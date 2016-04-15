@@ -9,31 +9,33 @@ namespace Epi.Web.MVC.Utility
 {
     class FieldAttributes
     {
+        int _tempInt;
+        double _tempDouble;
+
         public FieldAttributes(XElement _FieldTypeID, XDocument SurveyAnswer, Form form)
         {
-            Name = _FieldTypeID.Attribute("Name").Value;
-            PromptText = _FieldTypeID.Attribute("PromptText").Value;
-            TabIndex = int.Parse(_FieldTypeID.Attribute("TabIndex").Value);
-            //Required = _FieldTypeID.Attribute("IsRequired").Value == "True" ? true : false,
-            //RequiredMessage = _FieldTypeID.Attribute("PromptText").Value + " is required",
-            //RequiredMessage = "This field is required",
-            Name = _FieldTypeID.Attribute("Name").Value;
-            PromptTopPositionPercentage = double.Parse(_FieldTypeID.Attribute("PromptTopPositionPercentage").Value);
-            PromptLeftPositionPercentage = double.Parse(_FieldTypeID.Attribute("PromptLeftPositionPercentage").Value);
-            ControlTopPositionPercentage = double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value);
-            ControlLeftPositionPercentage = double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value);
-            ControlWidthPercentage = double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value);
+            RequiredMessage = "This field is required";
 
-            ControlHeightPercentage = double.Parse(_FieldTypeID.Attribute("ControlHeightPercentage").Value);
+            Name = _FieldTypeID.Attribute("Name").Value;
+            PromptText = _FieldTypeID.Attribute("PromptText").Value.Trim();
+            TabIndex = int.TryParse(_FieldTypeID.Attribute("TabIndex").Value, out _tempInt) ? _tempInt : 0;
+            Name = _FieldTypeID.Attribute("Name").Value;
+            PromptTopPositionPercentage = double.TryParse(_FieldTypeID.Attribute("PromptTopPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
+            PromptLeftPositionPercentage = double.TryParse(_FieldTypeID.Attribute("PromptLeftPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
+            ControlTopPositionPercentage = double.TryParse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
+            ControlLeftPositionPercentage = double.TryParse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
+            ControlWidthPercentage = double.TryParse(_FieldTypeID.Attribute("ControlWidthPercentage").Value, out _tempDouble) ? _tempDouble : 0;
+            ControlHeightPercentage = double.TryParse(_FieldTypeID.Attribute("ControlHeightPercentage").Value, out _tempDouble) ? _tempDouble : 0;
             PromptFontStyle = _FieldTypeID.Attribute("PromptFontStyle").Value;
-            PromptFontSize = double.Parse(_FieldTypeID.Attribute("PromptFontSize").Value);
+            PromptFontSize = double.TryParse(_FieldTypeID.Attribute("PromptFontSize").Value, out _tempDouble) ? _tempDouble : 0;
             PromptFontFamily = _FieldTypeID.Attribute("PromptFontFamily").Value;
 
             ControlFontStyle = _FieldTypeID.Attribute("ControlFontStyle").Value;
-            ControlFontSize = double.Parse(_FieldTypeID.Attribute("ControlFontSize").Value);
+            ControlFontSize = double.TryParse(_FieldTypeID.Attribute("ControlFontSize").Value, out _tempDouble) ? _tempDouble : 0;
             ControlFontFamily = _FieldTypeID.Attribute("ControlFontFamily").Value;
 
-            // IsRequired = bool.Parse(_FieldTypeID.Attribute("IsRequired").Value),
+            MaxLength = int.TryParse(_FieldTypeID.Attribute("MaxLength").Value, out _tempInt) ? _tempInt : 0;
+
             IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList");
             Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList");
 
@@ -41,8 +43,9 @@ namespace Epi.Web.MVC.Utility
             IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
             IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList");
             IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList");
-
         }
+
+        public string RequiredMessage { get; set; }
         public String Name { get; set; }
         public String PromptText { get; set; }
         public int TabIndex { get; set; }
@@ -62,6 +65,8 @@ namespace Epi.Web.MVC.Utility
         public double ControlFontSize { get; set; }
         public String ControlFontStyle { get; set; }
         public String ControlFontFamily { get; set; }
+
+        public int MaxLength { get; set; }
 
         public bool IsRequired { get; set; }
         public bool Required { get; set; }
