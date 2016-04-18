@@ -120,21 +120,18 @@ namespace Epi.Web.MVC.Utility
                     }
                     else
                     {
-                        FieldAttributes fieldAttributes;
+                        FieldAttributes fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
 
                         switch (_FieldTypeID.Attribute("FieldTypeId").Value)
                         {
                             case "1": // textbox
-
                                 var _TextBoxValue = Value;
-                                fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                                 form.AddFields(GetTextBox(fieldAttributes, _Width, _Height, _TextBoxValue));
                                 //                                             pName, pType, pSource
                                 //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value,"textbox","datasource",Value)); 
                                 break;
 
                             case "2"://Label/Title
-                                fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                                 form.AddFields(GetLabel(fieldAttributes, _Width, _Height));
                                 //                                             pName, pType, pSource
                                 //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "lable", "datasource",Value)); 
@@ -145,7 +142,6 @@ namespace Epi.Web.MVC.Utility
                             case "4"://MultiLineTextBox
 
                                 var _TextAreaValue = Value;
-                                fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                                 form.AddFields(GetTextArea(fieldAttributes, _Width, _Height, _TextAreaValue));
                                 //                                             pName, pType, pSource
                                 //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "multiline", "datasource",Value)); 
@@ -153,12 +149,12 @@ namespace Epi.Web.MVC.Utility
                             case "5"://NumericTextBox
 
                                 var _NumericTextBoxValue = Value;
-                                form.AddFields(GetNumericTextBox(_FieldTypeID, _Width, _Height, xdocResponse, _NumericTextBoxValue, form));
+                                form.AddFields(GetNumericTextBox(fieldAttributes, _Width, _Height, _NumericTextBoxValue));
                                 //                                             pName, pType, pSource
                                 //VariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", Value)); 
                                 break;
-                            // 7 DatePicker
-                            case "7"://NumericTextBox
+                            
+                            case "7"://DatePicker
 
                                 var _DatePickerValue = Value;
                                 form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
@@ -314,18 +310,16 @@ namespace Epi.Web.MVC.Utility
                 if (IsFound)
                 {
                     MvcDynamicForms.Fields.Field field = null;
-                    FieldAttributes fieldAttributes;
-                    ;
+                    FieldAttributes fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
+
                     switch (_FieldTypeID.Attribute("FieldTypeId").Value)
                     {
                         case "1": // textbox
                             var _TextBoxValue = Value;
-                            fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                             field = GetTextBox(fieldAttributes, _Width, _Height, _TextBoxValue);
                             break;
 
                         case "2": //Label/Title
-                             fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                             field = GetLabel(fieldAttributes, _Width, _Height);
                             break;
 
@@ -334,13 +328,12 @@ namespace Epi.Web.MVC.Utility
 
                         case "4": //MultiLineTextBox
                             var _TextAreaValue = Value;
-                            fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
                             field = GetTextArea(fieldAttributes, _Width, _Height, _TextAreaValue);
                             break;
 
                         case "5": //NumericTextBox
                             var _NumericTextBoxValue = Value;
-                            field = GetNumericTextBox(_FieldTypeID, _Width, _Height, xdocResponse, _NumericTextBoxValue, form);
+                            field = GetNumericTextBox(fieldAttributes, _Width, _Height, _NumericTextBoxValue);
                             break;
 
                         case "7": // 7 DatePicker
@@ -584,101 +577,107 @@ namespace Epi.Web.MVC.Utility
 
         }
 
-        private static NumericTextBox GetNumericTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
+        //private static NumericTextBox GetNumericTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
+        private static NumericTextBox GetNumericTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
-
-            var NumericTextBox = new NumericTextBox
+            var numericTextBox = new NumericTextBox(fieldAttributes, formWidth, formHeight)
             {
-                Title = _FieldTypeID.Attribute("Name").Value,
-                Prompt = _FieldTypeID.Attribute("PromptText").Value,
-                DisplayOrder = int.Parse(_FieldTypeID.Attribute("TabIndex").Value),
-                //Required =  _FieldTypeID.Attribute("IsRequired").Value == "True"?true:false ,
-                //RequiredMessage = _FieldTypeID.Attribute("PromptText").Value + " is required",
-                RequiredMessage = "This field is required",
-                Key = _FieldTypeID.Attribute("Name").Value,
-                PromptTop = _Height * double.Parse(_FieldTypeID.Attribute("PromptTopPositionPercentage").Value),
-                PromptLeft = _Width * double.Parse(_FieldTypeID.Attribute("PromptLeftPositionPercentage").Value),
-                Top = _Height * double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value),
-                Left = _Width * double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value),
-                PromptWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value),
-                ControlWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value),
-                fontstyle = _FieldTypeID.Attribute("PromptFontStyle").Value,
-                fontSize = double.Parse(_FieldTypeID.Attribute("PromptFontSize").Value),
-                fontfamily = _FieldTypeID.Attribute("PromptFontFamily").Value,
-                // IsRequired = bool.Parse(_FieldTypeID.Attribute("IsRequired").Value),
-                IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
-                Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
-                ReadOnly = bool.Parse(_FieldTypeID.Attribute("IsReadOnly").Value),
-                Lower = _FieldTypeID.Attribute("Lower").Value,
-                Upper = _FieldTypeID.Attribute("Upper").Value,
-                Value = _ControlValue,
-                IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList"),
-                IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList"),
-                IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList"),
-                Pattern = _FieldTypeID.Attribute("Pattern").Value
+                //Title = fieldAttributes.Name,
+                //Prompt = fieldAttributes.PromptText,
+                //DisplayOrder = fieldAttributes.TabIndex,
 
+                //Key = fieldAttributes.Name,
+                //PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
+                //PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
+                //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
+                //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
+                //PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //fontstyle = fieldAttributes.PromptFontStyle,
+                //fontSize = fieldAttributes.PromptFontSize,
+                //fontfamily = fieldAttributes.PromptFontFamily,
+
+                //Pattern = fieldAttributes.Pattern,
+                //Lower = fieldAttributes.Lower,
+                //Upper = fieldAttributes.Upper,
+
+                //IsRequired = fieldAttributes.IsRequired,
+                //Required = fieldAttributes.Required,
+                //RequiredMessage = fieldAttributes.RequiredMessage,
+                //ReadOnly = fieldAttributes.ReadOnly,
+                //IsHidden = fieldAttributes.IsHidden,
+                //IsHighlighted = fieldAttributes.IsHighlighted,
+                //IsDisabled = fieldAttributes.IsDisabled,
+
+                Value = controlValue
             };
-            return NumericTextBox;
 
+            return numericTextBox;
         }
+
         //private static Literal GetLabel(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer)
-        private static Literal GetLabel(FieldAttributes fieldAttributes, double _Width, double _Height)
+        private static Literal GetLabel(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
-            var Label = new Literal
-            {
-                FieldWrapper = "div",
-                Wrap = true,
-                DisplayOrder = fieldAttributes.TabIndex,
-                Html = fieldAttributes.PromptText,
-                Top = _Height * fieldAttributes.ControlTopPositionPercentage,
-                Left = _Width * fieldAttributes.ControlLeftPositionPercentage,
-                CssClass = "EpiLabel",
-                fontSize = fieldAttributes.PromptFontSize,
-                fontfamily = fieldAttributes.PromptFontFamily,
-                fontstyle = fieldAttributes.PromptFontStyle,
-                Height = _Height * fieldAttributes.ControlHeightPercentage,
-                Width = _Width * fieldAttributes.ControlWidthPercentage,
-                IsHidden = fieldAttributes.IsHidden,
-                Name = fieldAttributes.Name
-            };
-            return Label;
+            var label = new Literal(fieldAttributes, formWidth, formHeight);
+            label.FieldWrapper = "div";
+            label.Wrap = true;
+            label.Html = fieldAttributes.PromptText;
+
+            //{
+            //FieldWrapper = "div",
+            //Wrap = true
+            //DisplayOrder = fieldAttributes.TabIndex,
+            //Html = fieldAttributes.PromptText,
+            //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
+            //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
+            //CssClass = "EpiLabel",
+            //fontSize = fieldAttributes.PromptFontSize,
+            //fontfamily = fieldAttributes.PromptFontFamily,
+            //fontstyle = fieldAttributes.PromptFontStyle,
+            //Height = formHeight * fieldAttributes.ControlHeightPercentage,
+            //Width = formWidth * fieldAttributes.ControlWidthPercentage,
+            //IsHidden = fieldAttributes.IsHidden,
+            //Name = fieldAttributes.Name
+            //};
+
+            return label;
         }
         //private static TextArea GetTextArea(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
-        private static TextArea GetTextArea(FieldAttributes fieldAttributes, double _Width, double _Height, string _ControlValue)
+        private static TextArea GetTextArea(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
-            var TextArea = new TextArea
+            var textArea = new TextArea(fieldAttributes, formWidth, formHeight)
             {
-                Title = fieldAttributes.Name,
-                Prompt = fieldAttributes.PromptText,
-                DisplayOrder = fieldAttributes.TabIndex,
-                Key = fieldAttributes.Name,
-                PromptTop = _Height * fieldAttributes.PromptTopPositionPercentage,
-                PromptLeft = _Width * fieldAttributes.PromptLeftPositionPercentage,
-                Top = _Height * fieldAttributes.ControlTopPositionPercentage,
-                Left = _Width * fieldAttributes.ControlLeftPositionPercentage,
-                PromptWidth = _Width * fieldAttributes.ControlWidthPercentage,
-                ControlWidth = _Width * fieldAttributes.ControlWidthPercentage,
-                ControlHeight = _Height * fieldAttributes.ControlHeightPercentage,
-                fontstyle = fieldAttributes.PromptFontStyle,
-                fontSize = fieldAttributes.PromptFontSize,
-                fontfamily = fieldAttributes.PromptFontFamily,
+                //Title = fieldAttributes.Name,
+                //Prompt = fieldAttributes.PromptText,
+                //DisplayOrder = fieldAttributes.TabIndex,
+                //Key = fieldAttributes.Name,
+                //PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
+                //PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
+                //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
+                //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
+                //PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage,
+                //fontstyle = fieldAttributes.PromptFontStyle,
+                //fontSize = fieldAttributes.PromptFontSize,
+                //fontfamily = fieldAttributes.PromptFontFamily,
 
-                InputFieldfontstyle = fieldAttributes.ControlFontStyle,
-                InputFieldfontSize = fieldAttributes.ControlFontSize,
-                InputFieldfontfamily = fieldAttributes.ControlFontFamily,
+                //InputFieldfontstyle = fieldAttributes.ControlFontStyle,
+                //InputFieldfontSize = fieldAttributes.ControlFontSize,
+                //InputFieldfontfamily = fieldAttributes.ControlFontFamily,
 
-                IsRequired = fieldAttributes.IsRequired,
-                Required = fieldAttributes.Required,
-                RequiredMessage = fieldAttributes.RequiredMessage,
+                //IsRequired = fieldAttributes.IsRequired,
+                //Required = fieldAttributes.Required,
+                //RequiredMessage = fieldAttributes.RequiredMessage,
 
-                ReadOnly = fieldAttributes.ReadOnly,
-                IsHidden = fieldAttributes.IsHidden,
-                IsHighlighted = fieldAttributes.IsHighlighted,
-                IsDisabled = fieldAttributes.IsDisabled,
+                //ReadOnly = fieldAttributes.ReadOnly,
+                //IsHidden = fieldAttributes.IsHidden,
+                //IsHighlighted = fieldAttributes.IsHighlighted,
+                //IsDisabled = fieldAttributes.IsDisabled,
 
-                Value = _ControlValue
+                Value = controlValue
             };
-            return TextArea;
+            return textArea;
         }
         private static Hidden GetHiddenField(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {
@@ -694,43 +693,43 @@ namespace Epi.Web.MVC.Utility
         }
 
         //private static TextBox GetTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
-        private static TextBox GetTextBox(FieldAttributes fieldAttributes, double _Width, double _Height, string _ControlValue)
+        private static TextBox GetTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
-            var TextBox = new TextBox
+            var textBox = new TextBox (fieldAttributes, formWidth, formHeight)
             {
-                Title = fieldAttributes.Name,
-                Prompt = fieldAttributes.PromptText,
-                DisplayOrder = fieldAttributes.TabIndex,
-                Key = fieldAttributes.Name,
-                PromptTop = _Height * fieldAttributes.PromptTopPositionPercentage,
-                PromptLeft = _Width * fieldAttributes.PromptLeftPositionPercentage,
-                Top = _Height * fieldAttributes.ControlTopPositionPercentage,
-                Left = _Width * fieldAttributes.ControlLeftPositionPercentage,
-                PromptWidth = _Width * fieldAttributes.ControlWidthPercentage,
-                ControlWidth = _Width * fieldAttributes.ControlWidthPercentage,
-                fontstyle = fieldAttributes.PromptFontStyle,
-                fontSize = fieldAttributes.PromptFontSize,
-                fontfamily = fieldAttributes.PromptFontFamily,
+                //    Title = fieldAttributes.Name,
+                //    Prompt = fieldAttributes.PromptText,
+                //    DisplayOrder = fieldAttributes.TabIndex,
+                //    Key = fieldAttributes.Name,
+                //    PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
+                //    PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
+                //    Top = _Height * fieldAttributes.ControlTopPositionPercentage,
+                //    Left = _Width * fieldAttributes.ControlLeftPositionPercentage,
+                //    PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //    ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
+                //    fontstyle = fieldAttributes.PromptFontStyle,
+                //    fontSize = fieldAttributes.PromptFontSize,
+                //    fontfamily = fieldAttributes.PromptFontFamily,
 
-                InputFieldfontstyle = fieldAttributes.ControlFontStyle,
-                InputFieldfontSize = fieldAttributes.ControlFontSize,
-                InputFieldfontfamily = fieldAttributes.ControlFontFamily,
+                //    InputFieldfontstyle = fieldAttributes.ControlFontStyle,
+                //    InputFieldfontSize = fieldAttributes.ControlFontSize,
+                //    InputFieldfontfamily = fieldAttributes.ControlFontFamily,
 
-                MaxLength = fieldAttributes.MaxLength,
+                //    MaxLength = fieldAttributes.MaxLength,
 
-                IsRequired = fieldAttributes.IsRequired,
-                Required = fieldAttributes.Required,
-                RequiredMessage = fieldAttributes.RequiredMessage,
+                //    IsRequired = fieldAttributes.IsRequired,
+                //    Required = fieldAttributes.Required,
+                //    RequiredMessage = fieldAttributes.RequiredMessage,
 
-                ReadOnly = fieldAttributes.ReadOnly,
-                IsHidden = fieldAttributes.IsHidden,
-                IsHighlighted = fieldAttributes.IsHighlighted,
-                IsDisabled = fieldAttributes.IsDisabled,
+                //    ReadOnly = fieldAttributes.ReadOnly,
+                //    IsHidden = fieldAttributes.IsHidden,
+                //    IsHighlighted = fieldAttributes.IsHighlighted,
+                //    IsDisabled = fieldAttributes.IsDisabled,
 
-                Value = _ControlValue
+                Value = controlValue
             };
 
-            return TextBox;
+            return textBox;
         }
         private static CheckBox GetCheckBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {

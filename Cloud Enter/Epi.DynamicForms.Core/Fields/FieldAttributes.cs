@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Xml.Linq;
-using MvcDynamicForms;
 
-namespace Epi.Web.MVC.Utility
+namespace MvcDynamicForms.Fields
 {
-    class FieldAttributes
+    public class FieldAttributes
     {
         int _tempInt;
         double _tempDouble;

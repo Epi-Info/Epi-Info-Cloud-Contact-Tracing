@@ -67,6 +67,15 @@ namespace MvcDynamicForms.Fields
             get { return _pattern; }
             set { _pattern = value; }
         }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            Pattern = fieldAttributes.Pattern;
+            Lower = fieldAttributes.Lower;
+            Upper = fieldAttributes.Upper;
+        }
         /// <summary>
         /// Server Side validation for Numeric TextBox  
         /// </summary>

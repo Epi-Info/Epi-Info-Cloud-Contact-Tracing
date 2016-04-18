@@ -29,6 +29,7 @@ namespace MvcDynamicForms.Fields
         protected string _InputFieldfontfamily;
 
         protected Dictionary<string, string> _inputHtmlAttributes = new Dictionary<string, string>();
+
         /// <summary>
         /// Used to identify each InputField when performing model binding.
         /// </summary>
@@ -134,6 +135,30 @@ namespace MvcDynamicForms.Fields
                 _inputHtmlAttributes = value;
             }
         }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            Title = fieldAttributes.Name;
+            Prompt = fieldAttributes.PromptText;
+            Key = fieldAttributes.Name;
+            PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
+            PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage;
+
+            InputFieldfontstyle = fieldAttributes.ControlFontStyle;
+            InputFieldfontfamily = fieldAttributes.ControlFontFamily;
+            InputFieldfontSize = fieldAttributes.ControlFontSize;
+
+            IsRequired = fieldAttributes.IsRequired;
+            Required = fieldAttributes.Required;
+            RequiredMessage = fieldAttributes.RequiredMessage;
+            ReadOnly = fieldAttributes.ReadOnly;
+        }
+
         /// <summary>
         /// Validates the user's response.
         /// </summary>

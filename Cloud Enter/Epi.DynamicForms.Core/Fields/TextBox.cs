@@ -13,9 +13,10 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class TextBox : TextField
     {
-
-
-        
+        public TextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
 
         public override string RenderHtml()
         { 

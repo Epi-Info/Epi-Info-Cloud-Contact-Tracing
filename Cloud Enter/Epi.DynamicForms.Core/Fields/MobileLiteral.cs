@@ -14,17 +14,35 @@ namespace MvcDynamicForms.Fields
     public class MobileLiteral : Field
     {
         /// <summary>
+        /// MobileLiteral
+        /// </summary>
+        /// <remarks>Remove this empty constructor when the parameterized constructor is fully implemented</remarks>
+        public MobileLiteral()
+        {
+        }
+
+        public MobileLiteral(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+        /// <summary>
         /// Determines whether the rendered html will be wrapped by another element.
         /// </summary>
         /// 
-
-        public string Name { get; set; }
         public bool Wrap { get; set; }
         /// <summary>
         /// The html to be rendered on the form.
         /// </summary>
         public string Html { get; set; }
+        public string Name { get; set; }
 
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            Name = fieldAttributes.Name;
+        }
         public override string RenderHtml()
         {
             if (Wrap)
@@ -62,6 +80,7 @@ namespace MvcDynamicForms.Fields
             }
             return Html;
         }
+
         public string GetMobileLiteralStyle(string ControlFontStyle, string Top, string Left, string Width, string Height, bool IsHidden)
         {
 
@@ -95,9 +114,7 @@ namespace MvcDynamicForms.Fields
                         FontStyle.Append(Style.ToString());
 
                         break;
-
                 }
-
             }
             foreach (string Style in Styles)
             {
@@ -110,9 +127,7 @@ namespace MvcDynamicForms.Fields
                         FontWeight.Append(Style.ToString());
 
                         break;
-
                 }
-
             }
             CssStyles.Append(";font:");//1
             //if (!string.IsNullOrEmpty(FontStyle.ToString()))
@@ -138,9 +153,7 @@ namespace MvcDynamicForms.Fields
                         TextDecoration.Append(Style.ToString());
 
                         break;
-
                 }
-
             }
 
             if (!string.IsNullOrEmpty(TextDecoration.ToString()))
@@ -153,9 +166,7 @@ namespace MvcDynamicForms.Fields
             }
             CssStyles.Append(TextDecoration);
 
-
             return CssStyles.ToString();
-
         }
     }
 }

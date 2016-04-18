@@ -68,16 +68,32 @@ namespace MvcDynamicForms.Fields
                 _fieldWrapperClass = value;
             }
         }     
-        /// <summary>
-        /// The relative position that the field is rendered to html.
-        /// </summary>
-        public int DisplayOrder { get; set; }
+
         /// <summary>
         /// Renders the field as html.
         /// </summary>
         /// <returns>Returns a string containing the rendered html of the Field object.</returns>
         public abstract string RenderHtml();
-       
+
+        protected virtual void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            DisplayOrder = fieldAttributes.TabIndex;
+
+            fontstyle = fieldAttributes.PromptFontStyle;
+            fontSize = fieldAttributes.PromptFontSize;
+            fontfamily = fieldAttributes.PromptFontFamily;
+
+            IsHidden = fieldAttributes.IsHidden;
+            IsHighlighted = fieldAttributes.IsHighlighted;
+            IsDisabled = fieldAttributes.IsDisabled;
+        }
+
+        /// <summary>
+        /// The relative position that the field is rendered to html.
+        /// </summary>
+        public int DisplayOrder { get; set; }
 
         public double Top { get { return this._top; } set { this._top = value; } }
         public double Left { get { return this._left; } set { this._left = value; } }

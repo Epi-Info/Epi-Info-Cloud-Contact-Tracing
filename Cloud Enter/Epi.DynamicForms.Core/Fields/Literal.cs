@@ -13,24 +13,35 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class Literal : Field
     {
+        public Literal(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+        public string Name { get; set; }
+
         /// <summary>
         /// Determines whether the rendered html will be wrapped by another element.
         /// </summary>
-        /// 
-
-        public string Name { get; set; }
         public bool Wrap { get; set; }
+
         /// <summary>
         /// The html to be rendered on the form.
         /// </summary>
+        /// 
         public string Html { get; set; }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            Name = fieldAttributes.Name;
+        }
 
         public override string RenderHtml()
         {
             if (Wrap)
-            
             {
-                
                 var wrapper = new TagBuilder(_fieldWrapper);
                 if (string.IsNullOrEmpty(this._cssClass))
                 {
@@ -40,7 +51,6 @@ namespace MvcDynamicForms.Fields
                 {
                     wrapper.Attributes["class"] = this._cssClass;
                 }
-
 
                 System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"(\r\n|\r|\n)+");
 
@@ -61,6 +71,5 @@ namespace MvcDynamicForms.Fields
             }
             return Html;
         }
-   
     }
 }
