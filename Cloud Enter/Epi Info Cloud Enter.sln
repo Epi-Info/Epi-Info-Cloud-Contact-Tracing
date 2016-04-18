@@ -48,6 +48,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Epi.Compatibility", "Epi.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.ImportExport", "Epi.Compatibility\Epi.ImportExort\Epi.ImportExport.csproj", "{4696FF9B-C88A-447D-80F2-C9D1C6A09BA8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{83D23736-9927-42F2-9D37-4A20263B4C17}"
+	ProjectSection(SolutionItems) = preProject
+		..\Documentation\Cloud Enter Conceptual v4.vsd = ..\Documentation\Cloud Enter Conceptual v4.vsd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -464,5 +469,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EBD2B961-A952-4670-96CA-50BAA12C7F29} = {981A998A-AD70-41C0-BD68-FC54AB453921}
 		{4696FF9B-C88A-447D-80F2-C9D1C6A09BA8} = {981A998A-AD70-41C0-BD68-FC54AB453921}
+		{83D23736-9927-42F2-9D37-4A20263B4C17} = {2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}
 	EndGlobalSection
 EndGlobal
