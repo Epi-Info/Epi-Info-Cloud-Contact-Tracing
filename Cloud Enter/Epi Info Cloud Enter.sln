@@ -51,6 +51,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{83D23736-9927-42F2-9D37-4A20263B4C17}"
 	ProjectSection(SolutionItems) = preProject
 		..\Documentation\Cloud Enter Conceptual v4.vsd = ..\Documentation\Cloud Enter Conceptual v4.vsd
+		..\Documentation\Cloud Enter Conceptual v5.vsd = ..\Documentation\Cloud Enter Conceptual v5.vsd
 	EndProjectSection
 EndProject
 Global

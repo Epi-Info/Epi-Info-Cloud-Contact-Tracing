@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using System.Web;
 
 namespace MvcDynamicForms.Fields
 {
@@ -36,6 +34,7 @@ namespace MvcDynamicForms.Fields
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
 
             Name = fieldAttributes.Name;
+            Html = fieldAttributes.PromptText;
         }
 
         public override string RenderHtml()

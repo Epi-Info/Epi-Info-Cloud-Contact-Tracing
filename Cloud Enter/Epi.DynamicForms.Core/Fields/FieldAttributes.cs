@@ -7,64 +7,63 @@ namespace MvcDynamicForms.Fields
     {
         int _tempInt;
         double _tempDouble;
+        bool _tempBool;
 
         public FieldAttributes(XElement fieldType, XDocument surveyAnswer, Form form)
         {
             RequiredMessage = "This field is required";
 
-            Name = fieldType.Attribute("Name").Value;
-            PromptText = fieldType.Attribute("PromptText").Value.Trim();
-            TabIndex = int.TryParse(fieldType.Attribute("TabIndex").Value, out _tempInt) ? _tempInt : 0;
-            Name = fieldType.Attribute("Name").Value;
-            PromptTopPositionPercentage = double.TryParse(fieldType.Attribute("PromptTopPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            PromptLeftPositionPercentage = double.TryParse(fieldType.Attribute("PromptLeftPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            ControlTopPositionPercentage = double.TryParse(fieldType.Attribute("ControlTopPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            ControlLeftPositionPercentage = double.TryParse(fieldType.Attribute("ControlLeftPositionPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            ControlWidthPercentage = double.TryParse(fieldType.Attribute("ControlWidthPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            ControlHeightPercentage = double.TryParse(fieldType.Attribute("ControlHeightPercentage").Value, out _tempDouble) ? _tempDouble : 0;
-            PromptFontStyle = fieldType.Attribute("PromptFontStyle").Value;
-            PromptFontSize = double.TryParse(fieldType.Attribute("PromptFontSize").Value, out _tempDouble) ? _tempDouble : 0;
-            PromptFontFamily = fieldType.Attribute("PromptFontFamily").Value;
+            Name = fieldType.AttributeValue("Name");
+            TabIndex = int.TryParse(fieldType.AttributeValue("TabIndex"), out _tempInt) ? _tempInt : 0;
 
-            ControlFontStyle = fieldType.Attribute("ControlFontStyle").Value;
-            ControlFontSize = double.TryParse(fieldType.Attribute("ControlFontSize").Value, out _tempDouble) ? _tempDouble : 0;
-            ControlFontFamily = fieldType.Attribute("ControlFontFamily").Value;
+            PromptText = fieldType.AttributeValue("PromptText").Trim();
+            PromptTopPositionPercentage = double.TryParse(fieldType.AttributeValue("PromptTopPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
+            PromptLeftPositionPercentage = double.TryParse(fieldType.AttributeValue("PromptLeftPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
+            PromptFontStyle = fieldType.AttributeValue("PromptFontStyle");
+            PromptFontSize = double.TryParse(fieldType.AttributeValue("PromptFontSize"), out _tempDouble) ? _tempDouble : 0;
+            PromptFontFamily = fieldType.AttributeValue("PromptFontFamily");
 
-            MaxLength = int.TryParse(fieldType.Attribute("MaxLength").Value, out _tempInt) ? _tempInt : 0;
-            Pattern = fieldType.Attribute("Pattern").Value;
-            Lower = fieldType.Attribute("Lower").Value;
-            Upper = fieldType.Attribute("Upper").Value;
+            ControlTopPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlTopPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
+            ControlLeftPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlLeftPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
+            ControlWidthPercentage = double.TryParse(fieldType.AttributeValue("ControlWidthPercentage"), out _tempDouble) ? _tempDouble : 0;
+            ControlHeightPercentage = double.TryParse(fieldType.AttributeValue("ControlHeightPercentage"), out _tempDouble) ? _tempDouble : 0;
+            ControlFontStyle = fieldType.AttributeValue("ControlFontStyle");
+            ControlFontSize = double.TryParse(fieldType.AttributeValue("ControlFontSize"), out _tempDouble) ? _tempDouble : 0;
+            ControlFontFamily = fieldType.AttributeValue("ControlFontFamily");
 
-            IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), fieldType.Attribute("Name").Value, "RequiredFieldsList");
-            Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), fieldType.Attribute("Name").Value, "RequiredFieldsList");
+            MaxLength = int.TryParse(fieldType.AttributeValue("MaxLength"), out _tempInt) ? _tempInt : 0;
+            Pattern = fieldType.AttributeValue("Pattern");
+            Lower = fieldType.AttributeValue("Lower");
+            Upper = fieldType.AttributeValue("Upper");
 
-            ReadOnly = bool.Parse(fieldType.Attribute("IsReadOnly").Value);
-            IsHidden = Helpers.GetControlState(surveyAnswer, fieldType.Attribute("Name").Value, "HiddenFieldsList");
-            IsHighlighted = Helpers.GetControlState(surveyAnswer, fieldType.Attribute("Name").Value, "HighlightedFieldsList");
-            IsDisabled = Helpers.GetControlState(surveyAnswer, fieldType.Attribute("Name").Value, "DisabledFieldsList");
-
+            IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), fieldType.AttributeValue("Name"), "RequiredFieldsList");
+            Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), fieldType.AttributeValue("Name"), "RequiredFieldsList");
+            ReadOnly = bool.TryParse(fieldType.AttributeValue("IsReadOnly"), out _tempBool) ? _tempBool : false;
+            IsHidden = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HiddenFieldsList");
+            IsHighlighted = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HighlightedFieldsList");
+            IsDisabled = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "DisabledFieldsList");
         }
 
         public string RequiredMessage { get; set; }
-        public String Name { get; set; }
-        public String PromptText { get; set; }
+        public string Name { get; set; }
         public int TabIndex { get; set; }
+
+        public string PromptText { get; set; }
         public double PromptTopPositionPercentage { get; set; }
         public double PromptLeftPositionPercentage { get; set; }
+
         public double ControlTopPositionPercentage { get; set; }
         public double ControlLeftPositionPercentage { get; set; }
-
         public double ControlWidthPercentage { get; set; }
-
         public double ControlHeightPercentage { get; set; }
 
         public double PromptFontSize { get; set; }
-        public String PromptFontStyle { get; set; }
-        public String PromptFontFamily { get; set; }
+        public string PromptFontStyle { get; set; }
+        public string PromptFontFamily { get; set; }
 
         public double ControlFontSize { get; set; }
-        public String ControlFontStyle { get; set; }
-        public String ControlFontFamily { get; set; }
+        public string ControlFontStyle { get; set; }
+        public string ControlFontFamily { get; set; }
 
         public int MaxLength { get; set; }
         public string Pattern { get; set; }
@@ -73,10 +72,18 @@ namespace MvcDynamicForms.Fields
 
         public bool IsRequired { get; set; }
         public bool Required { get; set; }
-
         public bool ReadOnly { get; set; }
         public bool IsHidden { get; set; }
         public bool IsHighlighted { get; set; }
         public bool IsDisabled { get; set; }
+    }
+
+    public static class XmlAttributeExtensions
+    {
+        public static string AttributeValue(this XElement fieldType, XName attrName, string defaultValue = null)
+        {
+            var attribute = fieldType.Attribute(attrName);
+            return attribute != null ? attribute.Value : defaultValue;
+        }
     }
 }

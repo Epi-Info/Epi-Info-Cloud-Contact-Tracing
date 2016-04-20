@@ -1,37 +1,38 @@
-﻿using System.Linq;
-using MvcDynamicForms.Fields;
-using System.Xml;
-using System.Xml.Linq;
-using System.Text;
-using System.Web;
-using MvcDynamicForms;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using Epi.Core.EnterInterpreter;
+using MvcDynamicForms;
+using MvcDynamicForms.Fields;
+
 namespace Epi.Web.MVC.Utility
 {
     public static class FormProvider
     {
-
+        [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
+
+        [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
-        public static Form GetForm(object SurveyMetaData, int PageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO _SurveyAnswer)
+
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer)
         {
             string SurveyAnswer;
 
-            if (_SurveyAnswer != null)
+            if (surveyAnswer != null)
             {
-                SurveyAnswer = _SurveyAnswer.XML;
-
+                SurveyAnswer = surveyAnswer.XML;
             }
             else { SurveyAnswer = ""; }
 
             var form = new Form();
 
-            form.ResponseId = _SurveyAnswer.ResponseId;
+            form.ResponseId = surveyAnswer.ResponseId;
 
-            form.SurveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)(SurveyMetaData);
+            form.SurveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
             //Watermark 
             if (form.SurveyInfo.IsDraftMode)
             {
@@ -40,10 +41,9 @@ namespace Epi.Web.MVC.Utility
 
             string XML = form.SurveyInfo.XML;
 
-            form.CurrentPage = PageNumber;
+            form.CurrentPage = pageNumber;
             if (string.IsNullOrEmpty(XML))
             {
-
                 form.NumberOfPages = 1;
             }
             else
@@ -58,17 +58,15 @@ namespace Epi.Web.MVC.Utility
             {
                 XDocument xdoc = XDocument.Parse(XML);
 
-
                 var _FieldsTypeIDs = from _FieldTypeID in
                                          xdoc.Descendants("Field")
                                          //where _FieldTypeID.Attribute("Position").Value == (PageNumber - 1).ToString()
                                      select _FieldTypeID;
 
-
                 double _Width, _Height;
                 _Width = GetWidth(xdoc);
                 _Height = GetHeight(xdoc);
-                form.PageId = GetPageId(xdoc, PageNumber);
+                form.PageId = GetPageId(xdoc, pageNumber);
                 form.Width = _Width;
                 form.Height = _Height;
                 //Add checkcode to Form
@@ -79,7 +77,7 @@ namespace Epi.Web.MVC.Utility
                 string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
                 string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
 
-                XDocument xdocResponse = XDocument.Parse(_SurveyAnswer.XML);
+                XDocument xdocResponse = XDocument.Parse(surveyAnswer.XML);
 
                 form.HiddenFieldsList = xdocResponse.Root.Attribute("HiddenFieldsList").Value;
                 form.HighlightedFieldsList = xdocResponse.Root.Attribute("HighlightedFieldsList").Value;
@@ -87,7 +85,6 @@ namespace Epi.Web.MVC.Utility
                 form.RequiredFieldsList = xdocResponse.Root.Attribute("RequiredFieldsList").Value;
                 if (SurveyAnswerList != null)
                 {
-
                     form.FormCheckCodeObj = form.GetRelateCheckCodeObj(GetRelateFormObj(), checkcode);
                 }
                 else
@@ -95,17 +92,16 @@ namespace Epi.Web.MVC.Utility
                     form.FormCheckCodeObj = form.GetCheckCodeObj(xdoc, xdocResponse, checkcode);
                 }
 
-
                 form.FormCheckCodeObj.GetVariableJavaScript(VariableDefinitions);
                 form.FormCheckCodeObj.GetSubroutineJavaScript(VariableDefinitions);
 
-                string PageName = GetPageName(xdoc, PageNumber);
+                string PageName = GetPageName(xdoc, pageNumber);
 
 
                 //Generate page level Java script (Before)
-                JavaScript.Append(GetPageLevelJS(PageNumber, form, PageName, "Before"));
+                JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "Before"));
                 //Generate page level Java script (After)
-                JavaScript.Append(GetPageLevelJS(PageNumber, form, PageName, "After"));
+                JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
                 foreach (var _FieldTypeID in _FieldsTypeIDs)
                 {
@@ -114,7 +110,7 @@ namespace Epi.Web.MVC.Utility
                     JavaScript.Append(GetFormJavaScript(checkcode, form, _FieldTypeID.Attribute("Name").Value));
 
 
-                    if (_FieldTypeID.Attribute("Position").Value != (PageNumber - 1).ToString())
+                    if (_FieldTypeID.Attribute("Position").Value != (pageNumber - 1).ToString())
                     {
                         //form.AddFields(GetHiddenField(_FieldTypeID, _Width, _Height, SurveyAnswer, Value));
                     }
@@ -582,33 +578,6 @@ namespace Epi.Web.MVC.Utility
         {
             var numericTextBox = new NumericTextBox(fieldAttributes, formWidth, formHeight)
             {
-                //Title = fieldAttributes.Name,
-                //Prompt = fieldAttributes.PromptText,
-                //DisplayOrder = fieldAttributes.TabIndex,
-
-                //Key = fieldAttributes.Name,
-                //PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
-                //PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
-                //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
-                //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
-                //PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //fontstyle = fieldAttributes.PromptFontStyle,
-                //fontSize = fieldAttributes.PromptFontSize,
-                //fontfamily = fieldAttributes.PromptFontFamily,
-
-                //Pattern = fieldAttributes.Pattern,
-                //Lower = fieldAttributes.Lower,
-                //Upper = fieldAttributes.Upper,
-
-                //IsRequired = fieldAttributes.IsRequired,
-                //Required = fieldAttributes.Required,
-                //RequiredMessage = fieldAttributes.RequiredMessage,
-                //ReadOnly = fieldAttributes.ReadOnly,
-                //IsHidden = fieldAttributes.IsHidden,
-                //IsHighlighted = fieldAttributes.IsHighlighted,
-                //IsDisabled = fieldAttributes.IsDisabled,
-
                 Value = controlValue
             };
 
@@ -619,27 +588,6 @@ namespace Epi.Web.MVC.Utility
         private static Literal GetLabel(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             var label = new Literal(fieldAttributes, formWidth, formHeight);
-            label.FieldWrapper = "div";
-            label.Wrap = true;
-            label.Html = fieldAttributes.PromptText;
-
-            //{
-            //FieldWrapper = "div",
-            //Wrap = true
-            //DisplayOrder = fieldAttributes.TabIndex,
-            //Html = fieldAttributes.PromptText,
-            //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
-            //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
-            //CssClass = "EpiLabel",
-            //fontSize = fieldAttributes.PromptFontSize,
-            //fontfamily = fieldAttributes.PromptFontFamily,
-            //fontstyle = fieldAttributes.PromptFontStyle,
-            //Height = formHeight * fieldAttributes.ControlHeightPercentage,
-            //Width = formWidth * fieldAttributes.ControlWidthPercentage,
-            //IsHidden = fieldAttributes.IsHidden,
-            //Name = fieldAttributes.Name
-            //};
-
             return label;
         }
         //private static TextArea GetTextArea(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
@@ -647,34 +595,6 @@ namespace Epi.Web.MVC.Utility
         {
             var textArea = new TextArea(fieldAttributes, formWidth, formHeight)
             {
-                //Title = fieldAttributes.Name,
-                //Prompt = fieldAttributes.PromptText,
-                //DisplayOrder = fieldAttributes.TabIndex,
-                //Key = fieldAttributes.Name,
-                //PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
-                //PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
-                //Top = formHeight * fieldAttributes.ControlTopPositionPercentage,
-                //Left = formWidth * fieldAttributes.ControlLeftPositionPercentage,
-                //PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage,
-                //fontstyle = fieldAttributes.PromptFontStyle,
-                //fontSize = fieldAttributes.PromptFontSize,
-                //fontfamily = fieldAttributes.PromptFontFamily,
-
-                //InputFieldfontstyle = fieldAttributes.ControlFontStyle,
-                //InputFieldfontSize = fieldAttributes.ControlFontSize,
-                //InputFieldfontfamily = fieldAttributes.ControlFontFamily,
-
-                //IsRequired = fieldAttributes.IsRequired,
-                //Required = fieldAttributes.Required,
-                //RequiredMessage = fieldAttributes.RequiredMessage,
-
-                //ReadOnly = fieldAttributes.ReadOnly,
-                //IsHidden = fieldAttributes.IsHidden,
-                //IsHighlighted = fieldAttributes.IsHighlighted,
-                //IsDisabled = fieldAttributes.IsDisabled,
-
                 Value = controlValue
             };
             return textArea;
@@ -697,35 +617,6 @@ namespace Epi.Web.MVC.Utility
         {
             var textBox = new TextBox (fieldAttributes, formWidth, formHeight)
             {
-                //    Title = fieldAttributes.Name,
-                //    Prompt = fieldAttributes.PromptText,
-                //    DisplayOrder = fieldAttributes.TabIndex,
-                //    Key = fieldAttributes.Name,
-                //    PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage,
-                //    PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage,
-                //    Top = _Height * fieldAttributes.ControlTopPositionPercentage,
-                //    Left = _Width * fieldAttributes.ControlLeftPositionPercentage,
-                //    PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //    ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage,
-                //    fontstyle = fieldAttributes.PromptFontStyle,
-                //    fontSize = fieldAttributes.PromptFontSize,
-                //    fontfamily = fieldAttributes.PromptFontFamily,
-
-                //    InputFieldfontstyle = fieldAttributes.ControlFontStyle,
-                //    InputFieldfontSize = fieldAttributes.ControlFontSize,
-                //    InputFieldfontfamily = fieldAttributes.ControlFontFamily,
-
-                //    MaxLength = fieldAttributes.MaxLength,
-
-                //    IsRequired = fieldAttributes.IsRequired,
-                //    Required = fieldAttributes.Required,
-                //    RequiredMessage = fieldAttributes.RequiredMessage,
-
-                //    ReadOnly = fieldAttributes.ReadOnly,
-                //    IsHidden = fieldAttributes.IsHidden,
-                //    IsHighlighted = fieldAttributes.IsHighlighted,
-                //    IsDisabled = fieldAttributes.IsDisabled,
-
                 Value = controlValue
             };
 
