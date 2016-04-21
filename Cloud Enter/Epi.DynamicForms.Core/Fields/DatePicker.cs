@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
+using System.Globalization;
+using System.Threading;
 namespace MvcDynamicForms.Fields
 { 
     /// <summary>
@@ -143,6 +145,8 @@ namespace MvcDynamicForms.Fields
         {
              
  
+            CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+            string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
             StringBuilder ControlClass = new StringBuilder();
 
             ControlClass.Append("validate[");
@@ -170,12 +174,12 @@ namespace MvcDynamicForms.Fields
                 if (_IsRequired == true)
                 {
                    // ControlClass.Append("required,custom[date]] text-input datepicker");
-                    ControlClass.Append("required,custom[date]]  datepicker");
+                        ControlClass.Append("required,custom[" + DateFormat.ToUpper() + "]]  datepicker ");
                 }
                 else
                 {
                     //ControlClass.Append("custom[date]] text-input datepicker");
-                    ControlClass.Append("custom[date]]  datepicker");
+                        ControlClass.Append("custom[" + DateFormat.ToUpper() + "]]  datepicker ");
                 }
                 return ControlClass.ToString();
             }

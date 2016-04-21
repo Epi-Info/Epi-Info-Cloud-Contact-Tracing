@@ -8,7 +8,7 @@ using Epi.Web.Enter.Common;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
-
+using Epi.Web.Enter.Common.Extension;
 namespace Epi.Web.EF
 {
     public class EntityFormSettingDao : IFormSettingDao
@@ -107,7 +107,7 @@ namespace Epi.Web.EF
                        }
                        ////  Available Orgnization list 
 
-                       IEnumerable<Organization> OrganizationList = Context.Organizations.ToList();
+                       IQueryable<Organization> OrganizationList = Context.Organizations.ToList().AsQueryable();
                        foreach (var Org in OrganizationList)
                        {
                            if (!SelectedOrgs.ContainsValue(Org.Organization1) && Org.IsEnabled== true)
@@ -122,7 +122,7 @@ namespace Epi.Web.EF
                       selectedDataAccessRuleId = int.Parse(MetaData.DataAccessRuleId.ToString()); 
                        ////  Available DataAccess Rule Ids  list 
 
-                       IEnumerable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList();
+                       IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
                        foreach (var Rule in RuleIDs)
                        {
 
@@ -300,7 +300,7 @@ namespace Epi.Web.EF
             {
                 ////  Available DataAccess Rule Ids  list 
 
-                IEnumerable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList();
+                IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
                 foreach (var Rule in RuleIDs)
                 {
 
@@ -443,17 +443,72 @@ namespace Epi.Web.EF
             }
         
         }
+        public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
+        {
 
+            List<SurveyInfoBO> result = new List<SurveyInfoBO>();
+
+            List<string> list = new List<string>();
+            try
+            {
+
+                Guid Id = new Guid(RootId);
+
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    IQueryable<SurveyMetaData> Query = Context.SurveyMetaDatas.Where(x => x.SurveyId == Id).Traverse(x => x.SurveyMetaData1).AsQueryable();
+                    result = Mapper.Map(Query);
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            return result;
+
+        }
+       
         public void DeleteDraftRecords(string FormId)
         {
-            Guid Id = new Guid(FormId);
+            Guid NewId = new Guid(FormId);
             try
             {
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-                   Context.SurveyResponses.Where(x => x.SurveyId == Id && x.IsDraftMode == true).ToList().ForEach(Context.SurveyResponses.DeleteObject); 
-                   Context.SaveChanges();
+                     
+                    List<string> Ids = new List<string>();
+
+
+                    List<SurveyInfoBO> result = GetFormsHierarchyIdsByRootId(FormId);
+                    foreach (var item in result)
+                    {
+                        
+                                Ids.Add(item.SurveyId);
+                    }
+
+                    Ids.Reverse();
+
+                     
+                    //Get Root
+                   
+
+                    foreach (var Id in Ids)
+                    {
+ 
+
+
+                     Guid _Id = new Guid(Id);
+                    Context.SurveyResponses.Where(x => x.SurveyId == _Id && x.IsDraftMode == true).ToList().ForEach(Context.SurveyResponses.DeleteObject);
+
+                    Context.SaveChanges();
+                    }
+                  
                 }
+               
             }
             catch (Exception ex)
             {
@@ -461,5 +516,7 @@ namespace Epi.Web.EF
             }
 
         }
+
+        
     }
 }

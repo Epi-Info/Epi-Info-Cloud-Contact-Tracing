@@ -9,10 +9,14 @@ namespace MvcDynamicForms.Fields
         double _tempDouble;
         bool _tempBool;
 
+        public FieldAttributes()
+        {
+        }
+
         public FieldAttributes(XElement fieldType, XDocument surveyAnswer, Form form)
         {
             RequiredMessage = "This field is required";
-
+            FieldTypeId = int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0;
             Name = fieldType.AttributeValue("Name");
             TabIndex = int.TryParse(fieldType.AttributeValue("TabIndex"), out _tempInt) ? _tempInt : 0;
 
@@ -44,6 +48,8 @@ namespace MvcDynamicForms.Fields
             IsDisabled = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "DisabledFieldsList");
         }
 
+        public string UniqueId { get; set; }
+        public int FieldTypeId { get; set; }
         public string RequiredMessage { get; set; }
         public string Name { get; set; }
         public int TabIndex { get; set; }

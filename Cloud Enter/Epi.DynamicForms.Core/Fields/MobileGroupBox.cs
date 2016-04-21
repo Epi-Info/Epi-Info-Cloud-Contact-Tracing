@@ -22,11 +22,6 @@ namespace MvcDynamicForms.Fields
         /// </summary>
         public string Html { get; set; }
 
-        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
-        {
-            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
-        }
-
         public override string RenderHtml()
         {
             if (Wrap)

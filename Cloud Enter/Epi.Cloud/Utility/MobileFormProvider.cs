@@ -14,8 +14,9 @@ namespace Epi.Web.MVC.Utility
 {
     public class MobileFormProvider
     {
-
+        [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
+        [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
         
         public static Form GetForm(object SurveyMetaData, int PageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO _SurveyAnswer)

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.Reflection;
+using System.Diagnostics;
 using Epi.Web.Enter.Common.Constants;
 using Epi.Web.Enter.Common.Diagnostics;
 using Epi.Web.Enter.Common.Message;
@@ -37,15 +39,32 @@ namespace Epi.Web.MVC.Controllers
         [HttpGet]
         public ActionResult Index(string responseId, string ReturnUrl)
         {
-            //string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            //ViewBag.Version = version;
-
+            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            ViewBag.Version = version;
+            if (ConfigurationManager.AppSettings["IsDemoMode"] != null)
+                Session["IsDemoMode"] = ConfigurationManager.AppSettings["IsDemoMode"].ToUpper();
+            else
+                Session["IsDemoMode"] = "null";
             //   //get the responseId
             //    responseId = GetResponseId(ReturnUrl);
             //    //get the surveyId
             //     string SurveyId = _isurveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0].SurveyId;
             //     //put surveyId in viewbag so can be retrieved in Login/Index.cshtml
             //     ViewBag.SurveyId = SurveyId;
+            if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+            {
+                var IsDemoMode = System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"];
+                string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt("1");
+                if (!string.IsNullOrEmpty(IsDemoMode) && IsDemoMode.ToUpper() == "TRUE")
+                {
+                  FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
+                  
+                    Session["UserId"] = UserId;
+                    
+                    Session["UserHighestRole"] = 3;
+                    return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+                }
+            }
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
             if (authenticationSection.Mode == AuthenticationMode.Forms)

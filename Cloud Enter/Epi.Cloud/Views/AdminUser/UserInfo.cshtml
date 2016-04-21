@@ -8,6 +8,19 @@
 
 <script type="text/javascript">
     $( document ).ready(function() {
+        $("div#demoheader").css({ "margin": "-2px 0px 0px 10px" });
+        function disableElements(el) {
+            for (var i = 0; i < el.length; i++) {
+                el[i].disabled = true;
+                disableElements(el[i].children);
+            }
+        }
+             if ('@Session["IsDemoMode"]' == "TRUE")
+            {
+                // disableElements($('#content').children());
+                $('[name="input"]').attr("disabled", true);
+                $('[name="input"]').attr("title", "This feature is not available in demo mode");
+            }
     $("#Email").change(function () {
  
         var _Email = $("#Email").val();
@@ -54,17 +67,19 @@
     <div style="clear: both;">
     </div>
 </div>
-<div id="content" style="margin: 15px 0 200px; padding-left: 10px; min-height: 375px;">
+<div id="content" style="margin: 15px 0px 0px 0px; padding-left: 10px; min-height: 375px;">
     <div id="formtitle" style="display: block;">
         @if (Model.IsEditMode)
         {
             <h2 class="surveyTitle">
-                Edit Users</h2>
+                Edit Users
+            </h2>
         }
         else
         {
             <h2 class="surveyTitle">
-                Add Users</h2>
+                Add Users
+            </h2>
         }
     </div>
     <div style="clear: both;">
@@ -193,11 +208,11 @@
                     </div>
                     @if (!@Model.IsEditMode)
                     {
-                        <input type="submit" value="Create" id="Create" />
+                        <input type="submit" name="input" value="Create" id="Create" />
                     }
                     else
                     { 
-                        <input type="submit" value="Update" id="Update" />
+                        <input type="submit" name="input" value="Update" id="Update" />
              
                     }
                     @*<input type="submit" value="Cancel"  style="margin-left:20px;"/>*@

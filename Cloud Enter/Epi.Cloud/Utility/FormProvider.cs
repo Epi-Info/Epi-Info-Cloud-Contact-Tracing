@@ -3,23 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Text;
+using System.Web;
+using MvcDynamicForms;
+using System.Collections.Generic;
+using System;
 using System.Xml.XPath;
 using Epi.Core.EnterInterpreter;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
+using Epi.Cloud.Form.MetadataServices;
+using Epi.Web.Enter.Common.DTO;
+using System.Drawing;
 
 namespace Epi.Web.MVC.Utility
 {
     public static class FormProvider
     {
         [ThreadStatic]
-        public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
+        public static List<SurveyAnswerDTO> SurveyAnswerList;
 
         [ThreadStatic]
-        public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
-
+        public static List<SurveyInfoDTO> SurveyInfoList;
         public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer)
         {
+            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList);
+        }
+
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
+        {
+            // Save last values for subsequent calls from ValidateAll in SurveyController
+            SurveyAnswerList = surveyAnswerList;
+            SurveyInfoList = surveyInfoList;
+
+            var metadataProvider = new MetadataProvider();
+            var metadata = metadataProvider.GetMeta(1);
+
             string SurveyAnswer;
 
             if (surveyAnswer != null)
@@ -83,9 +102,9 @@ namespace Epi.Web.MVC.Utility
                 form.HighlightedFieldsList = xdocResponse.Root.Attribute("HighlightedFieldsList").Value;
                 form.DisabledFieldsList = xdocResponse.Root.Attribute("DisabledFieldsList").Value;
                 form.RequiredFieldsList = xdocResponse.Root.Attribute("RequiredFieldsList").Value;
-                if (SurveyAnswerList != null)
+                if (surveyAnswerList != null)
                 {
-                    form.FormCheckCodeObj = form.GetRelateCheckCodeObj(GetRelateFormObj(), checkcode);
+                    form.FormCheckCodeObj = form.GetRelateCheckCodeObj(GetRelateFormObj(surveyAnswerList, surveyInfoList), checkcode);
                 }
                 else
                 {
@@ -116,7 +135,10 @@ namespace Epi.Web.MVC.Utility
                     }
                     else
                     {
-                        FieldAttributes fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
+                        var uniqueId = _FieldTypeID.AttributeValue("UniqueId");
+                        FieldAttributes fieldAttributes = metadata.Where(m => m.UniqueId == uniqueId).FirstOrDefault();
+                        if (fieldAttributes == null) 
+                            fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
 
                         switch (_FieldTypeID.Attribute("FieldTypeId").Value)
                         {
@@ -203,7 +225,7 @@ namespace Epi.Web.MVC.Utility
                             case "17"://DropDown LegalValues
 
                                 string DropDownValues1 = "";
-                                DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                                DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                                 var _DropDownSelectedValue1 = Value;
                                 form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue1, DropDownValues1, 17, form));
                                 //                                             pName, pType, pSource
@@ -213,7 +235,7 @@ namespace Epi.Web.MVC.Utility
                             case "18"://DropDown Codes
 
                                 string DropDownValues2 = "";
-                                DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                                DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                                 var _DropDownSelectedValue2 = Value;
                                 form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue2, DropDownValues2, 18, form));
                                 //                                             pName, pType, pSource
@@ -223,7 +245,7 @@ namespace Epi.Web.MVC.Utility
                             case "19"://DropDown CommentLegal
 
                                 string DropDownValues = "";
-                                DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                                DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                                 var _DropDownSelectedValue = Value;
                                 form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form));
                                 //                                             pName, pType, pSource
@@ -372,21 +394,21 @@ namespace Epi.Web.MVC.Utility
 
                         case "17": //DropDown LegalValues
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue1 = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue1, DropDownValues1, 17, form);
                             break;
 
                         case "18": //DropDown Codes
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue2 = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue2, DropDownValues2, 18, form);
                             break;
 
                         case "19": //DropDown CommentLegal
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form);
                             break;
@@ -824,7 +846,7 @@ namespace Epi.Web.MVC.Utility
             return DropDown;
         }
 
-        public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName)
+        public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName, string  CodeColumnName )
         {
             StringBuilder DropDownValues = new StringBuilder();
 
@@ -852,7 +874,16 @@ namespace Epi.Web.MVC.Utility
                     {
 
                         // DropDownValues.Append(_SourceTableValue.LastAttribute.Value );
-                        DropDownValues.Append(_SourceTableValue.FirstAttribute.Value.Trim());
+                        if (!string.IsNullOrEmpty(CodeColumnName))
+                        {
+                            string Xelement = _SourceTableValue.ToString().ToLower();
+                            XElement NewXElement =   XElement.Parse(Xelement);
+                            DropDownValues.Append(NewXElement.Attribute(CodeColumnName.ToLower()).Value.Trim());
+                        }
+                        else
+                        {
+                            DropDownValues.Append(_SourceTableValue.Attributes().FirstOrDefault().Value.Trim());
+                        }
                         DropDownValues.Append("&#;");
                     }
                 }
@@ -885,8 +916,12 @@ namespace Epi.Web.MVC.Utility
             GroupBox.IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
             GroupBox.IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList");
             GroupBox.IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList");
-
-
+                    if (_FieldTypeID.Attribute("BackgroundColor") != null)
+                    {
+                        var color = Color.FromArgb((int)(int.Parse(_FieldTypeID.Attribute("BackgroundColor").Value)) + unchecked((int)0xFF000000));
+                        string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+                        GroupBox.BackgroundColor = HexValue;
+                    }
 
 
             return GroupBox;
@@ -983,8 +1018,16 @@ namespace Epi.Web.MVC.Utility
                 if (FunctionObject_A != null && !FunctionObject_A.IsNull())
                 {
                     JavaScript.AppendLine("$(document).ready(function () {");
-                    JavaScript.AppendLine("$('#myform').submit(function () {");
-                    JavaScript.AppendLine("page" + PageNumber + "_after();})");
+                    //JavaScript.AppendLine("$('#myform').submit(function () {");
+                  //  JavaScript.AppendLine("page" + PageNumber + "_after();})");
+                    JavaScript.AppendLine("$(\"[href]\").click(function(e) {");
+                    JavaScript.AppendLine("page" + PageNumber + "_after();  e.preventDefault(); })");
+
+                    JavaScript.AppendLine("$(\"#ContinueButton\").click(function(e) {");
+                    JavaScript.AppendLine("page" + PageNumber + "_after();  e.preventDefault(); })");
+
+                    JavaScript.AppendLine("$(\"#PreviousButton\").click(function(e) {");
+                    JavaScript.AppendLine("page" + PageNumber + "_after();  e.preventDefault(); })");
                     JavaScript.AppendLine("});");
 
                     JavaScript.Append("\n\nfunction page" + PageNumber);
@@ -1006,19 +1049,19 @@ namespace Epi.Web.MVC.Utility
             }
             return NewList;
         }
-        private static List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> GetRelateFormObj()
+        private static List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> GetRelateFormObj(List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
         {
 
             List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> List = new List<Enter.Common.Helper.RelatedFormsObj>();
 
 
-            for (int i = 0; SurveyAnswerList.Count() > i; i++)
+            for (int i = 0; surveyAnswerList.Count() > i; i++)
             {
 
 
                 Epi.Web.Enter.Common.Helper.RelatedFormsObj RelatedFormsObj = new Epi.Web.Enter.Common.Helper.RelatedFormsObj();
-                XDocument xdocResponse1 = XDocument.Parse(SurveyAnswerList[i].XML);
-                XDocument xdoc1 = XDocument.Parse(SurveyInfoList[i].XML.ToString());
+                XDocument xdocResponse1 = XDocument.Parse(surveyAnswerList[i].XML);
+                XDocument xdoc1 = XDocument.Parse(surveyInfoList[i].XML.ToString());
                 RelatedFormsObj.MetaData = xdoc1;
                 RelatedFormsObj.Response = xdocResponse1;
 

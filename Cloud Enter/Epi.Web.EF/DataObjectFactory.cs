@@ -20,7 +20,7 @@ namespace Epi.Web.EF
         {
             try
             {
-#if DEBUG
+#if false
                 //Unencrypted (Clear Text) connections string here
                 string ctConnectionStringName = "ctEWEEntities";
                 string ctEWEADOconnectionStringName = "ctEWEADO";

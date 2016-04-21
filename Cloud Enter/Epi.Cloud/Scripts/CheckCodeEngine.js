@@ -433,7 +433,7 @@ CCE_Context.prototype.getValue = function (pName)
 
                     case "datepicker": //string has been converted to date for comparison with another date
                         value = new Date(field.val()).valueOf();
-                        if(value == "")
+                        if (value == "" || isNaN(value))
                         {
                             return null;
                         }
@@ -446,7 +446,7 @@ CCE_Context.prototype.getValue = function (pName)
                         var refDate = "01/01/1970 ";//It is a reference date 
                         var dateTime = refDate + field.val();
                         value = new Date(dateTime).valueOf();
-                                                if(value == "")
+                        if (value == "" || isNaN(value))
                         {
                             return null;
                         }
@@ -457,7 +457,7 @@ CCE_Context.prototype.getValue = function (pName)
                         return value;
                     case "numeric": //string has been converted to number to compare with another number
                         value = new Number(field.val()).valueOf();
-                        if(value == "")
+                        if (value == "" || isNaN(value))
                         {
                             return null;
                         }
@@ -655,7 +655,11 @@ CCE_Context.prototype.setValue = function (pName, pValue) {
                     cce_Symbol.Value = pValue;
 
                     break;
-
+                case "label": // lable
+                    Jquery = Jquery + '_fieldWrapper';
+                    $(Jquery).html(pValue);
+                    cce_Symbol.Value = pValue;
+                    break;
                 default:
                     $(Jquery).val(pValue);
                     cce_Symbol.Value = pValue;
@@ -1910,7 +1914,9 @@ function CCE_ContextOpenSimpleDialogBox(Title,Prompt,id)
         $('.ui-dialog-title').text(Title.toString());
         $('#SimpleDialogBoxPrempt').text(Prompt.toString());
         $('#SimpleDialogBoxButton').text('Ok');
+        setTimeout(function () {
         $("#SimpleDialogBox").dialog("open");
+        }, 100);
      }else{
      
      CCE_ContextOpenMobileSimpleDialogBox(Title,Prompt,id) 
@@ -1932,7 +1938,9 @@ function CCE_ContextOpenDialogBox(Title,MaskOpt,Identifier,Prompt)
         $('#DialogBoxOkButton').text('Ok');
         $('#DialogBoxInput').datepicker( "hide" );
          
-        $("#DialogBox").dialog("open");
+        setTimeout(function () {
+            $("#DialogBox").dialog("open");
+        }, 100);
         $('#ui-timepicker-div').hide();
 
         if(CCE_GetMaskedPattern(MaskOpt.toLocaleString()).toString() != "")

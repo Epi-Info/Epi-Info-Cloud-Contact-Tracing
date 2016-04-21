@@ -62,18 +62,18 @@ namespace Epi.Web.MVC.Facade
         /// <param name="pageNumber"></param>
         /// <param name="surveyAnswerDTO"></param>
         /// <returns></returns>
-        public MvcDynamicForms.Form GetSurveyFormData(string surveyId, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsMobileDevice, List<SurveyAnswerDTO> _SurveyAnswerDTOList = null)
+        public MvcDynamicForms.Form GetSurveyFormData(string surveyId, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsMobileDevice, List<SurveyAnswerDTO> surveyAnswerList = null)
         {
-            List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
+            List<SurveyInfoDTO> surveyInfoList = new List<SurveyInfoDTO>();
 
-            if (_SurveyAnswerDTOList != null)
+            if (surveyAnswerList != null)
             {
-                foreach (var item in _SurveyAnswerDTOList)
+                foreach (var item in surveyAnswerList)
                 {
                     Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
                     request.Criteria.SurveyIdList.Add(item.SurveyId);
                     Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
-                    List.Add(_SurveyInfoDTO);
+                    surveyInfoList.Add(_SurveyInfoDTO);
                 }
             }
             //Get the SurveyInfoDTO
@@ -82,15 +82,15 @@ namespace Epi.Web.MVC.Facade
 
             if (IsMobileDevice)
             {
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
+                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = surveyInfoList;
+                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = surveyAnswerList;
                 form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
             }
             else
             {
-                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
+                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = surveyInfoList;
+                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = surveyAnswerList;
+                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, surveyAnswerList, surveyInfoList);
             }
             return form;
         }

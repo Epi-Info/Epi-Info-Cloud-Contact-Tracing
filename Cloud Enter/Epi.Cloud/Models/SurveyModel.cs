@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using MvcDynamicForms;
+using System.Globalization;
+using System.Threading;
 namespace Epi.Web.MVC.Models
     {
     public class SurveyModel
@@ -12,6 +14,18 @@ namespace Epi.Web.MVC.Models
         private FormResponseInfoModel _FormResponseInfoModel;
         private int _RequestedViewId;
         private string _RelatedButtonWasClicked;
+        private string _CurrentCultureDateFormat;
+        public SurveyModel(){
+            CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+            string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
+            DateFormat = DateFormat.Remove(DateFormat.IndexOf("y"), 2);
+            _CurrentCultureDateFormat = DateFormat;
+        }
+        public string CurrentCultureDateFormat
+        {
+            get { return _CurrentCultureDateFormat; }
+            set { _CurrentCultureDateFormat = value; }
+        }
         public Form Form
             {
             get { return _Form; }

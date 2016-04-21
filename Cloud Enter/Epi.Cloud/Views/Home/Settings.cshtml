@@ -347,8 +347,25 @@
 	    if ('@Session["UsertRole"]' == "2" && '@Session["IsOwner"]'.toUpperCase() == "FALSE") {
 	        $('#SupperAdminDiv').hide();
 	    }
+	        if ('@Session["IsDemoMode"]' == "TRUE")
+	        {
+	            if ('@Session["IsOwner"]'.toUpperCase() == "TRUE") {
+	                disableElements($('#SupperAdminDiv').children());
+	                disableElements($('#UserSelect').children());
+	            }
+	            else
+	            {
+	                disableElements($('#UserSelect').children());
+                }
 
+	        }	    
 	});
+    function disableElements(el) {
+        for (var i = 0; i < el.length; i++) {
+            el[i].disabled = true;
+            disableElements(el[i].children);
+        }
+    }
     function DeleteFormWarning() {
       
         if ($('#SoftDeleteForm').is(':checked'))

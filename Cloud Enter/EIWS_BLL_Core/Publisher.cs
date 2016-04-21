@@ -185,7 +185,7 @@ namespace Epi.Web.BLL
                     {
 
                     //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
-                    if (ValidateOrganizationKey(pRequestMessage.OrganizationKey))
+                        if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey, pRequestMessage.OwnerId))//EW-96
                         {
 
                         if (ValidateSurveyFields(pRequestMessage))
@@ -308,7 +308,7 @@ namespace Epi.Web.BLL
                     {
 
                     //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
-                    if (ValidateOrganizationKey(pRequestMessage.OrganizationKey))
+                        if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey,pRequestMessage.OwnerId))//EW-96
                         {
 
                         if (ValidateSurveyFields(pRequestMessage))
@@ -472,7 +472,10 @@ namespace Epi.Web.BLL
             SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
             SurveyRequestResultBO = Publish(SurveyInfoBO);
            // ParentId = SurveyRequestResultBO.URL.Split('/').Last();
+            if (SurveyRequestResultBO.ViewIdAndFormIdList != null)
+            {
             ParentId = SurveyRequestResultBO.ViewIdAndFormIdList[_ViewId];
+                }
             SurveyIds.Add(_ViewId, ParentId);
 
             }
@@ -506,8 +509,10 @@ namespace Epi.Web.BLL
 
                 int RelateViewId = 0;
                 int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
-
+                if (!this.ViewIds.ContainsKey(RelateViewId))
+                {
                 this.ViewIds.Add(RelateViewId, ViewId);
+                }
                 }
 
           
@@ -556,6 +561,13 @@ namespace Epi.Web.BLL
                 }
             }
             return List;
+        }
+        private bool ValidateOrganizationKeyByUser(Guid gOrganizationKey,int UserID)
+        {
+            bool result;
+            string strOrgKeyEncrypted = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(gOrganizationKey.ToString());
+            result = this.OrganizationDao.IsUserExistsInOrganization(strOrgKeyEncrypted, UserID);
+            return result;
         }
       
     }

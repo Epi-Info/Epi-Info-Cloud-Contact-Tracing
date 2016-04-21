@@ -101,6 +101,7 @@ namespace Epi.Web.Enter.Common.Email
             {
                 bool isAuthenticated = false;
                 bool isUsingSSL = false;
+                int SMTPPort = 25;
 
                 // App Config Settings:
                 // EMAIL_USE_AUTHENTICATION [ True | False ] default is False
@@ -127,6 +128,12 @@ namespace Epi.Web.Enter.Common.Email
                     {
                         isUsingSSL = true;
                     }
+                }
+
+                s = ConfigurationManager.AppSettings["SMTP_PORT"];
+                if (!int.TryParse(s, out SMTPPort))
+                {
+                    SMTPPort = 25;
                 }
 
                 System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();

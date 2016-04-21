@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -56,6 +58,7 @@ namespace Epi.Web.MVC.Controllers
         {
         try
             {
+            CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
             SurveyModel SurveyModel = new SurveyModel();
             if (Session["IsEditMode"]!=null)
                 {
@@ -71,7 +74,9 @@ namespace Epi.Web.MVC.Controllers
                 SurveyModel = IndexGet(responseId, PageNumber, "");
                 
                 }
-
+            string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
+            DateFormat = DateFormat.Remove(DateFormat.IndexOf("y"),2);
+            SurveyModel.CurrentCultureDateFormat = DateFormat;
            return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, SurveyModel);
             }
             catch (Exception ex)
@@ -1296,7 +1301,6 @@ namespace Epi.Web.MVC.Controllers
 
                     for (int i = 1; i < form.NumberOfPages + 1; i++)
                     {
-
                         form = Epi.Web.MVC.Utility.FormProvider.GetForm(form.SurveyInfo, i, SurveyAnswer);
                         if (!form.Validate(form.RequiredFieldsList))
                         {

@@ -100,7 +100,13 @@
         $("#myform")[0].action = actionUrlP;
         $("#myform").submit();
     }
+    function disableElements(el) {
+        for (var i = 0; i < el.length; i++) {
+            el[i].disabled = true;
 
+            disableElements(el[i].children);
+        }
+    }
 
 
     $(document).ready(function () {
@@ -108,6 +114,11 @@
 
         //$("#Savebutton").tooltip();
 
+        var DateFormat = '@Model.CurrentCultureDateFormat'
+        DateFormat = DateFormat.toLocaleLowerCase().toString()
+        
+        
+        $(".datepicker").datepicker("option", "dateFormat", DateFormat);
 
 
         $("#dialog").dialog({
@@ -167,7 +178,7 @@
 
         // start the idle timer plugin
         $.idleTimeout('#TimeOutdialog', 'div.ui-dialog-buttonpane button:first', {
-            idleAfter: 900,
+            idleAfter: 840,
             pollingInterval: 2,
             keepAliveURL: 'keepalive.php',
             serverResponseEquals: 'OK',
@@ -737,7 +748,7 @@
     }
     function GoHome() {
 
-
+       $('#myform').validationEngine('detach');
         $("#myform")[0].Go_Home_action.value = 'true';
 
         $("#myform")[0].action = window.location.href;
@@ -748,7 +759,7 @@
     }
 
     function GoOneLevelUp() {
-
+        $('#myform').validationEngine('detach');
         $("#myform")[0].Go_One_Level_Up_action.value = 'true';
 
         $("#myform")[0].action = window.location.href;
@@ -941,8 +952,9 @@
 
 	
 		@Html.AntiForgeryToken() 
-			 
+     <div id="epiform">
 		@Html.Raw(Model.Form.RenderHtml(true))
+     </div>
 		   
 		<input type="hidden"  id="HiddenFieldsList"  name="HiddenFieldsList" value="@Model.Form.HiddenFieldsList" />
 		<input type="hidden"  id="HighlightedFieldsList"  name="HighlightedFieldsList" value="@Model.Form.HighlightedFieldsList" />
@@ -965,7 +977,8 @@
 	    <input type="hidden"   id="Parent_Response_Id" name="Parent_Response_Id" value="" /> 
 			 *@
 		<div id="nav">
-			<div id="prev" align="left">&nbsp;
+             <div id="prev" align="left">
+                 &nbsp;
 					@if (Model.Form.CurrentPage != 1)
 			   {  
 						<button class="default prev" id="PreviousButton" value="PreviousButton" onclick="Previous();"  name="PreviousButton"  type="button" > &nbsp; Previous</button>

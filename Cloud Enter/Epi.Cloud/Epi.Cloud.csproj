@@ -268,6 +268,7 @@
     <Compile Include="Controllers\ViewSwitcherController.cs" />
     <Compile Include="Facade\ISecurityFacade.cs" />
     <Compile Include="Facade\ISurveyFacade.cs" />
+    <Compile Include="Facade\CloudSecurityFacade.cs" />
     <Compile Include="Facade\SecurityFacade.cs" />
     <Compile Include="Facade\SurveyFacade.cs" />
     <Compile Include="Global.asax.cs">
@@ -321,6 +322,7 @@
     <Compile Include="Utility\SurveyResponseXML.cs" />
     <Compile Include="Utility\ValidateResponse.cs" />
     <Compile Include="Utility\WindowsAuthentication.cs" />
+    <Compile Include="Views\MetadataProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Microsoft.Practices.ServiceLocation.dll" />
@@ -519,6 +521,7 @@
     <Content Include="EWEManagerServiceV2.svc" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\application-insights.js" />
     <Content Include="Scripts\autoNumeric-1.7.4.js" />
     <Content Include="Scripts\CheckCodeEngine.js" />
     <Content Include="Scripts\idle-timer.js" />

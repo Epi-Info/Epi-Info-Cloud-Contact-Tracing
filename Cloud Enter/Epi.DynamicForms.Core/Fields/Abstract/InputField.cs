@@ -27,7 +27,7 @@ namespace MvcDynamicForms.Fields
         protected string _InputFieldfontstyle;
         protected double _InputFieldfontSize;
         protected string _InputFieldfontfamily;
-
+        protected string _BackgroundColor;
         protected Dictionary<string, string> _inputHtmlAttributes = new Dictionary<string, string>();
 
         /// <summary>
@@ -176,9 +176,9 @@ namespace MvcDynamicForms.Fields
         public double PromptLeft { get { return this._Promptleft; } set { this._Promptleft = value; } }
 
         public double PromptWidth { get { return this._PromptWidth; } set { this._PromptWidth = value; } }
-        public double ControlWidth { get { return this._ControlWidth; } set { this._ControlWidth = value; } }
+        public double ControlWidth { get { return System.Math.Truncate(this._ControlWidth); } set { this._ControlWidth = System.Math.Truncate(value); } }
        
-        public double ControlHeight { get { return this._ControlHeight; } set { this._ControlHeight = value; } }
+        public double ControlHeight { get { return System.Math.Truncate(this._ControlHeight); } set { this._ControlHeight = System.Math.Truncate(value); } }
         public Boolean IsRequired { get { return this._IsRequired; } set {   this._IsRequired =value; } }
         public Boolean IsReadOnly { get { return this._IsReadOnly; } set {   this._IsReadOnly = value; }}
         public int MaxLength { get { return this._MaxLength; } set { this._MaxLength = value; } }
@@ -189,6 +189,7 @@ namespace MvcDynamicForms.Fields
         public string InputFieldfontstyle { get { return this._InputFieldfontstyle; } set { this._InputFieldfontstyle = value; } }
         public double InputFieldfontSize { get { return this._InputFieldfontSize; } set { this._InputFieldfontSize = value; } }
         public string InputFieldfontfamily { get { return this._InputFieldfontfamily; } set { this._InputFieldfontfamily = value; } }
+        public string BackgroundColor { get { return this._BackgroundColor; } set { this._BackgroundColor = value; } }
 
         public string GetInputFieldStyle(string ControlFontStyle, double ControlFontSize, string ControlFontFamily)
         {
