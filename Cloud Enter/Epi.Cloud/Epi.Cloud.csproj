@@ -604,8 +604,11 @@
     <None Include="Properties\DataSources\Epi.Web.Enter.Common.Message.OrganizationResponse.datasource" />
     <None Include="Properties\DataSources\Epi.Web.Enter.Common.Message.PublishResponse.datasource" />
     <None Include="Properties\DataSources\Epi.Web.Enter.Common.Message.UserResponse.datasource" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
-    <None Include="Properties\PublishProfiles\Profile1.pubxml" />
     <None Include="Service References\DataServiceClient\EWEDataService.disco" />
     <None Include="Service References\DataServiceClient\configuration91.svcinfo" />
     <None Include="Service References\DataServiceClient\configuration.svcinfo" />
