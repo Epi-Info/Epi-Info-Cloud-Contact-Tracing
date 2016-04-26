@@ -109,17 +109,21 @@
     }
 
 
+
     $(document).ready(function () {
         // a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
 
-        //$("#Savebutton").tooltip();
-
+        //$("#Savebutton").tooltip();      
+        
         var DateFormat = '@Model.CurrentCultureDateFormat'
         DateFormat = DateFormat.toLocaleLowerCase().toString()
         
         
         $(".datepicker").datepicker("option", "dateFormat", DateFormat);
-
+        
+        
+          
+ 
 
         $("#dialog").dialog({
             autoOpen: false,
@@ -212,24 +216,24 @@
                     "text": 'Save',
                     "click": function () {
                         //alert('@Model.Form.StatusId');
-	                    $(this).dialog("close");
-	                    var input = $("<input>")
+                        $(this).dialog("close");
+                        var input = $("<input>")
 					   .attr("type", "hidden")
 					   .attr("name", "CloseButton").val("CloseButton");
-	                    $('#myform').append($(input));
-	                    $("#myform").submit();
+                        $('#myform').append($(input));
+                        $("#myform").submit();
 
 
-	                },
-	                "class": 'dialogbtn'
+                    },
+                    "class": 'dialogbtn'
 
-	            }, {
-	                "text": 'Don\'t Save',
-	                "click": function () {
+                }, {
+                    "text": 'Don\'t Save',
+                    "click": function () {
 
-	                    var signoutUrl = '@Url.Action("Delete", "Survey")';
-	                   // alert('Don\'t Save');
-	                    //  var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
+                        var signoutUrl = '@Url.Action("Delete", "Survey")';
+                        // alert('Don\'t Save');
+                        //  var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
                         $.ajax({
                             url: signoutUrl,
                             type: 'POST',
@@ -295,12 +299,12 @@
                     "click": function () {
 
                         var signoutUrl = '@Url.Action("Delete", "Survey")';
-                        
+
                         $.ajax({
                             url: signoutUrl,
                             type: 'POST',
                             contentType: 'application/json; charset=utf-8',
-                            
+
                             dataType: "json",
                             cache: false,
                             async: false,
@@ -477,7 +481,7 @@
         /*Exit the survey */
         $("#Close").click(function (e) {
             e.preventDefault();
-             //alert('close')
+            //alert('close')
 
             CCE_HasFormValuesChanged();
             if ($('#FormHasChanged').val() == 'True') {
@@ -518,23 +522,23 @@
 
 
         $("a.item-link").click(function (event) {
-             event.preventDefault(); 
-             CCE_HasFormValuesChanged();
-                if ($('#FormHasChanged').val() == 'True') {
-                    $("#exitAndLogoutdialog").dialog("open");
-                }
-                else {
-                    
-                    DeleteRecord(true);
-                    
-                }
-           
+            event.preventDefault();
+            CCE_HasFormValuesChanged();
+            if ($('#FormHasChanged').val() == 'True') {
+                $("#exitAndLogoutdialog").dialog("open");
+            }
+            else {
+
+                DeleteRecord(true);
+
+            }
+
         });
 
 
 
         $("#Close1").click(function (e) {
-          // alert('close1')
+            // alert('close1')
             e.preventDefault();
             CCE_HasFormValuesChanged();
             if ($('#FormHasChanged').val() == 'True') {
@@ -572,18 +576,18 @@
         });
         function successFunc(data) {
             $(this).dialog("close");
-            
+
             if (Signout) {
-               
+
 
                 var signoutUrl = '@Url.Action("SignOut", "Post")';
                 var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
                 SignOutAndRedirect(signoutUrl, homePageUrl);
-            }else{
+            } else {
                 var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data;
-                   window.location.href = homePageUrl;
-              } 
-             
+                window.location.href = homePageUrl;
+            }
+
         }
         function errorFunc(data) {
             alert('failed');
@@ -848,18 +852,18 @@
  <div id="pageHeader">
 	<div id="pageTitle"><h2>@Model.Form.SurveyInfo.SurveyName</h2></div>
   
-<div id="userwelcome">
+@*<div id="userwelcome">
     
-    Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;
+    Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;*@
 	@*<a href="#">Log Out</a>*@
 	@*@Html.ActionLink("Log Out", "LogOut", "Survey", null, null)*@
 
-    @Html.ActionLink("Log Out", "LogOut", "Survey", new { id = "LogOut", @class = "item-link" })
+    @*@Html.ActionLink("Log Out", "LogOut", "Survey", new { id = "LogOut", @class = "item-link" })*@
 
     @*<button class="default exitsurvey" id="LogOut" type="submit"  name="LogOut" value="">Log Out</button>*@
-	</div>
-	<div style="clear:both;"></div>
-</div>  
+	@*</div>
+	<div style="clear:both;"></div>*@
+</div>   
 	
 
 <div id="content" class="recordcontentdiv" style="margin:0px auto;">
@@ -953,63 +957,63 @@
 	
 		@Html.AntiForgeryToken() 
      <div id="epiform">
-		@Html.Raw(Model.Form.RenderHtml(true))
+         @Html.Raw(Model.Form.RenderHtml(true))
      </div>
-		   
-		<input type="hidden"  id="HiddenFieldsList"  name="HiddenFieldsList" value="@Model.Form.HiddenFieldsList" />
-		<input type="hidden"  id="HighlightedFieldsList"  name="HighlightedFieldsList" value="@Model.Form.HighlightedFieldsList" />
-		<input type="hidden"  id="DisabledFieldsList"  name="DisabledFieldsList" value="@Model.Form.DisabledFieldsList" />
-		<input type="hidden"  id="RequiredFieldsList"  name="RequiredFieldsList" value="@Model.Form.RequiredFieldsList" />
-		<input type="hidden"  id="AssignList"  name="AssignList" value="@Model.Form.AssignList" />
-		<input type="hidden"  name="is_save_action" value="false" />
-		<input type="hidden"  name="is_goto_action" value="false" />
-        <input type="hidden"  name="Get_Child_action" value="false" />
-        <input type="hidden"  name="Go_Home_action" value="false" />
-         <input type="hidden"  name="Click_Related_Form" value="" />
-    
-          <input type="hidden"  name="Go_One_Level_Up_action" value="false" />
-	    <input type="hidden"  id="FormHasChanged"  name="Form_Has_Changed" value="@Model.Form.FormValuesHasChanged" /> 
-        <input type="hidden"  id="RelateButtonWasClicked"  name="Requested_View_Id" value="@HttpContext.Current.Session["RequestedViewId"]" /> 
-        <input type="hidden"  id="RelateButtonWasClicked_Temp"  name="Requested_View_Id_Temp" value="@HttpContext.Current.Session["RequestedViewId"]" /> 
-     <input type="hidden" id="LogoutButtoneWasClicked" name="Log_Out" value="" /> 
 
-      @*  <input type="hidden"  id="Parent_Form_Id" name="Parent_Form_Id" value="" /> 
-	    <input type="hidden"   id="Parent_Response_Id" name="Parent_Response_Id" value="" /> 
-			 *@
-		<div id="nav">
+         <input type="hidden" id="HiddenFieldsList" name="HiddenFieldsList" value="@Model.Form.HiddenFieldsList" />
+         <input type="hidden" id="HighlightedFieldsList" name="HighlightedFieldsList" value="@Model.Form.HighlightedFieldsList" />
+         <input type="hidden" id="DisabledFieldsList" name="DisabledFieldsList" value="@Model.Form.DisabledFieldsList" />
+         <input type="hidden" id="RequiredFieldsList" name="RequiredFieldsList" value="@Model.Form.RequiredFieldsList" />
+         <input type="hidden" id="AssignList" name="AssignList" value="@Model.Form.AssignList" />
+         <input type="hidden" name="is_save_action" value="false" />
+         <input type="hidden" name="is_goto_action" value="false" />
+         <input type="hidden" name="Get_Child_action" value="false" />
+         <input type="hidden" name="Go_Home_action" value="false" />
+         <input type="hidden" name="Click_Related_Form" value="" />
+
+         <input type="hidden" name="Go_One_Level_Up_action" value="false" />
+         <input type="hidden" id="FormHasChanged" name="Form_Has_Changed" value="@Model.Form.FormValuesHasChanged" />
+         <input type="hidden" id="RelateButtonWasClicked" name="Requested_View_Id" value="@HttpContext.Current.Session["RequestedViewId"]" />
+         <input type="hidden" id="RelateButtonWasClicked_Temp" name="Requested_View_Id_Temp" value="@HttpContext.Current.Session["RequestedViewId"]" />
+         <input type="hidden" id="LogoutButtoneWasClicked" name="Log_Out" value="" />
+
+         @*  <input type="hidden"  id="Parent_Form_Id" name="Parent_Form_Id" value="" />
+            <input type="hidden"   id="Parent_Response_Id" name="Parent_Response_Id" value="" />
+         *@
+         <div id="nav">
              <div id="prev" align="left">
                  &nbsp;
-					@if (Model.Form.CurrentPage != 1)
-			   {  
-						<button class="default prev" id="PreviousButton" value="PreviousButton" onclick="Previous();"  name="PreviousButton"  type="button" > &nbsp; Previous</button>
+                 @if (Model.Form.CurrentPage != 1)
+			   {
+                     <button class="default prev" id="PreviousButton" value="PreviousButton" onclick="Previous();" name="PreviousButton" type="button"> &nbsp; Previous</button>
 			   }
-				</div>
+             </div>
 
-				<div id="savediv" align="center">
-					@*<button class="default save"  type="button" id ="Savebutton" onclick="Save();" name="Savebutton" value="save"> Save & Close</button>*@
-					<button class="default save" id ="Savebutton2" type="submit" onclick="Save();"  name="Savebutton" value="Submit"  style="margin-right:10px;">Save</button>
-					<button class="default save" id ="Savebutton" type="submit"  name="Submitbutton" value="Submit" style="width:126px;margin-right:10px;">Save & Close</button>
-                    <button class="default exitsurvey" id="Close1" type="submit"  name="Submitbutton" value="Submit" style="padding: 4px 6px 4px 6px !important;">Exit</button>  
-				</div>
-				 
-			  
-			@if (Model.Form.CurrentPage == Model.Form.NumberOfPages)
-	   {  
-				@*<div id="next" align="right"> 
-					<button class="default submits" type="submit"  name="Submitbutton" value="Submit" >Submit </button>
-				</div>*@
+             <div id="savediv" align="center">
+                 @*<button class="default save"  type="button" id ="Savebutton" onclick="Save();" name="Savebutton" value="save"> Save & Close</button>*@
+                 <button class="default save" id="Savebutton2" type="submit" onclick="Save();" name="Savebutton" value="Submit" style="margin-right:10px;">Save</button>
+                 <button class="default save" id="Savebutton" type="submit" name="Submitbutton" value="Submit" style="width:126px;margin-right:10px;">Save & Close</button>
+                 <button class="default exitsurvey" id="Close1" type="submit" name="Submitbutton" value="Submit" style="padding: 4px 6px 4px 6px !important;">Exit</button>
+             </div>
+
+
+             @if (Model.Form.CurrentPage == Model.Form.NumberOfPages)
+	   {
+                 @*<div id="next" align="right">
+                        <button class="default submits" type="submit"  name="Submitbutton" value="Submit" >Submit </button>
+                    </div>*@
 	   }
    else
 	   {
-				<div id="next" align="right">
-					<button class="default next"  name="ContinueButton" id="ContinueButton" onclick="Continue();" type="button" >Continue &nbsp; </button>
-				</div>						
+                 <div id="next" align="right">
+                     <button class="default next" name="ContinueButton" id="ContinueButton" onclick="Continue();" type="button">Continue &nbsp; </button>
+                 </div>
 	   }
 
-			</div>    
-		   
-	
- </div>	 @*End formdisplay Div *@  
+         </div>
+
+
+     </div>	 @*End formdisplay Div *@  
 
 	}@*End Form *@
 </div>@*End content Div *@

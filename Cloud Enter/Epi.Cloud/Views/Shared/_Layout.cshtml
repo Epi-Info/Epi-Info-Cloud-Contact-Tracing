@@ -16,7 +16,7 @@
 	/* throw script error to highlight exception collection feature
 	window.callFunctionThatDoesntExist(); */
     </script>
-    @*<script src="@Url.Content("~/Scripts/jquery.form.js")" type="text/javascript"></script>*@
+    <script src="@Url.Content("~/Scripts/jquery.form.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery-1.7.1.js")" type="text/javascript"></script>
     <script src="@Url.Content("~/Scripts/jquery.validationEngine.js")" type="text/javascript"></script>
      <script src="@Url.Content("~/Scripts/jquery.validationEngine-en.js")" type="text/javascript"></script> 
@@ -126,9 +126,9 @@
 </head>
 <body>    
 <div id="container">
-    <div id="header">
-        <img alt="Epi Info 7 - Epi Cloud Enter" src="~/Content/images/epiIcon.png" />
-        <h1>Epi Info™ Cloud Enter</h1>
+    <div id="header" style="height:50px">
+        <img style="float:left;margin:0px 5px 0px 5px" alt="Epi Info Cloud Data Capture" src="~/Content/images/ei_logomark_wht_outln_50px.png" />
+        <h1 style="float:left;margin:15px 10px 0px 0px">Epi Info Cloud Data Capture</h1>
     </div>
     @if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
     {
@@ -143,6 +143,7 @@
                 </div>
         }
     }
+    
     <div id="maincontent">  
         @RenderBody()
     </div>

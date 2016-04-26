@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Epi.Web.MVC.Repositories.Core;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Constants;
@@ -62,35 +63,77 @@ namespace Epi.Web.MVC.Facade
         /// <param name="pageNumber"></param>
         /// <param name="surveyAnswerDTO"></param>
         /// <returns></returns>
-        public MvcDynamicForms.Form GetSurveyFormData(string surveyId, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsMobileDevice, List<SurveyAnswerDTO> surveyAnswerList = null)
+        public MvcDynamicForms.Form GetSurveyFormData(
+            string surveyId,
+            int pageNumber,
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
+            bool IsMobileDevice, 
+            List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
+            List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
         {
-            List<SurveyInfoDTO> surveyInfoList = new List<SurveyInfoDTO>();
+            List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
 
-            if (surveyAnswerList != null)
+           
+            //Get the SurveyInfoDTO
+            Epi.Web.Enter.Common.DTO.SurveyInfoDTO surveyInfoDTO;
+            if (FormsHierarchyDTOList == null)
             {
-                foreach (var item in surveyAnswerList)
+            surveyInfoDTO =  SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
+            if (_SurveyAnswerDTOList != null)
+            {
+                foreach (var item in _SurveyAnswerDTOList)
                 {
                     Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
                     request.Criteria.SurveyIdList.Add(item.SurveyId);
                     Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
-                    surveyInfoList.Add(_SurveyInfoDTO);
+                    List.Add(_SurveyInfoDTO);
                 }
             }
-            //Get the SurveyInfoDTO
-            Epi.Web.Enter.Common.DTO.SurveyInfoDTO surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
-            MvcDynamicForms.Form form = null;
+            }
+            
+            else
+            {
+                var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == surveyAnswerDTO.SurveyId);
+                surveyInfoDTO = SurveyInfoDTO.SurveyInfo;
+
+
+             
+                _SurveyAnswerDTOList = new List<SurveyAnswerDTO>();
+                _SurveyAnswerDTOList.Add(surveyAnswerDTO);
+
+                foreach (var item in FormsHierarchyDTOList)
+                {
+                    if (item.ResponseIds.Count() > 0)
+                    {
+                        var DTO = item.ResponseIds.FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.RelateParentId);
+                        if (DTO != null && !_SurveyAnswerDTOList.Contains(DTO))
+
+                            _SurveyAnswerDTOList.Add(DTO);
+                        
+                    }
+                }
+
+                foreach (var item in _SurveyAnswerDTOList)
+                {
+                    var _SurveyInfoDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == item.SurveyId);
+                    List.Add(_SurveyInfoDTO.SurveyInfo);
+                }
+                 
+                  
+            }
+                MvcDynamicForms.Form form = null;
 
             if (IsMobileDevice)
             {
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = surveyInfoList;
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = surveyAnswerList;
+                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
+                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
                 form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
             }
             else
             {
-                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = surveyInfoList;
-                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = surveyAnswerList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, surveyAnswerList, surveyInfoList);
+                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
+                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
+                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
             }
             return form;
         }
@@ -114,8 +157,8 @@ namespace Epi.Web.MVC.Facade
             // 2 update the current survey response and save the response
 
             //// 1 Get the record for the current survey response
-            SurveyAnswerResponse surveyAnswerResponse = GetSurveyAnswerResponse(responseId);
-
+            SurveyAnswerResponse surveyAnswerResponse = new SurveyAnswerResponse();//GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId.ToString());
+            surveyAnswerResponse.SurveyResponseList.Add(surveyAnswerDTO);
             ///2 Update the current survey response and save it
 
             SurveyHelper.UpdateSurveyResponse(surveyInfoModel, form, _surveyAnswerRequest, _surveyResponseXML, _iSurveyAnswerRepository, surveyAnswerResponse, responseId, surveyAnswerDTO, IsSubmited, IsSaved, PageNumber, UserId);

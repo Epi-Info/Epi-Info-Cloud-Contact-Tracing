@@ -44,7 +44,7 @@ namespace Epi.Web.MVC.Controllers
                 else
                 {
                     surveyInfoModel.IsDraftModeStyleClass = "final";
-                }
+                }              
                 bool IsMobileDevice = false;
                 IsMobileDevice = this.Request.Browser.IsMobileDevice;
                 Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(SurveyMode, IsMobileDevice);

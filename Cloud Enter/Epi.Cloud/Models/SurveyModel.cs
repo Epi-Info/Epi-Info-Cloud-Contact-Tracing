@@ -16,6 +16,7 @@ namespace Epi.Web.MVC.Models
         private string _RelatedButtonWasClicked;
         private string _CurrentCultureDateFormat;
         public SurveyModel(){
+
             CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
             string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
             DateFormat = DateFormat.Remove(DateFormat.IndexOf("y"), 2);

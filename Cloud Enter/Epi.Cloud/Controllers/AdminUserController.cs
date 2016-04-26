@@ -134,7 +134,8 @@ namespace Epi.Web.MVC.Controllers
         public ActionResult GetUserList(int orgid)
         {
 
-
+            string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            ViewBag.Version = version;
             OrganizationRequest Request = new OrganizationRequest();
             Request.Organization.OrganizationId = orgid;
             OrganizationResponse OrganizationUsers = _isurveyFacade.GetOrganizationUsers(Request);
