@@ -13,6 +13,8 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using MvcDynamicForms;
+
 namespace Epi.Web.MVC.Controllers
 {
     [Authorize]
@@ -217,7 +219,7 @@ namespace Epi.Web.MVC.Controllers
 			SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
 			XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
 
-			MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
+			Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
 
 			var _FieldsTypeIDs = from _FieldTypeID in
 									 xdoc.Descendants("Field")

@@ -264,7 +264,7 @@ namespace Epi
             Project project = new Project();
 
             DbDriverInfo collectedDataDBInfo = new DbDriverInfo();
-            IDbDriverFactory collectedDBFactory = DbDriverFactoryCreator.GetDbDriverFactory("Epi.Data.SqlServer.SqlDBFactory, Epi.Data.SqlServer");
+            IDbDriverFactory collectedDBFactory = DbDriverFactoryCreator.GetDbDriverFactory("Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer");
             string GUID = System.Guid.NewGuid().ToString();
             //collectedDataDBInfo.DBCnnStringBuilder = collectedDBFactory.RequestNewConnection(connectionInfo);
 
@@ -288,7 +288,7 @@ namespace Epi
             }
                                 
             IDbDriver driver = collectedDBFactory.CreateDatabaseObject(collectedDataDBInfo.DBCnnStringBuilder);
-            project.CollectedData.Initialize(collectedDataDBInfo, "Epi.Data.SqlServer.SqlDBFactory, Epi.Data.SqlServer", false);
+            project.CollectedData.Initialize(collectedDataDBInfo, "Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer", false);
 
             project.Name = prjFileName; //fi.Name.Substring(0, fi.Name.Length - 4);
             project.Location = prjFileLocation; //directory;
@@ -297,7 +297,7 @@ namespace Epi
             project.Description = string.Empty;
 
             project.CollectedDataDbInfo = collectedDataDBInfo;
-            project.CollectedDataDriver = "Epi.Data.SqlServer.SqlDBFactory, Epi.Data.SqlServer";
+            project.CollectedDataDriver = "Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer";
             project.CollectedDataConnectionString = connectionString;            
 
             project.MetadataSource = MetadataSource.SameDb;

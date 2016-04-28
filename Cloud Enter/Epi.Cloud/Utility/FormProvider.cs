@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using System.Text;
-using System.Web;
-using MvcDynamicForms;
-using System.Collections.Generic;
-using System;
 using System.Xml.XPath;
+using Epi.Cloud.FormMetadataServices;
 using Epi.Core.EnterInterpreter;
+using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using Epi.Cloud.Form.MetadataServices;
-using Epi.Web.Enter.Common.DTO;
-using System.Drawing;
 
 namespace Epi.Web.MVC.Utility
 {

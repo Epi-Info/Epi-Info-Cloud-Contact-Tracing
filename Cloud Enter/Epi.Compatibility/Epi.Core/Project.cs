@@ -201,7 +201,7 @@ namespace Epi
                         case "Epi.Data.Office.AccessDBFactory":
                             this.CollectedDataDriver = Configuration.AccessDriver;
                             break;
-                        case "Epi.Data.SqlServer.SqlDBFactory":
+                        case "Epi.Cloud.SqlServer.SqlDBFactory":
                         default:
                             this.CollectedDataDriver = Configuration.SqlDriver;
                             break;

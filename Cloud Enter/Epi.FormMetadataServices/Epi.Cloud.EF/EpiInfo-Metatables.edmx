@@ -1,0 +1,1253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="EPIInfo7Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="metaBackgrounds">
+          <Key>
+            <PropertyRef Name="BackgroundId" />
+          </Key>
+          <Property Name="BackgroundId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ImageId" Type="int" />
+          <Property Name="ImageLayout" Type="nvarchar" MaxLength="10" />
+          <Property Name="Color" Type="int" />
+        </EntityType>
+        <EntityType Name="metaDataTypes">
+          <Key>
+            <PropertyRef Name="DataTypeId" />
+          </Key>
+          <Property Name="DataTypeId" Type="int" Nullable="false" />
+          <Property Name="HasPattern" Type="bit" Nullable="false" />
+          <Property Name="HasSize" Type="bit" Nullable="false" />
+          <Property Name="HasRange" Type="bit" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="metaDbInfo">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+            <PropertyRef Name="ProjectLocation" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="EpiVersion" />
+            <PropertyRef Name="Purpose" />
+          </Key>
+          <Property Name="ProjectId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProjectLocation" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ProjectName" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="EpiVersion" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Purpose" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaFields">
+          <Key>
+            <PropertyRef Name="FieldId" />
+          </Key>
+          <Property Name="FieldId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UniqueId" Type="uniqueidentifier" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="PromptText" Type="ntext" />
+          <Property Name="ControlFontFamily" Type="nvarchar" MaxLength="127" />
+          <Property Name="ControlFontStyle" Type="nvarchar" MaxLength="50" />
+          <Property Name="ControlFontSize" Type="decimal" Precision="2" Scale="0" />
+          <Property Name="ControlTopPositionPercentage" Type="float" />
+          <Property Name="ControlLeftPositionPercentage" Type="float" />
+          <Property Name="ControlHeightPercentage" Type="float" />
+          <Property Name="ControlWidthPercentage" Type="float" />
+          <Property Name="TabIndex" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="HasTabStop" Type="bit" />
+          <Property Name="PromptFontFamily" Type="nvarchar" MaxLength="127" />
+          <Property Name="PromptFontStyle" Type="nvarchar" MaxLength="50" />
+          <Property Name="PromptFontSize" Type="decimal" Precision="2" Scale="0" />
+          <Property Name="PromptScriptName" Type="nvarchar" MaxLength="20" />
+          <Property Name="PromptTopPositionPercentage" Type="float" />
+          <Property Name="PromptLeftPositionPercentage" Type="float" />
+          <Property Name="ControlScriptName" Type="nvarchar" MaxLength="20" />
+          <Property Name="ShouldRepeatLast" Type="bit" />
+          <Property Name="IsRequired" Type="bit" />
+          <Property Name="IsReadOnly" Type="bit" />
+          <Property Name="ShouldRetainImageSize" Type="bit" />
+          <Property Name="MaxLength" Type="smallint" />
+          <Property Name="Lower" Type="nvarchar" MaxLength="20" />
+          <Property Name="Upper" Type="nvarchar" MaxLength="20" />
+          <Property Name="Pattern" Type="nvarchar" MaxLength="50" />
+          <Property Name="ShowTextOnRight" Type="bit" />
+          <Property Name="CheckCodeBefore" Type="ntext" />
+          <Property Name="CheckCodeAfter" Type="ntext" />
+          <Property Name="RelateCondition" Type="nvarchar" MaxLength="255" />
+          <Property Name="ShouldReturnToParent" Type="bit" />
+          <Property Name="SourceTableName" Type="nvarchar" MaxLength="255" />
+          <Property Name="CodeColumnName" Type="nvarchar" MaxLength="255" />
+          <Property Name="TextColumnName" Type="nvarchar" MaxLength="255" />
+          <Property Name="Sort" Type="bit" />
+          <Property Name="IsExclusiveTable" Type="bit" />
+          <Property Name="DataTableName" Type="nvarchar" MaxLength="64" />
+          <Property Name="SourceFieldId" Type="int" />
+          <Property Name="FieldTypeId" Type="int" Nullable="false" />
+          <Property Name="RelatedViewId" Type="int" />
+          <Property Name="List" Type="ntext" />
+          <Property Name="BackgroundColor" Type="int" />
+          <Property Name="ViewId" Type="int" Nullable="false" />
+          <Property Name="PageId" Type="int" />
+        </EntityType>
+        <EntityType Name="metaFieldTypes">
+          <Key>
+            <PropertyRef Name="FieldTypeId" />
+          </Key>
+          <Property Name="FieldTypeId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="HasFont" Type="bit" Nullable="false" />
+          <Property Name="HasRepeatLast" Type="bit" Nullable="false" />
+          <Property Name="HasRequired" Type="bit" Nullable="false" />
+          <Property Name="HasReadOnly" Type="bit" Nullable="false" />
+          <Property Name="HasRetainImageSize" Type="bit" Nullable="false" />
+          <Property Name="IsDropDown" Type="bit" Nullable="false" />
+          <Property Name="IsGridColumn" Type="bit" Nullable="false" />
+          <Property Name="IsSystem" Type="bit" Nullable="false" />
+          <Property Name="DefaultPatternId" Type="int" Nullable="false" />
+          <Property Name="DataTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaGridColumns">
+          <Key>
+            <PropertyRef Name="GridColumnId" />
+          </Key>
+          <Property Name="GridColumnId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Size" Type="smallint" />
+          <Property Name="Position" Type="smallint" Nullable="false" />
+          <Property Name="Text" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="ShouldRepeatLast" Type="bit" Nullable="false" />
+          <Property Name="IsRequired" Type="bit" />
+          <Property Name="IsReadOnly" Type="bit" />
+          <Property Name="Pattern" Type="nvarchar" MaxLength="64" />
+          <Property Name="Upper" Type="nvarchar" MaxLength="20" />
+          <Property Name="Lower" Type="nvarchar" MaxLength="20" />
+          <Property Name="Width" Type="int" Nullable="false" />
+          <Property Name="SourceTableName" Type="nvarchar" MaxLength="50" />
+          <Property Name="CodeColumnName" Type="nvarchar" MaxLength="50" />
+          <Property Name="TextColumnName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Sort" Type="bit" />
+          <Property Name="IsExclusiveTable" Type="bit" />
+          <Property Name="DataTableName" Type="nvarchar" MaxLength="64" />
+          <Property Name="FieldId" Type="int" Nullable="false" />
+          <Property Name="FieldTypeId" Type="int" Nullable="false" />
+          <Property Name="IsUniqueField" Type="bit" />
+        </EntityType>
+        <EntityType Name="metaImages">
+          <Key>
+            <PropertyRef Name="ImageId" />
+          </Key>
+          <Property Name="ImageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Image" Type="image" />
+          <Property Name="ImageUniqueValue" Type="int" />
+        </EntityType>
+        <EntityType Name="metaLayerRenderTypes">
+          <Key>
+            <PropertyRef Name="LayerRenderTypeId" />
+          </Key>
+          <Property Name="LayerRenderTypeId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaLayers">
+          <Key>
+            <PropertyRef Name="LayerId" />
+          </Key>
+          <Property Name="LayerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Gml" Type="ntext" />
+          <Property Name="GmlSchema" Type="ntext" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="metaLinks">
+          <Key>
+            <PropertyRef Name="LinkId" />
+          </Key>
+          <Property Name="LinkId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FromRecordGuid" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="ToRecordGuid" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="FromViewId" Type="int" Nullable="false" />
+          <Property Name="ToViewId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaMapLayers">
+          <Key>
+            <PropertyRef Name="MapLayerId" />
+          </Key>
+          <Property Name="MapLayerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RenderField" Type="nvarchar" MaxLength="64" />
+          <Property Name="MarkerColor" Type="int" />
+          <Property Name="RampBeginColor" Type="int" />
+          <Property Name="RampEndColor" Type="int" />
+          <Property Name="ClassBreaks" Type="int" />
+          <Property Name="DataTableName" Type="nvarchar" MaxLength="64" />
+          <Property Name="DataTableKey" Type="nvarchar" MaxLength="64" />
+          <Property Name="FeatureKey" Type="nvarchar" MaxLength="64" />
+          <Property Name="LineColor" Type="int" />
+          <Property Name="FillColor" Type="int" />
+          <Property Name="PolygonOutlineColor" Type="int" />
+          <Property Name="MapId" Type="int" Nullable="false" />
+          <Property Name="LayerId" Type="int" Nullable="false" />
+          <Property Name="LayerRenderTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaMapPoints">
+          <Key>
+            <PropertyRef Name="MapPointId" />
+          </Key>
+          <Property Name="MapPointId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DataSourceTableName" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="DataSourceXCoordinateColumnName" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="DataSourceYCoordinateColumnName" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="DataSourceLabelColumnName" Type="nvarchar" MaxLength="64" />
+          <Property Name="Size" Type="int" Nullable="false" />
+          <Property Name="Color" Type="int" Nullable="false" />
+          <Property Name="MapId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaMaps">
+          <Key>
+            <PropertyRef Name="MapId" />
+          </Key>
+          <Property Name="MapId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Title" Type="nvarchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="metaPages">
+          <Key>
+            <PropertyRef Name="PageId" />
+          </Key>
+          <Property Name="PageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Position" Type="smallint" Nullable="false" />
+          <Property Name="CheckCodeBefore" Type="ntext" />
+          <Property Name="CheckCodeAfter" Type="ntext" />
+          <Property Name="BackgroundId" Type="int" Nullable="false" />
+          <Property Name="ViewId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaPatterns">
+          <Key>
+            <PropertyRef Name="PatternId" />
+          </Key>
+          <Property Name="PatternId" Type="int" Nullable="false" />
+          <Property Name="Expression" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Mask" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="FormattedExpression" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="DataTypeId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaPrograms">
+          <Key>
+            <PropertyRef Name="ProgramId" />
+          </Key>
+          <Property Name="ProgramId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="Content" Type="ntext" Nullable="false" />
+          <Property Name="Comment" Type="ntext" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DateModified" Type="datetime" Nullable="false" />
+          <Property Name="Author" Type="nvarchar" MaxLength="64" />
+        </EntityType>
+        <EntityType Name="metaViews">
+          <Key>
+            <PropertyRef Name="ViewId" />
+          </Key>
+          <Property Name="ViewId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+          <Property Name="IsRelatedView" Type="bit" Nullable="false" />
+          <Property Name="CheckCode" Type="ntext" />
+          <Property Name="CheckCodeBefore" Type="ntext" />
+          <Property Name="CheckCodeAfter" Type="ntext" />
+          <Property Name="RecordCheckCodeBefore" Type="ntext" />
+          <Property Name="RecordCheckCodeAfter" Type="ntext" />
+          <Property Name="CheckCodeVariableDefinitions" Type="ntext" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+          <Property Name="Orientation" Type="nvarchar" MaxLength="16" Nullable="false" />
+          <Property Name="LabelAlign" Type="nvarchar" MaxLength="16" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__metaField__DataT__3B75D760">
+          <End Role="metaDataTypes" Type="Self.metaDataTypes" Multiplicity="1" />
+          <End Role="metaFieldTypes" Type="Self.metaFieldTypes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaDataTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Principal>
+            <Dependent Role="metaFieldTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__Field__571DF1D5">
+          <End Role="metaFieldTypes" Type="Self.metaFieldTypes" Multiplicity="1" />
+          <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaFieldTypes">
+              <PropertyRef Name="FieldTypeId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="FieldTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__PageI__59FA5E80">
+          <End Role="metaPages" Type="Self.metaPages" Multiplicity="0..1" />
+          <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaPages">
+              <PropertyRef Name="PageId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="PageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__Relat__5812160E">
+          <End Role="metaViews" Type="Self.metaViews" Multiplicity="0..1" />
+          <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="RelatedViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__ViewI__59063A47">
+          <End Role="metaViews" Type="Self.metaViews" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="ViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__Layer__4D94879B">
+          <End Role="metaLayers" Type="Self.metaLayers" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaLayers">
+              <PropertyRef Name="LayerId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="LayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__Layer__4E88ABD4">
+          <End Role="metaLayerRenderTypes" Type="Self.metaLayerRenderTypes" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaLayerRenderTypes">
+              <PropertyRef Name="LayerRenderTypeId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="LayerRenderTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__MapId__4CA06362">
+          <End Role="metaMaps" Type="Self.metaMaps" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaMaps">
+              <PropertyRef Name="MapId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="MapId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapPo__MapId__5165187F">
+          <End Role="metaMaps" Type="Self.metaMaps" Multiplicity="1" />
+          <End Role="metaMapPoints" Type="Self.metaMapPoints" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaMaps">
+              <PropertyRef Name="MapId" />
+            </Principal>
+            <Dependent Role="metaMapPoints">
+              <PropertyRef Name="MapId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaPages__ViewI__5441852A">
+          <End Role="metaViews" Type="Self.metaViews" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="metaPages" Type="Self.metaPages" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaPages">
+              <PropertyRef Name="ViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaPatte__DataT__45F365D3">
+          <End Role="metaDataTypes" Type="Self.metaDataTypes" Multiplicity="1" />
+          <End Role="metaPatterns" Type="Self.metaPatterns" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaDataTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Principal>
+            <Dependent Role="metaPatterns">
+              <PropertyRef Name="DataTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EPIInfo7ModelStoreContainer">
+          <EntitySet Name="metaBackgrounds" EntityType="Self.metaBackgrounds" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaDataTypes" EntityType="Self.metaDataTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaFields" EntityType="Self.metaFields" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaFieldTypes" EntityType="Self.metaFieldTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaGridColumns" EntityType="Self.metaGridColumns" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaImages" EntityType="Self.metaImages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaLayerRenderTypes" EntityType="Self.metaLayerRenderTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaLayers" EntityType="Self.metaLayers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaLinks" EntityType="Self.metaLinks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaMapLayers" EntityType="Self.metaMapLayers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaMapPoints" EntityType="Self.metaMapPoints" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaMaps" EntityType="Self.metaMaps" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaPages" EntityType="Self.metaPages" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaPatterns" EntityType="Self.metaPatterns" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaPrograms" EntityType="Self.metaPrograms" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaViews" EntityType="Self.metaViews" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="metaDbInfo" EntityType="Self.metaDbInfo" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [metaDbInfo].[ProjectId] AS [ProjectId], 
+    [metaDbInfo].[ProjectLocation] AS [ProjectLocation], 
+    [metaDbInfo].[ProjectName] AS [ProjectName], 
+    [metaDbInfo].[EpiVersion] AS [EpiVersion], 
+    [metaDbInfo].[Purpose] AS [Purpose]
+    FROM [dbo].[metaDbInfo] AS [metaDbInfo]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__metaField__DataT__3B75D760" Association="Self.FK__metaField__DataT__3B75D760">
+            <End Role="metaDataTypes" EntitySet="metaDataTypes" />
+            <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__Field__571DF1D5" Association="Self.FK__metaField__Field__571DF1D5">
+            <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__PageI__59FA5E80" Association="Self.FK__metaField__PageI__59FA5E80">
+            <End Role="metaPages" EntitySet="metaPages" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__Relat__5812160E" Association="Self.FK__metaField__Relat__5812160E">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__ViewI__59063A47" Association="Self.FK__metaField__ViewI__59063A47">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__Layer__4D94879B" Association="Self.FK__metaMapLa__Layer__4D94879B">
+            <End Role="metaLayers" EntitySet="metaLayers" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__Layer__4E88ABD4" Association="Self.FK__metaMapLa__Layer__4E88ABD4">
+            <End Role="metaLayerRenderTypes" EntitySet="metaLayerRenderTypes" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__MapId__4CA06362" Association="Self.FK__metaMapLa__MapId__4CA06362">
+            <End Role="metaMaps" EntitySet="metaMaps" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapPo__MapId__5165187F" Association="Self.FK__metaMapPo__MapId__5165187F">
+            <End Role="metaMaps" EntitySet="metaMaps" />
+            <End Role="metaMapPoints" EntitySet="metaMapPoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaPages__ViewI__5441852A" Association="Self.FK__metaPages__ViewI__5441852A">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaPages" EntitySet="metaPages" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaPatte__DataT__45F365D3" Association="Self.FK__metaPatte__DataT__45F365D3">
+            <End Role="metaDataTypes" EntitySet="metaDataTypes" />
+            <End Role="metaPatterns" EntitySet="metaPatterns" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EPIInfo7Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="metaBackground">
+          <Key>
+            <PropertyRef Name="BackgroundId" />
+          </Key>
+          <Property Name="BackgroundId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ImageId" Type="Int32" />
+          <Property Name="ImageLayout" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="Color" Type="Int32" />
+        </EntityType>
+        <EntityType Name="metaDataType">
+          <Key>
+            <PropertyRef Name="DataTypeId" />
+          </Key>
+          <Property Name="DataTypeId" Type="Int32" Nullable="false" />
+          <Property Name="HasPattern" Type="Boolean" Nullable="false" />
+          <Property Name="HasSize" Type="Boolean" Nullable="false" />
+          <Property Name="HasRange" Type="Boolean" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="metaFieldTypes" Relationship="Self.FK__metaField__DataT__3B75D760" FromRole="metaDataTypes" ToRole="metaFieldTypes" />
+          <NavigationProperty Name="metaPatterns" Relationship="Self.FK__metaPatte__DataT__45F365D3" FromRole="metaDataTypes" ToRole="metaPatterns" />
+        </EntityType>
+        <EntityType Name="metaField">
+          <Key>
+            <PropertyRef Name="FieldId" />
+          </Key>
+          <Property Name="FieldId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UniqueId" Type="Guid" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="PromptText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ControlFontFamily" Type="String" MaxLength="127" FixedLength="false" Unicode="true" />
+          <Property Name="ControlFontStyle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ControlFontSize" Type="Decimal" Precision="2" Scale="0" />
+          <Property Name="ControlTopPositionPercentage" Type="Double" />
+          <Property Name="ControlLeftPositionPercentage" Type="Double" />
+          <Property Name="ControlHeightPercentage" Type="Double" />
+          <Property Name="ControlWidthPercentage" Type="Double" />
+          <Property Name="TabIndex" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="HasTabStop" Type="Boolean" />
+          <Property Name="PromptFontFamily" Type="String" MaxLength="127" FixedLength="false" Unicode="true" />
+          <Property Name="PromptFontStyle" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PromptFontSize" Type="Decimal" Precision="2" Scale="0" />
+          <Property Name="PromptScriptName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="PromptTopPositionPercentage" Type="Double" />
+          <Property Name="PromptLeftPositionPercentage" Type="Double" />
+          <Property Name="ControlScriptName" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ShouldRepeatLast" Type="Boolean" />
+          <Property Name="IsRequired" Type="Boolean" />
+          <Property Name="IsReadOnly" Type="Boolean" />
+          <Property Name="ShouldRetainImageSize" Type="Boolean" />
+          <Property Name="MaxLength" Type="Int16" />
+          <Property Name="Lower" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Upper" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Pattern" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ShowTextOnRight" Type="Boolean" />
+          <Property Name="CheckCodeBefore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCodeAfter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RelateCondition" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="ShouldReturnToParent" Type="Boolean" />
+          <Property Name="SourceTableName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="CodeColumnName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="TextColumnName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Sort" Type="Boolean" />
+          <Property Name="IsExclusiveTable" Type="Boolean" />
+          <Property Name="DataTableName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="SourceFieldId" Type="Int32" />
+          <Property Name="FieldTypeId" Type="Int32" Nullable="false" />
+          <Property Name="RelatedViewId" Type="Int32" />
+          <Property Name="List" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BackgroundColor" Type="Int32" />
+          <Property Name="ViewId" Type="Int32" Nullable="false" />
+          <Property Name="PageId" Type="Int32" />
+          <NavigationProperty Name="metaFieldType" Relationship="Self.FK__metaField__Field__571DF1D5" FromRole="metaFields" ToRole="metaFieldTypes" />
+          <NavigationProperty Name="metaPage" Relationship="Self.FK__metaField__PageI__59FA5E80" FromRole="metaFields" ToRole="metaPages" />
+          <NavigationProperty Name="metaView" Relationship="Self.FK__metaField__Relat__5812160E" FromRole="metaFields" ToRole="metaViews" />
+          <NavigationProperty Name="metaView1" Relationship="Self.FK__metaField__ViewI__59063A47" FromRole="metaFields" ToRole="metaViews" />
+        </EntityType>
+        <EntityType Name="metaFieldType">
+          <Key>
+            <PropertyRef Name="FieldTypeId" />
+          </Key>
+          <Property Name="FieldTypeId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="HasFont" Type="Boolean" Nullable="false" />
+          <Property Name="HasRepeatLast" Type="Boolean" Nullable="false" />
+          <Property Name="HasRequired" Type="Boolean" Nullable="false" />
+          <Property Name="HasReadOnly" Type="Boolean" Nullable="false" />
+          <Property Name="HasRetainImageSize" Type="Boolean" Nullable="false" />
+          <Property Name="IsDropDown" Type="Boolean" Nullable="false" />
+          <Property Name="IsGridColumn" Type="Boolean" Nullable="false" />
+          <Property Name="IsSystem" Type="Boolean" Nullable="false" />
+          <Property Name="DefaultPatternId" Type="Int32" Nullable="false" />
+          <Property Name="DataTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="metaDataType" Relationship="Self.FK__metaField__DataT__3B75D760" FromRole="metaFieldTypes" ToRole="metaDataTypes" />
+          <NavigationProperty Name="metaFields" Relationship="Self.FK__metaField__Field__571DF1D5" FromRole="metaFieldTypes" ToRole="metaFields" />
+        </EntityType>
+        <EntityType Name="metaGridColumn">
+          <Key>
+            <PropertyRef Name="GridColumnId" />
+          </Key>
+          <Property Name="GridColumnId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Size" Type="Int16" />
+          <Property Name="Position" Type="Int16" Nullable="false" />
+          <Property Name="Text" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ShouldRepeatLast" Type="Boolean" Nullable="false" />
+          <Property Name="IsRequired" Type="Boolean" />
+          <Property Name="IsReadOnly" Type="Boolean" />
+          <Property Name="Pattern" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Upper" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Lower" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Width" Type="Int32" Nullable="false" />
+          <Property Name="SourceTableName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CodeColumnName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TextColumnName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Sort" Type="Boolean" />
+          <Property Name="IsExclusiveTable" Type="Boolean" />
+          <Property Name="DataTableName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="FieldId" Type="Int32" Nullable="false" />
+          <Property Name="FieldTypeId" Type="Int32" Nullable="false" />
+          <Property Name="IsUniqueField" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="metaImage">
+          <Key>
+            <PropertyRef Name="ImageId" />
+          </Key>
+          <Property Name="ImageId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="ImageUniqueValue" Type="Int32" />
+        </EntityType>
+        <EntityType Name="metaLayerRenderType">
+          <Key>
+            <PropertyRef Name="LayerRenderTypeId" />
+          </Key>
+          <Property Name="LayerRenderTypeId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="metaMapLayers" Relationship="Self.FK__metaMapLa__Layer__4E88ABD4" FromRole="metaLayerRenderTypes" ToRole="metaMapLayers" />
+        </EntityType>
+        <EntityType Name="metaLayer">
+          <Key>
+            <PropertyRef Name="LayerId" />
+          </Key>
+          <Property Name="LayerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Gml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="GmlSchema" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="FileName" Type="String" MaxLength="1" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="metaMapLayers" Relationship="Self.FK__metaMapLa__Layer__4D94879B" FromRole="metaLayers" ToRole="metaMapLayers" />
+        </EntityType>
+        <EntityType Name="metaLink">
+          <Key>
+            <PropertyRef Name="LinkId" />
+          </Key>
+          <Property Name="LinkId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FromRecordGuid" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ToRecordGuid" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromViewId" Type="Int32" Nullable="false" />
+          <Property Name="ToViewId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="metaMapLayer">
+          <Key>
+            <PropertyRef Name="MapLayerId" />
+          </Key>
+          <Property Name="MapLayerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RenderField" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="MarkerColor" Type="Int32" />
+          <Property Name="RampBeginColor" Type="Int32" />
+          <Property Name="RampEndColor" Type="Int32" />
+          <Property Name="ClassBreaks" Type="Int32" />
+          <Property Name="DataTableName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="DataTableKey" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="FeatureKey" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="LineColor" Type="Int32" />
+          <Property Name="FillColor" Type="Int32" />
+          <Property Name="PolygonOutlineColor" Type="Int32" />
+          <Property Name="MapId" Type="Int32" Nullable="false" />
+          <Property Name="LayerId" Type="Int32" Nullable="false" />
+          <Property Name="LayerRenderTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="metaLayerRenderType" Relationship="Self.FK__metaMapLa__Layer__4E88ABD4" FromRole="metaMapLayers" ToRole="metaLayerRenderTypes" />
+          <NavigationProperty Name="metaLayer" Relationship="Self.FK__metaMapLa__Layer__4D94879B" FromRole="metaMapLayers" ToRole="metaLayers" />
+          <NavigationProperty Name="metaMap" Relationship="Self.FK__metaMapLa__MapId__4CA06362" FromRole="metaMapLayers" ToRole="metaMaps" />
+        </EntityType>
+        <EntityType Name="metaMapPoint">
+          <Key>
+            <PropertyRef Name="MapPointId" />
+          </Key>
+          <Property Name="MapPointId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DataSourceTableName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DataSourceXCoordinateColumnName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DataSourceYCoordinateColumnName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DataSourceLabelColumnName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="Size" Type="Int32" Nullable="false" />
+          <Property Name="Color" Type="Int32" Nullable="false" />
+          <Property Name="MapId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="metaMap" Relationship="Self.FK__metaMapPo__MapId__5165187F" FromRole="metaMapPoints" ToRole="metaMaps" />
+        </EntityType>
+        <EntityType Name="metaMap">
+          <Key>
+            <PropertyRef Name="MapId" />
+          </Key>
+          <Property Name="MapId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Title" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="metaMapLayers" Relationship="Self.FK__metaMapLa__MapId__4CA06362" FromRole="metaMaps" ToRole="metaMapLayers" />
+          <NavigationProperty Name="metaMapPoints" Relationship="Self.FK__metaMapPo__MapId__5165187F" FromRole="metaMaps" ToRole="metaMapPoints" />
+        </EntityType>
+        <EntityType Name="metaPage">
+          <Key>
+            <PropertyRef Name="PageId" />
+          </Key>
+          <Property Name="PageId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Position" Type="Int16" Nullable="false" />
+          <Property Name="CheckCodeBefore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCodeAfter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BackgroundId" Type="Int32" Nullable="false" />
+          <Property Name="ViewId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="metaFields" Relationship="Self.FK__metaField__PageI__59FA5E80" FromRole="metaPages" ToRole="metaFields" />
+          <NavigationProperty Name="metaView" Relationship="Self.FK__metaPages__ViewI__5441852A" FromRole="metaPages" ToRole="metaViews" />
+        </EntityType>
+        <EntityType Name="metaPattern">
+          <Key>
+            <PropertyRef Name="PatternId" />
+          </Key>
+          <Property Name="PatternId" Type="Int32" Nullable="false" />
+          <Property Name="Expression" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Mask" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FormattedExpression" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DataTypeId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="metaDataType" Relationship="Self.FK__metaPatte__DataT__45F365D3" FromRole="metaPatterns" ToRole="metaDataTypes" />
+        </EntityType>
+        <EntityType Name="metaProgram">
+          <Key>
+            <PropertyRef Name="ProgramId" />
+          </Key>
+          <Property Name="ProgramId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Comment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateModified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Author" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="metaView">
+          <Key>
+            <PropertyRef Name="ViewId" />
+          </Key>
+          <Property Name="ViewId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="IsRelatedView" Type="Boolean" Nullable="false" />
+          <Property Name="CheckCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCodeBefore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCodeAfter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RecordCheckCodeBefore" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RecordCheckCodeAfter" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CheckCodeVariableDefinitions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <Property Name="Orientation" Type="String" MaxLength="16" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="LabelAlign" Type="String" MaxLength="16" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="metaFields" Relationship="Self.FK__metaField__Relat__5812160E" FromRole="metaViews" ToRole="metaFields" />
+          <NavigationProperty Name="metaFields1" Relationship="Self.FK__metaField__ViewI__59063A47" FromRole="metaViews" ToRole="metaFields" />
+          <NavigationProperty Name="metaPages" Relationship="Self.FK__metaPages__ViewI__5441852A" FromRole="metaViews" ToRole="metaPages" />
+        </EntityType>
+        <EntityType Name="metaDbInfo">
+          <Key>
+            <PropertyRef Name="ProjectId" />
+            <PropertyRef Name="ProjectLocation" />
+            <PropertyRef Name="ProjectName" />
+            <PropertyRef Name="EpiVersion" />
+            <PropertyRef Name="Purpose" />
+          </Key>
+          <Property Name="ProjectId" Type="Guid" Nullable="false" />
+          <Property Name="ProjectLocation" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ProjectName" Type="String" MaxLength="64" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="EpiVersion" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Purpose" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="FK__metaField__DataT__3B75D760">
+          <End Role="metaDataTypes" Type="Self.metaDataType" Multiplicity="1" />
+          <End Role="metaFieldTypes" Type="Self.metaFieldType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaDataTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Principal>
+            <Dependent Role="metaFieldTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaPatte__DataT__45F365D3">
+          <End Role="metaDataTypes" Type="Self.metaDataType" Multiplicity="1" />
+          <End Role="metaPatterns" Type="Self.metaPattern" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaDataTypes">
+              <PropertyRef Name="DataTypeId" />
+            </Principal>
+            <Dependent Role="metaPatterns">
+              <PropertyRef Name="DataTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__Field__571DF1D5">
+          <End Role="metaFieldTypes" Type="Self.metaFieldType" Multiplicity="1" />
+          <End Role="metaFields" Type="Self.metaField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaFieldTypes">
+              <PropertyRef Name="FieldTypeId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="FieldTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__PageI__59FA5E80">
+          <End Role="metaPages" Type="Self.metaPage" Multiplicity="0..1" />
+          <End Role="metaFields" Type="Self.metaField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaPages">
+              <PropertyRef Name="PageId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="PageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__Relat__5812160E">
+          <End Role="metaViews" Type="Self.metaView" Multiplicity="0..1" />
+          <End Role="metaFields" Type="Self.metaField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="RelatedViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaField__ViewI__59063A47">
+          <End Role="metaViews" Type="Self.metaView" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="metaFields" Type="Self.metaField" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaFields">
+              <PropertyRef Name="ViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__Layer__4E88ABD4">
+          <End Role="metaLayerRenderTypes" Type="Self.metaLayerRenderType" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaLayerRenderTypes">
+              <PropertyRef Name="LayerRenderTypeId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="LayerRenderTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__Layer__4D94879B">
+          <End Role="metaLayers" Type="Self.metaLayer" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaLayers">
+              <PropertyRef Name="LayerId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="LayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapLa__MapId__4CA06362">
+          <End Role="metaMaps" Type="Self.metaMap" Multiplicity="1" />
+          <End Role="metaMapLayers" Type="Self.metaMapLayer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaMaps">
+              <PropertyRef Name="MapId" />
+            </Principal>
+            <Dependent Role="metaMapLayers">
+              <PropertyRef Name="MapId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaMapPo__MapId__5165187F">
+          <End Role="metaMaps" Type="Self.metaMap" Multiplicity="1" />
+          <End Role="metaMapPoints" Type="Self.metaMapPoint" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaMaps">
+              <PropertyRef Name="MapId" />
+            </Principal>
+            <Dependent Role="metaMapPoints">
+              <PropertyRef Name="MapId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__metaPages__ViewI__5441852A">
+          <End Role="metaViews" Type="Self.metaView" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="metaPages" Type="Self.metaPage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="metaViews">
+              <PropertyRef Name="ViewId" />
+            </Principal>
+            <Dependent Role="metaPages">
+              <PropertyRef Name="ViewId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="EPIInfo7Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="metaBackgrounds" EntityType="Self.metaBackground" />
+          <EntitySet Name="metaDataTypes" EntityType="Self.metaDataType" />
+          <EntitySet Name="metaFields" EntityType="Self.metaField" />
+          <EntitySet Name="metaFieldTypes" EntityType="Self.metaFieldType" />
+          <EntitySet Name="metaGridColumns" EntityType="Self.metaGridColumn" />
+          <EntitySet Name="metaImages" EntityType="Self.metaImage" />
+          <EntitySet Name="metaLayerRenderTypes" EntityType="Self.metaLayerRenderType" />
+          <EntitySet Name="metaLayers" EntityType="Self.metaLayer" />
+          <EntitySet Name="metaLinks" EntityType="Self.metaLink" />
+          <EntitySet Name="metaMapLayers" EntityType="Self.metaMapLayer" />
+          <EntitySet Name="metaMapPoints" EntityType="Self.metaMapPoint" />
+          <EntitySet Name="metaMaps" EntityType="Self.metaMap" />
+          <EntitySet Name="metaPages" EntityType="Self.metaPage" />
+          <EntitySet Name="metaPatterns" EntityType="Self.metaPattern" />
+          <EntitySet Name="metaPrograms" EntityType="Self.metaProgram" />
+          <EntitySet Name="metaViews" EntityType="Self.metaView" />
+          <EntitySet Name="metaDbInfoes" EntityType="Self.metaDbInfo" />
+          <AssociationSet Name="FK__metaField__DataT__3B75D760" Association="Self.FK__metaField__DataT__3B75D760">
+            <End Role="metaDataTypes" EntitySet="metaDataTypes" />
+            <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaPatte__DataT__45F365D3" Association="Self.FK__metaPatte__DataT__45F365D3">
+            <End Role="metaDataTypes" EntitySet="metaDataTypes" />
+            <End Role="metaPatterns" EntitySet="metaPatterns" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__Field__571DF1D5" Association="Self.FK__metaField__Field__571DF1D5">
+            <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__PageI__59FA5E80" Association="Self.FK__metaField__PageI__59FA5E80">
+            <End Role="metaPages" EntitySet="metaPages" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__Relat__5812160E" Association="Self.FK__metaField__Relat__5812160E">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaField__ViewI__59063A47" Association="Self.FK__metaField__ViewI__59063A47">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaFields" EntitySet="metaFields" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__Layer__4E88ABD4" Association="Self.FK__metaMapLa__Layer__4E88ABD4">
+            <End Role="metaLayerRenderTypes" EntitySet="metaLayerRenderTypes" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__Layer__4D94879B" Association="Self.FK__metaMapLa__Layer__4D94879B">
+            <End Role="metaLayers" EntitySet="metaLayers" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapLa__MapId__4CA06362" Association="Self.FK__metaMapLa__MapId__4CA06362">
+            <End Role="metaMaps" EntitySet="metaMaps" />
+            <End Role="metaMapLayers" EntitySet="metaMapLayers" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaMapPo__MapId__5165187F" Association="Self.FK__metaMapPo__MapId__5165187F">
+            <End Role="metaMaps" EntitySet="metaMaps" />
+            <End Role="metaMapPoints" EntitySet="metaMapPoints" />
+          </AssociationSet>
+          <AssociationSet Name="FK__metaPages__ViewI__5441852A" Association="Self.FK__metaPages__ViewI__5441852A">
+            <End Role="metaViews" EntitySet="metaViews" />
+            <End Role="metaPages" EntitySet="metaPages" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EPIInfo7ModelStoreContainer" CdmEntityContainer="EPIInfo7Entities">
+          <EntitySetMapping Name="metaBackgrounds">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaBackground">
+              <MappingFragment StoreEntitySet="metaBackgrounds">
+                <ScalarProperty Name="BackgroundId" ColumnName="BackgroundId" />
+                <ScalarProperty Name="ImageId" ColumnName="ImageId" />
+                <ScalarProperty Name="ImageLayout" ColumnName="ImageLayout" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaDataTypes">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaDataType">
+              <MappingFragment StoreEntitySet="metaDataTypes">
+                <ScalarProperty Name="DataTypeId" ColumnName="DataTypeId" />
+                <ScalarProperty Name="HasPattern" ColumnName="HasPattern" />
+                <ScalarProperty Name="HasSize" ColumnName="HasSize" />
+                <ScalarProperty Name="HasRange" ColumnName="HasRange" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaFields">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaField">
+              <MappingFragment StoreEntitySet="metaFields">
+                <ScalarProperty Name="FieldId" ColumnName="FieldId" />
+                <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PromptText" ColumnName="PromptText" />
+                <ScalarProperty Name="ControlFontFamily" ColumnName="ControlFontFamily" />
+                <ScalarProperty Name="ControlFontStyle" ColumnName="ControlFontStyle" />
+                <ScalarProperty Name="ControlFontSize" ColumnName="ControlFontSize" />
+                <ScalarProperty Name="ControlTopPositionPercentage" ColumnName="ControlTopPositionPercentage" />
+                <ScalarProperty Name="ControlLeftPositionPercentage" ColumnName="ControlLeftPositionPercentage" />
+                <ScalarProperty Name="ControlHeightPercentage" ColumnName="ControlHeightPercentage" />
+                <ScalarProperty Name="ControlWidthPercentage" ColumnName="ControlWidthPercentage" />
+                <ScalarProperty Name="TabIndex" ColumnName="TabIndex" />
+                <ScalarProperty Name="HasTabStop" ColumnName="HasTabStop" />
+                <ScalarProperty Name="PromptFontFamily" ColumnName="PromptFontFamily" />
+                <ScalarProperty Name="PromptFontStyle" ColumnName="PromptFontStyle" />
+                <ScalarProperty Name="PromptFontSize" ColumnName="PromptFontSize" />
+                <ScalarProperty Name="PromptScriptName" ColumnName="PromptScriptName" />
+                <ScalarProperty Name="PromptTopPositionPercentage" ColumnName="PromptTopPositionPercentage" />
+                <ScalarProperty Name="PromptLeftPositionPercentage" ColumnName="PromptLeftPositionPercentage" />
+                <ScalarProperty Name="ControlScriptName" ColumnName="ControlScriptName" />
+                <ScalarProperty Name="ShouldRepeatLast" ColumnName="ShouldRepeatLast" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="IsReadOnly" ColumnName="IsReadOnly" />
+                <ScalarProperty Name="ShouldRetainImageSize" ColumnName="ShouldRetainImageSize" />
+                <ScalarProperty Name="MaxLength" ColumnName="MaxLength" />
+                <ScalarProperty Name="Lower" ColumnName="Lower" />
+                <ScalarProperty Name="Upper" ColumnName="Upper" />
+                <ScalarProperty Name="Pattern" ColumnName="Pattern" />
+                <ScalarProperty Name="ShowTextOnRight" ColumnName="ShowTextOnRight" />
+                <ScalarProperty Name="CheckCodeBefore" ColumnName="CheckCodeBefore" />
+                <ScalarProperty Name="CheckCodeAfter" ColumnName="CheckCodeAfter" />
+                <ScalarProperty Name="RelateCondition" ColumnName="RelateCondition" />
+                <ScalarProperty Name="ShouldReturnToParent" ColumnName="ShouldReturnToParent" />
+                <ScalarProperty Name="SourceTableName" ColumnName="SourceTableName" />
+                <ScalarProperty Name="CodeColumnName" ColumnName="CodeColumnName" />
+                <ScalarProperty Name="TextColumnName" ColumnName="TextColumnName" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="IsExclusiveTable" ColumnName="IsExclusiveTable" />
+                <ScalarProperty Name="DataTableName" ColumnName="DataTableName" />
+                <ScalarProperty Name="SourceFieldId" ColumnName="SourceFieldId" />
+                <ScalarProperty Name="FieldTypeId" ColumnName="FieldTypeId" />
+                <ScalarProperty Name="RelatedViewId" ColumnName="RelatedViewId" />
+                <ScalarProperty Name="List" ColumnName="List" />
+                <ScalarProperty Name="BackgroundColor" ColumnName="BackgroundColor" />
+                <ScalarProperty Name="ViewId" ColumnName="ViewId" />
+                <ScalarProperty Name="PageId" ColumnName="PageId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaFieldTypes">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaFieldType">
+              <MappingFragment StoreEntitySet="metaFieldTypes">
+                <ScalarProperty Name="FieldTypeId" ColumnName="FieldTypeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="HasFont" ColumnName="HasFont" />
+                <ScalarProperty Name="HasRepeatLast" ColumnName="HasRepeatLast" />
+                <ScalarProperty Name="HasRequired" ColumnName="HasRequired" />
+                <ScalarProperty Name="HasReadOnly" ColumnName="HasReadOnly" />
+                <ScalarProperty Name="HasRetainImageSize" ColumnName="HasRetainImageSize" />
+                <ScalarProperty Name="IsDropDown" ColumnName="IsDropDown" />
+                <ScalarProperty Name="IsGridColumn" ColumnName="IsGridColumn" />
+                <ScalarProperty Name="IsSystem" ColumnName="IsSystem" />
+                <ScalarProperty Name="DefaultPatternId" ColumnName="DefaultPatternId" />
+                <ScalarProperty Name="DataTypeId" ColumnName="DataTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaGridColumns">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaGridColumn">
+              <MappingFragment StoreEntitySet="metaGridColumns">
+                <ScalarProperty Name="GridColumnId" ColumnName="GridColumnId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="Text" ColumnName="Text" />
+                <ScalarProperty Name="ShouldRepeatLast" ColumnName="ShouldRepeatLast" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="IsReadOnly" ColumnName="IsReadOnly" />
+                <ScalarProperty Name="Pattern" ColumnName="Pattern" />
+                <ScalarProperty Name="Upper" ColumnName="Upper" />
+                <ScalarProperty Name="Lower" ColumnName="Lower" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="SourceTableName" ColumnName="SourceTableName" />
+                <ScalarProperty Name="CodeColumnName" ColumnName="CodeColumnName" />
+                <ScalarProperty Name="TextColumnName" ColumnName="TextColumnName" />
+                <ScalarProperty Name="Sort" ColumnName="Sort" />
+                <ScalarProperty Name="IsExclusiveTable" ColumnName="IsExclusiveTable" />
+                <ScalarProperty Name="DataTableName" ColumnName="DataTableName" />
+                <ScalarProperty Name="FieldId" ColumnName="FieldId" />
+                <ScalarProperty Name="FieldTypeId" ColumnName="FieldTypeId" />
+                <ScalarProperty Name="IsUniqueField" ColumnName="IsUniqueField" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaImages">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaImage">
+              <MappingFragment StoreEntitySet="metaImages">
+                <ScalarProperty Name="ImageId" ColumnName="ImageId" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="ImageUniqueValue" ColumnName="ImageUniqueValue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaLayerRenderTypes">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaLayerRenderType">
+              <MappingFragment StoreEntitySet="metaLayerRenderTypes">
+                <ScalarProperty Name="LayerRenderTypeId" ColumnName="LayerRenderTypeId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaLayers">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaLayer">
+              <MappingFragment StoreEntitySet="metaLayers">
+                <ScalarProperty Name="LayerId" ColumnName="LayerId" />
+                <ScalarProperty Name="Gml" ColumnName="Gml" />
+                <ScalarProperty Name="GmlSchema" ColumnName="GmlSchema" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaLinks">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaLink">
+              <MappingFragment StoreEntitySet="metaLinks">
+                <ScalarProperty Name="LinkId" ColumnName="LinkId" />
+                <ScalarProperty Name="FromRecordGuid" ColumnName="FromRecordGuid" />
+                <ScalarProperty Name="ToRecordGuid" ColumnName="ToRecordGuid" />
+                <ScalarProperty Name="FromViewId" ColumnName="FromViewId" />
+                <ScalarProperty Name="ToViewId" ColumnName="ToViewId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaMapLayers">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaMapLayer">
+              <MappingFragment StoreEntitySet="metaMapLayers">
+                <ScalarProperty Name="MapLayerId" ColumnName="MapLayerId" />
+                <ScalarProperty Name="RenderField" ColumnName="RenderField" />
+                <ScalarProperty Name="MarkerColor" ColumnName="MarkerColor" />
+                <ScalarProperty Name="RampBeginColor" ColumnName="RampBeginColor" />
+                <ScalarProperty Name="RampEndColor" ColumnName="RampEndColor" />
+                <ScalarProperty Name="ClassBreaks" ColumnName="ClassBreaks" />
+                <ScalarProperty Name="DataTableName" ColumnName="DataTableName" />
+                <ScalarProperty Name="DataTableKey" ColumnName="DataTableKey" />
+                <ScalarProperty Name="FeatureKey" ColumnName="FeatureKey" />
+                <ScalarProperty Name="LineColor" ColumnName="LineColor" />
+                <ScalarProperty Name="FillColor" ColumnName="FillColor" />
+                <ScalarProperty Name="PolygonOutlineColor" ColumnName="PolygonOutlineColor" />
+                <ScalarProperty Name="MapId" ColumnName="MapId" />
+                <ScalarProperty Name="LayerId" ColumnName="LayerId" />
+                <ScalarProperty Name="LayerRenderTypeId" ColumnName="LayerRenderTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaMapPoints">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaMapPoint">
+              <MappingFragment StoreEntitySet="metaMapPoints">
+                <ScalarProperty Name="MapPointId" ColumnName="MapPointId" />
+                <ScalarProperty Name="DataSourceTableName" ColumnName="DataSourceTableName" />
+                <ScalarProperty Name="DataSourceXCoordinateColumnName" ColumnName="DataSourceXCoordinateColumnName" />
+                <ScalarProperty Name="DataSourceYCoordinateColumnName" ColumnName="DataSourceYCoordinateColumnName" />
+                <ScalarProperty Name="DataSourceLabelColumnName" ColumnName="DataSourceLabelColumnName" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="MapId" ColumnName="MapId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaMaps">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaMap">
+              <MappingFragment StoreEntitySet="metaMaps">
+                <ScalarProperty Name="MapId" ColumnName="MapId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaPages">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaPage">
+              <MappingFragment StoreEntitySet="metaPages">
+                <ScalarProperty Name="PageId" ColumnName="PageId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="CheckCodeBefore" ColumnName="CheckCodeBefore" />
+                <ScalarProperty Name="CheckCodeAfter" ColumnName="CheckCodeAfter" />
+                <ScalarProperty Name="BackgroundId" ColumnName="BackgroundId" />
+                <ScalarProperty Name="ViewId" ColumnName="ViewId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaPatterns">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaPattern">
+              <MappingFragment StoreEntitySet="metaPatterns">
+                <ScalarProperty Name="PatternId" ColumnName="PatternId" />
+                <ScalarProperty Name="Expression" ColumnName="Expression" />
+                <ScalarProperty Name="Mask" ColumnName="Mask" />
+                <ScalarProperty Name="FormattedExpression" ColumnName="FormattedExpression" />
+                <ScalarProperty Name="DataTypeId" ColumnName="DataTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaPrograms">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaProgram">
+              <MappingFragment StoreEntitySet="metaPrograms">
+                <ScalarProperty Name="ProgramId" ColumnName="ProgramId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Comment" ColumnName="Comment" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateModified" ColumnName="DateModified" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaViews">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaView">
+              <MappingFragment StoreEntitySet="metaViews">
+                <ScalarProperty Name="ViewId" ColumnName="ViewId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="IsRelatedView" ColumnName="IsRelatedView" />
+                <ScalarProperty Name="CheckCode" ColumnName="CheckCode" />
+                <ScalarProperty Name="CheckCodeBefore" ColumnName="CheckCodeBefore" />
+                <ScalarProperty Name="CheckCodeAfter" ColumnName="CheckCodeAfter" />
+                <ScalarProperty Name="RecordCheckCodeBefore" ColumnName="RecordCheckCodeBefore" />
+                <ScalarProperty Name="RecordCheckCodeAfter" ColumnName="RecordCheckCodeAfter" />
+                <ScalarProperty Name="CheckCodeVariableDefinitions" ColumnName="CheckCodeVariableDefinitions" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Orientation" ColumnName="Orientation" />
+                <ScalarProperty Name="LabelAlign" ColumnName="LabelAlign" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="metaDbInfoes">
+            <EntityTypeMapping TypeName="EPIInfo7Model.metaDbInfo">
+              <MappingFragment StoreEntitySet="metaDbInfo">
+                <ScalarProperty Name="ProjectId" ColumnName="ProjectId" />
+                <ScalarProperty Name="ProjectLocation" ColumnName="ProjectLocation" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="EpiVersion" ColumnName="EpiVersion" />
+                <ScalarProperty Name="Purpose" ColumnName="Purpose" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

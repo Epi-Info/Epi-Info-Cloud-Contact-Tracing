@@ -1,24 +1,32 @@
 ﻿using System;
+//#define MetadataHack
+
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Epi.Cloud.MetadataServices;
+using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
 
-namespace Epi.Cloud.Form.MetadataServices
+namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
         public List<FieldAttributes> GetMeta(int pageid)
         {
+            List<FieldAttributes> fieldattributes = null;
+#if MetadataHack
             GetmetadataDB _getmeta = new GetmetadataDB();
             List<CDTProject> projectfields = new List<CDTProject>();
             projectfields = _getmeta.MetaDataAsync(pageid);
             //List<CDTFieldAttributes> fieldattributes = new List<CDTFieldAttributes>();
-            List<FieldAttributes> fieldattributes = new List<FieldAttributes>();
             fieldattributes = _getmeta.GetFieldAttributes(projectfields);
+#else
+            ProjectMetadataProvider p = new ProjectMetadataProvider();
+            List<MetadataFieldAttribute> mdFieldattributes;
+            mdFieldattributes = p.GetProxy(pageid.ToString());  
+
+#endif
             return fieldattributes;
         }
     }

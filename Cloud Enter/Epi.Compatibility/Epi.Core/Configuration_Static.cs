@@ -35,7 +35,7 @@ namespace Epi
         /// <summary>
         /// Identifier for Sql Driver that is built into Epi Info
         /// </summary>
-        public const string SqlDriver = "Epi.Data.SqlServer.SqlDBFactory, Epi.Data.SqlServer";  //will be removed, Zack
+        public const string SqlDriver = "Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer";  //will be removed, Zack
 
         /// <summary>
         /// Identifier for Excel driver that is built into Epi Info

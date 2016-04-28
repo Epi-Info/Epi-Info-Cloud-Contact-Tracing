@@ -5,11 +5,13 @@ using System.Web;
 using MvcDynamicForms;
 using System.Globalization;
 using System.Threading;
+
+
 namespace Epi.Web.MVC.Models
     {
     public class SurveyModel
         { 
-        private Form _Form;
+        private MvcDynamicForms.Form _Form;
         private List<RelateModel> _RelateModel;
         private FormResponseInfoModel _FormResponseInfoModel;
         private int _RequestedViewId;
@@ -27,7 +29,7 @@ namespace Epi.Web.MVC.Models
             get { return _CurrentCultureDateFormat; }
             set { _CurrentCultureDateFormat = value; }
         }
-        public Form Form
+        public  MvcDynamicForms.Form  Form
             {
             get { return _Form; }
             set { _Form = value; }

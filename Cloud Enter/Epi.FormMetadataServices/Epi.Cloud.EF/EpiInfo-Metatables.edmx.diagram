@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="a5e5ff947c6c43f58715cac1480219a2" Name="Diagram1">
+        <EntityTypeShape EntityType="EPIInfo7Model.metaBackground" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaDataType" Width="1.5" PointX="0.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaField" Width="1.5" PointX="5.25" PointY="8.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaFieldType" Width="1.5" PointX="3" PointY="12.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaGridColumn" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaImage" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaLayerRenderType" Width="1.5" PointX="7.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaLayer" Width="1.5" PointX="7.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaLink" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaMapLayer" Width="1.5" PointX="10" PointY="3" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaMapPoint" Width="1.5" PointX="10" PointY="9.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaMap" Width="1.5" PointX="7.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaPage" Width="1.5" PointX="3" PointY="18.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaPattern" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaProgram" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaView" Width="1.5" PointX="0.75" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="EPIInfo7Model.metaDbInfo" Width="1.5" PointX="12.75" PointY="4.75" IsExpanded="true" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaField__DataT__3B75D760" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaPatte__DataT__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaField__Field__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaField__PageI__59FA5E80" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaField__Relat__5812160E" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaField__ViewI__59063A47" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaMapLa__Layer__4E88ABD4" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaMapLa__Layer__4D94879B" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaMapLa__MapId__4CA06362" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaMapPo__MapId__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="EPIInfo7Model.FK__metaPages__ViewI__5441852A" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
