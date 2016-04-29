@@ -186,6 +186,10 @@
       <HintPath>..\Assemblies\GoldParserEngine.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -651,6 +655,7 @@
     </Compile>
     <Compile Include="Web\SessionHistory.cs" />
     <Compile Include="WordBuilder.cs" />
+    <None Include="packages.config" />
     <None Include="Service References\EWEManagerService\Epi.EWEManagerService.OrganizationResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
