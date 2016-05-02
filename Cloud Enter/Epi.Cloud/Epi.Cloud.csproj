@@ -63,9 +63,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\EpiInfo.Plugin.dll</HintPath>
     </Reference>
-    <Reference Include="ImranB.ModelBindingFix">
-      <HintPath>..\..\..\Web1.2.1.0\Epi.Web\bin\ImranB.ModelBindingFix.dll</HintPath>
-    </Reference>
     <Reference Include="jQuery.Mobile.MVC">
       <HintPath>..\packages\jQuery.Mobile.MVC.0.0.2\lib\jQuery.Mobile.MVC.dll</HintPath>
     </Reference>
