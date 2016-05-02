@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="DataTypes\CDTFieldAttribute.cs" />
     <Compile Include="DataTypes\CDTUser.cs" />
+    <Compile Include="MetadataService\Interface\IMetadataFieldAttributes.cs" />
     <Compile Include="ProjectMetadataProvider.cs" />
     <Compile Include="DataTypes\CDTBase.cs" />
     <Compile Include="DataTypes\CDTHeaderInfo.cs" />

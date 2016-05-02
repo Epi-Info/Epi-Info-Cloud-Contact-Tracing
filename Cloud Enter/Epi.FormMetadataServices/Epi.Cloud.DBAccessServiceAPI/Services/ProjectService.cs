@@ -25,7 +25,7 @@ namespace Epi.Cloud.DBAccessService.Services
         /// </summary>
         /// <param name="projectid"></param>
         /// <returns></returns>
-        public List<MetadataFieldAttribute> GetProjectMetaData(string projectid)
+        public List<MetadataFieldAttributes> GetProjectMetaData(string projectid)
         {
             GetmetadataDB getMetadata = new GetmetadataDB();
             var task = getMetadata.MetaDataAsync(Convert.ToInt32(projectid));

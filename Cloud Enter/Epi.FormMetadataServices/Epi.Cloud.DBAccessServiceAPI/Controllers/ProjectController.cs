@@ -21,14 +21,14 @@ namespace Epi.Cloud.DBAccessService.Controllers
         // GET: api/Project/5
         public IHttpActionResult Get()
         {
-            return new ServiceResult<List<MetadataFieldAttribute>>(_projectService.GetProjectMetaData(null), this);
+            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(null), this);
         }
 
         // GET: api/Project/5
         public IHttpActionResult Get(string ID)
         {
 
-            return new ServiceResult<List<MetadataFieldAttribute>>(_projectService.GetProjectMetaData(ID), this);             
+            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(ID), this);             
         }
         
     }

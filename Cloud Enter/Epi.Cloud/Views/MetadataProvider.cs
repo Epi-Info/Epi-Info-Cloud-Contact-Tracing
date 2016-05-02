@@ -1,32 +1,72 @@
-﻿#define MetadataHack
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
+using Epi.Cloud.MetadataServices.MetadataService.Interface;
 
 namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
+        bool _useRawSqlMetadataHack = false;
+
         public List<FieldAttributes> GetMeta(int pageid)
         {
             List<FieldAttributes> fieldattributes = null;
-#if MetadataHack
-            GetmetadataDB _getmeta = new GetmetadataDB();
-            List<CDTProject> projectfields = new List<CDTProject>();
-            projectfields = _getmeta.MetaDataAsync(pageid);
-            //List<CDTFieldAttributes> fieldattributes = new List<CDTFieldAttributes>();
-            fieldattributes = _getmeta.GetFieldAttributes(projectfields);
-#else
-            ProjectMetadataProvider p = new ProjectMetadataProvider();
-            List<MetadataFieldAttribute> mdFieldattributes;
-            mdFieldattributes = p.GetProxy(pageid.ToString());  
+            if (_useRawSqlMetadataHack)
+            {
+                GetmetadataDB _getmeta = new GetmetadataDB();
+                List<CDTProject> projectfields = new List<CDTProject>();
+                projectfields = _getmeta.MetaDataAsync(pageid);
+                //List<CDTFieldAttributes> fieldattributes = new List<CDTFieldAttributes>();
+                fieldattributes = _getmeta.GetFieldAttributes(projectfields);
+            }
+            else
+            {
+                ProjectMetadataProvider p = new ProjectMetadataProvider();
+                List<MetadataFieldAttributes> mdFieldattributes;
+                mdFieldattributes = p.GetProxy(pageid.ToString());
+                fieldattributes = mdFieldattributes.Select(f => new FieldAttributes
+                {
+                    UniqueId = f.UniqueId,
+                    RequiredMessage = "This field is required",
+                    FieldTypeId = f.FieldTypeId.ValueOrDefault(),
+                    Name = f.Name,
+                    TabIndex = (int)f.TabIndex.ValueOrDefault(),
 
-#endif
+                    PromptText = f.PromptText,
+                    PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),
+                    PromptLeftPositionPercentage = f.PromptLeftPositionPercentage.ValueOrDefault(),
+                    PromptFontStyle = f.PromptFontStyle,
+                    PromptFontSize = (double)f.PromptFontSize.ValueOrDefault(),
+                    PromptFontFamily = f.PromptFontFamily,
+
+                    ControlTopPositionPercentage = f.ControlTopPositionPercentage.ValueOrDefault(),
+                    ControlLeftPositionPercentage = f.ControlLeftPositionPercentage.ValueOrDefault(),
+                    ControlWidthPercentage = f.ControlWidthPercentage.ValueOrDefault(),
+                    ControlHeightPercentage = f.ControlHeightPercentage.ValueOrDefault(),
+                    ControlFontStyle = f.ControlFontStyle,
+                    ControlFontSize = (double)f.ControlFontSize.ValueOrDefault(),
+                    ControlFontFamily = f.ControlFontFamily,
+
+                    MaxLength = f.MaxLength.ValueOrDefault(),
+                    Pattern = f.Pattern,
+                    Lower = f.Lower,
+                    Upper = f.Upper,
+
+                    IsRequired = false,
+                    Required = false,
+                    ReadOnly = false,
+                    IsHidden = false,
+                    IsHighlighted = false,
+                    IsDisabled = false
+                }).ToList();
+            }
+
             return fieldattributes;
         }
     }
@@ -226,6 +266,14 @@ namespace Epi.Cloud.FormMetadataServices
             }
             return fieldattributes;
         }
+    }
+
+    public static class NullableExtensions
+    {
+        public static int ValueOrDefault(this int? field) { return field.HasValue ? field.Value : 0; }
+        public static double ValueOrDefault(this double? field) { return field.HasValue ? field.Value : 0d; }
+        public static bool ValueOrDefault(this bool? field) { return field.HasValue ? field.Value : false; }
+        public static decimal ValueOrDefault(this decimal? field) { return field.HasValue ? field.Value : 0m; }
     }
 }
 

@@ -35,9 +35,10 @@ namespace Epi.Cloud.SqlServer
                                  where (mf.PageId.HasValue && mf.PageId == pageId )|| (!mf.PageId.HasValue && mf.PageId == pageId)
                                  select new
                                  {
+                                     mf.UniqueId,
                                      mf.Name,
                                      mf.PageId,
-                                     mf.FieldId,
+                                     mf.FieldId,                                    
                                      mf.FieldTypeId,
                                      ControlAfterCheckCode = mf.CheckCodeAfter,
                                      ControlBeforeCheckCode = mf.CheckCodeBefore,
@@ -89,6 +90,7 @@ namespace Epi.Cloud.SqlServer
                     {
                         MetadataDbFieldAttribute GetFieldsData = new MetadataDbFieldAttribute();
 
+                        GetFieldsData.UniqueId = element.UniqueId.HasValue ? element.UniqueId.Value.ToString("D") : string.Empty;
                         GetFieldsData.Name = element.Name;
                         GetFieldsData.PageId = element.PageId;
                         GetFieldsData.FieldId = element.FieldId;

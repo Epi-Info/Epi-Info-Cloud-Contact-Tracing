@@ -18,9 +18,9 @@ namespace Epi.Cloud.DBAccessService.Repository
 
 
         //Call the Cloud EF and get the meta data
-        public async Task<List<MetadataFieldAttribute>> MetaDataAsync(int? pageid)
+        public async Task<List<MetadataFieldAttributes>> MetaDataAsync(int? pageid)
         {
-            List<MetadataFieldAttribute> pfileds = new List<MetadataFieldAttribute>();
+            List<MetadataFieldAttributes> pfileds = new List<MetadataFieldAttributes>();
             DataTable dt = new DataTable();
 
             MetaData metaDt = new MetaData();
@@ -32,7 +32,7 @@ namespace Epi.Cloud.DBAccessService.Repository
 
             foreach (var data in dataPfieleds)
             {
-                MetadataFieldAttribute pfiled = new MetadataFieldAttribute();
+                MetadataFieldAttributes pfiled = new MetadataFieldAttributes();
 
                 pfiled.Name = data.Name;
                 pfiled.PageId = data.PageId;

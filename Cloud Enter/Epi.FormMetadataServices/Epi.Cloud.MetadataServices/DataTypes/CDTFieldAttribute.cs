@@ -1,6 +1,8 @@
-﻿namespace Epi.Cloud.MetadataServices.DataTypes
+﻿using Epi.Cloud.MetadataServices.MetadataService.Interface;
+
+namespace Epi.Cloud.MetadataServices.DataTypes
 {
-    public class MetadataFieldAttribute : CDTBase
+    public class MetadataFieldAttributes : CDTBase, IMetadataFieldAttributes
     {
         public string ProjectId { get; set; }
         public string ProjectName { get; set; }
