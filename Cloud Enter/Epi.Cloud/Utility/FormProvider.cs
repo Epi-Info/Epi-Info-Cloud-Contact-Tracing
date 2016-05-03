@@ -172,9 +172,11 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 10://CheckBox
-
-                            var _CheckBoxValue = Value;
-                            form.AddFields(GetCheckBox(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue));
+                                //Renuka
+                                var _CheckBoxValue = Value;
+                                var checkbox = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
+                                //var checkboxFromXml = GetCheckBoxFromXml(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue);
+                                form.AddFields(checkbox);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "checkbox", "datasource",Value)); 
                             break;
@@ -194,7 +196,9 @@ namespace Epi.Web.MVC.Utility
                                 _DropDownSelectedValueYN = "No";
                             }
 
-                            form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValueYN, "Yes&#;No", 11, form));
+                                var dropdownselectedvalueYN = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValueYN, "Yes&#;No", 11);
+
+                                form.AddFields(dropdownselectedvalueYN);//, "Yes&#;No", 11);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "yesno", "datasource",Value)); 
 
@@ -351,7 +355,7 @@ namespace Epi.Web.MVC.Utility
 
                         case "10"://CheckBox
                             var _CheckBoxValue = Value;
-                            field = GetCheckBox(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue);
+                            field = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
                             break;
 
                         case "11"://DropDown Yes/No
@@ -366,8 +370,11 @@ namespace Epi.Web.MVC.Utility
 
                                 _DropDownSelectedValueYN = "No";
                             }
+                            var dropdownselectedvalueYN = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValueYN, "Yes&#;No", 11);
 
-                            field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValueYN, "Yes&#;No", 11, form);
+                            form.AddFields(dropdownselectedvalueYN);
+
+                            //field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValueYN, "Yes&#;No", 11, form);
                             break;
 
                         case "12": //RadioList
@@ -629,10 +636,21 @@ namespace Epi.Web.MVC.Utility
 
             return textBox;
         }
-        private static CheckBox GetCheckBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
+        //Renuka
+        private static CheckBox GetCheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
+            var checkBox = new CheckBox (fieldAttributes,formWidth,formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
 
+            return checkBox;
+        }
 
+#if DEBUG
+        //Renuka
+        private static CheckBox GetCheckBoxFromXml(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
+        {
             var CheckBox = new CheckBox
             {
                 Title = _FieldTypeID.Attribute("Name").Value,
@@ -664,6 +682,8 @@ namespace Epi.Web.MVC.Utility
             return CheckBox;
 
         }
+
+#endif
         private static DatePicker GetDatePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -777,6 +797,17 @@ namespace Epi.Web.MVC.Utility
         }
 
 
+//renuka
+        private static Select GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
+        {
+            var select = new Select(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
+            {
+                Value = controlValue
+            };
+            select.SelectType = FieldTypeId;
+            select.AddChoices(DropDownValues, "&#;");
+            return select;
+        }
         private static Select GetDropDown(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string DropDownValues, int FieldTypeId, Form form)
         {
 

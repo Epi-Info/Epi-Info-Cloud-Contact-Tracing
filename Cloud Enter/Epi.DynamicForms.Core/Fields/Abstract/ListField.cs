@@ -13,8 +13,8 @@ namespace MvcDynamicForms.Fields
     {
         protected Dictionary<string, bool> _choices = new Dictionary<string, bool>();
         protected string _responseDelimiter = ", ";
-        protected float _ControlFontSize;
-        protected string _ControlFontStyle;
+        protected float _ControlFontSize = 10;
+        protected string _ControlFontStyle= "Regular";
         
         /// <summary>
         /// The choices that the end user can choose from.

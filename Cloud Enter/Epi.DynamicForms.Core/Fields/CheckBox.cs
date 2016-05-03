@@ -12,7 +12,17 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class CheckBox : InputField
     {
-        private string _checkedValue = "Yes";
+        public CheckBox()
+        {
+        }
+
+        public CheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+     
+    //Renuka
+    private string _checkedValue = "Yes";
         private string _uncheckedValue = "No";
         new private string _promptClass = "MvcDynamicCheckboxPrompt";
 
@@ -89,6 +99,20 @@ namespace MvcDynamicForms.Fields
             return true;
         }
 
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage + 2;
+            PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage + 20;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = 10;
+            //ControlHeight = 0;
+            //InputFieldfontSize = 0;
+            //InputFieldfontfamily = null;
+            //InputFieldfontstyle = null;
+        }
+
         public override string RenderHtml()
         {
             var inputName = _form.FieldPrefix + _key;
@@ -124,7 +148,7 @@ namespace MvcDynamicForms.Fields
             //{
             //    chk.Attributes.Add("disabled", "disabled");
             //}
-
+            //Renuka
             chk.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);            
           
             chk.MergeAttributes(_inputHtmlAttributes);

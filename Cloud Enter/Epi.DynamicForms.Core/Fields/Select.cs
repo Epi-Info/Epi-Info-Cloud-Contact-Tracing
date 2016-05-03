@@ -15,6 +15,14 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class Select : ListField
     { 
+        public Select()
+        {
+        }
+
+        public Select(FieldAttributes fieldAttributes, double formWidth, double formHeight)// string DropDownValues, int FieldTypeId)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);//, DropDownValues, FieldTypeId);
+        }
         /// <summary>
         /// The number of options to display at a time.
         /// </summary>
@@ -216,7 +224,7 @@ namespace MvcDynamicForms.Fields
                     {
                         var opt = new TagBuilder("option");
                         var optSelectedVale = "";
-                        if (!string.IsNullOrEmpty(SelectedValue.ToString()))
+                        if (!string.IsNullOrEmpty(SelectedValue))
                         {
                          optSelectedVale = SelectedValue.ToString();//=="1"? "Yes" : "No";
                         }

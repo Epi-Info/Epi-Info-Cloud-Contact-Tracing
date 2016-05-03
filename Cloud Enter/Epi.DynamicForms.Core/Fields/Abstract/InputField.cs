@@ -66,6 +66,7 @@ namespace MvcDynamicForms.Fields
                 _promptClass = value;
             }
         }
+        public string Value { get; set; }
         /// <summary>
         /// String representing the user's response to the field.
         /// </summary>
