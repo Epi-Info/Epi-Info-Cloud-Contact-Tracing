@@ -28,8 +28,8 @@ namespace Epi.Cloud.DBAccessService.Controllers
         public IHttpActionResult Get(string ID)
         {
 
-            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(ID), this);             
+            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(ID), this);
         }
-        
+
     }
 }

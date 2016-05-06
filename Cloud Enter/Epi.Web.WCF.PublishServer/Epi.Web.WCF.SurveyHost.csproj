@@ -159,17 +159,17 @@
     <Content Include="Site.Master" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
-      <Project>{05A484AB-A555-4200-936B-BEC573285BCC}</Project>
+      <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
       <Name>Epi.Web.EF</Name>
     </ProjectReference>
     <ProjectReference Include="..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
-      <Project>{31F91938-2997-4650-8D36-71C845F1071D}</Project>
+      <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
       <Name>Epi.Web.WCF.SurveyService</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace Epi.Cloud.DBAccessService
+namespace Epi.Cloud.DBAccessServiceAPI
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

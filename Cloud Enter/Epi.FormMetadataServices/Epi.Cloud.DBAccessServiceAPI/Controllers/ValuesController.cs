@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace Epi.Cloud.DBAccessService.Controllers
+namespace Epi.Cloud.DBAccessServiceAPI.Controllers
 {
     [Authorize]
     public class ValuesController : ApiController

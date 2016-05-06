@@ -1,12 +1,8 @@
 ﻿
 using Epi.Cloud.MetadataServices.DataTypes;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Configuration;
 using Epi.Cloud.SqlServer;
 
@@ -81,6 +77,7 @@ namespace Epi.Cloud.DBAccessService.Repository
                 pfiled.HasTabStop = data.HasTabStop;
                 pfiled.SourceFieldId = data.SourceFieldId;
                 pfiled.RequiredMessage = "This field is required";
+                pfiled.List = data.List;
                 pfileds.Add(pfiled);
             }
 

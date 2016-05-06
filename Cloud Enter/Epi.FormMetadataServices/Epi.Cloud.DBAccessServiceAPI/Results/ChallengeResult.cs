@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace Epi.Cloud.DBAccessService.Results
+namespace Epi.Cloud.DBAccessServiceAPI.Results
 {
     public class ChallengeResult : IHttpActionResult
     {

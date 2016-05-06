@@ -20,6 +20,10 @@ namespace Epi.Web.MVC.Controllers
     [Authorize]
     public class SurveyController : Controller
     {
+        //Table Storage
+        private ISurveyTableStorageFacade _isurveyTableStorageFacade;
+
+
         private ISecurityFacade _isecurityFacade;
 
         //declare SurveyTransactionObject object
@@ -309,7 +313,10 @@ namespace Epi.Web.MVC.Controllers
                         form = SetLists(form);
 
                          _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
-                        
+
+                        //Insert survey response to TableStorage
+                        _isurveyTableStorageFacade = new SurveyTableStorageFacade();
+                        _isurveyTableStorageFacade.InsertSurveyResponseToTableStorage(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
 
                         if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))

@@ -8,10 +8,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using Epi.Cloud.DBAccessService.Providers;
-using Epi.Cloud.DBAccessService.Models;
+using Epi.Cloud.DBAccessServiceAPI.Providers;
+using Epi.Cloud.DBAccessServiceAPI.Models;
 
-namespace Epi.Cloud.DBAccessService
+namespace Epi.Cloud.DBAccessServiceAPI
 {
     public partial class Startup
     {

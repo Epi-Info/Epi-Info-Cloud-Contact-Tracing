@@ -13,11 +13,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Epi.Cloud.DBAccessService.Models;
-using Epi.Cloud.DBAccessService.Providers;
-using Epi.Cloud.DBAccessService.Results;
+using Epi.Cloud.DBAccessServiceAPI.Models;
+using Epi.Cloud.DBAccessServiceAPI.Providers;
+using Epi.Cloud.DBAccessServiceAPI.Results;
 
-namespace Epi.Cloud.DBAccessService.Controllers
+namespace Epi.Cloud.DBAccessServiceAPI.Controllers
 {
     [Authorize]
     [RoutePrefix("api/Account")]
