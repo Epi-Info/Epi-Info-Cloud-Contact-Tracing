@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Epi.Cloud.MetadataServices.DataTypes;
 using Epi.Cloud.MetadataServices.ProxiesService;
 
@@ -7,12 +8,11 @@ namespace Epi.Cloud.MetadataServices
     public class ProjectMetadataProvider
     {
         //Pass the page id and call the DBAccess API and get the project fileds.
-        public List<MetadataFieldAttributes> GetProxy(string pageid)
+        public async Task<List<MetadataFieldAttributes>> GetProjectMetadataForPage(string pageid)
         {
-            FieldAttributeServiceProxy fieldat = new FieldAttributeServiceProxy();
-            List<MetadataFieldAttributes> fieldattributes = new List<MetadataFieldAttributes>();
-            var task = fieldat.GetProjectMetadataAsync(pageid);
-            return task.Result;
+            FieldAttributeServiceProxy serviceProxy = new FieldAttributeServiceProxy();
+            var task = serviceProxy.GetProjectMetadataAsync(pageid);
+            return await task;
         }
     }
 }

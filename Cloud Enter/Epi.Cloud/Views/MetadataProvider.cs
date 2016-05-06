@@ -31,7 +31,7 @@ namespace Epi.Cloud.FormMetadataServices
             {
                 ProjectMetadataProvider p = new ProjectMetadataProvider();
                 List<MetadataFieldAttributes> mdFieldattributes;
-                mdFieldattributes = p.GetProxy(pageid.ToString());
+                mdFieldattributes = p.GetProjectMetadataForPage(pageid.ToString()).Result;
                 fieldattributes = mdFieldattributes.Select(f => new FieldAttributes
                 {
                     UniqueId = f.UniqueId,
