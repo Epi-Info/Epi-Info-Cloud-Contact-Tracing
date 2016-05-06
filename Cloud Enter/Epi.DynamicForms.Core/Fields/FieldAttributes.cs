@@ -17,6 +17,7 @@ namespace MvcDynamicForms.Fields
         public FieldAttributes(XElement fieldType, XDocument surveyAnswer, Form form)
         {
             RequiredMessage = "This field is required";
+            UniqueId = fieldType.AttributeValue("UniqueId");
             FieldTypeId = int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0;
             Name = fieldType.AttributeValue("Name");
             TabIndex = int.TryParse(fieldType.AttributeValue("TabIndex"), out _tempInt) ? _tempInt : 0;
@@ -47,6 +48,9 @@ namespace MvcDynamicForms.Fields
             IsHidden = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HiddenFieldsList");
             IsHighlighted = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HighlightedFieldsList");
             IsDisabled = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "DisabledFieldsList");
+            ShowTextOnRight = fieldType.AttributeValue("ShowTextOnRight");
+            ChoicesList = fieldType.AttributeValue("List");
+            BackgroundColor = fieldType.AttributeValue("BackgroundColor");
         }
 
         public string UniqueId { get; set; }
@@ -83,6 +87,10 @@ namespace MvcDynamicForms.Fields
         public bool IsHidden { get; set; }
         public bool IsHighlighted { get; set; }
         public bool IsDisabled { get; set; }
+
+        public string ShowTextOnRight { get; set; }
+        public string ChoicesList { get; set; }
+        public string BackgroundColor { get; set; }
     }
 
     public static class XmlAttributeExtensions

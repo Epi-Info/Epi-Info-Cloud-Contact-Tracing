@@ -30,6 +30,17 @@ namespace MvcDynamicForms.Fields
                 _ChoicesList = value;
             }
         }
+
+        public RadioList()
+        {
+
+        }
+
+        public RadioList(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
         public override string RenderHtml()
         {
             var html = new StringBuilder();
@@ -199,6 +210,38 @@ namespace MvcDynamicForms.Fields
 
             return NewList;
 
+        }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage ;
+            PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage ;
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            this.ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlHeight = 0;
+            this.Width = formWidth;
+            this.Height = formHeight;
+            string ListString = fieldAttributes.ChoicesList;
+            ListString = ListString.Replace("||", "|");
+            ChoicesList = ListString;
+            List<string> Lists = ChoicesList.Split('|').ToList<string>();
+            Choices = GetChoices(Lists[0].Split(',').ToList<string>());
+            List<string> Pattern = new List<string>();
+            Pattern = Lists[1].Split(',').ToList<string>();
+            this._showTextOnRight = Convert.ToBoolean(fieldAttributes.ShowTextOnRight);
+            this.Pattern = Pattern;
+            if (formHeight > formWidth)
+            {
+                this.Orientation = (Orientation)0;
+            }
+            else
+            {
+                this.Orientation = (Orientation)1;
+            }           
         }
     }
 }

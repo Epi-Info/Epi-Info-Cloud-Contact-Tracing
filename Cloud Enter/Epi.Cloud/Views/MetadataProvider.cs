@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Epi.Cloud.MetadataServices;
+using System.Text;
+using System.Threading.Tasks;
 using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
 using Epi.Cloud.MetadataServices.MetadataService.Interface;
+using Epi.Cloud.MetadataServices;
 
 namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        bool _useRawSqlMetadataHack = false;
+        bool _useRawSqlMetadataHack = true;
 
         public List<FieldAttributes> GetMeta(int pageid)
         {
@@ -124,6 +126,7 @@ namespace Epi.Cloud.FormMetadataServices
         public string IsExclusiveTable { get; set; }
         public int? TabIndex { get; set; }
         public string HasTabStop { get; set; }
+        public string ChoicesList { get; set; }
 
         public string SourceFieldId { get; set; }
     }
@@ -199,6 +202,8 @@ namespace Epi.Cloud.FormMetadataServices
                     pfiled.TabIndex = Convert.ToInt32(dr["TabIndex"]);
                     pfiled.HasTabStop = dr["HasTabStop"].ToString();
                     pfiled.SourceFieldId = dr["SourceFieldId"].ToString();
+                    pfiled.ChoicesList = dr["List"].ToString();
+                    pfiled.BackgroundColor = dr["BackgroundColor"].ToString();
                     pfileds.Add(pfiled);
                 }
 
@@ -259,6 +264,8 @@ namespace Epi.Cloud.FormMetadataServices
                 fieldAttributers.IsRequired = Convert.ToBoolean(field.IsRequired);
                 //_field.Required=Convert.ToBoolean(field.r)
                 fieldAttributers.ReadOnly = Convert.ToBoolean(field.IsReadOnly);
+                fieldAttributers.ShowTextOnRight = field.ShowTextOnRight;
+                fieldAttributers.ChoicesList = field.ChoicesList;
                 // _field.IsHidden=Convert.ToBoolean(field.)
                 //_field.IsHighlighted = Convert.ToBoolean(field.IsHighlighted);
                 //_field.IsDisabled=Convert.ToBoolean(field.)

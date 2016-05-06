@@ -204,12 +204,12 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 12://RadioList
-                            var _GroupBoxValue1 = GetControlValue(xdocResponse, _FieldTypeID.Attribute("UniqueId").Value);
-                            form.AddFields(GetGroupBox(_FieldTypeID, _Width + 12, _Height, xdocResponse, _GroupBoxValue1));
-                            var _RadioListSelectedValue1 = Value;
-                            string RadioListValues1 = "";
-                            RadioListValues1 = _FieldTypeID.Attribute("List").Value;
-                            form.AddFields(GetRadioList(_FieldTypeID, _Width, _Height, xdocResponse, _RadioListSelectedValue1, RadioListValues1, form));
+                                var _GroupBoxValue1 = Value;                               
+                                form.AddFields(GetGroupBox(fieldAttributes, _Width+12, _Height, _GroupBoxValue1));
+                                var _RadioListSelectedValue1 = Value;
+                                string RadioListValues1 = "";
+                                RadioListValues1 = fieldAttributes.ChoicesList;                               
+                                form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, RadioListValues1));
 
                             break;
 
@@ -247,8 +247,8 @@ namespace Epi.Web.MVC.Utility
                             form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
                             break;
                         case 21://GroupBox
-                            var _GroupBoxValue = GetControlValue(xdocResponse, _FieldTypeID.Attribute("UniqueId").Value);
-                            form.AddFields(GetGroupBox(_FieldTypeID, _Width, _Height, xdocResponse, _GroupBoxValue));
+                                var _GroupBoxValue = Value;
+                                form.AddFields(GetGroupBox(fieldAttributes, _Width, _Height, _GroupBoxValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "", "datasource",Value)); 
                             break;
@@ -380,8 +380,7 @@ namespace Epi.Web.MVC.Utility
                         case "12": //RadioList
                             var _RadioListSelectedValue1 = Value;
                             string RadioListValues1 = "";
-                            RadioListValues1 = _FieldTypeID.Attribute("List").Value;
-                            field = GetRadioList(_FieldTypeID, _Width, _Height, xdocResponse, _RadioListSelectedValue1, RadioListValues1, form);
+                            field = GetRadioList(fieldAttributes, _Width, _Height, _RadioListSelectedValue1);
                             break;
 
                         case "17": //DropDown LegalValues
@@ -406,7 +405,7 @@ namespace Epi.Web.MVC.Utility
                             break;
 
                         case "21": //GroupBox
-                            field = GetGroupBox(_FieldTypeID, _Width, _Height, xdocResponse, Value);
+                            field = GetGroupBox(fieldAttributes, _Width, _Height, Value);
                             break;
                     }
 
@@ -525,6 +524,15 @@ namespace Epi.Web.MVC.Utility
             return ControlValue;
         }
 
+        private static RadioList GetRadioList(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var radiolist = new RadioList(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
+               
+            return radiolist;
+        }
         private static RadioList GetRadioList(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string RadioListValues, Form form)
         {
 
@@ -907,6 +915,17 @@ namespace Epi.Web.MVC.Utility
 
             return DropDownValues.ToString();
         }
+
+	    private static GroupBox GetGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+	    {
+	        var groupbox = new GroupBox(fieldAttributes, formWidth, formHeight)
+	        {
+	            Value = controlValue
+	        };       
+
+	        return groupbox;
+	    }
+
         private static GroupBox GetGroupBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {
 

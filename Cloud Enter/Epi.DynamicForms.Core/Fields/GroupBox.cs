@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -20,6 +21,16 @@ namespace MvcDynamicForms.Fields
         /// The html to be rendered on the form.
         /// </summary>
         public string Html { get; set; }
+
+        public GroupBox()
+        {
+
+        }
+
+        public GroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
 
         public override string RenderHtml()
         {
@@ -181,5 +192,33 @@ namespace MvcDynamicForms.Fields
 
         }
 
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage ;
+            PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            ControlHeight = formHeight*fieldAttributes.ControlHeightPercentage - 12;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage - 12;
+
+            //fontstyle = fieldAttributes.ControlFontStyle;
+            //fontSize = fieldAttributes.ControlFontSize;
+            //fontfamily = fieldAttributes.ControlFontFamily;
+
+            fontstyle = fieldAttributes.PromptFontStyle;
+            fontSize = fieldAttributes.PromptFontSize;
+            fontfamily = fieldAttributes.PromptFontFamily;
+
+            if (fieldAttributes.BackgroundColor != null)
+             {
+                 var color = Color.FromArgb((int)(int.Parse(fieldAttributes.BackgroundColor)) + unchecked((int)0xFF000000));
+                 string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+                 BackgroundColor = HexValue;
+             }           
+        }
     }
 }
