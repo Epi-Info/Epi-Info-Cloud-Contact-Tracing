@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
-using Epi.Cloud.DBAccessService.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions;
 
-namespace Epi.Cloud.DBAccessService.Areas.HelpPage.Models
+namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.Models
 {
     /// <summary>
     /// The model that represents an API displayed on the help page.

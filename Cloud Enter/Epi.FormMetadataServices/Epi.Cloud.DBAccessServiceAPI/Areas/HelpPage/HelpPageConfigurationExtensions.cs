@@ -11,10 +11,10 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using Epi.Cloud.DBAccessService.Areas.HelpPage.ModelDescriptions;
-using Epi.Cloud.DBAccessService.Areas.HelpPage.Models;
+using Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.Models;
 
-namespace Epi.Cloud.DBAccessService.Areas.HelpPage
+namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

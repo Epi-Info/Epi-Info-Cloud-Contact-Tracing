@@ -1,10 +1,10 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using Epi.Cloud.DBAccessService.Areas.HelpPage.ModelDescriptions;
-using Epi.Cloud.DBAccessService.Areas.HelpPage.Models;
+using Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.Models;
 
-namespace Epi.Cloud.DBAccessService.Areas.HelpPage.Controllers
+namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

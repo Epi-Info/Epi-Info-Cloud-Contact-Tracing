@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Epi.Cloud.DBAccessService")]
+[assembly: AssemblyTitle("Epi.Cloud.DBAccessServiceAPI")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Epi.Cloud.DBAccessService")]
+[assembly: AssemblyProduct("Epi.Cloud.DBAccessServiceAPI")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1c59e6e6-1800-4659-9826-6fe6cda2f825")]
+[assembly: Guid("ecbebd11-4b4b-432b-9ada-4b8ca19956d4")]
 
 // Version information for an assembly consists of the following four values:
 //

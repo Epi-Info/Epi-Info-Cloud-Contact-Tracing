@@ -9,9 +9,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Epi.Cloud.DBAccessService.Models;
+using Epi.Cloud.DBAccessServiceAPI.Models;
 
-namespace Epi.Cloud.DBAccessService.Providers
+namespace Epi.Cloud.DBAccessServiceAPI.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {

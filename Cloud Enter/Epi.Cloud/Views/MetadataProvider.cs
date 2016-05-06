@@ -14,7 +14,7 @@ namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        bool _useRawSqlMetadataHack = true;
+        bool _useRawSqlMetadataHack = false;
 
         public List<FieldAttributes> GetMeta(int pageid)
         {
@@ -65,7 +65,8 @@ namespace Epi.Cloud.FormMetadataServices
                     ReadOnly = false,
                     IsHidden = false,
                     IsHighlighted = false,
-                    IsDisabled = false
+                    IsDisabled = false,
+                    ChoicesList = f.List
                 }).ToList();
             }
 
@@ -113,7 +114,7 @@ namespace Epi.Cloud.FormMetadataServices
         public string ShouldRetainImageSize { get; set; }
         public string Pattern { get; set; }
         public int? MaxLength { get; set; }
-        public string ShowTextOnRight { get; set; } 
+        public string ShowTextOnRight { get; set; }
         public string Lower { get; set; }
         public string Upper { get; set; }
         public string RelateCondition { get; set; }

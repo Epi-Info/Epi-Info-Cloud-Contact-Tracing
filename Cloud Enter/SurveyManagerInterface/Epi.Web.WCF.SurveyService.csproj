@@ -64,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EIWS_BLL_Core\Epi.Web.BLL.csproj">
-      <Project>{D49B7A21-644B-49D7-9A5D-387BF31EAFE5}</Project>
+      <Project>{d49b7a21-644b-49d7-9a5d-387bf31eafe5}</Project>
       <Name>Epi.Web.BLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
@@ -72,7 +72,7 @@
       <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
-      <Project>{05A484AB-A555-4200-936B-BEC573285BCC}</Project>
+      <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
       <Name>Epi.Web.EF</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">

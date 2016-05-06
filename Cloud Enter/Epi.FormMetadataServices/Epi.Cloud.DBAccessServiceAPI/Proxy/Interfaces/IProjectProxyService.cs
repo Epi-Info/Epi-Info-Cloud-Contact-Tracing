@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Epi.Cloud.DBAccessService.Proxy.Interfaces
 {
     public interface IProjectProxyService
-    { 
-        List<MetadataFieldAttributes> GetProjectMetaData(string projectID); 
+    {
+        List<MetadataFieldAttributes> GetProjectMetaData(string projectID);
     }
 }

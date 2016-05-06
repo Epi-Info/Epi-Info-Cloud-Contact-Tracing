@@ -53,9 +53,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Epi.Web.EF">
-      <HintPath>..\Epi.Web.EF\bin\Debug\Epi.Web.EF.dll</HintPath>
-    </Reference>
     <Reference Include="Epi.Web.Enter.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\Epi.Web.Common\bin\Debug\Epi.Web.Enter.Common.dll</HintPath>
     </Reference>
@@ -266,8 +263,10 @@
     <Compile Include="Facade\ISecurityFacade.cs" />
     <Compile Include="Facade\ISurveyFacade.cs" />
     <Compile Include="Facade\CloudSecurityFacade.cs" />
+    <Compile Include="Facade\ISurveyTableStorageFacade.cs" />
     <Compile Include="Facade\SecurityFacade.cs" />
     <Compile Include="Facade\SurveyFacade.cs" />
+    <Compile Include="Facade\SurveyTableStorageFacade.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -718,16 +717,24 @@
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
       <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Web.DataEntryServices\Epi.Web.DataEntryServices.csproj">
+      <Project>{aa7bfd2a-ab8f-41af-8f37-f4207627563f}</Project>
+      <Name>Epi.Web.DataEntryServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Web.CheckCodeEngine\Epi.Web.CheckCodeEngine.csproj">
       <Project>{6B084882-EF4F-4CF0-85B1-1E8C357AE822}</Project>
       <Name>Epi.Web.CheckCodeEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
+      <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
+      <Name>Epi.Web.EF</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
       <Project>{B8AF69BD-3CE1-4AA5-875D-3FB87C7FCE44}</Project>
       <Name>Epi.Web.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
-      <Project>{31F91938-2997-4650-8D36-71C845F1071D}</Project>
+      <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
       <Name>Epi.Web.WCF.SurveyService</Name>
     </ProjectReference>
   </ItemGroup>
