@@ -50,8 +50,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.ImportExport", "Epi.Com
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{83D23736-9927-42F2-9D37-4A20263B4C17}"
 	ProjectSection(SolutionItems) = preProject
-		..\Documentation\Cloud Enter Conceptual v4.vsd = ..\Documentation\Cloud Enter Conceptual v4.vsd
-		..\Documentation\Cloud Enter Conceptual v5.vsd = ..\Documentation\Cloud Enter Conceptual v5.vsd
+		..\Documentation\Cloud Enter Conceptual v6.pdf = ..\Documentation\Cloud Enter Conceptual v6.pdf
 		..\Documentation\Cloud Enter Conceptual v6.vsd = ..\Documentation\Cloud Enter Conceptual v6.vsd
 	EndProjectSection
 EndProject
