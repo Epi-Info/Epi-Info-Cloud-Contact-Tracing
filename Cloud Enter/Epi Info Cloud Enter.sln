@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}"
 	ProjectSection(SolutionItems) = preProject
@@ -53,8 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.ImportExport", "Epi.Com
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{83D23736-9927-42F2-9D37-4A20263B4C17}"
 	ProjectSection(SolutionItems) = preProject
-		..\Documentation\Cloud Enter Conceptual v4.vsd = ..\Documentation\Cloud Enter Conceptual v4.vsd
-		..\Documentation\Cloud Enter Conceptual v5.vsd = ..\Documentation\Cloud Enter Conceptual v5.vsd
+		..\Documentation\Cloud Enter Conceptual v6.pdf = ..\Documentation\Cloud Enter Conceptual v6.pdf
+		..\Documentation\Cloud Enter Conceptual v6.vsd = ..\Documentation\Cloud Enter Conceptual v6.vsd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dev Test Projects", "Dev Test Projects", "{B7914E06-C65D-4677-8290-ED9FDD1BC0F9}"
