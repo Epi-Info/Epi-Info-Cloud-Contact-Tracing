@@ -716,12 +716,12 @@ function SaveForm() {
 </script>
 
 <div id="pageHeader">
-  	<div id="pageTitle"><h2>@Model.Form.SurveyInfo.SurveyName</h2></div>
+  	@*<div id="pageTitle"><h2>@Model.Form.SurveyInfo.SurveyName</h2></div>
    	<div id="userwelcome">Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;
-    @*<a href="#">Log Out</a>*@
-    @Html.ActionLink("Log Out", "LogOut", "Survey", null, null)	
-    </div>
-  	<div style="clear:both;"></div>
+	    <a href="#">Log Out</a>*@
+	    @*Html.ActionLink("Log Out", "LogOut", "Survey", null, null)	
+    	</div>
+  	<div style="clear:both;"></div>*@
 </div>  
 
 <div id="content" class="recordcontentdiv" style="margin:20px auto 0;">

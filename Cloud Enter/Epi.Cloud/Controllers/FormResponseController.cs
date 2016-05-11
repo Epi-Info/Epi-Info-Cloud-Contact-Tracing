@@ -1,20 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Configuration;
 using System.Web.Mvc;
-using System.Web.Security;
+using Epi.Web.MVC.Models;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using System.Linq;
 using Epi.Core.EnterInterpreter;
-using Epi.Web.Enter.Common.DTO;
+using System.Collections.Generic;
+using System.Web.Security;
+using System.Configuration;
+using System.Web;
+using System.Web.Caching;
+using System.Web.UI;
+using System.Reflection;
+using System.Diagnostics;
 using Epi.Web.Enter.Common.Message;
-using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
-using MvcDynamicForms;
-
+using Epi.Web.Enter.Common.DTO;
+using System.Web.Configuration;
+using System.Text;
 namespace Epi.Web.MVC.Controllers
 {
     [Authorize]
@@ -45,9 +49,6 @@ namespace Epi.Web.MVC.Controllers
 		// View =0 Root form
 		public ActionResult Index(string formid, string responseid, int Pagenumber = 1, int ViewId = 0)
 		{
-
-			List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
-
 			if (ViewId == 0)
 			{
 				//Following code checks if request is for new or selected form.
@@ -61,17 +62,16 @@ namespace Epi.Web.MVC.Controllers
 				Session.Remove("RootResponseId");
 				Session.Remove("FormValuesHasChanged");
 				Session["IsEditMode"] = false;
-			}
-			if (ViewId == 0)
-			{
+                
 				var model = new FormResponseInfoModel();
 				model.ViewId = ViewId;
 				model = GetSurveyResponseInfoModel(formid, Pagenumber);
-
+                Session["SelectedOrgId"] = model.FormInfoModel.OrganizationId;
 				return View("Index", model);
 			}
 			else
 			{
+                List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
 				int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
 
 				bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
@@ -149,18 +149,31 @@ namespace Epi.Web.MVC.Controllers
 		[HttpPost]
 		public ActionResult Index(string surveyid, string AddNewFormId, string EditForm, string Cancel)
 		{
+            int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
+            bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
+            FormsAuthentication.SetAuthCookie("BeginSurvey", false);
+            bool IsEditMode = false;
+            if (IsMobileDevice == false)
+            {
+                IsMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+            }
 			if (!string.IsNullOrEmpty(Cancel))
 			{
 				int PNumber;
 				int.TryParse(Cancel, out PNumber);
+                Dictionary<string, int> SurveyPagesList = (Dictionary<string, int>)Session["RelateButtonPageId"];
+                if (SurveyPagesList != null)
+                {
+                    PNumber = SurveyPagesList[this.Request.Form["Parent_Response_Id"].ToString()];
+                }
 
 				return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseid = this.Request.Form["Parent_Response_Id"].ToString(), PageNumber = PNumber });
 			}
-            if (string.IsNullOrEmpty(EditForm) && Session["EditForm"] != null)
+            if (string.IsNullOrEmpty(EditForm) && Session["EditForm"] != null && string.IsNullOrEmpty(AddNewFormId))
             {
                 EditForm = Session["EditForm"].ToString();
             }
-			bool IsEditMode = false;
+			
 			if (!string.IsNullOrEmpty(EditForm))
 			{
 				//Session["RootFormId"] = surveyid;
@@ -170,36 +183,23 @@ namespace Epi.Web.MVC.Controllers
 				}
 				Session["IsEditMode"] = true;
 				IsEditMode = true;
-				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(EditForm);
+                List<FormsHierarchyDTO> FormsHierarchy1 = GetFormsHierarchy();
+                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = FormsHierarchy1.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == EditForm);//GetSurveyAnswer(EditForm);
                 if (Session["RecoverLastRecordVersion"] != null)
                 {
                     surveyAnswerDTO.RecoverLastRecordVersion = bool.Parse(Session["RecoverLastRecordVersion"].ToString());
                 }
 				string ChildRecordId = GetChildRecordId(surveyAnswerDTO);
-				return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, Epi.Web.MVC.Constants.Constant.SURVEY_CONTROLLER, new { responseid = ChildRecordId, PageNumber = 1, Edit = "Edit" });
+                return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, Epi.Web.MVC.Constants.Constant.SURVEY_CONTROLLER, new { responseid = surveyAnswerDTO.ParentRecordId, PageNumber = 1, Edit = "Edit" });
 			}
             //else
             //{
             //    Session["IsEditMode"] = false;
 
 			//}
-			int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
-			if (!string.IsNullOrEmpty(EditForm))
-			{
-				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(EditForm);
-				surveyAnswerDTO.Status = 1;
-				string ChildRecordId = GetChildRecordId(surveyAnswerDTO);
-				return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, Epi.Web.MVC.Constants.Constant.SURVEY_CONTROLLER, new { responseid = ChildRecordId, PageNumber = 1, Edit = "Edit" });
-			}
-			bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
 
 
-			if (IsMobileDevice == false)
-			{
-				IsMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
-			}
 
-			FormsAuthentication.SetAuthCookie("BeginSurvey", false);
 
 			//create the responseid
 			Guid ResponseID = Guid.NewGuid();
@@ -213,13 +213,14 @@ namespace Epi.Web.MVC.Controllers
 			// Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
 			// Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId);
 			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, true, this.Request.Form["Parent_Response_Id"].ToString(), IsEditMode);
-			SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
+            List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
+            SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId, FormsHierarchy);
 
 			// set the survey answer to be production or test 
 			SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
 			XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
 
-			Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
+            MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice, null, FormsHierarchy);
 
 			var _FieldsTypeIDs = from _FieldTypeID in
 									 xdoc.Descendants("Field")
@@ -808,9 +809,17 @@ namespace Epi.Web.MVC.Controllers
 			}
 		}
 
-		public SurveyInfoModel GetSurveyInfo(string SurveyId)
+        public SurveyInfoModel GetSurveyInfo(string SurveyId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
+        {
+            SurveyInfoModel surveyInfoModel = new SurveyInfoModel();
+            if (FormsHierarchyDTOList != null)
 		{
-			SurveyInfoModel surveyInfoModel = _isurveyFacade.GetSurveyInfoModel(SurveyId);
+                surveyInfoModel = Mapper.ToSurveyInfoModel(FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).SurveyInfo);
+            }
+            else
+            {
+                surveyInfoModel = _isurveyFacade.GetSurveyInfoModel(SurveyId);
+            }
 			return surveyInfoModel;
 		}
 		private string GetChildRecordId(SurveyAnswerDTO surveyAnswerDTO)
@@ -1036,5 +1045,24 @@ namespace Epi.Web.MVC.Controllers
 
         }
 
+        public void SetRelateSession(string ResponseId, int CurrentPage)
+        {
+            var Obj = Session["RelateButtonPageId"];
+            Dictionary<string, int> List = new Dictionary<string, int>();
+            if (Obj == null)
+            {
+                List.Add(ResponseId, CurrentPage);
+                Session["RelateButtonPageId"] = List;
+            }
+            else
+            {
+                List = (Dictionary<string, int>)Session["RelateButtonPageId"];
+                if (!List.ContainsKey(ResponseId))
+                {
+                    List.Add(ResponseId, CurrentPage);
+                    Session["RelateButtonPageId"] = List;
+                }
+            }
+        }
 	}
 }

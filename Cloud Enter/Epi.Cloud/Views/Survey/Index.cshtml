@@ -108,22 +108,59 @@
         }
     }
 
+    function ShowSppiner() 
+    {
+        var validate = $('#myform').validationEngine('validate');
+        if(validate)
+        {
+            if (open) 
+            {
+            $('BODY').jLoadingOverlay('close');
+            open = false;
+             }
+            else 
+            {
+            $('BODY').jLoadingOverlay('');
+            open = true;
+              }
+        }
+    }
+    function CloseSppiner() {
 
+        $('BODY').jLoadingOverlay('close');
+        open = false;
 
+    }
     $(document).ready(function () {
         // a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
 
         //$("#Savebutton").tooltip();      
-        
+        CloseSppiner();
         var DateFormat = '@Model.CurrentCultureDateFormat'
         DateFormat = DateFormat.toLocaleLowerCase().toString()
         
         
         $(".datepicker").datepicker("option", "dateFormat", DateFormat);
         
+        //Sppiner Start
         
           
+        //$(function () {
  
+        //    $('BODY').jLoadingOverlay('')
+        //    setInterval(
+        //    function () {
+        //        if (open) {
+        //            $('BODY').jLoadingOverlay('close');
+        //            open = false;
+        //        }
+        //        else {
+        //            $('BODY').jLoadingOverlay('');
+        //            open = true;
+        //        }
+        //    }, 3000);
+        //})
+        //Sppiner End
 
         $("#dialog").dialog({
             autoOpen: false,
@@ -217,6 +254,7 @@
                     "click": function () {
                         //alert('@Model.Form.StatusId');
                         $(this).dialog("close");
+                        ShowSppiner();
                         var input = $("<input>")
 					   .attr("type", "hidden")
 					   .attr("name", "CloseButton").val("CloseButton");
@@ -234,6 +272,7 @@
                         var signoutUrl = '@Url.Action("Delete", "Survey")';
                         // alert('Don\'t Save');
                         //  var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
+                        ShowSppiner();
                         $.ajax({
                             url: signoutUrl,
                             type: 'POST',
@@ -247,10 +286,11 @@
                         });
                         function successFunc(data) {
                             $(this).dialog("close");
-                            var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data;
+                            var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session["SelectedOrgId"];
                             window.location.href = homePageUrl;
                         }
                         function errorFunc(data) {
+                            CloseSppiner();
                             alert('failed');
                         }
 
@@ -480,6 +520,7 @@
 
         /*Exit the survey */
         $("#Close").click(function (e) {
+            // ShowSppiner();
             e.preventDefault();
             //alert('close')
 
@@ -487,7 +528,7 @@
             if ($('#FormHasChanged').val() == 'True') {
                 $("#exitdialog").dialog("open");
             } else {
-
+                ShowSppiner();
                 //            var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
                 //            window.location.href = homePageUrl;
                 DeleteRecord();
@@ -539,15 +580,27 @@
 
         $("#Close1").click(function (e) {
             // alert('close1')
+            //ShowSppiner();
             e.preventDefault();
             CCE_HasFormValuesChanged();
             if ($('#FormHasChanged').val() == 'True') {
                 $("#exitdialog").dialog("open");
             } else {
+                ShowSppiner();
                 DeleteRecord();
             }
         });
+        ///Savebutton
+        $("#Savebutton").click(function (e) {
+            ShowSppiner();
 
+        });
+        $("#Savebutton1").click(function (e) {
+            ShowSppiner();
+        });
+        $('.pages a[href]').click(function (e) {
+            ShowSppiner();
+        });
 
         /*Open the modal popup on link click*/
         $('#copy').click(function () {
@@ -584,7 +637,7 @@
                 var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
                 SignOutAndRedirect(signoutUrl, homePageUrl);
             } else {
-                var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data;
+                var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session["SelectedOrgId"];
                 window.location.href = homePageUrl;
             }
 
@@ -634,7 +687,7 @@
         $("#RelateNavigation").dialog("close");
     }
     function NavigateToChild(ViewId) {
-
+        ShowSppiner();
         $('#RelateButtonWasClicked_Temp').val(ViewId)
         $('#RelateButtonWasClicked').val(ViewId);
         var temp = HasResponse(ViewId);
@@ -658,7 +711,7 @@
     function ReadRelatedResponse(ViewId) {
 
         var signoutUrl = '@Url.Action("ReadResponseInfo", "Survey")' + '?SurveyId=' + '@Model.Form.SurveyInfo.SurveyId' + '&ViewId=' + ViewId + '&ResponseId=' + '@Model.Form.ResponseId' + '&FormValuesHasChanged=' + $('#FormHasChanged').val() + '&CurrentPage=' + '@Model.Form.CurrentPage';
-
+        ShowSppiner();
         $.ajax({
             url: signoutUrl,
             type: 'GET',
@@ -674,6 +727,7 @@
             $('#RelateButtonWasClicked_Temp').val(ViewId)
             $('#RelateButtonWasClicked').val(ViewId);
             $('#RelateNavigation').html(data);
+            CloseSppiner();
             OpenRelateNavigationDialog();
 
         }
@@ -751,7 +805,7 @@
 
     }
     function GoHome() {
-
+        ShowSppiner();
        $('#myform').validationEngine('detach');
         $("#myform")[0].Go_Home_action.value = 'true';
 
@@ -763,6 +817,7 @@
     }
 
     function GoOneLevelUp() {
+        ShowSppiner();
         $('#myform').validationEngine('detach');
         $("#myform")[0].Go_One_Level_Up_action.value = 'true';
 
@@ -985,13 +1040,13 @@
                  &nbsp;
                  @if (Model.Form.CurrentPage != 1)
 			   {
-                     <button class="default prev" id="PreviousButton" value="PreviousButton" onclick="Previous();" name="PreviousButton" type="button"> &nbsp; Previous</button>
+                     <button class="default prev" id="PreviousButton" value="PreviousButton" onclick="ShowSppiner(); Previous();" name="PreviousButton" type="button"> &nbsp; Previous</button>
 			   }
              </div>
 
              <div id="savediv" align="center">
                  @*<button class="default save"  type="button" id ="Savebutton" onclick="Save();" name="Savebutton" value="save"> Save & Close</button>*@
-                 <button class="default save" id="Savebutton2" type="submit" onclick="Save();" name="Savebutton" value="Submit" style="margin-right:10px;">Save</button>
+                 <button class="default save" id="Savebutton2" type="submit" onclick="ShowSppiner();Save();" name="Savebutton" value="Submit" style="margin-right:10px;">Save</button>
                  <button class="default save" id="Savebutton" type="submit" name="Submitbutton" value="Submit" style="width:126px;margin-right:10px;">Save & Close</button>
                  <button class="default exitsurvey" id="Close1" type="submit" name="Submitbutton" value="Submit" style="padding: 4px 6px 4px 6px !important;">Exit</button>
              </div>
@@ -1006,7 +1061,7 @@
    else
 	   {
                  <div id="next" align="right">
-                     <button class="default next" name="ContinueButton" id="ContinueButton" onclick="Continue();" type="button">Continue &nbsp; </button>
+                     <button class="default next" name="ContinueButton" id="ContinueButton" onclick="ShowSppiner(); Continue();" type="button">Continue &nbsp; </button>
                  </div>
 	   }
 

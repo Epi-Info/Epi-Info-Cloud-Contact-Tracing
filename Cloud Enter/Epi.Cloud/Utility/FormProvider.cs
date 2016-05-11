@@ -649,7 +649,8 @@ namespace Epi.Web.MVC.Utility
         {
             var checkBox = new CheckBox (fieldAttributes,formWidth,formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
             {
-                Value = controlValue
+                Value = controlValue,
+                Response = controlValue
             };
 
             return checkBox;

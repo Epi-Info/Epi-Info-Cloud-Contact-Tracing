@@ -117,8 +117,8 @@ namespace Epi.Web.MVC
               routes.MapRoute
                 (
                     null, // Route name
-                    "FormResponse/CheckForConcurrency/{ResponseId}", // URL with parameters
-                    new { controller = "FormResponse", action = "CheckForConcurrency", ResponseId = UrlParameter.Optional }
+                    "FormResponse/CheckForConcurrency", // URL with parameters
+                    new { controller = "FormResponse", action = "CheckForConcurrency" }
                 ); 
             routes.MapRoute
             (
@@ -142,8 +142,8 @@ namespace Epi.Web.MVC
             routes.MapRoute
             (
                 null, // Route name
-                "Home/{surveyid}", // URL with parameters
-                new { controller = "Home", action = "Index", surveyid = UrlParameter.Optional}
+                "Home/{surveyid}/{orgid}", // URL with parameters
+                new { controller = "Home", action = "Index", surveyid = UrlParameter.Optional, orgid = UrlParameter.Optional }
             ); // Parameter defaults
 
             routes.MapRoute
@@ -383,11 +383,11 @@ namespace Epi.Web.MVC
                   new { controller = "AdminUser", action = "UserInfo", userid = UrlParameter.Optional, iseditmode = UrlParameter.Optional, orgid = UrlParameter.Optional }
               ); // Parameter defaults
 
-            routes.MapRoute(
-               "Default", // Route name
-               "{*url}", // URL with parameters
-               new { controller = "Login", action = "Index", id = UrlParameter.Optional }
-              );
+            //routes.MapRoute(
+            //   "Default", // Route name
+            //   "{*url}", // URL with parameters
+            //   new { controller = "Login", action = "Index", id = UrlParameter.Optional }
+            //  );
               
         }
     }

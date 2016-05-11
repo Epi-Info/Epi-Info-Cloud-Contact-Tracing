@@ -49,7 +49,7 @@ namespace Epi.Web.MVC.Controllers
         }
 
         [HttpGet]
-        public ActionResult Index(string surveyid)
+        public ActionResult Index(string surveyid, int orgid=-1)
         {
 
             int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
@@ -67,7 +67,12 @@ namespace Epi.Web.MVC.Controllers
                
                 GetFormModel(surveyid, UserId, UserId1, out OrgnizationId, out FormModel);
                 
-             
+                if (orgid == -1)
+                {
+                Session["SelectedOrgId"] = OrgnizationId;
+                }else{
+                    Session["SelectedOrgId"] = orgid;
+                }
                 System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"(\r\n|\r|\n)+");
 
 

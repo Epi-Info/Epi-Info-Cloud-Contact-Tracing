@@ -114,7 +114,8 @@ var pageId = $('#hidPageNumber').val();
         e.preventDefault();
      $("input[id=hidSelectedResponseId]").val($(this).val());
       /*  */
-        var ActionUrl = '@Url.Action("CheckForConcurrency", "FormResponse")' + '?ResponseId=' + $("input[id=hidSelectedResponseId]").val();
+     var id = $("input[id=hidSelectedResponseId]").val();
+       var ActionUrl = '@Url.Action("CheckForConcurrency", "FormResponse")' + '?ResponseId=' + id;
       
         $.ajax({
             url: ActionUrl,
@@ -161,7 +162,10 @@ var pageId = $('#hidPageNumber').val();
             {
                
                 // if time elapsed is less the   system timeout
-              
+                //alert("EditingDuration "+ EditingDuration);
+                //alert("SessionTimeOut "+ SessionTimeOut);
+                //alert("loggedInUserId "+ loggedInUserId);
+                //alert("data.LastActiveUserId " + data.LastActiveUserId);
                 if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
                     
                     $('#inlinecontent').simpledialog({'mode': 'blank',
@@ -185,7 +189,8 @@ var pageId = $('#hidPageNumber').val();
                 }
                 else {
                    
-                    UnLockRecordForDelete(ResponseId);
+                    var Rid = $("input[id=hidSelectedResponseId]").val();
+                    UnLockRecordForDelete(Rid);
 
                 }
               
@@ -410,7 +415,7 @@ var pageId = $('#hidPageNumber').val();
     }
     function UnLockRecordForDelete(ResponseId) {
 
-        var ActionUrl = '@Url.Action("UnLock", "FormResponse")' + '?ResponseId=' + ResponseId ;
+        var ActionUrl = '@Url.Action("UnLock", "FormResponse")' + '?ResponseId=' + ResponseId + "&RecoverLastRecordVersion=" + false ;
         $.ajax({
             url: ActionUrl,
             type: 'POST',
@@ -426,7 +431,7 @@ var pageId = $('#hidPageNumber').val();
             {
                // $("#exitdialog").data('ResponseId', ResponseId)
               //  $("#exitdialog").dialog("open");
-                $(this).simpledialog({
+                $('#inlinecontent1').simpledialog({
                     'mode': 'blank',
                     'prompt': false,
                     'forceInput': false,
