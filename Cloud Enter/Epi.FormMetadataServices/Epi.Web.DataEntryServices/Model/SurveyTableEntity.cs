@@ -1,9 +1,9 @@
-﻿namespace Epi.Web.DataEntryServices.Model
-{
-    public class SurveyTableEntity
+﻿namespace Epi.Cloud.DataEntryServices.Model
+{ 
+    public class SurveyQuestionandAnswser
     {
-        public string QuestionName { get; set; }
-        public string Answer { get; set; }
+        public string QName { get; set; }
 
+        public string Answer { get; set; }
     }
 }

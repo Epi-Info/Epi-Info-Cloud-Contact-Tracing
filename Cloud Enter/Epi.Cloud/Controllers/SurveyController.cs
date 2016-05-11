@@ -22,7 +22,7 @@ namespace Epi.Web.MVC.Controllers
     public class SurveyController : Controller
     {
         //Table Storage
-        private ISurveyTableStorageFacade _isurveyTableStorageFacade;
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
 
 
         private ISecurityFacade _isecurityFacade;
@@ -318,9 +318,9 @@ namespace Epi.Web.MVC.Controllers
 
                          _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
-                        //Insert survey response to TableStorage
-                        _isurveyTableStorageFacade = new SurveyTableStorageFacade();
-                        _isurveyTableStorageFacade.InsertSurveyResponseToTableStorage(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                        //Insert Survey response to DocumentDB
+                        //_isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+                       // _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
 
                         if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
