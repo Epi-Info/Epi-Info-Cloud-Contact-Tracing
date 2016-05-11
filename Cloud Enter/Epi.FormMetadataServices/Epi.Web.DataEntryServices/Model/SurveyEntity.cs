@@ -1,29 +1,30 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.Azure.Documents;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 
-namespace Epi.Web.DataEntryServices.Model
+namespace Epi.Cloud.DataEntryServices.Model
 {
-    public class SurveyEntity : TableEntity
+    public class Survey : Resource
     {
-        public SurveyEntity() { }
-        public SurveyEntity(string responseId, string surveyId)
-        {
-            this.PartitionKey = responseId;
-            this.RowKey = surveyId;
-            this.Timestamp = DateTime.Now;
-        }
+        public SurveyProperties SurveyProperties { get; set; } 
 
-        public List<SurveyTableEntity> SurveyTableEntity { get; set; }
+        public List<SurveyQuestionandAnswer> SurveyQuestionandAnswer { get; set; } 
+
+    }
+    public class SurveyProperties 
+    { 
+        public string RecStatus { get; set; }
+        public string GlobalRecordID { get; set; } 
+
+        public string CaseID { get; set; }
+    }
+    public class SurveyQuestionandAnswer
+    {
+        public string GlobalRecordID { get; set; }
+        public List<KeyValuePair<string, string>> SurveyQAList { get; set; }
+        public DateTime DateOfInterview { get; set; }
         public int PageNumber { get; set; }
-        public string SurveyData { get; set; }
-        public int StatusId { get; set; }
         public string SurveyName { get; set; }
-        public DateTime DateCreated { get; set; }
-
-        public DateTime DateUpdated { get; set; }
-        public string UserEmail { get; set; }
-        public bool IsLocked { get; set; }
-
     }
 }

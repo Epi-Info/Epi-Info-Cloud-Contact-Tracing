@@ -2,11 +2,11 @@
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 
-namespace Epi.Web.DataEntryServices
+namespace Epi.Cloud.DataEntryServices
 {
     public class TableStorageInfo
     {
-        string tblname = "SurveyTable";
+        
         // CloudTable table = CreateTableAsync(tblname).Result;
 
         /// <summary>
@@ -77,6 +77,13 @@ namespace Epi.Web.DataEntryServices
         }
 
 
+    }
+    /// <summary>
+    /// Get the Document db config and if database is not avaliable and created database in document db
+    /// </summary>
+    public class DocumentDBInfo
+    {
+         
     }
 }
 
