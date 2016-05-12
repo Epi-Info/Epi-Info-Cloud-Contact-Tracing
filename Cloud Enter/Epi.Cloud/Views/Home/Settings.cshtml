@@ -1,4 +1,5 @@
-﻿@model List<Epi.Web.MVC.Models.SettingsInfoModel>
+﻿@using Epi.Web.MVC.Constants
+@model List<Epi.Web.MVC.Models.SettingsInfoModel>
 <div id="formtitle">
 	<h2 class="surveyTitle">@Model[0].FormName </h2>
 </div>
@@ -343,13 +344,13 @@
 	}
 	$(document).ready(function () {
 	    MakeShareable();
-	  // alert('@Session["IsOwner"]'.toUpperCase())
-	    if ('@Session["UsertRole"]' == "2" && '@Session["IsOwner"]'.toUpperCase() == "FALSE") {
+	  // alert('@Session[SessionKeys.IsOwner]'.toUpperCase())
+	    if ('@Session[SessionKeys.UsertRole]' == "2" && '@Session[SessionKeys.IsOwner]'.toUpperCase() == "FALSE") {
 	        $('#SupperAdminDiv').hide();
 	    }
-	        if ('@Session["IsDemoMode"]' == "TRUE")
+	        if ('@Session[SessionKeys.IsDemoMode]' == "TRUE")
 	        {
-	            if ('@Session["IsOwner"]'.toUpperCase() == "TRUE") {
+	            if ('@Session[SessionKeys.IsOwner]'.toUpperCase() == "TRUE") {
 	                disableElements($('#SupperAdminDiv').children());
 	                disableElements($('#UserSelect').children());
 	            }

@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.FormResponseInfoModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.FormResponseInfoModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Form Details"; //+ " - " +
       // Model.SurveyName + " - " + Model.IsDraftModeStyleClass + " - Mobile";  
@@ -307,7 +308,7 @@ var pageId = $('#hidPageNumber').val();
     }
     function openEWAVLiteURL()
     {
-        window.open('@System.Configuration.ConfigurationManager.AppSettings["EWAVLiteBaseURL"]?userid=@Session["UGuid"]&datasourceid=@Model.FormInfoModel.FormId');
+        window.open('@System.Configuration.ConfigurationManager.AppSettings["EWAVLiteBaseURL"]?userid=@Session[SessionKeys.UGuid]&datasourceid=@Model.FormInfoModel.FormId');
     }
 
     // Check For Concurrency
@@ -480,7 +481,7 @@ var pageId = $('#hidPageNumber').val();
             Home</h2>
     </div>
     <div id="userwelcome">
-        Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp;
+        Welcome <strong>@Session[SessionKeys.UserFirstName]&nbsp; @Session[SessionKeys.UserLastName]</strong>&nbsp;
         | &nbsp; @*  <a href="#">Log Out</a>*@
         @Html.ActionLink("Log Out", "LogOut", "FormResponse", null, null)
     </div>

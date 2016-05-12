@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.OrgListModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.OrgListModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Site Administration";// + " - "+ 
 	// Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
@@ -16,7 +17,7 @@
  
 	
 	<div id="userwelcome">
-		Welcome <strong>@Session["UserFirstName"] @Session["UserLastName"]</strong>&nbsp; | &nbsp;
+		Welcome <strong>@Session[SessionKeys.UserFirstName] @Session[SessionKeys.UserLastName]</strong>&nbsp; | &nbsp;
 	  @*  <a href="#">Log Out</a>*@
 	  
 	  @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;

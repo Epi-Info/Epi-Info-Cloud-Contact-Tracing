@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.FormResponseInfoModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.FormResponseInfoModel
 <div id="formtitle">
     <h2 class="surveyTitle" style="line-height: 120%;">@Model.FormInfoModel.FormName
     </h2>
@@ -9,7 +10,7 @@
         $("#btnsearch").click(function () {
             $("#searchbox").toggle();
         });
-            if ('@Session["IsDemoMode"]' == "TRUE")         
+            if ('@Session[SessionKeys.IsDemoMode]' == "TRUE")         
             {
                // $('[name="AddNewFormId"]').attr("disabled", true);
                // $('[name="DeleteButton"]').attr("disabled", true);
@@ -20,7 +21,7 @@
 
     function openEWAVLiteURL()
     {
-        window.open('@System.Configuration.ConfigurationManager.AppSettings["EWAVLiteBaseURL"]?userid=@Session["UGuid"]&datasourceid=@Model.FormInfoModel.FormId');
+        window.open('@System.Configuration.ConfigurationManager.AppSettings["EWAVLiteBaseURL"]?userid=@Session[SessionKeys.UGuid]&datasourceid=@Model.FormInfoModel.FormId');
     }
 
 </script>
@@ -37,7 +38,7 @@
             Launch Analytics
         </button>
     }
-    @if (Model.FormInfoModel.IsOwner || (Session["UsertRole"].ToString() == "2" && Model.FormInfoModel.IsShared))
+    @if (Model.FormInfoModel.IsOwner || (Session[SessionKeys.UsertRole].ToString() == "2" && Model.FormInfoModel.IsShared))
     {
         <span>&nbsp;&nbsp;</span>
         <button id="btneditsettings" onclick="GetSettings()" class="default settings" type="button">

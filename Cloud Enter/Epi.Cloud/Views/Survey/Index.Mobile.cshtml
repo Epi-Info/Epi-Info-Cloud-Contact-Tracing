@@ -1,4 +1,4 @@
-﻿
+﻿@using Epi.Web.MVC.Constants
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Form";
 }
@@ -717,7 +717,7 @@ function SaveForm() {
 
 <div id="pageHeader">
   	@*<div id="pageTitle"><h2>@Model.Form.SurveyInfo.SurveyName</h2></div>
-   	<div id="userwelcome">Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;
+   	<div id="userwelcome">Welcome <strong>@Session[SessionKeys.UserFirstName]&nbsp; @Session[SessionKeys.UserLastName]</strong>&nbsp; | &nbsp;
 	    <a href="#">Log Out</a>*@
 	    @*Html.ActionLink("Log Out", "LogOut", "Survey", null, null)	
     	</div>
@@ -729,7 +729,7 @@ function SaveForm() {
 	
 {  
  <div id="formdisplay" class="@Model.Form.IsDraftModeStyleClass.ToString()" style="">
-  @if (@Model.Form.SurveyInfo.SurveyId != @Session["RootFormId"].ToString())
+  @if (@Model.Form.SurveyInfo.SurveyId != @Session[SessionKeys.RootFormId].ToString())
      {
 	<div id="relatenav" style="padding-bottom:10px;">
             @* <button class=""   id ="Home" type="button" onclick="GoHome()" name="Home"  >  Main Record</button>
@@ -858,8 +858,8 @@ function SaveForm() {
             <input type="hidden"  name="Go_Home_action" value="false" />
             <input type="hidden"  name="Go_One_Level_Up_action" value="false" />
             <input type="hidden"  name="Do_Not_Save_action" value="false" />
-	        <input type="hidden"  id="RelateButtonWasClicked"  name="Requested_View_Id" value="@HttpContext.Current.Session["RequestedViewId"]" /> 
-            <input type="hidden"  id="RelateButtonWasClicked_Temp"  name="Requested_View_Id_Temp" value="@HttpContext.Current.Session["RequestedViewId"]" /> 
+	        <input type="hidden"  id="RelateButtonWasClicked"  name="Requested_View_Id" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" /> 
+            <input type="hidden"  id="RelateButtonWasClicked_Temp"  name="Requested_View_Id_Temp" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" /> 
             <input type="hidden"  name="HiddenStatusId" id="HiddenStatusId" value="false" />
             <input type="hidden"  name="HiddenIsSaved" id="HiddenIsSaved" value="false" /> 
             <input type="hidden"  name="HiddensuccessContent" id="HiddensuccessContent" value="false" /> 

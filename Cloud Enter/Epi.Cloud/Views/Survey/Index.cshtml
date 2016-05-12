@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.SurveyModel        
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.SurveyModel        
         
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Form";
@@ -286,7 +287,7 @@
                         });
                         function successFunc(data) {
                             $(this).dialog("close");
-                            var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session["SelectedOrgId"];
+                            var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session[SessionKeys.SelectedOrgId];
                             window.location.href = homePageUrl;
                         }
                         function errorFunc(data) {
@@ -637,7 +638,7 @@
                 var homePageUrl = '@Url.Action("Index", "Home")' + '/' + '@Model.Form.SurveyInfo.SurveyId';
                 SignOutAndRedirect(signoutUrl, homePageUrl);
             } else {
-                var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session["SelectedOrgId"];
+                var homePageUrl = '@Url.Action("Index", "Home")' + '/' + data +'/'+ @Session[SessionKeys.SelectedOrgId];
                 window.location.href = homePageUrl;
             }
 
@@ -909,7 +910,7 @@
   
 @*<div id="userwelcome">
     
-    Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;*@
+    Welcome <strong>@Session[SessionKeys.UserFirstName]&nbsp; @Session[SessionKeys.UserLastName]</strong>&nbsp; | &nbsp;*@
 	@*<a href="#">Log Out</a>*@
 	@*@Html.ActionLink("Log Out", "LogOut", "Survey", null, null)*@
 
@@ -927,7 +928,7 @@
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "myform", @class = "" }))
 	{  
  <div id="formdisplay" class="@Model.Form.IsDraftModeStyleClass.ToString()" style="">
- @if (@Model.Form.SurveyInfo.SurveyId != @Session["RootFormId"].ToString())
+ @if (@Model.Form.SurveyInfo.SurveyId != @Session[SessionKeys.RootFormId].ToString())
      {
 	<div id="relatenav" style="padding-bottom:10px;">
             <button class="exitsurvey default"   id ="Home" type="button" onclick="GoHome()" name="Home" style="width:150px; font-size:10pt; float:left; background: #00B050;"><img src="../../Content/images/root.png" style="width:16px; vertical-align: text-top;"/> Main Record</button>
@@ -1028,8 +1029,8 @@
 
          <input type="hidden" name="Go_One_Level_Up_action" value="false" />
          <input type="hidden" id="FormHasChanged" name="Form_Has_Changed" value="@Model.Form.FormValuesHasChanged" />
-         <input type="hidden" id="RelateButtonWasClicked" name="Requested_View_Id" value="@HttpContext.Current.Session["RequestedViewId"]" />
-         <input type="hidden" id="RelateButtonWasClicked_Temp" name="Requested_View_Id_Temp" value="@HttpContext.Current.Session["RequestedViewId"]" />
+         <input type="hidden" id="RelateButtonWasClicked" name="Requested_View_Id" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" />
+         <input type="hidden" id="RelateButtonWasClicked_Temp" name="Requested_View_Id_Temp" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" />
          <input type="hidden" id="LogoutButtoneWasClicked" name="Log_Out" value="" />
 
          @*  <input type="hidden"  id="Parent_Form_Id" name="Parent_Form_Id" value="" />

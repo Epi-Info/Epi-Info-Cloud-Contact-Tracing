@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.FormModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.FormModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Home"; //+ " - " +
        // Model.SurveyName + " - " + Model.IsDraftModeStyleClass + " - Mobile";  
@@ -47,7 +48,7 @@
  
 <div id="pageHeader">
   	<div id="pageTitle"><h2>Home</h2></div>
-   	<div id="userwelcome">Welcome <strong>@Session["UserFirstName"]&nbsp; @Session["UserLastName"]</strong>&nbsp; | &nbsp;
+   	<div id="userwelcome">Welcome <strong>@Session[SessionKeys.UserFirstName]&nbsp; @Session[SessionKeys.UserLastName]</strong>&nbsp; | &nbsp;
   @*  <a href="#">Log Out</a>*@
   @Html.ActionLink("Log Out", "LogOut", "Home", null, null)	
     </div>

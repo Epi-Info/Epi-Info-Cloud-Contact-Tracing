@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.FormModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.FormModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Home";// + " - "+ 
 	// Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
@@ -170,7 +171,7 @@
                     SetSettingButtonValue('@Model.SelectedForm');
                     $('#' + '@Model.SelectedForm').addClass('metro-set');
                     $("#FORM_SELECTED_HIDDEN").val('@Model.SelectedForm');
-                    ReadResponses('@Model.SelectedForm', '@Session["PageNumber"]', '', '');
+                    ReadResponses('@Model.SelectedForm', '@Session[SessionKeys.PageNumber]', '', '');
                     // alert(2);
                     //test
                 }
@@ -487,7 +488,7 @@
             //ActionUrl = '@Url.Action("ReadSortedResponseInfo","Home")' + "?formid=" + ResultUrl + "&page=1";
             //            ReadResponse(ActionUrl);
             //ReadResponses(ResultUrl, 1, '', '');
-            var OrgId = '@Session["SelectedOrgId"]';
+            var OrgId = '@Session[SessionKeys.SelectedOrgId]';
             $("#FORM_SelectedOrgId_HIDDEN").val(OrgId);
             FilterRecordsByOrg(OrgId);
         }
@@ -589,7 +590,7 @@
     function ReadResponses(formid, pagenumber, sortOrder, sortField) {
 
 
-        var SessioOrgId =' @Session["SelectedOrgId"]';
+        var SessioOrgId =' @Session[SessionKeys.SelectedOrgId]';
 
         //  alert("session: " + SessioOrgId +"  DropDown " + $("#dropdown-2").val());
 

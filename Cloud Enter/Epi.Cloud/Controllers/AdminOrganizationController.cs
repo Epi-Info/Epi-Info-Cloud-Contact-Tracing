@@ -11,6 +11,8 @@ using System.Web.Configuration;
 using Epi.Web.MVC.Models;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using Epi.Web.MVC.Constants;
+
 namespace Epi.Web.MVC.Controllers
 {
     public class AdminOrganizationController : Controller
@@ -27,8 +29,8 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
-            int UserHighestRole = int.Parse(Session["UserHighestRole"].ToString());
+            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             OrganizationRequest Request = new OrganizationRequest();
             Request.UserId = UserId;
             Request.UserRole = UserHighestRole;
@@ -75,8 +77,8 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult OrgInfo(OrgAdminInfoModel OrgAdminInfoModel)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session["UserId"].ToString());
-            int UserHighestRole = int.Parse(Session["UserHighestRole"].ToString());
+            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             string url = "";
             if (this.Request.UrlReferrer == null)
             {

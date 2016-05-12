@@ -1,4 +1,5 @@
-﻿@model Epi.Web.MVC.Models.UserOrgModel
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.UserOrgModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Site Administration";// + " - "+ 
     // Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
@@ -7,7 +8,7 @@
 <link href="@Url.Content("~/Content/css/eweAdmin.css")" rel="Stylesheet" type="text/css" />
 <script>
     $(document).ready(function () {
-        //if ('@Session["IsDemoMode"]' == "TRUE") 
+        //if ('@Session[SessionKeys.IsDemoMode]' == "TRUE") 
             //{
                 //disableElements($('#adminpaging').children());
            // }       
@@ -61,7 +62,7 @@
  
     </script>
     <div id="userwelcome">
-        Welcome <strong>@Session["UserFirstName"] @Session["UserLastName"]</strong>&nbsp;
+        Welcome <strong>@Session[Epi.Web.MVC.Constants.SessionKeys.UserFirstName] @Session[Epi.Web.MVC.Constants.SessionKeys.UserLastName]</strong>&nbsp;
         | &nbsp; @*  <a href="#">Log Out</a>*@
         @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;
         @Html.ActionLink("Log Out", "LogOut", "Home", null, null)
@@ -92,7 +93,7 @@
             <select id="OrgList" onchange="GetList()">
                 @foreach (var Org in Model.OrgList)
                 {
-                    if (Org.OrganizationId == Convert.ToInt16(Session["CurrentOrgId"]))
+                    if (Org.OrganizationId == Convert.ToInt16(Session[Epi.Web.MVC.Constants.SessionKeys.CurrentOrgId]))
                     {
                     <option value= '@Org.OrganizationId' selected>@Org.Organization</option>
                     }

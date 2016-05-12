@@ -5,6 +5,8 @@ using System.Web;
 using System.Net.Mail;
 using System.Net;
 using System.Configuration;
+using Epi.Web.MVC.Constants;
+
 namespace Epi.Web.Utility
 {
     public class ExceptionMessage
@@ -124,11 +126,11 @@ namespace Epi.Web.Utility
                 pMessage += "Inner Exception :\n" + exc.InnerException + ";" +
                             "Exception StackTrace:\n" + exc.StackTrace + "\n\n\n";
 
-                if (!string.IsNullOrEmpty(Context.Session["UserFirstName"].ToString()))
+                if (!string.IsNullOrEmpty(Context.Session[SessionKeys.UserFirstName].ToString()))
                 {
-                    pMessage += "Logged in User: \n" + Context.Session["UserFirstName"].ToString() + " " + Context.Session["UserLastName"].ToString() + "\n\n\n"; ;
-                    pMessage += "Form Id: \n" + Context.Session["RootFormId"] + "\n\n\n"; ;
-                    pMessage += "Response Id: \n" + Context.Session["RootResponseId"] + "\n\n\n"; ;
+                    pMessage += "Logged in User: \n" + Context.Session[SessionKeys.UserFirstName].ToString() + " " + Context.Session[SessionKeys.UserLastName].ToString() + "\n\n\n"; ;
+                    pMessage += "Form Id: \n" + Context.Session[SessionKeys.RootFormId] + "\n\n\n"; ;
+                    pMessage += "Response Id: \n" + Context.Session[SessionKeys.RootResponseId] + "\n\n\n"; ;
                 }
 
 
