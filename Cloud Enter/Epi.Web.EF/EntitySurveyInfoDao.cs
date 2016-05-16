@@ -486,43 +486,57 @@ namespace Epi.Web.EF
         }
 
 
-   public void InsertFormdefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList)
-       {
-      
-       try
-           {
-           List<string> ColumnNames = new List<string>();
-           if (!IsSqlProject)
-               {
-                  ColumnNames = MetaDaTaColumnNames();
-               }
-           else
-               {
-                   ColumnNames = ControlsNameList;
-               }
-           int i = 1;
-           foreach (string Column in ColumnNames)
-               {
-              
-               using (var Context = DataObjectFactory.CreateContext())
-                   {
+        public void InsertFormdefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList)
+        {
 
-                   ResponseDisplaySetting SettingEntity = Mapper.Map(FormId, i, Column);
+            try
+            {
+                //Delete old columns
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    Guid Id = new Guid(FormId);
+                    IQueryable<ResponseDisplaySetting> ColumnList = Context.ResponseDisplaySettings.Where(x => x.FormId == Id);
 
-                   Context.AddToResponseDisplaySettings(SettingEntity);
 
-                   Context.SaveChanges();
-                   
-                   }
-               i++;
-               }
-           }
-       catch (Exception ex)
-           {
-           throw (ex);
-           }
-       }
-   public void UpdateParentId(string SurveyId ,int ViewId , string ParentId)
+                    foreach (var item in ColumnList)
+                    {
+                        Context.ResponseDisplaySettings.DeleteObject(item);
+                    }
+                    Context.SaveChanges();
+                }
+                // Adding new columns
+                List<string> ColumnNames = new List<string>();
+                if (!IsSqlProject)
+                {
+                    ColumnNames = MetaDaTaColumnNames();
+                }
+                else
+                {
+                    ColumnNames = ControlsNameList;
+                }
+                int i = 1;
+                foreach (string Column in ColumnNames)
+                {
+
+                    using (var Context = DataObjectFactory.CreateContext())
+                    {
+
+                        ResponseDisplaySetting SettingEntity = Mapper.Map(FormId, i, Column);
+
+                        Context.AddToResponseDisplaySettings(SettingEntity);
+
+                        Context.SaveChanges();
+
+                    }
+                    i++;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public void UpdateParentId(string SurveyId ,int ViewId , string ParentId)
        {
        try
            {

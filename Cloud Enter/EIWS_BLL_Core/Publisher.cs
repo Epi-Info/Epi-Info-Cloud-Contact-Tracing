@@ -318,13 +318,14 @@ namespace Epi.Web.BLL
 
 
                                     this.SurveyInfoDao.UpdateSurveyInfo(ToBusinessObject(pRequestMessage, SurveyId));
-                                ////Insert Connection string..
-                                //DbConnectionStringBO DbConnectionStringBO = new DbConnectionStringBO();
-                                //DbConnectionStringBO = GetConnection(pRequestMessage.DBConnectionString);
-                                //DbConnectionStringBO.SurveyId = SurveyId;
-                                //this.SurveyInfoDao.InsertConnectionString(DbConnectionStringBO);
-
-                                Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
+                            ////Insert Connection string..
+                            //DbConnectionStringBO DbConnectionStringBO = new DbConnectionStringBO();
+                            //DbConnectionStringBO = GetConnection(pRequestMessage.DBConnectionString);
+                            //DbConnectionStringBO.SurveyId = SurveyId;
+                            //this.SurveyInfoDao.InsertConnectionString(DbConnectionStringBO);
+                            var BO = ToBusinessObject(pRequestMessage, SurveyId);
+                            this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject, GetSurveyControls(BO));
+                            Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
                                 SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
                                 result.ViewIdAndFormIdList = SurveyIdsList;
                                 result.URL = GetURL(pRequestMessage, SurveyId);
