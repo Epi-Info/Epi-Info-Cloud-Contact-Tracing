@@ -1362,8 +1362,8 @@ namespace Epi.Cloud.SqlServer
         /// <returns>Connection instance</returns>
         public override IDbConnection GetConnection()
         {
-            return GetNativeConnection(connectionString);
-            //return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
+            //return GetNativeConnection(connectionString);
+            return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
         }
 
         /// <summary>
