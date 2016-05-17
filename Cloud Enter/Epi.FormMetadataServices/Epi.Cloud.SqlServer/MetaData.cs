@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Data.EF;
+using System.Reflection;
+using System;
+using System.Data;
 
 namespace Epi.Cloud.SqlServer
 {
@@ -151,5 +154,15 @@ namespace Epi.Cloud.SqlServer
 
             }
         }
+
+
+        public DataTable GetDropdownDB(string tableName,string ColumnName)
+        {
+            SqlDatabase sqldb = new SqlDatabase();
+            return sqldb.GetTableData(tableName, ColumnName, string.Empty);            
+        }
+
+     
+
     }
 }

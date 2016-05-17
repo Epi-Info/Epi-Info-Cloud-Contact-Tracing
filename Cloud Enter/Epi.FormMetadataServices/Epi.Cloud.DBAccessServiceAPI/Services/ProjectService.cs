@@ -30,7 +30,14 @@ namespace Epi.Cloud.DBAccessService.Services
             GetmetadataDB getMetadata = new GetmetadataDB();
             var task = getMetadata.MetaDataAsync(Convert.ToInt32(projectid));
             return task.Result;
-        } 
+        }
+
+        public IEnumerable<string> GetDropdownValues(string TableName, string ColumnName)
+        {
+            GetmetadataDB getMetadata = new GetmetadataDB();
+            IEnumerable<string> lstDropdownVal = getMetadata.GetDropDownValuesDb(TableName, ColumnName);
+            return lstDropdownVal;
+        }
 
 
     }

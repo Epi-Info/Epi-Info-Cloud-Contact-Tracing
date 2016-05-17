@@ -10,6 +10,8 @@ using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
+using Epi.Cloud.SqlServer;
+using System.Data;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -173,10 +175,10 @@ namespace Epi.Web.MVC.Utility
                             break;
                         case 10://CheckBox
                                 //Renuka
-                                var _CheckBoxValue = Value;
-                                var checkbox = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
-                                //var checkboxFromXml = GetCheckBoxFromXml(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue);
-                                form.AddFields(checkbox);
+                            var _CheckBoxValue = Value;
+                            var checkbox = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
+                            //var checkboxFromXml = GetCheckBoxFromXml(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue);
+                            form.AddFields(checkbox);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "checkbox", "datasource",Value)); 
                             break;
@@ -196,27 +198,29 @@ namespace Epi.Web.MVC.Utility
                                 _DropDownSelectedValueYN = "No";
                             }
 
-                                var dropdownselectedvalueYN = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValueYN, "Yes&#;No", 11);
+                            var dropdownselectedvalueYN = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValueYN, "Yes&#;No", 11);
 
-                                form.AddFields(dropdownselectedvalueYN);//, "Yes&#;No", 11);
+                            form.AddFields(dropdownselectedvalueYN);//, "Yes&#;No", 11);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "yesno", "datasource",Value)); 
 
                             break;
                         case 12://RadioList
-                                var _GroupBoxValue1 = Value;                               
-                                form.AddFields(GetGroupBox(fieldAttributes, _Width+12, _Height, _GroupBoxValue1));
-                                var _RadioListSelectedValue1 = Value;
-                                string RadioListValues1 = "";
-                                RadioListValues1 = fieldAttributes.ChoicesList;                               
-                                form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, RadioListValues1));
+                            var _GroupBoxValue1 = Value;
+                            form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, _GroupBoxValue1));
+                            var _RadioListSelectedValue1 = Value;
+                            string RadioListValues1 = "";
+                            RadioListValues1 = fieldAttributes.ChoicesList;
+                            form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, RadioListValues1));
 
                             break;
 
                         case 17://DropDown LegalValues
 
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            DropDownValues1 = string.Join("&#;", fieldAttributes.SourceTableValues);
+                            //string DropDownValues1XML = GetDropDownValuesDb(_FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            // DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue1 = Value;
                             form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue1, DropDownValues1, 17, form));
                             //                                             pName, pType, pSource
@@ -226,7 +230,9 @@ namespace Epi.Web.MVC.Utility
                         case 18://DropDown Codes
 
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            DropDownValues2 = string.Join("&#;", fieldAttributes.SourceTableValues);
+                            //string DropDownValues2XML = GetDropDownValuesDb(_FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue2 = Value;
                             form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue2, DropDownValues2, 18, form));
                             //                                             pName, pType, pSource
@@ -236,7 +242,9 @@ namespace Epi.Web.MVC.Utility
                         case 19://DropDown CommentLegal
 
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            DropDownValues = string.Join("&#;", fieldAttributes.SourceTableValues);
+                            DropDownValues = GetDropDownValuesDb(_FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //string DropDownValuesXML = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue = Value;
                             form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form));
                             //                                             pName, pType, pSource
@@ -247,8 +255,8 @@ namespace Epi.Web.MVC.Utility
                             form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
                             break;
                         case 21://GroupBox
-                                var _GroupBoxValue = Value;
-                                form.AddFields(GetGroupBox(fieldAttributes, _Width, _Height, _GroupBoxValue));
+                            var _GroupBoxValue = Value;
+                            form.AddFields(GetGroupBox(fieldAttributes, _Width, _Height, _GroupBoxValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "", "datasource",Value)); 
                             break;
@@ -432,7 +440,8 @@ namespace Epi.Web.MVC.Utility
 
                     return double.Parse(_top.First());
                 }
-                else {
+                else
+                {
 
                     var _top = from Node in
                                    xdoc.Descendants("View")
@@ -530,7 +539,7 @@ namespace Epi.Web.MVC.Utility
             {
                 Value = controlValue
             };
-               
+
             return radiolist;
         }
         private static RadioList GetRadioList(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string RadioListValues, Form form)
@@ -647,7 +656,7 @@ namespace Epi.Web.MVC.Utility
         //Renuka
         private static CheckBox GetCheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
-            var checkBox = new CheckBox (fieldAttributes,formWidth,formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
+            var checkBox = new CheckBox(fieldAttributes, formWidth, formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
             {
                 Value = controlValue,
                 Response = controlValue
@@ -806,7 +815,7 @@ namespace Epi.Web.MVC.Utility
         }
 
 
-//renuka
+        //renuka
         private static Select GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
         {
             var select = new Select(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
@@ -857,10 +866,6 @@ namespace Epi.Web.MVC.Utility
 
             DropDown.EmptyOption = "Select";
 
-
-
-
-
             DropDown.AddChoices(DropDownValues, "&#;");
 
             if (!string.IsNullOrWhiteSpace(_ControlValue))
@@ -869,6 +874,22 @@ namespace Epi.Web.MVC.Utility
             }
 
             return DropDown;
+        }
+        public static string GetDropDownValuesDb(string ControlName, string TableName, string CodeColumnName)
+        {
+            StringBuilder DropDownValues = new StringBuilder();
+
+            MetaData getDropdownVal = new MetaData();
+            DataTable dtDropDownVal = getDropdownVal.GetDropdownDB(TableName, CodeColumnName);
+
+
+            foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)
+            {
+                DropDownValues.Append(_SourceTableValue[CodeColumnName]);                
+
+                DropDownValues.Append("&#;");
+            }
+            return DropDownValues.ToString();
         }
 
         public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName, string CodeColumnName)
@@ -917,15 +938,15 @@ namespace Epi.Web.MVC.Utility
             return DropDownValues.ToString();
         }
 
-	    private static GroupBox GetGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
-	    {
-	        var groupbox = new GroupBox(fieldAttributes, formWidth, formHeight)
-	        {
-	            Value = controlValue
-	        };       
+        private static GroupBox GetGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var groupbox = new GroupBox(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
 
-	        return groupbox;
-	    }
+            return groupbox;
+        }
 
         private static GroupBox GetGroupBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {

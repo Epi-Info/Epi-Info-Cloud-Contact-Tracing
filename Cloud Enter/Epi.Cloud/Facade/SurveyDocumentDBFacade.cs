@@ -3,10 +3,7 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.MVC.Models;
 using MvcDynamicForms;
 using Epi.Cloud.DataEntryServices;
-using System.Dynamic;
-using System.Collections;
 using Epi.Cloud.DataEntryServices.Model;
-using System;
 
 namespace Epi.Web.MVC.Facade
 {

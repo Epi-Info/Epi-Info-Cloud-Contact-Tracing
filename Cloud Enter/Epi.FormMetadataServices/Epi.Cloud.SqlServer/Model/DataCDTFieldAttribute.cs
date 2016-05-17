@@ -60,5 +60,6 @@ namespace Epi.Cloud.SqlServer
         public int? SourceFieldId { get; set; }
         public string List { get; set; }
         public bool? Sort { get; set; }
+        public List<string> SourceTableValues { get; set; }
     }
 }

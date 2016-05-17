@@ -60,8 +60,9 @@
     <Reference Include="Epi.Web.CheckCodeEngine">
       <HintPath>..\Epi.Web.CheckCodeEngine\bin\Debug\Epi.Web.CheckCodeEngine.dll</HintPath>
     </Reference>
-    <Reference Include="EpiInfo.Plugin">
-      <HintPath>..\Epi.Web\bin\EpiInfo.Plugin.dll</HintPath>
+    <Reference Include="EpiInfo.Plugin, Version=7.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Epi.Cloud\bin\EpiInfo.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>

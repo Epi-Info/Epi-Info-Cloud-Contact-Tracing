@@ -91,6 +91,7 @@ namespace MvcDynamicForms.Fields
         public string ShowTextOnRight { get; set; }
         public string ChoicesList { get; set; }
         public string BackgroundColor { get; set; }
+        public List<string> SourceTableValues { get; set; }
     }
 
     public static class XmlAttributeExtensions

@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
-using Epi.Cloud.MetadataServices.MetadataService.Interface;
 using Epi.Cloud.MetadataServices;
 
 namespace Epi.Cloud.FormMetadataServices
@@ -66,7 +63,9 @@ namespace Epi.Cloud.FormMetadataServices
                     IsHidden = false,
                     IsHighlighted = false,
                     IsDisabled = false,
-                    ChoicesList = f.List
+                    ChoicesList = f.List,
+                    SourceTableValues = f.SourceTableValues
+
                 }).ToList();
             }
 
@@ -100,16 +99,13 @@ namespace Epi.Cloud.FormMetadataServices
         public double? PromptLeftPositionPercentage { get; set; }
         public string PromptText { get; set; }
         public double? PromptFontSize { get; set; }
-
         public string PromptFontFamily { get; set; }
         public string PromptFontStyle { get; set; }
         //publi string ControlFontFamily{get;set;}
         // public string ControlFontSize { get; set; } 
         public string PromptScriptName { get; set; }
-
         public string ShouldRepeatLast { get; set; }
         public bool? IsRequired { get; set; }
-
         public bool? IsReadOnly { get; set; }
         public string ShouldRetainImageSize { get; set; }
         public string Pattern { get; set; }
@@ -128,15 +124,15 @@ namespace Epi.Cloud.FormMetadataServices
         public int? TabIndex { get; set; }
         public string HasTabStop { get; set; }
         public string ChoicesList { get; set; }
-
         public string SourceFieldId { get; set; }
+        public List<string> SourceTableValues { get; set; }
     }
 
     public class GetmetadataDB
     {
         // string connStr = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
         //string connStr = "Server=tcp:epiinfocloudserver.database.windows.net,1433;Database=EpiinfoCloudDB;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
-        string connStr = "Server=tcp:gelwebenterss.database.windows.net,1433;Database=EPIInfo7;User ID=saglenz@gelwebenterss;Password=Password123!@#;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+        string connStr = "Server=tcp:epiinfocloudserver.database.windows.net,1433;Database=EPIInfo7;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
 
         public List<CDTProject> MetaDataAsync(int pageid)
         {
@@ -270,6 +266,7 @@ namespace Epi.Cloud.FormMetadataServices
                 // _field.IsHidden=Convert.ToBoolean(field.)
                 //_field.IsHighlighted = Convert.ToBoolean(field.IsHighlighted);
                 //_field.IsDisabled=Convert.ToBoolean(field.)
+                fieldAttributers.SourceTableValues = field.SourceTableValues;
                 fieldattributes.Add(fieldAttributers);
             }
             return fieldattributes;

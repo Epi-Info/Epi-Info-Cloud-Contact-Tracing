@@ -210,3 +210,12 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/PublishHome.pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - Web Deploy (4).pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - Web Deploy (3).pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - Web Deploy (2).pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - FTP.pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - FTP (3).pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - FTP (2).pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/EpicloudenterDBAccessAPI - Web Deploy.pubxml
+/Cloud Enter/Epi.Cloud/Properties/PublishProfiles/EpicloudenterDBAccessAPI - FTP.pubxml

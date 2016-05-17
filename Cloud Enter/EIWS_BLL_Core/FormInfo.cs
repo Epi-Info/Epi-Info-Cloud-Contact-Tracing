@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-
 using Epi.Web.Enter.Interfaces.DataInterface;
 using System.Configuration;
+
 namespace Epi.Web.BLL
 {
     public class FormInfo

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
 using Newtonsoft.Json;
 using System.Net;
 using Epi.Cloud.MetadataServices.DataTypes;
-using System.Configuration;
 
 
 namespace Epi.Cloud.MetadataServices
@@ -18,11 +12,11 @@ namespace Epi.Cloud.MetadataServices
         public MetadataProxy()
         {
             //var test  = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
-            //_apiUrl = "http://epicloudenterdbaccessapi.azurewebsites.net/";
+            //_apiUrl = "http://epicloudapi.azurewebsites.net/";
             _apiUrl = "https://localhost:44379/";
         }
 
-        
+
         protected T GetData<T>(string endpoint)
         {
             string url = FormatUrl(endpoint);
@@ -96,8 +90,8 @@ namespace Epi.Cloud.MetadataServices
                 //ThrowServiceException(resp);
             }
             return default(T);
-        } 
+        }
 
 
-}
+    }
 }

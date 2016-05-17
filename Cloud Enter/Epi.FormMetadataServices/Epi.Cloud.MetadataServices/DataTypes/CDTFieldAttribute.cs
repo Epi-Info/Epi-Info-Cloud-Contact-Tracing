@@ -1,4 +1,5 @@
 ﻿using Epi.Cloud.MetadataServices.MetadataService.Interface;
+using System.Collections.Generic;
 
 namespace Epi.Cloud.MetadataServices.DataTypes
 {
@@ -59,7 +60,7 @@ namespace Epi.Cloud.MetadataServices.DataTypes
         public string Expr1017 { get; set; }
         public bool Sort { get; set; }
         public string List { get; set; }
-
         public string RequiredMessage { get; set; }
+        public List<string> SourceTableValues { get; set; }
     }
 }

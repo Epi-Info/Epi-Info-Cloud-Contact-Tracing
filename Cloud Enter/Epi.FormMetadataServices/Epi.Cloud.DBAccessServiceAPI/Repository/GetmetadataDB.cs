@@ -5,6 +5,7 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Web.Configuration;
 using Epi.Cloud.SqlServer;
+using System.Text;
 
 namespace Epi.Cloud.DBAccessService.Repository
 {
@@ -20,13 +21,12 @@ namespace Epi.Cloud.DBAccessService.Repository
             DataTable dt = new DataTable();
 
             MetaData metaDt = new MetaData();
-            List<MetadataDbFieldAttribute> dataPfieleds = new List<MetadataDbFieldAttribute>();
+            List<MetadataDbFieldAttribute> lstMetaDataFieldsAtr = new List<MetadataDbFieldAttribute>();
 
             //Get the meta data using entity framework passing pageid
-            dataPfieleds = metaDt.GetFieldsByPageAsData(pageid);
+            lstMetaDataFieldsAtr = metaDt.GetFieldsByPageAsData(pageid);
 
-
-            foreach (var data in dataPfieleds)
+            foreach (var data in lstMetaDataFieldsAtr)
             {
                 MetadataFieldAttributes pfiled = new MetadataFieldAttributes();
 
@@ -78,12 +78,50 @@ namespace Epi.Cloud.DBAccessService.Repository
                 pfiled.SourceFieldId = data.SourceFieldId;
                 pfiled.RequiredMessage = "This field is required";
                 pfiled.List = data.List;
+
+                pfiled.SourceTableValues = PopulateCodeTables(data.SourceTableName, data.TextColumnName);
+
                 pfileds.Add(pfiled);
             }
 
             //return pfileds;
 
             return await Task.FromResult(pfileds);
+        }
+
+        //public List<string> PopulateCodeTables(string SourceTableName)
+        //{
+
+        //    if (string.IsNullOrEmpty(SourceTableName)) return null;            
+        //    List<string> lstSourceTableVal = new List<string>();
+        //    lst            
+        //}
+
+        public static List<string> PopulateCodeTables(string TableName, string ColumnName)
+        {
+            if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(ColumnName)) return null;
+            List<string> lstSourceTableVal = new List<string>();
+
+            MetaData getDropdownVal = new MetaData();
+            DataTable dtDropDownVal = getDropdownVal.GetDropdownDB(TableName, ColumnName);
+
+            foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)
+            {
+                lstSourceTableVal.Add(_SourceTableValue[ColumnName].ToString());
+
+                //lstSourceTableVal.Append("&#;");
+            }
+            return lstSourceTableVal;
+        }
+
+        public IEnumerable<string> GetDropDownValuesDb(string TableName, string CodeColumnName)
+        {
+            IEnumerable<string> ooo = null;
+
+
+            MetaData MetaData = new MetaData();
+            MetaData.GetDropdownDB(TableName, CodeColumnName);
+            return ooo;
         }
 
 
