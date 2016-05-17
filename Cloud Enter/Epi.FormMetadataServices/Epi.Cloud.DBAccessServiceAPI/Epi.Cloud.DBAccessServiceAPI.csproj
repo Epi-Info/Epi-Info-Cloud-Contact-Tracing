@@ -294,6 +294,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Areas\HelpPage\Views\Web.config" />
     <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
@@ -313,6 +316,13 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\epicloudapi - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\epicloudapi - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\epiclouddevapi - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\epiclouddevapi - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
