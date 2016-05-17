@@ -48,7 +48,7 @@
         }
         
     </div>
-    @if (Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString()) > 1)
+    @if (Model != null && Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString()) > 1)
     {
         <div style="margin: 10px">
             <a id="showhide" href="#">Show/Hide Details</a></div>

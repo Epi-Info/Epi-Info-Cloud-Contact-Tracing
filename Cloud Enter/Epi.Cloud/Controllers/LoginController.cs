@@ -46,12 +46,6 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.IsDemoMode] = ConfigurationManager.AppSettings["IsDemoMode"].ToUpper();
             else
                 Session[SessionKeys.IsDemoMode] = "null";
-            //   //get the responseId
-            //    responseId = GetResponseId(ReturnUrl);
-            //    //get the surveyId
-            //     string SurveyId = _isurveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0].SurveyId;
-            //     //put surveyId in viewbag so can be retrieved in Login/Index.cshtml
-            //     ViewBag.SurveyId = SurveyId;
             if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
             {
                 var IsDemoMode = System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"];
