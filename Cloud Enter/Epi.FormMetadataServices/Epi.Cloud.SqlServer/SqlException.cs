@@ -4,34 +4,34 @@ namespace Epi.Cloud.SqlServer
     /// SqlException class
     /// </summary>
 	public class SqlException : System.ApplicationException
-	{
-		#region Private data
-		private string sqlStatement;
-		#endregion Private data
+    {
+        #region Private data
+        private string sqlStatement;
+        #endregion Private data
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor with parameters
         /// </summary>
         /// <param name="stmt"> Sql statement</param>
         /// <param name="inner">System Exception</param>
-		public SqlException(string stmt, System.Exception inner) : base(inner.Message, inner)
-		{
-			sqlStatement = stmt;
-		}
-		#endregion Constructors
+        public SqlException(string stmt, System.Exception inner) : base(inner.Message, inner)
+        {
+            sqlStatement = stmt;
+        }
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Read only property SqlStatement
         /// </summary>
-		public string SqlStatement
-		{
-			get
-			{
-				return sqlStatement;
-			}
-		}
-		#endregion Public Properties
-	}
+        public string SqlStatement
+        {
+            get
+            {
+                return sqlStatement;
+            }
+        }
+        #endregion Public Properties
+    }
 }

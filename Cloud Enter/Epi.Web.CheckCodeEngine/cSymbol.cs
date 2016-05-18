@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EpiInfo.Plugin;
-
-namespace Epi.Core.EnterInterpreter
+﻿namespace Epi.Core.EnterInterpreter
 {
     public interface IType
     {
-           string Name { get;}
+        string Name { get; }
     }
 
     public class cSymbol
@@ -34,7 +28,7 @@ namespace Epi.Core.EnterInterpreter
     {
         public VariableSymbol(string pName, EpiInfo.Plugin.DataType pType) : base(pName, pType) { }
         public VariableSymbol(EpiInfo.Plugin.IVariable pVariable) : base(pVariable.Name, pVariable.DataType) { }
-        
+
     }
 
     public class BuiltInTypeSymbol : cSymbol//, IType

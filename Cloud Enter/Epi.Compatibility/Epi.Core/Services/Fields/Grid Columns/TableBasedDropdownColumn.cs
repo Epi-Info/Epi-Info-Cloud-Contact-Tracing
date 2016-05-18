@@ -1,9 +1,6 @@
 using System;
 using System.Data;
 
-using Epi;
-using Epi.Data;
-
 namespace Epi.Fields
 {
     /// <summary>
@@ -49,7 +46,7 @@ namespace Epi.Fields
         {
             tableName = gridDataRow[ColumnNames.DATA_TABLE_NAME].ToString();
             if (gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE] != null &&
-                gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE] != DBNull.Value) 
+                gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE] != DBNull.Value)
             {
                 isExclusiveTable = (bool)gridDataRow[ColumnNames.IS_EXCLUSIVE_TABLE];
             }
@@ -59,7 +56,7 @@ namespace Epi.Fields
             {
                 codeColumnName = gridDataRow[ColumnNames.CODE_COLUMN_NAME].ToString();
             }
-            
+
             if (gridDataRow[ColumnNames.SORT] != null &&
                 gridDataRow[ColumnNames.SORT] != DBNull.Value)
             {

@@ -1,5 +1,4 @@
-﻿using System;
-namespace Epi.Core
+﻿namespace Epi.Core
 {
     /// <summary>
     /// IControl Factory

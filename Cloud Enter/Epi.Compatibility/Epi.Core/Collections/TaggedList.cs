@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Epi.Collections
 {
@@ -67,7 +65,7 @@ namespace Epi.Collections
             int index = IndexOf(element);
             return tags[index];
         }
-        
+
         #endregion Public Methods
 
     }

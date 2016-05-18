@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using System.Collections.Generic;
 using Epi.Core;
 using System.Windows.Forms;

@@ -10,7 +10,6 @@ namespace Epi.Web.MVC.Utility
     public static class WindowsAuthentication
     {
 
-
         public static bool IsAuthenticated(String domain, String username, String pwd, string _path, string _filterAttribute)
         {
             String domainAndUsername = domain + @"\" + username;
@@ -59,7 +58,7 @@ namespace Epi.Web.MVC.Utility
                 return results;
             }
         }
-        public static UserPrincipal GetUserFromAd(string UserEmail ,string Domain)
+        public static UserPrincipal GetUserFromAd(string UserEmail, string Domain)
         {
             using (HostingEnvironment.Impersonate())
             {
@@ -76,9 +75,11 @@ namespace Epi.Web.MVC.Utility
                     }
 
                     return results;
-                }catch (Exception){
-                
-                return null;
+                }
+                catch (Exception)
+                {
+
+                    return null;
                 }
             }
         }
@@ -121,5 +122,5 @@ namespace Epi.Web.MVC.Utility
             return groupNames.ToString();
         }
     }
-        
+
 }

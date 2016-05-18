@@ -63,12 +63,12 @@ namespace Epi
         DatabasesDialog,
 
         //Actions for Enter Commands
-        
+
         ///<summary>
         /// Always
         ///</summary>
         Always,
-        
+
         /// <summary>
         /// Assign
         /// </summary>

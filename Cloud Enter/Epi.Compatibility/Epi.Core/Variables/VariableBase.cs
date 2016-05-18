@@ -1,14 +1,11 @@
-using System;
-using Epi.DataSets;
-
 namespace Epi
-{ 
+{
     /// <summary>
-	/// Base class for Variable.
-	/// </summary>
+    /// Base class for Variable.
+    /// </summary>
     public abstract class VariableBase : IVariable
     {
-        
+
         #region Protected Attributes
         /// <summary>
         /// Expression for all variable sub classes
@@ -68,9 +65,9 @@ namespace Epi
         //    this.dataType = dataType;
         //    this.val = value;
         //}
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Property get for the type of the variable.
         /// </summary>
@@ -85,16 +82,16 @@ namespace Epi
         /// Property get/set for the name of the variable
         /// </summary>
 		public string Name
-		{
-			get
-			{
-				return name;
-			}
+        {
+            get
+            {
+                return name;
+            }
             set
             {
                 name = value;
             }
-		}
+        }
 
         /// <summary>
         /// Property get/set for the variable's expression
@@ -120,11 +117,11 @@ namespace Epi
         /// it must take on the datatype of the RHS value
         /// </remarks>
         public DataType DataType
-		{
-			get
-			{
-				return dataType;
-			}
+        {
+            get
+            {
+                return dataType;
+            }
             set
             {
                 if (dataType == DataType.Unknown)
@@ -132,7 +129,7 @@ namespace Epi
                     dataType = value;
                 }
             }
-		}
+        }
 
         /// <summary>
         /// Property get/set for prompt of the variable.
@@ -148,7 +145,7 @@ namespace Epi
                 promptText = value;
             }
         }
-        
+
         #endregion Public Properties
 
         #region Public Methods
@@ -156,7 +153,7 @@ namespace Epi
         /// <summary>
         /// The Dispose Method
         /// </summary>
-		public virtual void Dispose()
+        public virtual void Dispose()
         {
         }
 

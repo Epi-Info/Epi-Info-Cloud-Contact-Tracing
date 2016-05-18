@@ -5,7 +5,8 @@ namespace Epi.Web.MVC.Controllers
 {
     public class ViewSwitcherController : Controller
     {
-        public RedirectResult SwitchView(bool mobile, string returnUrl) {
+        public RedirectResult SwitchView(bool mobile, string returnUrl)
+        {
             if (Request.Browser.IsMobileDevice == mobile)
                 HttpContext.ClearOverriddenBrowser();
             else

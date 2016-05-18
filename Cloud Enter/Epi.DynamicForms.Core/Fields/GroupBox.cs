@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents html to be rendered on the form.
     /// </summary>
@@ -54,22 +52,24 @@ namespace MvcDynamicForms.Fields
 
             // prompt label
             var prompt = new TagBuilder("legend");
-           
+
             prompt.SetInnerText(Prompt);
             //prompt.Attributes.Add("for", inputName);
             //prompt.Attributes.Add("class", "EpiLabel");
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetStyle(_fontstyle.ToString() ));
+            StyleValues.Append(GetStyle(_fontstyle.ToString()));
 
             double PromptSize = Prompt.Length * fontSize;
 
-            if (PromptSize > this.ControlWidth )
+            if (PromptSize > this.ControlWidth)
             {
-            prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _ControlWidth.ToString() + "px" );
-            }else{
-              prompt.Attributes.Add("style", StyleValues.ToString()   );
-            
+                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _ControlWidth.ToString() + "px");
+            }
+            else
+            {
+                prompt.Attributes.Add("style", StyleValues.ToString());
+
             }
             //html.Append(prompt.ToString());
 
@@ -77,26 +77,26 @@ namespace MvcDynamicForms.Fields
             var txt = new TagBuilder("fieldset");
             //var Subtxt = new TagBuilder("legend");
             //Subtxt.InnerHtml = Prompt;
-            txt.InnerHtml= prompt.ToString();
+            txt.InnerHtml = prompt.ToString();
             txt.Attributes.Add("name", inputName);
             txt.Attributes.Add("id", inputName);
             txt.Attributes.Add("type", "text");
             // txt.Attributes.Add("value", Value);
             txt.Attributes.Add("value", Value);
 
-            txt.Attributes.Add("style", "position:absolute;left:" 
-                + _left.ToString() + "px;top:" 
-                + _top.ToString() + "px" + ";width:" 
-                + _ControlWidth.ToString() + "px" 
+            txt.Attributes.Add("style", "position:absolute;left:"
+                + _left.ToString() + "px;top:"
+                + _top.ToString() + "px" + ";width:"
+                + _ControlWidth.ToString() + "px"
                 + ";height:" + _ControlHeight.ToString() + "px;"
-                +  "background:" + _BackgroundColor
+                + "background:" + _BackgroundColor
                 );// + IsHiddenStyle);
 
             txt.MergeAttributes(_inputHtmlAttributes);
-           // html.Append(txt.ToString(TagRenderMode.SelfClosing));
+            // html.Append(txt.ToString(TagRenderMode.SelfClosing));
             html.Append(txt.ToString());
 
-            
+
 
 
             var wrapper = new TagBuilder(_fieldWrapper);
@@ -110,7 +110,7 @@ namespace MvcDynamicForms.Fields
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
         }
-        public string GetStyle(string ControlFontStyle )
+        public string GetStyle(string ControlFontStyle)
         {
 
             StringBuilder FontStyle = new StringBuilder();
@@ -120,7 +120,7 @@ namespace MvcDynamicForms.Fields
 
             char[] delimiterChars = { ' ', ',' };
             string[] Styles = ControlFontStyle.Split(delimiterChars);
-             
+
             foreach (string Style in Styles)
             {
                 switch (Style.ToString())
@@ -195,14 +195,14 @@ namespace MvcDynamicForms.Fields
         protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
-
-            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage ;
+            Key = fieldAttributes.Name + "_GroupBox";
+            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage;
             PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage;
             PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
 
             Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
             Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
-            ControlHeight = formHeight*fieldAttributes.ControlHeightPercentage - 12;
+            ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage - 12;
             ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage - 12;
 
             //fontstyle = fieldAttributes.ControlFontStyle;
@@ -214,11 +214,11 @@ namespace MvcDynamicForms.Fields
             fontfamily = fieldAttributes.PromptFontFamily;
 
             if (fieldAttributes.BackgroundColor != null)
-             {
-                 var color = Color.FromArgb((int)(int.Parse(fieldAttributes.BackgroundColor)) + unchecked((int)0xFF000000));
-                 string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
-                 BackgroundColor = HexValue;
-             }           
+            {
+                var color = Color.FromArgb((int)(int.Parse(fieldAttributes.BackgroundColor)) + unchecked((int)0xFF000000));
+                string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+                BackgroundColor = HexValue;
+            }
         }
     }
 }

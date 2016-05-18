@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace MvcDynamicForms.Fields
 {
@@ -14,7 +10,7 @@ namespace MvcDynamicForms.Fields
     {
         private string _regexMessage = "Invalid";
         private string _ControlValue;
-     
+
         /// <summary>
         /// A regular expression that will be applied to the user's text respone for validation.
         /// </summary>
@@ -33,13 +29,13 @@ namespace MvcDynamicForms.Fields
                 _regexMessage = value;
             }
         }
-       public string Value { get; set; }
+        public string Value { get; set; }
         //public string Value { get { return _Value; } set { _Value = value; } }
         public override string Response
         {
             get { return Value; }
             set { Value = value; }
-             
+
         }
 
         //Declaring the min value for decimal
@@ -80,7 +76,7 @@ namespace MvcDynamicForms.Fields
                 return true;
             }
             //if response have character "_" or only "." it is not required, so assign Response = ""
-            if ((Response.IndexOf("_") != -1) ||((Response.IndexOf(".") != -1 && Response.Length ==1)))
+            if ((Response.IndexOf("_") != -1) || ((Response.IndexOf(".") != -1 && Response.Length == 1)))
             {
                 Response = string.Empty;
             }
@@ -102,14 +98,14 @@ namespace MvcDynamicForms.Fields
                  This will be usefull in money related fields or decimal fields. (www.regexlib.com)  */
                 /*** Matches  .568 | 8578 | 1234567.1234567 ****/
                 /**** Non-Matches: 568. | 56.89.36 | 5.3.6.9.6 *****/
-               // string regularExp = "^([0-9]*|\\d*\\.\\d{1}?\\d*)$";
-               //string regularExp = "^-?([0-9]*|\\d*\\.\\d{1}?\\d*)$";
-               // var regex = new Regex(regularExp);
+                // string regularExp = "^([0-9]*|\\d*\\.\\d{1}?\\d*)$";
+                //string regularExp = "^-?([0-9]*|\\d*\\.\\d{1}?\\d*)$";
+                // var regex = new Regex(regularExp);
 
                 //if (!regex.IsMatch(Value))
-                
+
                 double testValue = 0.0;
-                if(!double.TryParse(Value, out testValue))
+                if (!double.TryParse(Value, out testValue))
                 {
                     //invalid: it is not numeric
                     Error = "Value must be a number";
@@ -152,7 +148,7 @@ namespace MvcDynamicForms.Fields
 
         }
 
-       
+
 
 
 

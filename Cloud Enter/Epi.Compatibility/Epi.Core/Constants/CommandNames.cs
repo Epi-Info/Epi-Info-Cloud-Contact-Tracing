@@ -215,11 +215,11 @@ namespace Epi
         /// 
         /// </summary>
         public const string GRAPH = "GRAPH";
-		/// <summary>
-		/// Type of graph to be displayed following CoxPH, KMSurvival, etc.
-		/// </summary>
-		public const string GRAPHTYPE = "GRAPHTYPE";
-		/// <summary>
+        /// <summary>
+        /// Type of graph to be displayed following CoxPH, KMSurvival, etc.
+        /// </summary>
+        public const string GRAPHTYPE = "GRAPHTYPE";
+        /// <summary>
         /// Data is displayed as a grid in the List command
         /// </summary>
         public const string GRIDTABLE = "GRIDTABLE";
@@ -411,11 +411,11 @@ namespace Epi
         /// Variable for the Primary Sampling Unit (PSU) in Complex Sample commands.
         /// </summary>
         public const string PSUVAR = "PSUVAR";
-		/// <summary>
-		/// Variable for the Primary Sampling Unit (PSU) in Complex Sample commands.
-		/// </summary>
-		public const string PVALUE = "PVALUE";
-		/// <summary>
+        /// <summary>
+        /// Variable for the Primary Sampling Unit (PSU) in Complex Sample commands.
+        /// </summary>
+        public const string PVALUE = "PVALUE";
+        /// <summary>
         /// Command to exit Analysis module
         /// </summary>
         public const string QUIT = "QUIT";
@@ -451,7 +451,7 @@ namespace Epi
         /// Report command keyword
         /// </summary>
         public const string REPORT = "REPORT";
-       
+
         /// <summary>
         /// ROUND numeric function
         /// </summary>
@@ -581,10 +581,10 @@ namespace Epi
 		/// Unit of time used for graphs following CoxPH, KMSurvival, etc.
         /// </summary>
         public const string TIMEUNIT = "TIMEUNIT";
-		/// <summary>
-		/// In Summarize command, the table to which output is written
-		/// </summary>
-		public const string TO = "TO";
+        /// <summary>
+        /// In Summarize command, the table to which output is written
+        /// </summary>
+        public const string TO = "TO";
         /// <summary>
         /// True/False parameter of FORMAT function
         /// </summary>

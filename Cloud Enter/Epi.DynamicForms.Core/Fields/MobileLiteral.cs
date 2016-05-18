@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using System.Web;
 
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents html to be rendered on the form.
     /// </summary>
@@ -65,14 +63,14 @@ namespace MvcDynamicForms.Fields
 
                 Html = MvcHtmlString.Create(newText).ToString();
 
-               // wrapper.Attributes["ID"] = "labelmvcdynamicfield_" + Name.ToLower();
+                // wrapper.Attributes["ID"] = "labelmvcdynamicfield_" + Name.ToLower();
                 wrapper.Attributes["ID"] = "mvcdynamicfield_" + Name.ToLower() + "_fieldWrapper";
 
                 StringBuilder StyleValues = new StringBuilder();
 
                 StyleValues.Append(GetMobileLiteralStyle(_fontstyle.ToString(), null, null, null, null, IsHidden));
                 //StyleValues.Append(";word-wrap:break-word;");
-               // wrapper.Attributes.Add("data-role", "fieldcontain");
+                // wrapper.Attributes.Add("data-role", "fieldcontain");
                 wrapper.Attributes.Add(new KeyValuePair<string, string>("style", StyleValues.ToString()));
 
                 wrapper.InnerHtml = Html;

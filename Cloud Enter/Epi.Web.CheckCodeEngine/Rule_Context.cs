@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data;
-using System.Text.RegularExpressions;
 using com.calitha.goldparser;
-using Epi;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
 
 /*
@@ -63,16 +60,17 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public string HiddenFieldList
         {
-            get { 
-                    StringBuilder result = new StringBuilder();
-                    foreach(string s in _HiddenFieldList) 
-                    {
-                        result.Append(s);
-                        result.Append(',');
-                    }
-                    return result.ToString();
+            get
+            {
+                StringBuilder result = new StringBuilder();
+                foreach (string s in _HiddenFieldList)
+                {
+                    result.Append(s);
+                    result.Append(',');
                 }
-            set 
+                return result.ToString();
+            }
+            set
             {
                 string[] list = value.Split(',');
                 _HiddenFieldList.Clear();
@@ -85,15 +83,16 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public string HighlightedFieldList
         {
-            get { 
-                    StringBuilder result = new StringBuilder();
-                    foreach (string s in _HighlightedFieldList) 
-                    {
-                        result.Append(s);
-                        result.Append(',');
-                    }
-                    return result.ToString();
+            get
+            {
+                StringBuilder result = new StringBuilder();
+                foreach (string s in _HighlightedFieldList)
+                {
+                    result.Append(s);
+                    result.Append(',');
                 }
+                return result.ToString();
+            }
             set
             {
                 string[] list = value.Split(',');
@@ -107,15 +106,16 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public string DisabledFieldList
         {
-            get { 
-                    StringBuilder result = new StringBuilder();
-                    foreach (string s in _DisabledFieldList) 
-                    {
-                        result.Append(s);
-                        result.Append(',');
-                    }
-                    return result.ToString(); 
+            get
+            {
+                StringBuilder result = new StringBuilder();
+                foreach (string s in _DisabledFieldList)
+                {
+                    result.Append(s);
+                    result.Append(',');
                 }
+                return result.ToString();
+            }
             set
             {
                 string[] list = value.Split(',');
@@ -310,7 +310,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public Rule_Context()
         {
-            this.currentScope = new cSymbolTable("global",null);
+            this.currentScope = new cSymbolTable("global", null);
             //Rule_Context.LoadPermanentVariables(this.currentScope);
             this.Initialize();
         }
@@ -338,7 +338,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             this._DisabledFieldList = new List<string>();
             this._RequiredFieldList = new List<string>();
 
-           //this.DefineVariablesCheckCode = new Rule_DefineVariables_Statement();
+            //this.DefineVariablesCheckCode = new Rule_DefineVariables_Statement();
             this.GroupVariableList = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
 
@@ -624,7 +624,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         var.DataType = DataType.Text;
                         var.ControlType = "label";
                         continue;
-                        //break;
+                    //break;
                     case "4"://MultiLineTextBox
                         var.DataType = DataType.Text;
                         var.ControlType = "multiline";
@@ -645,7 +645,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         var.ControlType = "timepicker";
 
                         break;
-                   
+
                     case "10"://CheckBox
                         var.DataType = DataType.Boolean;
                         var.ControlType = "checkbox";
@@ -713,14 +713,14 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
             var _ControlValues = from _ControlValue in
                                         xdoc.Descendants("ResponseDetail")
-                                    where _ControlValue.Attribute("QuestionName").Value == ControlName.ToString()
-                                    select _ControlValue;
+                                 where _ControlValue.Attribute("QuestionName").Value == ControlName.ToString()
+                                 select _ControlValue;
 
             foreach (var _ControlValue in _ControlValues)
             {
                 ControlValue = _ControlValue.Value;
             }
-            
+
 
             return ControlValue;
         }
@@ -732,7 +732,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\", new Number({4}));";
 
 
-            foreach (PluginVariable var in this.CurrentScope.FindVariables( VariableScope.DataSource | VariableScope.Global | VariableScope.Permanent | VariableScope.Standard))
+            foreach (PluginVariable var in this.CurrentScope.FindVariables(VariableScope.DataSource | VariableScope.Global | VariableScope.Permanent | VariableScope.Standard))
             {
                 string DataSource;
                 switch (var.VariableScope)
@@ -768,13 +768,13 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         pJavaScriptBuilder.AppendLine(string.Format(defineFormat, var.Name, var.ControlType, DataSource, var.PageNumber, var.Expression));
                         break;
                     case "commentlegal":
-                    case  "codes":
+                    case "codes":
                     case "legalvalues":
                     case "datepicker":
                     case "timepicker":
                     case "multiline":
-                    case "textbox": 
-                    
+                    case "textbox":
+
                     default:
                         pJavaScriptBuilder.AppendLine(string.Format(defineFormat, var.Name, var.ControlType, DataSource, var.PageNumber, var.Expression));
                         break;
@@ -872,7 +872,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public void GetSubroutineJavaScript(StringBuilder pJavaScriptBuilder)
         {
-            foreach (KeyValuePair<string,EnterRule> kvp in this.OuterSubroutine)
+            foreach (KeyValuePair<string, EnterRule> kvp in this.OuterSubroutine)
             {
                 kvp.Value.ToJavaScript(pJavaScriptBuilder);
             }

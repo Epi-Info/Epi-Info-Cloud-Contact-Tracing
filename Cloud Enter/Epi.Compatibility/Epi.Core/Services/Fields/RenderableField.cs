@@ -3,8 +3,6 @@
 using System;
 using System.Data;
 using System.Drawing;
-using Epi;
-using Epi.Data.Services;
 using System.Windows.Forms;
 #endregion
 
@@ -15,45 +13,45 @@ namespace Epi.Fields
 	/// Renderable Field.
 	/// </summary>
 	public abstract class RenderableField : Field
-	{
-		#region Private Members
-		private Page page = null;
-		private bool hasTabStop = false;
-		private bool isControlResizable = true;
+    {
+        #region Private Members
+        private Page page = null;
+        private bool hasTabStop = false;
+        private bool isControlResizable = true;
         protected bool insertStarted;
         private double tabIndex = 0;
-		private double controlTopPositionPercentage = 0;
-		private double controlLeftPositionPercentage = 0;
-		private double controlHeightPercentage = 0;
-		private double controlWidthPercentage = 0;
-		private string promptText = string.Empty;
-		private System.Drawing.Font promptFont = null;
-		private System.Drawing.Font controlFont = null;
+        private double controlTopPositionPercentage = 0;
+        private double controlLeftPositionPercentage = 0;
+        private double controlHeightPercentage = 0;
+        private double controlWidthPercentage = 0;
+        private string promptText = string.Empty;
+        private System.Drawing.Font promptFont = null;
+        private System.Drawing.Font controlFont = null;
 
-		/// <summary>
-		/// Tag is a placeholder to temporarily store any information about the field.
-		/// </summary>
-		private object tag = null;
+        /// <summary>
+        /// Tag is a placeholder to temporarily store any information about the field.
+        /// </summary>
+        private object tag = null;
 
-		#endregion
-        
-		#region Constructors
+        #endregion
 
-		/// <summary>
+        #region Constructors
+
+        /// <summary>
         /// Constructor
-		/// </summary>
-		/// <param name="page">The page the field belongs to</param>
-		public RenderableField(Page page) : base(page.GetView())
-		{            
-			this.page = page;
-		}
+        /// </summary>
+        /// <param name="page">The page the field belongs to</param>
+        public RenderableField(Page page) : base(page.GetView())
+        {
+            this.page = page;
+        }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
-		public RenderableField (View view) : base(view)
-		{		
-		}
+		public RenderableField(View view) : base(view)
+        {
+        }
 
         /// <summary>
         /// Load Renderable Field from a <see cref="System.Data.DataRow"/>
@@ -118,228 +116,228 @@ namespace Epi.Fields
             base.AssignMembers(field);
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Properties
-		
-		public Control Control { get; set; }
-        
+        #region Public Properties
+
+        public Control Control { get; set; }
+
         /// <summary>
-		/// Gets/sets the page that this field belongs to.
-		/// </summary>
-		public Page Page
-		{
-			get
-			{
-				return this.page;
-			}
-			set
-			{
-				this.page = value;
-			}
-		}
+        /// Gets/sets the page that this field belongs to.
+        /// </summary>
+        public Page Page
+        {
+            get
+            {
+                return this.page;
+            }
+            set
+            {
+                this.page = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the prompt's font
         /// </summary>
 		public Font PromptFont
-		{
-			get
-			{
-				if (promptFont == null)
-				{
-					return new System.Drawing.Font(FontFamily.GenericSansSerif, 8.5f);
-				}
-				else
-				{
-					return promptFont;
-				}
-			}
-			set
-			{
-				promptFont = value;
-			}
-		}
+        {
+            get
+            {
+                if (promptFont == null)
+                {
+                    return new System.Drawing.Font(FontFamily.GenericSansSerif, 8.5f);
+                }
+                else
+                {
+                    return promptFont;
+                }
+            }
+            set
+            {
+                promptFont = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the control's font
         /// </summary>
 		public Font ControlFont
-		{
-			get
-			{
-				if (controlFont == null)
-				{
-					return new System.Drawing.Font(FontFamily.GenericSansSerif, 8.5f);
-				}
-				else
-				{
-					return controlFont;
-				}
-			}
-			set
-			{
-				controlFont = value;
-			}
-		}
+        {
+            get
+            {
+                if (controlFont == null)
+                {
+                    return new System.Drawing.Font(FontFamily.GenericSansSerif, 8.5f);
+                }
+                else
+                {
+                    return controlFont;
+                }
+            }
+            set
+            {
+                controlFont = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the flag that indicates if this field has a tab stop.
         /// </summary>
 		public bool HasTabStop
-		{
-			get
-			{
-				return hasTabStop;
-			}
-			set
-			{
-				hasTabStop = value;
-			}		
-		}
+        {
+            get
+            {
+                return hasTabStop;
+            }
+            set
+            {
+                hasTabStop = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the field's tab index
         /// </summary>
         public double TabIndex
-		{
-			get
-			{
-				return tabIndex;
-			}
-			set
-			{
-				tabIndex = value;
-			}
-		}
+        {
+            get
+            {
+                return tabIndex;
+            }
+            set
+            {
+                tabIndex = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets top position percentage for UI control.
-		/// </summary>
+        /// <summary>
+        /// Gets/sets top position percentage for UI control.
+        /// </summary>
         public double ControlTopPositionPercentage
-		{
-			get
-			{
+        {
+            get
+            {
                 return controlTopPositionPercentage - (int)controlTopPositionPercentage;
-			}
-			set
-			{
+            }
+            set
+            {
                 controlTopPositionPercentage = value - (int)value;
-			}
-		}
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets left position percentage for UI control.
-		/// </summary>
+        /// <summary>
+        /// Gets/sets left position percentage for UI control.
+        /// </summary>
         public double ControlLeftPositionPercentage
-		{
-			get
-			{
+        {
+            get
+            {
                 return controlLeftPositionPercentage - (int)controlLeftPositionPercentage;
-			}
-			set
-			{
+            }
+            set
+            {
                 controlLeftPositionPercentage = value - (int)value;
-			}
-		}
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets height percentage for UI control.
-		/// </summary>
+        /// <summary>
+        /// Gets/sets height percentage for UI control.
+        /// </summary>
         public double ControlHeightPercentage
-		{
-			get
-			{
-				return controlHeightPercentage;
-			}
-			set
-			{
-				controlHeightPercentage = value;
-			}
-		}
+        {
+            get
+            {
+                return controlHeightPercentage;
+            }
+            set
+            {
+                controlHeightPercentage = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets width percentage for UI control.
         /// </summary>
 		public double ControlWidthPercentage
-		{
-			get
-			{
-				return controlWidthPercentage;
-			}
-			set
-			{
-				controlWidthPercentage = value;
-			}
-		}
+        {
+            get
+            {
+                return controlWidthPercentage;
+            }
+            set
+            {
+                controlWidthPercentage = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets prompt text for UI control.
-		/// </summary>
+        /// <summary>
+        /// Gets/sets prompt text for UI control.
+        /// </summary>
         public string PromptText
-		{
-			get
-			{
-				return promptText;
-			}
-			set
-			{
-				promptText = value;
-			}
-		}
-		
-		/// <summary>
-		/// Tag is a placeholder to temporarily store any information about the field.
-		/// Typical usage is to store the control object when form is generated in Enter.
-		/// </summary>
-		public object Tag
-		{
-			get
-			{
-				return tag;
-			}
-			set
-			{
-				tag = value;
-			}
-		}
+        {
+            get
+            {
+                return promptText;
+            }
+            set
+            {
+                promptText = value;
+            }
+        }
 
-		#endregion
+        /// <summary>
+        /// Tag is a placeholder to temporarily store any information about the field.
+        /// Typical usage is to store the control object when form is generated in Enter.
+        /// </summary>
+        public object Tag
+        {
+            get
+            {
+                return tag;
+            }
+            set
+            {
+                tag = value;
+            }
+        }
 
-		#region Protected Properties
+        #endregion
 
-		/// <summary>
-		/// Gets/sets control resizable flag for UI control.
-		/// </summary>
+        #region Protected Properties
+
+        /// <summary>
+        /// Gets/sets control resizable flag for UI control.
+        /// </summary>
         public bool IsControlResizable
-		{
-			get
-			{
-				return isControlResizable;
-			}
-			set
-			{
-				isControlResizable = value;
-			}
-		}
-		#endregion Protected Properties
+        {
+            get
+            {
+                return isControlResizable;
+            }
+            set
+            {
+                isControlResizable = value;
+            }
+        }
+        #endregion Protected Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		/// <summary>
-		/// Saves the field to the database
-		/// </summary>
-		public override void SaveToDb()
-		{
-			if (Id == 0)
-			{
+        /// <summary>
+        /// Saves the field to the database
+        /// </summary>
+        public override void SaveToDb()
+        {
+            if (Id == 0)
+            {
                 InsertField();
-			}
-			else
-			{
-				UpdateField();
-			}
-		}
+            }
+            else
+            {
+                UpdateField();
+            }
+        }
 
         /// <summary>
         /// Updates the control position
@@ -356,21 +354,21 @@ namespace Epi.Fields
         {
             GetMetadata().UpdateControlSize(this);
         }
-        
-		#endregion
 
-		#region Protected Methods
+        #endregion
+
+        #region Protected Methods
 
         /// <summary>
         /// Updates the field in Metadata
         /// </summary>
-		protected abstract void UpdateField();
+        protected abstract void UpdateField();
 
-		#endregion
+        #endregion
 
-		#region Private Methods
-		
-		#endregion Private Methods
+        #region Private Methods
 
-	}
+        #endregion Private Methods
+
+    }
 }

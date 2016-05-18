@@ -1,13 +1,8 @@
-using System;
 using System.ComponentModel;
 using System.Data;
-using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Xml;
-using Epi;
-using Epi.Collections;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
@@ -95,7 +90,7 @@ namespace Epi.Fields
 
             string list = row["List"].ToString();
             if (list.Contains("||"))
-            { 
+            {
                 list = list.Substring(0, list.IndexOf("||"));
             }
             string[] listArray = (list).Split(',');
@@ -246,13 +241,13 @@ namespace Epi.Fields
             {
                 optionsString = optionsString + option + ',';
             }
-            
+
             optionsString = optionsString.TrimEnd(new char[] { ',' });
             optionsString = optionsString + "||" + locations;
-            
+
             return optionsString;
         }
-        
+
         /// <summary>
         /// The view element of the field
         /// </summary>

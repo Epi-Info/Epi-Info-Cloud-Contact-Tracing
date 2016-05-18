@@ -4,38 +4,37 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 
 #endregion  //Namespaces
 
 namespace Epi.Fields
-{	
-	/// <summary>
-	/// Command button field
-	/// </summary>
-	public class CommandButtonField : FieldWithoutSeparatePrompt, IFieldWithCheckCodeClick
-	{
-		#region Private Members
-		private string checkCodeClick = string.Empty;
+{
+    /// <summary>
+    /// Command button field
+    /// </summary>
+    public class CommandButtonField : FieldWithoutSeparatePrompt, IFieldWithCheckCodeClick
+    {
+        #region Private Members
+        private string checkCodeClick = string.Empty;
         private string checkCodeAfter = string.Empty;
         private XmlElement viewElement;
         private XmlNode fieldNode;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion
+        #endregion
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
         public CommandButtonField(Page page) : base(page)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -54,8 +53,8 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
 		public CommandButtonField(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -84,9 +83,9 @@ namespace Epi.Fields
             base.AssignMembers(clone);
             return clone;
         }
-		#endregion
-	
-		#region Public Properties
+        #endregion
+
+        #region Public Properties
 
         /// <summary>
         /// Returns field type
@@ -100,20 +99,20 @@ namespace Epi.Fields
         }
 
 
-		/// <summary>
-		/// Gets/sets the field's "after" check code when the field is created
-		/// </summary>
-		public string CheckCodeClick
-		{
-			get
-			{
-				return checkCodeClick;
-			}
-			set
-			{
-				checkCodeClick = value;
-			}
-		}
+        /// <summary>
+        /// Gets/sets the field's "after" check code when the field is created
+        /// </summary>
+        public string CheckCodeClick
+        {
+            get
+            {
+                return checkCodeClick;
+            }
+            set
+            {
+                checkCodeClick = value;
+            }
+        }
 
         /// <summary>
         /// Gets/Sets the field's "after" check code when the field 
@@ -146,26 +145,26 @@ namespace Epi.Fields
             }
         }
 
-		#endregion
+        #endregion
 
-		#region Protected Properties
+        #region Protected Properties
 
-		#endregion Protected Properties
+        #endregion Protected Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{			
-			GetMetadata().DeleteField(this);
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
+        }
 
-		#endregion Public Methods
+        #endregion Public Methods
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -239,19 +238,19 @@ namespace Epi.Fields
         //    }
         //}
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
-		private void Control_Click(object sender, EventArgs e)
-		{
-			if (!string.IsNullOrEmpty(CheckCodeClick))
-			{
-//				View.RunCheckCode(CheckCodeClick);
-			}
-		}
-		#endregion      
+        #region Event Handlers
+        private void Control_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(CheckCodeClick))
+            {
+                //				View.RunCheckCode(CheckCodeClick);
+            }
+        }
+        #endregion
 
-	
+
 
     }
 }

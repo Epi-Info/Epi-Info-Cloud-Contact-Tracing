@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
 using Epi.Data.Services;
-using Epi.Fields;
 using EpiInfo.Plugin;
 
 namespace Epi
@@ -27,15 +21,15 @@ namespace Epi
         }
 
         #region Template Utility Methods
-        public static string[] GetFiles(string path, string searchPattern) 
-        { 
-            string[] m_arExt = searchPattern.Split(';'); 
+        public static string[] GetFiles(string path, string searchPattern)
+        {
+            string[] m_arExt = searchPattern.Split(';');
             List<string> strFiles = new List<string>();
-            List<string> strValidFiles = new List<string>(); 
-            
-            foreach (string filter in m_arExt) 
-            { 
-                strFiles.AddRange(System.IO.Directory.GetFiles(path, filter)); 
+            List<string> strValidFiles = new List<string>();
+
+            foreach (string filter in m_arExt)
+            {
+                strFiles.AddRange(System.IO.Directory.GetFiles(path, filter));
             }
 
             foreach (string fileName in strFiles)
@@ -54,7 +48,7 @@ namespace Epi
                 }
             }
 
-            return strValidFiles.ToArray(); 
+            return strValidFiles.ToArray();
         }
 
         public DataTable GetProjectTable(string subFolder)
@@ -64,7 +58,7 @@ namespace Epi
             table.Columns.Add(new DataColumn("TemplateDescription", System.Type.GetType("System.String")));
             table.Columns.Add(new DataColumn("TemplatePath", System.Type.GetType("System.String")));
             table.Columns.Add(new DataColumn("TemplateCreateDate", System.Type.GetType("System.String")));
- 
+
             table.Columns.Add(new DataColumn("Name", System.Type.GetType("System.String")));
             table.Columns.Add(new DataColumn("Location", System.Type.GetType("System.String")));
             table.Columns.Add(new DataColumn("Description", System.Type.GetType("System.String")));
@@ -73,7 +67,7 @@ namespace Epi
             DataRow row;
 
             string projectFolderPath = Path.Combine(templatesPath, subFolder);
-            
+
             if (Directory.Exists(projectFolderPath) != true)
             {
                 return table;
@@ -81,7 +75,7 @@ namespace Epi
 
             String[] projectTemplates = GetFiles(projectFolderPath, "*.xml;*.eit");
 
-            foreach(string path in projectTemplates)
+            foreach (string path in projectTemplates)
             {
                 row = table.NewRow();
 
@@ -126,7 +120,7 @@ namespace Epi
                         }
                     }
                 }
-                catch{}
+                catch { }
             }
 
             return table;

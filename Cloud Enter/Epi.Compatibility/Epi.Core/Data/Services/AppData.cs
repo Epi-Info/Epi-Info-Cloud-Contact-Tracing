@@ -1,173 +1,168 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Data.OleDb;
-using System.IO;
-using System.Text;
-using Epi;
-using Epi.Data;
 using Epi.DataSets;
 
 namespace Epi.Data.Services
 {
-	/// <summary>
-	/// Manages AppData database.
-	/// </summary>
-	public class AppData 
-	{		
-		#region Private Data
-		private  ArrayList fieldTypes = null;
-		//private  DataSets.AppDataSet.SettingsDataTable settingsDataTable;
-		//private  DataSets.AppDataSet.ModulesDataTable modulesDataTable;
-		//private  DataSets.AppDataSet.RecordProcessingScopesDataTable recordProcessingScopesDataTable;
-		//private  DataSets.AppDataSet.RepresentationsOfMissingDataTable representationsOfMissingDataTable;
-		//private  DataSets.AppDataSet.RepresentationsOfNoDataTable representationsOfNoDataTable;
-		//private  DataSets.AppDataSet.RepresentationsOfYesDataTable representationsOfYesDataTable;
-		//private  DataSets.AppDataSet.StatisticsLevelsDataTable statisticsLevelsDataTable;
-		//private  DataSets.AppDataSet.DataPatternsDataTable dataPatternsDataTable;
-		//private  DataSets.AppDataSet.DataTypesDataTable dataTypesDataTable;
-		//private  DataSets.AppDataSet.FieldTypesDataTable fieldTypesDataTable;
-		//private  DataSets.AppDataSet.FontStylesDataTable fontStylesDataTable;
-		//private  DataSets.AppDataSet.ListTreatmentTypesDataTable listTreatmentTypesDataTable;
-		//private  DataSets.AppDataSet.SourceControlTypesDataTable sourceControlTypesDataTable;
-		//private  DataSets.AppDataSet.CommandGroupsDataTable commandGroupsDataTable;
-		//private  DataSets.AppDataSet.CommandsDataTable commandsDataTable;
-		//private  DataSets.AppDataSet.DialogFormatsDataTable dialogFormatsDataTable;
-		//private  DataSets.AppDataSet.VariableScopesDataTable variableScopesDataTable;
-		//private  DataSets.AppDataSet.SupportedAggregatesDataTable supportedAggregatesDataTable;
-		//private  DataSets.AppDataSet.ReservedWordsDataTable reservedWordsDataTable;
-		//private DataSets.AppDataSet.LayerRenderTypesDataTable layerRenderTypesDataTable;
-		
-		#endregion Private Data
+    /// <summary>
+    /// Manages AppData database.
+    /// </summary>
+    public class AppData
+    {
+        #region Private Data
+        private ArrayList fieldTypes = null;
+        //private  DataSets.AppDataSet.SettingsDataTable settingsDataTable;
+        //private  DataSets.AppDataSet.ModulesDataTable modulesDataTable;
+        //private  DataSets.AppDataSet.RecordProcessingScopesDataTable recordProcessingScopesDataTable;
+        //private  DataSets.AppDataSet.RepresentationsOfMissingDataTable representationsOfMissingDataTable;
+        //private  DataSets.AppDataSet.RepresentationsOfNoDataTable representationsOfNoDataTable;
+        //private  DataSets.AppDataSet.RepresentationsOfYesDataTable representationsOfYesDataTable;
+        //private  DataSets.AppDataSet.StatisticsLevelsDataTable statisticsLevelsDataTable;
+        //private  DataSets.AppDataSet.DataPatternsDataTable dataPatternsDataTable;
+        //private  DataSets.AppDataSet.DataTypesDataTable dataTypesDataTable;
+        //private  DataSets.AppDataSet.FieldTypesDataTable fieldTypesDataTable;
+        //private  DataSets.AppDataSet.FontStylesDataTable fontStylesDataTable;
+        //private  DataSets.AppDataSet.ListTreatmentTypesDataTable listTreatmentTypesDataTable;
+        //private  DataSets.AppDataSet.SourceControlTypesDataTable sourceControlTypesDataTable;
+        //private  DataSets.AppDataSet.CommandGroupsDataTable commandGroupsDataTable;
+        //private  DataSets.AppDataSet.CommandsDataTable commandsDataTable;
+        //private  DataSets.AppDataSet.DialogFormatsDataTable dialogFormatsDataTable;
+        //private  DataSets.AppDataSet.VariableScopesDataTable variableScopesDataTable;
+        //private  DataSets.AppDataSet.SupportedAggregatesDataTable supportedAggregatesDataTable;
+        //private  DataSets.AppDataSet.ReservedWordsDataTable reservedWordsDataTable;
+        //private DataSets.AppDataSet.LayerRenderTypesDataTable layerRenderTypesDataTable;
 
-		#region Constructors
-		private static AppData instance;
-		/// <summary>
-		/// Reference to AppData object.
-		/// </summary>
-		public static AppData Instance
-		{
-			get
-			{
-				if (instance == null)
-				{
-					instance = new AppData();
-				}
-				return instance;
-			}
-		}       
-	 
-		#endregion Constructors
+        #endregion Private Data
 
-		#region Public Properties
-		#region Generated Code
-		private DataSets.AppDataSet.CommandGroupsDataTable commandGroupsDataTable;
-		/// <summary>
-		/// Command Groups Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.CommandGroupsDataTable CommandGroupsDataTable
-		{
-			get
-			{
-				if (commandGroupsDataTable == null)
-				{
-					commandGroupsDataTable = new DataSets.AppDataSet.CommandGroupsDataTable();
-					commandGroupsDataTable.AddCommandGroupsRow(1, @"Data", 1);
-					commandGroupsDataTable.AddCommandGroupsRow(2, @"Variables", 2);
-					commandGroupsDataTable.AddCommandGroupsRow(3, @"Select/If", 3);
-					commandGroupsDataTable.AddCommandGroupsRow(4, @"Statistics", 4);
-					commandGroupsDataTable.AddCommandGroupsRow(5, @"Advanced Statistics", 5);
-					commandGroupsDataTable.AddCommandGroupsRow(6, @"Output", 6);
-					commandGroupsDataTable.AddCommandGroupsRow(7, @"User-Defined Commands", 7);
-					commandGroupsDataTable.AddCommandGroupsRow(8, @"User Interaction", 8);
-					commandGroupsDataTable.AddCommandGroupsRow(9, @"Options", 9);
-				}
-				return (commandGroupsDataTable);
-			}
-		}
+        #region Constructors
+        private static AppData instance;
+        /// <summary>
+        /// Reference to AppData object.
+        /// </summary>
+        public static AppData Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new AppData();
+                }
+                return instance;
+            }
+        }
 
-		private DataSets.AppDataSet.CommandsDataTable commandsDataTable;
-		/// <summary>
-		/// Commands Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.CommandsDataTable CommandsDataTable
-		{
-			get
-			{
-				if (commandsDataTable == null)
-				{
-					commandsDataTable = new DataSets.AppDataSet.CommandsDataTable();
-					commandsDataTable.AddCommandsRow(1, @"Read", 1, 1);
-					//commandsDataTable.AddCommandsRow(2, @"SQLExec", 2, 1);
-					//commandsDataTable.AddCommandsRow(4, @"RecordSet", 3, 1);
-					commandsDataTable.AddCommandsRow(2, @"Relate", 2, 1);
-					commandsDataTable.AddCommandsRow(3, @"Write (Export)", 3, 1);
-					commandsDataTable.AddCommandsRow(4, @"Merge", 4, 1);
-					commandsDataTable.AddCommandsRow(5, @"Delete File/Table", 5, 1);
-					commandsDataTable.AddCommandsRow(6, @"Delete Records", 6, 1);
-					commandsDataTable.AddCommandsRow(7, @"Undelete Records", 7, 1);
-					commandsDataTable.AddCommandsRow(1, @"Define", 1, 2);
-					commandsDataTable.AddCommandsRow(2, @"DefineGroup", 2, 2);
-					commandsDataTable.AddCommandsRow(3, @"Undefine", 3, 2);
-					commandsDataTable.AddCommandsRow(4, @"Assign", 4, 2);
-					commandsDataTable.AddCommandsRow(5, @"Recode", 5, 2);
-					commandsDataTable.AddCommandsRow(6, @"Display", 6, 2);
-					
-					
-					commandsDataTable.AddCommandsRow(1, @"Select", 1, 3);
-					commandsDataTable.AddCommandsRow(2, @"Cancel Select", 2, 3);
-					commandsDataTable.AddCommandsRow(3, @"If", 3, 3);
-					commandsDataTable.AddCommandsRow(4, @"Sort", 4, 3);
-					commandsDataTable.AddCommandsRow(5, @"Cancel Sort", 5, 3);
-					commandsDataTable.AddCommandsRow(1, @"List", 1, 4);
-					commandsDataTable.AddCommandsRow(2, @"Frequencies", 2, 4);
-					commandsDataTable.AddCommandsRow(3, @"Tables", 3, 4);
-					//commandsDataTable.AddCommandsRow(4, @"Match", 4, 4);
-					commandsDataTable.AddCommandsRow(5, @"Means", 5, 4);
-					commandsDataTable.AddCommandsRow(6, @"Summarize", 6, 4);
-					commandsDataTable.AddCommandsRow(7, @"Graph", 7, 4);
-					//commandsDataTable.AddCommandsRow(8, @"Map", 8, 4);
-					commandsDataTable.AddCommandsRow(1, @"Linear Regression", 1, 5);
-					commandsDataTable.AddCommandsRow(2, @"Logistic Regression", 2, 5);
-					commandsDataTable.AddCommandsRow(3, @"Kaplan-Meier Survival", 3, 5);
-					commandsDataTable.AddCommandsRow(4, @"Cox Proportional Hazards", 4, 5);
-					commandsDataTable.AddCommandsRow(5, @"Complex Sample Frequencies", 5, 5);
-					commandsDataTable.AddCommandsRow(6, @"Complex Sample Tables", 6, 5);
-					commandsDataTable.AddCommandsRow(7, @"Complex Sample Means", 7, 5);
-					commandsDataTable.AddCommandsRow(1, @"Header", 1, 6);
-					commandsDataTable.AddCommandsRow(2, @"Type", 2, 6);
-					commandsDataTable.AddCommandsRow(3, @"RouteOut", 3, 6);
-					commandsDataTable.AddCommandsRow(4, @"CloseOut", 4, 6);
-					commandsDataTable.AddCommandsRow(5, @"PrintOut", 5, 6);
-					//commandsDataTable.AddCommandsRow(6, @"Reports", 6, 6);
-					commandsDataTable.AddCommandsRow(7, @"Storing Output", 7, 6);
+        #endregion Constructors
 
-					commandsDataTable.AddCommandsRow(1, @"Define Command", 1, 7);
-					commandsDataTable.AddCommandsRow(2, @"User Command", 2, 7);
-					commandsDataTable.AddCommandsRow(3, @"Run Saved Program", 3, 7);
-					commandsDataTable.AddCommandsRow(4, @"Execute File", 4, 7);
-					
+        #region Public Properties
+        #region Generated Code
+        private DataSets.AppDataSet.CommandGroupsDataTable commandGroupsDataTable;
+        /// <summary>
+        /// Command Groups Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.CommandGroupsDataTable CommandGroupsDataTable
+        {
+            get
+            {
+                if (commandGroupsDataTable == null)
+                {
+                    commandGroupsDataTable = new DataSets.AppDataSet.CommandGroupsDataTable();
+                    commandGroupsDataTable.AddCommandGroupsRow(1, @"Data", 1);
+                    commandGroupsDataTable.AddCommandGroupsRow(2, @"Variables", 2);
+                    commandGroupsDataTable.AddCommandGroupsRow(3, @"Select/If", 3);
+                    commandGroupsDataTable.AddCommandGroupsRow(4, @"Statistics", 4);
+                    commandGroupsDataTable.AddCommandGroupsRow(5, @"Advanced Statistics", 5);
+                    commandGroupsDataTable.AddCommandGroupsRow(6, @"Output", 6);
+                    commandGroupsDataTable.AddCommandGroupsRow(7, @"User-Defined Commands", 7);
+                    commandGroupsDataTable.AddCommandGroupsRow(8, @"User Interaction", 8);
+                    commandGroupsDataTable.AddCommandGroupsRow(9, @"Options", 9);
+                }
+                return (commandGroupsDataTable);
+            }
+        }
+
+        private DataSets.AppDataSet.CommandsDataTable commandsDataTable;
+        /// <summary>
+        /// Commands Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.CommandsDataTable CommandsDataTable
+        {
+            get
+            {
+                if (commandsDataTable == null)
+                {
+                    commandsDataTable = new DataSets.AppDataSet.CommandsDataTable();
+                    commandsDataTable.AddCommandsRow(1, @"Read", 1, 1);
+                    //commandsDataTable.AddCommandsRow(2, @"SQLExec", 2, 1);
+                    //commandsDataTable.AddCommandsRow(4, @"RecordSet", 3, 1);
+                    commandsDataTable.AddCommandsRow(2, @"Relate", 2, 1);
+                    commandsDataTable.AddCommandsRow(3, @"Write (Export)", 3, 1);
+                    commandsDataTable.AddCommandsRow(4, @"Merge", 4, 1);
+                    commandsDataTable.AddCommandsRow(5, @"Delete File/Table", 5, 1);
+                    commandsDataTable.AddCommandsRow(6, @"Delete Records", 6, 1);
+                    commandsDataTable.AddCommandsRow(7, @"Undelete Records", 7, 1);
+                    commandsDataTable.AddCommandsRow(1, @"Define", 1, 2);
+                    commandsDataTable.AddCommandsRow(2, @"DefineGroup", 2, 2);
+                    commandsDataTable.AddCommandsRow(3, @"Undefine", 3, 2);
+                    commandsDataTable.AddCommandsRow(4, @"Assign", 4, 2);
+                    commandsDataTable.AddCommandsRow(5, @"Recode", 5, 2);
+                    commandsDataTable.AddCommandsRow(6, @"Display", 6, 2);
+
+
+                    commandsDataTable.AddCommandsRow(1, @"Select", 1, 3);
+                    commandsDataTable.AddCommandsRow(2, @"Cancel Select", 2, 3);
+                    commandsDataTable.AddCommandsRow(3, @"If", 3, 3);
+                    commandsDataTable.AddCommandsRow(4, @"Sort", 4, 3);
+                    commandsDataTable.AddCommandsRow(5, @"Cancel Sort", 5, 3);
+                    commandsDataTable.AddCommandsRow(1, @"List", 1, 4);
+                    commandsDataTable.AddCommandsRow(2, @"Frequencies", 2, 4);
+                    commandsDataTable.AddCommandsRow(3, @"Tables", 3, 4);
+                    //commandsDataTable.AddCommandsRow(4, @"Match", 4, 4);
+                    commandsDataTable.AddCommandsRow(5, @"Means", 5, 4);
+                    commandsDataTable.AddCommandsRow(6, @"Summarize", 6, 4);
+                    commandsDataTable.AddCommandsRow(7, @"Graph", 7, 4);
+                    //commandsDataTable.AddCommandsRow(8, @"Map", 8, 4);
+                    commandsDataTable.AddCommandsRow(1, @"Linear Regression", 1, 5);
+                    commandsDataTable.AddCommandsRow(2, @"Logistic Regression", 2, 5);
+                    commandsDataTable.AddCommandsRow(3, @"Kaplan-Meier Survival", 3, 5);
+                    commandsDataTable.AddCommandsRow(4, @"Cox Proportional Hazards", 4, 5);
+                    commandsDataTable.AddCommandsRow(5, @"Complex Sample Frequencies", 5, 5);
+                    commandsDataTable.AddCommandsRow(6, @"Complex Sample Tables", 6, 5);
+                    commandsDataTable.AddCommandsRow(7, @"Complex Sample Means", 7, 5);
+                    commandsDataTable.AddCommandsRow(1, @"Header", 1, 6);
+                    commandsDataTable.AddCommandsRow(2, @"Type", 2, 6);
+                    commandsDataTable.AddCommandsRow(3, @"RouteOut", 3, 6);
+                    commandsDataTable.AddCommandsRow(4, @"CloseOut", 4, 6);
+                    commandsDataTable.AddCommandsRow(5, @"PrintOut", 5, 6);
+                    //commandsDataTable.AddCommandsRow(6, @"Reports", 6, 6);
+                    commandsDataTable.AddCommandsRow(7, @"Storing Output", 7, 6);
+
+                    commandsDataTable.AddCommandsRow(1, @"Define Command", 1, 7);
+                    commandsDataTable.AddCommandsRow(2, @"User Command", 2, 7);
+                    commandsDataTable.AddCommandsRow(3, @"Run Saved Program", 3, 7);
+                    commandsDataTable.AddCommandsRow(4, @"Execute File", 4, 7);
+
                     commandsDataTable.AddCommandsRow(1, @"Dialog", 1, 8);
-					commandsDataTable.AddCommandsRow(2, @"Beep", 2, 8);
-					//commandsDataTable.AddCommandsRow(3, @"Help", 3, 8);
-					commandsDataTable.AddCommandsRow(4, @"Quit Program", 4, 8);
-					commandsDataTable.AddCommandsRow(1, @"Set", 1, 9);
-					//commandsDataTable.AddCommandsRow(2, @"Define Group", 2, 2);
-				}
-				return (commandsDataTable);
-			}
-		}
+                    commandsDataTable.AddCommandsRow(2, @"Beep", 2, 8);
+                    //commandsDataTable.AddCommandsRow(3, @"Help", 3, 8);
+                    commandsDataTable.AddCommandsRow(4, @"Quit Program", 4, 8);
+                    commandsDataTable.AddCommandsRow(1, @"Set", 1, 9);
+                    //commandsDataTable.AddCommandsRow(2, @"Define Group", 2, 2);
+                }
+                return (commandsDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.DataPatternsDataTable dataPatternsDataTable;
-		/// <summary>
-		/// Data Patterns Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.DataPatternsDataTable DataPatternsDataTable
-		{
-			get
-			{
-				if (dataPatternsDataTable == null)
-				{
+        private DataSets.AppDataSet.DataPatternsDataTable dataPatternsDataTable;
+        /// <summary>
+        /// Data Patterns Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.DataPatternsDataTable DataPatternsDataTable
+        {
+            get
+            {
+                if (dataPatternsDataTable == null)
+                {
                     dataPatternsDataTable = new DataSets.AppDataSet.DataPatternsDataTable();
                     int patternId = 0;
 
@@ -208,272 +203,272 @@ namespace Epi.Data.Services
                     dataPatternsDataTable.AddDataPatternsRow(++patternId, 7, @"###-###-###-####", @"###-###-###-####", @"###-###-###-####");
                     dataPatternsDataTable.AddDataPatternsRow(++patternId, 7, @"#-###-###-###-####", @"#-###-###-###-####", @"#-###-###-###-####");
                 }
-				return (dataPatternsDataTable);
-			}
-		}
+                return (dataPatternsDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.DataTypesDataTable dataTypesDataTable;
-		/// <summary>
-		/// Data Types Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.DataTypesDataTable DataTypesDataTable
-		{
-			get
-			{
-				if (dataTypesDataTable == null)
-				{
-					dataTypesDataTable = new DataSets.AppDataSet.DataTypesDataTable();
-					dataTypesDataTable.AddDataTypesRow(1, true, false, true, @"Number", @"NUMERIC");
-					dataTypesDataTable.AddDataTypesRow(2, false, true, false, @"Text", @"TEXTINPUT");
+        private DataSets.AppDataSet.DataTypesDataTable dataTypesDataTable;
+        /// <summary>
+        /// Data Types Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.DataTypesDataTable DataTypesDataTable
+        {
+            get
+            {
+                if (dataTypesDataTable == null)
+                {
+                    dataTypesDataTable = new DataSets.AppDataSet.DataTypesDataTable();
+                    dataTypesDataTable.AddDataTypesRow(1, true, false, true, @"Number", @"NUMERIC");
+                    dataTypesDataTable.AddDataTypesRow(2, false, true, false, @"Text", @"TEXTINPUT");
                     dataTypesDataTable.AddDataTypesRow(3, false, false, true, @"Date", @"DATEFORMAT");
                     dataTypesDataTable.AddDataTypesRow(4, false, false, false, @"Time", @"TIMEFORMAT");
                     dataTypesDataTable.AddDataTypesRow(5, false, false, false, @"DateTime", @"DATETIMEFORMAT");
-					dataTypesDataTable.AddDataTypesRow(6, false, false, false, @"Boolean", @"YN");
-					dataTypesDataTable.AddDataTypesRow(7, true, false, false, @"PhoneNumber", @"TEXTINPUT");
-					dataTypesDataTable.AddDataTypesRow(8, false, false, false, @"YesNo", @"YN");
-					dataTypesDataTable.AddDataTypesRow(9, false, false, false, @"Unknown", string.Empty);
-					dataTypesDataTable.AddDataTypesRow(10, false, false, false, @"GUID", @"TEXTINPUT");
-					dataTypesDataTable.AddDataTypesRow(0, false, false, false, @"Object", @"DLLOBJECT");
-				}
-				return (dataTypesDataTable);
-			}
-		}
+                    dataTypesDataTable.AddDataTypesRow(6, false, false, false, @"Boolean", @"YN");
+                    dataTypesDataTable.AddDataTypesRow(7, true, false, false, @"PhoneNumber", @"TEXTINPUT");
+                    dataTypesDataTable.AddDataTypesRow(8, false, false, false, @"YesNo", @"YN");
+                    dataTypesDataTable.AddDataTypesRow(9, false, false, false, @"Unknown", string.Empty);
+                    dataTypesDataTable.AddDataTypesRow(10, false, false, false, @"GUID", @"TEXTINPUT");
+                    dataTypesDataTable.AddDataTypesRow(0, false, false, false, @"Object", @"DLLOBJECT");
+                }
+                return (dataTypesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.DialogFormatsDataTable dialogFormatsDataTable;
-		/// <summary>
-		/// Dialog Formats Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.DialogFormatsDataTable DialogFormatsDataTable
-		{
-			get
-			{
-				if (dialogFormatsDataTable == null)
-				{
-					dialogFormatsDataTable = new DataSets.AppDataSet.DialogFormatsDataTable();
-					dialogFormatsDataTable.AddDialogFormatsRow(1, @"Text Entry", 1, @"TEXTINPUT");
-					dialogFormatsDataTable.AddDialogFormatsRow(2, @"Multiple Choice", 2, @"<StringList>");
-					dialogFormatsDataTable.AddDialogFormatsRow(3, @"Variable List", 3, @"DBVARIABLES");
-					dialogFormatsDataTable.AddDialogFormatsRow(4, @"View List", 4, @"DBVIEWS");
-					dialogFormatsDataTable.AddDialogFormatsRow(5, @"Database List", 5, @"DATABASES");
-					dialogFormatsDataTable.AddDialogFormatsRow(6, @"File Open", 6, @"READ");
-					dialogFormatsDataTable.AddDialogFormatsRow(7, @"File Save", 7, @"WRITE");
-				}
-				return (dialogFormatsDataTable);
-			}
-		}
+        private DataSets.AppDataSet.DialogFormatsDataTable dialogFormatsDataTable;
+        /// <summary>
+        /// Dialog Formats Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.DialogFormatsDataTable DialogFormatsDataTable
+        {
+            get
+            {
+                if (dialogFormatsDataTable == null)
+                {
+                    dialogFormatsDataTable = new DataSets.AppDataSet.DialogFormatsDataTable();
+                    dialogFormatsDataTable.AddDialogFormatsRow(1, @"Text Entry", 1, @"TEXTINPUT");
+                    dialogFormatsDataTable.AddDialogFormatsRow(2, @"Multiple Choice", 2, @"<StringList>");
+                    dialogFormatsDataTable.AddDialogFormatsRow(3, @"Variable List", 3, @"DBVARIABLES");
+                    dialogFormatsDataTable.AddDialogFormatsRow(4, @"View List", 4, @"DBVIEWS");
+                    dialogFormatsDataTable.AddDialogFormatsRow(5, @"Database List", 5, @"DATABASES");
+                    dialogFormatsDataTable.AddDialogFormatsRow(6, @"File Open", 6, @"READ");
+                    dialogFormatsDataTable.AddDialogFormatsRow(7, @"File Save", 7, @"WRITE");
+                }
+                return (dialogFormatsDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.FieldTypesDataTable fieldTypesDataTable;
-		/// <summary>
-		/// Field Types Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.FieldTypesDataTable FieldTypesDataTable
-		{
-			get
-			{
-				if (fieldTypesDataTable == null)
-				{
-					fieldTypesDataTable = new DataSets.AppDataSet.FieldTypesDataTable();
-					fieldTypesDataTable.AddFieldTypesRow(1, @"Text", false, true, true, true, true, false, false, false, true, true, true, 2, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(2, @"Label/Title", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(3, @"Text (Uppercase)", false, true, true, true, true, false, false, false, true, false, false, 2, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(4, @"Multiline", false, false, true, true, true, false, false, false, true, false, false, 2, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(5, @"Number", true, false, true, true, true, false, false, true, true, false, true, 1, false, 2);
-					fieldTypesDataTable.AddFieldTypesRow(6, @"Phone Number", true, false, true, true, true, false, false, false, true, false, true, 7, false, 7);
+        private DataSets.AppDataSet.FieldTypesDataTable fieldTypesDataTable;
+        /// <summary>
+        /// Field Types Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.FieldTypesDataTable FieldTypesDataTable
+        {
+            get
+            {
+                if (fieldTypesDataTable == null)
+                {
+                    fieldTypesDataTable = new DataSets.AppDataSet.FieldTypesDataTable();
+                    fieldTypesDataTable.AddFieldTypesRow(1, @"Text", false, true, true, true, true, false, false, false, true, true, true, 2, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(2, @"Label/Title", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(3, @"Text (Uppercase)", false, true, true, true, true, false, false, false, true, false, false, 2, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(4, @"Multiline", false, false, true, true, true, false, false, false, true, false, false, 2, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(5, @"Number", true, false, true, true, true, false, false, true, true, false, true, 1, false, 2);
+                    fieldTypesDataTable.AddFieldTypesRow(6, @"Phone Number", true, false, true, true, true, false, false, false, true, false, true, 7, false, 7);
                     fieldTypesDataTable.AddFieldTypesRow(7, @"Date", true, false, true, true, true, false, false, true, true, false, true, 3, false, 9);
                     fieldTypesDataTable.AddFieldTypesRow(8, @"Time", true, false, true, true, true, false, false, false, true, false, true, 4, false, 14);
                     fieldTypesDataTable.AddFieldTypesRow(9, @"Date/Time", true, false, true, true, true, false, false, false, true, false, true, 5, false, 16);
-					fieldTypesDataTable.AddFieldTypesRow(10, @"Checkbox", false, false, true, false, true, false, false, false, false, false, true, 6, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(11, @"Yes/No", false, false, true, true, true, false, false, false, true, false, true, 8, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(12, @"Option", false, false, false, false, false, false, false, false, false, false, false, 2, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(13, @"Command Button", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(14, @"Image", false, false, false, false, false, false, true, false, false, false, false, 0, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(15, @"Mirror", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(16, @"Grid", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(17, @"Legal Values", false, false, true, true, true, false, false, false, true, true, true, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(18, @"Codes", false, false, true, true, true, false, false, false, true, true, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(19, @"Comment Legal", false, false, true, true, true, false, false, false, true, true, true, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(20, @"Relate", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(21, @"Group", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(22, @"RecStatus", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
-					fieldTypesDataTable.AddFieldTypesRow(23, @"UniqueKey", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
-					fieldTypesDataTable.AddFieldTypesRow(24, @"ForeignKey", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
-					fieldTypesDataTable.AddFieldTypesRow(25, @"GUID", false, false, false, false, false, false, false, false, false, false, false, 10, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(26, @"GlobalRecordId", false, false, false, false, false, false, false, false, false, false, false, 2, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(27, @"List", false, false, true, true, true, false, false, false, true, true, false, 9, false, 0);
-					fieldTypesDataTable.AddFieldTypesRow(99, @"Unknown", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
-				}
-				return (fieldTypesDataTable);
-			}
-		}
+                    fieldTypesDataTable.AddFieldTypesRow(10, @"Checkbox", false, false, true, false, true, false, false, false, false, false, true, 6, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(11, @"Yes/No", false, false, true, true, true, false, false, false, true, false, true, 8, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(12, @"Option", false, false, false, false, false, false, false, false, false, false, false, 2, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(13, @"Command Button", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(14, @"Image", false, false, false, false, false, false, true, false, false, false, false, 0, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(15, @"Mirror", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(16, @"Grid", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(17, @"Legal Values", false, false, true, true, true, false, false, false, true, true, true, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(18, @"Codes", false, false, true, true, true, false, false, false, true, true, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(19, @"Comment Legal", false, false, true, true, true, false, false, false, true, true, true, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(20, @"Relate", false, false, false, false, false, false, false, false, true, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(21, @"Group", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(22, @"RecStatus", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(23, @"UniqueKey", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(24, @"ForeignKey", false, false, false, false, false, false, false, false, false, false, false, 1, true, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(25, @"GUID", false, false, false, false, false, false, false, false, false, false, false, 10, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(26, @"GlobalRecordId", false, false, false, false, false, false, false, false, false, false, false, 2, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(27, @"List", false, false, true, true, true, false, false, false, true, true, false, 9, false, 0);
+                    fieldTypesDataTable.AddFieldTypesRow(99, @"Unknown", false, false, false, false, false, false, false, false, false, false, false, 9, false, 0);
+                }
+                return (fieldTypesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.FontStylesDataTable fontStylesDataTable;
-		/// <summary>
-		/// Variable Scopes Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.FontStylesDataTable FontStylesDataTable
-		{
-			get
-			{
-				if (fontStylesDataTable == null)
-				{
-					fontStylesDataTable = new DataSets.AppDataSet.FontStylesDataTable();
-					fontStylesDataTable.AddFontStylesRow(1, @"Regular");
-					fontStylesDataTable.AddFontStylesRow(2, @"Italic");
-					fontStylesDataTable.AddFontStylesRow(3, @"Bold");
-					fontStylesDataTable.AddFontStylesRow(4, @"Bold Italic");
-				}
-				return (fontStylesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.FontStylesDataTable fontStylesDataTable;
+        /// <summary>
+        /// Variable Scopes Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.FontStylesDataTable FontStylesDataTable
+        {
+            get
+            {
+                if (fontStylesDataTable == null)
+                {
+                    fontStylesDataTable = new DataSets.AppDataSet.FontStylesDataTable();
+                    fontStylesDataTable.AddFontStylesRow(1, @"Regular");
+                    fontStylesDataTable.AddFontStylesRow(2, @"Italic");
+                    fontStylesDataTable.AddFontStylesRow(3, @"Bold");
+                    fontStylesDataTable.AddFontStylesRow(4, @"Bold Italic");
+                }
+                return (fontStylesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.LayerRenderTypesDataTable layerRenderTypesDataTable;
-		/// <summary>
-		/// Layer Render Types Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.LayerRenderTypesDataTable LayerRenderTypesDataTable
-		{
-			get
-			{
-				if (layerRenderTypesDataTable == null)
-				{
-					layerRenderTypesDataTable = new DataSets.AppDataSet.LayerRenderTypesDataTable();
-					layerRenderTypesDataTable.AddLayerRenderTypesRow(1, @"Simple");
-					layerRenderTypesDataTable.AddLayerRenderTypesRow(2, @"Choropleth");
-					layerRenderTypesDataTable.AddLayerRenderTypesRow(3, @"Dot Density");
-					layerRenderTypesDataTable.AddLayerRenderTypesRow(4, @"Unique Values");
-				}
-				return (layerRenderTypesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.LayerRenderTypesDataTable layerRenderTypesDataTable;
+        /// <summary>
+        /// Layer Render Types Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.LayerRenderTypesDataTable LayerRenderTypesDataTable
+        {
+            get
+            {
+                if (layerRenderTypesDataTable == null)
+                {
+                    layerRenderTypesDataTable = new DataSets.AppDataSet.LayerRenderTypesDataTable();
+                    layerRenderTypesDataTable.AddLayerRenderTypesRow(1, @"Simple");
+                    layerRenderTypesDataTable.AddLayerRenderTypesRow(2, @"Choropleth");
+                    layerRenderTypesDataTable.AddLayerRenderTypesRow(3, @"Dot Density");
+                    layerRenderTypesDataTable.AddLayerRenderTypesRow(4, @"Unique Values");
+                }
+                return (layerRenderTypesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.ListTreatmentTypesDataTable listTreatmentTypesDataTable;
-		/// <summary>
-		/// List Treatment Types Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.ListTreatmentTypesDataTable ListTreatmentTypesDataTable
-		{
-			get
-			{
-				if (listTreatmentTypesDataTable == null)
-				{
-					listTreatmentTypesDataTable = new DataSets.AppDataSet.ListTreatmentTypesDataTable();
-					listTreatmentTypesDataTable.AddListTreatmentTypesRow(1, @"Legal Values");
-					listTreatmentTypesDataTable.AddListTreatmentTypesRow(2, @"Comment Legal");
-				}
-				return (listTreatmentTypesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.ListTreatmentTypesDataTable listTreatmentTypesDataTable;
+        /// <summary>
+        /// List Treatment Types Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.ListTreatmentTypesDataTable ListTreatmentTypesDataTable
+        {
+            get
+            {
+                if (listTreatmentTypesDataTable == null)
+                {
+                    listTreatmentTypesDataTable = new DataSets.AppDataSet.ListTreatmentTypesDataTable();
+                    listTreatmentTypesDataTable.AddListTreatmentTypesRow(1, @"Legal Values");
+                    listTreatmentTypesDataTable.AddListTreatmentTypesRow(2, @"Comment Legal");
+                }
+                return (listTreatmentTypesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.ModulesDataTable modulesDataTable;
-		/// <summary>
-		/// Modules Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.ModulesDataTable ModulesDataTable
-		{
-			get
-			{
-				if (modulesDataTable == null)
-				{
-					modulesDataTable = new DataSets.AppDataSet.ModulesDataTable();
-					modulesDataTable.AddModulesRow(1, @"General", 1, @"EpiInfo", @"General", string.Empty, string.Empty);
-					modulesDataTable.AddModulesRow(2, @"Menu", 2, @"Menu", @"Menu", string.Empty, string.Empty);
-					modulesDataTable.AddModulesRow(3, @"Make View", 3, @"MakeView", @"Make View", @"Epi.MakeView", @"Epi.MakeView.Forms.MakeView");
-					modulesDataTable.AddModulesRow(4, @"Enter", 4, @"Enter", @"Enter Data", @"Epi.Enter", @"Epi.Enter.Forms.Enter");
-					modulesDataTable.AddModulesRow(5, @"Analysis", 5, @"Analysis", @"Analyze Data", @"Epi.Analysis", @"Epi.Analysis.Forms.Analysis");
-					modulesDataTable.AddModulesRow(6, @"EpiMap", 6, @"EpiMap", @"Create Maps", @"Epi.Map", @"Epi.Map.Forms.EpiMap");
-				}
-				return (modulesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.ModulesDataTable modulesDataTable;
+        /// <summary>
+        /// Modules Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.ModulesDataTable ModulesDataTable
+        {
+            get
+            {
+                if (modulesDataTable == null)
+                {
+                    modulesDataTable = new DataSets.AppDataSet.ModulesDataTable();
+                    modulesDataTable.AddModulesRow(1, @"General", 1, @"EpiInfo", @"General", string.Empty, string.Empty);
+                    modulesDataTable.AddModulesRow(2, @"Menu", 2, @"Menu", @"Menu", string.Empty, string.Empty);
+                    modulesDataTable.AddModulesRow(3, @"Make View", 3, @"MakeView", @"Make View", @"Epi.MakeView", @"Epi.MakeView.Forms.MakeView");
+                    modulesDataTable.AddModulesRow(4, @"Enter", 4, @"Enter", @"Enter Data", @"Epi.Enter", @"Epi.Enter.Forms.Enter");
+                    modulesDataTable.AddModulesRow(5, @"Analysis", 5, @"Analysis", @"Analyze Data", @"Epi.Analysis", @"Epi.Analysis.Forms.Analysis");
+                    modulesDataTable.AddModulesRow(6, @"EpiMap", 6, @"EpiMap", @"Create Maps", @"Epi.Map", @"Epi.Map.Forms.EpiMap");
+                }
+                return (modulesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.RecordProcessingScopesDataTable recordProcessingScopesDataTable;
-		/// <summary>
-		/// Record Processing Scopes Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.RecordProcessingScopesDataTable RecordProcessingScopesDataTable
-		{
-			get
-			{
-				if (recordProcessingScopesDataTable == null)
-				{
-					recordProcessingScopesDataTable = new DataSets.AppDataSet.RecordProcessingScopesDataTable();
-					recordProcessingScopesDataTable.AddRecordProcessingScopesRow(1, @"Normal (undeleted)", @"UNDELETED", 1);
-					recordProcessingScopesDataTable.AddRecordProcessingScopesRow(2, @"Deleted", @"DELETED", 2);
-					recordProcessingScopesDataTable.AddRecordProcessingScopesRow(3, @"Both", @"BOTH", 3);
-				}
-				return (recordProcessingScopesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.RecordProcessingScopesDataTable recordProcessingScopesDataTable;
+        /// <summary>
+        /// Record Processing Scopes Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.RecordProcessingScopesDataTable RecordProcessingScopesDataTable
+        {
+            get
+            {
+                if (recordProcessingScopesDataTable == null)
+                {
+                    recordProcessingScopesDataTable = new DataSets.AppDataSet.RecordProcessingScopesDataTable();
+                    recordProcessingScopesDataTable.AddRecordProcessingScopesRow(1, @"Normal (undeleted)", @"UNDELETED", 1);
+                    recordProcessingScopesDataTable.AddRecordProcessingScopesRow(2, @"Deleted", @"DELETED", 2);
+                    recordProcessingScopesDataTable.AddRecordProcessingScopesRow(3, @"Both", @"BOTH", 3);
+                }
+                return (recordProcessingScopesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.RepresentationsOfMissingDataTable representationsOfMissingDataTable;
-		/// <summary>
-		/// Representations Of Missing Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.RepresentationsOfMissingDataTable RepresentationsOfMissingDataTable
-		{
-			get
-			{
-				if (representationsOfMissingDataTable == null)
-				{
-					representationsOfMissingDataTable = new DataSets.AppDataSet.RepresentationsOfMissingDataTable();
-					representationsOfMissingDataTable.AddRepresentationsOfMissingRow(1, @"Missing", 1);
-					representationsOfMissingDataTable.AddRepresentationsOfMissingRow(2, @"Unknown", 2);
-					representationsOfMissingDataTable.AddRepresentationsOfMissingRow(3, @"(.)", 3);
-				}
-				return (representationsOfMissingDataTable);
-			}
-		}
+        private DataSets.AppDataSet.RepresentationsOfMissingDataTable representationsOfMissingDataTable;
+        /// <summary>
+        /// Representations Of Missing Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.RepresentationsOfMissingDataTable RepresentationsOfMissingDataTable
+        {
+            get
+            {
+                if (representationsOfMissingDataTable == null)
+                {
+                    representationsOfMissingDataTable = new DataSets.AppDataSet.RepresentationsOfMissingDataTable();
+                    representationsOfMissingDataTable.AddRepresentationsOfMissingRow(1, @"Missing", 1);
+                    representationsOfMissingDataTable.AddRepresentationsOfMissingRow(2, @"Unknown", 2);
+                    representationsOfMissingDataTable.AddRepresentationsOfMissingRow(3, @"(.)", 3);
+                }
+                return (representationsOfMissingDataTable);
+            }
+        }
 
 
 
-		private DataSets.AppDataSet.RepresentationsOfNoDataTable representationsOfNoDataTable;
-		/// <summary>
-		/// Representations Of No Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.RepresentationsOfNoDataTable RepresentationsOfNoDataTable
-		{
-			get
-			{
-				if (representationsOfNoDataTable == null)
-				{
-					representationsOfNoDataTable = new DataSets.AppDataSet.RepresentationsOfNoDataTable();
-					representationsOfNoDataTable.AddRepresentationsOfNoRow(1, @"No", 1);
-					representationsOfNoDataTable.AddRepresentationsOfNoRow(2, @"False", 2);
-					representationsOfNoDataTable.AddRepresentationsOfNoRow(3, @"(-)", 3);
-				}
-				return (representationsOfNoDataTable);
-			}
-		}
+        private DataSets.AppDataSet.RepresentationsOfNoDataTable representationsOfNoDataTable;
+        /// <summary>
+        /// Representations Of No Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.RepresentationsOfNoDataTable RepresentationsOfNoDataTable
+        {
+            get
+            {
+                if (representationsOfNoDataTable == null)
+                {
+                    representationsOfNoDataTable = new DataSets.AppDataSet.RepresentationsOfNoDataTable();
+                    representationsOfNoDataTable.AddRepresentationsOfNoRow(1, @"No", 1);
+                    representationsOfNoDataTable.AddRepresentationsOfNoRow(2, @"False", 2);
+                    representationsOfNoDataTable.AddRepresentationsOfNoRow(3, @"(-)", 3);
+                }
+                return (representationsOfNoDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.RepresentationsOfYesDataTable representationsOfYesDataTable;
-		/// <summary>
-		/// Representations Of Yes Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.RepresentationsOfYesDataTable RepresentationsOfYesDataTable
-		{
-			get
-			{
-				if (representationsOfYesDataTable == null)
-				{
-					representationsOfYesDataTable = new DataSets.AppDataSet.RepresentationsOfYesDataTable();
-					representationsOfYesDataTable.AddRepresentationsOfYesRow(1, @"Yes", 1);
-					representationsOfYesDataTable.AddRepresentationsOfYesRow(2, @"True", 2);
-					representationsOfYesDataTable.AddRepresentationsOfYesRow(3, @"(+)", 3);
-				}
-				return (representationsOfYesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.RepresentationsOfYesDataTable representationsOfYesDataTable;
+        /// <summary>
+        /// Representations Of Yes Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.RepresentationsOfYesDataTable RepresentationsOfYesDataTable
+        {
+            get
+            {
+                if (representationsOfYesDataTable == null)
+                {
+                    representationsOfYesDataTable = new DataSets.AppDataSet.RepresentationsOfYesDataTable();
+                    representationsOfYesDataTable.AddRepresentationsOfYesRow(1, @"Yes", 1);
+                    representationsOfYesDataTable.AddRepresentationsOfYesRow(2, @"True", 2);
+                    representationsOfYesDataTable.AddRepresentationsOfYesRow(3, @"(+)", 3);
+                }
+                return (representationsOfYesDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.ReservedWordsDataTable reservedWordsDataTable;
-		/// <summary>
-		/// Reservered Words Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.ReservedWordsDataTable ReservedWordsDataTable
-		{
-			get
-			{
-				if (reservedWordsDataTable == null)
-				{
+        private DataSets.AppDataSet.ReservedWordsDataTable reservedWordsDataTable;
+        /// <summary>
+        /// Reservered Words Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.ReservedWordsDataTable ReservedWordsDataTable
+        {
+            get
+            {
+                if (reservedWordsDataTable == null)
+                {
                     int index = 1;
                     reservedWordsDataTable = new DataSets.AppDataSet.ReservedWordsDataTable();
                     reservedWordsDataTable.AddReservedWordsRow(index++, @"ABSOLUTE", @"B");
@@ -1074,265 +1069,265 @@ namespace Epi.Data.Services
                     reservedWordsDataTable.AddReservedWordsRow(index++, @"new", @"B");
                     reservedWordsDataTable.AddReservedWordsRow(index++, @"with", @"B");
 
-				}
-				return (reservedWordsDataTable);
-			}
-		}
+                }
+                return (reservedWordsDataTable);
+            }
+        }
 
-		private DataSets.AppDataSet.SettingsDataTable settingsDataTable;
-		/// <summary>
-		/// Settings Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.SettingsDataTable SettingsDataTable
-		{
-			get
-			{
-				if (settingsDataTable == null)
-				{
-					settingsDataTable = new DataSets.AppDataSet.SettingsDataTable();
-					settingsDataTable.AddSettingsRow(1, @"BackgroundImage", @"C:\Epi_Info");
-					settingsDataTable.AddSettingsRow(2, @"MRUProjectsCount", @"4");
-					settingsDataTable.AddSettingsRow(3, @"Language", @"English");
-					settingsDataTable.AddSettingsRow(4, @"RepresentationOfYes", @"Yes");
-					settingsDataTable.AddSettingsRow(5, @"RepresentationOfNo", @"No");
-					settingsDataTable.AddSettingsRow(6, @"RepresentationOfMissing", @"Missing");
-					settingsDataTable.AddSettingsRow(7, @"StatisticsLevel", @"2");
-					settingsDataTable.AddSettingsRow(8, @"RecordProcessingScope", @"2");
-					settingsDataTable.AddSettingsRow(9, @"ShowCompletePrompt", @"true");
-					settingsDataTable.AddSettingsRow(10, @"ShowSelection", @"true");
-					settingsDataTable.AddSettingsRow(11, @"ShowGraphics", @"true");
-					settingsDataTable.AddSettingsRow(12, @"ShowPercents", @"true");
-					settingsDataTable.AddSettingsRow(13, @"ShowTables", @"true");
-					settingsDataTable.AddSettingsRow(14, @"ShowHyperlinks", @"true");
-					settingsDataTable.AddSettingsRow(15, @"IncludeMissingValues", @"false");
-					settingsDataTable.AddSettingsRow(16, @"SnapToGrid", @"true");
-					settingsDataTable.AddSettingsRow(17, @"EditorFontName", @"Verdana");
-					settingsDataTable.AddSettingsRow(18, @"EditorFontSize", @"8.25");
-					settingsDataTable.AddSettingsRow(17, @"ControlFontName", @"Arial");
-					settingsDataTable.AddSettingsRow(18, @"ControlFontSize", @"11.25");
-					settingsDataTable.AddSettingsRow(19, @"DefaultDatabaseFormat", @"2");
-					settingsDataTable.AddSettingsRow(20, @"WorkingDirectory", @"C:\Temp");
-					settingsDataTable.AddSettingsRow(21, @"ProjectDirectory", @"C:\Documents and Settings\kkm4\My Documents\Epi Info Projects");
-					settingsDataTable.AddSettingsRow(22, @"MRUViewsCount", @"4");
-					settingsDataTable.AddSettingsRow(22, @"MRUDataSourcesCount", @"5");
-					settingsDataTable.AddSettingsRow(23, @"DefaultDataFormat", @"3");
-				}
-				return (settingsDataTable);
-			}
-		}
-
-
-
-		private DataSets.AppDataSet.SourceControlTypesDataTable sourceControlTypesDataTable;
-		/// <summary>
-		/// Source Control Types Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.SourceControlTypesDataTable SourceControlTypesDataTable
-		{
-			get
-			{
-				if (sourceControlTypesDataTable == null)
-				{
-					sourceControlTypesDataTable = new DataSets.AppDataSet.SourceControlTypesDataTable();
-					sourceControlTypesDataTable.AddSourceControlTypesRow(1, @"Codes");
-					sourceControlTypesDataTable.AddSourceControlTypesRow(2, @"Mirror");
-				}
-				return (sourceControlTypesDataTable);
-			}
-		}
-
-		private DataSets.AppDataSet.StatisticsLevelsDataTable statisticsLevelsDataTable;
-		/// <summary>
-		/// Statistics Levels Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.StatisticsLevelsDataTable StatisticsLevelsDataTable
-		{
-			get
-			{
-				if (statisticsLevelsDataTable == null)
-				{
-					statisticsLevelsDataTable = new DataSets.AppDataSet.StatisticsLevelsDataTable();
-					statisticsLevelsDataTable.AddStatisticsLevelsRow(1, @"None", @"NONE", 1);
-					statisticsLevelsDataTable.AddStatisticsLevelsRow(2, @"Minimal", @"MINIMAL", 2);
-					statisticsLevelsDataTable.AddStatisticsLevelsRow(3, @"Intermediate", @"INTERMEDIATE", 3);
-					statisticsLevelsDataTable.AddStatisticsLevelsRow(4, @"Advanced", @"COMPLETE", 4);
-				}
-				return (statisticsLevelsDataTable);
-			}
-		}
+        private DataSets.AppDataSet.SettingsDataTable settingsDataTable;
+        /// <summary>
+        /// Settings Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.SettingsDataTable SettingsDataTable
+        {
+            get
+            {
+                if (settingsDataTable == null)
+                {
+                    settingsDataTable = new DataSets.AppDataSet.SettingsDataTable();
+                    settingsDataTable.AddSettingsRow(1, @"BackgroundImage", @"C:\Epi_Info");
+                    settingsDataTable.AddSettingsRow(2, @"MRUProjectsCount", @"4");
+                    settingsDataTable.AddSettingsRow(3, @"Language", @"English");
+                    settingsDataTable.AddSettingsRow(4, @"RepresentationOfYes", @"Yes");
+                    settingsDataTable.AddSettingsRow(5, @"RepresentationOfNo", @"No");
+                    settingsDataTable.AddSettingsRow(6, @"RepresentationOfMissing", @"Missing");
+                    settingsDataTable.AddSettingsRow(7, @"StatisticsLevel", @"2");
+                    settingsDataTable.AddSettingsRow(8, @"RecordProcessingScope", @"2");
+                    settingsDataTable.AddSettingsRow(9, @"ShowCompletePrompt", @"true");
+                    settingsDataTable.AddSettingsRow(10, @"ShowSelection", @"true");
+                    settingsDataTable.AddSettingsRow(11, @"ShowGraphics", @"true");
+                    settingsDataTable.AddSettingsRow(12, @"ShowPercents", @"true");
+                    settingsDataTable.AddSettingsRow(13, @"ShowTables", @"true");
+                    settingsDataTable.AddSettingsRow(14, @"ShowHyperlinks", @"true");
+                    settingsDataTable.AddSettingsRow(15, @"IncludeMissingValues", @"false");
+                    settingsDataTable.AddSettingsRow(16, @"SnapToGrid", @"true");
+                    settingsDataTable.AddSettingsRow(17, @"EditorFontName", @"Verdana");
+                    settingsDataTable.AddSettingsRow(18, @"EditorFontSize", @"8.25");
+                    settingsDataTable.AddSettingsRow(17, @"ControlFontName", @"Arial");
+                    settingsDataTable.AddSettingsRow(18, @"ControlFontSize", @"11.25");
+                    settingsDataTable.AddSettingsRow(19, @"DefaultDatabaseFormat", @"2");
+                    settingsDataTable.AddSettingsRow(20, @"WorkingDirectory", @"C:\Temp");
+                    settingsDataTable.AddSettingsRow(21, @"ProjectDirectory", @"C:\Documents and Settings\kkm4\My Documents\Epi Info Projects");
+                    settingsDataTable.AddSettingsRow(22, @"MRUViewsCount", @"4");
+                    settingsDataTable.AddSettingsRow(22, @"MRUDataSourcesCount", @"5");
+                    settingsDataTable.AddSettingsRow(23, @"DefaultDataFormat", @"3");
+                }
+                return (settingsDataTable);
+            }
+        }
 
 
 
-		private DataSets.AppDataSet.SupportedAggregatesDataTable supportedAggregatesDataTable;
-		/// <summary>
-		/// Supported Aggregates Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.SupportedAggregatesDataTable SupportedAggregatesDataTable
-		{
-			get
-			{
-				if (supportedAggregatesDataTable == null)
-				{
-					supportedAggregatesDataTable = new DataSets.AppDataSet.SupportedAggregatesDataTable();
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(1, @"Average", 1);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(2, @"Count", 2);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(3, @"First", 3);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(4, @"Last", 4);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(5, @"Maximum", 5);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(6, @"Minimum", 6);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(7, @"StdDev", 7);
-					//supportedAggregatesDataTable.AddSupportedAggregatesRow(8, @"StdDev(Pop)", 8);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(9, @"Sum", 9);
-					supportedAggregatesDataTable.AddSupportedAggregatesRow(10, @"Var", 10);
-					//supportedAggregatesDataTable.AddSupportedAggregatesRow(11, @"Var(Pop)", 11);
-				}
-				return (supportedAggregatesDataTable);
-			}
-		}
+        private DataSets.AppDataSet.SourceControlTypesDataTable sourceControlTypesDataTable;
+        /// <summary>
+        /// Source Control Types Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.SourceControlTypesDataTable SourceControlTypesDataTable
+        {
+            get
+            {
+                if (sourceControlTypesDataTable == null)
+                {
+                    sourceControlTypesDataTable = new DataSets.AppDataSet.SourceControlTypesDataTable();
+                    sourceControlTypesDataTable.AddSourceControlTypesRow(1, @"Codes");
+                    sourceControlTypesDataTable.AddSourceControlTypesRow(2, @"Mirror");
+                }
+                return (sourceControlTypesDataTable);
+            }
+        }
+
+        private DataSets.AppDataSet.StatisticsLevelsDataTable statisticsLevelsDataTable;
+        /// <summary>
+        /// Statistics Levels Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.StatisticsLevelsDataTable StatisticsLevelsDataTable
+        {
+            get
+            {
+                if (statisticsLevelsDataTable == null)
+                {
+                    statisticsLevelsDataTable = new DataSets.AppDataSet.StatisticsLevelsDataTable();
+                    statisticsLevelsDataTable.AddStatisticsLevelsRow(1, @"None", @"NONE", 1);
+                    statisticsLevelsDataTable.AddStatisticsLevelsRow(2, @"Minimal", @"MINIMAL", 2);
+                    statisticsLevelsDataTable.AddStatisticsLevelsRow(3, @"Intermediate", @"INTERMEDIATE", 3);
+                    statisticsLevelsDataTable.AddStatisticsLevelsRow(4, @"Advanced", @"COMPLETE", 4);
+                }
+                return (statisticsLevelsDataTable);
+            }
+        }
 
 
 
-		private DataSets.AppDataSet.VariableScopesDataTable variableScopesDataTable;
-		/// <summary>
-		/// Variable Scopes Data Table in Application DataSet 
-		/// </summary>
-		public DataSets.AppDataSet.VariableScopesDataTable VariableScopesDataTable
-		{
-			get
-			{
-				if (variableScopesDataTable == null)
-				{
-					variableScopesDataTable = new DataSets.AppDataSet.VariableScopesDataTable();
-					variableScopesDataTable.AddVariableScopesRow(4, @"Standard", 1, true);
-					variableScopesDataTable.AddVariableScopesRow(2, @"Global", 2, false);
-					variableScopesDataTable.AddVariableScopesRow(1, @"Permanent", 3, false);
-					variableScopesDataTable.AddVariableScopesRow(0, @"Undefined", 0, false);
-					variableScopesDataTable.AddVariableScopesRow(16, @"DataSource", 4, false);
-					variableScopesDataTable.AddVariableScopesRow(32, @"DataSourceAssigned", 5, false);
-				}
-				return (variableScopesDataTable);
-			}
-		}
-		#endregion Generated Code
+        private DataSets.AppDataSet.SupportedAggregatesDataTable supportedAggregatesDataTable;
+        /// <summary>
+        /// Supported Aggregates Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.SupportedAggregatesDataTable SupportedAggregatesDataTable
+        {
+            get
+            {
+                if (supportedAggregatesDataTable == null)
+                {
+                    supportedAggregatesDataTable = new DataSets.AppDataSet.SupportedAggregatesDataTable();
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(1, @"Average", 1);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(2, @"Count", 2);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(3, @"First", 3);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(4, @"Last", 4);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(5, @"Maximum", 5);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(6, @"Minimum", 6);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(7, @"StdDev", 7);
+                    //supportedAggregatesDataTable.AddSupportedAggregatesRow(8, @"StdDev(Pop)", 8);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(9, @"Sum", 9);
+                    supportedAggregatesDataTable.AddSupportedAggregatesRow(10, @"Var", 10);
+                    //supportedAggregatesDataTable.AddSupportedAggregatesRow(11, @"Var(Pop)", 11);
+                }
+                return (supportedAggregatesDataTable);
+            }
+        }
 
-		#endregion Public Properties
 
-		#region Private Properties
-		private  ArrayList FieldTypes
-		{
-			get
-			{
-				if (fieldTypes == null)
-				{
-					fieldTypes = new ArrayList();
-					foreach (AppDataSet.FieldTypesRow row in FieldTypesDataTable.Rows)
-					{
-						FieldType fieldType = new FieldType(row);
-						fieldTypes.Add(fieldType);
-					}
-				}
-				return (fieldTypes);
-			}
-		}		
-		#endregion Private Properties
 
-		#region Public Methods
+        private DataSets.AppDataSet.VariableScopesDataTable variableScopesDataTable;
+        /// <summary>
+        /// Variable Scopes Data Table in Application DataSet 
+        /// </summary>
+        public DataSets.AppDataSet.VariableScopesDataTable VariableScopesDataTable
+        {
+            get
+            {
+                if (variableScopesDataTable == null)
+                {
+                    variableScopesDataTable = new DataSets.AppDataSet.VariableScopesDataTable();
+                    variableScopesDataTable.AddVariableScopesRow(4, @"Standard", 1, true);
+                    variableScopesDataTable.AddVariableScopesRow(2, @"Global", 2, false);
+                    variableScopesDataTable.AddVariableScopesRow(1, @"Permanent", 3, false);
+                    variableScopesDataTable.AddVariableScopesRow(0, @"Undefined", 0, false);
+                    variableScopesDataTable.AddVariableScopesRow(16, @"DataSource", 4, false);
+                    variableScopesDataTable.AddVariableScopesRow(32, @"DataSourceAssigned", 5, false);
+                }
+                return (variableScopesDataTable);
+            }
+        }
+        #endregion Generated Code
 
-		/// <summary>
-		/// Get Record Processessing Scope By Id
-		/// </summary>
-		/// <param name="id">The id of the Record ProcessingS cope</param>
-		/// <returns>Record ProcessingS copes Row</returns>
-		public AppDataSet.RecordProcessingScopesRow GetRecordProcessessingScopeById(RecordProcessingScope id)
-		{
-			foreach (AppDataSet.RecordProcessingScopesRow row in this.RecordProcessingScopesDataTable.Rows)
-			{
-				if (row.Id == (short) id)
-				{
-					return row;
-				}
-			}
-			throw new GeneralException("Invalid Scope Id");
-		}
+        #endregion Public Properties
 
-		/// <summary>
-		/// A row that contains the Statistics Levels and names
-		/// </summary>
-		/// <param name="id">Statistics Level enumeration.</param>
-		/// <returns>Statistics Levels Row</returns>
-		public AppDataSet.StatisticsLevelsRow  GetStatisticsLevelById(StatisticsLevel id)
-		{
-			foreach (AppDataSet.StatisticsLevelsRow row in this.StatisticsLevelsDataTable.Rows)
-			{
-				if (row.Id == (short) id)
-				{
-					return row;
-				}
-			}
-			throw new System.ApplicationException("Invalid Statistics Level Id");
-		}   
+        #region Private Properties
+        private ArrayList FieldTypes
+        {
+            get
+            {
+                if (fieldTypes == null)
+                {
+                    fieldTypes = new ArrayList();
+                    foreach (AppDataSet.FieldTypesRow row in FieldTypesDataTable.Rows)
+                    {
+                        FieldType fieldType = new FieldType(row);
+                        fieldTypes.Add(fieldType);
+                    }
+                }
+                return (fieldTypes);
+            }
+        }
+        #endregion Private Properties
 
-		/// <summary>
-		/// Checks to see if a word already exists as a reserved word
-		/// </summary>
-		/// <param name="word">Possible reserved word</param>
-		/// <returns>Returns status as to whether word already exists as a reserved word</returns>
-		public bool IsReservedWord(string word)
-		{
-			#region Input Validation
-			if (string.IsNullOrEmpty(word))			
-			{
-				throw new ArgumentNullException("word");
-			}
-			#endregion
-			
-			DataView dv = ReservedWordsDataTable.DefaultView;
-			dv.RowFilter = ReservedWordsDataTable.NameColumn.ColumnName + " = '" + word + "'";
-			return (dv.Count > 0);
-		}
-		#endregion Public Methods		
-		
-		#region Nested Types
-		/// <summary>
-		/// Field Type class
-		/// </summary>
-		public class FieldType
-		{
-			#region Constructors
-			/// <summary>
-			/// Default Constructor
-			/// </summary>
-			public FieldType()
-			{
-			}
+        #region Public Methods
 
-			/// <summary>
-			/// Constructor
-			/// </summary>
-			/// <param name="row">Field Types row in application dataset.</param>
-		public FieldType(AppDataSet.FieldTypesRow row)
-			{
-				inner = row;
-			}
-			#endregion Constructors
+        /// <summary>
+        /// Get Record Processessing Scope By Id
+        /// </summary>
+        /// <param name="id">The id of the Record ProcessingS cope</param>
+        /// <returns>Record ProcessingS copes Row</returns>
+        public AppDataSet.RecordProcessingScopesRow GetRecordProcessessingScopeById(RecordProcessingScope id)
+        {
+            foreach (AppDataSet.RecordProcessingScopesRow row in this.RecordProcessingScopesDataTable.Rows)
+            {
+                if (row.Id == (short)id)
+                {
+                    return row;
+                }
+            }
+            throw new GeneralException("Invalid Scope Id");
+        }
 
-			#region Fields
-			private AppDataSet.FieldTypesRow inner;
-			#endregion Fields
+        /// <summary>
+        /// A row that contains the Statistics Levels and names
+        /// </summary>
+        /// <param name="id">Statistics Level enumeration.</param>
+        /// <returns>Statistics Levels Row</returns>
+        public AppDataSet.StatisticsLevelsRow GetStatisticsLevelById(StatisticsLevel id)
+        {
+            foreach (AppDataSet.StatisticsLevelsRow row in this.StatisticsLevelsDataTable.Rows)
+            {
+                if (row.Id == (short)id)
+                {
+                    return row;
+                }
+            }
+            throw new System.ApplicationException("Invalid Statistics Level Id");
+        }
 
-			#region Public Properties
-			/// <summary>
-			/// Internal Field Types row.
-			/// </summary>
-			public AppDataSet.FieldTypesRow Inner
-			{
-				get
-				{
-					return inner;
-				}
-			}
-			#endregion Public Properties
-		}
-		#endregion
-	}
+        /// <summary>
+        /// Checks to see if a word already exists as a reserved word
+        /// </summary>
+        /// <param name="word">Possible reserved word</param>
+        /// <returns>Returns status as to whether word already exists as a reserved word</returns>
+        public bool IsReservedWord(string word)
+        {
+            #region Input Validation
+            if (string.IsNullOrEmpty(word))
+            {
+                throw new ArgumentNullException("word");
+            }
+            #endregion
+
+            DataView dv = ReservedWordsDataTable.DefaultView;
+            dv.RowFilter = ReservedWordsDataTable.NameColumn.ColumnName + " = '" + word + "'";
+            return (dv.Count > 0);
+        }
+        #endregion Public Methods		
+
+        #region Nested Types
+        /// <summary>
+        /// Field Type class
+        /// </summary>
+        public class FieldType
+        {
+            #region Constructors
+            /// <summary>
+            /// Default Constructor
+            /// </summary>
+            public FieldType()
+            {
+            }
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="row">Field Types row in application dataset.</param>
+            public FieldType(AppDataSet.FieldTypesRow row)
+            {
+                inner = row;
+            }
+            #endregion Constructors
+
+            #region Fields
+            private AppDataSet.FieldTypesRow inner;
+            #endregion Fields
+
+            #region Public Properties
+            /// <summary>
+            /// Internal Field Types row.
+            /// </summary>
+            public AppDataSet.FieldTypesRow Inner
+            {
+                get
+                {
+                    return inner;
+                }
+            }
+            #endregion Public Properties
+        }
+        #endregion
+    }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Epi.Web.MVC.Repositories.Core;
-using Epi.Web.MVC.DataServiceClient;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
@@ -13,8 +10,6 @@ namespace Epi.Web.MVC.Repositories
 {
     public class SurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
     {
-
-
 
         private Epi.Web.MVC.DataServiceClient.IEWEDataService _iDataService;
 

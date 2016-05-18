@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 namespace Epi.Web.BLL
 {
 
-  public  class SurveyInfo
+    public class SurveyInfo
     {
-      private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
-      Dictionary<int, int> ViewIds = new Dictionary<int, int>();
+        private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
+        Dictionary<int, int> ViewIds = new Dictionary<int, int>();
 
         public SurveyInfo(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao pSurveyInfoDao)
         {
@@ -23,7 +20,7 @@ namespace Epi.Web.BLL
         public SurveyInfoBO GetSurveyInfoById(string pId)
         {
             List<string> IdList = new List<string>();
-            if (! string.IsNullOrEmpty(pId))
+            if (!string.IsNullOrEmpty(pId))
             {
                 IdList.Add(pId);
             }
@@ -39,7 +36,7 @@ namespace Epi.Web.BLL
         }
 
 
-     
+
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
@@ -52,13 +49,13 @@ namespace Epi.Web.BLL
             return result;
         }
 
-        public PageInfoBO GetSurveySizeInfo(List<string> pIdList,int BandwidthUsageFactor, int pResponseMaxSize = -1)
-        { 
+        public PageInfoBO GetSurveySizeInfo(List<string> pIdList, int BandwidthUsageFactor, int pResponseMaxSize = -1)
+        {
             List<SurveyInfoBO> SurveyInfoBOList = this.SurveyInfoDao.GetSurveySizeInfo(pIdList, -1, -1, pResponseMaxSize);
 
             PageInfoBO result = new PageInfoBO();
 
-            result = Epi.Web.BLL.Common.GetSurveySize(SurveyInfoBOList,BandwidthUsageFactor, pResponseMaxSize);
+            result = Epi.Web.BLL.Common.GetSurveySize(SurveyInfoBOList, BandwidthUsageFactor, pResponseMaxSize);
             return result;
 
 
@@ -71,7 +68,7 @@ namespace Epi.Web.BLL
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
             List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfoByOrgKeyAndPublishKey(SurveyId, EncryptedKey, publishKey);
 
-             
+
             if (result != null && result.Count > 0)
             {
                 return true;
@@ -103,7 +100,7 @@ namespace Epi.Web.BLL
 
 
 
-      /// <summary>
+        /// <summary>
         /// Gets SurveyInfo based on criteria
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
@@ -127,7 +124,7 @@ namespace Epi.Web.BLL
             return result;
 
         }
-      
+
         public SurveyInfoBO InsertSurveyInfo(SurveyInfoBO pValue)
         {
             SurveyInfoBO result = pValue;
@@ -136,21 +133,21 @@ namespace Epi.Web.BLL
         }
         public SurveyInfoBO UpdateSurveyInfo(SurveyInfoBO pRequestMessage)
         {
-        SurveyInfoBO result = pRequestMessage;
-        if (ValidateSurveyFields(pRequestMessage))
+            SurveyInfoBO result = pRequestMessage;
+            if (ValidateSurveyFields(pRequestMessage))
             {
-            if (this.IsRelatedForm(pRequestMessage.XML))
-                    {
+                if (this.IsRelatedForm(pRequestMessage.XML))
+                {
 
                     List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(pRequestMessage.SurveyId.ToString());
-                    
+
                     // 1- breck down the xml to n views
                     List<string> XmlList = new List<string>();
                     XmlList = XmlChunking(pRequestMessage.XML);
 
                     // 2- call publish() with each of the views
                     foreach (string Xml in XmlList)
-                        {
+                    {
                         XDocument xdoc = XDocument.Parse(Xml);
                         SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
                         XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
@@ -173,19 +170,21 @@ namespace Epi.Web.BLL
                         this.SurveyInfoDao.UpdateSurveyInfo(SurveyInfoBO);
 
 
-                        }
                     }
+                }
                 else
-                    {
+                {
 
                     this.SurveyInfoDao.UpdateSurveyInfo(pRequestMessage);
-                    }
+                }
                 result.StatusText = "Successfully updated survey information.";
-            }else{
-                result.StatusText = "One or more survey required fields are missing values.";
-            
             }
-            
+            else
+            {
+                result.StatusText = "One or more survey required fields are missing values.";
+
+            }
+
             return result;
         }
 
@@ -211,13 +210,13 @@ namespace Epi.Web.BLL
 
             }
 
-           
+
             else if (string.IsNullOrEmpty(pRequestMessage.SurveyName))
             {
 
                 isValid = false;
             }
- 
+
 
 
 
@@ -225,53 +224,53 @@ namespace Epi.Web.BLL
         }
 
 
-        public List<SurveyInfoBO> GetChildInfoByParentId(Dictionary<string ,int > ParentIdList)
-            {
+        public List<SurveyInfoBO> GetChildInfoByParentId(Dictionary<string, int> ParentIdList)
+        {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             foreach (KeyValuePair<string, int> item in ParentIdList)
-                {
-                result = this.SurveyInfoDao.GetChildInfoByParentId(item.Key, item.Value);
-                }
-            return result;
-            }
-        public SurveyInfoBO GetParentInfoByChildId(string ChildId)
             {
+                result = this.SurveyInfoDao.GetChildInfoByParentId(item.Key, item.Value);
+            }
+            return result;
+        }
+        public SurveyInfoBO GetParentInfoByChildId(string ChildId)
+        {
             SurveyInfoBO result = new SurveyInfoBO();
 
             result = this.SurveyInfoDao.GetParentInfoByChildId(ChildId);
-              
+
             return result;
-            }
+        }
         public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string RootId)
-            {
+        {
             List<SurveyInfoBO> SurveyInfoBOList = new List<SurveyInfoBO>();
             List<FormsHierarchyBO> result = new List<FormsHierarchyBO>();
 
             SurveyInfoBOList = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             foreach (var item in SurveyInfoBOList)
-                {
+            {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
                 FormsHierarchyBO.ViewId = item.ViewId;
                 FormsHierarchyBO.FormId = item.SurveyId;
                 FormsHierarchyBO.SurveyInfo = item;
                 if (item.SurveyId == RootId)
-                    {
+                {
                     FormsHierarchyBO.IsRoot = true;
-                    }
-                result.Add(FormsHierarchyBO);
                 }
+                result.Add(FormsHierarchyBO);
+            }
 
             return result;
 
-            }
+        }
         private List<SurveyInfoBO> GetFormsHierarchyIds(string RootId)
-            {
+        {
             List<SurveyInfoBO> FormsHierarchyIds = new List<SurveyInfoBO>();
             FormsHierarchyIds = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             return FormsHierarchyIds;
-            }
+        }
         private bool IsRelatedForm(string Xml)
-            {
+        {
 
             bool IsRelatedForm = false;
             XDocument xdoc = XDocument.Parse(Xml);
@@ -279,18 +278,18 @@ namespace Epi.Web.BLL
 
             int NumberOfViews = xdoc.Descendants("View").Count();
             if (NumberOfViews > 1)
-                {
+            {
                 IsRelatedForm = true;
-
-                }
-
-            return IsRelatedForm;
 
             }
 
+            return IsRelatedForm;
+
+        }
+
 
         private void GetRelateViewIds(XElement ViewElement, int ViewId)
-            {
+        {
 
             var _RelateFields = from _Field in
                                     ViewElement.Descendants("Field")
@@ -298,19 +297,19 @@ namespace Epi.Web.BLL
                                 select _Field;
 
             foreach (var Item in _RelateFields)
-                {
+            {
 
                 int RelateViewId = 0;
                 int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
 
                 this.ViewIds.Add(RelateViewId, ViewId);
-                }
-
-
             }
 
+
+        }
+
         private List<string> XmlChunking(string Xml)
-            {
+        {
             List<string> XmlList = new List<string>();
             XDocument xdoc = XDocument.Parse(Xml);
             XDocument xdoc1 = XDocument.Parse(Xml);
@@ -318,15 +317,15 @@ namespace Epi.Web.BLL
             xdoc.Descendants("View").Remove();
 
             foreach (XElement Xelement in xdoc1.Descendants("Project").Elements("View"))
-                {
+            {
 
                 //xdoc.Element("Project").Add(Xelement);
                 xdoc.Root.Element("Project").Add(Xelement);
                 XmlList.Add(xdoc.ToString());
                 xdoc.Descendants("View").Remove();
-                }
+            }
 
             return XmlList;
-            }
+        }
     }
 }

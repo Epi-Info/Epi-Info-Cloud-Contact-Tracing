@@ -6,7 +6,7 @@ namespace Epi.Cloud.DataEntryServices
 {
     public class TableStorageInfo
     {
-        
+
         // CloudTable table = CreateTableAsync(tblname).Result;
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace Epi.Cloud.DataEntryServices
     /// </summary>
     public class DocumentDBInfo
     {
-         
+
     }
 }
 

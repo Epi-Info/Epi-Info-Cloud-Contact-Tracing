@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Epi.Web.Enter.Common.DTO
+{
+    public class FormSettingDTO
     {
-  public   class FormSettingDTO
+        public FormSettingDTO()
         {
+            _SelectedDataAccessRule = 1;
+        }
 
-
-
-      public  FormSettingDTO()
-      {
-          _SelectedDataAccessRule = 1;
-      }
-
-        private Dictionary<int,string> _ColumnNameList;
+        private Dictionary<int, string> _ColumnNameList;
         private Dictionary<int, string> _FormControlNameList;
         private Dictionary<int, string> _AssignedUserList;
         private Dictionary<int, string> _UserList;
@@ -25,7 +19,7 @@ namespace Epi.Web.Enter.Common.DTO
         private Dictionary<int, string> _SelectedOrgList;
         private bool _DeleteDraftData;
         private bool _IsDisabled;
-        private int _SelectedDataAccessRule ;
+        private int _SelectedDataAccessRule;
         private Dictionary<int, string> _DataAccessRuleIds;
         private Dictionary<string, string> _DataAccessRuleDescription;
         public Dictionary<string, string> DataAccessRuleDescription
@@ -45,39 +39,39 @@ namespace Epi.Web.Enter.Common.DTO
             set { _SelectedDataAccessRule = value; }
         }
         public Dictionary<int, string> ColumnNameList
-            {
+        {
             get { return _ColumnNameList; }
             set { _ColumnNameList = value; }
-            }
+        }
         public Dictionary<int, string> FormControlNameList
-            {
+        {
             get { return _FormControlNameList; }
             set { _FormControlNameList = value; }
-            }
+        }
 
         public Dictionary<int, string> AssignedUserList
-            {
+        {
             get { return _AssignedUserList; }
             set { _AssignedUserList = value; }
-            }
+        }
         public Dictionary<int, string> UserList
-            {
+        {
             get { return _UserList; }
             set { _UserList = value; }
-            }
+        }
 
-        public   string FormId
-            {
+        public string FormId
+        {
             get { return _FormId; }
             set { _FormId = value; }
-            }
-      
+        }
+
         public bool IsShareable
         {
             get { return _IsShareable; }
             set { _IsShareable = value; }
         }
-    
+
         public Dictionary<int, string> AvailableOrgList
         {
             get { return _AvailableOrgList; }
@@ -93,11 +87,11 @@ namespace Epi.Web.Enter.Common.DTO
             get { return _IsDisabled; }
             set { _IsDisabled = value; }
         }
-    
+
         public bool DeleteDraftData
         {
             get { return _DeleteDraftData; }
             set { _DeleteDraftData = value; }
         }
-        }
     }
+}

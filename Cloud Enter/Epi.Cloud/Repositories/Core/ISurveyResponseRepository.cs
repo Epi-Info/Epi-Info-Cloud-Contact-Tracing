@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Epi.Web.Enter.Common.Message;
+﻿using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Repositories.Core
 {

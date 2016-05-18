@@ -3,9 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Text;
 using System.Xml;
-using Epi;
 using System.Collections.Generic;
 using Epi.Core;
 using System.Windows.Forms;
@@ -157,7 +155,7 @@ namespace Epi.Fields
             {
                 string condition = string.Empty;
 
-                foreach(System.Collections.Generic.KeyValuePair<string,int> kvp in pairAssociated)
+                foreach (System.Collections.Generic.KeyValuePair<string, int> kvp in pairAssociated)
                 {
                     condition = string.Format("{0}{1}:{2},", condition, kvp.Key, kvp.Value.ToString());
                 }
@@ -186,7 +184,7 @@ namespace Epi.Fields
             base.AssignMembers(clone);
             return clone;
         }
-        
+
         /// <summary>
         /// Load From Row
         /// </summary>

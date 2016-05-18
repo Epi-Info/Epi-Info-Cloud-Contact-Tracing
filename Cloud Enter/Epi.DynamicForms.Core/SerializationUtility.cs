@@ -6,7 +6,7 @@ namespace MvcDynamicForms.Utilities
     public static class SerializationUtility
     {
         public static string Serialize(object obj)
-        {            
+        {
             StringWriter writer = new StringWriter();
             new LosFormatter().Serialize(writer, obj);
             return writer.ToString();

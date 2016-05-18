@@ -1,8 +1,4 @@
-using System;
-using System.Data;
 using System.Xml;
-using Epi.Data;
-using Epi;
 
 namespace Epi.Fields
 {
@@ -10,28 +6,28 @@ namespace Epi.Fields
     /// Drop Down Field abstract class
     /// </summary>
 	public abstract class DropDownField : InputFieldWithSeparatePrompt
-	{
-		#region Private Class Members
-		// protected DragableComboBox combobox;
-		#endregion Private Class Members
+    {
+        #region Private Class Members
+        // protected DragableComboBox combobox;
+        #endregion Private Class Members
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">The page the field belongs to</param>
-		public DropDownField(Page page) : base(page)
-		{
-			Construct();
-		}
+        public DropDownField(Page page) : base(page)
+        {
+            Construct();
+        }
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
 		public DropDownField(View view) : base(view)
-		{
-			Construct();
-		}
+        {
+            Construct();
+        }
         /// <summary>
         /// Constructor
         /// </summary>
@@ -39,17 +35,17 @@ namespace Epi.Fields
         /// <param name="viewElement">The Xml view element of the ImageField.</param>
         public DropDownField(Page page, XmlElement viewElement)
             : base(page)
-        {            
-        }  
+        {
+        }
 
         /// <summary>
         /// Common constructor code.
         /// </summary>
-		private void Construct()
-		{
-		}
+        private void Construct()
+        {
+        }
 
-		#endregion Constructors
+        #endregion Constructors
 
         #region Public Properties
         #endregion Public Properties
@@ -59,17 +55,17 @@ namespace Epi.Fields
 
         #region Public Methods
         /// <summary>
-		/// Deletes the Drop Down field
-		/// </summary>
-		public override void Delete()
-		{
-			GetMetadata().DeleteField(this);
+        /// Deletes the Drop Down field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Private Methods
-		#endregion Private Methods
-	}
+        #region Private Methods
+        #endregion Private Methods
+    }
 }

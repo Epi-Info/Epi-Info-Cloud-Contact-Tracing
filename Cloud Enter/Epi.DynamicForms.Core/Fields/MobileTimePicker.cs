@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -13,7 +12,7 @@ namespace MvcDynamicForms.Fields
     public class MobileTimePicker : TimePickerField
     {
         public override string RenderHtml()
-        { 
+        {
             var html = new StringBuilder();
             var inputName = _form.FieldPrefix + _key;
             string ErrorStyle = string.Empty;
@@ -26,7 +25,7 @@ namespace MvcDynamicForms.Fields
 
             StringBuilder StyleValues = new StringBuilder();
             StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
-           // prompt.Attributes.Add("style", StyleValues.ToString());
+            // prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
             // error label
@@ -44,21 +43,21 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("data-role", "datebox");
             txt.Attributes.Add("data-options", "{\"mode\": \"timebox\" , \"themeInput\":\"e\" , \"themeButton\" : \"e\", \"pickPageButtonTheme\": \"e\", \"pickPageInputTheme\":\"e\", \"pickPageFlipButtonTheme\":\"a\", \"pickPageTheme\":\"e\"}");
             //txt.Attributes.Add("data-theme", "pickPageInputTheme");
-           
-            
-            
+
+
+
             txt.Attributes.Add("value", Value);
             ////////////Check code start//////////////////
             EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
             //if Pattern is empty and the control has after event then treat it like a text box
             //if (string.IsNullOrEmpty(Pattern))
             //{
-                if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
-                {
-                   // txt.Attributes.Add("onblur", "return " + _key + "_after(this.id);"); //After
-                    txt.Attributes.Add("onchange", "return " + _key + "_after(this.id);"); //After
-                  
-                }
+            if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
+            {
+                // txt.Attributes.Add("onblur", "return " + _key + "_after(this.id);"); //After
+                txt.Attributes.Add("onchange", "return " + _key + "_after(this.id);"); //After
+
+            }
             //}
             EnterRule FunctionObjectBefore = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=before&identifier=" + _key);
             if (FunctionObjectBefore != null && !FunctionObjectBefore.IsNull())
@@ -78,10 +77,10 @@ namespace MvcDynamicForms.Fields
             //{
             //    IsHiddenStyle = "display:none";
             //}
-          /*  if (_IsHighlighted)
-            {
-                IsHighlightedStyle = "background-color:yellow";
-            }*/
+            /*  if (_IsHighlighted)
+              {
+                  IsHighlightedStyle = "background-color:yellow";
+              }*/
 
             //if (_IsDisabled)
             //{
@@ -94,7 +93,7 @@ namespace MvcDynamicForms.Fields
             {
                 //txt.Attributes.Add("class", "validate[custom[time],required] text-input datepicker");
                 txt.Attributes.Add("class", "validate[required,custom[time]] text-input datepicker");
-                
+
                 txt.Attributes.Add("data-prompt-position", "topLeft:15");
             }
             else
@@ -108,12 +107,12 @@ namespace MvcDynamicForms.Fields
             //    txt.Attributes.Add("disabled", "disabled");
             //    }
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
             txt.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
 
@@ -187,7 +186,7 @@ namespace MvcDynamicForms.Fields
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-                 
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();

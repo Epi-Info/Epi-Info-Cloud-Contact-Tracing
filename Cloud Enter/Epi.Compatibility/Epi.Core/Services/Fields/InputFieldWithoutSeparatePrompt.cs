@@ -99,7 +99,7 @@ namespace Epi.Fields
             }
         }
 
-        
+
         /// <summary>
         /// Retuns the EpiInfo.Plugin.datatype of the field.
         /// </summary>

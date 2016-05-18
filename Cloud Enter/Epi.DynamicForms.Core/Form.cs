@@ -5,7 +5,6 @@ using System.Text;
 using System.Web.Mvc;
 using MvcDynamicForms.Fields;
 using MvcDynamicForms.Utilities;
-using System.Xml.Linq;
 
 namespace MvcDynamicForms
 {
@@ -28,7 +27,7 @@ namespace MvcDynamicForms
         public string FormValuesHasChanged { get; set; }
         private string _IsDraftModeStyleClass = "";
 
-        
+
         /// <summary>
         /// The html element that wraps all rendered html.
         /// </summary>
@@ -103,11 +102,11 @@ namespace MvcDynamicForms
         /// Validates each InputField object contained in the Fields collection. Validation also causes the Error property to be set for each InputField object.
         /// </summary>
         /// <returns>Returns true if every InputField object is valid. False is returned otherwise.</returns>
-        public bool Validate(string RequiredFieldsList = "" )
+        public bool Validate(string RequiredFieldsList = "")
         {
             bool isValid = true;
-           
-             
+
+
             foreach (var field in InputFields)
             {
                 if (!string.IsNullOrEmpty(RequiredFieldsList))
@@ -135,19 +134,20 @@ namespace MvcDynamicForms
                         field.Required = false;
                     }
                 }
-                else {
+                else
+                {
                     field.Required = false;
                 }
-              if (!field.Validate())
-              {
-                  isValid = false;
-              }
+                if (!field.Validate())
+                {
+                    isValid = false;
+                }
             }
             return isValid;
         }
 
 
-        
+
         /// <summary>
         /// Returns a string containing the rendered html of every contained Field object. The html can optionally include the Form object's state serialized into a hidden field.
         /// </summary>        
@@ -158,12 +158,13 @@ namespace MvcDynamicForms
             var formWrapper = new TagBuilder(_formWrapper);
             if (IsMobile)
             {
-            formWrapper.Attributes.Add("style",  "width:auto;height:auto;");
-            formWrapper.Attributes.Add("data-role", "fieldcontain");
-            formWrapper.Attributes.Add("data-ajax", "false");
+                formWrapper.Attributes.Add("style", "width:auto;height:auto;");
+                formWrapper.Attributes.Add("data-role", "fieldcontain");
+                formWrapper.Attributes.Add("data-ajax", "false");
             }
-            else{
-             formWrapper.Attributes.Add("style", string.Format("width:{0}px;height:{1}px;", this.Width,this.Height + 100));
+            else
+            {
+                formWrapper.Attributes.Add("style", string.Format("width:{0}px;height:{1}px;", this.Width, this.Height + 100));
             }
             formWrapper.Attributes["class"] = _formWrapperClass;
             var html = new StringBuilder(formWrapper.ToString(TagRenderMode.StartTag));
@@ -291,10 +292,10 @@ namespace MvcDynamicForms
                 {
                     ErrorCode = field.ErrorClass,
                     ErrorValue = field.Error,
-                    FieldName =field.Prompt
+                    FieldName = field.Prompt
                 };
 
-                if ( string.IsNullOrEmpty(Error.ErrorValue))
+                if (string.IsNullOrEmpty(Error.ErrorValue))
                     continue;
 
                 ErrorSummary.Add(Error);
@@ -304,19 +305,19 @@ namespace MvcDynamicForms
             {
                 return GetErrorSummaryList(ErrorSummary);
             }
-            else 
+            else
             {
                 return string.Empty;
             }
 
-       
-           
+
+
         }
 
         public string GetErrorSummaryList(List<ErrorSummary> ErrorSummary)
         {
 
-  
+
             StringBuilder ErrorList = new StringBuilder();
             ErrorList.Append("<Ul>");
             foreach (var Error in ErrorSummary)
@@ -337,7 +338,7 @@ namespace MvcDynamicForms
         }
         public Epi.Web.Enter.Common.DTO.SurveyInfoDTO SurveyInfo
         {
-            get {return this._SurveyInfo; }
+            get { return this._SurveyInfo; }
             set { this._SurveyInfo = value; }
         }
 
@@ -353,7 +354,7 @@ namespace MvcDynamicForms
             }
         }
         public int NumberOfPages { get; set; }
-        public int CurrentPage  { get; set; }
+        public int CurrentPage { get; set; }
         /// <summary>
         /// IsSaved is a boolean used to find whether the Save button has been clicked. It hs captured as a hidden variable in Survey/Index.cshtml. Based on the value
         /// we display the modal dialg to send email for survey 
@@ -366,8 +367,8 @@ namespace MvcDynamicForms
         public int StatusId { get; set; }
         // To return to survey after exit
         public string PassCode { get; set; }
-        public string HiddenFieldsList 
-        { 
+        public string HiddenFieldsList
+        {
             get; set;
         }
         public string HighlightedFieldsList
@@ -393,29 +394,29 @@ namespace MvcDynamicForms
         public Epi.Core.EnterInterpreter.Rule_Context FormCheckCodeObj { get; set; }
 
         public Epi.Core.EnterInterpreter.Rule_Context GetCheckCodeObj(System.Xml.Linq.XDocument xdoc, System.Xml.Linq.XDocument xdocResponse, string FormCheckCode)
-        { 
+        {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
-            Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context) EIP.Context;
+            Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
             result.LoadTemplate(xdoc, xdocResponse);
             EIP.Execute(FormCheckCode);
 
             return result;
         }
         public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> Obj, string FormCheckCode)
-            {
+        {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
             Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
             foreach (var item in Obj)
-                {
+            {
                 result.LoadTemplate(item.MetaData, item.Response);
-                }
+            }
             EIP.Execute(FormCheckCode);
 
             return result;
-            }
+        }
         public string FormJavaScript { get; set; }
 
- 
+
         public string IsDraftModeStyleClass
         {
             get

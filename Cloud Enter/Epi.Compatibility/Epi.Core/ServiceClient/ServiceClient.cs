@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Security;
 
@@ -169,7 +166,7 @@ namespace Epi.Core.ServiceClient
             //string s = config.Settings.WebServiceAuthMode;// "Authentication_Use_Windows"];
             if (config.Settings.WebServiceAuthMode == 1)
             {
-                    pIsAuthenticated = true;
+                pIsAuthenticated = true;
             }
 
             string s = config.Settings.WebServiceBindingMode;// ConfigurationManager.AppSettings["WCF_BINDING_TYPE"];
@@ -206,7 +203,7 @@ namespace Epi.Core.ServiceClient
 
                 if (!string.IsNullOrWhiteSpace(pSurveyId))
                 {
-                    request.Criteria.SurveyIdList = new string[]{pSurveyId};
+                    request.Criteria.SurveyIdList = new string[] { pSurveyId };
                 }
 
                 if (client.IsValidOrgKey(request))
@@ -217,7 +214,7 @@ namespace Epi.Core.ServiceClient
                 {
                     return IsValidOrganizationKeyEnum.No;
                 }
-                
+
             }
             catch (System.ServiceModel.EndpointNotFoundException epnf)
             {

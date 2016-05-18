@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents a datepicker whichis is a textbox and the datepicker.
     /// </summary>
@@ -26,7 +25,7 @@ namespace MvcDynamicForms.Fields
 
             StringBuilder StyleValues = new StringBuilder();
             StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
-          //  prompt.Attributes.Add("style", StyleValues.ToString());
+            //  prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
             // error label
@@ -58,7 +57,7 @@ namespace MvcDynamicForms.Fields
                 txt.Attributes.Add("onfocus", "return " + _key + "_before(this.id);"); //Before
             }
 
-          //  txt.Attributes.Add("onchange", "return this.focus();"); //After
+            //  txt.Attributes.Add("onchange", "return this.focus();"); //After
             ////////////Check code end//////////////////
 
             if (_MaxLength.ToString() != "0" && !string.IsNullOrEmpty(_MaxLength.ToString()))
@@ -87,16 +86,16 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("style", "" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
             //if (ReadOnly)
             //    {
-                
+
             //    txt.Attributes.Add("disabled", "disabled");
             //    }
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
             txt.MergeAttributes(_inputHtmlAttributes);
             html.Append(txt.ToString(TagRenderMode.SelfClosing));
@@ -106,14 +105,14 @@ namespace MvcDynamicForms.Fields
                 //var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 //html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-         
+
             }
             // adding scripts for date picker
             //var scriptDatePicker = new TagBuilder("script");
-            
+
             //if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
             //{
-               
+
             //    scriptDatePicker.InnerHtml = "$('#" + inputName + "').datepicker({onClose:function(){setTimeout(" + _key + "_after,100);},changeMonth:true,changeYear:true});";
             //}
             //else
@@ -143,7 +142,7 @@ namespace MvcDynamicForms.Fields
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-                
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();
@@ -160,12 +159,12 @@ namespace MvcDynamicForms.Fields
             ControlClass.Append("validate[");
 
 
-            if ((!string.IsNullOrEmpty(GetRightDateFormat(Lower,Pattern).ToString()) && (!string.IsNullOrEmpty(GetRightDateFormat(Upper,Pattern).ToString()))))
+            if ((!string.IsNullOrEmpty(GetRightDateFormat(Lower, Pattern).ToString()) && (!string.IsNullOrEmpty(GetRightDateFormat(Upper, Pattern).ToString()))))
             {
 
                 //   ControlClass.Append("customDate[date],future[" + GetRightDateFormat(Lower).ToString() + "],past[" + GetRightDateFormat(Upper).ToString() + "],");
                 //dateRange
-                ControlClass.Append("customDate[date],datePickerRange, " + GetRightDateFormat(Lower,Pattern).ToString() + "," + GetRightDateFormat(Upper,Pattern).ToString() + ",");
+                ControlClass.Append("customDate[date],datePickerRange, " + GetRightDateFormat(Lower, Pattern).ToString() + "," + GetRightDateFormat(Upper, Pattern).ToString() + ",");
 
                 if (_IsRequired == true)
                 {

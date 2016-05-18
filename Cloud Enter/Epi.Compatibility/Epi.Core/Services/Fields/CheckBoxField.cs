@@ -1,21 +1,19 @@
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
-{	
-	/// <summary>
-	/// Check box field
-	/// </summary>
-	public class CheckBoxField : InputFieldWithoutSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore, IFieldWithCheckCodeClick
-	{
-		#region Private Members
+{
+    /// <summary>
+    /// Check box field
+    /// </summary>
+    public class CheckBoxField : InputFieldWithoutSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore, IFieldWithCheckCodeClick
+    {
+        #region Private Members
 
         private string checkCodeBefore = string.Empty;
-		private string checkCodeAfter = string.Empty;
+        private string checkCodeAfter = string.Empty;
         private string checkCodeClick = string.Empty;
         private string checkCodeValue = string.Empty;
         private XmlElement viewElement;
@@ -23,23 +21,23 @@ namespace Epi.Fields
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
         private bool _boxOnRight = false;
-		// private DragableCheckBox checkbox;
+        // private DragableCheckBox checkbox;
 
-		#endregion  //Private Members
+        #endregion  //Private Members
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public CheckBoxField(Page page) : base(page)
-		{
-			Construct();
-		}
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public CheckBoxField(Page page) : base(page)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -53,15 +51,15 @@ namespace Epi.Fields
             this.Page = page;
             Construct();
         }
-		
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
-		public CheckBoxField(View view) : base(view)
-		{            
-			Construct();
-		}
+        public CheckBoxField(View view) : base(view)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -75,12 +73,12 @@ namespace Epi.Fields
             Construct();
         }
 
-		private void Construct()
-		{
+        private void Construct()
+        {
             genericDbColumnType = GenericDbColumnType.Boolean;
             this.dbColumnType = DbType.Boolean;
-			IsControlResizable = false;
-		}
+            IsControlResizable = false;
+        }
 
         /// <summary>
         /// Load CheckBoxField from a System.Data.DataRow.
@@ -105,9 +103,9 @@ namespace Epi.Fields
             return clone;
         }
 
-		#endregion Constructors
-	
-		#region Public Properties
+        #endregion Constructors
+
+        #region Public Properties
 
         /// <summary>
         /// Returns field type
@@ -136,21 +134,21 @@ namespace Epi.Fields
             }
         }
 
-		/// <summary>
-		/// Value of the check box. This property is available only in DataEntry mode.
-		/// </summary>
-		public override string CurrentRecordValueString
-		{
-			get
-			{
-				Page.AssertDataEntryMode();          
+        /// <summary>
+        /// Value of the check box. This property is available only in DataEntry mode.
+        /// </summary>
+        public override string CurrentRecordValueString
+        {
+            get
+            {
+                Page.AssertDataEntryMode();
                 return checkCodeValue;
-			}
-			set
-			{
+            }
+            set
+            {
                 checkCodeValue = value;
-			}
-		}
+            }
+        }
 
         public bool BoxOnRight
         {
@@ -158,20 +156,20 @@ namespace Epi.Fields
             set { _boxOnRight = value; }
         }
 
-		/// <summary>
-		/// Gets/sets the field's "after" check code
-		/// </summary>
-		public string CheckCodeAfter
-		{
-			get
-			{
-				return checkCodeAfter;
-			}
-			set
-			{
-				checkCodeAfter = value;
-			}
-		}
+        /// <summary>
+        /// Gets/sets the field's "after" check code
+        /// </summary>
+        public string CheckCodeAfter
+        {
+            get
+            {
+                return checkCodeAfter;
+            }
+            set
+            {
+                checkCodeAfter = value;
+            }
+        }
 
 
         /// <summary>
@@ -204,22 +202,22 @@ namespace Epi.Fields
             }
         }
 
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Protected Properties
-		
-		#endregion Protected Properties
+        #region Protected Properties
 
-		#region Public Methods
+        #endregion Protected Properties
 
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
-			GetMetadata().DeleteField(this);
+        #region Public Methods
+
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
+        }
 
         /// <summary>
         /// The view element of the field
@@ -235,9 +233,9 @@ namespace Epi.Fields
                 viewElement = value;
             }
         }
-		#endregion
+        #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -257,11 +255,11 @@ namespace Epi.Fields
             GetMetadata().UpdateField(this);
         }
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
+        #region Event Handlers
 
-		#endregion
+        #endregion
 
-	}
+    }
 }

@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-
-using Epi;
 using Epi.Data;
 using Epi.Data.Services;
 using EpiInfo.Plugin;
@@ -11,12 +9,12 @@ namespace Epi.Fields
     /// <summary>
     /// Base class for all fields (in a view) that accept input and have a prompt separate from the control
     /// </summary>
-	public abstract class InputFieldWithSeparatePrompt :  FieldWithSeparatePrompt, IMirrorable, IInputField
-	{
-		#region Private Class Members
-		private bool isReadOnly = false;
-		private bool isRequired = false;
-		private bool shouldRepeatLast = false;
+	public abstract class InputFieldWithSeparatePrompt : FieldWithSeparatePrompt, IMirrorable, IInputField
+    {
+        #region Private Class Members
+        private bool isReadOnly = false;
+        private bool isRequired = false;
+        private bool shouldRepeatLast = false;
         private string tableName = string.Empty;
         private string _Namespace;
 
@@ -24,9 +22,9 @@ namespace Epi.Fields
         /// Current Record Value Object
         /// </summary>
         protected object currentRecordValueObject = null;
-		#endregion Private Class Members
+        #endregion Private Class Members
 
-		#region Protected class members
+        #region Protected class members
         /// <summary>
         /// SQL data type.
         /// </summary>
@@ -35,29 +33,29 @@ namespace Epi.Fields
         /// dbColumnType
         /// </summary>
         protected DbType dbColumnType = DbType.String;
-		#endregion Protected class members
-		
-		#region Constructors
+        #endregion Protected class members
+
+        #region Constructors
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="page"><see cref="Epi.Page"/></param>
-		public InputFieldWithSeparatePrompt(Page page) : base(page)
-		{
-			Construct();
-		}
+        public InputFieldWithSeparatePrompt(Page page) : base(page)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="view"><see cref="Epi.View"/></param>
 		public InputFieldWithSeparatePrompt(View view) : base(view)
-		{
-			Construct();
+        {
+            Construct();
         }
         #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
 
         /// <summary>
         /// Retuns the datatype of the field.
@@ -66,7 +64,7 @@ namespace Epi.Fields
         {
             get
             {
-                return (DataType) AppData.Instance.FieldTypesDataTable.GetDataTypeByFieldTypeId((int)FieldType);
+                return (DataType)AppData.Instance.FieldTypesDataTable.GetDataTypeByFieldTypeId((int)FieldType);
             }
             set
             {
@@ -108,11 +106,11 @@ namespace Epi.Fields
 
         public string Prompt { get { return this.PromptText; } set { return; } }
 
-		/// <summary>
-		/// Gets/sets the data contents of the field
-		/// </summary>
-		public virtual object CurrentRecordValueObject
-		{
+        /// <summary>
+        /// Gets/sets the data contents of the field
+        /// </summary>
+        public virtual object CurrentRecordValueObject
+        {
             get
             {
                 return currentRecordValueObject;
@@ -121,7 +119,7 @@ namespace Epi.Fields
             {
                 currentRecordValueObject = value;
             }
-		}
+        }
 
         /// <summary>
         /// Retuns the EpiInfo.Plugin.datatype of the field.
@@ -192,7 +190,7 @@ namespace Epi.Fields
                 {
                     return this.Name;
                 }
-                
+
             }
             set
             {
@@ -219,46 +217,46 @@ namespace Epi.Fields
         /// Gets/sets the Read Only field flag.
         /// </summary>
         public bool IsReadOnly
-		{
-			get
-			{
-				return (isReadOnly);
-			}
-			set
-			{
-				isReadOnly = value;
-			}
-		}
+        {
+            get
+            {
+                return (isReadOnly);
+            }
+            set
+            {
+                isReadOnly = value;
+            }
+        }
 
-		/// <summary>
-		/// Required field flag.
-		/// </summary>
+        /// <summary>
+        /// Required field flag.
+        /// </summary>
         public bool IsRequired
-		{
-			get
-			{
-				return (isRequired);
-			}
-			set
-			{
-				isRequired = value;
-			}
-		}
+        {
+            get
+            {
+                return (isRequired);
+            }
+            set
+            {
+                isRequired = value;
+            }
+        }
 
-		/// <summary>
+        /// <summary>
         /// Gets/sets the Should repeat last field flag.
-		/// </summary>
+        /// </summary>
         public bool ShouldRepeatLast
-		{
-			get
-			{
-				return (shouldRepeatLast);
-			}
-			set
-			{
-				shouldRepeatLast = value;
-			}
-		}
+        {
+            get
+            {
+                return (shouldRepeatLast);
+            }
+            set
+            {
+                shouldRepeatLast = value;
+            }
+        }
 
         /// <summary>
         /// Gets the SQL Data type
@@ -274,7 +272,7 @@ namespace Epi.Fields
                 throw new GeneralException("genericDbColumnType is not set: " + this.FieldType.ToString());
             }
         }
-		#endregion Public Properties
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
 
@@ -30,8 +28,8 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <returns>SurveyResponse.</returns>
         List<SurveyResponseBO> GetSurveyResponseBySurveyId(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1);
 
-        List<SurveyResponseBO> GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey,  int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
-        
+        List<SurveyResponseBO> GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
+
         /// <summary>
         /// Get SurveyResponses based on criteria.
         /// </summary>
@@ -45,14 +43,14 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </summary>
         /// <param name="sortExpression">Sort order.</param>
         /// <returns>Sorted list of SurveyResponses.</returns>
-       // List<SurveyResponseBO> GetSurveyResponses(string sortExpression = "SurveyResponseId ASC");
-        
+        // List<SurveyResponseBO> GetSurveyResponses(string sortExpression = "SurveyResponseId ASC");
+
         /// <summary>
         /// Gets SurveyResponse given an order.
         /// </summary>
         /// <param name="orderId">Unique order identifier.</param>
         /// <returns>SurveyResponse.</returns>
-       // SurveyResponseBO GetSurveyResponseByOrder(int orderId);
+        // SurveyResponseBO GetSurveyResponseByOrder(int orderId);
 
         /// <summary>
         /// Gets SurveyResponses with order statistics in given sort order.
@@ -60,7 +58,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <param name="SurveyResponses">SurveyResponse list.</param>
         /// <param name="sortExpression">Sort order.</param>
         /// <returns>Sorted list of SurveyResponses with order statistics.</returns>
-     //   List<SurveyResponseBO> GetSurveyResponsesWithOrderStatistics(string sortExpression);
+        //   List<SurveyResponseBO> GetSurveyResponsesWithOrderStatistics(string sortExpression);
 
         /// <summary>
         /// Inserts a new SurveyResponse. 
@@ -88,44 +86,31 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// Deletes a SurveyResponse
         /// </summary>
         /// <param name="SurveyResponse">SurveyResponse.</param>
-         void DeleteSurveyResponse(SurveyResponseBO SurveyResponse);
-
-         void UpdatePassCode(UserAuthenticationRequestBO passcodeBO);
-         UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
-
-         List<SurveyResponseBO> GetFormResponseByFormId(string FormId,int PageNumber, int PageSize);
-         List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria);
-         int GetFormResponseCount(string FormId);
-
-         int GetFormResponseCount(SurveyAnswerCriteria Criteria);
-
-         string GetResponseParentId(string ResponseId);
-         SurveyResponseBO GetSingleResponse(string ResponseId);
-
-         List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string RootId);
-         void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse); 
-         SurveyResponseBO GetFormResponseByParentRecordId(string ResponseId);
-         List<SurveyResponseBO> GetAncestorResponseIdsByChildId(string ChildId);
-
-         List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, string SurveyId);
-         List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, SurveyAnswerCriteria Criteria);
-         void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse);
-
-         SurveyResponseBO  GetResponseXml(string ResponseId);
-
-         void DeleteResponseXml(ResponseXmlBO ResponseXmlBO);
-
-         void InsertResponseXml(ResponseXmlBO item);
-         bool ISResponseExists(Guid ResponseId);
-
+        void DeleteSurveyResponse(SurveyResponseBO SurveyResponse);
+        void UpdatePassCode(UserAuthenticationRequestBO passcodeBO);
+        UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
+        List<SurveyResponseBO> GetFormResponseByFormId(string FormId, int PageNumber, int PageSize);
+        List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria);
+        int GetFormResponseCount(string FormId);
+        int GetFormResponseCount(SurveyAnswerCriteria Criteria);
+        string GetResponseParentId(string ResponseId);
+        SurveyResponseBO GetSingleResponse(string ResponseId);
+        List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string RootId);
+        void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse);
+        SurveyResponseBO GetFormResponseByParentRecordId(string ResponseId);
+        List<SurveyResponseBO> GetAncestorResponseIdsByChildId(string ChildId);
+        List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, string SurveyId);
+        List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, SurveyAnswerCriteria Criteria);
+        void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse);
+        SurveyResponseBO GetResponseXml(string ResponseId);
+        void DeleteResponseXml(ResponseXmlBO ResponseXmlBO);
+        void InsertResponseXml(ResponseXmlBO item);
+        bool ISResponseExists(Guid ResponseId);
         //bool ISResponseExists(SurveyAnswerCriteria Criteria);
 
-         bool HasResponse(SurveyAnswerCriteria Criteria);
-
-         void UpdateRecordStatus(SurveyResponseBO SurveyResponseBO);
-         void UpdateRecordStatus(string ResponseId, int Status);
-
-         int GetDataAccessRule(string FormId,int UserId);
-        
+        bool HasResponse(SurveyAnswerCriteria Criteria);
+        void UpdateRecordStatus(SurveyResponseBO SurveyResponseBO);
+        void UpdateRecordStatus(string ResponseId, int Status);
+        int GetDataAccessRule(string FormId, int UserId);
     }
 }

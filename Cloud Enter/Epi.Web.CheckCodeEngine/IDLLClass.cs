@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Epi.Core.EnterInterpreter
+﻿namespace Epi.Core.EnterInterpreter
 {
     public enum DLLClassEnum
     {
@@ -13,7 +8,6 @@ namespace Epi.Core.EnterInterpreter
 
     public interface IDLLClass
     {
-
         string Identifier { get; }
         string Class { get; }
         DLLClassEnum Type { get; }

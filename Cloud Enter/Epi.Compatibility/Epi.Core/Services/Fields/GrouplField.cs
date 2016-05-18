@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Xml;
-using Epi;
 #endregion
 
 namespace Epi.Fields
@@ -13,24 +12,24 @@ namespace Epi.Fields
     /// 
     /// </summary>
 	public class GroupField : FieldWithoutSeparatePrompt
-	{
-		#region Private Members
+    {
+        #region Private Members
         private XmlElement viewElement;
         private XmlNode fieldNode;
         private System.Drawing.Color backgroundColor;
         private string childFieldNames;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion Private Members
+        #endregion Private Members
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">The page the field belongs to</param>
-		public GroupField(Page page) : base(page)
-		{
-		}
+        public GroupField(Page page) : base(page)
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -42,7 +41,7 @@ namespace Epi.Fields
             LoadFromRow(row);
             this.Page = page;
         }
-		
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -60,8 +59,8 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
 		public GroupField(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -75,10 +74,10 @@ namespace Epi.Fields
             //this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -211,10 +210,10 @@ namespace Epi.Fields
         //        fieldsWaitingToUpdate--;
         //    }
         //}
-		
-		#endregion  //Protected Methods
 
-		#region Public Methods
+        #endregion  //Protected Methods
+
+        #region Public Methods
         /// <summary>
         /// Load from row
         /// </summary>
@@ -224,7 +223,7 @@ namespace Epi.Fields
             base.LoadFromRow(row);
             if (row["BackgroundColor"].ToString().Length > 0)
             {
-                this.BackgroundColor = Color.FromArgb((int)(row["BackgroundColor"]) + unchecked((int)0xFF000000)); 
+                this.BackgroundColor = Color.FromArgb((int)(row["BackgroundColor"]) + unchecked((int)0xFF000000));
             }
             if (row["List"].ToString().Length > 0)
             {
@@ -247,7 +246,7 @@ namespace Epi.Fields
             }
             return false;
         }
-        
+
         /// <summary>
         /// Gets the name of the Field Group.
         /// </summary>
@@ -256,20 +255,20 @@ namespace Epi.Fields
         {
             return Name;
         }
-        
+
         /// <summary>
         /// Delete
         /// </summary>
-		public override void Delete()
-		{
+        public override void Delete()
+        {
             GetMetadata().DeleteField(this);
             Page.GroupFields.Remove(this);
             view.MustRefreshFieldCollection = true;
         }
-		#endregion  //Public Methods
+        #endregion  //Public Methods
 
-		#region Event Handlers		
-		#endregion
+        #region Event Handlers		
+        #endregion
 
         /// <summary>
         /// The view element of the field
@@ -285,5 +284,5 @@ namespace Epi.Fields
                 viewElement = value;
             }
         }
-	}
+    }
 }

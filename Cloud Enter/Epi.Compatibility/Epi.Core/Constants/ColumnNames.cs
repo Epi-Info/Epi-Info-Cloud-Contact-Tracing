@@ -424,7 +424,7 @@ namespace Epi
         /// <summary>
         /// ViewId
         /// </summary>
-        public const string VIEW_ID = "ViewId"; 
+        public const string VIEW_ID = "ViewId";
         /// <summary>
         /// Volume
         /// </summary>

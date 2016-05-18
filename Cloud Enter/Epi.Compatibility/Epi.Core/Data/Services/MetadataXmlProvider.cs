@@ -1,18 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Xml;
-using System.Text.RegularExpressions;
 using Epi.Collections;
-using Epi;
-using Epi.Data;
 using Epi.DataSets;
 using Epi.Fields;
-using Epi.Resources;
 
 namespace Epi.Data.Services
 {
@@ -172,7 +167,7 @@ namespace Epi.Data.Services
             string name = string.Empty;
             return name;
         }
-        
+
         /// <summary>
         /// Get List of code tables
         /// </summary>
@@ -573,21 +568,21 @@ namespace Epi.Data.Services
         /// <param name="viewId">Id of the view</param>
         /// <returns>A view object</returns>
         public DataTable GetPublishedViewKeys(int viewId)
-            {
+        {
             try
-                {
+            {
                 Query query = db.CreateQuery("select [EIWSOrganizationKey] ,[EIWSFormId] ,[EWEOrganizationKey] ,[EWEFormId]  " +
                     "from metaViews " +
                     "where [ViewId] = @ViewId");
                 query.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, viewId));
                 DataTable results = db.Select(query);
                 return results;
-                }
-            catch (Exception ex)
-                {
-                throw new GeneralException("Could not retrieve view", ex);
-                }
             }
+            catch (Exception ex)
+            {
+                throw new GeneralException("Could not retrieve view", ex);
+            }
+        }
 
         /// <summary>
         /// Gets a view's record check code for the "After" event
@@ -1483,7 +1478,7 @@ namespace Epi.Data.Services
         {
             throw new NotImplementedException();
         }
-        
+
         /// <summary>
         /// Gets all field types for grid columns
         /// </summary>
@@ -1568,7 +1563,7 @@ namespace Epi.Data.Services
                 DataTable table = GetGroupsForPage(page.Id);
                 foreach (DataRow row in table.Rows)
                 {
-                //    groups.Add(new GroupField(row, page));
+                    //    groups.Add(new GroupField(row, page));
                 }
                 return (groups);
             }
@@ -1891,7 +1886,7 @@ namespace Epi.Data.Services
             table = db.Select(query);
             return table;
         }
-        
+
         /// <summary>
         /// Returns all datatables used by metadata.
         /// </summary>
@@ -1956,7 +1951,7 @@ namespace Epi.Data.Services
                 throw new GeneralException("Could not retrieve data table name", ex);
             }
         }
-        
+
         /// <summary>
         /// Returns the names of all data tables used by metadata for a given view.
         /// </summary>
@@ -1966,7 +1961,7 @@ namespace Epi.Data.Services
         {
             return null;
         }
-            
+
         /// <summary>
         /// returns the column names in the table referenced by a view
         /// </summary>
@@ -3892,7 +3887,7 @@ namespace Epi.Data.Services
             }
         }
 
-        
+
         /// <summary>
         /// Create GUID field.
         /// </summary>
@@ -6923,14 +6918,14 @@ namespace Epi.Data.Services
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// Creates a field in metaFields
         /// </summary>
         public void InsertFields(DataTable fields)
         {
             throw new System.ApplicationException("Not implemented");
         }
-        
+
         /// <summary>
         /// Save Code Table Data
         /// </summary>
@@ -8246,7 +8241,7 @@ namespace Epi.Data.Services
 
             }
         }
-        
+
         /// <summary>
         /// Update Group field.
         /// </summary>
@@ -9425,7 +9420,7 @@ namespace Epi.Data.Services
         {
             throw new NotImplementedException("Not implemented - GetMaxBackgroundId");
         }
-        
+
         /// <summary>
         /// Returns the Id of the last Image added
         /// </summary>
@@ -9434,7 +9429,7 @@ namespace Epi.Data.Services
         {
             throw new NotImplementedException("Not implemented - GetMaxImageId");
         }
-        
+
         /// <summary>
         /// Returns the Id of the last field added
         /// </summary>
@@ -10719,7 +10714,7 @@ namespace Epi.Data.Services
             //TODO:  Get Grid Column information
         }
 
-       
+
         /// <summary>
         /// Retrieves data for GUID field from xml metadata
         /// </summary>
@@ -10742,9 +10737,9 @@ namespace Epi.Data.Services
             field.IsRequired = bool.Parse(fieldNode.Attributes["IsRequired"].Value);
             field.TableName = fieldNode.Attributes["DataTableName"].Value;
             field.SourceFieldId = Int32.Parse(fieldNode.Attributes["SourceFieldId"].Value);
-       
+
             field.Page = new Page(field.GetView());
-            field.Page.Id = int.Parse(fieldNode.Attributes["PageId"].Value);                  
+            field.Page.Id = int.Parse(fieldNode.Attributes["PageId"].Value);
         }
 
         /// <summary>
@@ -11277,7 +11272,7 @@ namespace Epi.Data.Services
                 throw new System.ApplicationException("Could not retrieve code tables from database", ex);
             }
         }
-        
+
         /// <summary>
         /// Returns the parent view of a related view
         /// </summary>

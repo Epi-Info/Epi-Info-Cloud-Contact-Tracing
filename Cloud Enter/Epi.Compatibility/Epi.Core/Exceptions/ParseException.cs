@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using com.calitha.goldparser;
 using System.Security.Permissions;
@@ -11,12 +10,12 @@ namespace Epi
     /// </summary>
     [Serializable]
     public class ParseException : GeneralException
-	{
-		#region Private Members
-		private ParseErrorEventArgs args;
-		#endregion Private Members
+    {
+        #region Private Members
+        private ParseErrorEventArgs args;
+        #endregion Private Members
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Default Constructor
         /// </summary>
@@ -24,16 +23,16 @@ namespace Epi
             : base(null)
         {
         }
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="arg">Parse Error Event Aruguments</param>
         public ParseException(ParseErrorEventArgs arg)
             : base(SharedStrings.WARNING_COMMAND_SYNTAX_ERROR + "\r\r" + SharedStrings.UNEXPECTED_TOKEN, arg.UnexpectedToken.Text)
-		{
-			args = arg;			
-		}
+        {
+            args = arg;
+        }
 
         /// <summary>
         /// Constructor
@@ -44,7 +43,7 @@ namespace Epi
             : base(info, context)
         {
         }
-		#endregion Constructors
+        #endregion Constructors
 
         #region Public Methods
         /// <summary>
@@ -64,13 +63,13 @@ namespace Epi
         /// Gets the Terminal parser token
         /// </summary>
 		public TerminalToken UnexpectedToken
-		{
-			get
-			{
-				return args.UnexpectedToken;
-			}
-		}
-		#endregion Public properties
+        {
+            get
+            {
+                return args.UnexpectedToken;
+            }
+        }
+        #endregion Public properties
 
-	}
+    }
 }

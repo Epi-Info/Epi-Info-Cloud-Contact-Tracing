@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.Constants;
 namespace Epi.Web.EF
 {
     public class EntityUserDao : IUserDao
@@ -81,13 +78,13 @@ namespace Epi.Web.EF
                     Context.Organizations.Attach(Org);
 
 
-                   
+
                     Context.Users.AddObject(Mapper.ToUserEntity(User));
 
                     UserOrganization UserOrganizationEntity = Mapper.ToUserOrganizationEntity(User, OrgBO);
                     Context.UserOrganizations.AddObject(UserOrganizationEntity);
 
-                                   
+
 
                     Context.SaveChanges();
                 }
@@ -164,7 +161,7 @@ namespace Epi.Web.EF
                 return true;
 
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
 
                 return false;
@@ -329,26 +326,26 @@ namespace Epi.Web.EF
         }
 
         public List<UserBO> GetAdminsBySelectedOrgs(FormSettingBO FormSettingBO, string formId)
-           {
-             
-              List<UserBO> AdminList = new List<UserBO>();
-              using (var Context = DataObjectFactory.CreateContext())
-              {
-                  foreach (var item in FormSettingBO.SelectedOrgList)
-                  {
-                      int OrgId = int.Parse(item.Value);
+        {
 
-                      var users = Context.UserOrganizations.Where(x => x.RoleId == 2 && x.OrganizationID == OrgId && x.Active == true);
+            List<UserBO> AdminList = new List<UserBO>();
+            using (var Context = DataObjectFactory.CreateContext())
+            {
+                foreach (var item in FormSettingBO.SelectedOrgList)
+                {
+                    int OrgId = int.Parse(item.Value);
 
-                      foreach (var user in users)
-                      {
-                          AdminList.Add(Mapper.MapToUserBO(user.User, user.RoleId));
-                      }
+                    var users = Context.UserOrganizations.Where(x => x.RoleId == 2 && x.OrganizationID == OrgId && x.Active == true);
 
-                  }
-              }
-                  return AdminList;
-             }
+                    foreach (var user in users)
+                    {
+                        AdminList.Add(Mapper.MapToUserBO(user.User, user.RoleId));
+                    }
 
-}
+                }
+            }
+            return AdminList;
+        }
+
+    }
 }

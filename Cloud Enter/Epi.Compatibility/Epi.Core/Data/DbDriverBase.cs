@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 
@@ -11,7 +10,7 @@ namespace Epi.Data
     public abstract class DbDriverBase : IDbDriver
     {
         #region Public Events
-      
+
         #endregion Public Events
 
         #region Public Properties
@@ -210,7 +209,7 @@ namespace Epi.Data
         /// << may only apply to Access databases >>
         /// </summary>
         public abstract bool CompactDatabase();
-        
+
         /// <summary>
         /// Executes a SQL statement that does not return anything. 
         /// </summary>
@@ -321,7 +320,7 @@ namespace Epi.Data
         {
             WordBuilder wb = new WordBuilder(",");
             foreach (string s in columnNames)
-            {                
+            {
                 wb.Add(this.InsertInEscape(s));
             }
             return GetTableData(tableName, wb.ToString(), string.Empty);
@@ -520,7 +519,7 @@ namespace Epi.Data
         /// <param name="dataType"></param>
         /// <returns></returns>
         public abstract string GetDbSpecificColumnType(GenericDbColumnType dataType);
-        
+
         public abstract string SyntaxTrue
         {
             get;

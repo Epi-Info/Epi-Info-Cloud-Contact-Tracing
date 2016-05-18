@@ -1,10 +1,5 @@
 using System;
-using System.Data;
 using System.Reflection;
-using Epi;
-using Epi.DataSets;
-using System.IO;
-using Epi.Data;
 
 namespace Epi.Data
 {
@@ -21,7 +16,7 @@ namespace Epi.Data
             /// <summary>
             /// PHIN database
             /// </summary>
-            public const string Phin = "PHIN"; 
+            public const string Phin = "PHIN";
 
             /// <summary>
             /// Application Data
@@ -71,7 +66,7 @@ namespace Epi.Data
                         Configuration config = Configuration.GetNewInstance();
                         foreach (Epi.DataSets.Config.DataDriverRow row in config.DataDrivers)
                         {
-                            string type = row.Type;                                                        
+                            string type = row.Type;
 
                             if (type == dataDriverType && row.FileName != null && !string.IsNullOrEmpty(row.FileName))
                             {

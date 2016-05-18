@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents a single html checkbox input field.
     /// </summary>
@@ -120,7 +118,7 @@ namespace MvcDynamicForms.Fields
                 IsHighlightedStyle = "background-color:yellow";
             }
 
-            
+
             if (_IsDisabled)
             {
                 chk.Attributes.Add("disabled", "disabled");
@@ -130,8 +128,8 @@ namespace MvcDynamicForms.Fields
             //chk.Attributes.Add("onblur", "EventArray.push('" + Prompt + "After')");//After
             ////////////Check code end//////////////////
 
-          //  chk.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-            chk.Attributes.Add("style", ""+ ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
+            //  chk.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
+            chk.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
 
             chk.MergeAttributes(_inputHtmlAttributes);
             ////////////Check code start//////////////////
@@ -176,12 +174,12 @@ namespace MvcDynamicForms.Fields
             //}
             html.Append(prompt.ToString());
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
             // hidden input (so that value is posted when checkbox is unchecked)
             var hdn = new TagBuilder("input");
@@ -216,7 +214,7 @@ namespace MvcDynamicForms.Fields
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-              
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();

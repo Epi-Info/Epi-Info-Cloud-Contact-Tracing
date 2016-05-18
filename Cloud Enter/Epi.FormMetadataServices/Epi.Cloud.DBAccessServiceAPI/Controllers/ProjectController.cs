@@ -1,6 +1,5 @@
 ﻿
 using System.Web.Http;
-using System.Net;
 using Epi.Cloud.DBAccessService.Proxy.Interfaces;
 using Epi.Cloud.DBAccessService.Handlers;
 using Epi.Cloud.DBAccessService.Services;

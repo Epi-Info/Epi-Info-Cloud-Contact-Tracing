@@ -1,7 +1,4 @@
-using System;
 using System.Data;
-
-using Epi;
 using Epi.Data.Services;
 
 namespace Epi.Fields
@@ -10,11 +7,11 @@ namespace Epi.Fields
     /// Represents the interface for a field in a view.
     /// </summary>
 	public interface IField : INamedObject
-	{
+    {
         /// <summary>
         /// Gets the type of the field.
         /// </summary>
-        MetaFieldType FieldType { get;}
+        MetaFieldType FieldType { get; }
         /// <summary>
         /// Loads a field object from the database row.
         /// </summary>
@@ -38,5 +35,5 @@ namespace Epi.Fields
         /// </summary>
         /// <returns></returns>
         IMetadataProvider GetMetadata();
-	}
+    }
 }

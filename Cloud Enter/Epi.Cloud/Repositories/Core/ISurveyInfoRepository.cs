@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Epi.Web.Enter.Common.Message;
+﻿using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Repositories.Core
 {
@@ -10,7 +6,7 @@ namespace Epi.Web.MVC.Repositories.Core
     /// SurveyInfo Repository interface.
     /// Derives from standard IRepository of SurveyInfoResponse. Adds a method GetSurveyInfo .
     /// </summary>
-    public interface ISurveyInfoRepository: IRepository<Epi.Web.Enter.Common.Message.SurveyInfoResponse>
+    public interface ISurveyInfoRepository : IRepository<Epi.Web.Enter.Common.Message.SurveyInfoResponse>
     {
         SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequestId);
 

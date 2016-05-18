@@ -1,14 +1,11 @@
 
 #region Imported Namespaces
 
-using Epi;
 using Epi.Data;
-using Epi.Fields;
 
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Xml;
 
 #endregion

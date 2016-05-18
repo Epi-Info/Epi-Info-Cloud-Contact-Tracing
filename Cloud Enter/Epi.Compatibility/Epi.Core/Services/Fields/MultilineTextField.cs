@@ -1,16 +1,13 @@
-using System;
 using System.ComponentModel;
-using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Multiline text field
-	/// </summary>
-	public class MultilineTextField : TextField
+    /// <summary>
+    /// Multiline text field
+    /// </summary>
+    public class MultilineTextField : TextField
     {
         #region Private Data Members
 
@@ -29,9 +26,9 @@ namespace Epi.Fields
         }
 
         public MultilineTextField(Page page) : base(page)
-		{
-			Construct();
-		}
+        {
+            Construct();
+        }
 
         public MultilineTextField(View view) : base(view)
         {
@@ -63,7 +60,7 @@ namespace Epi.Fields
             Construct();
         }
 
-		#endregion
+        #endregion
 
         #region Public Properties
 
@@ -94,7 +91,7 @@ namespace Epi.Fields
         }
         #endregion Public Properties
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database

@@ -1,29 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using Epi.Web.MVC.Repositories.Core;
-using Epi.Web.MVC.DataServiceClient;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
-using Epi.Web.MVC.DataServiceClient;
 using System.Web.Caching;
 using System.Configuration;
 namespace Epi.Web.MVC.Repositories
 {
     public class IntegratedSurveyInfoRepository : RepositoryBase, ISurveyInfoRepository
     {
-
-
-
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
         public IntegratedSurveyInfoRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
         {
             _iDataService = iDataService;
         }
-        
+
         /// <summary>
         /// Calling the proxy client to fetch a SurveyInfoResponse object
         /// </summary>
@@ -36,9 +30,9 @@ namespace Epi.Web.MVC.Repositories
             {
                 //SurveyInfoResponse result = Client.GetSurveyInfo(pRequest);
                 //SurveyInfoResponse result = _iDataService.GetSurveyInfo(pRequest);
-                SurveyInfoResponse result =null;
+                SurveyInfoResponse result = null;
                 string SurveyId = pRequest.Criteria.SurveyIdList[0].ToString();
-                var CacheObj =   HttpRuntime.Cache.Get(SurveyId);
+                var CacheObj = HttpRuntime.Cache.Get(SurveyId);
 
                 int CacheDuration = 0;
                 int.TryParse(ConfigurationManager.AppSettings["CACHE_DURATION"].ToString(), out CacheDuration);
@@ -53,13 +47,13 @@ namespace Epi.Web.MVC.Repositories
 
                         if (IsCacheSlidingExpiration.ToUpper() == "TRUE")
                         {
-                           
+
                             HttpRuntime.Cache.Insert(SurveyId, result, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(CacheDuration));
                         }
                         else
                         {
                             HttpRuntime.Cache.Insert(SurveyId, result, null, DateTime.Now.AddMinutes(CacheDuration), Cache.NoSlidingExpiration);
-                            
+
                         }
                         return result;
                     }
@@ -79,7 +73,7 @@ namespace Epi.Web.MVC.Repositories
 
 
 
-               // return result;
+                // return result;
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -104,93 +98,93 @@ namespace Epi.Web.MVC.Repositories
         }
 
         #region stubcode
-            public List<Enter.Common.DTO.SurveyInfoDTO> GetList(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        public List<Enter.Common.DTO.SurveyInfoDTO> GetList(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            public Enter.Common.DTO.SurveyInfoDTO Get(int id)
-            {
-                throw new NotImplementedException();
-            }
+        public Enter.Common.DTO.SurveyInfoDTO Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-            public int GetCount(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        public int GetCount(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Insert(Enter.Common.DTO.SurveyInfoDTO t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Insert(Enter.Common.DTO.SurveyInfoDTO t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Update(Enter.Common.DTO.SurveyInfoDTO t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Update(Enter.Common.DTO.SurveyInfoDTO t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Delete(int id)
-            {
-                throw new NotImplementedException();
-            } 
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 
-            List<SurveyInfoResponse> IRepository<SurveyInfoResponse>.GetList(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        List<SurveyInfoResponse> IRepository<SurveyInfoResponse>.GetList(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            SurveyInfoResponse IRepository<SurveyInfoResponse>.Get(int id)
-            {
-                throw new NotImplementedException();
-            }
+        SurveyInfoResponse IRepository<SurveyInfoResponse>.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Insert(SurveyInfoResponse t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Insert(SurveyInfoResponse t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Update(SurveyInfoResponse t)
-            {
-                throw new NotImplementedException();
-            }
-
-
-            public FormsInfoResponse GetFormsInfoList(FormsInfoRequest pRequestId)
-            {
-               
-                FormsInfoResponse result = (FormsInfoResponse)_iDataService.GetFormsInfo(pRequestId);
-                return result;
-            }
+        public void Update(SurveyInfoResponse t)
+        {
+            throw new NotImplementedException();
+        }
 
 
-            public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
-            {
-                return _iDataService.DeleteResponse(SARequest);
-            }
+        public FormsInfoResponse GetFormsInfoList(FormsInfoRequest pRequestId)
+        {
+
+            FormsInfoResponse result = (FormsInfoResponse)_iDataService.GetFormsInfo(pRequestId);
+            return result;
+        }
 
 
-            public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest) 
-                {
+        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
+        {
+            return _iDataService.DeleteResponse(SARequest);
+        }
 
 
-                return _iDataService.GetFormChildInfo(SurveyInfoRequest);
-                
-                }
-            public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
-                {
-
-                return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
+        public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest)
+        {
 
 
+            return _iDataService.GetFormChildInfo(SurveyInfoRequest);
 
-                }
-            public SurveyAnswerResponse GetResponseAncestor(SurveyAnswerRequest SARequest) 
-                {
+        }
+        public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
+        {
 
-                return _iDataService.GetAncestorResponseIdsByChildId(SARequest);
-                
-                }
+            return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
+
+
+
+        }
+        public SurveyAnswerResponse GetResponseAncestor(SurveyAnswerRequest SARequest)
+        {
+
+            return _iDataService.GetAncestorResponseIdsByChildId(SARequest);
+
+        }
     }
 }

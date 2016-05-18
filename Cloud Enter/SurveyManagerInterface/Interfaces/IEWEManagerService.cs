@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
-using Epi.Web.Enter.Common.DTO;
+﻿using System.ServiceModel;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 namespace Epi.Web.WCF.SurveyService
@@ -31,7 +25,7 @@ namespace Epi.Web.WCF.SurveyService
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse GetOrganizationNames(OrganizationRequest pRequest);
-        
+
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse GetOrganizationByKey(OrganizationRequest pRequest);
@@ -46,7 +40,7 @@ namespace Epi.Web.WCF.SurveyService
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse SetOrganization(OrganizationRequest pRequest);
-         
+
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse UpdateOrganizationInfo(OrganizationRequest pRequest);

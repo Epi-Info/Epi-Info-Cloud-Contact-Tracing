@@ -7,7 +7,6 @@ using System.Xml;
 using Epi.Collections;
 using Epi.Data;
 using Epi.Fields;
-using Epi;
 using Epi.Data.Services;
 
 namespace Epi
@@ -19,7 +18,7 @@ namespace Epi
     /// </summary>
     public class View : ITable, INamedObject
     {
-        
+
         #region Fields
         private string name = string.Empty;
         private bool isRelatedView = false;
@@ -117,7 +116,7 @@ namespace Epi
             RecordCheckCodeAfter = row[ColumnNames.RECORD_CHECK_CODE_AFTER].ToString();
             IsRelatedView = (bool)row[ColumnNames.IS_RELATED_VIEW];
 
-            if( row.Table.Columns.Contains(ColumnNames.PAGE_WIDTH))
+            if (row.Table.Columns.Contains(ColumnNames.PAGE_WIDTH))
             {
                 PageWidth = (int)row[ColumnNames.PAGE_WIDTH];
             }
@@ -126,7 +125,7 @@ namespace Epi
                 PageHeight = (int)row[ColumnNames.PAGE_HEIGHT];
             }
             if (row.Table.Columns.Contains(ColumnNames.PAGE_ORIENTATION))
-            {            
+            {
                 PageOrientation = row[ColumnNames.PAGE_ORIENTATION].ToString();
             }
             if (row.Table.Columns.Contains(ColumnNames.PAGE_LABEL_ALIGN))
@@ -162,7 +161,7 @@ namespace Epi
                 sb.Append(SqlKeyWords.FROM);
                 sb.Append(StringLiterals.SPACE);
                 sb.Append("");
-                
+
 
                 System.Text.StringBuilder sb2 = new System.Text.StringBuilder();
                 sb2.Append(Util.InsertInSquareBrackets(this.TableName));
@@ -636,7 +635,7 @@ namespace Epi
             {
                 if (pages == null)
                 {
-                    pages = GetMetadata().GetViewPages(this);                                                          
+                    pages = GetMetadata().GetViewPages(this);
                 }
                 return (pages);
             }
@@ -719,7 +718,7 @@ namespace Epi
                 }
             }
         }
-	
+
         /// <summary>
         /// The view element of the view 
         /// </summary>
@@ -774,51 +773,51 @@ namespace Epi
                 this.GlobalRecordIdField.CurrentRecordValueObject = value;
             }
         }
-      
+
         public virtual string EIWSOrganizationKey
-            {
+        {
             get
-                {
+            {
                 return (eiwsOrganizationKey);
-                }
+            }
             set
-                {
+            {
                 eiwsOrganizationKey = value;
-                }
             }
+        }
         public virtual string EIWSFormId
-            {
+        {
             get
-                {
+            {
                 return (eiwsFormId);
-                }
+            }
             set
-                {
+            {
                 eiwsFormId = value;
-                }
             }
+        }
         public virtual string EWEOrganizationKey
-            {
+        {
             get
-                {
+            {
                 return (eweOrganizationKey);
-                }
-            set
-                {
-                eweOrganizationKey = value;
-                }
             }
-        public virtual string EWEFormId
+            set
             {
-            get
-                {
-                return (eweFormId);
-                }
-            set
-                {
-                eweFormId = value;
-                }
+                eweOrganizationKey = value;
             }
+        }
+        public virtual string EWEFormId
+        {
+            get
+            {
+                return (eweFormId);
+            }
+            set
+            {
+                eweFormId = value;
+            }
+        }
         #endregion Public Properties
 
         #region Private Properties
@@ -843,13 +842,13 @@ namespace Epi
         {
             // assume valid by default
             bool valid = true;
-            
+
             if (string.IsNullOrEmpty(viewName.Trim()))
             {
                 // if the view name is empty, or just a series of spaces, invalidate it
                 validationStatus = SharedStrings.MISSING_VIEW_NAME;
                 valid = false;
-            }            
+            }
             else if (AppData.Instance.IsReservedWord(viewName))
             {
                 // if the view name is a reserved word, invalidate it
@@ -945,7 +944,7 @@ namespace Epi
             return relatedViews;
         }
 
-        
+
 
         /// <summary>
         /// Copies a view object into this
@@ -1059,7 +1058,7 @@ namespace Epi
             Page page = null;
             this.pages = null;
             this.project.Save();
-            
+
             page = new Page(this, 0);
             page.Name = name;
             page.Position = position;
@@ -1128,12 +1127,12 @@ namespace Epi
                 throw new ArgumentNullException("Prompt Text");
             }
             #endregion Input Validation
-            
+
             promptText = Util.Squeeze(promptText);
 
             if (promptText == "")
             {
-                promptText = "field";        
+                promptText = "field";
             }
 
             //Remove any special characters in the prompt name
@@ -1445,7 +1444,7 @@ namespace Epi
                 {
                     return field;
                 }
-            }            
+            }
             return null;
         }
 
@@ -1571,7 +1570,7 @@ namespace Epi
             }
             else
             {
-                if(fields.Contains(field))
+                if (fields.Contains(field))
                 {
                     fields.Remove(field);
                 }
@@ -1587,7 +1586,7 @@ namespace Epi
         #endregion Public Methods
 
         #region Private Methods
-        
+
         private void GetParent(int relatedViewId)
         {
             parentView = this.GetMetadata().GetParentView(relatedViewId);
@@ -1595,7 +1594,7 @@ namespace Epi
 
         #endregion
 
-        public const string InitialCheckCode = 
+        public const string InitialCheckCode =
             "/*\n"
             + "	1. Choose a block from the upper right list to create a block for the action to occur.\n"
             + "	2. Select a command to add to the block from the lower right list.\n"

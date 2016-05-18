@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Epi.Web.Enter.Common.BusinessRule;
+﻿using System.Collections.Generic;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {

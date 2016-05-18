@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using Epi.Core.EnterInterpreter;
 
 namespace MvcDynamicForms.Fields
 {
@@ -13,11 +10,6 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class Hidden : TextField
     {
-
-
-
-       
- 
         public override string RenderHtml()
         {
             var html = new StringBuilder();
@@ -117,6 +109,6 @@ namespace MvcDynamicForms.Fields
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
         }
-        
+
     }
 }

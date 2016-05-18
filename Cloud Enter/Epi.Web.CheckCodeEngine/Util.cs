@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Epi.Core.EnterInterpreter
 {
-        /// <summary>
+    /// <summary>
     /// We need to find a way to organize these methods to reduce the possibility
     /// of "Spaghetti Code" like maintenance problems. Please do not add any more members
     /// to this class. Thanks.

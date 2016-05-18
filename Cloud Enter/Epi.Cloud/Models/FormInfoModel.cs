@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Epi.Web.MVC.Models
+﻿namespace Epi.Web.MVC.Models
 {
     public class FormInfoModel
     {
@@ -72,32 +67,32 @@ namespace Epi.Web.MVC.Models
             set { _IsOwner = value; }
         }
         public int UserId
-            {
+        {
             get { return _UserId; }
             set { _UserId = value; }
-            }
-       public string OwnerLName
-           {
-           get { return _OwnerLName; }
-           set { _OwnerLName = value; }
-           }
-        
-       public string OwnerFName
-           {
-           get { return _OwnerFName; }
-           set { _OwnerFName = value; }
-           }
-       public bool IsShareable
-       {
-           get { return _IsShareable; }
-           set { _IsShareable = value; }
-       }
+        }
+        public string OwnerLName
+        {
+            get { return _OwnerLName; }
+            set { _OwnerLName = value; }
+        }
 
-       public bool IsShared
-       {
-           get { return _IsShared; }
-           set { _IsShared = value; }
-       }
+        public string OwnerFName
+        {
+            get { return _OwnerFName; }
+            set { _OwnerFName = value; }
+        }
+        public bool IsShareable
+        {
+            get { return _IsShareable; }
+            set { _IsShareable = value; }
+        }
+
+        public bool IsShared
+        {
+            get { return _IsShared; }
+            set { _IsShared = value; }
+        }
         public bool EwavLiteToggleSwitch
         {
             get { return _ewavLiteToggleSwitch; }

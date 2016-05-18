@@ -1,27 +1,24 @@
-using System;
 using System.Data;
-using System.Drawing;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Foreign Key Column to a Unique Key.
-	/// </summary>
-	public class ForeignKeyColumn : PredefinedColumn, IMirrorable
-	{
-		#region Constructors
+    /// <summary>
+    /// Foreign Key Column to a Unique Key.
+    /// </summary>
+    public class ForeignKeyColumn : PredefinedColumn, IMirrorable
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for the class. Instantiates a grid field.
-		/// </summary>
-		/// <param name="grid">Grid field object.</param>
+        /// <summary>
+        /// Constructor for the class. Instantiates a grid field.
+        /// </summary>
+        /// <param name="grid">Grid field object.</param>
         public ForeignKeyColumn(GridField grid)
             : base(grid)
-		{
+        {
             Construct();
-		}
+        }
         /// <summary>
         /// Constructor for the class.
         /// </summary>
@@ -37,12 +34,12 @@ namespace Epi.Fields
         /// Common constructor code to provide a name for the class.
         /// </summary>
 		private void Construct()
-		{
+        {
             this.Name = ColumnNames.FOREIGN_KEY;
             this.GridColumnType = MetaFieldType.ForeignKey;
             genericDbColumnType = GenericDbColumnType.UInt64;
-		}		
-		#endregion Constructors
+        }
+        #endregion Constructors
 
         #region Public Properties
         /// <summary>
@@ -54,7 +51,7 @@ namespace Epi.Fields
             {
                 return SharedStrings.FOREIGN_KEY;
             }
-            set 
+            set
             {
                 throw new GeneralException("Text for Foreign key is pre-defined.");
             }
@@ -74,7 +71,7 @@ namespace Epi.Fields
 		/// Saves the field to the database
 		/// </summary>
 		protected override void InsertColumn()
-		{
+        {
             if (Id == 0)
             {
                 Id = GetMetadata().CreateGridColumn(this);
@@ -84,7 +81,7 @@ namespace Epi.Fields
             {
                 throw new System.ApplicationException("Unique key column already exists.");
             }
-		}
+        }
 
         /// <summary>
         /// Deletes the grid column from the database.
@@ -101,7 +98,7 @@ namespace Epi.Fields
         {
             return;
         }
-		#endregion
+        #endregion
 
         #region
         /// <summary>
@@ -114,5 +111,5 @@ namespace Epi.Fields
         }
         #endregion
 
-	}
+    }
 }

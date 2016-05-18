@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
 namespace MvcDynamicForms.Fields
-{ 
-      [Serializable]
+{
+    [Serializable]
     public class MobileGroupBox : Field
     {
 
@@ -34,7 +33,7 @@ namespace MvcDynamicForms.Fields
                 }
                 else
                 {
-                 //   wrapper.Attributes["class"] = this._cssClass;
+                    //   wrapper.Attributes["class"] = this._cssClass;
                 }
 
 

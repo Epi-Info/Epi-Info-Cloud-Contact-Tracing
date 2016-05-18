@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
 using Epi.Web.Enter.Common.MessageBase;
 using Epi.Web.Enter.Common.DTO;
 
@@ -15,9 +14,9 @@ namespace Epi.Web.Enter.Common.Message
         /// <summary>
         /// Default Constructor for SurveyInfoResponse.
         /// </summary>
-        public SurveyInfoResponse() 
-        { 
-            this.SurveyInfoList = new List<SurveyInfoDTO>(); 
+        public SurveyInfoResponse()
+        {
+            this.SurveyInfoList = new List<SurveyInfoDTO>();
         }
 
         /// <summary>

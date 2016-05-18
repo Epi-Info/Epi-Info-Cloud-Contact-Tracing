@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
@@ -23,7 +19,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private bool _IsSQLProject;
         private bool _IsShareable;
         private bool _IsShared;
-        private int _DataAccesRuleId ;
+        private int _DataAccesRuleId;
         private bool _HasDraftModeData;
         [DataMember]
         public int DataAccesRuleId
@@ -120,7 +116,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _IsSQLProject = value; }
         }
 
-        
+
         public bool IsShareable
         {
             get { return _IsShareable; }
@@ -132,7 +128,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
             get { return _IsShared; }
             set { _IsShared = value; }
         }
-        
+
         public bool HasDraftModeData
         {
             get { return _HasDraftModeData; }

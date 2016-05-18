@@ -1,20 +1,14 @@
 #region Namespaces
 
-using System;
-using System.Data;
 using System.Xml;
-using Epi;
-using Epi.Fields;
-using System.Drawing;
-using System.ComponentModel;
 
 #endregion  //Namespaces
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Single line text field
-	/// </summary>
+    /// <summary>
+    /// Single line text field
+    /// </summary>
     public class SingleLineTextField : TextField
     {
         #region Private Data Members
@@ -68,7 +62,7 @@ namespace Epi.Fields
             : base(view)
         {
             this.fieldNode = fieldNode;
-            this.view.Project.Metadata.GetFieldData(this, fieldNode);           
+            this.view.Project.Metadata.GetFieldData(this, fieldNode);
         }
 
         #endregion Constructors
@@ -77,7 +71,7 @@ namespace Epi.Fields
 
         public SingleLineTextField Clone()
         {
-            SingleLineTextField clone = (SingleLineTextField) this.MemberwiseClone();
+            SingleLineTextField clone = (SingleLineTextField)this.MemberwiseClone();
             base.AssignMembers(clone);
             return clone;
         }
@@ -127,8 +121,6 @@ namespace Epi.Fields
         }
 
         #endregion  //Public Properties
-
-
 
     }
 }

@@ -1,9 +1,7 @@
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
 using Epi.Data;
-using Epi;
 
 namespace Epi.Fields
 {
@@ -23,7 +21,7 @@ namespace Epi.Fields
         /// Check Code After
         /// </summary>
         protected string checkCodeAfter = string.Empty;
-        
+
         /// <summary>
         /// Check Code Before
         /// </summary>
@@ -37,9 +35,9 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="page">The page the field belongs to</param>
         public YesNoField(Page page) : base(page)
-		{
-			Construct();
-		}
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -52,16 +50,16 @@ namespace Epi.Fields
             this.viewElement = viewElement;
             this.Page = page;
             Construct();
-        }  
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public YesNoField(View view) : base(view)
-		{
-			Construct();
-		}
+        public YesNoField(View view) : base(view)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Load from row
@@ -90,15 +88,15 @@ namespace Epi.Fields
             this.view.Project.Metadata.GetFieldData(this, fieldNode);
         }
 
-		private void Construct()
-		{
+        private void Construct()
+        {
             genericDbColumnType = GenericDbColumnType.Byte;
             this.dbColumnType = DbType.Byte;
-		}
-		#endregion Constructors
+        }
+        #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -130,9 +128,9 @@ namespace Epi.Fields
 
         #region Public Methods
 
-		#endregion
+        #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -151,10 +149,10 @@ namespace Epi.Fields
             GetMetadata().UpdateField(this);
         }
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
-		#endregion     
+        #region Event Handlers
+        #endregion
 
         #region Members
 
@@ -193,5 +191,5 @@ namespace Epi.Fields
         {
             return GetProject().CollectedData.GetDatabase().GetDbSpecificColumnType(GenericDbColumnType.Byte);
         }
-	}
+    }
 }

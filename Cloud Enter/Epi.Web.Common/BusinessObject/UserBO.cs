@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
-   public class UserBO
+    public class UserBO
     {
         private int _UserId;
 
@@ -90,10 +87,10 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private bool _IsActive;
 
         public bool IsActive
-            {
+        {
             get { return _IsActive; }
             set { _IsActive = value; }
-            }
+        }
         private int _UserHighestRole;
         public int UserHighestRole
         {
@@ -108,7 +105,5 @@ namespace Epi.Web.Enter.Common.BusinessObject
             get { return _UGuid; }
             set { _UGuid = value; }
         }
-
-
     }
 }

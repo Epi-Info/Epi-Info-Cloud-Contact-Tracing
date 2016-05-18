@@ -1,19 +1,16 @@
 #region Namespaces
 
-using System;
 using System.ComponentModel;
-using System.Data;
 using System.Xml;
-using Epi;
 
 #endregion  //Namespaces
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Legal values Field
-	/// </summary>
-	public class DDLFieldOfCommentLegal : TableBasedDropDownField
+    /// <summary>
+    /// Legal values Field
+    /// </summary>
+    public class DDLFieldOfCommentLegal : TableBasedDropDownField
     {
         #region Private Data Members
 
@@ -31,16 +28,16 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="page">The page</param>
         public DDLFieldOfCommentLegal(Page page) : base(page)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view</param>
 		public DDLFieldOfCommentLegal(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -65,10 +62,10 @@ namespace Epi.Fields
             this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -130,11 +127,11 @@ namespace Epi.Fields
 
         #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		#endregion
+        #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -153,15 +150,15 @@ namespace Epi.Fields
         {
             GetMetadata().UpdateField(this);
         }
-        
-		#endregion
 
-		#region Event Handlers
-		#endregion Event Handlers
+        #endregion
 
-		#region Protected Methods
+        #region Event Handlers
+        #endregion Event Handlers
 
-		#endregion
+        #region Protected Methods
+
+        #endregion
 
         /// <summary>
         /// The view element of the field
@@ -179,5 +176,5 @@ namespace Epi.Fields
         }
 
 
-	}
+    }
 }

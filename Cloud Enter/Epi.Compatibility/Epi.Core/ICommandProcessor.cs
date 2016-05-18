@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Epi.Collections;
 
 namespace Epi
@@ -14,7 +13,7 @@ namespace Epi
         /// <summary>
         /// Boolean to indicate that Execution is to be skipped
         /// </summary>
-        bool SkipExecution { get; set;}
+        bool SkipExecution { get; set; }
 
         /// <summary>
         /// Return a reference to CommandProcessorResults
@@ -22,18 +21,18 @@ namespace Epi
         /// <remarks>
         /// Side effect - If there is no instance of CommandProcessorResults, it will be created
         /// </remarks>
-        CommandProcessorResults Results { get; set;}
+        CommandProcessorResults Results { get; set; }
 
         /// <summary>
         /// returns a reference 
         /// </summary>
         /// <returns></returns>
-        Stack Stack { get;}
+        Stack Stack { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        NamedObjectCollection<SubRoutine> SubRoutines { get;}
+        NamedObjectCollection<SubRoutine> SubRoutines { get; }
 
         /// <summary>
         /// 

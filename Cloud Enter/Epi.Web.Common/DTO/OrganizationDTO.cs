@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
-
-namespace Epi.Web.Enter.Common.DTO
+﻿namespace Epi.Web.Enter.Common.DTO
 {
     public class OrganizationDTO
     {
@@ -18,12 +12,12 @@ namespace Epi.Web.Enter.Common.DTO
             set { _Organization = value; }
         }
 
-        public string OrganizationKey 
+        public string OrganizationKey
         {
             get { return _OrganizationKey; }
             set { _OrganizationKey = value; }
         }
-       
+
 
         public bool IsEnabled
         {
@@ -31,10 +25,10 @@ namespace Epi.Web.Enter.Common.DTO
             set { _IsEnabled = value; }
         }
         public int OrganizationId
-            {
+        {
             get { return _OrganizationId; }
             set { _OrganizationId = value; }
-            }
+        }
 
 
     }

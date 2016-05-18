@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Security;
 
@@ -20,7 +17,7 @@ namespace Epi.Core.ServiceClient
         public static EWEManagerService.EWEManagerServiceV2Client GetClient(string pEndPointAddress, bool pIsAuthenticated, bool pIsWsHttpBinding = true)
         {
             EWEManagerService.EWEManagerServiceV2Client result = null;
-            
+
             try
             {
                 Configuration config = Configuration.GetNewInstance();
@@ -193,19 +190,19 @@ namespace Epi.Core.ServiceClient
         {
             try
             {
-            EWEManagerService.EWEManagerServiceV2Client client = EWEServiceClient.GetClient();
+                EWEManagerService.EWEManagerServiceV2Client client = EWEServiceClient.GetClient();
                 Configuration config = Configuration.GetNewInstance();
 
-                var Request = new EWEManagerService.SurveyInfoRequest(); 
+                var Request = new EWEManagerService.SurveyInfoRequest();
 
                 EWEManagerService.SurveyInfoCriteria Criteria = new EWEManagerService.SurveyInfoCriteria();
- 
+
                 if (!string.IsNullOrEmpty(pOrganizationKey))
                 {
                     Criteria.OrganizationKey = new Guid(pOrganizationKey);
                     Request.Criteria = Criteria;
                 }
-                
+
                 if (!string.IsNullOrWhiteSpace(pSurveyId))
                 {
                     Criteria.SurveyIdList = new string[1];
@@ -226,7 +223,7 @@ namespace Epi.Core.ServiceClient
             {
                 return IsValidOrganizationKeyEnum.EndPointNotFound;
             }
-            catch 
+            catch
             {
                 return IsValidOrganizationKeyEnum.GeneralException;
             }

@@ -1,34 +1,30 @@
-
-using System;
 using System.Data;
-using System.Drawing;
 
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// RecStatus Grid Column
-	/// </summary>
-	public class RecStatusColumn : PredefinedColumn, IMirrorable
-	{
-		#region Private Members
-		private string value = string.Empty;
+    /// <summary>
+    /// RecStatus Grid Column
+    /// </summary>
+    public class RecStatusColumn : PredefinedColumn, IMirrorable
+    {
+        #region Private Members
+        private string value = string.Empty;
         private string tableName = string.Empty;
-		#endregion Private Members
+        #endregion Private Members
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Instantiates a grid field
-		/// </summary>
-		/// <param name="grid">Grid field object.</param>
+        /// <summary>
+        /// Instantiates a grid field
+        /// </summary>
+        /// <param name="grid">Grid field object.</param>
         public RecStatusColumn(GridField grid)
             : base(grid)
-		{
+        {
             construct();
-		}
+        }
         /// <summary>
         /// Constructor for the class
         /// </summary>
@@ -46,8 +42,8 @@ namespace Epi.Fields
             this.GridColumnType = MetaFieldType.RecStatus;
             genericDbColumnType = GenericDbColumnType.SByte;
         }
-		
-		#endregion Constructors
+
+        #endregion Constructors
 
         #region Public Properties
         /// <summary>
@@ -74,7 +70,7 @@ namespace Epi.Fields
         //}
         #endregion Public Properties
 
-		#region protected methods
+        #region protected methods
 
         /// <summary>
         /// Inserts the grid column to the database
@@ -108,7 +104,7 @@ namespace Epi.Fields
             return;
         }
 
-		#endregion
+        #endregion
 
         #region
         /// <summary>
@@ -121,5 +117,5 @@ namespace Epi.Fields
         }
         #endregion
 
-	}
+    }
 }

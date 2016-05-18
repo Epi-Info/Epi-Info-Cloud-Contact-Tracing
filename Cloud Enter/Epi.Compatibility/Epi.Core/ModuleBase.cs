@@ -1,14 +1,10 @@
 using System;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Data;
-using Epi.Collections;
 
 namespace Epi
 {
-	/// <summary>
-	/// Epi Info application module abstract type
-	/// </summary>
+    /// <summary>
+    /// Epi Info application module abstract type
+    /// </summary>
     public abstract class ModuleBase : IModule
     {
         #region Private Attributes
@@ -26,26 +22,26 @@ namespace Epi
         /// Command line
         /// </summary>
         protected ICommandLine commandLine;
-        
+
         /// <summary>
         /// Module Manager
         /// </summary>
-		protected IModuleManager moduleManager;
+        protected IModuleManager moduleManager;
         #endregion Protected Attributes
 
         #region Constructors
-        
+
         /// <summary>
         /// Constructor
         /// </summary>
         public ModuleBase()
-		{
+        {
             memoryRegion = new MemoryRegion();
         }
         #endregion
 
         #region Public Properties
-        
+
         #endregion Public Properties
 
         #region Public Methods
@@ -80,46 +76,46 @@ namespace Epi
             this.commandLine = commandLine;
         }
 
-		/// <summary>
-		/// Signal load completion and register with module manager
-		/// </summary>
-		protected void OnLoaded()
-		{
-			// module is responsible for formally loading itself into the application using
-			// the module manager.
-			if (this.moduleManager != null)
-			{
-				this.moduleManager.Attach(this);
-			}
-		}
-		
+        /// <summary>
+        /// Signal load completion and register with module manager
+        /// </summary>
+        protected void OnLoaded()
+        {
+            // module is responsible for formally loading itself into the application using
+            // the module manager.
+            if (this.moduleManager != null)
+            {
+                this.moduleManager.Attach(this);
+            }
+        }
+
         /// <summary>
         /// Request module to unload
         /// </summary>
-		protected abstract void Unload();
+        protected abstract void Unload();
 
         /// <summary>
         /// Signal unload completion and unregister from module manager
         /// </summary>
 		protected void OnUnloaded()
-		{
-			// module is also responsible for formally unloading itself from the application 
-			// using the module manager. If module manager is null, there is a chance that
+        {
+            // module is also responsible for formally unloading itself from the application 
+            // using the module manager. If module manager is null, there is a chance that
             // we've already unloaded the module using the module manager
-			if (this.moduleManager != null)
-			{
-				this.moduleManager.Detach(this);
+            if (this.moduleManager != null)
+            {
+                this.moduleManager.Detach(this);
 
                 // prevent module from attempting to unload from module manager a second time
                 this.moduleManager = null;
-			}
+            }
         }
 
         /// <summary>
         /// Return type of module to caller
         /// </summary>
         protected abstract string ModuleName { get; }
-        
+
         /// <summary>
         /// Dispose method
         /// </summary>
@@ -150,9 +146,9 @@ namespace Epi
 		/// specified service.</para>
 		/// </returns>
         [System.Diagnostics.DebuggerStepThrough()]
-		public virtual object GetService(Type serviceType)
-		{
-			object service = null;
+        public virtual object GetService(Type serviceType)
+        {
+            object service = null;
 
             if (serviceType == this.GetType())
             {
@@ -171,8 +167,8 @@ namespace Epi
             {
                 service = this.moduleManager.GetService(serviceType);
             }
-        
-			return service;
+
+            return service;
         }
         #endregion
 
@@ -229,7 +225,7 @@ namespace Epi
         #region Explicit IModule Routing
         // explicit interface implementation is used to hide members from intellisense, while
         // still allow polymorphism
-        string IModule.ModuleName 
+        string IModule.ModuleName
         {
             get
             {
@@ -238,13 +234,13 @@ namespace Epi
         }
 
         void IModule.Load(IModuleManager moduleManager, ICommandLine commandLine)
-		{
+        {
             this.Load(moduleManager, commandLine);
-		}
+        }
 
-		void IModule.Unload()
-		{
-			this.Unload();
+        void IModule.Unload()
+        {
+            this.Unload();
         }
         #endregion
 

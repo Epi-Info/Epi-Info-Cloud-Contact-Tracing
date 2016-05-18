@@ -1,43 +1,42 @@
-using System;
 using System.Data;
 using Epi.Data;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Date Column
-	/// </summary>
-	public class DateColumn : ContiguousColumn
-	{
+    /// <summary>
+    /// Date Column
+    /// </summary>
+    public class DateColumn : ContiguousColumn
+    {
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		public DateColumn(GridField grid) : base(grid)
-		{
-			Construct();
-		}
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        public DateColumn(GridField grid) : base(grid)
+        {
+            Construct();
+        }
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="gridRow">A DataRow containing the grid row's data</param>
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="gridRow">A DataRow containing the grid row's data</param>
         /// <param name="grid">The grid that contains the DataRow</param>
         public DateColumn(DataRow gridRow, GridField grid)
             : base(gridRow, grid)
-		{	
-			Construct();
-		}
+        {
+            Construct();
+        }
 
-		private void Construct()
-		{
-			this.GridColumnType = MetaFieldType.Date;
+        private void Construct()
+        {
+            this.GridColumnType = MetaFieldType.Date;
             genericDbColumnType = GenericDbColumnType.Date;
-		}
+        }
 
-		#endregion Constructors
+        #endregion Constructors
 
         #region Public Properties
 
@@ -68,7 +67,7 @@ namespace Epi.Fields
         {
             GetMetadata().UpdateGridColumn(this);
         }
-        
+
         #endregion
-	}
+    }
 }

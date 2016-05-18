@@ -5,10 +5,10 @@ using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Unique Key and RecStatus are predefined data fields. Their names and sizes can't be changed.
-	/// </summary>
-	public abstract class PredefinedColumn : GridColumnBase
+    /// <summary>
+    /// Unique Key and RecStatus are predefined data fields. Their names and sizes can't be changed.
+    /// </summary>
+    public abstract class PredefinedColumn : GridColumnBase
     {
         #region Private Members
         private string val = string.Empty;
@@ -17,12 +17,12 @@ namespace Epi.Fields
 
         #region Constructors
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		public PredefinedColumn(GridField grid) : base(grid)
-		{
-		}
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        public PredefinedColumn(GridField grid) : base(grid)
+        {
+        }
         /// <summary>
         /// Constructor for the class
         /// </summary>
@@ -30,7 +30,7 @@ namespace Epi.Fields
         /// <param name="grid">The grid that contains the gridrow</param>
         public PredefinedColumn(DataRow gridRow, GridField grid)
             : base(gridRow, grid)
-		{
+        {
         }
 
         #endregion Constructors
@@ -79,7 +79,7 @@ namespace Epi.Fields
         /// <summary>
         /// Returns the prompt for UI.
         /// </summary>
-        public abstract string PromptText { get;set;}
+        public abstract string PromptText { get; set; }
 
         /// <summary>
         /// Value indicating the record status.
@@ -110,7 +110,7 @@ namespace Epi.Fields
                 throw new ApplicationException("Expression can't be set");
             }
         }
-        
+
         #endregion Public properties
 
         #region Public Methods

@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
-using System.Text;
-using Epi.Web.Enter.Common;
-using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
@@ -24,10 +19,10 @@ namespace Epi.Web.EF
             Dictionary<int, string> SelectedOrgs = new Dictionary<int, string>();
             Dictionary<int, string> DataAccessRuleIds = new Dictionary<int, string>();
             Dictionary<string, string> DataAccessRuleDescription = new Dictionary<string, string>();
-            int selectedDataAccessRuleId ;
+            int selectedDataAccessRuleId;
             try
             {
-                
+
                 Guid id = new Guid(FormId);
                 using (var Context = DataObjectFactory.CreateContext())
                 {
@@ -44,7 +39,7 @@ namespace Epi.Web.EF
 
                     }
 
-                    
+
 
 
                     //var SelectedUserQuery = from FormInfo in Context.SurveyMetaDatas
@@ -57,15 +52,15 @@ namespace Epi.Web.EF
 
                     SurveyMetaData SelectedUserQuery = Context.SurveyMetaDatas.First(x => x.SurveyId == id);
 
-                   // var SelectedOrgId = SelectedUserQuery.OrganizationId;
+                    // var SelectedOrgId = SelectedUserQuery.OrganizationId;
                     var SelectedOrgId = CurrentOrgId;
                     var query = (from user in SelectedUserQuery.Users
-                                join userorg in Context.UserOrganizations
-                            on user.UserID equals userorg.UserID
-                                where userorg.Active == true &&
-                                userorg.OrganizationID == SelectedOrgId
-                               // orderby user.UserName
-                                select user).Distinct().OrderBy(user => user.UserName) ;
+                                 join userorg in Context.UserOrganizations
+                             on user.UserID equals userorg.UserID
+                                 where userorg.Active == true &&
+                                 userorg.OrganizationID == SelectedOrgId
+                                 // orderby user.UserName
+                                 select user).Distinct().OrderBy(user => user.UserName);
 
                     // IEnumerable<User> Users = SelectedUserQuery.Users;
                     foreach (var user in query)
@@ -80,11 +75,11 @@ namespace Epi.Web.EF
 
 
                     var UserQuery = (from user in Context.Users
-                                    join userorg in Context.UserOrganizations
-                                    on user.UserID equals userorg.UserID
+                                     join userorg in Context.UserOrganizations
+                                     on user.UserID equals userorg.UserID
                                      where userorg.Active == true &&
                                  userorg.OrganizationID == SelectedOrgId
-                                    //orderby user.UserName
+                                     //orderby user.UserName
                                      select user).Distinct().OrderBy(user => user.UserName);
 
 
@@ -96,40 +91,41 @@ namespace Epi.Web.EF
                             AvailableUsers.Add(user.UserID, user.UserName);
                         }
                     }
-                   
+
                     //// Select Orgnization list 
                     var OrganizationQuery = Context.Organizations.Where(c => c.SurveyMetaDatas.Any(a => a.SurveyId == id)).ToList();
 
- 
-                       foreach(var org in OrganizationQuery){
 
-                           SelectedOrgs.Add(org.OrganizationId, org.Organization1);
-                       }
-                       ////  Available Orgnization list 
+                    foreach (var org in OrganizationQuery)
+                    {
 
-                       IQueryable<Organization> OrganizationList = Context.Organizations.ToList().AsQueryable();
-                       foreach (var Org in OrganizationList)
-                       {
-                           if (!SelectedOrgs.ContainsValue(Org.Organization1) && Org.IsEnabled== true)
-                           {
-                               AvailableOrgs.Add(Org.OrganizationId, Org.Organization1);
-                           }
-                       }
-                       //// Select DataAccess Rule Ids  list 
-                     var MetaData = Context.SurveyMetaDatas.Where( a => a.SurveyId == id).Single();
+                        SelectedOrgs.Add(org.OrganizationId, org.Organization1);
+                    }
+                    ////  Available Orgnization list 
+
+                    IQueryable<Organization> OrganizationList = Context.Organizations.ToList().AsQueryable();
+                    foreach (var Org in OrganizationList)
+                    {
+                        if (!SelectedOrgs.ContainsValue(Org.Organization1) && Org.IsEnabled == true)
+                        {
+                            AvailableOrgs.Add(Org.OrganizationId, Org.Organization1);
+                        }
+                    }
+                    //// Select DataAccess Rule Ids  list 
+                    var MetaData = Context.SurveyMetaDatas.Where(a => a.SurveyId == id).Single();
 
 
-                      selectedDataAccessRuleId = int.Parse(MetaData.DataAccessRuleId.ToString()); 
-                       ////  Available DataAccess Rule Ids  list 
+                    selectedDataAccessRuleId = int.Parse(MetaData.DataAccessRuleId.ToString());
+                    ////  Available DataAccess Rule Ids  list 
 
-                       IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
-                       foreach (var Rule in RuleIDs)
-                       {
+                    IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
+                    foreach (var Rule in RuleIDs)
+                    {
 
-                           DataAccessRuleIds.Add(Rule.RuleId, Rule.RuleName);
-                           DataAccessRuleDescription.Add(Rule.RuleName, Rule.RuleDescription);
-                          
-                       }
+                        DataAccessRuleIds.Add(Rule.RuleId, Rule.RuleName);
+                        DataAccessRuleDescription.Add(Rule.RuleName, Rule.RuleDescription);
+
+                    }
                     FormSettingBO.ColumnNameList = ColumnNameList;
                     FormSettingBO.UserList = AvailableUsers;
                     FormSettingBO.AssignedUserList = SelectedUsers;
@@ -225,10 +221,10 @@ namespace Epi.Web.EF
                 {
                     SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
                     //Remove old Users
-                
+
                     var _User = new HashSet<string>(Response.Users.Select(x => x.UserName));
-                    var Users = Context.Users.Where(t => _User.Contains(t.UserName))  .ToList();
-                  
+                    var Users = Context.Users.Where(t => _User.Contains(t.UserName)).ToList();
+
                     foreach (User user in Users)
                     {
 
@@ -274,7 +270,7 @@ namespace Epi.Web.EF
                         Organization Org = Context.Organizations.FirstOrDefault(x => x.OrganizationId == OrgId);
                         Response.Organizations.Add(Org);
 
-                        
+
 
                     }
                     Context.SaveChanges();
@@ -287,9 +283,9 @@ namespace Epi.Web.EF
                 throw (ex);
             }
         }
-        public   FormSettingBO GetFormSettings()
+        public FormSettingBO GetFormSettings()
         {
-             
+
             FormSettingBO FormSettingBO = new FormSettingBO();
 
             Dictionary<int, string> DataAccessRuleIds = new Dictionary<int, string>();
@@ -321,7 +317,7 @@ namespace Epi.Web.EF
 
 
         }
-        
+
         public List<string> GetAllColumnNames(string FormId)
         {
             Guid Id = new Guid(FormId);
@@ -374,8 +370,8 @@ namespace Epi.Web.EF
 
 
             return GetOrgAdmins;
-        
-        
+
+
         }
 
         public List<UserBO> GetOrgAdminsByFormId(string FormId)
@@ -395,7 +391,7 @@ namespace Epi.Web.EF
 
                     foreach (var Org in Orgs)
                     {
-                        
+
                         var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == Org.OrganizationId && x.RoleId == 2 && x.Active == true);
                         foreach (var Admin in AdminList)
                         {
@@ -403,7 +399,7 @@ namespace Epi.Web.EF
                             UserBO.EmailAddress = Admin.User.EmailAddress;
                             UserBO.UserId = Admin.User.UserID;
                             BoList.Add(UserBO);
-                             
+
                         }
 
                     }
@@ -415,11 +411,11 @@ namespace Epi.Web.EF
             }
 
             return BoList;
-        
-        
+
+
         }
 
-        public void SoftDeleteForm( string FormId)
+        public void SoftDeleteForm(string FormId)
         {
             Guid Id = new Guid(FormId);
             try
@@ -441,7 +437,7 @@ namespace Epi.Web.EF
             {
                 throw (ex);
             }
-        
+
         }
         public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
         {
@@ -471,7 +467,7 @@ namespace Epi.Web.EF
             return result;
 
         }
-       
+
         public void DeleteDraftRecords(string FormId)
         {
             Guid NewId = new Guid(FormId);
@@ -479,36 +475,36 @@ namespace Epi.Web.EF
             {
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-                     
+
                     List<string> Ids = new List<string>();
 
 
                     List<SurveyInfoBO> result = GetFormsHierarchyIdsByRootId(FormId);
                     foreach (var item in result)
                     {
-                        
-                                Ids.Add(item.SurveyId);
+
+                        Ids.Add(item.SurveyId);
                     }
 
                     Ids.Reverse();
 
-                     
+
                     //Get Root
-                   
+
 
                     foreach (var Id in Ids)
                     {
- 
 
 
-                     Guid _Id = new Guid(Id);
-                    Context.SurveyResponses.Where(x => x.SurveyId == _Id && x.IsDraftMode == true).ToList().ForEach(Context.SurveyResponses.DeleteObject);
 
-                    Context.SaveChanges();
+                        Guid _Id = new Guid(Id);
+                        Context.SurveyResponses.Where(x => x.SurveyId == _Id && x.IsDraftMode == true).ToList().ForEach(Context.SurveyResponses.DeleteObject);
+
+                        Context.SaveChanges();
                     }
-                  
+
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -517,6 +513,6 @@ namespace Epi.Web.EF
 
         }
 
-        
+
     }
 }

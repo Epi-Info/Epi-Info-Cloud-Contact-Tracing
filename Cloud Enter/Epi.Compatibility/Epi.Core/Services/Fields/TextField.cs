@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
@@ -9,30 +8,30 @@ namespace Epi.Fields
     /// Provides a text field in a view that enables users to enter text
     /// </summary>
 	public abstract class TextField : InputTextBoxField
-	{
-		#region Private Class Members
-		private int maxLength;
-		private int sourceFieldId;
-		#endregion //Private Class Members
+    {
+        #region Private Class Members
+        private int maxLength;
+        private int sourceFieldId;
+        #endregion //Private Class Members
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">Page</param>
-		public TextField(Page page) : base(page)
-		{
+        public TextField(Page page) : base(page)
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public TextField(View view) : base (view)
-		{
+		public TextField(View view) : base(view)
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Load from row
@@ -63,9 +62,9 @@ namespace Epi.Fields
             genericDbColumnType = GenericDbColumnType.String;
             this.dbColumnType = DbType.String;
         }
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
 
         /// <summary>
         /// Returns field type
@@ -119,32 +118,32 @@ namespace Epi.Fields
         /// Returns MaxLength
         /// </summary>
 		public int MaxLength
-		{
-			get
-			{
-				return (maxLength);
-			}
-			set
-			{
-				maxLength = value;
-			}
-		}
+        {
+            get
+            {
+                return (maxLength);
+            }
+            set
+            {
+                maxLength = value;
+            }
+        }
 
         /// <summary>
         /// Returns Source Field Id
         /// </summary>
-		public int SourceFieldId 
-		{
-			get
-			{
-				return sourceFieldId;
-			}
-			set
-			{
-				sourceFieldId = value;
-			}
-		}
-		#endregion Public Properties
+		public int SourceFieldId
+        {
+            get
+            {
+                return sourceFieldId;
+            }
+            set
+            {
+                sourceFieldId = value;
+            }
+        }
+        #endregion Public Properties
 
         #region Public Methods
         /// <summary>
@@ -157,5 +156,5 @@ namespace Epi.Fields
         }
 
         #endregion Public Methods
-	}
+    }
 }

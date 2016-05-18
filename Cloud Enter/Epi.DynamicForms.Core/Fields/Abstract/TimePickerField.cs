@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace MvcDynamicForms.Fields
@@ -98,7 +95,7 @@ namespace MvcDynamicForms.Fields
                 
                      matches 24hrs time or am/pm
                  */
-                string regularExp = "^(\\d{1,2}):(\\d{2})(:(\\d{2}))?(\\s?(AM|am|PM|pm))?$" ;
+                string regularExp = "^(\\d{1,2}):(\\d{2})(:(\\d{2}))?(\\s?(AM|am|PM|pm))?$";
                 var regex = new Regex(regularExp);
 
                 if (!regex.IsMatch(Value))
@@ -119,7 +116,7 @@ namespace MvcDynamicForms.Fields
                             Error = "Value must be a valid Military time (e.g. 13:23:45)";
                         }
                     }
-                    
+
                     return false;
                 }
             }

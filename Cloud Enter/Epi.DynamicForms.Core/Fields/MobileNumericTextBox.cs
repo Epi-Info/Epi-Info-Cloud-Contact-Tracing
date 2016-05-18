@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
 
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents an html textbox input element.
     /// </summary>
     [Serializable]
-    public class MobileNumericTextBox : NumericTextField 
+    public class MobileNumericTextBox : NumericTextField
     {
 
         public override string RenderHtml()
@@ -33,9 +31,9 @@ namespace MvcDynamicForms.Fields
 
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), _PromptWidth.ToString(), Height.ToString()));
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), IsHidden));
-           // prompt.Attributes.Add("style", StyleValues.ToString());
-           // prompt.Attributes.Add("style", "color:white");
-             
+            // prompt.Attributes.Add("style", StyleValues.ToString());
+            // prompt.Attributes.Add("style", "color:white");
+
             html.Append(prompt.ToString());
 
             // error label
@@ -69,12 +67,12 @@ namespace MvcDynamicForms.Fields
             //}
 
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
 
             // txt.Attributes.Add("value", Value);
@@ -95,7 +93,7 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("class", GetControlClass());
             txt.Attributes.Add("data-prompt-position", "topLeft:15");
             //txt.Attributes.Add("style", "position:absolute "+  ";color:#111; background-color:white ;width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-            txt.Attributes.Add("style", "" +  ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
+            txt.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
             txt.MergeAttributes(_inputHtmlAttributes);
             html.Append(txt.ToString(TagRenderMode.SelfClosing));
 
@@ -113,12 +111,12 @@ namespace MvcDynamicForms.Fields
                 html.Append(scriptMaskedInput.ToString(TagRenderMode.Normal));
             }
             // If readonly then add the following jquery script to make the field disabled 
-           //   if (ReadOnly)
-           //  {
-           //     var scriptReadOnlyText = new TagBuilder("script");
-           //     scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
-           //     html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-           // }
+            //   if (ReadOnly)
+            //  {
+            //     var scriptReadOnlyText = new TagBuilder("script");
+            //     scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
+            //     html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
+            // }
 
             //prevent numeric text box control to submit on enter click
             var scriptBuilder = new TagBuilder("script");
@@ -128,16 +126,16 @@ namespace MvcDynamicForms.Fields
 
             var wrapper = new TagBuilder(_fieldWrapper);
             wrapper.Attributes["class"] = _fieldWrapperClass;
-           // wrapper.Attributes.Add("data-role", "fieldcontain");
+            // wrapper.Attributes.Add("data-role", "fieldcontain");
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-               
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
-          
+
         }
 
         private string GetMaskedPattern(string pattern)

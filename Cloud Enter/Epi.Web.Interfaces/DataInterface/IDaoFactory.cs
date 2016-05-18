@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Interfaces.DataInterface;
 
 namespace Epi.Web.Enter.Interfaces.DataInterfaces
@@ -14,15 +10,11 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
     /// </remarks>
     public interface IDaoFactory
     {
-
         /// <summary>
         /// Gets an order data access object.
         /// </summary>
         ISurveyInfoDao SurveyInfoDao { get; }
-
-       
         ISurveyResponseDao SurveyResponseDao { get; }
-
         IOrganizationDao OrganizationDao { get; }
         IFormInfoDao FormInfoDao { get; }
         IFormSettingDao FormSettingDao { get; }

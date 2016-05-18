@@ -1,5 +1,4 @@
-﻿using System;
-namespace Epi.Data
+﻿namespace Epi.Data
 {
     interface ITableColumn
     {

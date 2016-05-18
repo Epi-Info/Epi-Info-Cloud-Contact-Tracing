@@ -1,28 +1,25 @@
 using System;
 using System.Data;
-using System.Drawing;
 using System.Xml;
-
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Global Record Id Field
-	/// </summary>
-	public class GlobalRecordIdField : PredefinedDataField, IMirrorable
-	{
-		#region Constructors
+    /// <summary>
+    /// Global Record Id Field
+    /// </summary>
+    public class GlobalRecordIdField : PredefinedDataField, IMirrorable
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Instantiates a field
-		/// </summary>
-		/// <param name="view">The view this field belongs to</param>
+        /// <summary>
+        /// Instantiates a field
+        /// </summary>
+        /// <param name="view">The view this field belongs to</param>
         public GlobalRecordIdField(View view)
             : base(view)
-		{
-			Construct();
-		}
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -30,9 +27,9 @@ namespace Epi.Fields
         /// <param name="view">View</param>
         /// <param name="viewElement">Xml view element</param>
         public GlobalRecordIdField(View view, XmlElement viewElement)
-            : base(view)          
+            : base(view)
         {
-            this.viewElement = viewElement;            
+            this.viewElement = viewElement;
         }
 
         /// <summary>
@@ -47,13 +44,13 @@ namespace Epi.Fields
             //dpb this.view.Project.Metadata.GetFieldData(this, fieldNode);           
         }
 
-		private void Construct()
-		{
+        private void Construct()
+        {
             this.Name = ColumnNames.GLOBAL_RECORD_ID;
             this.dbColumnType = DbType.String;
-		}
-		
-		#endregion Constructors
+        }
+
+        #endregion Constructors
 
         #region Private Data Members
         private XmlElement viewElement;
@@ -81,7 +78,7 @@ namespace Epi.Fields
             {
                 return SharedStrings.GLOBAL_RECORD_ID;
             }
-            set 
+            set
             {
                 throw new GeneralException("Prompt for Unique Identifier ID is pre-defined");
             }
@@ -107,24 +104,24 @@ namespace Epi.Fields
 		/// Saves the field to the database
 		/// </summary>
 		protected override void InsertField()
-		{
-			if (this.Id == 0)
-			{
-                this.Id = GetMetadata().CreateField(this);                			
-			}
-			else
-			{
-				throw new System.ApplicationException("Unique key field already exists");
-			}
-		}		
+        {
+            if (this.Id == 0)
+            {
+                this.Id = GetMetadata().CreateField(this);
+            }
+            else
+            {
+                throw new System.ApplicationException("Unique key field already exists");
+            }
+        }
 
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
-			GetMetadata().DeleteField(this);
-		}
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
+        }
 
         /// <summary>
         /// Returns the string value that is reflected my a mirror field.
@@ -142,7 +139,7 @@ namespace Epi.Fields
                 CurrentRecordValueObject = Guid.NewGuid().ToString();
             }
         }
-      
+
         #endregion
 
         /// <summary>
@@ -160,5 +157,5 @@ namespace Epi.Fields
             }
         }
 
-	}
+    }
 }

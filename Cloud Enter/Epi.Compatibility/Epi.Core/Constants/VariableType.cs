@@ -8,7 +8,7 @@ namespace Epi
     [System.Flags]
     public enum VariableType
     {
-        
+
         /// <summary>
         /// Variable undefined
         /// </summary>

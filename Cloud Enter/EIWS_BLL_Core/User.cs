@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
@@ -31,7 +29,7 @@ namespace Epi.Web.BLL
 
             UserResponseBO = UserDao.GetUser(User);
             UserResponseBO.UserHighestRole = UserDao.GetUserHighestRole(UserResponseBO.UserId);
-            
+
 
             return UserResponseBO;
         }
@@ -176,7 +174,7 @@ namespace Epi.Web.BLL
 
             UserResponseBO = UserDao.GetUserByEmail(User);
             if (UserResponseBO != null)
-            UserResponseBO.UserHighestRole  = UserDao.GetUserHighestRole(UserResponseBO.UserId);
+                UserResponseBO.UserHighestRole = UserDao.GetUserHighestRole(UserResponseBO.UserId);
             return UserResponseBO;
         }
 

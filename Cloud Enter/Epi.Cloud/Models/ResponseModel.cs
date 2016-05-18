@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Epi.Web.MVC.Models
+﻿namespace Epi.Web.MVC.Models
 {
     public class ResponseModel
     {
@@ -13,9 +8,7 @@ namespace Epi.Web.MVC.Models
         public string Column3 { get; set; }
         public string Column4 { get; set; }
         public string Column5 { get; set; }
-
         public bool IsLocked { get; set; }
-
         public int PageSize { get; set; }
     }
 }

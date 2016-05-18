@@ -1,37 +1,35 @@
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Number Field.
-	/// </summary>
-	public class NumberField : InputTextBoxField, IPatternable
-	{
-		#region Private Members
-		private string pattern = string.Empty;
+    /// <summary>
+    /// Number Field.
+    /// </summary>
+    public class NumberField : InputTextBoxField, IPatternable
+    {
+        #region Private Members
+        private string pattern = string.Empty;
         private string lower = string.Empty;
         private string upper = string.Empty;
         private XmlElement viewElement;
         private XmlNode fieldNode;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion  Private Members
-		
-		#region Constructors
-		
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public NumberField(Page page) : base(page)
-		{
-			Construct();
-		}
+        #endregion  Private Members
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public NumberField(Page page) : base(page)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// NumberField
@@ -50,9 +48,9 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">View</param>
 		public NumberField(View view) : base(view)
-		{
-			Construct();
-		}
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -86,17 +84,17 @@ namespace Epi.Fields
             return clone;
         }
 
-		private void Construct()
-		{
+        private void Construct()
+        {
             genericDbColumnType = GenericDbColumnType.Double;
             this.dbColumnType = DbType.Double;
-		}
-		#endregion Constructors
+        }
+        #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
-		#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Returns field type
         /// </summary>
@@ -133,16 +131,16 @@ namespace Epi.Fields
         /// Pattern
         /// </summary>
 		public string Pattern
-		{
-			get
-			{
+        {
+            get
+            {
                 return (pattern);
-			}
-			set
-			{
-				pattern = value == "None" ? "" : value;
-			}
-		}
+            }
+            set
+            {
+                pattern = value == "None" ? "" : value;
+            }
+        }
 
         /// <summary>
         /// Lower
@@ -174,22 +172,22 @@ namespace Epi.Fields
             }
         }
 
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		///// <summary>
-		///// Saves the current field location
-		///// </summary>
+        ///// <summary>
+        ///// Saves the current field location
+        ///// </summary>
         //public override void SaveFieldLocation()
         //{
         //    Metadata.UpdateControlPosition(this);
         //    Metadata.UpdatePromptPosition(this);
         //}
 
-		#endregion
+        #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -263,12 +261,12 @@ namespace Epi.Fields
         //    }
         //}
 
-		#endregion
+        #endregion
 
-		#region Event Handlers
+        #region Event Handlers
 
 
-		#endregion Event Handlers
+        #endregion Event Handlers
 
         /// <summary>
         /// The view element of the field
@@ -285,5 +283,5 @@ namespace Epi.Fields
             }
         }
 
-	}
+    }
 }

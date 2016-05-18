@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Epi;
 using Epi.Collections;
 
 namespace Epi
@@ -42,26 +37,26 @@ namespace Epi
             for (int index = 0; index < this.Count; index++)
             {
                 string var = string.Empty;
-                if (this[index].IsVarType(VariableType.DataSourceRedefined))  
+                if (this[index].IsVarType(VariableType.DataSourceRedefined))
                 {
                     string s = string.Empty;
                     var = ((DataSourceVariableRedefined)this[index]).Expression;
-                }    
-                else if (this[index].IsVarType(VariableType.Standard ))
+                }
+                else if (this[index].IsVarType(VariableType.Standard))
                 {
-                        var = ((StandardVariable)this[index]).Expression;
+                    var = ((StandardVariable)this[index]).Expression;
                 }
                 else
                 {
                     //defect 267
-//                    var = this[index].Expression;                
+                    //                    var = this[index].Expression;                
                     var = this[index].Name;
                 }
                 if (tags[index] == SortOrder.Descending)
                 {
                     var += CharLiterals.SPACE + "desc";
                 }
-                
+
                 builder.Add(var);
             }
             return builder.ToString();

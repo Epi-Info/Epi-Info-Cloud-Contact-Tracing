@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Epi.Collections;
 using Epi.Fields;
 
 namespace Epi.Collections
@@ -233,7 +229,7 @@ namespace Epi.Collections
             if (field is MirrorField)
             {
                 mirrorFields.Remove(field.Name);
-            } 
+            }
             if (field is RelatedViewField)
             {
                 relatedFields.Add(field as RelatedViewField);

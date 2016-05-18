@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,7 +13,7 @@ namespace MvcDynamicForms.Fields
     {
         private string _regexMessage = "Invalid";
         private string _ControlValue;
-    
+
 
         /// <summary>
         /// A regular expression that will be applied to the user's text respone for validation.
@@ -80,7 +79,7 @@ namespace MvcDynamicForms.Fields
                 ClearError();
                 return true;
             }
-            
+
             if (string.IsNullOrEmpty(Response))
             {
                 if (Required)

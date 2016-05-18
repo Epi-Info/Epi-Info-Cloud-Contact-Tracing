@@ -1,10 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
-using System.Text.RegularExpressions;
 using com.calitha.goldparser;
-using Epi;
 /*
 using Epi.Collections;
 using Epi.Data;
@@ -24,7 +20,7 @@ namespace Epi.Core.EnterInterpreter
 
         #region Constructors
 
-        public EnterRule() 
+        public EnterRule()
         {
             this.Context = new Rule_Context();
         }
@@ -50,9 +46,9 @@ namespace Epi.Core.EnterInterpreter
             return "";
         }
 
-        public virtual bool IsNull() 
-        { 
-            return false; 
+        public virtual bool IsNull()
+        {
+            return false;
         }
 
         protected string BoolVal(bool isTrue)
@@ -157,7 +153,7 @@ namespace Epi.Core.EnterInterpreter
                         break;
                 }
             }
-             
+
             return type;
         }
 
@@ -280,26 +276,26 @@ namespace Epi.Core.EnterInterpreter
                         result = new Rule_Program(pContext, NT);
                         break;
                     case "<Always_Statement>":
-                        result  = new Rule_Always(pContext, NT);
+                        result = new Rule_Always(pContext, NT);
                         break;
 
                     case "<Simple_Assign_Statement>":
                     case "<Let_Statement>":
                     case "<Assign_Statement>":
-                        result  = new Rule_Assign(pContext, NT);
+                        result = new Rule_Assign(pContext, NT);
                         break;
                     case "<Assign_DLL_Statement>":
-                        result  = new Rule_Assign_DLL_Statement(pContext, NT);
+                        result = new Rule_Assign_DLL_Statement(pContext, NT);
                         break;
                     case "<If_Statement>":
                     case "<If_Else_Statement>":
-                        result  = new Rule_If_Then_Else_End(pContext, NT);
+                        result = new Rule_If_Then_Else_End(pContext, NT);
                         break;
                     case "<Else_If_Statement>":
                         result = new Rule_Else_If_Statement(pContext, NT);
                         break;
                     case "<Define_Variable_Statement>":
-                        result  = new Rule_Define(pContext, NT);
+                        result = new Rule_Define(pContext, NT);
                         break;
                     case "<Define_Dll_Statement>":
                         result = new Rule_DLL_Statement(pContext, NT);
@@ -311,17 +307,17 @@ namespace Epi.Core.EnterInterpreter
 
                     case "<Hide_Some_Statement>":
                     case "<Hide_Except_Statement>":
-                        result  = new Rule_Hide(pContext, NT);
+                        result = new Rule_Hide(pContext, NT);
                         break;
 
                     case "<Unhide_Some_Statement>":
                     case "<Unhide_Except_Statement>":
-                        result  = new Rule_UnHide(pContext, NT);
+                        result = new Rule_UnHide(pContext, NT);
                         break;
 
                     case "<Go_To_Variable_Statement>":
                     case "<Go_To_Page_Statement>":
-                        result  = new Rule_GoTo(pContext, NT);
+                        result = new Rule_GoTo(pContext, NT);
                         break;
 
                     case "<Simple_Dialog_Statement>":
@@ -340,10 +336,10 @@ namespace Epi.Core.EnterInterpreter
                     case "<Dialog_Write_Filter_Statement>":
                     case "<Dialog_Date_Statement>":
                     case "<Dialog_Date_Mask_Statement>":
-                        result  = new Rule_Dialog(pContext, NT);
+                        result = new Rule_Dialog(pContext, NT);
                         break;
                     case "<Comment_Line>":
-                        result  = new Rule_CommentLine(pContext, NT);
+                        result = new Rule_CommentLine(pContext, NT);
                         break;
                     case "<Simple_Execute_Statement>":
                     case "<Execute_File_Statement>":
@@ -354,49 +350,49 @@ namespace Epi.Core.EnterInterpreter
                     case "<Execute_No_Wait_For_Exit_File_Statement>":
                     case "<Execute_No_Wait_For_Exit_String_Statement>":
                     case "<Execute_No_Wait_For_Exit_Url_Statement>":
-                        result  = new Rule_Execute(pContext, NT);
+                        result = new Rule_Execute(pContext, NT);
                         break;
                     case "<Beep_Statement>":
-                        result  = new Rule_Beep(pContext, NT);
+                        result = new Rule_Beep(pContext, NT);
                         break;
                     case "<Auto_Search_Statement>":
-                        result  = new Rule_AutoSearch(pContext, NT);
+                        result = new Rule_AutoSearch(pContext, NT);
                         break;
                     case "<Quit_Statement>":
-                        result  = new Rule_Quit(pContext);
+                        result = new Rule_Quit(pContext);
                         break;
                     case "<Clear_Statement>":
-                        result  = new Rule_Clear(pContext, NT);
+                        result = new Rule_Clear(pContext, NT);
                         break;
                     case "<New_Record_Statement>":
-                        result  = new Rule_NewRecord(pContext, NT);
+                        result = new Rule_NewRecord(pContext, NT);
                         break;
                     case "<Simple_Undefine_Statement>":
-                        result  = new Rule_Undefine(pContext, NT);
+                        result = new Rule_Undefine(pContext, NT);
                         break;
                     case "<Geocode_Statement>":
-                        result  = new Rule_Geocode(pContext, NT);
+                        result = new Rule_Geocode(pContext, NT);
                         break;
                     case "<DefineVariables_Statement>":
-                        result  = new Rule_DefineVariables_Statement(pContext, NT);
+                        result = new Rule_DefineVariables_Statement(pContext, NT);
                         break;
                     case "<Field_Checkcode_Statement>":
-                        result  = new Rule_Field_Checkcode_Statement(pContext, NT);
+                        result = new Rule_Field_Checkcode_Statement(pContext, NT);
                         break;
                     case "<View_Checkcode_Statement>":
-                        result  = new Rule_View_Checkcode_Statement(pContext, NT);
+                        result = new Rule_View_Checkcode_Statement(pContext, NT);
                         break;
                     case "<Record_Checkcode_Statement>":
-                        result  = new Rule_Record_Checkcode_Statement(pContext, NT);
+                        result = new Rule_Record_Checkcode_Statement(pContext, NT);
                         break;
                     case "<Page_Checkcode_Statement>":
-                        result  = new Rule_Page_Checkcode_Statement(pContext, NT);
+                        result = new Rule_Page_Checkcode_Statement(pContext, NT);
                         break;
                     case "<Subroutine_Statement>":
-                        result  = new Rule_Subroutine_Statement(pContext, NT);
+                        result = new Rule_Subroutine_Statement(pContext, NT);
                         break;
                     case "<Call_Statement>":
-                        result  = new Rule_Call(pContext, NT);
+                        result = new Rule_Call(pContext, NT);
                         break;
                     case "<Expr List>":
                         result = new Rule_ExprList(pContext, NT);
@@ -479,10 +475,10 @@ namespace Epi.Core.EnterInterpreter
                     default:
                         result = new Rule_Value(pContext, NT);
                         break;
-                    
+
                         //result = new Rule_Value(pContext, NT);
                         //throw new Exception("Missing rule in EnterRule.BuildStatments " + NT.Symbol.ToString());
-                        
+
                 }
 
 

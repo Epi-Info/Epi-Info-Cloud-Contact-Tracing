@@ -1,7 +1,4 @@
-﻿using System.Web.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Text;
 
 namespace MvcDynamicForms.Fields
@@ -42,7 +39,7 @@ namespace MvcDynamicForms.Fields
         /// <summary>
         /// The html element that will be used to wrap fields when they are rendered as html.
         /// </summary>
-    
+
         public string FieldWrapper
         {
             get
@@ -67,7 +64,7 @@ namespace MvcDynamicForms.Fields
             {
                 _fieldWrapperClass = value;
             }
-        }     
+        }
 
         /// <summary>
         /// Renders the field as html.
@@ -95,16 +92,22 @@ namespace MvcDynamicForms.Fields
         /// </summary>
         public int DisplayOrder { get; set; }
 
-        public double Top { 
-            get {
-                return System.Math.Truncate(this._top); 
-            } 
-            set { this._top = System.Math.Truncate(value); } }
-        public double Left { 
-            get { return  System.Math.Truncate(this._left); } 
-            set {
-                this._left = System.Math.Truncate(value); 
-            } }
+        public double Top
+        {
+            get
+            {
+                return System.Math.Truncate(this._top);
+            }
+            set { this._top = System.Math.Truncate(value); }
+        }
+        public double Left
+        {
+            get { return System.Math.Truncate(this._left); }
+            set
+            {
+                this._left = System.Math.Truncate(value);
+            }
+        }
         public string CssClass { get { return this._cssClass; } set { this._cssClass = value; } }
         //_font
         public string fontfamily { get { return this._fontfamily; } set { this._fontfamily = value; } }
@@ -117,8 +120,8 @@ namespace MvcDynamicForms.Fields
         public bool IsHighlighted { get { return this._IsHighlighted; } set { this._IsHighlighted = value; } }
         public bool IsDisabled { get { return this._IsDisabled; } set { this._IsDisabled = value; } }
 
-        public bool IsPlaceHolder  { get { return this._IsPlaceHolder; } set { this._IsPlaceHolder = value; } }
-        
+        public bool IsPlaceHolder { get { return this._IsPlaceHolder; } set { this._IsPlaceHolder = value; } }
+
         /// <summary>
         /// This function generates control style 
         /// </summary>
@@ -131,10 +134,10 @@ namespace MvcDynamicForms.Fields
             StringBuilder FontWeight = new StringBuilder();
             StringBuilder TextDecoration = new StringBuilder();
             StringBuilder CssStyles = new StringBuilder();
-            if (Top.IndexOf(",") >0)
-            Top =  Top.Remove(Top.IndexOf(","));
+            if (Top.IndexOf(",") > 0)
+                Top = Top.Remove(Top.IndexOf(","));
             if (Left.IndexOf(",") > 0)
-            Left = Left.Remove(Left.IndexOf(","));
+                Left = Left.Remove(Left.IndexOf(","));
 
             char[] delimiterChars = { ' ', ',' };
             string[] Styles = ControlFontStyle.Split(delimiterChars);
@@ -233,7 +236,7 @@ namespace MvcDynamicForms.Fields
 
             char[] delimiterChars = { ' ', ',' };
             string[] Styles = ControlFontStyle.Split(delimiterChars);
-           
+
             foreach (string Style in Styles)
             {
                 switch (Style.ToString())
@@ -303,7 +306,7 @@ namespace MvcDynamicForms.Fields
             }
             CssStyles.Append(";display:inline");
             CssStyles.Append(TextDecoration);
-            
+
 
             return CssStyles.ToString();
 

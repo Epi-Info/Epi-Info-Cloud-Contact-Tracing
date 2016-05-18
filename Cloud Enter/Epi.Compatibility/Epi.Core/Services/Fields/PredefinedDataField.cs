@@ -1,16 +1,15 @@
 using System;
 using System.Data;
-
 using Epi.Data;
 using Epi.Data.Services;
 using EpiInfo.Plugin;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Unique Key and RecStatus are predefined data fields. Their names and sizes can't be changed.
-	/// </summary>
-	public abstract class PredefinedDataField : Field, IDataField
+    /// <summary>
+    /// Unique Key and RecStatus are predefined data fields. Their names and sizes can't be changed.
+    /// </summary>
+    public abstract class PredefinedDataField : Field, IDataField
     {
         #region Private Members
         private object currentRecordValueObject = null;
@@ -29,7 +28,7 @@ namespace Epi.Fields
 		/// <param name="view">The view this field belongs to</param>
         public PredefinedDataField(View view)
             : base(view)
-		{
+        {
             //construct();  
         }
 
@@ -51,10 +50,10 @@ namespace Epi.Fields
         /// Retuns the datatype of the field.
         /// </summary>
         /// 
-        
+
         //public abstract DataType DataType{get; set;}
         public DataType DataType
-        { 
+        {
             get
             {
                 return (DataType)AppData.Instance.FieldTypesDataTable.GetDataTypeByFieldTypeId((int)FieldType);
@@ -65,7 +64,7 @@ namespace Epi.Fields
                 return;
             }
         }
-        
+
         /// <summary>
         /// Retuns the EpiInfo.Plugin.datatype of the field.
         /// </summary>
@@ -128,7 +127,7 @@ namespace Epi.Fields
         /// <summary>
         /// The prompt's text
         /// </summary>
-        public abstract string PromptText { get;set;}
+        public abstract string PromptText { get; set; }
         public string Prompt { get { return this.PromptText; } set { return; } }
         /// <summary>
         /// Value indicating the record status
@@ -207,7 +206,7 @@ namespace Epi.Fields
                 throw new ApplicationException("Expression can't be set");
             }
         }
-        
+
         #endregion Public properties
 
         #region Public Methods

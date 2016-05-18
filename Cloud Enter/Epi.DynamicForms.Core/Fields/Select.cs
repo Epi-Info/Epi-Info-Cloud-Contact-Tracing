@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using  System.Web;
 using Epi.Core.EnterInterpreter;
 using System.Drawing;
 
@@ -14,7 +11,7 @@ namespace MvcDynamicForms.Fields
     /// </summary>
     [Serializable]
     public class Select : ListField
-    { 
+    {
         public Select()
         {
         }
@@ -69,7 +66,7 @@ namespace MvcDynamicForms.Fields
 
             var inputName = _form.FieldPrefix + _key;
             string ErrorStyle = string.Empty;
-            
+
             // prompt
             var prompt = new TagBuilder("label");
 
@@ -80,14 +77,14 @@ namespace MvcDynamicForms.Fields
             string NewPromp = System.Web.Mvc.MvcHtmlString.Create(newText).ToString();
 
 
-            prompt.InnerHtml=NewPromp;
+            prompt.InnerHtml = NewPromp;
             prompt.Attributes.Add("for", inputName);
             prompt.Attributes.Add("class", "EpiLabel");
             prompt.Attributes.Add("Id", "label" + inputName);
 
-            
+
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(),_IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -97,7 +94,7 @@ namespace MvcDynamicForms.Fields
                 //Add new Error to the error Obj
 
                 ErrorStyle = ";border-color: red";
-             
+
             }
 
             // open select element
@@ -109,7 +106,7 @@ namespace MvcDynamicForms.Fields
             if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
             {
 
-              //  select.Attributes.Add("onblur", "return " + _key + "_after();"); //After
+                //  select.Attributes.Add("onblur", "return " + _key + "_after();"); //After
                 select.Attributes.Add("onchange", "return " + _key + "_after();"); //After
             }
             EnterRule FunctionObjectBefore = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=before&identifier=" + _key);
@@ -120,86 +117,88 @@ namespace MvcDynamicForms.Fields
             }
 
             ////////////Check code end//////////////////
-            int LargestChoiseLength =0 ;
+            int LargestChoiseLength = 0;
             string measureString = "";
-            foreach (var choise in _choices) {
+            foreach (var choise in _choices)
+            {
 
-                if (choise.Key.ToString().Length > LargestChoiseLength) 
-             {
-                 LargestChoiseLength = choise.Key.ToString().Length;
+                if (choise.Key.ToString().Length > LargestChoiseLength)
+                {
+                    LargestChoiseLength = choise.Key.ToString().Length;
 
-                 measureString = choise.Key.ToString();
-             } 
-            
-            
+                    measureString = choise.Key.ToString();
+                }
+
+
             }
 
-           // LargestChoiseLength = LargestChoiseLength * _ControlFontSize;
+            // LargestChoiseLength = LargestChoiseLength * _ControlFontSize;
 
             Font stringFont = new Font(ControlFontStyle, _ControlFontSize);
 
-            SizeF size = new SizeF() ;
+            SizeF size = new SizeF();
             using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
             {
-                  size = g.MeasureString(measureString.ToString(), stringFont);
+                size = g.MeasureString(measureString.ToString(), stringFont);
             }
 
 
-           
-          // stringSize = (int) Graphics.MeasureString(measureString.ToString(), stringFont).Width;
-        
+
+            // stringSize = (int) Graphics.MeasureString(measureString.ToString(), stringFont).Width;
+
 
             if (_IsRequired == true)
             {
-                        if ((size.Width) > _ControlWidth)
-                        {
-                           // select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
-                            select.Attributes.Add("class", GetControlClass() + "fix-me");
-                        }
-                        else
-                        {
-                           // select.Attributes.Add("class", GetControlClass() + "text-input");
-                            select.Attributes.Add("class", GetControlClass()  );
-                        }
-                       select.Attributes.Add("data-prompt-position", "topRight:10");
-            }
-            else 
-            {
-                        //select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
                 if ((size.Width) > _ControlWidth)
                 {
-                    select.Attributes.Add("class", GetControlClass() +"fix-me ");
+                    // select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
+                    select.Attributes.Add("class", GetControlClass() + "fix-me");
+                }
+                else
+                {
+                    // select.Attributes.Add("class", GetControlClass() + "text-input");
+                    select.Attributes.Add("class", GetControlClass());
+                }
+                select.Attributes.Add("data-prompt-position", "topRight:10");
+            }
+            else
+            {
+                //select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
+                if ((size.Width) > _ControlWidth)
+                {
+                    select.Attributes.Add("class", GetControlClass() + "fix-me ");
                 }
                 else
                 {
 
-                    select.Attributes.Add("class", GetControlClass() );
+                    select.Attributes.Add("class", GetControlClass());
                 }
                 select.Attributes.Add("data-prompt-position", "topRight:10");
-                 
+
             }
             string IsHiddenStyle = "";
             string IsHighlightedStyle = "";
-            if(_IsHidden){
+            if (_IsHidden)
+            {
                 IsHiddenStyle = "display:none";
             }
             if (_IsHighlighted)
             {
                 IsHighlightedStyle = "background-color:yellow";
             }
-             
+
             //if (_IsDisabled)
             //{
             //    select.Attributes.Add("disabled", "disabled");
             //}
-            
+
             string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
             select.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px ; font-size:" + _ControlFontSize + "pt;" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
             select.MergeAttributes(_inputHtmlAttributes);
             html.Append(select.ToString(TagRenderMode.StartTag));
 
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
@@ -226,20 +225,20 @@ namespace MvcDynamicForms.Fields
                         var optSelectedVale = "";
                         if (!string.IsNullOrEmpty(SelectedValue))
                         {
-                         optSelectedVale = SelectedValue.ToString();//=="1"? "Yes" : "No";
+                            optSelectedVale = SelectedValue.ToString();//=="1"? "Yes" : "No";
                         }
-                         opt.Attributes.Add("value",( choice.Key =="Yes"? "1":"0"));
+                        opt.Attributes.Add("value", (choice.Key == "Yes" ? "1" : "0"));
                         if (choice.Key == optSelectedVale.ToString())
                         {
                             opt.Attributes.Add("selected", "selected");
-                            
+
                         }
                         if (choice.Key == "Yes" || choice.Key == "No")
                         {
                             opt.SetInnerText(choice.Key);
                             html.Append(opt.ToString());
                         }
-                        
+
                     }
                     break;
                 case "17":
@@ -251,7 +250,7 @@ namespace MvcDynamicForms.Fields
                         opt.SetInnerText(choice.Key);
                         html.Append(opt.ToString());
                     }
-                
+
                     break;
                 case "18":
                     foreach (var choice in _choices)
@@ -289,7 +288,7 @@ namespace MvcDynamicForms.Fields
                     }
                     break;
             }
- 
+
             // close select element
             html.Append(select.ToString(TagRenderMode.EndTag));
 
@@ -298,7 +297,7 @@ namespace MvcDynamicForms.Fields
             hidden.Attributes.Add("type", "hidden");
             hidden.Attributes.Add("id", inputName + "_hidden");
             hidden.Attributes.Add("name", inputName);
-            hidden.Attributes.Add("value", string.Empty);          
+            hidden.Attributes.Add("value", string.Empty);
             html.Append(hidden.ToString(TagRenderMode.SelfClosing));
 
             var wrapper = new TagBuilder(_fieldWrapper);

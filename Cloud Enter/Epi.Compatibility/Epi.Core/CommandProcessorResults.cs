@@ -1,10 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Xml;
-using System.Text;
-using System.IO;
 
 using System.Collections.Generic;
 
@@ -19,28 +16,28 @@ namespace Epi
     /// Command Processor Results class
     /// </summary>
 	public class CommandProcessorResults
-	{
-		#region Private Attributes
-		private ArrayList actions = new ArrayList();
-		private bool resetOutput = false;
+    {
+        #region Private Attributes
+        private ArrayList actions = new ArrayList();
+        private bool resetOutput = false;
         private string htmlOutput = string.Empty;
         private XmlDocument xmlOutput = null;
         private DataSet dsOutput = null;
         private string fileNameOutput;
         private string outTableName;
         private ArrayList commandBlock = new ArrayList();
-        private Dictionary<Epi.Action, Collection<string>> checkCodeList;        
-		
+        private Dictionary<Epi.Action, Collection<string>> checkCodeList;
+
         #endregion Private Attributes
 
-		#region Constructors
-		/// <summary>
-		/// command processor results
-		/// </summary>
-		public CommandProcessorResults()
-		{
-		}
-		#endregion Constructors
+        #region Constructors
+        /// <summary>
+        /// command processor results
+        /// </summary>
+        public CommandProcessorResults()
+        {
+        }
+        #endregion Constructors
 
         #region Public Methods
         /// <summary>
@@ -69,47 +66,47 @@ namespace Epi
 		/// List of actions to perform after the command has executed.
 		/// </summary>
 		public ArrayList Actions
-		{
-			get
-			{
-				return actions;
-			}
-		}
+        {
+            get
+            {
+                return actions;
+            }
+        }
 
-		/// <summary>
-		/// Indicates if the output stream should be reset before adding results.
-		/// </summary>
-		public bool ResetOutput
-		{
-			get
-			{
-				return this.resetOutput;
-			}
-			set
-			{
-				resetOutput = value;
-			}
-		}
+        /// <summary>
+        /// Indicates if the output stream should be reset before adding results.
+        /// </summary>
+        public bool ResetOutput
+        {
+            get
+            {
+                return this.resetOutput;
+            }
+            set
+            {
+                resetOutput = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets the <see cref="System.Data.DataSet"/>  output for command processor
-		/// </summary>
-		public DataSet DsOutput
-		{
-			get
-			{
+        /// <summary>
+        /// Gets/sets the <see cref="System.Data.DataSet"/>  output for command processor
+        /// </summary>
+        public DataSet DsOutput
+        {
+            get
+            {
                 if (this.dsOutput == null)
                 {
                     this.dsOutput = new DataSet();
                 }
 
-				return this.dsOutput;
-			}
-			set
-			{
-				this.dsOutput = value;
-			}
-		}
+                return this.dsOutput;
+            }
+            set
+            {
+                this.dsOutput = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the HTML output for command processor
@@ -126,19 +123,19 @@ namespace Epi
             }
         }
 
-		/// <summary>
-		/// Gets/sets the Xml output for command processor
-		/// </summary>
-		public  XmlDocument XmlOutput 
-		{
-			get
-			{
-				return this.xmlOutput;
-			}
-			set
-			{
-				this.xmlOutput = value;
-			}
+        /// <summary>
+        /// Gets/sets the Xml output for command processor
+        /// </summary>
+        public XmlDocument XmlOutput
+        {
+            get
+            {
+                return this.xmlOutput;
+            }
+            set
+            {
+                this.xmlOutput = value;
+            }
 
         }
 
@@ -187,7 +184,7 @@ namespace Epi
                 if (this.checkCodeList == null)
                 {
                     checkCodeList = new Dictionary<Epi.Action, Collection<string>>();
-                }                
+                }
                 return this.checkCodeList;
             }
             set

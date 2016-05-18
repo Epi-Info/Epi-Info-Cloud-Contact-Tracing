@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using Epi.Web.MVC.Repositories.Core;
-using Epi.Web.MVC.DataServiceClient;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
-using Epi.Web.MVC.DataServiceClient;
 using System.Web.Caching;
 using System.Configuration;
 
@@ -15,16 +12,13 @@ namespace Epi.Web.MVC.Repositories
 {
     public class SurveyInfoRepository : RepositoryBase, ISurveyInfoRepository
     {
-
-
-
         private Epi.Web.MVC.DataServiceClient.IEWEDataService _iDataService;
 
         public SurveyInfoRepository(Epi.Web.MVC.DataServiceClient.IEWEDataService iDataService)
         {
             _iDataService = iDataService;
         }
-        
+
         /// <summary>
         /// Calling the proxy client to fetch a SurveyInfoResponse object
         /// </summary>
@@ -32,7 +26,6 @@ namespace Epi.Web.MVC.Repositories
         /// <returns></returns>
         public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
         {
-
 
             try
             {
@@ -47,7 +40,7 @@ namespace Epi.Web.MVC.Repositories
                 string CacheIsOn = ConfigurationManager.AppSettings["CACHE_IS_ON"];//false;
                 string IsCacheSlidingExpiration = ConfigurationManager.AppSettings["CACHE_SLIDING_EXPIRATION"].ToString();
 
-                if (CacheIsOn.ToUpper()=="TRUE") 
+                if (CacheIsOn.ToUpper() == "TRUE")
                 {
                     if (CacheObj == null)
                     {
@@ -55,13 +48,13 @@ namespace Epi.Web.MVC.Repositories
 
                         if (IsCacheSlidingExpiration.ToUpper() == "TRUE")
                         {
-                           
+
                             HttpRuntime.Cache.Insert(SurveyId, result, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(CacheDuration));
                         }
-                        else 
+                        else
                         {
                             HttpRuntime.Cache.Insert(SurveyId, result, null, DateTime.Now.AddMinutes(CacheDuration), Cache.NoSlidingExpiration);
-                           
+
                         }
                         return result;
                     }
@@ -73,13 +66,13 @@ namespace Epi.Web.MVC.Repositories
 
                     }
                 }
-                else 
+                else
                 {
-                result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
-                return result;
-                     
+                    result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
+                    return result;
+
                 }
- 
+
                 // return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -105,97 +98,97 @@ namespace Epi.Web.MVC.Repositories
         }
 
         #region stubcode
-            public List<Enter.Common.DTO.SurveyInfoDTO> GetList(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        public List<Enter.Common.DTO.SurveyInfoDTO> GetList(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            public Enter.Common.DTO.SurveyInfoDTO Get(int id)
-            {
-                throw new NotImplementedException();
-            }
+        public Enter.Common.DTO.SurveyInfoDTO Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-            public int GetCount(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        public int GetCount(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Insert(Enter.Common.DTO.SurveyInfoDTO t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Insert(Enter.Common.DTO.SurveyInfoDTO t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Update(Enter.Common.DTO.SurveyInfoDTO t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Update(Enter.Common.DTO.SurveyInfoDTO t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Delete(int id)
-            {
-                throw new NotImplementedException();
-            } 
+        public void Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
 
-            List<SurveyInfoResponse> IRepository<SurveyInfoResponse>.GetList(Criterion criterion = null)
-            {
-                throw new NotImplementedException();
-            }
+        List<SurveyInfoResponse> IRepository<SurveyInfoResponse>.GetList(Criterion criterion = null)
+        {
+            throw new NotImplementedException();
+        }
 
-            SurveyInfoResponse IRepository<SurveyInfoResponse>.Get(int id)
-            {
-                throw new NotImplementedException();
-            }
+        SurveyInfoResponse IRepository<SurveyInfoResponse>.Get(int id)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Insert(SurveyInfoResponse t)
-            {
-                throw new NotImplementedException();
-            }
+        public void Insert(SurveyInfoResponse t)
+        {
+            throw new NotImplementedException();
+        }
 
-            public void Update(SurveyInfoResponse t)
-            {
-                throw new NotImplementedException();
-            }
-
-
-            public FormsInfoResponse GetFormsInfoList(FormsInfoRequest fRequest)
-            {
-
-                //SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
-                //throw new NotImplementedException();
-                fRequest.Criteria.UserId = 2;//Hard coded user for now
-                FormsInfoResponse result;
-                result = (FormsInfoResponse)_iDataService.GetFormsInfo(fRequest);
-                return result;
-
-            }
+        public void Update(SurveyInfoResponse t)
+        {
+            throw new NotImplementedException();
+        }
 
 
-            public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
-            {
-              return _iDataService.DeleteResponse(SARequest);
-            }
+        public FormsInfoResponse GetFormsInfoList(FormsInfoRequest fRequest)
+        {
 
-            public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest)
-                {
-                   return _iDataService.GetFormChildInfo(SurveyInfoRequest);
- 
-                }
-            public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
-                {
+            //SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
+            //throw new NotImplementedException();
+            fRequest.Criteria.UserId = 2;//Hard coded user for now
+            FormsInfoResponse result;
+            result = (FormsInfoResponse)_iDataService.GetFormsInfo(fRequest);
+            return result;
 
-                      return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
- 
-                }
-            public SurveyAnswerResponse GetResponseAncestor(SurveyAnswerRequest SARequest)
-                {
+        }
 
-                return _iDataService.GetAncestorResponseIdsByChildId(SARequest);
-                }
-       public OrganizationResponse GetUserOrganizations(OrganizationRequest OrgRequest)
+
+        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
+        {
+            return _iDataService.DeleteResponse(SARequest);
+        }
+
+        public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest)
+        {
+            return _iDataService.GetFormChildInfo(SurveyInfoRequest);
+
+        }
+        public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
+        {
+
+            return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
+
+        }
+        public SurveyAnswerResponse GetResponseAncestor(SurveyAnswerRequest SARequest)
+        {
+
+            return _iDataService.GetAncestorResponseIdsByChildId(SARequest);
+        }
+        public OrganizationResponse GetUserOrganizations(OrganizationRequest OrgRequest)
 
         {
-        return _iDataService.GetUserOrganizations(OrgRequest);
+            return _iDataService.GetUserOrganizations(OrgRequest);
         }
     }
 }

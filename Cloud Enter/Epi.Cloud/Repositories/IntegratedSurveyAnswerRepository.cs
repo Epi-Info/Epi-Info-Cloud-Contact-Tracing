@@ -9,9 +9,6 @@ namespace Epi.Web.MVC.Repositories
 {
     public class IntegratedSurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
     {
-
-
-
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
         public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
@@ -84,7 +81,6 @@ namespace Epi.Web.MVC.Repositories
             }
         }
 
-
         public FormSettingResponse GetFormSettings(FormSettingRequest pRequest)
         {
             try
@@ -114,7 +110,6 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
-
 
         public UserAuthenticationResponse UpdatePassCode(UserAuthenticationRequest AuthenticationRequest)
         {
@@ -699,15 +694,10 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
 
             }
-
-
-
         }
-
 
         public OrganizationResponse GetOrganizationUsers(OrganizationRequest OrgReq)
         {
-
             try
             {
 
@@ -742,7 +732,6 @@ namespace Epi.Web.MVC.Repositories
 
             try
             {
-
                 UserResponse result = _iDataService.GetUserInfo(Request);
                 return result;
             }
@@ -773,7 +762,6 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-
                 UserResponse result = _iDataService.SetUserInfo(Request);
                 return result;
             }
@@ -839,9 +827,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-
                 return _iDataService.HasResponse(SurveyId, ResponseId);
-
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -864,7 +850,6 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
 
             }
-
 
         }
     }

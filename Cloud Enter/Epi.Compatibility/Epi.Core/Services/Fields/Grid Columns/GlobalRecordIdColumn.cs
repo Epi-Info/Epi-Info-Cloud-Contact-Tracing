@@ -1,8 +1,5 @@
-using System;
 using System.Data;
-using System.Drawing;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {

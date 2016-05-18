@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 namespace Epi
@@ -43,8 +42,8 @@ namespace Epi
         /// <summary>
         /// Default Constructor
         /// </summary>
-        public TableNotFoundException():this(string.Empty)
-        { 
+        public TableNotFoundException() : this(string.Empty)
+        {
         }
 
         /// <summary>

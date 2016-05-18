@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 
 
 namespace Epi.Web.Enter.Common.DTO
-    {
+{
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class FormResponseInfoDTO
-        {
+    {
         [DataMember]
         public string ResponseId { get; set; }
         [DataMember]
@@ -29,5 +26,5 @@ namespace Epi.Web.Enter.Common.DTO
 
         [DataMember]
         public bool IsDraftMode { get; set; }
-        }
     }
+}

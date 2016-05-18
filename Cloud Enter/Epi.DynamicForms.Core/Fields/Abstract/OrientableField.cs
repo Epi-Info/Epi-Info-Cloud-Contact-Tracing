@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MvcDynamicForms.Fields
 {
@@ -87,7 +85,7 @@ namespace MvcDynamicForms.Fields
             {
                 _horizontalClass = value;
             }
-        }        
+        }
         /// <summary>
         /// The class attribute that is added to the ul element containing the choices.
         /// </summary>
@@ -103,7 +101,7 @@ namespace MvcDynamicForms.Fields
             }
         }
 
-       public bool ShowTextOnRight
+        public bool ShowTextOnRight
         {
             get
             {

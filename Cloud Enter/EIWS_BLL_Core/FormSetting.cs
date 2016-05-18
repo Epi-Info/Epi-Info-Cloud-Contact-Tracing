@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Criteria;
-using System.Xml;
 using System.Xml.Linq;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using System.Configuration;
@@ -13,8 +10,6 @@ namespace Epi.Web.BLL
 {
     public class FormSetting
     {
-
-
         private IFormSettingDao FormSettingDao;
 
         private IUserDao UserDao;
@@ -25,13 +20,13 @@ namespace Epi.Web.BLL
             this.UserDao = pUserDao;
             this.FormInfoDao = pFormInfoDao;
         }
-        public FormSetting(IFormSettingDao pFormSettingDao )
+        public FormSetting(IFormSettingDao pFormSettingDao)
         {
             this.FormSettingDao = pFormSettingDao;
-            
+
         }
 
-        public FormSettingBO GetFormSettings(string FormId, string Xml,int CurrentOrgId = -1)
+        public FormSettingBO GetFormSettings(string FormId, string Xml, int CurrentOrgId = -1)
         {
             FormSettingBO result = this.FormSettingDao.GetFormSettings(FormId, CurrentOrgId);
             if (!string.IsNullOrEmpty(Xml))
@@ -90,12 +85,12 @@ namespace Epi.Web.BLL
 
 
 
-       // public string SaveSettings(bool IsDraftMode, Dictionary<int, string> ColumnNameList, Dictionary<int, string> AssignedUserList, string FormId, Dictionary<int, string> SelectedOrgList, bool IsShareable)
+        // public string SaveSettings(bool IsDraftMode, Dictionary<int, string> ColumnNameList, Dictionary<int, string> AssignedUserList, string FormId, Dictionary<int, string> SelectedOrgList, bool IsShareable)
         public string SaveSettings(bool IsDraftMode, FormSettingDTO FormSettingDTO)
         {
             string Message = "";
             FormSettingBO FormSettingBO = new FormSettingBO();
-           // FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
+            // FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
             FormSettingBO.AssignedUserList = FormSettingDTO.AssignedUserList;
             FormSettingBO.SelectedOrgList = FormSettingDTO.SelectedOrgList;
             FormSettingBO.DeleteDraftData = FormSettingDTO.DeleteDraftData;
@@ -107,18 +102,18 @@ namespace Epi.Web.BLL
             {
                 List<UserBO> FormCurrentUsersList = this.UserDao.GetUserByFormId(FormSettingDTO.FormId);
                 //this.FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-               // this.FormSettingDao.UpDateFormMode(FormInfoBO);
+                // this.FormSettingDao.UpDateFormMode(FormInfoBO);
                 Dictionary<int, string> AssignedOrgAdminList = this.FormSettingDao.GetOrgAdmins(FormSettingDTO.SelectedOrgList);// about to share with
                 List<UserBO> CurrentOrgAdminList = this.FormSettingDao.GetOrgAdminsByFormId(FormSettingDTO.FormId);// shared with 
                 this.FormSettingDao.UpDateSettingsList(FormSettingBO, FormSettingDTO.FormId);
 
                 // Clear all Draft records
                 if (FormSettingDTO.DeleteDraftData)
-                { 
-                this.FormSettingDao.DeleteDraftRecords(FormSettingDTO.FormId);
+                {
+                    this.FormSettingDao.DeleteDraftRecords(FormSettingDTO.FormId);
                 }
 
-               List<UserBO> AdminList =  this.UserDao.GetAdminsBySelectedOrgs(FormSettingBO, FormSettingDTO.FormId);
+                List<UserBO> AdminList = this.UserDao.GetAdminsBySelectedOrgs(FormSettingBO, FormSettingDTO.FormId);
 
                 if (ConfigurationManager.AppSettings["SEND_EMAIL_TO_ASSIGNED_USERS"].ToUpper() == "TRUE" && FormSettingDTO.AssignedUserList.Count() > 0)
                 {
@@ -127,7 +122,7 @@ namespace Epi.Web.BLL
                 }
 
                 // Send Email to organization admin when a form is shared with that organization
-             SendEmail(AssignedOrgAdminList, FormSettingDTO.FormId, CurrentOrgAdminList,true);
+                SendEmail(AssignedOrgAdminList, FormSettingDTO.FormId, CurrentOrgAdminList, true);
 
 
                 Message = "Success";
@@ -141,7 +136,7 @@ namespace Epi.Web.BLL
             return Message;
         }
 
-        public void UpDateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO) 
+        public void UpDateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO)
         {
             FormSettingBO FormSettingBO = new FormSettingBO();
             FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
@@ -156,11 +151,11 @@ namespace Epi.Web.BLL
             {
 
                 this.FormSettingDao.SoftDeleteForm(FormSettingDTO.FormId);
-            
+
             }
 
         }
-        private void SendEmail(Dictionary<int, String> AssignedUserList, string FormId, List<UserBO> FormCurrentUsersList,bool ShareForm = false)
+        private void SendEmail(Dictionary<int, String> AssignedUserList, string FormId, List<UserBO> FormCurrentUsersList, bool ShareForm = false)
         {
 
             try
@@ -203,31 +198,32 @@ namespace Epi.Web.BLL
 
                     }
                 }
-               
+
                 if (UsersEmail.Count() > 0)
                 {
                     Epi.Web.Enter.Common.Email.Email Email = new Web.Enter.Common.Email.Email();
-                     if(!ShareForm ){
-                   
-                    Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form  to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                    Email.Body = Email.Body.ToString() + " \n \n" + ConfigurationManager.AppSettings["BaseURL"];
-                    Email.From = UserBO.EmailAddress;
-                    Email.To = UsersEmail;
-                    Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to You";
-                   
-                     }
-                     else
-                     {
-                          
-                    Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                    Email.Body = Email.Body.ToString() + " \n \n" + ConfigurationManager.AppSettings["BaseURL"];
-                    Email.From = UserBO.EmailAddress;
-                    Email.To = UsersEmail;
-                    Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shered with your organization.";
-                          
-                     
-                     }
-                     Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(Email);
+                    if (!ShareForm)
+                    {
+
+                        Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form  to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        Email.Body = Email.Body.ToString() + " \n \n" + ConfigurationManager.AppSettings["BaseURL"];
+                        Email.From = UserBO.EmailAddress;
+                        Email.To = UsersEmail;
+                        Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to You";
+
+                    }
+                    else
+                    {
+
+                        Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        Email.Body = Email.Body.ToString() + " \n \n" + ConfigurationManager.AppSettings["BaseURL"];
+                        Email.From = UserBO.EmailAddress;
+                        Email.To = UsersEmail;
+                        Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shered with your organization.";
+
+
+                    }
+                    Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(Email);
 
                 }
 

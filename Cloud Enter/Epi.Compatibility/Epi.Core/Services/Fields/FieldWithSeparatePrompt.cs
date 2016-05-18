@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-using System.Drawing;
-using Epi;
 
 namespace Epi.Fields
 {
@@ -120,7 +118,7 @@ namespace Epi.Fields
                 promptWidthPositionPercentage = value;
             }
         }
-        
+
         /// <summary>
         /// Gets/sets the top position percentage of a prompt.
         /// </summary>

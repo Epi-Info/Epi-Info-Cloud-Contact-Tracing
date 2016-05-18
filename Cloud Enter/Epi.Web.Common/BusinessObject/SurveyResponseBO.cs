@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
-    public class SurveyResponseBO :ICloneable
+    public class SurveyResponseBO : ICloneable
     {
 
         public SurveyResponseBO()
@@ -14,7 +12,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
             this.Status = 1;
         }
 
-        public string ResponseId{ get; set; }
+        public string ResponseId { get; set; }
         public Guid UserPublishKey { get; set; }
         public string SurveyId { get; set; }
         public DateTime DateUpdated { get; set; }
@@ -37,11 +35,9 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public Dictionary<string, string> SqlData { get; set; }
         public int RecrodSourceId { get; set; }
         public int CurrentOrgId { get; set; }
-        public object Clone() 
-            {
-
-              return this.MemberwiseClone();
-            
-            }
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
     }
 }

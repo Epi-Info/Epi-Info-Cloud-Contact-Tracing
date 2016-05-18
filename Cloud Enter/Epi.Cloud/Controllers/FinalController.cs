@@ -24,7 +24,7 @@ namespace Epi.Web.MVC.Controllers
         [HttpGet]
         public ActionResult Index(string surveyId, string final)
         {
-            
+
             try
             {
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -44,7 +44,7 @@ namespace Epi.Web.MVC.Controllers
                 else
                 {
                     surveyInfoModel.IsDraftModeStyleClass = "final";
-                }              
+                }
                 bool IsMobileDevice = false;
                 IsMobileDevice = this.Request.Browser.IsMobileDevice;
                 Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(SurveyMode, IsMobileDevice);
@@ -54,7 +54,7 @@ namespace Epi.Web.MVC.Controllers
             }
             catch (Exception ex)
             {
-                Epi.Web.Utility.ExceptionMessage.SendLogMessage( ex, this.HttpContext);
+                Epi.Web.Utility.ExceptionMessage.SendLogMessage(ex, this.HttpContext);
                 return View(Epi.Web.MVC.Constants.Constant.EXCEPTION_PAGE);
             }
         }
@@ -73,7 +73,7 @@ namespace Epi.Web.MVC.Controllers
 
                 FormsAuthentication.SetAuthCookie("BeginSurvey", false);
                 Guid responseId = Guid.NewGuid();
-                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyId, responseId.ToString(),0);
+                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyId, responseId.ToString(), 0);
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
                 XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
                 MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
@@ -105,14 +105,14 @@ namespace Epi.Web.MVC.Controllers
                         }
                     }
                 }
-                
-                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 1,0);
+
+                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 1, 0);
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseId = responseId, PageNumber = 1 });
             }
             catch (Exception ex)
             {
-                Epi.Web.Utility.ExceptionMessage.SendLogMessage(  ex, this.HttpContext);
+                Epi.Web.Utility.ExceptionMessage.SendLogMessage(ex, this.HttpContext);
                 return View(Epi.Web.MVC.Constants.Constant.EXCEPTION_PAGE);
             }
 

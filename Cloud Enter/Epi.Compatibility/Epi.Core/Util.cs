@@ -1,16 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using System.Runtime.Remoting;
 using System.Security.Cryptography;
-using Epi;
 using Epi.Fields;
 using Epi.Data;
 
@@ -34,7 +30,7 @@ namespace Epi
         /// </summary>
         public static DateTime NullDateTime
         {
-            get{return nullDateTime;}
+            get { return nullDateTime; }
         }
         #endregion public static properties
 
@@ -240,7 +236,7 @@ namespace Epi
                     {
                         return null;
                     }
-                }          
+                }
             }
 
             return project;
@@ -286,7 +282,7 @@ namespace Epi
                     collectedDataDBInfo.DBCnnStringBuilder[parts[0]] = password;
                 }
             }
-                                
+
             IDbDriver driver = collectedDBFactory.CreateDatabaseObject(collectedDataDBInfo.DBCnnStringBuilder);
             project.CollectedData.Initialize(collectedDataDBInfo, "Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer", false);
 
@@ -298,7 +294,7 @@ namespace Epi
 
             project.CollectedDataDbInfo = collectedDataDBInfo;
             project.CollectedDataDriver = "Epi.Cloud.SqlServer.SqlDBFactory, Epi.Cloud.SqlServer";
-            project.CollectedDataConnectionString = connectionString;            
+            project.CollectedDataConnectionString = connectionString;
 
             project.MetadataSource = MetadataSource.SameDb;
             project.Metadata.AttachDbDriver(project.CollectedData.GetDbDriver());
@@ -313,7 +309,7 @@ namespace Epi
                 {
                     return null;
                 }
-            }            
+            }
 
             return project;
         }
@@ -432,7 +428,7 @@ namespace Epi
                     columnNames.Add(kvp.Value, runningTabIndex);
                     runningTabIndex++;
                 }
-            }            
+            }
 
             int newRunningTabIndex = 0; // to prevent arg exceptions; TODO: Fix this better
             foreach (KeyValuePair<string, int> kvp in columnNames)
@@ -442,7 +438,7 @@ namespace Epi
                     table.Columns[kvp.Key].SetOrdinal(newRunningTabIndex);
                     newRunningTabIndex++;
                 }
-            }            
+            }
         }
 
         /// <summary>
@@ -701,7 +697,7 @@ namespace Epi
             memStream.Close();
             return imageAsBytes;
         }
-        
+
         /// <summary>
         /// Import target DataTable rows into source DataTable rows.
         /// <remarks>Shouldn't this be the other way around?</remarks>
@@ -940,7 +936,7 @@ namespace Epi
                 throw new ArgumentNullException("Text");
             }
             #endregion
-            
+
             Regex regex = new Regex("[^A-Z0-9_]", RegexOptions.IgnoreCase);
             return (regex.Replace(text, string.Empty));
         }
@@ -993,7 +989,7 @@ namespace Epi
                 throw new ArgumentNullException("Text");
             }
             #endregion
-            
+
             decimal result;
             return decimal.TryParse(text, out result);
         }

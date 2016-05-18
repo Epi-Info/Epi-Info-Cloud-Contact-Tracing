@@ -4,8 +4,6 @@ using System;
 using System.Data;
 using System.Xml;
 using System.Collections.Generic;
-using Epi;
-using Epi.Collections;
 
 #endregion  //Namespaces
 
@@ -191,12 +189,12 @@ namespace Epi.Fields
                         RecStatusColumn recStatusColumn = new RecStatusColumn(this);
                         ForeignKeyColumn foreignKeyColumn = new ForeignKeyColumn(this);
                         GlobalRecordIdColumn globalRecordIdColumn = new GlobalRecordIdColumn(this);
-                        
+
                         uniqueRowIdColumn.SaveToDb();
                         recStatusColumn.SaveToDb();
                         foreignKeyColumn.SaveToDb();
                         globalRecordIdColumn.SaveToDb();
-                        
+
                         columns = GetMetadata().GetGridColumnCollection(this);
                     }
                 }
@@ -249,7 +247,7 @@ namespace Epi.Fields
             this.Id = GetMetadata().CreateField(this);
 
             if (columns != null)
-            { 
+            {
                 foreach (GridColumnBase column in columns)
                 {
                     column.Id = 0;

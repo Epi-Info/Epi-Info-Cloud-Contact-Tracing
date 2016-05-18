@@ -2,13 +2,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Runtime;
-using System.Diagnostics;
 //using System.Data.Sql;
 
 namespace Epi.Cloud.SqlServer.Forms
@@ -32,7 +27,7 @@ namespace Epi.Cloud.SqlServer.Forms
             System.Data.Sql.SqlDataSourceEnumerator servers = System.Data.Sql.SqlDataSourceEnumerator.Instance;
             DataTable serversTable = servers.GetDataSources();
 
-            foreach(DataRow row in serversTable.Rows)
+            foreach (DataRow row in serversTable.Rows)
             {
                 if (row[1].Equals(DBNull.Value))
                 {
@@ -40,7 +35,7 @@ namespace Epi.Cloud.SqlServer.Forms
                     listBox.Items.Add(serverName);
                 }
                 else
-                {                       
+                {
                     string serverName = string.Format("{0}\\{1}", row[0], row[1]);//appending instance name to the server name
                     listBox.Items.Add(serverName);//adding  
                 }
@@ -63,7 +58,7 @@ namespace Epi.Cloud.SqlServer.Forms
             DataTable dataSources = System.Data.Sql.SqlDataSourceEnumerator.Instance.GetDataSources();
             foreach (DataRow dataSource in dataSources.Rows)
             {
-                string dataSourceName = dataSource["ServerName"].ToString();                
+                string dataSourceName = dataSource["ServerName"].ToString();
                 if (!string.IsNullOrEmpty(dataSource["InstanceName"].ToString()))
                 {
                     dataSourceName += Path.DirectorySeparatorChar + dataSource["InstanceName"].ToString();

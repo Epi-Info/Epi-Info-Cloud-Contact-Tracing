@@ -6,8 +6,6 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Reflection;
-using System.Diagnostics;
-using Epi.Web.Enter.Common.Constants;
 using Epi.Web.Enter.Common.Diagnostics;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
@@ -52,10 +50,10 @@ namespace Epi.Web.MVC.Controllers
                 string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt("1");
                 if (!string.IsNullOrEmpty(IsDemoMode) && IsDemoMode.ToUpper() == "TRUE")
                 {
-                  FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
-                  
+                    FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
+
                     Session[SessionKeys.UserId] = UserId;
-                    
+
                     Session[SessionKeys.UserHighestRole] = 3;
                     return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
                 }
@@ -87,10 +85,10 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserId] = UserId;
                         //Session[SessionKeys.UsertRole] = result.User.Role;
                         Session[SessionKeys.UserHighestRole] = result.User[0].UserHighestRole;
-                    Session[SessionKeys.UserEmailAddress] = result.User[0].EmailAddress;
-                    Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
-                    Session[SessionKeys.UserLastName] = result.User[0].LastName;
-                    Session[SessionKeys.UGuid] = result.User[0].UGuid;
+                        Session[SessionKeys.UserEmailAddress] = result.User[0].EmailAddress;
+                        Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
+                        Session[SessionKeys.UserLastName] = result.User[0].LastName;
+                        Session[SessionKeys.UGuid] = result.User[0].UGuid;
                         return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
                     }
                     else

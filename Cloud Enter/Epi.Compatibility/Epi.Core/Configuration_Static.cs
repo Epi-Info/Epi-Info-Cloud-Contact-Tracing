@@ -1,14 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
-using System.Xml.XPath;
-using System.Collections.Specialized;
-using System.Data;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Reflection;
@@ -128,9 +122,9 @@ namespace Epi
 
 
 
-        
 
-            /// <summary>
+
+        /// <summary>
         /// Returns a new instance of the configuration class
         /// </summary>
         /// <returns></returns>
@@ -246,7 +240,7 @@ namespace Epi
         /// <param name="accessedView">View that is accessed</param>
         public static void OnViewAccessed(View accessedView)
         {
-            if (! accessedView.IsRelatedView)
+            if (!accessedView.IsRelatedView)
             {
                 AssertConfigurationLoaded();
                 #region Input Validation
@@ -391,7 +385,7 @@ namespace Epi
                 gadgetRow.Type = type;
                 gadgetRow.FileName = fileName;
                 gadgetRow.MenuSection = menuSection;
-                mruGadget.AddGadgetRow(gadgetRow);                
+                mruGadget.AddGadgetRow(gadgetRow);
             }
 
             Save();
@@ -614,13 +608,13 @@ namespace Epi
                 DirectoryInfo sourceInfo = new DirectoryInfo(Path.Combine(installFolder, "Logs\\"));
                 DirectoryInfo targetInfo = new DirectoryInfo(drow.LogDir);
                 Util.CopyDirectory(sourceInfo, targetInfo);
-            }            
+            }
 
             Config.VersionRow vrow = configDataSet.Version.NewVersionRow();
             vrow.EpiInfoVersion = typeof(Configuration).Assembly.GetName().Version.Major;
             vrow.ConfigVersion = CurrentSchemaVersion;
             configDataSet.Version.Rows.Add(vrow);
-            
+
             Config.RecentViewRow recentviewrow1 = configDataSet.RecentView.NewRecentViewRow();
             recentviewrow1.Name = drow.Project + "Mumps\\Mumps.prj:Survey";
             recentviewrow1.Location = drow.Project + "Mumps\\Mumps.prj:Survey";
@@ -643,7 +637,7 @@ namespace Epi
             recentprojectrow.Name = "Sample";
             recentprojectrow.Location = drow.Project + "Sample\\Sample.prj";
             recentprojectrow.LastAccessed = DateTime.Now;
-            configDataSet.RecentProject.Rows.Add(recentprojectrow);            
+            configDataSet.RecentProject.Rows.Add(recentprojectrow);
 
             Config.SettingsRow row = configDataSet.Settings.NewSettingsRow();
             row.BackgroundImage = string.Empty;
@@ -705,11 +699,11 @@ namespace Epi
             row.DashboardLineListRowLimit = 2000;
 
 
-            #if LINUX_BUILD
+#if LINUX_BUILD
             row.DefaultDataDriver = MySQLDriver;
-            #else
+#else
             row.DefaultDataDriver = AccessDriver;
-            #endif
+#endif
 
             row.DefaultDataFormatForRead = 3;
             row.FrameworkTcpPort = 11532;
@@ -723,7 +717,7 @@ namespace Epi
             Config.DataDriverRow dataDriverRow1 = configDataSet.DataDriver.NewDataDriverRow();
             dataDriverRow1.DataDriversRow = parentDataDriversRow;
             dataDriverRow1.DisplayName = "Microsoft Access 2002-2003 (.mdb)";
-            dataDriverRow1.Type = AccessDriver; 
+            dataDriverRow1.Type = AccessDriver;
             dataDriverRow1.DataProvider = true;
             dataDriverRow1.MetadataProvider = true;
             configDataSet.DataDriver.Rows.Add(dataDriverRow1);
@@ -915,7 +909,7 @@ namespace Epi
             moduleRow.Name = "Localization";
             moduleRow.Type = "Epi.Windows.Localization.LocalizationWindowsModule, TSetup";
             configDataSet.Module.Rows.Add(moduleRow);
-            
+
             return new Configuration(DefaultConfigurationPath, configDataSet);
         }
 
@@ -1149,7 +1143,7 @@ namespace Epi
                 string cipherText = Convert.ToBase64String(cipherTextBytes);
                 return cipherText;
             }
-        }  
+        }
 
         /// <summary>
         /// Decryption
@@ -1191,7 +1185,7 @@ namespace Epi
                 symmetricKey.Mode = CipherMode.CBC;
                 ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
                 string plainText = string.Empty;
-                MemoryStream memoryStream = new MemoryStream(cipherTextBytes);                
+                MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
                 using (CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                 {
                     byte[] plainTextBytes = new byte[cipherTextBytes.Length];
@@ -1214,16 +1208,16 @@ namespace Epi
             //Set up the encryption objects
             using (AesCryptoServiceProvider acsp = GetProvider(Encoding.Default.GetBytes(passphrase)))
             {
-               
+
                 //base64StringToDecrypt = base64StringToDecrypt.Trim().Replace(" ", "+");
                 //if (base64StringToDecrypt.Length % 4 > 0)
                 //    base64StringToDecrypt = base64StringToDecrypt.PadRight(base64StringToDecrypt.Length + 4 - base64StringToDecrypt.Length % 4, '=');
 
                 byte[] RawBytes = Convert.FromBase64String(base64StringToDecrypt);
-//                RawBytes = Encoding.Unicode.GetBytes(base64StringToDecrypt);
-//                byte[] RawBytes = (Encoding.Default.GetBytes(base64StringToDecrypt));
+                //                RawBytes = Encoding.Unicode.GetBytes(base64StringToDecrypt);
+                //                byte[] RawBytes = (Encoding.Default.GetBytes(base64StringToDecrypt));
                 ICryptoTransform ictD = acsp.CreateDecryptor();
-                
+
                 //RawBytes now contains original byte array, still in Encrypted state
 
                 //Decrypt into stream
@@ -1240,7 +1234,7 @@ namespace Epi
                 //System.Diagnostics.Debug.Print(
 
                 //return the content of msD as a regular string
-//                string jrc = (new StreamReader(csD)).ReadToEnd();
+                //                string jrc = (new StreamReader(csD)).ReadToEnd();
                 return (new StreamReader(csD)).ReadToEnd();
             }
         }
@@ -1258,7 +1252,7 @@ namespace Epi
             string ivString = "00000000";
             byte[] bytes = new byte[ivString.Length * sizeof(char)];
             System.Buffer.BlockCopy(ivString.ToCharArray(), 0, bytes, 0, bytes.Length);
-//            result.IV = bytes;
+            //            result.IV = bytes;
 
             byte[] RealKey = GetKey(key, result);
             result.Key = RealKey;
@@ -1281,9 +1275,9 @@ namespace Epi
 
         public static string DecryptJava(string cipherText, string password)
         {
-            if (cipherText.Substring(0,5).Equals("APPLE"))
+            if (cipherText.Substring(0, 5).Equals("APPLE"))
                 return DecryptString(cipherText.Substring(5), password);
-            
+
 
             int _keyLengthInBits = 128;
 
@@ -1354,69 +1348,69 @@ namespace Epi
             else
             {
                 #region DEFAULT_ENCRYPT
-                using(FileStream fsInput = new FileStream(inputFileName,
+                using (FileStream fsInput = new FileStream(inputFileName,
                     FileMode.Open,
-                    FileAccess.Read)) 
+                    FileAccess.Read))
+                {
+
+                    using (FileStream fsEncrypted = new FileStream(outputFileName,
+                                    FileMode.Create,
+                                    FileAccess.Write))
                     {
 
-                        using (FileStream fsEncrypted = new FileStream(outputFileName,
-                                        FileMode.Create,
-                                        FileAccess.Write))
+                        string saltStr = string.Empty;
+                        if (customSalt.Length == 32)
                         {
-
-                            string saltStr = string.Empty;
-                            if (customSalt.Length == 32)
-                            {
-                                saltStr = customSalt;
-                            }
-                            else
-                            {
-                                saltStr = Configuration.saltValueAlt;
-                            }
-
-                            string initVectorStr = string.Empty;
-                            if (customInitVector.Length == 16)
-                            {
-                                initVectorStr = customInitVector;
-                            }
-                            else
-                            {
-                                initVectorStr = Configuration.initVectorAlt;
-                            }
-
-                            byte[] salt = Encoding.ASCII.GetBytes(saltStr);
-                            Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(password, salt, iterations);
-                            RijndaelManaged SymmetricKey = new RijndaelManaged();
-                            SymmetricKey.Padding = PaddingMode.PKCS7;
-                            SymmetricKey.KeySize = 256;
-                            SymmetricKey.Mode = CipherMode.CBC;
-                            SymmetricKey.Key = key.GetBytes(SymmetricKey.KeySize / 8);
-
-                            GCHandle gch = GCHandle.Alloc(SymmetricKey.Key, GCHandleType.Pinned);
-
-                            SymmetricKey.IV = ASCIIEncoding.ASCII.GetBytes(initVectorStr);
-                            SymmetricKey.BlockSize = 128;
-
-                            initVectorStr = string.Empty;
-                            saltStr = string.Empty;
-
-                            ICryptoTransform aesEncrypt = SymmetricKey.CreateEncryptor(SymmetricKey.Key, SymmetricKey.IV);
-                            using (CryptoStream cryptostream = new CryptoStream(fsEncrypted,
-                                                aesEncrypt,
-                                                CryptoStreamMode.Write))
-                            {
-                                byte[] bytearrayinput = new byte[fsInput.Length - 1];
-                                fsInput.Read(bytearrayinput, 0, bytearrayinput.Length);
-                                cryptostream.Write(bytearrayinput, 0, bytearrayinput.Length);
-                            }
-
-                            ZeroMemory(gch.AddrOfPinnedObject(), 32);
-                            gch.Free();
-
-                            SymmetricKey.Clear();
+                            saltStr = customSalt;
                         }
+                        else
+                        {
+                            saltStr = Configuration.saltValueAlt;
+                        }
+
+                        string initVectorStr = string.Empty;
+                        if (customInitVector.Length == 16)
+                        {
+                            initVectorStr = customInitVector;
+                        }
+                        else
+                        {
+                            initVectorStr = Configuration.initVectorAlt;
+                        }
+
+                        byte[] salt = Encoding.ASCII.GetBytes(saltStr);
+                        Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(password, salt, iterations);
+                        RijndaelManaged SymmetricKey = new RijndaelManaged();
+                        SymmetricKey.Padding = PaddingMode.PKCS7;
+                        SymmetricKey.KeySize = 256;
+                        SymmetricKey.Mode = CipherMode.CBC;
+                        SymmetricKey.Key = key.GetBytes(SymmetricKey.KeySize / 8);
+
+                        GCHandle gch = GCHandle.Alloc(SymmetricKey.Key, GCHandleType.Pinned);
+
+                        SymmetricKey.IV = ASCIIEncoding.ASCII.GetBytes(initVectorStr);
+                        SymmetricKey.BlockSize = 128;
+
+                        initVectorStr = string.Empty;
+                        saltStr = string.Empty;
+
+                        ICryptoTransform aesEncrypt = SymmetricKey.CreateEncryptor(SymmetricKey.Key, SymmetricKey.IV);
+                        using (CryptoStream cryptostream = new CryptoStream(fsEncrypted,
+                                            aesEncrypt,
+                                            CryptoStreamMode.Write))
+                        {
+                            byte[] bytearrayinput = new byte[fsInput.Length - 1];
+                            fsInput.Read(bytearrayinput, 0, bytearrayinput.Length);
+                            cryptostream.Write(bytearrayinput, 0, bytearrayinput.Length);
+                        }
+
+                        ZeroMemory(gch.AddrOfPinnedObject(), 32);
+                        gch.Free();
+
+                        SymmetricKey.Clear();
+                    }
                 }
-                
+
                 #endregion // DEFAULT_ENCRYPT
             }
         }
@@ -1459,7 +1453,7 @@ namespace Epi
             else
             {
                 #region DEFAULT_ENCRYPT
-                using (MemoryStream msInput = new 
+                using (MemoryStream msInput = new
                     MemoryStream(Encoding.ASCII.GetBytes(plaintext)))
                 {
 
@@ -1670,7 +1664,7 @@ namespace Epi
                         object lateBoundObj = Activator.CreateInstance(t);
 
                         object[] parameter = new object[5];
-                        parameter[0] = inputFileName;                        
+                        parameter[0] = inputFileName;
                         parameter[1] = password;
                         parameter[2] = customInitVector;
                         parameter[3] = customSalt;

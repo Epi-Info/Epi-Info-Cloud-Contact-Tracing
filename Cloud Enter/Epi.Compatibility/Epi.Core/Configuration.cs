@@ -1,12 +1,4 @@
-using System;
-using System.Collections;
-using System.Data;
-using System.Security.Cryptography;
-
-using Epi;
-using Epi.Collections;
 using Epi.DataSets;
-using Epi.Resources;
 
 namespace Epi
 {
@@ -343,7 +335,7 @@ namespace Epi
             {
                 if (configDataSet.DataSources.Count < 1)
                 {
-                    Config.DataSourcesRow newrow = configDataSet.DataSources.NewDataSourcesRow();                    
+                    Config.DataSourcesRow newrow = configDataSet.DataSources.NewDataSourcesRow();
                     ConfigDataSet.DataSources.Rows.Add(newrow);
                 }
                 return configDataSet.DataSources[0];

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 
 namespace Epi.Core.EnterInterpreter
 {
-    public class cSymbolTable : EpiInfo.Plugin.IScope 
+    public class cSymbolTable : EpiInfo.Plugin.IScope
     {
         private string _name;
         private EpiInfo.Plugin.IScope _parent;
@@ -29,7 +28,7 @@ namespace Epi.Core.EnterInterpreter
         public string Name
         {
             get { return this._name; }
-            set 
+            set
             {
                 if (string.IsNullOrEmpty(this._name))
                 {
@@ -47,9 +46,9 @@ namespace Epi.Core.EnterInterpreter
         public void define(EpiInfo.Plugin.IVariable pSymbol)
         {
             // ensure that Permanent and Global variables are placed in global scope
-            if 
+            if
             (
-                (pSymbol.VariableScope == EpiInfo.Plugin.VariableScope.Permanent | pSymbol.VariableScope == EpiInfo.Plugin.VariableScope.Global) && !this._name.Equals("global", StringComparison.OrdinalIgnoreCase) 
+                (pSymbol.VariableScope == EpiInfo.Plugin.VariableScope.Permanent | pSymbol.VariableScope == EpiInfo.Plugin.VariableScope.Global) && !this._name.Equals("global", StringComparison.OrdinalIgnoreCase)
                 || !string.IsNullOrEmpty(pSymbol.Namespace) && (!string.IsNullOrEmpty(this._name) && !this._name.Equals(pSymbol.Namespace, StringComparison.OrdinalIgnoreCase))
             )
             {
@@ -79,9 +78,9 @@ namespace Epi.Core.EnterInterpreter
                     this._SymbolList.Add(pSymbol.Name, pSymbol);
                     if (pSymbol.VariableScope == EpiInfo.Plugin.VariableScope.Permanent)
                     {
-                      //PermanentVariable pv = new PermanentVariable(pSymbol.Name, (Epi.DataType) pSymbol.DataType);
-                      //pv.Expression = pSymbol.Expression;
-                       //Epi.MemoryRegion.UpdatePermanentVariable(pv);
+                        //PermanentVariable pv = new PermanentVariable(pSymbol.Name, (Epi.DataType) pSymbol.DataType);
+                        //pv.Expression = pSymbol.Expression;
+                        //Epi.MemoryRegion.UpdatePermanentVariable(pv);
                     }
                 }
             }
@@ -89,7 +88,7 @@ namespace Epi.Core.EnterInterpreter
 
         public void undefine(string pName, string pNamespace = null)
         {
-            if(!string.IsNullOrEmpty(pNamespace) && (!string.IsNullOrEmpty(this._name) && !this._name.Equals(pNamespace, StringComparison.OrdinalIgnoreCase)))
+            if (!string.IsNullOrEmpty(pNamespace) && (!string.IsNullOrEmpty(this._name) && !this._name.Equals(pNamespace, StringComparison.OrdinalIgnoreCase)))
             {
                 if (this._parent != null)
                 {
@@ -114,7 +113,7 @@ namespace Epi.Core.EnterInterpreter
         {
             EpiInfo.Plugin.IVariable result = null;
 
-            if(!string.IsNullOrEmpty(pNamespace) && (!string.IsNullOrEmpty(this._name) && !this._name.Equals(pNamespace, StringComparison.OrdinalIgnoreCase)))
+            if (!string.IsNullOrEmpty(pNamespace) && (!string.IsNullOrEmpty(this._name) && !this._name.Equals(pNamespace, StringComparison.OrdinalIgnoreCase)))
             {
                 if (this._parent != null)
                 {
@@ -163,7 +162,7 @@ namespace Epi.Core.EnterInterpreter
                         result.Add(kvp.Value);
                     }
                 }
-            
+
 
                 if (this._parent != null)
                 {

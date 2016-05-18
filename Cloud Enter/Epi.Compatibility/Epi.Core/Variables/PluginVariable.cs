@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using EpiInfo.Plugin;
-
-namespace Epi
+﻿namespace Epi
 {
     public class PluginVariable : EpiInfo.Plugin.IVariable
     {
@@ -26,40 +21,40 @@ namespace Epi
             _prompt = prompt;
         }
 
-        public string Name 
-        { 
-            get { return _name; } 
-            set { _name = value; } 
-        }
-        
-        public EpiInfo.Plugin.DataType DataType 
-        { 
-            get { return _dataType; } 
-            set { _dataType = value; } 
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
         }
 
-        public EpiInfo.Plugin.VariableScope VariableScope 
-        { 
-            get { return _variableScope; } 
-            set { _variableScope = value; } 
+        public EpiInfo.Plugin.DataType DataType
+        {
+            get { return _dataType; }
+            set { _dataType = value; }
         }
-        
-        public string Expression 
-        { 
-            get { return _expression; } 
-            set { _expression = value; } 
+
+        public EpiInfo.Plugin.VariableScope VariableScope
+        {
+            get { return _variableScope; }
+            set { _variableScope = value; }
         }
-        
-        public string Namespace 
+
+        public string Expression
+        {
+            get { return _expression; }
+            set { _expression = value; }
+        }
+
+        public string Namespace
         {
             get { return _variableNamespace; }
-            set { _variableNamespace = value; } 
+            set { _variableNamespace = value; }
         }
 
-        public string Prompt 
-        { 
-            get { return _prompt; } 
-            set { _prompt = value; } 
+        public string Prompt
+        {
+            get { return _prompt; }
+            set { _prompt = value; }
         }
     }
 }

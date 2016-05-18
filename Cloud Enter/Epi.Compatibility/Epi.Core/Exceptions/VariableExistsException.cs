@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -55,7 +54,7 @@ namespace Epi
         {
             this.variable = var;
         }
-         
+
         /// <summary>
         /// Constructor
         /// </summary>

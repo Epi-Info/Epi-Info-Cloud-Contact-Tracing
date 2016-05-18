@@ -3,9 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Xml;
-using Epi;
 
 #endregion  //Namespaces
 
@@ -213,7 +211,7 @@ namespace Epi.Fields
         /// Check Code Before member variable
         /// </summary>
         protected string checkCodeBefore = string.Empty;
-        
+
         #endregion Protected Properties
 
         #region Public Methods
@@ -230,7 +228,7 @@ namespace Epi.Fields
                 childView.IsRelatedView = false;
                 GetMetadata().UpdateView(childView);
             }
-            
+
             GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
         }
@@ -374,17 +372,12 @@ namespace Epi.Fields
             }
             catch (ArgumentException ex)
             {
-                
+
                 throw new GeneralException(SharedStrings.EXCEPTION_OCCURRED, ex);
             }
         }
 
         #endregion  //Private Methods
-
-
-
-
-
 
     }
 }

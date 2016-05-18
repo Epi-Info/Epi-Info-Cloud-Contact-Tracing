@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web.Mvc;
 
 namespace MvcDynamicForms.Fields
 {
@@ -164,7 +162,7 @@ namespace MvcDynamicForms.Fields
         /// Validates the user's response.
         /// </summary>
         /// <returns></returns>
-        public abstract bool Validate();        
+        public abstract bool Validate();
         /// <summary>
         /// Removes the message stored in the Error property.
         /// </summary>
@@ -172,21 +170,21 @@ namespace MvcDynamicForms.Fields
         {
             Error = null;
         }
-         
+
         public double PromptTop { get { return this._Prompttop; } set { this._Prompttop = value; } }
         public double PromptLeft { get { return this._Promptleft; } set { this._Promptleft = value; } }
 
         public double PromptWidth { get { return this._PromptWidth; } set { this._PromptWidth = value; } }
         public double ControlWidth { get { return System.Math.Truncate(this._ControlWidth); } set { this._ControlWidth = System.Math.Truncate(value); } }
-       
+
         public double ControlHeight { get { return System.Math.Truncate(this._ControlHeight); } set { this._ControlHeight = System.Math.Truncate(value); } }
-        public Boolean IsRequired { get { return this._IsRequired; } set {   this._IsRequired =value; } }
-        public Boolean IsReadOnly { get { return this._IsReadOnly; } set {   this._IsReadOnly = value; }}
+        public Boolean IsRequired { get { return this._IsRequired; } set { this._IsRequired = value; } }
+        public Boolean IsReadOnly { get { return this._IsReadOnly; } set { this._IsReadOnly = value; } }
         public int MaxLength { get { return this._MaxLength; } set { this._MaxLength = value; } }
 
-      //  protected string InputFieldfontstyle;
-      //  protected string InputFieldfontSize;
-       // protected string InputFieldfontfamily;
+        //  protected string InputFieldfontstyle;
+        //  protected string InputFieldfontSize;
+        // protected string InputFieldfontfamily;
         public string InputFieldfontstyle { get { return this._InputFieldfontstyle; } set { this._InputFieldfontstyle = value; } }
         public double InputFieldfontSize { get { return this._InputFieldfontSize; } set { this._InputFieldfontSize = value; } }
         public string InputFieldfontfamily { get { return this._InputFieldfontfamily; } set { this._InputFieldfontfamily = value; } }
@@ -229,7 +227,7 @@ namespace MvcDynamicForms.Fields
                     case "Normal":
                         FontWeight.Append(Style.ToString());
                         break;
-                    
+
 
                 }
 

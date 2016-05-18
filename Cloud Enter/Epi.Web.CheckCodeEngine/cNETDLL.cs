@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Reflection;
 
 namespace Epi.Core.EnterInterpreter
@@ -19,7 +16,7 @@ namespace Epi.Core.EnterInterpreter
         public cNETDLL(string pIdentifier, string pClass)
         {
             _identifier = pIdentifier;
-            _class = pClass.Substring(pClass.LastIndexOf(".") + 1,pClass.Length - pClass.LastIndexOf(".") - 1);
+            _class = pClass.Substring(pClass.LastIndexOf(".") + 1, pClass.Length - pClass.LastIndexOf(".") - 1);
             _filePath = pClass.Substring(0, pClass.LastIndexOf("."));
         }
 
@@ -42,7 +39,7 @@ namespace Epi.Core.EnterInterpreter
         {
             object result = null;
 
-            if(_assembly == null)
+            if (_assembly == null)
             {
                 _assembly = System.Reflection.Assembly.Load(_filePath);
             }
@@ -88,7 +85,7 @@ namespace Epi.Core.EnterInterpreter
                             {
 
                                 ParameterInfo[] parameters = methodInfo.GetParameters();
-                                if(parameters.Length == pArgumentList.Length)
+                                if (parameters.Length == pArgumentList.Length)
                                 {
                                     for (int i = 0; i < parameters.Length; i++)
                                     {

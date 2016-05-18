@@ -1,5 +1,4 @@
 ﻿using Microsoft.Azure.Documents;
-using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 
@@ -7,15 +6,15 @@ namespace Epi.Cloud.DataEntryServices.Model
 {
     public class Survey : Resource
     {
-        public SurveyProperties SurveyProperties { get; set; } 
+        public SurveyProperties SurveyProperties { get; set; }
 
-        public List<SurveyQuestionandAnswer> SurveyQuestionandAnswer { get; set; } 
+        public List<SurveyQuestionandAnswer> SurveyQuestionandAnswer { get; set; }
 
     }
-    public class SurveyProperties 
-    { 
+    public class SurveyProperties
+    {
         public string RecStatus { get; set; }
-        public string GlobalRecordID { get; set; } 
+        public string GlobalRecordID { get; set; }
 
         public string CaseID { get; set; }
     }

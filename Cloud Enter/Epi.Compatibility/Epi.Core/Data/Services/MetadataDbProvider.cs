@@ -1,19 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using Epi.Collections;
-using Epi;
-using Epi.Data;
 using Epi.DataSets;
 using Epi.Fields;
-using Epi.Resources;
 
 namespace Epi.Data.Services
 {
@@ -40,7 +34,7 @@ namespace Epi.Data.Services
         protected void RemoveDatabase()
         {
             if (db.TableExists("metaBackgrounds"))
-            {                 
+            {
                 db.ExecuteNonQuery(db.CreateQuery("Delete From metaBackgrounds"));
                 db.DeleteTable("metaBackgrounds");
             }
@@ -85,7 +79,7 @@ namespace Epi.Data.Services
             {
                 db.ExecuteNonQuery(db.CreateQuery("Delete From metaGridColumns"));
                 db.DeleteTable("metaGridColumns");
-            }            
+            }
 
             if (db.TableExists("metaImages"))
             {
@@ -115,8 +109,8 @@ namespace Epi.Data.Services
             {
                 db.ExecuteNonQuery(db.CreateQuery("Delete From metaViews"));
                 db.DeleteTable("metaViews");
-            }            
-            
+            }
+
             if (db.TableExists("metaPatterns"))
             {
                 db.ExecuteNonQuery(db.CreateQuery("Delete From metaPatterns"));
@@ -459,9 +453,9 @@ namespace Epi.Data.Services
         public virtual DataTable GetViewsAsDataTable()
         {
             Query query = db.CreateQuery(
-                "select [ViewId], [Name], [CheckCode], [CheckCodeBefore], [CheckCodeAfter], [RecordCheckCodeBefore], " + 
+                "select [ViewId], [Name], [CheckCode], [CheckCodeBefore], [CheckCodeAfter], [RecordCheckCodeBefore], " +
                 "[RecordCheckCodeAfter], [CheckCodeVariableDefinitions], [IsRelatedView], [Width], [Height], [Orientation], [LabelAlign] " +
-				"from metaViews" );
+                "from metaViews");
             return db.Select(query);
         }
 
@@ -778,22 +772,22 @@ namespace Epi.Data.Services
         /// <param name="viewId">Id of the view</param>
         /// <returns>A view object</returns>
         public DataTable GetPublishedViewKeys(int viewId)
-            {
+        {
             try
-                {
+            {
                 Query query = db.CreateQuery("select [EIWSOrganizationKey] ,[EIWSFormId] ,[EWEOrganizationKey] ,[EWEFormId]  " +
                     "from metaViews " +
                     "where [ViewId] = @ViewId");
                 query.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, viewId));
                 DataTable results = db.Select(query);
                 return results;
-                }
-            catch 
-                {
-                    return null;
-               // throw new GeneralException("Could not retrieve view", ex);
-                }
             }
+            catch
+            {
+                return null;
+                // throw new GeneralException("Could not retrieve view", ex);
+            }
+        }
 
 
         /// <summary>
@@ -1124,7 +1118,7 @@ namespace Epi.Data.Services
             Query query = db.CreateQuery(queryString);
             query.Parameters.Add(new QueryParameter("@viewID", DbType.Int32, field.GetView().Id));
             query.Parameters.Add(new QueryParameter("@uniqueId", DbType.Guid, field.UniqueId));
-            
+
             DataTable table = db.Select(query);
             if (table.Rows.Count > 0)
             {
@@ -1133,7 +1127,7 @@ namespace Epi.Data.Services
 
             return null;
         }
-        
+
         /// <summary>
         /// Returns view's fields as a data table
         /// </summary>
@@ -1177,9 +1171,9 @@ namespace Epi.Data.Services
             {
                 string queryString =
                     "SELECT "
-                    + "mF.[" + ColumnNames.NAME + "], " 
+                    + "mF.[" + ColumnNames.NAME + "], "
                     + "mF.[" + ColumnNames.FIELD_TYPE_ID + "], "
-                    + "mF.[" + ColumnNames.DATA_TABLE_NAME + "] " 
+                    + "mF.[" + ColumnNames.DATA_TABLE_NAME + "] "
                     + "FROM metaFields mF "
                     + "WHERE mF.[ViewId] = @viewId";
 
@@ -1740,7 +1734,7 @@ namespace Epi.Data.Services
                 throw new GeneralException("Could not add layer", ex);
             }
         }
-        
+
         /// <summary>
         /// Gets all field types for grid columns
         /// </summary>
@@ -1842,7 +1836,7 @@ namespace Epi.Data.Services
                 {
                     groups.Add(new GroupField(row, page));
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -1888,7 +1882,7 @@ namespace Epi.Data.Services
                 columnNames.Append("Mask");
                 columnNames.Append("FormattedExpression");
                 Query query = db.CreateQuery("select" + Util.InsertIn(columnNames.ToString(), StringLiterals.SPACE) +
-                   Util.InsertIn( "from", StringLiterals.SPACE) + db.InsertInEscape("metaPatterns"));
+                   Util.InsertIn("from", StringLiterals.SPACE) + db.InsertInEscape("metaPatterns"));
                 return db.Select(query);
             }
             catch (Exception ex)
@@ -1978,7 +1972,7 @@ namespace Epi.Data.Services
                 throw new GeneralException("Could not retrieve text fields for a page.", ex);
             }
         }
-        
+
         /// <summary>
         /// Gets a nonview table as a <see cref="System.Data.DataTable"/>
         /// </summary>
@@ -2027,11 +2021,11 @@ namespace Epi.Data.Services
                 Query query = db.CreateQuery("select [ViewId], [Name], [CheckCode], [CheckCodeBefore], [CheckCodeAfter], [RecordCheckCodeBefore], [RecordCheckCodeAfter], [CheckCodeVariableDefinitions], [IsRelatedView], [Width], [Height], [Orientation], [LabelAlign] " +
                     Util.InsertIn("from", StringLiterals.SPACE) + db.InsertInEscape("metaViews") +
                     Util.InsertIn("where", StringLiterals.SPACE) + db.InsertInEscape("Name") + StringLiterals.EQUAL + "@ViewName");
-                
+
                 QueryParameter parameter = new QueryParameter("@ViewName", DbType.String, viewName);
                 parameter.Size = viewName.Length;
                 query.Parameters.Add(parameter);
-                
+
                 DataTable results = db.Select(query);
                 if (results.Rows.Count > 0)
                 {
@@ -2104,14 +2098,14 @@ namespace Epi.Data.Services
                 List<string> tables = new List<string>();
                 //Query query = db.CreateQuery("select distinct [DataTableName] as Name, [ViewId] " +
                 //    "from [metaFields] where [DataTableName] is not null");
-              
+
                 //DataTable table = db.Select(query);
                 //foreach (DataRow row in table.Rows)
                 //{
                 //    tables.Add(row["Name"].ToString());
                 //}
                 tables = db.GetTableNames();
-                return  tables;
+                return tables;
             }
             catch (Exception ex)
             {
@@ -2161,7 +2155,7 @@ namespace Epi.Data.Services
                 DataTable results = db.Select(query);
                 if (results.Rows.Count > 0)
                 {
-                   return results.Rows[0][ColumnNames.DATA_TABLE_NAME].ToString();
+                    return results.Rows[0][ColumnNames.DATA_TABLE_NAME].ToString();
                 }
                 else
                 {
@@ -3082,7 +3076,7 @@ namespace Epi.Data.Services
 
                 insertQuery.Parameters.Add(new QueryParameter("@DataTableName", DbType.String, field.TableName));
                 insertQuery.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, field.GetView().Id));
-                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId)); 
+                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId));
                 insertQuery.Parameters.Add(new QueryParameter("@TextColumnName", DbType.String, field.TextColumnName));
                 insertQuery.Parameters.Add(new QueryParameter("@SourceTableName", DbType.String, field.SourceTableName));
                 insertQuery.Parameters.Add(new QueryParameter("@ControlFontFamily", DbType.String, field.ControlFont.Name));
@@ -3146,7 +3140,7 @@ namespace Epi.Data.Services
 
                 insertQuery.Parameters.Add(new QueryParameter("@DataTableName", DbType.String, field.TableName));
                 insertQuery.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, field.GetView().Id));
-                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId)); 
+                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId));
                 insertQuery.Parameters.Add(new QueryParameter("@CodeColumnName", DbType.String, field.CodeColumnName));
                 insertQuery.Parameters.Add(new QueryParameter("@TextColumnName", DbType.String, field.TextColumnName));
                 insertQuery.Parameters.Add(new QueryParameter("@SourceTableName", DbType.String, field.SourceTableName));
@@ -3210,7 +3204,7 @@ namespace Epi.Data.Services
                     "values (@ViewId, @UniqueId, @ControlFontFamily, @ControlFontStyle, @ControlFontSize, @ControlHeightPercentage, @ControlLeftPositionPercentage, @ControlTopPositionPercentage, @ControlWidthPercentage, @FieldTypeId, @HasTabStop, @Name, @PageId, @PromptFontFamily, @PromptFontStyle, @PromptFontSize, @PromptText,@PromptLeftPositionPercentage, @PromptTopPositionPercentage, @TabIndex)");
 
                 insertQuery.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, field.GetView().Id));
-                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId)); 
+                insertQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId));
                 insertQuery.Parameters.Add(new QueryParameter("@ControlFontFamily", DbType.String, field.ControlFont.Name));
                 insertQuery.Parameters.Add(new QueryParameter("@ControlFontStyle", DbType.String, field.ControlFont.Style.ToString()));
                 insertQuery.Parameters.Add(new QueryParameter("@ControlFontSize", DbType.Double, field.ControlFont.Size));
@@ -4265,10 +4259,10 @@ namespace Epi.Data.Services
 
                 //NAME
                 insertQuery.Parameters.Add(new QueryParameter("@Name", DbType.String, (string)gridColumnRow["Name"]));
-                
+
                 //SIZE
                 int size = 0;
-                if(int.TryParse((string)gridColumnRow["Size"], out result))
+                if (int.TryParse((string)gridColumnRow["Size"], out result))
                 {
                     size = result;
                 }
@@ -4316,7 +4310,7 @@ namespace Epi.Data.Services
 
                 // SOURCE TABLE NAME
                 insertQuery.Parameters.Add(new QueryParameter("@SourceTableName", DbType.String, (string)gridColumnRow["SourceTableName"]));
-                
+
                 // CODE COLUMN NAME
                 insertQuery.Parameters.Add(new QueryParameter("@CodeColumnName", DbType.String, (string)gridColumnRow["CodeColumnName"]));
 
@@ -4338,13 +4332,13 @@ namespace Epi.Data.Services
                     isExclusiveTable = yesno;
                 }
                 insertQuery.Parameters.Add(new QueryParameter("@IsExclusiveTable", DbType.Boolean, isExclusiveTable));
-                
+
                 // DATA TABLE NAME
                 insertQuery.Parameters.Add(new QueryParameter("@DataTableName", DbType.String, (string)gridColumnRow["DataTableName"]));
 
                 // FIELD ID
                 if (int.TryParse((string)gridColumnRow["FieldId"], out result))
-                { 
+                {
                     insertQuery.Parameters.Add(new QueryParameter("@FieldId", DbType.Int32, result));
                 }
 
@@ -4725,7 +4719,7 @@ namespace Epi.Data.Services
 
                 db.ExecuteNonQuery(insertQuery);
                 int maxGridColumnId = GetMaxGridColumnId(column.Grid.Id);
-                return maxGridColumnId; 
+                return maxGridColumnId;
             }
             catch (Exception ex)
             {
@@ -4788,7 +4782,7 @@ namespace Epi.Data.Services
                     TableColumn tableColumn = new TableColumn("IsUniqueField", GenericDbColumnType.Boolean, true);
                     db.AddColumn("metaGridColumns", tableColumn);
                 }
-                
+
                 Query insertQuery = db.CreateQuery("insert into metaGridColumns([Name], [TextColumnName], [SourceTableName], [Width], [Position], [FieldTypeId], [Text], [ShouldRepeatLast], [IsExclusiveTable], [IsReadOnly], [IsRequired], [IsUniqueField], [FieldId], [Sort]) " +
                     "values (@Name, @TextColumnName, @SourceTableName, @Width, @Position, @FieldTypeId, @Text, @ShouldRepeatLast, @IsExclusiveTable, @IsReadOnly, @IsRequired, @IsUniqueField, @FieldId, @Sort)");
 
@@ -5014,7 +5008,7 @@ namespace Epi.Data.Services
         {
             try
             {
-            string queryString = "update metaViews set [CheckCodeVariableDefinitions] = @CheckCodeVariableDefinitions, [CheckCode] = @CheckCode, [CheckCodeBefore] = @CheckCodeBefore, [CheckCodeAfter] = @CheckCodeAfter, [RecordCheckCodeBefore] = @RecordCheckCodeBefore, [RecordCheckCodeAfter] = @RecordCheckCodeAfter, [IsRelatedView] = @IsRelatedView, [Width] = @Width, [Height] = @Height, [Orientation] = @Orientation, [LabelAlign] = @LabelAlign ,[EIWSOrganizationKey]= @EIWSOrganizationKey,[EIWSFormId]= @EIWSFormId,[EWEOrganizationKey]= @EWEOrganizationKey,[EWEFormId]= @EWEFormId where [ViewId] = @ViewId";
+                string queryString = "update metaViews set [CheckCodeVariableDefinitions] = @CheckCodeVariableDefinitions, [CheckCode] = @CheckCode, [CheckCodeBefore] = @CheckCodeBefore, [CheckCodeAfter] = @CheckCodeAfter, [RecordCheckCodeBefore] = @RecordCheckCodeBefore, [RecordCheckCodeAfter] = @RecordCheckCodeAfter, [IsRelatedView] = @IsRelatedView, [Width] = @Width, [Height] = @Height, [Orientation] = @Orientation, [LabelAlign] = @LabelAlign ,[EIWSOrganizationKey]= @EIWSOrganizationKey,[EIWSFormId]= @EIWSFormId,[EWEOrganizationKey]= @EWEOrganizationKey,[EWEFormId]= @EWEFormId where [ViewId] = @ViewId";
                 Query query = db.CreateQuery(queryString);
                 query.Parameters.Add(new QueryParameter("@CheckCodeVariableDefinitions", DbType.String, view.CheckCodeVariableDefinitions));
                 query.Parameters.Add(new QueryParameter("@CheckCode", DbType.String, view.CheckCode));
@@ -5032,7 +5026,7 @@ namespace Epi.Data.Services
                 query.Parameters.Add(new QueryParameter("@EWEOrganizationKey", DbType.String, view.EWEOrganizationKey));
                 query.Parameters.Add(new QueryParameter("@EWEFormId", DbType.String, view.EWEFormId));
                 query.Parameters.Add(new QueryParameter("@ViewId", DbType.Int32, view.Id));
-                
+
                 int i = db.ExecuteNonQuery(query);
             }
             catch (Exception ex)
@@ -5275,13 +5269,13 @@ namespace Epi.Data.Services
         public void UpdatePage(Page page)
         {
             #region Input Validation
-            
+
             if (page.CheckCodeBefore.Contains("GLOBAL_ID!GetGlobalUniqueID()"))
             {
                 page.CheckCodeBefore = RemoveOldGUIDCheckCode(page.CheckCodeBefore);
             }
 
-            if(page.CheckCodeAfter.Contains("GLOBAL_ID!GetGlobalUniqueID()"))
+            if (page.CheckCodeAfter.Contains("GLOBAL_ID!GetGlobalUniqueID()"))
             {
                 page.CheckCodeAfter = RemoveOldGUIDCheckCode(page.CheckCodeAfter);
             }
@@ -5579,7 +5573,7 @@ namespace Epi.Data.Services
                 Query insertQuery = db.CreateQuery("insert into " + tableName + "([" + columnName + "]) values (@Value)");
                 insertQuery.Parameters.Add(new QueryParameter("@Value", DbType.String, columnName, columnName));
                 db.Update(dataTable, tableName, insertQuery, updateQuery);
-                
+
             }
             catch (Exception ex)
             {
@@ -5675,7 +5669,7 @@ namespace Epi.Data.Services
 
                 // Determine if we need to report progress and what progress step to count.
                 rowCount = dataTable.Rows.Count;
-                step = (rowCount/10);
+                step = (rowCount / 10);
 
                 // If row count is too small, skip progress reporting.
                 reportProgress = (step > 0);
@@ -5705,7 +5699,7 @@ namespace Epi.Data.Services
                     }
 
                     db.ExecuteNonQuery(insertQuery);
-                    
+
                     if (reportProgress)
                     {
                         int rem = 0;
@@ -5792,7 +5786,7 @@ namespace Epi.Data.Services
                 sb.Append(StringLiterals.PARANTHESES_CLOSE);
 
                 insertQuery = db.CreateQuery(sb.ToString());
-                
+
                 for (int i = 0; i < columnNames.Length; i++)
                 {
                     QueryParameter insertParameter = new QueryParameter(StringLiterals.COMMERCIAL_AT + columnNames[i].Replace(" ", ""), DbType.String, columnNames[i], columnNames[i]);
@@ -5823,7 +5817,7 @@ namespace Epi.Data.Services
                     sb.Append(StringLiterals.NEW_VALUE);
                     sb.Append(i.ToString());
 
-                    if (i < (columnNames.Length-1))
+                    if (i < (columnNames.Length - 1))
                     {
                         sb.Append(StringLiterals.COMMA);
                         sb.Append(StringLiterals.SPACE);
@@ -5853,7 +5847,7 @@ namespace Epi.Data.Services
                         sb.Append(StringLiterals.SPACE);
                     }
                 }
-                
+
                 updateQuery = db.CreateQuery(sb.ToString());
 
                 for (int i = 0; i < columnNames.Length; i++)
@@ -5907,7 +5901,7 @@ namespace Epi.Data.Services
 
             //try
             //{
-                
+
             //    if (db.TableExists(prefixedTableName.ToLower()))
             //    {
             //        // Needed so that code tables are not constantly appended if you import over
@@ -5938,7 +5932,7 @@ namespace Epi.Data.Services
             //            sb.Append(StringLiterals.PARANTHESES_OPEN);
             //            sb.Append(StringLiterals.NUMBER_255);
             //            sb.Append(StringLiterals.PARANTHESES_CLOSE);
-                       
+
             //            if (i < columnNames.Length - 1)
             //            {
             //                sb.Append(StringLiterals.COMMA);
@@ -5952,7 +5946,7 @@ namespace Epi.Data.Services
             //        db.ExecuteNonQuery(createQuery);
 
             //        Retval = true;
-                
+
             //}
             //catch (Exception ex)
             //{
@@ -6340,7 +6334,7 @@ namespace Epi.Data.Services
         {
             try
             {
-                Query query = db.CreateQuery("update metaFields set [ControlHeightPercentage] = @Height, [ControlWidthPercentage] = @Width where [FieldId] = @FieldId"); 
+                Query query = db.CreateQuery("update metaFields set [ControlHeightPercentage] = @Height, [ControlWidthPercentage] = @Width where [FieldId] = @FieldId");
                 query.Parameters.Add(new QueryParameter("@Height", DbType.Double, field.ControlHeightPercentage));
                 query.Parameters.Add(new QueryParameter("@Width", DbType.Double, field.ControlWidthPercentage));
                 query.Parameters.Add(new QueryParameter("@FieldId", DbType.Int32, field.Id));
@@ -6534,7 +6528,7 @@ namespace Epi.Data.Services
                     {
                         try
                         {
-                            foreignKeyField = (ForeignKeyField) view.Fields["FKEY"];
+                            foreignKeyField = (ForeignKeyField)view.Fields["FKEY"];
                         }
                         catch (System.Exception ex)
                         {
@@ -6610,7 +6604,7 @@ namespace Epi.Data.Services
                 throw new GeneralException("Could not update CheckBoxField in the database", ex);
             }
         }
-     
+
         /// <summary>
         /// Update Command button field.
         /// </summary>
@@ -7126,7 +7120,7 @@ namespace Epi.Data.Services
                 updateQuery.Parameters.Add(new QueryParameter("@PromptFontStyle", DbType.String, field.PromptFont.Style.ToString()));
                 updateQuery.Parameters.Add(new QueryParameter("@PromptFontSize", DbType.Double, field.PromptFont.Size));
                 updateQuery.Parameters.Add(new QueryParameter("@PromptLeftPositionPercentage", DbType.Double, field.PromptLeftPositionPercentage));
-                updateQuery.Parameters.Add(new QueryParameter("@PromptTopPositionPercentage", DbType.Double, field.PromptTopPositionPercentage));                
+                updateQuery.Parameters.Add(new QueryParameter("@PromptTopPositionPercentage", DbType.Double, field.PromptTopPositionPercentage));
                 updateQuery.Parameters.Add(new QueryParameter("@PromptText", DbType.String, field.PromptText));
                 updateQuery.Parameters.Add(new QueryParameter("@TabIndex", DbType.Int32, field.TabIndex));
                 updateQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId));
@@ -7802,7 +7796,7 @@ namespace Epi.Data.Services
                 {
                     updateQuery.Parameters.Add(new QueryParameter("@RelatedViewId", DbType.Int32, field.RelatedViewID));
                 }
-                
+
                 updateQuery.Parameters.Add(new QueryParameter("@UniqueId", DbType.Guid, field.UniqueId));
 
                 db.ExecuteNonQuery(updateQuery);
@@ -8582,7 +8576,7 @@ namespace Epi.Data.Services
                 StringBuilder sb = new StringBuilder();
 
                 sb.Append("update [metaFields] set ");
-                
+
                 sb.Append("[ControlFontFamily] = @ControlFontFamily, ");
                 sb.Append("[ControlFontStyle] = @ControlFontStyle, ");
                 sb.Append("[ControlFontSize] = @ControlFontSize, ");
@@ -8702,7 +8696,7 @@ namespace Epi.Data.Services
 
         public int GetMaxBackgroundId()
         {
-            Query selectQuery = db.CreateQuery("select MAX(BackgroundId) from metaBackgrounds" );
+            Query selectQuery = db.CreateQuery("select MAX(BackgroundId) from metaBackgrounds");
             return (int)db.ExecuteScalar(selectQuery);
         }
 
@@ -8747,7 +8741,7 @@ namespace Epi.Data.Services
                 selectQuery.Parameters.Add(new QueryParameter("@pageId", DbType.Int32, pageId));
                 selectQuery.Parameters.Add(new QueryParameter("@viewId", DbType.Int32, viewId));
             }
-            
+
             object result = db.ExecuteScalar(selectQuery);
 
             if (result != DBNull.Value)
@@ -8828,7 +8822,7 @@ namespace Epi.Data.Services
                 throw new GeneralException("Could not retrieve table column names", ex);
             }
         }
-        
+
         /// <summary>
         /// Gets the minimum tab index of data fields
         /// </summary>
@@ -9280,7 +9274,7 @@ namespace Epi.Data.Services
 
             //columns.Add(new TableColumn("FieldId", GenericDbColumnType.Int32, false, "metaFields", "FieldId", true));  
             //columns.Add(new TableColumn("FieldTypeId", GenericDbColumnType.Int32, false, "metaFieldTypes", "FieldTypeId"));  
- 
+
             db.CreateTable("metaGridColumns", columns);
         }
 
@@ -9357,7 +9351,7 @@ namespace Epi.Data.Services
                     query = db.CreateQuery("insert into metaLayerRenderTypes ([LayerRenderTypeId], [Name]) values (@LayerRenderTypeId, @Name)");
                     query.Parameters.Add(new QueryParameter("@LayerRenderTypeId", DbType.Int32, layerRenderType.LayerRenderTypeId));
                     query.Parameters.Add(new QueryParameter("@Name", DbType.String, layerRenderType.Name));
-                    
+
                     db.ExecuteNonQuery(query);
                 }
             }
@@ -9720,7 +9714,7 @@ namespace Epi.Data.Services
             returnTable.Columns.Add("ImageLayout", System.Type.GetType("System.String"));
             returnTable.Columns.Add("Color", System.Type.GetType("System.Int32"));
             DataRow row = returnTable.NewRow();
-            
+
             Query selectBackgroundQuery = db.CreateQuery("select * from [metaBackgrounds] where [BackgroundId] = @BackgroundId");
             selectBackgroundQuery.Parameters.Add(new QueryParameter("@BackgroundId", DbType.Int32, page.BackgroundId));
 
@@ -9786,7 +9780,7 @@ namespace Epi.Data.Services
         /// <returns>DataTable</returns>
         public DataTable GetBackgroundData()
         {
-            DataTable dt=null;
+            DataTable dt = null;
             Query selectQuery = db.CreateQuery("select * from [metaBackgrounds]");
             dt = db.Select(selectQuery);
             return dt;
@@ -9868,12 +9862,12 @@ namespace Epi.Data.Services
                     imageId = GetImageId(imageByteCount);
                 }
             }
-            
+
             StringBuilder queryString = new StringBuilder();
             queryString.Append("update [metaBackgrounds] set ");
-            queryString.Append("[ImageId]=@ImageId, "); 
+            queryString.Append("[ImageId]=@ImageId, ");
             queryString.Append("[ImageLayout]=@ImageLayout, [Color]=@Color where [BackgroundId]=@BackgroundId");
-            
+
             Query updateQuery = db.CreateQuery(queryString.ToString());
             updateQuery.Parameters.Add(new QueryParameter("@ImageId", DbType.Int32, imageId));
             updateQuery.Parameters.Add(new QueryParameter("@ImageLayout", DbType.String, imageLayout));
@@ -9936,7 +9930,7 @@ namespace Epi.Data.Services
 
             Data.QueryParameter imageParam = new QueryParameter("@Image", DbType.Object, imageAsBytes);
             imageParam.Size = imageAsBytes.Length + 1;
-            insertQuery.Parameters.Add(imageParam );
+            insertQuery.Parameters.Add(imageParam);
             insertQuery.Parameters.Add(new QueryParameter("@ImageUniqueValue", DbType.Int32, compressedHash));
             db.ExecuteNonQuery(insertQuery);
             return GetMaxImageId();
@@ -9996,7 +9990,7 @@ namespace Epi.Data.Services
             Query selectQuery = db.CreateQuery("SELECT [ImageId] FROM [metaImages] WHERE ([ImageUniqueValue]=@ImageUniqueValue)");
             selectQuery.Parameters.Add(new QueryParameter("@ImageUniqueValue", DbType.Int32, imageUniqueValue));
             table = db.Select(selectQuery);
-            if(table.Rows.Count > 0)
+            if (table.Rows.Count > 0)
             {
                 imageId = (Int32)table.Rows[0]["ImageId"];
             }

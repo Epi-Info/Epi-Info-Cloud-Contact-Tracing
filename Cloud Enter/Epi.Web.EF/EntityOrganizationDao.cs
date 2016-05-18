@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
-using System.Text;
 //using BusinessObjects;
 //using DataObjects.EntityFramework.ModelMapper;
 //using System.Linq.Dynamic;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Web.EF
 {
@@ -282,8 +278,8 @@ namespace Epi.Web.EF
                                 select org;
 
                     var SuperAdminChkQry = from usrorg in Context.UserOrganizations
-                                            join org in Context.Organizations
-                                            on usrorg.OrganizationID equals org.OrganizationId
+                                           join org in Context.Organizations
+                                           on usrorg.OrganizationID equals org.OrganizationId
                                            where org.OrganizationKey == Organization.OrganizationKey && usrorg.RoleId > 2
                                            select usrorg;
 

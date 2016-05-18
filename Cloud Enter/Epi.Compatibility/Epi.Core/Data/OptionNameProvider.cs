@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using Epi.Data.Services;
 
 namespace Epi.Data
@@ -24,7 +22,7 @@ namespace Epi.Data
 
             foreach (DataRow row in rows)
             {
-                Dictionary<int, string> nameIndexColl = new Dictionary<int,string>();
+                Dictionary<int, string> nameIndexColl = new Dictionary<int, string>();
                 string[] options = row["List"].ToString().Split(new char[] { ',' });
 
                 int index = 0;
@@ -34,7 +32,7 @@ namespace Epi.Data
                     index++;
                 }
 
-                
+
                 _optionFieldsColl.Add(row["Name"].ToString(), nameIndexColl);
             }
         }
@@ -57,7 +55,7 @@ namespace Epi.Data
                     {
                         name = nameIndexColl[index];
                     }
-                    
+
                 }
             }
             return name;

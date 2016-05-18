@@ -1,19 +1,16 @@
-using System;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Xml;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
-{	
-	/// <summary>
-	/// Image field
-	/// </summary>
-	public class ImageField : InputFieldWithSeparatePrompt
-	{
-		#region Private Members
+{
+    /// <summary>
+    /// Image field
+    /// </summary>
+    public class ImageField : InputFieldWithSeparatePrompt
+    {
+        #region Private Members
         /// <summary>
         /// Boolean setting that determines if the image should keep its true size thus effectively cropped to the size of the image control.
         /// </summary>
@@ -32,20 +29,20 @@ namespace Epi.Fields
         private XmlNode fieldNode;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion Private Members
+        #endregion Private Members
 
-		#region Public Events
-		#endregion Public Events
+        #region Public Events
+        #endregion Public Events
 
-		#region Constructors
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public ImageField(Page page) : base(page)
-		{
+        #region Constructors
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public ImageField(Page page) : base(page)
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -64,9 +61,9 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">The view this field belongs to</param>
 		public ImageField(View view) : base(view)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -103,7 +100,7 @@ namespace Epi.Fields
             return clone;
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
         #region Public Properties
         /// <summary>
@@ -117,20 +114,20 @@ namespace Epi.Fields
             }
         }
 
-		/// <summary>
-		/// Gets/sets whether the image size is retained
-		/// </summary>
-		public bool ShouldRetainImageSize
-		{
-			get
-			{
-				return shouldRetainImageSize;
-			}
-			set
-			{
-				shouldRetainImageSize = value;
-			}
-		}
+        /// <summary>
+        /// Gets/sets whether the image size is retained
+        /// </summary>
+        public bool ShouldRetainImageSize
+        {
+            get
+            {
+                return shouldRetainImageSize;
+            }
+            set
+            {
+                shouldRetainImageSize = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the Xml view element of the field
@@ -167,23 +164,23 @@ namespace Epi.Fields
         {
             return GetProject().CollectedData.GetDatabase().GetDbSpecificColumnType(GenericDbColumnType.Image);
         }
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Protected Properties
-		#endregion Protected Properties
+        #region Protected Properties
+        #endregion Protected Properties
 
-		#region Public Methods
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
+        #region Public Methods
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
             GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
-		#endregion
+        }
+        #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -260,7 +257,7 @@ namespace Epi.Fields
         #endregion
 
         #region Event Handlers
-		#endregion Event Handlers
+        #endregion Event Handlers
 
-	}
+    }
 }

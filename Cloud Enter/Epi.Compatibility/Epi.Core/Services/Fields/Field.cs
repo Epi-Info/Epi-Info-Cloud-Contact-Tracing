@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-using System.Drawing;
-using Epi.Data;
 using Epi.Data.Services;
 
 namespace Epi.Fields
@@ -9,30 +7,30 @@ namespace Epi.Fields
 
     public delegate void FieldSaveCompleteHandler(Field field);
 
-	/// <summary>
-	/// Field
-	/// </summary>
-	public abstract class Field : IField
-	{
-		#region Constructors
+    /// <summary>
+    /// Field
+    /// </summary>
+    public abstract class Field : IField
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Private constructor - cannot be used
-		/// </summary>
-		private Field()
-		{
-		}
+        /// <summary>
+        /// Private constructor - cannot be used
+        /// </summary>
+        private Field()
+        {
+        }
 
-		/// <summary>
-		/// Instantiates a field
-		/// </summary>
-		/// <param name="view">The view that contains this field</param>
-		public Field(View view)
-		{
-			this.view = view;
-		}
+        /// <summary>
+        /// Instantiates a field
+        /// </summary>
+        /// <param name="view">The view that contains this field</param>
+        public Field(View view)
+        {
+            this.view = view;
+        }
 
-		#endregion Constructors
+        #endregion Constructors
 
         #region Events
 
@@ -43,7 +41,7 @@ namespace Epi.Fields
 
         #region Fields
         private string name = string.Empty;
-		private int id;
+        private int id;
         private string sourceTable;
         private Guid uniqueId = Guid.NewGuid();
         /// <summary>
@@ -51,19 +49,19 @@ namespace Epi.Fields
         /// </summary>
         protected View view;
         public static int fieldsWaitingToUpdate;
-        
+
         private bool isVisible = true;
         private bool isEnabled = true;
         private bool isHighlighted = false;
         private bool isRequired = false;
 
-		#endregion Fields
+        #endregion Fields
 
-		#region Public Properties
+        #region Public Properties
 
-		/// <summary>
-		/// Returns the type of the field.
-		/// </summary>
+        /// <summary>
+        /// Returns the type of the field.
+        /// </summary>
         public abstract MetaFieldType FieldType { get; }
 
         /// <summary>
@@ -81,44 +79,44 @@ namespace Epi.Fields
         /// <returns></returns>
         public View View
         {
-			get
-			{
-				return view;
-			}
-			set
-			{
-				view = value;
-			}
+            get
+            {
+                return view;
+            }
+            set
+            {
+                view = value;
+            }
         }
 
         /// <summary>
         /// Gets/sets the fields's Id.
         /// </summary>
 		public int Id
-		{
-			get
-			{
-				return id;
-			}
-			set
-			{
-				id = value;
-			}
-		}
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
         /// <summary>
         /// Gets/sets the field name
         /// </summary>
 		public string Name
-		{
-			get
-			{
-				return name;
-			}
-			set
-			{
-				name = value;
-			}
-		}
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the source of the field
@@ -170,9 +168,9 @@ namespace Epi.Fields
         public bool IsRequired { get { return this.isRequired; } set { this.isRequired = value; } }
 
 
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Shortcut for getting project instance.
@@ -220,42 +218,42 @@ namespace Epi.Fields
         public virtual void Dispose()
         {
         }
-		
-		/// <summary>
-		/// Saves the field to the database
-		/// </summary>
-		public virtual void SaveToDb()
-		{
-			if (Id == 0)
-			{
-				InsertField();
-			}
-			else
-			{
-				throw new System.ApplicationException("Can't update this field");
-			}
-		}
+
+        /// <summary>
+        /// Saves the field to the database
+        /// </summary>
+        public virtual void SaveToDb()
+        {
+            if (Id == 0)
+            {
+                InsertField();
+            }
+            else
+            {
+                throw new System.ApplicationException("Can't update this field");
+            }
+        }
         /// <summary>
         /// Deletes the field from the view
         /// </summary>
 		public abstract void Delete();
 
-		#endregion Public Methods
+        #endregion Public Methods
 
-		#region Protected Methods
+        #region Protected Methods
 
         /// <summary>
         /// Executes when a field is inserted into the view.
         /// </summary>
-		protected void OnFieldAdded()
-		{
-			view.MustRefreshFieldCollection = true;
-		}
+        protected void OnFieldAdded()
+        {
+            view.MustRefreshFieldCollection = true;
+        }
 
-		/// <summary>
-		/// Inserts the field to the database
-		/// </summary>
-		protected abstract void InsertField();
+        /// <summary>
+        /// Inserts the field to the database
+        /// </summary>
+        protected abstract void InsertField();
 
         protected void OnFieldInserted(Field f)
         {
@@ -273,6 +271,6 @@ namespace Epi.Fields
             }
         }
 
-		#endregion Protected Methods
-	}
+        #endregion Protected Methods
+    }
 }

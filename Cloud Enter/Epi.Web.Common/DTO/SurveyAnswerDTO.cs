@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.DTO
@@ -48,23 +46,23 @@ namespace Epi.Web.Enter.Common.DTO
 
         [DataMember]
         public int ViewId { get; set; }
-         [DataMember]
+        [DataMember]
         public int FormOwnerId
         {
             get;
             set;
         }
-         [DataMember]
-         public int LoggedInUserId
-         {
-             get;
-             set;
-         }
-         [DataMember]
-         public bool RecoverLastRecordVersion
-         {
-             get;
-             set;
-         }
+        [DataMember]
+        public int LoggedInUserId
+        {
+            get;
+            set;
+        }
+        [DataMember]
+        public bool RecoverLastRecordVersion
+        {
+            get;
+            set;
+        }
     }
 }

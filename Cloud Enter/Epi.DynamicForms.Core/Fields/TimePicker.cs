@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -12,8 +11,8 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class TimePicker : TimePickerField
     {
-        public override string RenderHtml() 
-        { 
+        public override string RenderHtml()
+        {
             var html = new StringBuilder();
             var inputName = _form.FieldPrefix + _key;
             string ErrorStyle = string.Empty;
@@ -106,51 +105,51 @@ namespace MvcDynamicForms.Fields
 
             // If readonly then add the following jquery script to make the field disabled 
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
             //if (!string.IsNullOrEmpty(Pattern))
             //{
-                // adding scripts for date picker
-                var scripttimePicker = new TagBuilder("script");
-                //scriptDatePicker.InnerHtml = "$(function() { $('#" + inputName + "').datepicker({changeMonth: true,changeYear: true});});";
-                /*Checkcode control after event...for datepicker, the onblur event fires on selecting a date from calender. Since the datepicker control itself is tied to after event which was firing before the datepicker
-                 textbox is populated the comparison was not working. For this reason, the control after steps are interjected inside datepicker onClose event, so the after event is fired when the datepicker is populated 
-                 */
-                if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
+            // adding scripts for date picker
+            var scripttimePicker = new TagBuilder("script");
+            //scriptDatePicker.InnerHtml = "$(function() { $('#" + inputName + "').datepicker({changeMonth: true,changeYear: true});});";
+            /*Checkcode control after event...for datepicker, the onblur event fires on selecting a date from calender. Since the datepicker control itself is tied to after event which was firing before the datepicker
+             textbox is populated the comparison was not working. For this reason, the control after steps are interjected inside datepicker onClose event, so the after event is fired when the datepicker is populated 
+             */
+            if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
+            {
+                //scriptDatePicker.InnerHtml = "$('#" + inputName + "').datepicker({onClose:function(){" + _key + "_after();},changeMonth:true,changeYear:true});";
+                //Note: datepicker seems to have a command inst.input.focus(); (I think) called after the onClose callback which resets the focus to the original input element. I'm wondering if there is way round this with bind(). 
+                //http://stackoverflow.com/questions/7087987/change-the-focus-on-jqueryui-datepicker-on-close
+
+                if (Pattern == "HH:MM:SS AMPM")
                 {
-                    //scriptDatePicker.InnerHtml = "$('#" + inputName + "').datepicker({onClose:function(){" + _key + "_after();},changeMonth:true,changeYear:true});";
-                    //Note: datepicker seems to have a command inst.input.focus(); (I think) called after the onClose callback which resets the focus to the original input element. I'm wondering if there is way round this with bind(). 
-                    //http://stackoverflow.com/questions/7087987/change-the-focus-on-jqueryui-datepicker-on-close
-
-                    if (Pattern == "HH:MM:SS AMPM")
-                    {
-                        scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({onClose:function(){setTimeout(" + _key + "_after,100);},ampm : true, showSecond:true,timeFormat: 'hh:mm:ss TT'});";
-                    }
-                    else
-                    {
-                        scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({onClose:function(){setTimeout(" + _key + "_after,100);}, showSecond:true,timeFormat: 'hh:mm:ss'});";
-                    }
-
+                    scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({onClose:function(){setTimeout(" + _key + "_after,100);},ampm : true, showSecond:true,timeFormat: 'hh:mm:ss TT'});";
                 }
                 else
                 {
-                    if (Pattern == "HH:MM:SS AMPM")
-                    {
-                        scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({ampm : true, showSecond:true,timeFormat: 'hh:mm:ss TT'});";
-                    }
-                    else
-                    {
-                        scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({showSecond:true,timeFormat: 'hh:mm:ss'});";
-                    }
+                    scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({onClose:function(){setTimeout(" + _key + "_after,100);}, showSecond:true,timeFormat: 'hh:mm:ss'});";
                 }
 
-                html.Append(scripttimePicker.ToString(TagRenderMode.Normal));
-           // }
-            
+            }
+            else
+            {
+                if (Pattern == "HH:MM:SS AMPM")
+                {
+                    scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({ampm : true, showSecond:true,timeFormat: 'hh:mm:ss TT'});";
+                }
+                else
+                {
+                    scripttimePicker.InnerHtml = "$('#" + inputName + "').timepicker({showSecond:true,timeFormat: 'hh:mm:ss'});";
+                }
+            }
+
+            html.Append(scripttimePicker.ToString(TagRenderMode.Normal));
+            // }
+
             //prevent date picker control to submit on enter click
             var scriptBuilder = new TagBuilder("script");
             scriptBuilder.InnerHtml = "$('#" + inputName + "').BlockEnter('" + inputName + "');";

@@ -71,7 +71,7 @@ namespace Epi
         /// Ellipsis
         /// </summary>
         public const string ELLIPSIS = "...";
-        
+
         /// <summary>
         /// String Literal EPI REPRESENTATION OF FALSE
         /// </summary>
@@ -162,16 +162,16 @@ namespace Epi
         /// String Literal for Old Guid Code
         /// </summary>
         public const string OLD_GUID_CODE = "ALWAYS\r\nIF CDCUNIQUEID=(.) OR CDCUNIQUEID=\"\"  THEN\r\nASSIGN CDCUNIQUEID = GLOBAL_ID!GetGlobalUniqueID()\r\nASSIGN CDC_UNIQUE_ID=CDCUNIQUEID\r\nEND\r\nEND";
-            
+
         /// <summary>
         /// String Literal OldValue
         /// </summary>
         public const string OLD_VALUE = "OldValue";
-            
+
         /// <summary>
         /// String Literal PARENTHESES OPEN
         /// </summary>
-		public const string PARANTHESES_OPEN = "(";
+        public const string PARANTHESES_OPEN = "(";
 
         /// <summary>
         /// String Literal PARENTHESES CLOSE
@@ -212,12 +212,12 @@ namespace Epi
         /// String Literal SPACE
         /// </summary>
         public const string SPACE = " ";
-                
+
         /// <summary>
         /// String Literal STAR
         /// </summary>
         public const string STAR = "*";
-    
+
         /// <summary>
         /// String Literal TAB
         /// </summary>

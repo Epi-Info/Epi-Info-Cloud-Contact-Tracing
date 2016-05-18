@@ -66,14 +66,14 @@ namespace MvcDynamicForms.Fields
 
                 Html = MvcHtmlString.Create(newText).ToString();
 
-               // wrapper.Attributes["ID"] = "labelmvcdynamicfield_" + Name.ToLower();
+                // wrapper.Attributes["ID"] = "labelmvcdynamicfield_" + Name.ToLower();
                 wrapper.Attributes["ID"] = "mvcdynamicfield_" + Name.ToLower() + "_fieldWrapper";
                 StringBuilder StyleValues = new StringBuilder();
 
                 StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _top.ToString(), _left.ToString(), Width.ToString(), Height.ToString(), IsHidden));
                 //StyleValues.Append(";word-wrap:break-word;");
-                 wrapper.Attributes.Add(new KeyValuePair<string, string>("style", StyleValues.ToString()));
-               
+                wrapper.Attributes.Add(new KeyValuePair<string, string>("style", StyleValues.ToString()));
+
                 wrapper.InnerHtml = Html;
                 return wrapper.ToString();
             }

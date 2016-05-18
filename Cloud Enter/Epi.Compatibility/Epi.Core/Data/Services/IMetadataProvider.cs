@@ -32,7 +32,7 @@ namespace Epi.Data.Services
         /// <param name="mapId"></param>
         /// <param name="layerId"></param>
         void AddLayerToMap(int mapId, int layerId);
-        
+
 
         /// <summary>
         /// Add Grid Column
@@ -251,7 +251,7 @@ namespace Epi.Data.Services
         /// </summary>
         /// <param name="field">ImageField field object reference.</param>
         /// <returns>Returns a new ImageField field.</returns>
-        int CreateField(Epi.Fields.ImageField field);        
+        int CreateField(Epi.Fields.ImageField field);
         /// <summary>
         /// Create a new GroupFiled field.
         /// </summary>
@@ -504,7 +504,7 @@ namespace Epi.Data.Services
         /// <param name="viewName">Name of the current Id of view in Epi.Project.</param>
         /// <returns></returns>
         string GetAvailDataTableName(string viewName);
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -590,7 +590,7 @@ namespace Epi.Data.Services
         /// </summary>
         /// <returns></returns>
         List<string> GetDataTableList();
-        
+
         /// <summary>
         /// Get Data Table Name
         /// </summary>
@@ -604,7 +604,7 @@ namespace Epi.Data.Services
         /// <param name="viewId"></param>
         /// <returns>a DataTable containing all the data table names.</returns>
         DataTable GetDataTableNames(int viewId);
-        
+
         /// <summary>
         /// Get Field Id By Name As Data Row
         /// </summary>
@@ -1032,7 +1032,7 @@ namespace Epi.Data.Services
         /// </summary>
         /// <param name="viewId">Current Id of view in Epi.Project.</param>
         /// <returns></returns>
-        System.Data.DataTable GetPagesForView(int viewId);        
+        System.Data.DataTable GetPagesForView(int viewId);
         /// <summary>
         /// Returns the parent view of a related view
         /// </summary>
@@ -1247,8 +1247,8 @@ namespace Epi.Data.Services
         /// Removes all the fields in metaFields that are positioned off of the page.
         /// </summary>
         void RemovePageOutlierFields();
-        
-        
+
+
         /// <summary>
         /// 
         /// </summary>

@@ -5,7 +5,6 @@ using System.Data;
 using System.Threading.Tasks;
 using System.Web.Configuration;
 using Epi.Cloud.SqlServer;
-using System.Text;
 
 namespace Epi.Cloud.DBAccessService.Repository
 {

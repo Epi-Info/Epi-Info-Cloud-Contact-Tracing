@@ -2,12 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Epi.Data;
 
@@ -92,7 +89,7 @@ namespace Epi.Cloud.SqlServer.Forms
             //}
         }
 
-        
+
         /// <summary>
         /// Sets the preferred database name
         /// </summary>
@@ -173,7 +170,7 @@ namespace Epi.Cloud.SqlServer.Forms
         {
             OnCancelClick();
         }
-      
+
         /// <summary>
         /// Handles the Change event of the Server Name's selection
         /// </summary>
@@ -183,16 +180,16 @@ namespace Epi.Cloud.SqlServer.Forms
         {
             // if last item in list (Browse for Servers)
             if ((string)cmbServerName.SelectedItem == SharedStrings.BROWSE_FOR_MORE)
-            
+
             {
                 string serverName = BrowseForServers.BrowseNetworkServers().ToString();
                 if (!string.IsNullOrEmpty(serverName))
-                {                   
+                {
                     this.cmbServerName.Items.Insert(0, serverName);
-                    this.cmbServerName.SelectedIndex = 0;                   
+                    this.cmbServerName.SelectedIndex = 0;
                     cmbDatabaseName.DataSource = null;
                     PreferredDatabaseName = string.Empty;
-                    List<String> databases = new List<String>();               
+                    List<String> databases = new List<String>();
                     using (var con = new SqlConnection("Data Source=" + serverName + ";Initial Catalog=master;Trusted_Connection=yes"))
                     {
                         try
@@ -205,51 +202,51 @@ namespace Epi.Cloud.SqlServer.Forms
                                 databases.Add(databas.Field<String>("database_name"));
                             }
                         }
-                        catch(Exception)
+                        catch (Exception)
                         {
 
                         }
                     }
-                    if (databases.Count>0)
-                    cmbDatabaseName.DataSource = databases;
+                    if (databases.Count > 0)
+                        cmbDatabaseName.DataSource = databases;
 
 
-                  /*  string database = this.cmbDatabaseName.Text;
-                    Epi.Cloud.SqlServer.SqlDatabase db = new SqlDatabase();
+                    /*  string database = this.cmbDatabaseName.Text;
+                      Epi.Cloud.SqlServer.SqlDatabase db = new SqlDatabase();
 
-                    dbConnectionStringBuilder = new System.Data.SqlClient.SqlConnectionStringBuilder();
-                    dbConnectionStringBuilder.DataSource = cmbServerName.Text;
-                    dbConnectionStringBuilder.UserID = txtUserName.Text;
-                    if (rdbWindowsAuthentication.Checked)
-                    {
-                        dbConnectionStringBuilder.IntegratedSecurity = true;
-                    }
-                    else
-                    {
-                        dbConnectionStringBuilder.UserID = txtUserName.Text;
-                        dbConnectionStringBuilder.Password = txtPassword.Text;
-                    }
+                      dbConnectionStringBuilder = new System.Data.SqlClient.SqlConnectionStringBuilder();
+                      dbConnectionStringBuilder.DataSource = cmbServerName.Text;
+                      dbConnectionStringBuilder.UserID = txtUserName.Text;
+                      if (rdbWindowsAuthentication.Checked)
+                      {
+                          dbConnectionStringBuilder.IntegratedSecurity = true;
+                      }
+                      else
+                      {
+                          dbConnectionStringBuilder.UserID = txtUserName.Text;
+                          dbConnectionStringBuilder.Password = txtPassword.Text;
+                      }
 
-                    db.ConnectionString = this.DbConnectionStringBuilder.ToString();
+                      db.ConnectionString = this.DbConnectionStringBuilder.ToString();
 
-                    try
-                    {
-                        if (db.TestConnection())
-                        {
-                            this.cmbDatabaseName.Text = string.Empty;
-                            List<string> databaseNamesList = db.GetDatabaseNameList();
-                            cmbDatabaseName.DataSource = databaseNamesList;
-                        }
-                        else
-                        {
-                            MessageBox.Show("Connection failed."); // TODO: hard coded string.
-                        }
+                      try
+                      {
+                          if (db.TestConnection())
+                          {
+                              this.cmbDatabaseName.Text = string.Empty;
+                              List<string> databaseNamesList = db.GetDatabaseNameList();
+                              cmbDatabaseName.DataSource = databaseNamesList;
+                          }
+                          else
+                          {
+                              MessageBox.Show("Connection failed."); // TODO: hard coded string.
+                          }
 
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Connection failed: " + ex.Message); // TODO: hard coded string
-                    }*/
+                      }
+                      catch (Exception ex)
+                      {
+                          MessageBox.Show("Connection failed: " + ex.Message); // TODO: hard coded string
+                      }*/
 
                     return;
                 }
@@ -261,7 +258,7 @@ namespace Epi.Cloud.SqlServer.Forms
                 string serverName = cmbServerName.Text;
                 if (!string.IsNullOrEmpty(serverName))
                 {
-                    List<String> databases = new List<String>();                   
+                    List<String> databases = new List<String>();
                     cmbDatabaseName.DataSource = null;
                     PreferredDatabaseName = string.Empty;
                     using (var con = new SqlConnection("Data Source=" + serverName + ";Integrated Security=True"))
@@ -276,7 +273,7 @@ namespace Epi.Cloud.SqlServer.Forms
                                 databases.Add(databas.Field<String>("database_name"));
                             }
                         }
-                        catch(Exception )
+                        catch (Exception)
                         {
 
                         }
@@ -325,7 +322,7 @@ namespace Epi.Cloud.SqlServer.Forms
             //    MessageBox.Show("Connection failed: " + ex.Message);
             //}
         }
-        
+
         #endregion  Event Handlers
 
         #region Private Methods
@@ -374,7 +371,7 @@ namespace Epi.Cloud.SqlServer.Forms
         protected void OnCancelClick()
         {
             this.dbConnectionStringBuilder.ConnectionString = string.Empty;
-            this.PreferredDatabaseName = string.Empty; 
+            this.PreferredDatabaseName = string.Empty;
 
             this.DialogResult = DialogResult.Cancel;
             this.Close();

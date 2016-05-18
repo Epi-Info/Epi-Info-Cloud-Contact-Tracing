@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.BusinessObject
@@ -22,7 +19,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         }
 
         [DataMember]
-        public string OrganizationKey 
+        public string OrganizationKey
         {
             get { return _OrganizationKey; }
             set { _OrganizationKey = value; }
@@ -37,10 +34,10 @@ namespace Epi.Web.Enter.Common.BusinessObject
 
         [DataMember]
         public int OrganizationId
-            {
+        {
             get { return _OrganizationId; }
             set { _OrganizationId = value; }
-            }
-       
+        }
+
     }
 }

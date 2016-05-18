@@ -1,6 +1,6 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;using com.calitha.goldparser;
+using System.Runtime.Serialization;
+using com.calitha.goldparser;
 
 namespace Epi
 {
@@ -9,7 +9,7 @@ namespace Epi
     /// </summary>
     [Serializable]
     public class TokenException : GeneralException
-	{
+    {
         /// <summary>
         /// Default Constructor
         /// </summary>
@@ -22,9 +22,9 @@ namespace Epi
         /// </summary>
         /// <param name="args"></param>
 		public TokenException(TokenErrorEventArgs args)
-		{
+        {
             this.tokenList = args.Token.Text;
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -48,5 +48,5 @@ namespace Epi
                 return String.Format(SharedStrings.TOKEN_EXCEPTION, tokenList);
             }
         }
- 	}
+    }
 }

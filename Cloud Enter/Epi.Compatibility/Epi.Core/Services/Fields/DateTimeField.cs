@@ -2,45 +2,43 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Date Time Field.
-	/// </summary>
-	public class DateTimeField : InputTextBoxField
-	{
-		#region Private Members
+    /// <summary>
+    /// Date Time Field.
+    /// </summary>
+    public class DateTimeField : InputTextBoxField
+    {
+        #region Private Members
         private XmlElement viewElement;
         private XmlNode fieldNode;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion Private members
-		
-		#region Constructors
-		
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public DateTimeField(Page page) 
+        #endregion Private members
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public DateTimeField(Page page)
             : base(page)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public DateTimeField(View view) 
+		public DateTimeField(View view)
             : base(view)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -60,7 +58,7 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">View</param>
         /// <param name="fieldNode">Xml field node</param>
-        public DateTimeField(View view, XmlNode fieldNode) 
+        public DateTimeField(View view, XmlNode fieldNode)
             : base(view)
         {
             construct();
@@ -73,7 +71,7 @@ namespace Epi.Fields
             genericDbColumnType = GenericDbColumnType.DateTime;
             this.dbColumnType = DbType.DateTime;
         }
-        
+
         /// <summary>
         /// Load from row
         /// </summary>
@@ -90,8 +88,8 @@ namespace Epi.Fields
             return clone;
         }
 
-		#endregion Constructors
-		
+        #endregion Constructors
+
         #region Public Properties
 
         public virtual string Watermark
@@ -101,9 +99,9 @@ namespace Epi.Fields
                 System.Globalization.DateTimeFormatInfo formatInfo = System.Globalization.DateTimeFormatInfo.CurrentInfo;
                 return string.Format("{0} {1}", formatInfo.ShortDatePattern.ToUpper(), formatInfo.LongTimePattern.ToUpper());
             }
-            set { ;}
+            set {; }
         }
-        
+
         /// <summary>
         /// Returns field type
         /// </summary>
@@ -155,14 +153,14 @@ namespace Epi.Fields
                 {
                     bool result;
                     DateTime dateTimeEntered;
-                    
+
                     result = DateTime.TryParse(value, out dateTimeEntered);
 
                     if (result)
                     {
                         CurrentRecordValueObject = dateTimeEntered;
                     }
-                    else 
+                    else
                     {
                         CurrentRecordValueObject = null;
                     }
@@ -176,7 +174,7 @@ namespace Epi.Fields
 
         #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
         /// <summary>
         /// Returns the string value that is reflected my a mirror field.
@@ -187,9 +185,9 @@ namespace Epi.Fields
             return this.CurrentRecordValueObject.ToString();
         }
 
-		#endregion Public methods
+        #endregion Public methods
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -208,10 +206,10 @@ namespace Epi.Fields
             GetMetadata().UpdateField(this);
         }
 
-		#endregion Protected Methods
+        #endregion Protected Methods
 
-		#region Event Handlers
+        #region Event Handlers
 
-		#endregion
-	}
+        #endregion
+    }
 }

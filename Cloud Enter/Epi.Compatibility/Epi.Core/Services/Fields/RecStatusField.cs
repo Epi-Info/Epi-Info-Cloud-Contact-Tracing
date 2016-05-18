@@ -1,42 +1,37 @@
-
-using System;
 using System.Data;
-using System.Drawing;
 using System.Xml;
-
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// RecStatus Field
-	/// </summary>
-	public class RecStatusField : PredefinedDataField, IMirrorable
-	{
-		#region Private Members
-		private string value = string.Empty;
+    /// <summary>
+    /// RecStatus Field
+    /// </summary>
+    public class RecStatusField : PredefinedDataField, IMirrorable
+    {
+        #region Private Members
+        private string value = string.Empty;
         private string tableName = string.Empty;
         private XmlElement viewElement;
         private XmlNode fieldNode;
-		#endregion Private Members
+        #endregion Private Members
 
-		#region Constructors
+        #region Constructors
 
-		/// <summary>
-		/// Instantiates a field
-		/// </summary>
-		/// <param name="view">The view this field belongs to</param>
-		public RecStatusField(View view) : base(view)
-		{
-			Construct();
-		}
-		private void Construct()
-		{
-			this.Name = ColumnNames.REC_STATUS;
+        /// <summary>
+        /// Instantiates a field
+        /// </summary>
+        /// <param name="view">The view this field belongs to</param>
+        public RecStatusField(View view) : base(view)
+        {
+            Construct();
+        }
+        private void Construct()
+        {
+            this.Name = ColumnNames.REC_STATUS;
             base.CurrentRecordValueObject = Constants.NORMAL;
             this.dbColumnType = DbType.Int32;
 
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -46,7 +41,7 @@ namespace Epi.Fields
         public RecStatusField(View view, XmlElement viewElement)
             : base(view)
         {
-            this.viewElement = viewElement;            
+            this.viewElement = viewElement;
         }
 
         /// <summary>
@@ -58,10 +53,10 @@ namespace Epi.Fields
             : base(view)
         {
             this.fieldNode = fieldNode;
-            this.view.Project.Metadata.GetFieldData(this, fieldNode);           
+            this.view.Project.Metadata.GetFieldData(this, fieldNode);
         }
-		
-		#endregion Constructors
+
+        #endregion Constructors
 
         #region Public Properties
         /// <summary>
@@ -130,30 +125,30 @@ namespace Epi.Fields
         }
         #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		/// <summary>
-		/// Saves the field to the database
-		/// </summary>
-		protected override void InsertField()
-		{
-			if (this.Id == 0)
-			{
+        /// <summary>
+        /// Saves the field to the database
+        /// </summary>
+        protected override void InsertField()
+        {
+            if (this.Id == 0)
+            {
                 this.Id = GetMetadata().CreateField(this);
-			}
-			else
-			{
-				throw new System.ApplicationException("Rec status field already exists");
-			}
-		}
-		
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
+            }
+            else
+            {
+                throw new System.ApplicationException("Rec status field already exists");
+            }
+        }
+
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
             GetMetadata().DeleteField(this);
-		}
+        }
 
         /// <summary>
         /// Returns the string value that is reflected my a mirror field.
@@ -164,8 +159,6 @@ namespace Epi.Fields
             return this.CurrentRecordValueString;
         }
 
-		#endregion
-
-     
-	}
+        #endregion
+    }
 }

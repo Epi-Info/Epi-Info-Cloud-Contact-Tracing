@@ -1,8 +1,5 @@
-using System;
 using System.Data;
 using Epi.DataSets;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Epi
 {
@@ -32,7 +29,7 @@ namespace Epi
             : base(row.Name, (DataType)row.DataType, VariableType.Permanent)
         {
             config = Configuration.GetNewInstance();
-            this.Expression = row.DataValue;            
+            this.Expression = row.DataValue;
         }
 
         /// <summary>

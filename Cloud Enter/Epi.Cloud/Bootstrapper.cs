@@ -1,8 +1,6 @@
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 using Unity.Mvc3;
-using Epi.Web.MVC;
-using Epi.Web.MVC;
 using Epi.Web.MVC.Utility;
 using System.Configuration;
 
@@ -17,13 +15,13 @@ namespace Epi.Web.MVC
             string s = ConfigurationManager.AppSettings["INTEGRATED_SERVICE_MODE"];
             if (!string.IsNullOrEmpty(s))
             {
-                if (s.Equals("TRUE",System.StringComparison.OrdinalIgnoreCase))
+                if (s.Equals("TRUE", System.StringComparison.OrdinalIgnoreCase))
                 {
-                     IsIntegrated = true;
+                    IsIntegrated = true;
                 }
                 else
                 {
-                     IsIntegrated = false;
+                    IsIntegrated = false;
                 }
             }
 
@@ -42,7 +40,7 @@ namespace Epi.Web.MVC
             //ConfigureInjectionFor is the API to configure injection for a particular type e.g. DataServiceClient proxy class
             //InjectionConstructor: creates an instance of Microsoft.Practices.Unity.InjectionConstructor that looks for a constructor with the given set of parameters
             // e.g. container.RegisterType<ITestService, TestService>();            
-            
+
             container.RegisterType<Epi.Web.Enter.Common.Message.SurveyInfoRequest, Epi.Web.Enter.Common.Message.SurveyInfoRequest>();
             if (IsIntegrated)
             {

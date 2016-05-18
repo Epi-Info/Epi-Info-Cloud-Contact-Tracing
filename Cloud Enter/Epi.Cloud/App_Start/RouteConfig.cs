@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Http;
+﻿using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -44,7 +40,7 @@ namespace Epi.Web.MVC
           (
               null, // Route name
               "Home/ReadSortedResponseInfo", ///{formid}/{page}/{sort}/{sortfield} URL with parameters
-              new { controller = "Home", action = "ReadSortedResponseInfo", formid = UrlParameter.Optional, page = UrlParameter.Optional, sort = UrlParameter.Optional, sortfield = UrlParameter.Optional,orgid = UrlParameter.Optional }
+              new { controller = "Home", action = "ReadSortedResponseInfo", formid = UrlParameter.Optional, page = UrlParameter.Optional, sort = UrlParameter.Optional, sortfield = UrlParameter.Optional, orgid = UrlParameter.Optional }
           ); // Parameter defaults
 
 
@@ -54,8 +50,8 @@ namespace Epi.Web.MVC
                "Home/ReadResponseInfo", // URL with parameters
                new { controller = "Home", action = "ReadResponseInfo" }
            ); // Parameter defaults
-         
-           
+
+
             routes.MapRoute
          (
              null, // Route name
@@ -63,7 +59,7 @@ namespace Epi.Web.MVC
              new { controller = "Home", action = "GetSettings", formid = UrlParameter.Optional }
          ); // Parameter defaults
 
-             
+
             routes.MapRoute
       (
           null, // Route name
@@ -81,7 +77,7 @@ namespace Epi.Web.MVC
                   null, // Route name
                   "Home/LogOut", // URL with parameters
                   new { controller = "Home", action = "LogOut", ResId = UrlParameter.Optional }
-              ); 
+              );
             routes.MapRoute
             (
                 null, // Route name
@@ -94,32 +90,32 @@ namespace Epi.Web.MVC
         "Home/CheckForConcurrency", // URL with parameters
         new { controller = "Home", action = "CheckForConcurrency", responseid = UrlParameter.Optional }
     ); // Param
-            
 
-    routes.MapRoute
-    (
-        null, // Route name
-        "Home/Notify", // URL with parameters
-        new { controller = "Home", action = "Notify", responseid = UrlParameter.Optional }
-    ); // Param
-              routes.MapRoute
-    (
-        null, // Route name
-        "Home/Unlock", // URL with parameters
-        new { controller = "Home", action = "Unlock", responseid = UrlParameter.Optional, RecoverLastRecordVersion = UrlParameter.Optional }
-    ); // Param
-              routes.MapRoute
-                  (
-                      null, // Route name
-                      "FormResponse/Unlock/{ResponseId}/{RecoverLastRecordVersion}", // URL with parameters
-                      new { controller = "FormResponse", action = "Unlock", ResponseId = UrlParameter.Optional, RecoverLastRecordVersion = UrlParameter.Optional }
-                  ); // Param
-              routes.MapRoute
+
+            routes.MapRoute
+            (
+                null, // Route name
+                "Home/Notify", // URL with parameters
+                new { controller = "Home", action = "Notify", responseid = UrlParameter.Optional }
+            ); // Param
+            routes.MapRoute
+  (
+      null, // Route name
+      "Home/Unlock", // URL with parameters
+      new { controller = "Home", action = "Unlock", responseid = UrlParameter.Optional, RecoverLastRecordVersion = UrlParameter.Optional }
+  ); // Param
+            routes.MapRoute
                 (
                     null, // Route name
-                    "FormResponse/CheckForConcurrency", // URL with parameters
-                    new { controller = "FormResponse", action = "CheckForConcurrency" }
-                ); 
+                    "FormResponse/Unlock/{ResponseId}/{RecoverLastRecordVersion}", // URL with parameters
+                    new { controller = "FormResponse", action = "Unlock", ResponseId = UrlParameter.Optional, RecoverLastRecordVersion = UrlParameter.Optional }
+                ); // Param
+            routes.MapRoute
+              (
+                  null, // Route name
+                  "FormResponse/CheckForConcurrency", // URL with parameters
+                  new { controller = "FormResponse", action = "CheckForConcurrency" }
+              );
             routes.MapRoute
             (
                 null, // Route name
@@ -132,7 +128,7 @@ namespace Epi.Web.MVC
                    "FormResponse/CheckForConcurrency", // URL with parameters
                    new { controller = "FormResponse", action = "CheckForConcurrency", ResponseId = UrlParameter.Optional }
                ); // Param*/
-           
+
             routes.MapRoute
            (
                null, // Route name
@@ -170,7 +166,7 @@ namespace Epi.Web.MVC
                "FormResponse/ReadResponseInfo", // URL with parameters
                new { controller = "FormResponse", action = "ReadResponseInfo", ResId = UrlParameter.Optional }
            );
-           
+
             routes.MapRoute
             (
                 null, // Route name
@@ -227,14 +223,14 @@ namespace Epi.Web.MVC
                    "Survey/DeleteBranch/{responseid}", // URL with parameters
                    new { controller = "Survey", action = "DeleteBranch", responseid = UrlParameter.Optional, PageNumber = UrlParameter.Optional }
                );
-            
+
             routes.MapRoute
                (
                    null, // Route name
                    "Survey/AddChild", // URL with parameters
                    new { controller = "Survey", action = "AddChild" }
                );
-          
+
             routes.MapRoute
               (
                   null, // Route name
@@ -258,7 +254,7 @@ namespace Epi.Web.MVC
                  null, // Route name
                  "Survey/LogOut", // URL with parameters
                  new { controller = "Survey", action = "LogOut", ResId = UrlParameter.Optional }
-             ); 
+             );
 
             routes.MapRoute
                 (
@@ -266,8 +262,8 @@ namespace Epi.Web.MVC
                     "Survey/{responseid}/{PageNumber}", // URL with parameters
                     new { controller = "Survey", action = "Index", responseid = UrlParameter.Optional, PageNumber = UrlParameter.Optional }
                 ); // Parameter defaults
-            
-           
+
+
             routes.MapRoute
              (
                  null, // Route name
@@ -296,7 +292,7 @@ namespace Epi.Web.MVC
                   new { controller = "Login", action = "Index" }
               ); // Parameter defaults
 
-           
+
 
 
             routes.MapRoute
@@ -351,7 +347,7 @@ namespace Epi.Web.MVC
                 (
                     null, // Route name
                     "AdminOrganization/Cancel", // URL with parameters
-                    new { controller = "AdminOrganization", action = "Cancel"}
+                    new { controller = "AdminOrganization", action = "Cancel" }
                 ); // Parameter defaults
 
 
@@ -361,21 +357,21 @@ namespace Epi.Web.MVC
            "AdminUser/GetUserInfoAD", // URL with parameters
            new { controller = "AdminUser", action = "GetUserInfoAD", email = UrlParameter.Optional }
        ); // Parameter defaults
-           
+
             routes.MapRoute
             (
                 null, // Route name
                 "AdminUser/GetUserList", // URL with parameters
                 new { controller = "AdminUser", action = "GetUserList", orgid = UrlParameter.Optional }
             ); // Parameter defaults
-          
+
             routes.MapRoute
               (
                   null, // Route name
                   "AdminUser/UserList", // URL with parameters
                   new { controller = "AdminUser", action = "UserList" }
               ); // Parameter defaults
-        
+
             routes.MapRoute
               (
                   null, // Route name

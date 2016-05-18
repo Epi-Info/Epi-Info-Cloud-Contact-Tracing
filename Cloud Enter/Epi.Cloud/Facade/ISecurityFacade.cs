@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Epi.Web.Enter.Common.DTO;
+﻿using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Facade

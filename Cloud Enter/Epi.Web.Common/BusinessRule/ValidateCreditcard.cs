@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Epi.Web.Enter.Common.BusinessRule
+﻿namespace Epi.Web.Enter.Common.BusinessRule
 {
     /// <summary>
     /// Credit card validation rule.
@@ -12,7 +7,7 @@ namespace Epi.Web.Enter.Common.BusinessRule
     /// </summary>
     public class ValidateCreditcard : ValidateRegex
     {
-        
+
         public ValidateCreditcard(string propertyName) :
             base(propertyName, @"^((\d{4}[- ]?){3}\d{4})$")
         {

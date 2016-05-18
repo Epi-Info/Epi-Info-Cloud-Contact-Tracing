@@ -17,7 +17,7 @@
 //        private static IDictionary languageDictionary = null;
 //        #endregion
 
-       
+
 //        #region Protected Properties
 
 //        /// <summary>
@@ -143,10 +143,10 @@
 //            return englishString;
 //        }
 
-       
+
 //        protected const string COLUMN_NAME_ENGLISH = "lang_en-US";
 
-       
+
 //        protected const string TRANSLATION_TABLE_NAME = "Translations";
 
 
@@ -290,7 +290,7 @@
 //        //    }
 //        //}
 
-    
+
 //        #endregion Public Methods
 
 //    }

@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-
 namespace Epi
 {
     /// <summary>
@@ -25,7 +20,7 @@ namespace Epi
         /// <summary>
         /// Variable prompt text.
         /// </summary>
-        string PromptText { get; set;}
+        string PromptText { get; set; }
         /// <summary>
         /// Is variable <paramref name="typeCombination"/> type?
         /// </summary>

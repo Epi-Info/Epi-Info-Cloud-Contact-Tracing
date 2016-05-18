@@ -43,7 +43,7 @@
 //                        result -= quantity;
 //                        break;
 //                }
-                
+
 //                return result.ToString();
 //            }
 //            set

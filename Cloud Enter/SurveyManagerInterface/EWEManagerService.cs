@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
@@ -14,8 +11,7 @@ using Epi.Web.Enter.Common.Exception;
 using Epi.Web.BLL;
 
 using System.Configuration;
-using Epi.Web.Enter.Common.Security;
- 
+
 namespace Epi.Web.WCF.SurveyService
 {
     public class EWEManagerService : IEWEManagerService
@@ -40,7 +36,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EF.EntityOrganizationDao();
 
 
-                Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao,OrganizationDao);
+                Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
                 SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
                 SurveyRequestResultBO surveyRequestResultBO = Implementation.PublishSurvey(surveyInfoBO);
                 result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
@@ -59,7 +55,7 @@ namespace Epi.Web.WCF.SurveyService
         }
 
 
-       
+
 
 
         /// <summary>
@@ -99,13 +95,9 @@ namespace Epi.Web.WCF.SurveyService
                     SurveyIdList.Add(id.ToUpper());
                 }
 
-
-                
-
-                
                 List<SurveyInfoBO> SurveyBOList = new List<SurveyInfoBO>();
-              //  int ResponseMaxSize = 16384;   
-                int ResponseMaxSize =   Int32.Parse(ConfigurationManager.AppSettings["maxBytesPerRead"]);
+                //  int ResponseMaxSize = 16384;   
+                int ResponseMaxSize = Int32.Parse(ConfigurationManager.AppSettings["maxBytesPerRead"]);
                 int BandwidthUsageFactor = Int32.Parse(ConfigurationManager.AppSettings["BandwidthUsageFactor"]);
 
 
@@ -116,7 +108,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.BLL.Organization implementation1 = new Epi.Web.BLL.Organization(surveyInfoDao1);
                 bool ISValidOrg = implementation1.ValidateOrganization(pRequest.Criteria.OrganizationKey.ToString());
 
-           if (ISValidOrg)
+                if (ISValidOrg)
                 {
                     if (pRequest.Criteria.ReturnSizeInfoOnly == true)
                     {
@@ -130,13 +122,12 @@ namespace Epi.Web.WCF.SurveyService
                         SurveyBOList = implementation.GetSurveyInfo(SurveyIdList, criteria.ClosingDate, criteria.OrganizationKey.ToString(), criteria.SurveyType, criteria.PageNumber, criteria.PageSize);//Default 
                         foreach (SurveyInfoBO surveyInfoBO in SurveyBOList)
                         {
-
                             result.SurveyInfoList.Add(Mapper.ToDataTransferObject(surveyInfoBO));
-
                         }
                     }
                 }
-                else {
+                else
+                {
 
                     result.Message = "Organization Key not found";
                 }
@@ -164,10 +155,8 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
-                
-                Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
-                
 
+                Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
                 var response = new SurveyInfoResponse(request.RequestId);
 
@@ -197,76 +186,76 @@ namespace Epi.Web.WCF.SurveyService
                 // The Decorator Design Pattern. 
                 //using (TransactionDecorator transaction = new TransactionDecorator())
                 {
-                    
+
                     bool validSurvey = false;
                     //GetSurveyInfoByOrgKey
                     //validSurvey = Implementation.IsSurveyInfoValidByOrgKeyAndPublishKey(SurveyInfo.SurveyId, SurveyInfo.OrganizationKey.ToString(), SurveyInfo.UserPublishKey);
                     validSurvey = Implementation.IsSurveyInfoValidByOrgKey(SurveyInfo.SurveyId, SurveyInfo.OrganizationKey.ToString());
 
-                     Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao entityDaoFactory1 = new EF.EntityOrganizationDao();
-                     Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao surveyInfoDao1 = entityDaoFactory1;
-                     Epi.Web.BLL.Organization implementation1 = new Epi.Web.BLL.Organization(surveyInfoDao1);
-                     bool ISValidOrg = implementation1.ValidateOrganization(SurveyInfo.OrganizationKey.ToString());
+                    Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao entityDaoFactory1 = new EF.EntityOrganizationDao();
+                    Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao surveyInfoDao1 = entityDaoFactory1;
+                    Epi.Web.BLL.Organization implementation1 = new Epi.Web.BLL.Organization(surveyInfoDao1);
+                    bool ISValidOrg = implementation1.ValidateOrganization(SurveyInfo.OrganizationKey.ToString());
 
-                     if (ISValidOrg )
+                    if (ISValidOrg)
                     {
 
-                                 if (validSurvey)
+                        if (validSurvey)
+                        {
+
+
+                            if (request.Action == "Create")
+                            {
+                                Implementation.InsertSurveyInfo(SurveyInfo);
+                                response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
+                            }
+                            else if (request.Action == "Update")
+                            {
+                                Implementation.UpdateSurveyInfo(SurveyInfo);
+                                response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
+                                response.Message = SurveyInfo.StatusText;
+
+                            }
+                            else if (request.Action == "UpdateMode")
+                            {
+                                Implementation.UpdateSurveyInfo(SurveyInfo);
+                                response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
+                                response.Message = SurveyInfo.StatusText;
+                                //ImplementationAdmin.SendEmailToAdmins(SurveyInfo);// This process does not apply for EWE.
+                            }
+                            else if (request.Action == "Delete")
+                            {
+                                var criteria = request.Criteria as SurveyInfoCriteria;
+                                var survey = Implementation.GetSurveyInfoById(SurveyInfo.SurveyId);
+
+                                try
                                 {
-
-
-                                    if (request.Action == "Create")
+                                    if (Implementation.DeleteSurveyInfo(survey))
                                     {
-                                        Implementation.InsertSurveyInfo(SurveyInfo);
-                                        response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
+                                        response.RowsAffected = 1;
                                     }
-                                    else if (request.Action == "Update")
+                                    else
                                     {
-                                        Implementation.UpdateSurveyInfo(SurveyInfo);
-                                        response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
-                                        response.Message = SurveyInfo.StatusText;
-                                         
-                                    }
-                                    else if (request.Action == "UpdateMode")
-                                        {
-                                        Implementation.UpdateSurveyInfo(SurveyInfo);
-                                        response.SurveyInfoList.Add(Mapper.ToDataTransferObject(SurveyInfo));
-                                        response.Message = SurveyInfo.StatusText;
-                                        //ImplementationAdmin.SendEmailToAdmins(SurveyInfo);// This process does not apply for EWE.
-                                        }
-                                    else if (request.Action == "Delete")
-                                    {
-                                        var criteria = request.Criteria as SurveyInfoCriteria;
-                                        var survey = Implementation.GetSurveyInfoById(SurveyInfo.SurveyId);
-
-                                        try
-                                        {
-                                            if (Implementation.DeleteSurveyInfo(survey))
-                                            {
-                                                response.RowsAffected = 1;
-                                            }
-                                            else
-                                            {
-                                                response.RowsAffected = 0;
-                                            }
-                                        }
-                                        catch
-                                        {
-                                            response.RowsAffected = 0;
-                                        }
+                                        response.RowsAffected = 0;
                                     }
                                 }
-                                else
+                                catch
                                 {
-
-                                    response.Message = "SurveyId And/or Publish Key are invalid.";
+                                    response.RowsAffected = 0;
                                 }
+                            }
+                        }
+                        else
+                        {
+
+                            response.Message = "SurveyId And/or Publish Key are invalid.";
+                        }
                     }
-                     else
-                     {
+                    else
+                    {
 
-                         response.Message = "Organization Key is invalid.";
-                     }
+                        response.Message = "Organization Key is invalid.";
+                    }
                 }
 
                 return response;
@@ -281,12 +270,6 @@ namespace Epi.Web.WCF.SurveyService
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
         }
-
-
-
-
-
-
 
         /// <summary>
         /// 
@@ -304,7 +287,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
-               
+
 
 
                 //Get Organization Info
@@ -313,13 +296,13 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao surveyInfoDao1 = entityDaoFactory1;
 
                 Epi.Web.BLL.Organization implementation1 = new Epi.Web.BLL.Organization(surveyInfoDao1);
-                
+
                 bool ISValidOrg = implementation1.ValidateOrganization(pRequest.Criteria.OrganizationKey.ToString());
 
 
-                
+
                 if (ISValidOrg)
-             
+
                 {
 
                     // Validate client tag, access token, and user credentials
@@ -347,11 +330,11 @@ namespace Epi.Web.WCF.SurveyService
                     //List<string> SurveyIdList = new List<string>();
 
                     //SurveyIdList.Add(criteria.SurveyId);
-                   
+
 
                     bool validSurvey = false;
-                   // if (string.IsNullOrEmpty(criteria.SurveyId.ToString()))
-                   // {
+                    // if (string.IsNullOrEmpty(criteria.SurveyId.ToString()))
+                    // {
                     validSurvey = SurveyInfo.IsSurveyInfoValidByOrgKeyAndPublishKey(criteria.SurveyId, criteria.OrganizationKey.ToString(), criteria.UserPublishKey);
 
                     //}
@@ -398,9 +381,9 @@ namespace Epi.Web.WCF.SurveyService
                         {
                             // call BLL with a list of records 
 
-                            PageInfoBO PageInfoBO = Implementation.GetResponseSurveySize(IdList, criteria.SurveyId,  criteria.DateCompleted,BandwidthUsageFactor,criteria.IsDraftMode, criteria.StatusId, -1, -1, ResponseMaxSize);
+                            PageInfoBO PageInfoBO = Implementation.GetResponseSurveySize(IdList, criteria.SurveyId, criteria.DateCompleted, BandwidthUsageFactor, criteria.IsDraftMode, criteria.StatusId, -1, -1, ResponseMaxSize);
 
-                           
+
 
                             result.PageSize = PageInfoBO.PageSize;
                             result.NumberOfPages = PageInfoBO.NumberOfPages;
@@ -417,17 +400,14 @@ namespace Epi.Web.WCF.SurveyService
                                         criteria.IsDraftMode
                                     );
 
- 
-
-
 
                             foreach (SurveyResponseBO surveyResponseBo in SurveyResponseBOList)
                             {
                                 // if (surveyResponseBo.UserPublishKey == criteria.UserPublishKey)
                                 //if (UserPublishKey == criteria.UserPublishKey)
                                 //{
-                                    result.SurveyResponseList.Add(Mapper.ToDataTransferObject(surveyResponseBo));
-                              //  }
+                                result.SurveyResponseList.Add(Mapper.ToDataTransferObject(surveyResponseBo));
+                                //  }
                             }
                         }
                         /*
@@ -447,9 +427,9 @@ namespace Epi.Web.WCF.SurveyService
                 }
                 else
                 {
-                  result.Message = "Organization Key not found";
+                    result.Message = "Organization Key not found";
                 }
-               
+
                 return result;
             }
             catch (Exception ex)
@@ -498,7 +478,7 @@ namespace Epi.Web.WCF.SurveyService
             if (!ValidRequest(request, response, Validate.ClientTag | Validate.AccessToken))
                 return response;
 
-            if (! ValidateUser(request.UserName, request.Password))
+            if (!ValidateUser(request.UserName, request.Password))
             {
                 response.Acknowledge = AcknowledgeType.Failure;
                 //response.Message = "Invalid username and/or password.";
@@ -546,7 +526,7 @@ namespace Epi.Web.WCF.SurveyService
                 if (request.ClientTag != "ABC123")
                 {
                     response.Acknowledge = AcknowledgeType.Failure;
-                   // response.Message = "Unknown Client Tag";
+                    // response.Message = "Unknown Client Tag";
                     //return false;
                 }
             }
@@ -602,38 +582,39 @@ namespace Epi.Web.WCF.SurveyService
 
         public OrganizationResponse GetOrganization(OrganizationRequest request)
         {
-           
+
             try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
-                 // Transform SurveyInfo data transfer object to SurveyInfo business object
-                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
-                 var response = new OrganizationResponse(request.RequestId);
+                // Transform SurveyInfo data transfer object to SurveyInfo business object
+                OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
+                var response = new OrganizationResponse(request.RequestId);
 
-                 if (Epi.Web.BLL.Common.ValidateAdmin(request.AdminSecurityKey.ToString()))
-                 {
+                if (Epi.Web.BLL.Common.ValidateAdmin(request.AdminSecurityKey.ToString()))
+                {
 
-                     // Validate client tag, access token, and user credentials
+                    // Validate client tag, access token, and user credentials
 
-                     if (!ValidRequest(request, response, Validate.All))
-                         return response;
+                    if (!ValidRequest(request, response, Validate.All))
+                        return response;
 
-                     List<OrganizationBO> ListOrganizationBO = Implementation.GetOrganizationKey(Organization.Organization);
-                     response.OrganizationList = new List<OrganizationDTO>();
-                     foreach (OrganizationBO Item in ListOrganizationBO)
-                     {
-                         (response.OrganizationList).Add(Mapper.ToDataTransferObjects(Item));
+                    List<OrganizationBO> ListOrganizationBO = Implementation.GetOrganizationKey(Organization.Organization);
+                    response.OrganizationList = new List<OrganizationDTO>();
+                    foreach (OrganizationBO Item in ListOrganizationBO)
+                    {
+                        (response.OrganizationList).Add(Mapper.ToDataTransferObjects(Item));
 
-                     }
-                     return response;
-                 }
-                 else {
-                     response.Message = "Invalid Admin Key";
-                     return response;
-                 }
-              
-                 
+                    }
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Invalid Admin Key";
+                    return response;
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -648,7 +629,7 @@ namespace Epi.Web.WCF.SurveyService
 
         public OrganizationResponse GetOrganizationInfo(OrganizationRequest request)
         {
-            
+
             try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
@@ -678,7 +659,7 @@ namespace Epi.Web.WCF.SurveyService
                 {
                     response.Message = "Invalid Admin Key";
 
-                    return response ;
+                    return response;
                 }
 
 
@@ -697,7 +678,7 @@ namespace Epi.Web.WCF.SurveyService
 
         public OrganizationResponse GetOrganizationNames(OrganizationRequest request)
         {
-           try
+            try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
@@ -713,7 +694,7 @@ namespace Epi.Web.WCF.SurveyService
                     if (!ValidRequest(request, response, Validate.All))
                         return response;
 
-                    List<OrganizationBO> ListOrganizationBO = Implementation.GetOrganizationNames(); 
+                    List<OrganizationBO> ListOrganizationBO = Implementation.GetOrganizationNames();
                     response.OrganizationList = new List<OrganizationDTO>();
                     foreach (OrganizationBO Item in ListOrganizationBO)
                     {
@@ -745,9 +726,9 @@ namespace Epi.Web.WCF.SurveyService
 
         public OrganizationResponse SetOrganization(OrganizationRequest request)
         {
-          
+
             try
-            {                             
+            {
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
@@ -756,7 +737,7 @@ namespace Epi.Web.WCF.SurveyService
                 // Validate client tag, access token, and user credentials
                 if (Epi.Web.BLL.Common.ValidateAdmin(request.AdminSecurityKey.ToString()))
                 {
-                    
+
 
                     if (!ValidRequest(request, response, Validate.All))
                         return response;
@@ -770,10 +751,11 @@ namespace Epi.Web.WCF.SurveyService
 
                         response.Message = "Successfully added organization Key";
                     }
-                       
+
                     return response;
                 }
-                else {
+                else
+                {
                     response.Message = "Invalid Admin Key";
                     return response;
                 }
@@ -793,11 +775,11 @@ namespace Epi.Web.WCF.SurveyService
 
         public OrganizationResponse GetOrganizationByKey(OrganizationRequest request)
         {
-           try
+            try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
-               
+
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
                 var response = new OrganizationResponse(request.RequestId);
@@ -810,12 +792,12 @@ namespace Epi.Web.WCF.SurveyService
                     if (!ValidRequest(request, response, Validate.All))
                         return response;
 
-                    OrganizationBO OrganizationBO = Implementation.GetOrganizationByKey( Organization.OrganizationKey .ToString());
+                    OrganizationBO OrganizationBO = Implementation.GetOrganizationByKey(Organization.OrganizationKey.ToString());
                     response.OrganizationList = new List<OrganizationDTO>();
 
                     (response.OrganizationList).Add(Mapper.ToDataTransferObjects(OrganizationBO));
 
-                   
+
                     return response;
                 }
                 else
@@ -874,7 +856,7 @@ namespace Epi.Web.WCF.SurveyService
                             return response;
                         }
                     }
-                    
+
                     return response;
                 }
                 else
@@ -896,208 +878,198 @@ namespace Epi.Web.WCF.SurveyService
 
         }
 
-         public  bool IsValidOrgKey(SurveyInfoRequest request){
+        public bool IsValidOrgKey(SurveyInfoRequest request)
+        {
 
-              try
+            try
             {
-             
-             bool validSurvey = false;
-             //var SurveyInfo = Mapper.ToBusinessObject(request.SurveyInfoList[0]);
-             if (request.Criteria.SurveyIdList.Count == 0)
-             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao organizationDao = new EF.EntityOrganizationDao();
-                Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(organizationDao);
-                Epi.Web.Enter.Common.BusinessObject.OrganizationBO ogranizationBO = Implementation.GetOrganizationByKey(request.Criteria.OrganizationKey.ToString());
-                if (ogranizationBO == null)
+
+                bool validSurvey = false;
+                //var SurveyInfo = Mapper.ToBusinessObject(request.SurveyInfoList[0]);
+                if (request.Criteria.SurveyIdList.Count == 0)
                 {
-                    validSurvey = false;
+                    Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao organizationDao = new EF.EntityOrganizationDao();
+                    Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(organizationDao);
+                    Epi.Web.Enter.Common.BusinessObject.OrganizationBO ogranizationBO = Implementation.GetOrganizationByKey(request.Criteria.OrganizationKey.ToString());
+                    if (ogranizationBO == null)
+                    {
+                        validSurvey = false;
+                    }
+                    else
+                    {
+                        validSurvey = true;
+                    }
+
+
                 }
                 else
                 {
-                    validSurvey = true;
+                    Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
+                    Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
+                    validSurvey = Implementation.IsSurveyInfoValidByOrgKey(request.Criteria.SurveyIdList[0].ToString(), request.Criteria.OrganizationKey.ToString());
                 }
-
-
-             }
-             else
-             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
-                Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
-                validSurvey = Implementation.IsSurveyInfoValidByOrgKey(request.Criteria.SurveyIdList[0].ToString(), request.Criteria.OrganizationKey.ToString());
-             }
-             return validSurvey;
+                return validSurvey;
             }
-              catch (Exception ex)
-              {
-                  CustomFaultException customFaultException = new CustomFaultException();
-                  customFaultException.CustomMessage = ex.Message;
-                  customFaultException.Source = ex.Source;
-                  customFaultException.StackTrace = ex.StackTrace;
-                  customFaultException.HelpLink = ex.HelpLink;
-                  throw new FaultException<CustomFaultException>(customFaultException);
-              }
-         }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
 
-         /// <summary>
-         /// 
-         /// </summary>
-         /// <param name="pRequestMessage"></param>
-         /// <returns></returns>
-         public PublishResponse RePublishSurvey(PublishRequest pRequest)
-             {
-             try
-                 {
-                 PublishResponse result = new PublishResponse(pRequest.RequestId);
-                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
-                 Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EF.EntityOrganizationDao();
-
-
-                 Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
-                 SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
-                 SurveyRequestResultBO surveyRequestResultBO = Implementation.RePublishSurvey(surveyInfoBO);
-                 result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
-
-                 return result;
-                 }
-             catch (Exception ex)
-                 {
-                 CustomFaultException customFaultException = new CustomFaultException();
-                 customFaultException.CustomMessage = ex.Message;
-                 customFaultException.Source = ex.Source;
-                 customFaultException.StackTrace = ex.StackTrace;
-                 customFaultException.HelpLink = ex.HelpLink;
-                 throw new FaultException<CustomFaultException>(customFaultException);
-                 }
-             }
-
-         public UserAuthenticationResponse UserLogin(UserAuthenticationRequest request)
-             {
-             
-
-             var response = new UserAuthenticationResponse();
-             Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
-             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
-
-             
-             UserBO UserBO = Mapper.ToUserBO(request.User);
-              
-
-             UserBO result = Implementation.GetUser(UserBO);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pRequestMessage"></param>
+        /// <returns></returns>
+        public PublishResponse RePublishSurvey(PublishRequest pRequest)
+        {
+            try
+            {
+                PublishResponse result = new PublishResponse(pRequest.RequestId);
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EF.EntityOrganizationDao();
 
 
+                Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
+                SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
+                SurveyRequestResultBO surveyRequestResultBO = Implementation.RePublishSurvey(surveyInfoBO);
+                result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
 
-             if (result != null)
-                 {
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
 
-                 //response.Acknowledge = AcknowledgeType.Failure; TBD
-                 //response.Message = "Invalid Pass Code.";
-                 response.User = Mapper.ToUserDTO(result);
-                 response.UserIsValid = true;
+        public UserAuthenticationResponse UserLogin(UserAuthenticationRequest request)
+        {
+            var response = new UserAuthenticationResponse();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+            Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
-                 }
-             else
-                 {
-                 response.UserIsValid = false;
+            UserBO UserBO = Mapper.ToUserBO(request.User);
 
-                 }
+            UserBO result = Implementation.GetUser(UserBO);
 
+            if (result != null)
+            {
 
-             return response;
-             }
-         public bool UpdateUser(UserAuthenticationRequest request)
-             {
-             Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
-             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
+                //response.Acknowledge = AcknowledgeType.Failure; TBD
+                //response.Message = "Invalid Pass Code.";
+                response.User = Mapper.ToUserDTO(result);
+                response.UserIsValid = true;
 
-             UserBO UserBO = Mapper.ToUserBO(request.User);
-             OrganizationBO OrgBO = new OrganizationBO();
-             return Implementation.UpdateUser(UserBO, OrgBO);
+            }
+            else
+            {
+                response.UserIsValid = false;
 
-             }
-
-
-         public UserAuthenticationResponse GetUser(UserAuthenticationRequest request)
-             {
-             try
-                 {
-                 var response = new UserAuthenticationResponse();
-                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-                 Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
-                 Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
-
-                 UserBO UserBO = Mapper.ToUserBO(request.User);
-
-                 // UserBO result = Implementation.GetUserByUserId(UserBO);
-
-                 UserBO result = Implementation.GetUserByEmail(UserBO);
-
-                 if (result != null)
-                     {
+            }
 
 
-                     response.User = Mapper.ToUserDTO(result);
+            return response;
+        }
+        public bool UpdateUser(UserAuthenticationRequest request)
+        {
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+            Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
-                     }
-                 return response;
-                 }
-             catch (Exception ex)
-             {
+            UserBO UserBO = Mapper.ToUserBO(request.User);
+            OrganizationBO OrgBO = new OrganizationBO();
+            return Implementation.UpdateUser(UserBO, OrgBO);
 
-             throw ex;
-              }
+        }
 
-            
-             }
 
-         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
-             {
-             try
-                 {
+        public UserAuthenticationResponse GetUser(UserAuthenticationRequest request)
+        {
+            try
+            {
+                var response = new UserAuthenticationResponse();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+                Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
-                 PreFilledAnswerResponse response;
-                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
-                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
+                UserBO UserBO = Mapper.ToUserBO(request.User);
 
-                 response = Implementation.SetSurveyAnswer(request);
+                // UserBO result = Implementation.GetUserByUserId(UserBO);
 
-                 return response;
-                 }
-             catch (Exception ex)
-                 {
+                UserBO result = Implementation.GetUserByEmail(UserBO);
+
+                if (result != null)
+                {
+                    response.User = Mapper.ToUserDTO(result);
+                }
+                return response;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
+        {
+            try
+            {
+                PreFilledAnswerResponse response;
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
+                Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
+
+                response = Implementation.SetSurveyAnswer(request);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
                 // PassCodeDTO DTOList = new Common.DTO.PassCodeDTO();
                 // PreFilledAnswerResponse response = new PreFilledAnswerResponse(DTOList);
-                 PreFilledAnswerResponse response = new PreFilledAnswerResponse();
-                 response.ErrorMessageList.Add("Failed", "Failed to insert Response");
-                 response.Status = ((Epi.Web.BLL.SurveyResponse.Message)1).ToString();
-                 return response;
-                 }
-             }
-         public bool PingManagerService() {
+                PreFilledAnswerResponse response = new PreFilledAnswerResponse();
+                response.ErrorMessageList.Add("Failed", "Failed to insert Response");
+                response.Status = ((Epi.Web.BLL.SurveyResponse.Message)1).ToString();
+                return response;
+            }
+        }
+        public bool PingManagerService()
+        {
 
-         return true;
-             }
+            return true;
+        }
 
-        public  void SetSurveyAnswerStatus(SurveyAnswerRequest pRequest)
+        public void SetSurveyAnswerStatus(SurveyAnswerRequest pRequest)
+        {
+            SurveyAnswerResponse SurveyAnswerResponse = new SurveyAnswerResponse();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
+            Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
+            List<SurveyResponseBO> SurveyAnswerList = new List<SurveyResponseBO>();
+            SurveyAnswerList = Implementation.GetResponsesHierarchyIdsByRootId(pRequest.Criteria.SurveyAnswerIdList[0].ToString());
+
+            foreach (var response in SurveyAnswerList)
             {
-        SurveyAnswerResponse SurveyAnswerResponse = new SurveyAnswerResponse();
-        Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-        Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-        Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
-        List<SurveyResponseBO> SurveyAnswerList = new List<SurveyResponseBO>();
-        SurveyAnswerList = Implementation.GetResponsesHierarchyIdsByRootId(pRequest.Criteria.SurveyAnswerIdList[0].ToString());
-
-        foreach (var response in SurveyAnswerList)
-            {
-            var obj = Mapper.ToBusinessObject(Mapper.ToDataTransferObject(response), pRequest.Criteria.UserId);
-            obj.Status = pRequest.Criteria.StatusId;
-            Implementation.UpdateRecordStatus(obj);
+                var obj = Mapper.ToBusinessObject(Mapper.ToDataTransferObject(response), pRequest.Criteria.UserId);
+                obj.Status = pRequest.Criteria.StatusId;
+                Implementation.UpdateRecordStatus(obj);
 
             }
-             
-             
-             }
+
+
+        }
 
         public void UpdateRecordStatus(SurveyAnswerRequest pRequestMessage)
         {
@@ -1156,8 +1128,6 @@ namespace Epi.Web.WCF.SurveyService
             }
 
             return Response;
-
-
         }
     }
 }

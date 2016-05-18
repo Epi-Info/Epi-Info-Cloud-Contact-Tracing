@@ -3,11 +3,7 @@ using Epi.Cloud.DataEntryServices.Model;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -42,7 +38,7 @@ namespace Epi.Cloud.DataEntryServices
 
                         // 3.
                         Console.WriteLine("3. Getting reference to a DocumentCollection");
-                       // DocumentCollection collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName);
+                        // DocumentCollection collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName);
 
                         // 4. 
                         Console.WriteLine("4. Inserting Documents");
@@ -63,7 +59,7 @@ namespace Epi.Cloud.DataEntryServices
         ///If DB is not avaliable in Document Db create DB
         /// </summary>
         private static Database ReadOrCreateDatabase(string databaseId)
-        { 
+        {
             var db = client.CreateDatabaseQuery()
                             .Where(d => d.Id == databaseId)
                             .AsEnumerable()
@@ -120,7 +116,7 @@ namespace Epi.Cloud.DataEntryServices
             // In DocumentDB every Document must have an "id" property. If you supply one, it must be unique. 
             // If you do not supply one, DocumentDB will generate a GUID for you and add it to the Document as "id".
             // You can disable the auto generaction of ids if you prefer by setting the disableAutomaticIdGeneration option on CreateDocumentAsync method
-            var task1 = client.CreateDocumentAsync(collectionLink, surveyData); 
+            var task1 = client.CreateDocumentAsync(collectionLink, surveyData);
             // Wait for the above Async operations to finish executing
             Task.WaitAll(task1);
 

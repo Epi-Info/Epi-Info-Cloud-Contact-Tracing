@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Xml;
-
-namespace Epi.Web.Utility
+﻿namespace Epi.Web.Utility
 {
     public class ValidateResponse
     {

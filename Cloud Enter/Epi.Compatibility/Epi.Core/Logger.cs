@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 using Epi.Data;
@@ -64,7 +62,7 @@ namespace Epi
             // Log parameters ...
             foreach (QueryParameter param in query.Parameters)
             {
-                paramsString += param.ParameterName + "=" + (Util.IsEmpty(param.Value) ? String.Empty:param.Value.ToString()) + ";   ";
+                paramsString += param.ParameterName + "=" + (Util.IsEmpty(param.Value) ? String.Empty : param.Value.ToString()) + ";   ";
             }
             Log(paramsString);
         }
@@ -78,14 +76,14 @@ namespace Epi
             EnsureLogFileExists();
             return logFilePath;
         }
-        
+
         #endregion Public Methods
 
         #region Private Methods
         private static bool EnsureLogFileExists()
         {
             Configuration config = Configuration.GetNewInstance();
-            
+
             try
             {
                 // If the log file name is not availabe, create it.
@@ -97,7 +95,7 @@ namespace Epi
                     dateStamp = dateStamp.Replace(StringLiterals.COLON, StringLiterals.UNDER_SCORE);
                     dateStamp = dateStamp.Replace(StringLiterals.SPACE, StringLiterals.UNDER_SCORE);
                     string logFileName = "EpiInfo_Log_" + dateStamp + ".txt";
-                    
+
                     config = Configuration.GetNewInstance();
                     logFilePath = Path.Combine(config.Directories.LogDir, logFileName);
                 }
@@ -106,7 +104,7 @@ namespace Epi
                 {
                     Directory.CreateDirectory(config.Directories.LogDir);
                 }
-                
+
                 // if log file doesn't exist, create the file.
                 if (!File.Exists(logFilePath))
                 {

@@ -1,7 +1,3 @@
-using System;
-using Epi;
-using System.Collections.Generic;
-
 namespace Epi.Collections
 {
     /// <summary>

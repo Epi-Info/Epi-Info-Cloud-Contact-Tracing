@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data;
-
-using Epi.Collections;
 using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;
 
 namespace Epi

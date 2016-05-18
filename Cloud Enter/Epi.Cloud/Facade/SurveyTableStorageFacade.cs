@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.MVC.Models;
-using MvcDynamicForms;
-using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.DataEntryServices;
-using System.Threading.Tasks;
-
-namespace Epi.Web.MVC.Facade
+﻿namespace Epi.Web.MVC.Facade
 {
     public class SurveyTableStorageFacade : ISurveyTableStorageFacade
     {

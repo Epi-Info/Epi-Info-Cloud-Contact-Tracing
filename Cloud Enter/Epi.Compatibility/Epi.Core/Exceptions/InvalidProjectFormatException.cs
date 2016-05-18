@@ -1,5 +1,3 @@
-using System;
-
 namespace Epi
 {
 
@@ -7,12 +5,12 @@ namespace Epi
     /// Class InvalidProjectFormatException
     /// </summary>
 	public class InvalidProjectFormatException
-	{
+    {
         /// <summary>
         /// Constructor
         /// </summary>
 		public InvalidProjectFormatException()
-		{
-		}
-	}
+        {
+        }
+    }
 }

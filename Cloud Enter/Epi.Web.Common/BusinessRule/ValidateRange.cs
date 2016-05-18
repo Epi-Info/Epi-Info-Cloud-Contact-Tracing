@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Epi.Web.Enter.Common.BusinessRule
 {
@@ -31,7 +28,7 @@ namespace Epi.Web.Enter.Common.BusinessRule
 
         public ValidateRange(string propertyName, string errorMessage, object min, object max,
             ValidationOperator @operator, ValidationDataType dataType)
-            : this (propertyName,  min,  max,@operator, dataType)
+            : this(propertyName, min, max, @operator, dataType)
         {
             ErrorMessage = errorMessage;
         }

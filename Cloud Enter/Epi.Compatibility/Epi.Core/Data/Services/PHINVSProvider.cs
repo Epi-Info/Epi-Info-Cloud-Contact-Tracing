@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-using System.Data.Common;
-using Epi.Data;
 
 namespace Epi.Data.Services
 {
@@ -32,7 +30,7 @@ namespace Epi.Data.Services
         {
             IDbDriverFactory dbFactory = DbDriverFactoryCreator.GetDbDriverFactory(Configuration.AccessDriver);
             //this.db = DatabaseFactoryCreator.CreateDatabaseInstanceByConfiguredName(DatabaseFactoryCreator.KnownDatabaseNames.Phin);
-            this.db = dbFactory.CreateDatabaseObjectByConfiguredName(DbDriverFactoryCreator.KnownDatabaseNames.Phin);  
+            this.db = dbFactory.CreateDatabaseObjectByConfiguredName(DbDriverFactoryCreator.KnownDatabaseNames.Phin);
         }
         #endregion Constructors
 
@@ -75,39 +73,39 @@ namespace Epi.Data.Services
 
         #region Public Methods
         /// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         //[Obsolete("Use of DataTable in this context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
-		public DataTable GetDomains()
-		{
-			string queryString = " select [Code], [Name] from DOMAINS order by [Name]";
-			Query query = Db.CreateQuery(queryString);
-			return Db.Select(query);
-		}
+        public DataTable GetDomains()
+        {
+            string queryString = " select [Code], [Name] from DOMAINS order by [Name]";
+            Query query = Db.CreateQuery(queryString);
+            return Db.Select(query);
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="domainCode"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="domainCode"></param>
+        /// <returns></returns>
         //[Obsolete("Use of DataTable in this context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
-		public DataTable GetValueSets(string domainCode)
-		{
-			string queryString = " select [Code], [Name] from ValueSets V inner join ValueSets_Domains VD on V.Code = VD.ValueSetCode where [VD.DomainCode] = @DomainCode order by [Name]";
-			Query query = Db.CreateQuery(queryString);
-			query.Parameters.Add(new QueryParameter("@DomainCode", DbType.String, domainCode));
-			return Db.Select(query);
-		}
+        public DataTable GetValueSets(string domainCode)
+        {
+            string queryString = " select [Code], [Name] from ValueSets V inner join ValueSets_Domains VD on V.Code = VD.ValueSetCode where [VD.DomainCode] = @DomainCode order by [Name]";
+            Query query = Db.CreateQuery(queryString);
+            query.Parameters.Add(new QueryParameter("@DomainCode", DbType.String, domainCode));
+            return Db.Select(query);
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="valueSetCode"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="valueSetCode"></param>
+        /// <returns></returns>
         //[Obsolete("Use of DataTable in this context is no different than the use of a multidimensional System.Object array (not recommended).", false)]
-		public DataTable GetConcepts(string valueSetCode, string fieldName)
-		{
+        public DataTable GetConcepts(string valueSetCode, string fieldName)
+        {
             try
             {
                 string queryString = " select [Code], [Name] from [" + valueSetCode + "] order by [Name] ";
@@ -116,10 +114,10 @@ namespace Epi.Data.Services
                 table.Columns[0].ColumnName = fieldName;
                 return table;
             }
-			finally
-			{
-			}
-		}
-		#endregion Public Methods
-	}
+            finally
+            {
+            }
+        }
+        #endregion Public Methods
+    }
 }

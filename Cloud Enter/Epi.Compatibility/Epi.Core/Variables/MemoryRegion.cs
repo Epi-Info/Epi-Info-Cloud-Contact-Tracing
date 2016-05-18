@@ -1,14 +1,10 @@
 //KKM4 added this comment for testing
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data;
-
-using Epi.Collections;
 using Epi.DataSets;
 using Epi.Fields;
 using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;
-using VariableCollectionStack = System.Collections.Generic.Stack<Epi.Collections.NamedObjectCollection<Epi.IVariable>>;
 
 namespace Epi
 {
@@ -471,7 +467,7 @@ namespace Epi
             }
             return true;
         }
-        
+
         /// <summary>
         /// Get a given variable
         /// </summary>
@@ -503,7 +499,7 @@ namespace Epi
                     }
                     else
                     {
-                       // throw new GeneralException(string.Format("Variable '{0}' is not defined.", varName));
+                        // throw new GeneralException(string.Format("Variable '{0}' is not defined.", varName));
                     }
                 }
             }

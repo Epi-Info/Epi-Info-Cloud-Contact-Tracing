@@ -1,42 +1,28 @@
 ﻿using System;
-
-using Microsoft.VisualBasic;
-
 using System.Text;
-
 using System.Collections;
-
 using System.Web;
-
 using System.Web.UI;
-
-using System.Web.UI.WebControls; 
 
 namespace MvcDynamicForms
 {
     public class WebMsgBox
     {
-
         protected static Hashtable handlerPages = new Hashtable();
 
         private WebMsgBox()
         {
 
         }
-
-
-
         public static void Show(string Message)
         {
 
             if (!(handlerPages.Contains(HttpContext.Current.Handler)))
             {
-
                 Page currentPage = (Page)HttpContext.Current.Handler;
 
                 if (!((currentPage == null)))
                 {
-
                     Queue messageQueue = new Queue();
 
                     messageQueue.Enqueue(Message);
@@ -46,25 +32,17 @@ namespace MvcDynamicForms
                     currentPage.Unload += new EventHandler(CurrentPageUnload);
 
                 }
-
             }
 
             else
             {
-
                 Queue queue = ((Queue)(handlerPages[HttpContext.Current.Handler]));
 
                 queue.Enqueue(Message);
-
             }
-
         }
-
-
-
         private static void CurrentPageUnload(object sender, EventArgs e)
         {
-
             Queue queue = ((Queue)(handlerPages[HttpContext.Current.Handler]));
 
             if (queue != null)
@@ -96,12 +74,7 @@ namespace MvcDynamicForms
                 handlerPages.Remove(HttpContext.Current.Handler);
 
                 HttpContext.Current.Response.Write(builder.ToString());
-
             }
-
         }
-
-    } 
-
-
+    }
 }

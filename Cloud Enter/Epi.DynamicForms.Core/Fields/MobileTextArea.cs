@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
@@ -14,7 +12,7 @@ namespace MvcDynamicForms.Fields
     public class MobileTextArea : TextField
     {
         public override string RenderHtml()
-        { 
+        {
             var html = new StringBuilder();
             var inputName = _form.FieldPrefix + _key;
             string ErrorStyle = string.Empty;
@@ -27,7 +25,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("Id", "label" + inputName);
             StringBuilder StyleValues = new StringBuilder();
             StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), IsHidden));
-            
+
             prompt.Attributes.Add("style", "");
             html.Append(prompt.ToString());
             // error label
@@ -35,7 +33,7 @@ namespace MvcDynamicForms.Fields
             {
                 //Add new Error to the error Obj
 
-                 ErrorStyle = ";border-color: red";
+                ErrorStyle = ";border-color: red";
 
             }
 
@@ -79,28 +77,28 @@ namespace MvcDynamicForms.Fields
             //    txt.Attributes.Add("disabled", "disabled");
             //}
             //txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ";height:" + _ControlHeight.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-           // txt.Attributes.Add("style", "height:" + _ControlHeight.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
+            // txt.Attributes.Add("style", "height:" + _ControlHeight.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
             txt.Attributes.Add("style", "height:" + "100" + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-            
+
             txt.MergeAttributes(_inputHtmlAttributes);
             html.Append(txt.ToString());
 
 
             // If readonly then add the following jquery script to make the field disabled 
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
             var wrapper = new TagBuilder(_fieldWrapper);
             wrapper.Attributes["class"] = _fieldWrapperClass;
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-               
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();

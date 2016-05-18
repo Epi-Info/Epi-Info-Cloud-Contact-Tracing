@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Xml.XPath;
 using Epi.Web.Enter.Common.BusinessObject;
-using System.Xml;
 using System.Xml.Linq;
 using System.Data.SqlClient;
 namespace Epi.Web.BLL
 {
-   /// <summary>
-   /// 
-   /// </summary>
-  
+    /// <summary>
+    /// 
+    /// </summary>
+
     public class Publisher
     {
         private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
@@ -35,25 +32,25 @@ namespace Epi.Web.BLL
         }
         public Publisher()
         {
-            
-        }
-        public SurveyRequestResultBO PublishSurvey(SurveyInfoBO  pRequestMessage)
-        {
-        SurveyRequestResultBO result = new SurveyRequestResultBO();
 
-        if (IsRelatedForm(pRequestMessage.XML))
+        }
+        public SurveyRequestResultBO PublishSurvey(SurveyInfoBO pRequestMessage)
+        {
+            SurveyRequestResultBO result = new SurveyRequestResultBO();
+
+            if (IsRelatedForm(pRequestMessage.XML))
             {
-            result = PublishRelatedFormSurvey(pRequestMessage);
+                result = PublishRelatedFormSurvey(pRequestMessage);
             }
-        else
+            else
             {
-            result = Publish(pRequestMessage);
-                 
+                result = Publish(pRequestMessage);
+
             }
             return result;
         }
 
-       
+
 
 
         public SurveyRequestResultBO RePublishSurvey(SurveyInfoBO pRequestMessage)
@@ -61,17 +58,17 @@ namespace Epi.Web.BLL
 
             SurveyRequestResultBO result = new SurveyRequestResultBO();
             if (IsRelatedForm(pRequestMessage.XML))
-                {
+            {
                 result = RePublishRelatedFormSurvey(pRequestMessage);
-                }
+            }
             else
-                {
+            {
                 result = RePublish(pRequestMessage);
-                }
+            }
             return result;
         }
 
-     
+
 
         private static bool ValidateSurveyFields(SurveyInfoBO pRequestMessage)
         {
@@ -85,29 +82,29 @@ namespace Epi.Web.BLL
                 isValid = false;
 
             }
-            
+
             else if (string.IsNullOrEmpty(pRequestMessage.XML) || string.IsNullOrWhiteSpace(pRequestMessage.XML))
             {
 
                 isValid = false;
             }
             else if (string.IsNullOrEmpty(pRequestMessage.SurveyName))
-                {
+            {
 
                 isValid = false;
-                }
-            
-            else if ( string.IsNullOrEmpty(pRequestMessage.UserPublishKey.ToString()))
+            }
+
+            else if (string.IsNullOrEmpty(pRequestMessage.UserPublishKey.ToString()))
             {
 
                 isValid = false;
             }
 
 
- 
-            return isValid;        
+
+            return isValid;
         }
-     
+
         /// <summary>
         /// validate the Organization key passed with the list of Organization keys retrieved from database 
         /// through EF
@@ -124,28 +121,28 @@ namespace Epi.Web.BLL
             }
             else
             {
-                return false;    
+                return false;
             }
-            
-           
+
+
         }
 
         #endregion
 
         #region "Private members"
-        private string GetURL(SurveyInfoBO  pRequestMessage, Guid SurveyId)
+        private string GetURL(SurveyInfoBO pRequestMessage, Guid SurveyId)
         {
             System.Text.StringBuilder URL = new System.Text.StringBuilder();
             URL.Append(System.Configuration.ConfigurationManager.AppSettings["URL"]);
-           // URL.Append("/");
+            // URL.Append("/");
             //URL.Append(pRequestMessage.SurveyNumber.ToString());
             //URL.Append("/");
-           // URL.Append(SurveyId.ToString());
+            // URL.Append(SurveyId.ToString());
             return URL.ToString();
         }
 
-        private bool IsRelatedForm(string Xml) 
-            {
+        private bool IsRelatedForm(string Xml)
+        {
 
             bool IsRelatedForm = false;
             XDocument xdoc = XDocument.Parse(Xml);
@@ -153,99 +150,99 @@ namespace Epi.Web.BLL
 
             int NumberOfViews = xdoc.Descendants("View").Count();
             if (NumberOfViews > 1)
-                {
-                IsRelatedForm = true;
-                
-                }
-
-             return IsRelatedForm;
-            
-            }
-        private int GetViewId(string Xml)
             {
+                IsRelatedForm = true;
+
+            }
+
+            return IsRelatedForm;
+
+        }
+        private int GetViewId(string Xml)
+        {
 
             int ViewId = 0;
             XDocument xdoc = XDocument.Parse(Xml);
 
             XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-            
+
             int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
-             
+
             return ViewId;
 
-            }
+        }
         private SurveyRequestResultBO Publish(SurveyInfoBO pRequestMessage)
-            {
+        {
             SurveyRequestResultBO result = new SurveyRequestResultBO();
 
-           
-                var SurveyId = Guid.NewGuid();
 
-                if (pRequestMessage != null)
+            var SurveyId = Guid.NewGuid();
+
+            if (pRequestMessage != null)
+            {
+
+                //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
+                if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey, pRequestMessage.OwnerId))//EW-96
+                {
+
+                    if (ValidateSurveyFields(pRequestMessage))
                     {
-
-                    //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
-                        if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey, pRequestMessage.OwnerId))//EW-96
+                        try
                         {
 
-                        if (ValidateSurveyFields(pRequestMessage))
-                            {
-                            try
-                                {
+                            var BO = ToBusinessObject(pRequestMessage, SurveyId);
+                            this.SurveyInfoDao.InsertSurveyInfo(BO);
 
-                                    var BO = ToBusinessObject(pRequestMessage, SurveyId);
-                                    this.SurveyInfoDao.InsertSurveyInfo(BO);
-                                
-                                //Insert Connection string..
-                                if (pRequestMessage.IsSqlProject)
-                                    {
+                            //Insert Connection string..
+                            if (pRequestMessage.IsSqlProject)
+                            {
                                 DbConnectionStringBO DbConnectionStringBO = new DbConnectionStringBO();
                                 DbConnectionStringBO = GetConnection(pRequestMessage.DBConnectionString);
                                 DbConnectionStringBO.SurveyId = SurveyId;
                                 this.SurveyInfoDao.InsertConnectionString(DbConnectionStringBO);
-                                    }
-                                // Set Survey Settings
-                                this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject,GetSurveyControls(BO));
-                                Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
-                                SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
-                                result.ViewIdAndFormIdList = SurveyIdsList;
-                                result.URL = GetURL(pRequestMessage, SurveyId);
-                                result.IsPulished = true;
-                                }
-                            catch (Exception ex)
-                                {
-                                System.Console.Write(ex.ToString());
-                                //Entities.ObjectStateManager.GetObjectStateEntry(SurveyMetaData).Delete();
-                                result.URL = "";
-                                result.IsPulished = false;
-                                result.StatusText = "An Error has occurred while publishing your survey.";
-                                }
-
-
-
-
                             }
-                        else
-                            {
-
+                            // Set Survey Settings
+                            this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject, GetSurveyControls(BO));
+                            Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
+                            SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
+                            result.ViewIdAndFormIdList = SurveyIdsList;
+                            result.URL = GetURL(pRequestMessage, SurveyId);
+                            result.IsPulished = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Console.Write(ex.ToString());
+                            //Entities.ObjectStateManager.GetObjectStateEntry(SurveyMetaData).Delete();
                             result.URL = "";
                             result.IsPulished = false;
-                            result.StatusText = "One or more survey required fields are missing values.";
-                            }
-
+                            result.StatusText = "An Error has occurred while publishing your survey.";
                         }
+
+
+
+
+                    }
                     else
-                        {
+                    {
 
                         result.URL = "";
                         result.IsPulished = false;
-                        result.StatusText = "Organization Key is invalid.";
-
-                        }
+                        result.StatusText = "One or more survey required fields are missing values.";
                     }
-               
-            return result;
+
+                }
+                else
+                {
+
+                    result.URL = "";
+                    result.IsPulished = false;
+                    result.StatusText = "Organization Key is invalid.";
+
+                }
             }
+
+            return result;
+        }
 
         private static SurveyInfoBO ToBusinessObject(SurveyInfoBO pRequestMessage, Guid SurveyId)
         {
@@ -282,42 +279,42 @@ namespace Epi.Web.BLL
         }
 
         private DbConnectionStringBO GetConnection(string ConnectionString)
-            {
+        {
             DbConnectionStringBO DbConnectionStringBO = new Enter.Common.BusinessObject.DbConnectionStringBO();
             //string connStr = "Data Source=SERVERx;Initial Catalog=DBx;User ID=u;Password=p";
-          // string connStr =  "Data Source=ETIEX-022/SQLEXPRESS;Initial Catalog=TestEpi;Integrated Security=True";
+            // string connStr =  "Data Source=ETIEX-022/SQLEXPRESS;Initial Catalog=TestEpi;Integrated Security=True";
             var csb = new SqlConnectionStringBuilder(ConnectionString);
 
             DbConnectionStringBO.DatasourceServerName = csb.DataSource;
-            DbConnectionStringBO.InitialCatalog= csb.InitialCatalog;
+            DbConnectionStringBO.InitialCatalog = csb.InitialCatalog;
             DbConnectionStringBO.Password = csb.Password;
             DbConnectionStringBO.DatabaseUserID = csb.UserID;
             DbConnectionStringBO.PersistSecurityInfo = csb.IntegratedSecurity.ToString();
 
             DbConnectionStringBO.DatabaseType = "SQL";
             return DbConnectionStringBO;
-            }
+        }
         private SurveyRequestResultBO RePublish(SurveyInfoBO pRequestMessage)
-            {
+        {
 
             SurveyRequestResultBO result = new SurveyRequestResultBO();
-            
-                var SurveyId = new Guid(pRequestMessage.SurveyId);
 
-                if (pRequestMessage != null)
+            var SurveyId = new Guid(pRequestMessage.SurveyId);
+
+            if (pRequestMessage != null)
+            {
+
+                //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
+                if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey, pRequestMessage.OwnerId))//EW-96
+                {
+
+                    if (ValidateSurveyFields(pRequestMessage))
                     {
-
-                    //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
-                        if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey,pRequestMessage.OwnerId))//EW-96
+                        try
                         {
 
-                        if (ValidateSurveyFields(pRequestMessage))
-                            {
-                            try
-                                {
 
-
-                                    this.SurveyInfoDao.UpdateSurveyInfo(ToBusinessObject(pRequestMessage, SurveyId));
+                            this.SurveyInfoDao.UpdateSurveyInfo(ToBusinessObject(pRequestMessage, SurveyId));
                             ////Insert Connection string..
                             //DbConnectionStringBO DbConnectionStringBO = new DbConnectionStringBO();
                             //DbConnectionStringBO = GetConnection(pRequestMessage.DBConnectionString);
@@ -326,60 +323,60 @@ namespace Epi.Web.BLL
                             var BO = ToBusinessObject(pRequestMessage, SurveyId);
                             this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject, GetSurveyControls(BO));
                             Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
-                                SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
-                                result.ViewIdAndFormIdList = SurveyIdsList;
-                                result.URL = GetURL(pRequestMessage, SurveyId);
-                                result.IsPulished = true;
-                                }
-                            catch (Exception ex)
-                                {
-                                System.Console.Write(ex.ToString());
-                                //Entities.ObjectStateManager.GetObjectStateEntry(SurveyMetaData).Delete();
-                                result.URL = "";
-                                result.IsPulished = false;
-                                result.StatusText = "An Error has occurred while publishing your survey.";
-                                }
-
-
-
-
-                            }
-                        else
-                            {
-
+                            SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
+                            result.ViewIdAndFormIdList = SurveyIdsList;
+                            result.URL = GetURL(pRequestMessage, SurveyId);
+                            result.IsPulished = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Console.Write(ex.ToString());
+                            //Entities.ObjectStateManager.GetObjectStateEntry(SurveyMetaData).Delete();
                             result.URL = "";
                             result.IsPulished = false;
-                            result.StatusText = "One or more survey required fields are missing values.";
-                            }
-
+                            result.StatusText = "An Error has occurred while publishing your survey.";
                         }
+
+
+
+
+                    }
                     else
-                        {
+                    {
 
                         result.URL = "";
                         result.IsPulished = false;
-                        result.StatusText = "Organization Key is invalid.";
-
-                        }
+                        result.StatusText = "One or more survey required fields are missing values.";
                     }
-                
-            return result;
+
+                }
+                else
+                {
+
+                    result.URL = "";
+                    result.IsPulished = false;
+                    result.StatusText = "Organization Key is invalid.";
+
+                }
             }
+
+            return result;
+        }
         private SurveyRequestResultBO RePublishRelatedFormSurvey(SurveyInfoBO pRequestMessage)
-            {
+        {
             SurveyRequestResultBO SurveyRequestResultBO = new Web.Enter.Common.BusinessObject.SurveyRequestResultBO();
             Dictionary<int, int> ViewIds = new Dictionary<int, int>();
             Dictionary<int, string> SurveyIds = new Dictionary<int, string>();
-         
+
             List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIdsByRootId(pRequestMessage.SurveyId.ToString());
             // 1- breck down the xml to n views
             List<string> XmlList = new List<string>();
             XmlList = XmlChunking(pRequestMessage.XML);
             string ParentId = "";
-            
+
             // 2- call publish() with each of the views
             foreach (string Xml in XmlList)
-                {
+            {
                 XDocument xdoc = XDocument.Parse(Xml);
                 SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
                 XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
@@ -394,7 +391,7 @@ namespace Epi.Web.BLL
                 SurveyInfoBO.ViewId = ViewId;
                 var ViewExists = FormsHierarchyIds.Where(x => x.ViewId == ViewId);
                 if (ViewExists.Count() > 0)
-                    {
+                {
                     SurveyInfoBO pBO = FormsHierarchyIds.Single(x => x.ViewId == ViewId);
                     SurveyInfoBO.SurveyId = pBO.SurveyId;
                     SurveyInfoBO.ParentId = pBO.ParentId;
@@ -404,140 +401,141 @@ namespace Epi.Web.BLL
                     SurveyInfoBO.IsShareable = pRequestMessage.IsShareable;
                     SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
                     SurveyRequestResultBO = RePublish(SurveyInfoBO);
-                    }
-                else {
-                        SurveyInfoBO.XML = Xml;
-                        SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
-                        SurveyInfoBO.ViewId = ViewId;
-                        SurveyInfoBO.ParentId = ParentId;
-                        SurveyInfoBO.OwnerId = pRequestMessage.OwnerId;
-                        SurveyInfoBO.IsSqlProject = pRequestMessage.IsSqlProject;
-                        SurveyInfoBO.IsShareable = pRequestMessage.IsShareable;
-                        SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
-                      SurveyRequestResultBO = Publish(SurveyInfoBO);
-                     
-                    }
+                }
+                else
+                {
+                    SurveyInfoBO.XML = Xml;
+                    SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
+                    SurveyInfoBO.ViewId = ViewId;
+                    SurveyInfoBO.ParentId = ParentId;
+                    SurveyInfoBO.OwnerId = pRequestMessage.OwnerId;
+                    SurveyInfoBO.IsSqlProject = pRequestMessage.IsSqlProject;
+                    SurveyInfoBO.IsShareable = pRequestMessage.IsShareable;
+                    SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
+                    SurveyRequestResultBO = Publish(SurveyInfoBO);
+
+                }
                 ParentId = SurveyRequestResultBO.ViewIdAndFormIdList[ViewId];
                 SurveyIds.Add(ViewId, ParentId);
-                
-                }
+
+            }
             foreach (var _ViewId in this.ViewIds)
-                {
+            {
 
                 string PId = SurveyIds[_ViewId.Value].ToString();
                 string SId = SurveyIds[_ViewId.Key].ToString();
                 this.SurveyInfoDao.UpdateParentId(SId, _ViewId.Key, PId);
 
-                }
-        
-            return SurveyRequestResultBO;
             }
 
+            return SurveyRequestResultBO;
+        }
+
         private List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
-            {
+        {
             List<SurveyInfoBO> FormsHierarchyIds = new List<SurveyInfoBO>();
             FormsHierarchyIds = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             return FormsHierarchyIds;
-            }
+        }
         private SurveyRequestResultBO PublishRelatedFormSurvey(SurveyInfoBO pRequestMessage)
-            {
+        {
 
             SurveyRequestResultBO SurveyRequestResultBO = new Web.Enter.Common.BusinessObject.SurveyRequestResultBO();
-           // Dictionary<int, int> ViewIds = new Dictionary<int, int>();
+            // Dictionary<int, int> ViewIds = new Dictionary<int, int>();
             Dictionary<int, string> SurveyIds = new Dictionary<int, string>();
             string ParentId = "";
-            
+
             // 1- breck down the xml to n views
             List<string> XmlList = new List<string>();
-            XmlList = XmlChunking(pRequestMessage.XML);  
+            XmlList = XmlChunking(pRequestMessage.XML);
 
             // 2- call publish() with each of the views
             foreach (string Xml in XmlList)
             {
-            XDocument xdoc = XDocument.Parse(Xml);
-            SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
-            XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-            int _ViewId;
-            int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out _ViewId);
+                XDocument xdoc = XDocument.Parse(Xml);
+                SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
+                XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
+                int _ViewId;
+                int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out _ViewId);
 
-            GetRelateViewIds(ViewElement, _ViewId);
- 
-            SurveyInfoBO = pRequestMessage;
-            SurveyInfoBO.XML = Xml;
-            SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
-            SurveyInfoBO.ViewId = _ViewId;
-            SurveyInfoBO.ParentId = ParentId;
-            SurveyInfoBO.OwnerId = pRequestMessage.OwnerId ;
-            SurveyInfoBO.IsSqlProject = pRequestMessage.IsSqlProject;
-            SurveyInfoBO.IsShareable = pRequestMessage.IsShareable;
-            SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
-            SurveyRequestResultBO = Publish(SurveyInfoBO);
-           // ParentId = SurveyRequestResultBO.URL.Split('/').Last();
-            if (SurveyRequestResultBO.ViewIdAndFormIdList != null)
-            {
-            ParentId = SurveyRequestResultBO.ViewIdAndFormIdList[_ViewId];
+                GetRelateViewIds(ViewElement, _ViewId);
+
+                SurveyInfoBO = pRequestMessage;
+                SurveyInfoBO.XML = Xml;
+                SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
+                SurveyInfoBO.ViewId = _ViewId;
+                SurveyInfoBO.ParentId = ParentId;
+                SurveyInfoBO.OwnerId = pRequestMessage.OwnerId;
+                SurveyInfoBO.IsSqlProject = pRequestMessage.IsSqlProject;
+                SurveyInfoBO.IsShareable = pRequestMessage.IsShareable;
+                SurveyInfoBO.DBConnectionString = pRequestMessage.DBConnectionString;
+                SurveyRequestResultBO = Publish(SurveyInfoBO);
+                // ParentId = SurveyRequestResultBO.URL.Split('/').Last();
+                if (SurveyRequestResultBO.ViewIdAndFormIdList != null)
+                {
+                    ParentId = SurveyRequestResultBO.ViewIdAndFormIdList[_ViewId];
                 }
-            SurveyIds.Add(_ViewId, ParentId);
+                SurveyIds.Add(_ViewId, ParentId);
 
             }
 
-           
-            foreach(var ViewId in this.ViewIds )
-                {
-              
+
+            foreach (var ViewId in this.ViewIds)
+            {
+
                 string PId = SurveyIds[ViewId.Value].ToString();
                 string SId = SurveyIds[ViewId.Key].ToString();
                 this.SurveyInfoDao.UpdateParentId(SId, ViewId.Key, PId);
-           
-                 }
+
+            }
 
             SurveyRequestResultBO.ViewIdAndFormIdList = SurveyIds;
             SurveyRequestResultBO.URL = SurveyRequestResultBO.URL.Remove(SurveyRequestResultBO.URL.LastIndexOf('/'));
 
             return SurveyRequestResultBO;
-            }
+        }
 
-        private void  GetRelateViewIds(XElement ViewElement ,int ViewId)
-            {
-          
+        private void GetRelateViewIds(XElement ViewElement, int ViewId)
+        {
+
             var _RelateFields = from _Field in
                                     ViewElement.Descendants("Field")
                                 where _Field.Attribute("FieldTypeId").Value == "20"
                                 select _Field;
 
             foreach (var Item in _RelateFields)
-                {
+            {
 
                 int RelateViewId = 0;
                 int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
                 if (!this.ViewIds.ContainsKey(RelateViewId))
                 {
-                this.ViewIds.Add(RelateViewId, ViewId);
+                    this.ViewIds.Add(RelateViewId, ViewId);
                 }
-                }
-
-          
             }
 
+
+        }
+
         private List<string> XmlChunking(string Xml)
-            {
+        {
             List<string> XmlList = new List<string>();
             XDocument xdoc = XDocument.Parse(Xml);
             XDocument xdoc1 = XDocument.Parse(Xml);
-           
+
             xdoc.Descendants("View").Remove();
 
             foreach (XElement Xelement in xdoc1.Descendants("Project").Elements("View"))
-                {
+            {
 
                 //xdoc.Element("Project").Add(Xelement);
                 xdoc.Root.Element("Project").Add(Xelement);
                 XmlList.Add(xdoc.ToString());
                 xdoc.Descendants("View").Remove();
-                }
+            }
 
             return XmlList;
-            }
+        }
         #endregion
 
         private List<string> GetSurveyControls(SurveyInfoBO SurveyInfoBO)
@@ -563,13 +561,13 @@ namespace Epi.Web.BLL
             }
             return List;
         }
-        private bool ValidateOrganizationKeyByUser(Guid gOrganizationKey,int UserID)
+        private bool ValidateOrganizationKeyByUser(Guid gOrganizationKey, int UserID)
         {
             bool result;
             string strOrgKeyEncrypted = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(gOrganizationKey.ToString());
             result = this.OrganizationDao.IsUserExistsInOrganization(strOrgKeyEncrypted, UserID);
             return result;
         }
-      
+
     }
 }

@@ -1,8 +1,5 @@
 #region Namespaces
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 #endregion
 
@@ -389,6 +386,6 @@ namespace Epi.Data
         }
 
         #endregion
-        
+
     }
 }

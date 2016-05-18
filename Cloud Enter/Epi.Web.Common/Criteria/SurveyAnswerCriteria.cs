@@ -71,34 +71,34 @@ namespace Epi.Web.Enter.Common.Criteria
         [DataMember]
         public bool IncludeOrderStatistics { get; set; }
 
-        
-       [DataMember]
-        public Guid UserPublishKey { get; set; }
-
-       [DataMember]
-       public Guid OrganizationKey { get; set; }
-         
-       [DataMember]
-       public bool IsMobile { get; set; }
-       [DataMember]
-       public int UserId { get; set; }
-       [DataMember]
-       public bool IsEditMode { get; set; }
-
-       [DataMember]
-       public string SortOrder { get; set; }
-
-       [DataMember]
-       public string Sortfield { get; set; }
-
-       [DataMember]
-       public bool GetAllColumns { get; set; }
-
-       [DataMember]
-       public string SearchCriteria { get; set; }
 
         [DataMember]
-       public bool IsSqlProject { get; set; }
+        public Guid UserPublishKey { get; set; }
+
+        [DataMember]
+        public Guid OrganizationKey { get; set; }
+
+        [DataMember]
+        public bool IsMobile { get; set; }
+        [DataMember]
+        public int UserId { get; set; }
+        [DataMember]
+        public bool IsEditMode { get; set; }
+
+        [DataMember]
+        public string SortOrder { get; set; }
+
+        [DataMember]
+        public string Sortfield { get; set; }
+
+        [DataMember]
+        public bool GetAllColumns { get; set; }
+
+        [DataMember]
+        public string SearchCriteria { get; set; }
+
+        [DataMember]
+        public bool IsSqlProject { get; set; }
         [DataMember]
         public bool IsDeleteMode { get; set; }
         [DataMember]
@@ -115,6 +115,6 @@ namespace Epi.Web.Enter.Common.Criteria
             get;
             set;
         }
-         
+
     }
 }

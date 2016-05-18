@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Epi.Web.MVC.Models;
+﻿using Epi.Web.MVC.Models;
 using System.Configuration;
 
 namespace Epi.Web.MVC.Utility
-    {
+{
     public class OmnitureHelper
+    {
+        public static Omniture GetSettings(string SurveyMode, bool IsMobileDevice)
         {
 
-
-        public static Omniture GetSettings(string SurveyMode, bool IsMobileDevice) 
-            {
-         
             Omniture OmnitureObj = new Omniture();
             string IsEnabled = ConfigurationManager.AppSettings["OMNITURE_IS_ENABLED"];
             if (IsEnabled.ToUpper() == "TRUE")
-                {
+            {
                 OmnitureObj.IsEnabled = true;
                 OmnitureObj.Level1 = ConfigurationManager.AppSettings["OMNITURE_LEVEL_1"];
                 OmnitureObj.Level2 = ConfigurationManager.AppSettings["OMNITURE_LEVEL_2"];
@@ -33,21 +27,21 @@ namespace Epi.Web.MVC.Utility
                 //else
                 //    {
                 //      OmnitureObj.ChannelName = ConfigurationManager.AppSettings["OMNITURE_CHANNEL_NAME"] + "_" + SurveyMode.ToString();
-                    
-                //    }
-                }
-            else 
-                {
-                  OmnitureObj.IsEnabled = false;
-                }
 
-          return OmnitureObj;
-            
-            
+                //    }
+            }
+            else
+            {
+                OmnitureObj.IsEnabled = false;
             }
 
-
+            return OmnitureObj;
 
 
         }
+
+
+
+
     }
+}

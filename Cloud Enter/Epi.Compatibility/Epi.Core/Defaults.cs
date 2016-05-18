@@ -7,85 +7,85 @@ namespace Epi
     /// Defaults used in Epi Info
     /// </summary>
 	public static class Defaults
-	{		
+    {
 
-		#region Public Properties
+        #region Public Properties
 
-		/// <summary>
-		/// Default BackgroundImage file
-		/// </summary>
-		public static Image BackgroundImageFile
-		{
-			get
-			{
+        /// <summary>
+        /// Default BackgroundImage file
+        /// </summary>
+        public static Image BackgroundImageFile
+        {
+            get
+            {
                 return ResourceLoader.GetImage("BG.jpg");
-			}
-		}
+            }
+        }
 
-		/// <summary>
-		/// The default LANGUAGE is English
-		/// </summary>
-		public const string LANGUAGE = "en-US";
+        /// <summary>
+        /// The default LANGUAGE is English
+        /// </summary>
+        public const string LANGUAGE = "en-US";
         /// <summary>
         /// Show debug tracing
         /// </summary>
         public const bool SHOW_TRACE = false;
-		
-		/// <summary>
-		///  Returns the default variable scope.
-		/// </summary>
-		public static VariableType VariableScope
-		{
-			get
-			{
-				return VariableType.Standard;
-				// return AppData.Instance.GetDefaultVariableScope();
-			}
-		}
+
+        /// <summary>
+        ///  Returns the default variable scope.
+        /// </summary>
+        public static VariableType VariableScope
+        {
+            get
+            {
+                return VariableType.Standard;
+                // return AppData.Instance.GetDefaultVariableScope();
+            }
+        }
 
         /// <summary>
         /// returns Font Family Name
         /// </summary>
-		public static string FontFamilyName 
-		{
-			get
-			{
-				return FontFamily.GenericSansSerif.Name;
-			}
-		}
+		public static string FontFamilyName
+        {
+            get
+            {
+                return FontFamily.GenericSansSerif.Name;
+            }
+        }
 
         /// <summary>
         /// Returns Font Size
         /// </summary>
 		public static float FontSize
-		{
-			get
-			{
-				return 8.5f;
-			}
-		}
+        {
+            get
+            {
+                return 8.5f;
+            }
+        }
 
         /// <summary>
         /// Returns Font Style
         /// </summary>
 		public static FontStyle FontStyle
-		{
-			get
-			{
-				return FontStyle.Regular;
-			}
-		}
+        {
+            get
+            {
+                return FontStyle.Regular;
+            }
+        }
 
         /// <summary>
         /// Returns font
         /// </summary>
 		public static Font Font
-		{
-			get
-			{
-				return new Font(FontFamilyName, FontSize, FontStyle);
-			}
-		}
+        {
+            get
+            {
+                return new Font(FontFamilyName, FontSize, FontStyle);
+            }
+        }
 
         /// <summary>
         /// If this is set, all new pages will be given the current background image.
@@ -95,10 +95,10 @@ namespace Epi
         {
             get
             {
-                return (bool) false;
+                return (bool)false;
             }
-        }        
+        }
         #endregion Public Properties
 
-	}
+    }
 }

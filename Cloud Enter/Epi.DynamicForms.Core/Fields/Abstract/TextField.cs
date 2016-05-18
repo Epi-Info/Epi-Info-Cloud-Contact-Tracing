@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
- 
+
 namespace MvcDynamicForms.Fields
 {
     /// <summary>
@@ -18,7 +13,7 @@ namespace MvcDynamicForms.Fields
         /// <summary>
         /// A regular expression that will be applied to the user's text respone for validation.
         /// </summary>
-        public string RegularExpression { get; set; }        
+        public string RegularExpression { get; set; }
         /// <summary>
         /// The error message that is displayed to the user when their response does no match the regular expression.
         /// </summary>
@@ -33,17 +28,17 @@ namespace MvcDynamicForms.Fields
                 _regexMessage = value;
             }
         }
-        public  string Value{ get; set; }
-       //public string Value { get { return _Value; } set { _Value = value; } }
+        public string Value { get; set; }
+        //public string Value { get { return _Value; } set { _Value = value; } }
 
         public override string Response
         {
             get { return Value; }
             set
             {
-              Value = value;   
+                Value = value;
             }
-            
+
         }
         public override bool Validate()
         {
@@ -84,10 +79,10 @@ namespace MvcDynamicForms.Fields
         public override string GetXML()
         {
 
-            string XML ="<ResponseDetail QuestionId='"+_key + "'>" + Response +"<ResponseDetail>";
+            string XML = "<ResponseDetail QuestionId='" + _key + "'>" + Response + "<ResponseDetail>";
             return XML;
         }
 
-        
+
     }
 }

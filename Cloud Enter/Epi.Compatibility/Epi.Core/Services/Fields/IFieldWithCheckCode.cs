@@ -1,19 +1,19 @@
 namespace Epi.Fields
 {
-	/// <summary>
-	/// IFieldWithCheckCodeAfter
-	/// </summary>
-	public interface IFieldWithCheckCodeAfter
-	{
-		/// <summary>
-		/// Gets/sets the AFTER check code
-		/// </summary>
-		string CheckCodeAfter
-		{
-			get;
-			set;
-		}
-	}
+    /// <summary>
+    /// IFieldWithCheckCodeAfter
+    /// </summary>
+    public interface IFieldWithCheckCodeAfter
+    {
+        /// <summary>
+        /// Gets/sets the AFTER check code
+        /// </summary>
+        string CheckCodeAfter
+        {
+            get;
+            set;
+        }
+    }
 
     /// <summary>
     /// IFieldWithCheckCodeBefore

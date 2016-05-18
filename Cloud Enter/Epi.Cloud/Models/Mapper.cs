@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Epi.Web.MVC;
+﻿using System.Collections.Generic;
 namespace Epi.Web.MVC.Models
 {
     /// <summary>
@@ -10,9 +6,6 @@ namespace Epi.Web.MVC.Models
     /// </summary>
     public static class Mapper
     {
-
-
-
         /// <summary>
         /// Maps FormInfo DTO to FormInfo Model
         /// </summary>
@@ -31,11 +24,11 @@ namespace Epi.Web.MVC.Models
                 OrganizationName = FormInfoDTO.OrganizationName,
                 UserId = FormInfoDTO.UserId,
                 IsOwner = FormInfoDTO.IsOwner,
-                OwnerFName =FormInfoDTO.OwnerFName,
+                OwnerFName = FormInfoDTO.OwnerFName,
                 OwnerLName = FormInfoDTO.OwnerLName,
-                IsShareable =FormInfoDTO.IsShareable,
+                IsShareable = FormInfoDTO.IsShareable,
                 IsShared = FormInfoDTO.IsShared,
-                DataAccessRuleId= FormInfoDTO.DataAccessRuleId,
+                DataAccessRuleId = FormInfoDTO.DataAccessRuleId,
                 EwavLiteToggleSwitch = FormInfoDTO.EwavLiteToggleSwitch
             };
         }
@@ -143,29 +136,29 @@ namespace Epi.Web.MVC.Models
 
 
         internal static List<RelateModel> ToRelateModel(List<Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchy, string FormId)
-            {
+        {
             List<RelateModel> List = new List<RelateModel>();
-           
+
             // Common.DTO.FormsHierarchyDTO FormsHierarchyDTO = FormsHierarchy.Single(X => X.FormId == FormId);
-           foreach(var Obj in FormsHierarchy)
-               {
-               RelateModel RelateModel = new RelateModel();
-               RelateModel.FormId = Obj.FormId;
-               RelateModel.ViewId = Obj.ViewId;
-               RelateModel.IsSqlProject = Obj.IsSqlProject;
-               RelateModel.IsRoot = Obj.IsRoot;
-               RelateModel.ResponseIds = Mapper.ToSurveyAnswerModel(Obj.ResponseIds);
-             List.Add(RelateModel);
-               }
-           return List;
+            foreach (var Obj in FormsHierarchy)
+            {
+                RelateModel RelateModel = new RelateModel();
+                RelateModel.FormId = Obj.FormId;
+                RelateModel.ViewId = Obj.ViewId;
+                RelateModel.IsSqlProject = Obj.IsSqlProject;
+                RelateModel.IsRoot = Obj.IsRoot;
+                RelateModel.ResponseIds = Mapper.ToSurveyAnswerModel(Obj.ResponseIds);
+                List.Add(RelateModel);
             }
+            return List;
+        }
 
         internal static List<SurveyAnswerModel> ToSurveyAnswerModel(List<Enter.Common.DTO.SurveyAnswerDTO> list)
-            {
+        {
             List<SurveyAnswerModel> ModelList = new List<SurveyAnswerModel>();
-            foreach(var Obj in list)
-                {
-             SurveyAnswerModel SurveyAnswerModel = new Models.SurveyAnswerModel();
+            foreach (var Obj in list)
+            {
+                SurveyAnswerModel SurveyAnswerModel = new Models.SurveyAnswerModel();
                 SurveyAnswerModel.ResponseId = Obj.ResponseId;
                 SurveyAnswerModel.SurveyId = Obj.SurveyId;
                 SurveyAnswerModel.DateUpdated = Obj.DateUpdated;
@@ -175,55 +168,55 @@ namespace Epi.Web.MVC.Models
                 SurveyAnswerModel.ParentRecordId = Obj.ParentRecordId;
                 SurveyAnswerModel.RelateParentId = Obj.RelateParentId;
                 ModelList.Add(SurveyAnswerModel);
-              }
-            return ModelList;
             }
-
-        internal static  OrganizationModel  ToOrganizationModel ( Enter.Common.DTO.OrganizationDTO  DTO)
-            {
-             OrganizationModel  ModelList = new  OrganizationModel();
-
-             ModelList.IsEnabled = DTO.IsEnabled;
-             ModelList.Organization = DTO.Organization;
-             ModelList.OrganizationId = DTO.OrganizationId;
-             ModelList.OrganizationKey = DTO.OrganizationKey;
             return ModelList;
-            }
+        }
+
+        internal static OrganizationModel ToOrganizationModel(Enter.Common.DTO.OrganizationDTO DTO)
+        {
+            OrganizationModel ModelList = new OrganizationModel();
+
+            ModelList.IsEnabled = DTO.IsEnabled;
+            ModelList.Organization = DTO.Organization;
+            ModelList.OrganizationId = DTO.OrganizationId;
+            ModelList.OrganizationKey = DTO.OrganizationKey;
+            return ModelList;
+        }
 
         internal static List<OrganizationModel> ToOrganizationModelList(List<Enter.Common.DTO.OrganizationDTO> list)
-            {
+        {
             List<OrganizationModel> ModelList = new List<OrganizationModel>();
 
             foreach (var item in list)
-                {
+            {
                 ModelList.Add(Mapper.ToOrganizationModel(item));
-                }
-
-            return ModelList;
             }
 
+            return ModelList;
+        }
+
         internal static OrgAdminInfoModel ToOrgAdminInfoModel(Enter.Common.Message.OrganizationResponse Organizations)
-            {
+        {
             OrgAdminInfoModel OrgAdminInfoModel = new OrgAdminInfoModel();
             OrgAdminInfoModel.OrgName = Organizations.OrganizationList[0].Organization;
             OrgAdminInfoModel.IsOrgEnabled = Organizations.OrganizationList[0].IsEnabled;
 
             return OrgAdminInfoModel;
-            }
+        }
 
         internal static List<UserModel> ToUserModelList(List<Enter.Common.DTO.UserDTO> UserList)
-            {
-            List<UserModel> UserModel = new List<UserModel>() ;
+        {
+            List<UserModel> UserModel = new List<UserModel>();
             foreach (var user in UserList)
-                {
-                UserModel.Add(Mapper.ToUserModel(user));
-                
-                }
-            return UserModel;
-            }
-
-        public  static UserModel ToUserModel(Enter.Common.DTO.UserDTO user)
             {
+                UserModel.Add(Mapper.ToUserModel(user));
+
+            }
+            return UserModel;
+        }
+
+        public static UserModel ToUserModel(Enter.Common.DTO.UserDTO user)
+        {
             UserModel UserModel = new UserModel();
             UserModel.Email = user.EmailAddress;
             UserModel.FirstName = user.FirstName;
@@ -232,23 +225,23 @@ namespace Epi.Web.MVC.Models
             UserModel.IsActive = user.IsActive;
             UserModel.UserId = user.UserId;
             return UserModel;
-            }
+        }
         public static UserModel ToUserModelR(Enter.Common.DTO.UserDTO user)
-            {
+        {
             UserModel UserModel = new UserModel();
             UserModel.Email = user.EmailAddress;
             UserModel.FirstName = user.FirstName;
             UserModel.LastName = user.LastName;
-            UserModel.Role =  user.Role.ToString();
+            UserModel.Role = user.Role.ToString();
             UserModel.IsActive = user.IsActive;
             UserModel.UserId = user.UserId;
             return UserModel;
-            }
+        }
         private static string GetUserRole(int p)
-            {
-            string Role ="";
+        {
+            string Role = "";
             switch (p)
-                {
+            {
                 case 1:
                     Role = "User";
                     break;
@@ -263,14 +256,14 @@ namespace Epi.Web.MVC.Models
 
                 default:
                     break;
-                }
-            return Role;
             }
+            return Role;
+        }
 
 
 
         internal static Enter.Common.DTO.UserDTO ToUserDTO(UserModel UserModel)
-            {
+        {
             Enter.Common.DTO.UserDTO UserDTO = new Enter.Common.DTO.UserDTO();
 
             UserDTO.EmailAddress = UserModel.Email;
@@ -280,15 +273,15 @@ namespace Epi.Web.MVC.Models
             UserDTO.Role = int.Parse(UserModel.Role);
             UserDTO.IsActive = UserModel.IsActive;
             if (!string.IsNullOrEmpty(UserModel.PhoneNumber))
-                {
+            {
                 UserDTO.PhoneNumber = UserModel.PhoneNumber;
-                }
-            else
-                {
-                UserDTO.PhoneNumber = "123456789";
-                }
-            return UserDTO;
             }
+            else
+            {
+                UserDTO.PhoneNumber = "123456789";
+            }
+            return UserDTO;
+        }
 
         internal static SurveyInfoModel ToFormInfoModel(Enter.Common.DTO.SurveyInfoDTO SurveyInfoDTO)
         {

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Configuration;
-using System.ServiceModel;
-using System.ServiceModel.Configuration;
-using Epi.Web.MVC.DataServiceClient;
-namespace Epi.Web.MVC.Repositories.Core
+﻿namespace Epi.Web.MVC.Repositories.Core
 {
     /// <summary>
     /// TODO: For now commented. Later we will delete this class
@@ -42,7 +34,7 @@ namespace Epi.Web.MVC.Repositories.Core
         //    }
         //}
 
-       
+
         /// <summary>
         /// Correlates requestid with returned response correlationId. 
         /// These must always match. If not, request and responses are not related.

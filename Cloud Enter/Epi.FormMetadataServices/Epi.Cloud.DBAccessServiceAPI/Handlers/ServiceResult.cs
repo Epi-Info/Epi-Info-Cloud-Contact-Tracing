@@ -1,8 +1,5 @@
 ﻿
 using Epi.Cloud.MetadataServices.DataTypes;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -11,14 +8,14 @@ using System.Web.Http;
 
 namespace Epi.Cloud.DBAccessService.Handlers
 {
-    public class ServiceResult<T>:IHttpActionResult
+    public class ServiceResult<T> : IHttpActionResult
     {
         HttpStatusCode _statusCode;
         ApiController _controller;
         T _data;
 
 
-       public ServiceResult(HttpStatusCode statusCode, T data,ApiController controller)
+        public ServiceResult(HttpStatusCode statusCode, T data, ApiController controller)
         {
             _statusCode = statusCode;
             _data = data;
@@ -26,20 +23,20 @@ namespace Epi.Cloud.DBAccessService.Handlers
         }
 
 
-        public ServiceResult(T data,ApiController controller)
+        public ServiceResult(T data, ApiController controller)
         {
             _statusCode = HttpStatusCode.OK;
             _data = data;
             _controller = controller;
         }
-        
+
         //public Task<HttpResponseMessage>ExecuteAsync(CancellationToken cancellationToken)
         //{
         //    return Task.FormResult(Execute()); 
         //}
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
-        { 
+        {
             return Task.FromResult(Execute());
         }
         public HttpResponseMessage Execute()
@@ -47,7 +44,7 @@ namespace Epi.Cloud.DBAccessService.Handlers
             HttpResponseMessage message = null;
 
             var errorInfo = GetErrorInfo();
-            if(errorInfo!=null)
+            if (errorInfo != null)
             {
                 _statusCode = HttpStatusCode.BadRequest;
                 message = _controller.Request.CreateResponse(_statusCode, errorInfo);
@@ -64,7 +61,7 @@ namespace Epi.Cloud.DBAccessService.Handlers
         {
             var errorResponse = _data as CDTBase;
             CDTResponse error = null;
-            if(errorResponse!=null)
+            if (errorResponse != null)
             {
                 error = errorResponse.Response;
             }

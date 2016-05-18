@@ -1,15 +1,12 @@
-using System;
 using System.ComponentModel;
-using System.Data;
 using System.Xml;
-using Epi;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Legal values Field
-	/// </summary>
-	public class DDLFieldOfLegalValues : TableBasedDropDownField
+    /// <summary>
+    /// Legal values Field
+    /// </summary>
+    public class DDLFieldOfLegalValues : TableBasedDropDownField
     {
         #region Private Data Members
 
@@ -27,16 +24,16 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="page">The page</param>
         public DDLFieldOfLegalValues(Page page) : base(page)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view</param>
 		public DDLFieldOfLegalValues(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -61,9 +58,9 @@ namespace Epi.Fields
             this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
         /// <summary>
         /// Returns field type
         /// </summary>
@@ -79,40 +76,40 @@ namespace Epi.Fields
         /// Column name of the code
         /// </summary>
 		public override string CodeColumnName
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(codeColumnName))
-				{
-					codeColumnName = TextColumnName;
-				}
-				return codeColumnName;
-			}
-			set
-			{
-				base.CodeColumnName = value;
-			}
-		}
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(codeColumnName))
+                {
+                    codeColumnName = TextColumnName;
+                }
+                return codeColumnName;
+            }
+            set
+            {
+                base.CodeColumnName = value;
+            }
+        }
 
         /// <summary>
         /// Column name
         /// </summary>
 		public override string TextColumnName
-		{
-			get
-			{
-				return base.TextColumnName;
-			}
-			set
-			{
-				if (string.IsNullOrEmpty(codeColumnName))
-				{
-					codeColumnName = value;
-				}
-				base.TextColumnName = value;
-			}
-		}
-        
+        {
+            get
+            {
+                return base.TextColumnName;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(codeColumnName))
+                {
+                    codeColumnName = value;
+                }
+                base.TextColumnName = value;
+            }
+        }
+
         /// <summary>
         /// The view element of the field
         /// </summary>
@@ -128,22 +125,22 @@ namespace Epi.Fields
             }
         }
 
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		///// <summary>
-		///// Saves the current field location
-		///// </summary>
+        ///// <summary>
+        ///// Saves the current field location
+        ///// </summary>
         //public override void SaveFieldLocation()
         //{
         //    Metadata.UpdateControlPosition(this);
         //    Metadata.UpdatePromptPosition(this);
         //}
 
-		#endregion
+        #endregion
 
-		#region Protected Methods
+        #region Protected Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -217,6 +214,6 @@ namespace Epi.Fields
         //    }
         //}
 
-		#endregion Protected Methods
+        #endregion Protected Methods
     }
 }

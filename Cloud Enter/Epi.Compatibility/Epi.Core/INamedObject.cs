@@ -1,5 +1,3 @@
-using System;
-
 namespace Epi
 {
     /// <summary>
@@ -10,6 +8,6 @@ namespace Epi
         /// <summary>
         /// Gets the name of the object.
         /// </summary>
-        string Name { get;set;}
+        string Name { get; set; }
     }
 }

@@ -1,33 +1,29 @@
-using System;
-using System.Data;
 using System.Xml;
-
-using Epi;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Upper-Case Text Field.
-	/// </summary>
-	public class UpperCaseTextField : SingleLineTextField
-	{
-		#region Constructors
+    /// <summary>
+    /// Upper-Case Text Field.
+    /// </summary>
+    public class UpperCaseTextField : SingleLineTextField
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public UpperCaseTextField(Page page) : base(page)
-		{
-		}
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public UpperCaseTextField(Page page) : base(page)
+        {
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
 		public UpperCaseTextField(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -37,8 +33,8 @@ namespace Epi.Fields
         public UpperCaseTextField(Page page, XmlElement viewElement)
             : base(page, viewElement)
         {
-        }       
-      
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -48,7 +44,7 @@ namespace Epi.Fields
         {
         }
 
-		#endregion
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -63,9 +59,9 @@ namespace Epi.Fields
         }
         #endregion Public Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		#endregion Public Methods
+        #endregion Public Methods
 
-	}
+    }
 }

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Epi
 {
     /// <summary>
@@ -19,12 +15,12 @@ namespace Epi
         {
         }
 
-        private string sourceColumn = string.Empty; 
+        private string sourceColumn = string.Empty;
         /// <summary>
         /// The value of the current record
         /// </summary>
         protected object currentRecordValueObject = null;
-        
+
         /// <summary>
         /// Returns the current record value
         /// </summary>

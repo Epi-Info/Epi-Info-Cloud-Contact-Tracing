@@ -1,121 +1,113 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Linq;
-using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using System.Data.SqlClient;
 using System.Data;
 namespace Epi.Web.EF
+{
+    public class EntityFormInfoDao : IFormInfoDao
     {
-    public class EntityFormInfoDao: IFormInfoDao
+        public List<FormInfoBO> GetFormInfo(int UserId, int CurrentOrgId)
         {
-        public List<FormInfoBO> GetFormInfo(int UserId , int CurrentOrgId)
-            {
-        List<FormInfoBO> FormList = new List<FormInfoBO>();
-        FormInfoBO FormInfoBO;
-     
+            List<FormInfoBO> FormList = new List<FormInfoBO>();
+            FormInfoBO FormInfoBO;
+
             try
-                {
+            {
 
                 int Id = UserId;
 
-                    using (var Context = DataObjectFactory.CreateContext())
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    User CurrentUser = Context.Users.Single(x => x.UserID == Id);
+
+
+                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == 2);
+
+                    List<string> Assigned = GetAssignedForms(Context, CurrentUser);
+
+
+                    List<KeyValuePair<int, string>> Shared = GetSharedForms(CurrentOrgId, Context);
+
+                    // find the forms that are shared with the current user 
+                    List<KeyValuePair<int, string>> SharedForms = new List<KeyValuePair<int, string>>();
+                    foreach (var item in Shared)
+                    {
+
+                        if (UserOrganizations.Where(x => x.OrganizationID == item.Key).Count() > 0)
                         {
+                            KeyValuePair<int, string> Item = new KeyValuePair<int, string>(item.Key, item.Value);
+                            SharedForms.Add(Item);
+                        }
+                    }
 
 
+                    var items = from FormInfo in Context.SurveyMetaDatas
+                                join UserInfo in Context.Users
+                                on FormInfo.OwnerId equals UserInfo.UserID
+                                into temp
+                                where FormInfo.ParentId == null
+
+                                from UserInfo in temp.DefaultIfEmpty()
+                                select new { FormInfo, UserInfo };
 
 
-                       User CurrentUser = Context.Users.Single(x => x.UserID == Id);
+                    foreach (var item in items)
+                    {
 
-                       
-                       var UserOrganizations = CurrentUser.UserOrganizations.Where(x=> x.RoleId == 2);
-                        
-                       List<string> Assigned = GetAssignedForms(Context, CurrentUser);
-
-
-                       List<KeyValuePair<int, string>> Shared = GetSharedForms(CurrentOrgId, Context);
-                            
-                        // find the forms that are shared with the current user 
-                       List<KeyValuePair<int, string>> SharedForms = new List<KeyValuePair<int, string>>();
-                       foreach (var item in Shared)
-                       {
-
-                           if (UserOrganizations.Where(x => x.OrganizationID == item.Key).Count()>0)
-                           {
-                               KeyValuePair<int, string> Item = new KeyValuePair<int, string>(item.Key, item.Value);
-                               SharedForms.Add(Item);
-                           }
-                       }
-
-
-                       var items = from FormInfo in Context.SurveyMetaDatas
-                                   join UserInfo in Context.Users
-                                   on FormInfo.OwnerId equals UserInfo.UserID
-                                   into temp
-                                   where FormInfo.ParentId == null
-                                   
-                                   from UserInfo in temp.DefaultIfEmpty()
-                                   select new { FormInfo, UserInfo }; 
-                     
-
-                        foreach (var item in items)
-                            {
-                            
-                        FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo,item.UserInfo,false);
+                        FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, false);
                         //if (string.IsNullOrEmpty(FormInfoBO.ParentId))
                         //    {
-                               
 
-                            if(item.UserInfo.UserID == Id)
-                                {
-                                    FormInfoBO.IsOwner = true;
-                                    FormList.Add(FormInfoBO);
-                                   
-                                }
-                            else
-                                {
 
-                                //Only Share or Assign
-                                    if (SharedForms.Where(x=>x.Value == FormInfoBO.FormId).Count()>0)
-                                    {
-                                        FormInfoBO.IsShared = true;
-                                        FormInfoBO.UserId = Id;
-                                        //FormInfoBO.OrganizationId = Shared.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
-                                        FormInfoBO.OrganizationId = SharedForms.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
-                                        FormList.Add(FormInfoBO);
-                                    }
-                                    else if (Assigned.Contains(FormInfoBO.FormId))
-                                     {
-                                      FormInfoBO.IsOwner = false;
-                                      var UserOrgId =this.GetUserOrganization(FormInfoBO.FormId, UserId);
-                                      if (UserOrgId > -1)
-                                        {
-                                          FormInfoBO.OrganizationId = this.GetUserOrganization(FormInfoBO.FormId, UserId);
-                                        }
-                                   FormList.Add(FormInfoBO);
-                                     }
-                                   
-                                }
+                        if (item.UserInfo.UserID == Id)
+                        {
+                            FormInfoBO.IsOwner = true;
+                            FormList.Add(FormInfoBO);
 
-                           // FormList.Add(FormInfoBO);
-                              // }
+                        }
+                        else
+                        {
+
+                            //Only Share or Assign
+                            if (SharedForms.Where(x => x.Value == FormInfoBO.FormId).Count() > 0)
+                            {
+                                FormInfoBO.IsShared = true;
+                                FormInfoBO.UserId = Id;
+                                //FormInfoBO.OrganizationId = Shared.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
+                                FormInfoBO.OrganizationId = SharedForms.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
+                                FormList.Add(FormInfoBO);
                             }
-                         }
+                            else if (Assigned.Contains(FormInfoBO.FormId))
+                            {
+                                FormInfoBO.IsOwner = false;
+                                var UserOrgId = this.GetUserOrganization(FormInfoBO.FormId, UserId);
+                                if (UserOrgId > -1)
+                                {
+                                    FormInfoBO.OrganizationId = this.GetUserOrganization(FormInfoBO.FormId, UserId);
+                                }
+                                FormList.Add(FormInfoBO);
+                            }
+
+                        }
+
+                        // FormList.Add(FormInfoBO);
+                        // }
+                    }
                 }
-            catch (Exception ex)
-                {
-                throw (ex);
-                }
-           
-
-
-
-        return FormList;
             }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+
+
+
+            return FormList;
+        }
 
         private static List<KeyValuePair<int, string>> GetSharedForms(int CurrentOrgId, OSELS_EWEEntities Context)
         {
@@ -165,153 +157,153 @@ namespace Epi.Web.EF
         {
             try
             {
-               int OrgId = -1;
-                    using (var Context = DataObjectFactory.CreateContext())
+                int OrgId = -1;
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+
+
+
+                    // get UserOrganization
+                    var items = from UserOrgInfo in Context.UserOrganizations
+                                join OrgInfo in Context.Organizations on UserOrgInfo.OrganizationID equals OrgInfo.OrganizationId into temp
+
+                                where UserOrgInfo.UserID == UserId
+
+                                from query in temp.DefaultIfEmpty()
+                                select new { query };
+                    foreach (var Item in items)
                     {
 
-                   
-
-                        // get UserOrganization
-                        var items = from UserOrgInfo in Context.UserOrganizations 
-                                    join OrgInfo in Context.Organizations on UserOrgInfo.OrganizationID equals OrgInfo.OrganizationId into temp
-                                   
-                                    where UserOrgInfo.UserID == UserId
-                                    
-                                    from query in temp.DefaultIfEmpty()
-                                    select new { query };
-                        foreach (var Item in items)
+                        var OId = Item.query.SurveyMetaDatas.Where(x => x.SurveyId == new Guid(SurveyId));
+                        if (OId.Count() > 0)
                         {
-
-                            var OId = Item.query.SurveyMetaDatas.Where(x => x.SurveyId == new Guid(SurveyId));
-                            if (OId.Count()>0)
-                            {
-                                OrgId = Item.query.OrganizationId;
-                                break;
-                            }
+                            OrgId = Item.query.OrganizationId;
+                            break;
                         }
-
-
-                        //var OId = items.Where(x => x.query.SurveyMetaDatas.Where(z => z.SurveyId == new Guid(SurveyId)) == items1);
-
                     }
 
-                return OrgId;
-             }
-            catch (Exception ex)
-                {
-                throw (ex);
+
+                    //var OId = items.Where(x => x.query.SurveyMetaDatas.Where(z => z.SurveyId == new Guid(SurveyId)) == items1);
+
                 }
+
+                return OrgId;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
         }
 
         public FormInfoBO GetFormByFormId(string FormId, bool GetXml, int UserId)
+        {
+
+
+            FormInfoBO FormInfoBO = new FormInfoBO();
+
+            try
             {
 
-       
-                      FormInfoBO FormInfoBO = new FormInfoBO();
-                    
-                      try
-                          {
+                Guid Id = new Guid(FormId);
 
-                          Guid Id = new Guid(FormId);
-
-                          using (var Context = DataObjectFactory.CreateContext())
-                              {
-                                  
-
-
-                              var items = from FormInfo in Context.SurveyMetaDatas
-                                          join UserInfo in Context.Users
-                                          on FormInfo.OwnerId equals UserInfo.UserID
-                                          into temp
-                                          from UserInfo in temp.DefaultIfEmpty()
-                                          where FormInfo.SurveyId == Id
-                                          select new { FormInfo, UserInfo };
-                              SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
-                              var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
-                              var Orgs = Context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
+                using (var Context = DataObjectFactory.CreateContext())
+                {
 
 
 
-                              bool IsShared = false;
+                    var items = from FormInfo in Context.SurveyMetaDatas
+                                join UserInfo in Context.Users
+                                on FormInfo.OwnerId equals UserInfo.UserID
+                                into temp
+                                from UserInfo in temp.DefaultIfEmpty()
+                                where FormInfo.SurveyId == Id
+                                select new { FormInfo, UserInfo };
+                    SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
+                    var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
+                    var Orgs = Context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
 
-                              foreach(var org in Orgs)
-                              {
-                                  
 
-                                  var UserInfo = Context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == UserId && x.RoleId == 2);
-                                  if (UserInfo.Count()>0)
-                                 {
-                                     IsShared = true;
-                                     break;
-                                 
-                                 }
-                            
-                              }
+
+                    bool IsShared = false;
+
+                    foreach (var org in Orgs)
+                    {
+
+
+                        var UserInfo = Context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == UserId && x.RoleId == 2);
+                        if (UserInfo.Count() > 0)
+                        {
+                            IsShared = true;
+                            break;
+
+                        }
+
+                    }
 
 
 
 
-                              foreach (var item in items)
-                                  {
-                                 
-                                  FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo,GetXml);
-                                  FormInfoBO.IsShared = IsShared;
+                    foreach (var item in items)
+                    {
 
-                                  if (item.UserInfo.UserID == UserId)
-                                      {
-                                      FormInfoBO.IsOwner = true;
-                                      }
-                                  else
-                                      {
-                                      FormInfoBO.IsOwner = false;
-                                      }
+                        FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, GetXml);
+                        FormInfoBO.IsShared = IsShared;
 
-                                  }
-                              }
-                          }
-                      catch (Exception ex)
-                          {
-                          throw (ex);
-                          }
+                        if (item.UserInfo.UserID == UserId)
+                        {
+                            FormInfoBO.IsOwner = true;
+                        }
+                        else
+                        {
+                            FormInfoBO.IsOwner = false;
+                        }
 
-
-
-
-                      return FormInfoBO;
-            
-            
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+
+
+
+            return FormInfoBO;
+
+
+        }
 
         public FormInfoBO GetFormByFormId(string FormId)
         {
 
-        FormInfoBO FormInfoBO = new FormInfoBO();
+            FormInfoBO FormInfoBO = new FormInfoBO();
 
-        try
+            try
             {
 
-            Guid Id = new Guid(FormId);
+                Guid Id = new Guid(FormId);
 
-            using (var Context = DataObjectFactory.CreateContext())
+                using (var Context = DataObjectFactory.CreateContext())
                 {
-                 
-                SurveyMetaData SurveyMetaData = Context.SurveyMetaDatas.Single(x => x.SurveyId == Id);
-                FormInfoBO = Mapper.ToFormInfoBO(SurveyMetaData);
+
+                    SurveyMetaData SurveyMetaData = Context.SurveyMetaDatas.Single(x => x.SurveyId == Id);
+                    FormInfoBO = Mapper.ToFormInfoBO(SurveyMetaData);
                 }
             }
-        catch (Exception ex)
+            catch (Exception ex)
             {
-            throw (ex);
+                throw (ex);
             }
 
 
 
 
-        return FormInfoBO;
-            
-            }
+            return FormInfoBO;
 
-        public bool GetEwavLiteToggleSwitch(string FormId, int UserId) 
+        }
+
+        public bool GetEwavLiteToggleSwitch(string FormId, int UserId)
         {
             string EWEConnectionString = DataObjectFactory.EWEADOConnectionString;
             SqlConnection EWEConnection = new SqlConnection(EWEConnectionString);
@@ -328,7 +320,7 @@ namespace Epi.Web.EF
 
             object numberOfRows = DS.Tables[0].Rows.Count;
             EWEConnection.Close();
-            if ((int)numberOfRows >0)
+            if ((int)numberOfRows > 0)
             {
                 return true;
             }
@@ -338,8 +330,8 @@ namespace Epi.Web.EF
         }
 
 
-        public bool HasDraftRecords(string FormId) {
-
+        public bool HasDraftRecords(string FormId)
+        {
             try
             {
 
@@ -349,21 +341,20 @@ namespace Epi.Web.EF
                 {
 
                     var DraftRecords = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.IsDraftMode == true);
-                   if (DraftRecords.Count() > 0)
-                {
-                    _HasDraftRecords = true;
-                
+                    if (DraftRecords.Count() > 0)
+                    {
+                        _HasDraftRecords = true;
+
+                    }
                 }
-                }
-                
+
                 return _HasDraftRecords;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-           
-        }
 
         }
     }
+}

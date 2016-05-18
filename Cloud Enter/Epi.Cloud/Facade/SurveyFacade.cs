@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Epi.Web.MVC.Repositories.Core;
 using Epi.Web.Enter.Common.Message;
-using Epi.Web.MVC.Constants;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Facade;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.DTO;
 namespace Epi.Web.MVC.Facade
 {
@@ -67,37 +63,37 @@ namespace Epi.Web.MVC.Facade
             string surveyId,
             int pageNumber,
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-            bool IsMobileDevice, 
+            bool IsMobileDevice,
             List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
             List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
         {
             List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
 
-           
+
             //Get the SurveyInfoDTO
             Epi.Web.Enter.Common.DTO.SurveyInfoDTO surveyInfoDTO;
             if (FormsHierarchyDTOList == null)
             {
-            surveyInfoDTO =  SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
-            if (_SurveyAnswerDTOList != null)
-            {
-                foreach (var item in _SurveyAnswerDTOList)
+                surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
+                if (_SurveyAnswerDTOList != null)
                 {
-                    Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
-                    request.Criteria.SurveyIdList.Add(item.SurveyId);
-                    Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
-                    List.Add(_SurveyInfoDTO);
+                    foreach (var item in _SurveyAnswerDTOList)
+                    {
+                        Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
+                        request.Criteria.SurveyIdList.Add(item.SurveyId);
+                        Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
+                        List.Add(_SurveyInfoDTO);
+                    }
                 }
             }
-            }
-            
+
             else
             {
                 var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == surveyAnswerDTO.SurveyId);
                 surveyInfoDTO = SurveyInfoDTO.SurveyInfo;
 
 
-             
+
                 _SurveyAnswerDTOList = new List<SurveyAnswerDTO>();
                 _SurveyAnswerDTOList.Add(surveyAnswerDTO);
 
@@ -109,7 +105,7 @@ namespace Epi.Web.MVC.Facade
                         if (DTO != null && !_SurveyAnswerDTOList.Contains(DTO))
 
                             _SurveyAnswerDTOList.Add(DTO);
-                        
+
                     }
                 }
 
@@ -118,10 +114,10 @@ namespace Epi.Web.MVC.Facade
                     var _SurveyInfoDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == item.SurveyId);
                     List.Add(_SurveyInfoDTO.SurveyInfo);
                 }
-                 
-                  
+
+
             }
-                MvcDynamicForms.Form form = null;
+            MvcDynamicForms.Form form = null;
 
             if (IsMobileDevice)
             {
@@ -143,7 +139,7 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
         /// <param name="SurveyId"></param>
         /// <returns></returns>
-        public Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false , int CurrentOrgId = -1)
+        public Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
         {
 
             return SurveyHelper.CreateSurveyResponse(surveyId, responseId, _surveyAnswerRequest, _surveyAnswerDTO, _surveyResponseXML, _iSurveyAnswerRepository, UserId, IsChild, RelateResponseId, IsEditMode, CurrentOrgId);

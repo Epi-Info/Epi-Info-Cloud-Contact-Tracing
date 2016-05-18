@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
-using com.calitha.goldparser.lalr;
 using com.calitha.commons;
 using com.calitha.goldparser;
-using Epi.Core.EnterInterpreter.Rules;
 using EpiInfo.Plugin;
 
 namespace Epi.Core.EnterInterpreter
@@ -73,7 +71,7 @@ namespace Epi.Core.EnterInterpreter
         public IEnterInterpreterHost Host
         {
             get { return this.host; }
-            set{ this.host = value;}
+            set { this.host = value; }
 
         }
 
@@ -122,8 +120,8 @@ namespace Epi.Core.EnterInterpreter
         public EpiInterpreterParser(string filename)
         {
             FileStream stream = new FileStream(filename,
-                                               FileMode.Open, 
-                                               FileAccess.Read, 
+                                               FileMode.Open,
+                                               FileAccess.Read,
                                                FileShare.Read);
             Init(stream);
             stream.Close();
@@ -208,7 +206,7 @@ namespace Epi.Core.EnterInterpreter
 
         public EpiInterpreterParser(IEnterInterpreterHost pEnterCheckCodeInterface)
         {
-            Stream stream = EpiInterpreterParser.GetEnterCompiledGrammarTable(); 
+            Stream stream = EpiInterpreterParser.GetEnterCompiledGrammarTable();
             Init(stream);
             pEnterCheckCodeInterface.Register(this);
             this.EnterCheckCodeInterface = pEnterCheckCodeInterface;
@@ -236,7 +234,7 @@ namespace Epi.Core.EnterInterpreter
                 this.mContext.AssignVariableCheck = null;
 
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 if (!ex.Message.ToUpper().Contains("STACK EMPTY"))
                 {
@@ -290,7 +288,7 @@ namespace Epi.Core.EnterInterpreter
         private void TokenReadEvent(LALRParser parser, TokenReadEventArgs args)
         {
 
-            
+
 
             try
             {
@@ -348,7 +346,7 @@ namespace Epi.Core.EnterInterpreter
                 this.Context.module = new MemoryRegion();
             }*/
 
-            
+
 
             mContext.EnterCheckCodeInterface = this.EnterCheckCodeInterface;
 
@@ -358,7 +356,7 @@ namespace Epi.Core.EnterInterpreter
             program.Execute();
 
             mContext.CheckAssignedVariables();
-            
+
             /*
             if (this.IsExecuteMode && this.host.IsExecutionEnabled)
             {

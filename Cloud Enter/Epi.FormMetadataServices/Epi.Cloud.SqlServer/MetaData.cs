@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Data.EF;
-using System.Reflection;
-using System;
 using System.Data;
 
 namespace Epi.Cloud.SqlServer
@@ -34,14 +32,14 @@ namespace Epi.Cloud.SqlServer
                                  join mp in metacontext.metaPages on (mf.PageId) equals mp.PageId into lmp
                                  from mp in lmp.DefaultIfEmpty()
                                  join mv in metacontext.metaViews on (mp.ViewId) equals mv.ViewId into lmv
-                                 from mv in lmv.DefaultIfEmpty()                               
-                                 where (mf.PageId.HasValue && mf.PageId == pageId )|| (!mf.PageId.HasValue && mf.PageId == pageId)
+                                 from mv in lmv.DefaultIfEmpty()
+                                 where (mf.PageId.HasValue && mf.PageId == pageId) || (!mf.PageId.HasValue && mf.PageId == pageId)
                                  select new
                                  {
                                      mf.UniqueId,
                                      mf.Name,
                                      mf.PageId,
-                                     mf.FieldId,                                    
+                                     mf.FieldId,
                                      mf.FieldTypeId,
                                      ControlAfterCheckCode = mf.CheckCodeAfter,
                                      ControlBeforeCheckCode = mf.CheckCodeBefore,
@@ -155,14 +153,10 @@ namespace Epi.Cloud.SqlServer
             }
         }
 
-
-        public DataTable GetDropdownDB(string tableName,string ColumnName)
+        public DataTable GetDropdownDB(string tableName, string ColumnName)
         {
             SqlDatabase sqldb = new SqlDatabase();
-            return sqldb.GetTableData(tableName, ColumnName, string.Empty);            
+            return sqldb.GetTableData(tableName, ColumnName, string.Empty);
         }
-
-     
-
     }
 }

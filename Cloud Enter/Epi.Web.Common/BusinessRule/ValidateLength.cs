@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Epi.Web.Enter.Common.BusinessRule
+﻿namespace Epi.Web.Enter.Common.BusinessRule
 {
     /// <summary>
     ///  Length validation rule. 

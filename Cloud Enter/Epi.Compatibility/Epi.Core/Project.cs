@@ -2,16 +2,11 @@ using System;
 using System.Data;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using System.Security.Cryptography;
-using Epi;
 using System.Collections.Generic;
 using Epi.Collections;
 using Epi.Data;
-using Epi.Fields;
-using Epi.Resources;
 using Epi.Data.Services;
 
 namespace Epi
@@ -26,7 +21,7 @@ namespace Epi
         /// Event Handler for TableCopyStatusEvent
         /// </summary>
         public event TableCopyStatusEventHandler TableCopyStatusEvent;
-        
+
         /// <summary>
         /// Raise the TableCopyStatus Event
         /// </summary>
@@ -148,7 +143,7 @@ namespace Epi
         {
             Construct(filePath);
         }
-        
+
         public Project(string filePath, bool useMetaDataTable)
         {
             _useMetaDataSet = useMetaDataTable;
@@ -335,7 +330,7 @@ namespace Epi
                 xmlDoc.DocumentElement.Attributes["pageHeight"].Value = value;
             }
         }
-        
+
         /// <summary>
         /// Returns the file name of the project.
         /// </summary>
@@ -669,7 +664,7 @@ namespace Epi
             }
         }
 
-        
+
 
         /// <summary>
         /// Data Driver for the Collected database.
@@ -847,7 +842,7 @@ namespace Epi
             DataTable dt = Metadata.GetViewsAsDataTable();
             List<String> list = new List<String>();
             //If SQL permissions denied, returns dt with no rows--checked here.  den4 11/23/2010
-            if (dt == null || dt.Rows.Count == 0 )
+            if (dt == null || dt.Rows.Count == 0)
             {
                 return list;
             }
@@ -965,7 +960,7 @@ namespace Epi
         /// <param name="viewId">Id of <see cref="Epi.View"/> to get.</param>
         /// <returns>Project <see cref="Epi.View"/></returns>
         public View GetViewById(int viewId)
-        {            
+        {
             return (Views.GetViewById(viewId));
         }
 
@@ -1007,7 +1002,7 @@ namespace Epi
             // Collected data ...
             newProject.CollectedDataDbInfo = collectedDataDBInfo;
             newProject.CollectedDataConnectionString = collectedDataDBInfo.DBCnnStringBuilder.ToString();
-            
+
             newProject.CollectedDataDriver = collectedDataDriver;
             newProject.CollectedData.Initialize(collectedDataDBInfo, collectedDataDriver, true);
 
@@ -1104,7 +1099,7 @@ namespace Epi
             {
                 Views.Add(newView);
             }
-            
+
             Metadata.InsertView(newView);
             currentViewElement = newView.ViewElement;
             LoadViews();

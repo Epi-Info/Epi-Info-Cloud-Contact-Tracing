@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
-using System.Web.UI;
 
 
 
 namespace MvcDynamicForms.Fields
-{ 
+{
     /// <summary>
     /// Represents a list of html radio button inputs.
     /// </summary>
@@ -35,7 +34,7 @@ namespace MvcDynamicForms.Fields
             var html = new StringBuilder();
             var inputName = _form.FieldPrefix + _key;
             var choicesList = _choices.ToList();
-         
+
             var choicesList1 = GetChoices(_ChoicesList);
             choicesList = choicesList1.ToList();
 
@@ -65,18 +64,18 @@ namespace MvcDynamicForms.Fields
 
             var fieldset = new TagBuilder("fieldset");
             fieldset.Attributes.Add("data-role", "controlgroup");
-            
+
             html.Append(fieldset.ToString(TagRenderMode.StartTag));
 
             var legend = new TagBuilder("legend");
-              
+
             legend.SetInnerText(Prompt);
             html.Append(legend.ToString());
 
-          
 
-         
-         
+
+
+
             for (int i = 0; i < choicesList.Count; i++)
             {
 
@@ -96,19 +95,19 @@ namespace MvcDynamicForms.Fields
                     }
                 }
 
- 
+
                 var rad = new TagBuilder("input");
                 rad.Attributes.Add("type", "radio");
                 rad.Attributes.Add("name", inputName);
                 rad.Attributes.Add("class", inputName);
                 rad.Attributes.Add("id", radId);
-                
+
                 //StringBuilder RadioButton = new StringBuilder();
                 //RadioButton.Append("<input type='Radio'");
                 //RadioButton.Append(" name='" + inputName + "'");
                 //RadioButton.Append(" id='" + radId + "'/>");
 
-                
+
                 ////////////Check code start//////////////////
                 EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
                 if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
@@ -121,7 +120,7 @@ namespace MvcDynamicForms.Fields
                 ////////////Check code end//////////////////
                 rad.SetInnerText(choicesList[i].Key);
                 rad.Attributes.Add("value", i.ToString());
-               // rad.Attributes.Add("style", IsHiddenStyle);
+                // rad.Attributes.Add("style", IsHiddenStyle);
                 if (_IsDisabled)
                 {
                     rad.Attributes.Add("disabled", "disabled");
@@ -131,20 +130,20 @@ namespace MvcDynamicForms.Fields
                 rad.MergeAttributes(_inputHtmlAttributes);
                 html.Append(rad.ToString(TagRenderMode.SelfClosing));
 
-             
-                    var rightlbl = new TagBuilder("label");
-                    rightlbl.Attributes.Add("for", radId);
-                    rightlbl.Attributes.Add("class", "label" + inputName);
-                    //StringBuilder StyleValues2 = new StringBuilder();
-                    //StyleValues2.Append(GetRadioListStyle(_fontstyle.ToString(), null, null, null, null, IsHidden));
-                    ////rightlbl.Attributes.Add("style", StyleValues2.ToString() + ";" + IsHighlightedStyle + ";" + IsHiddenStyle);
-                    //rightlbl.Attributes.Add("style",  "" + IsHighlightedStyle + ";" + IsHiddenStyle);
-                    rightlbl.SetInnerText(choicesList[i].Key);
-                    html.Append(rightlbl.ToString());
 
-                 
+                var rightlbl = new TagBuilder("label");
+                rightlbl.Attributes.Add("for", radId);
+                rightlbl.Attributes.Add("class", "label" + inputName);
+                //StringBuilder StyleValues2 = new StringBuilder();
+                //StyleValues2.Append(GetRadioListStyle(_fontstyle.ToString(), null, null, null, null, IsHidden));
+                ////rightlbl.Attributes.Add("style", StyleValues2.ToString() + ";" + IsHighlightedStyle + ";" + IsHiddenStyle);
+                //rightlbl.Attributes.Add("style",  "" + IsHighlightedStyle + ";" + IsHiddenStyle);
+                rightlbl.SetInnerText(choicesList[i].Key);
+                html.Append(rightlbl.ToString());
+
+
             }
-          
+
             html.Append(fieldset.ToString(TagRenderMode.EndTag));
             //html.Append(Div.ToString(TagRenderMode.EndTag));
 
@@ -153,7 +152,7 @@ namespace MvcDynamicForms.Fields
             hidden.Attributes.Add("type", "hidden");
             hidden.Attributes.Add("id", inputName);
             hidden.Attributes.Add("name", inputName);
-            
+
             hidden.Attributes.Add("value", string.Empty);
             html.Append(hidden.ToString(TagRenderMode.SelfClosing));
 
@@ -162,13 +161,13 @@ namespace MvcDynamicForms.Fields
             if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-                
+
             }
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
 
-           
+
 
         }
 

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
@@ -11,9 +9,7 @@ using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.ObjectMapping;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Exception;
-using System.Collections;
 using Epi.Web.Enter.Interfaces.DataInterface;
-using System.Configuration;
 namespace Epi.Web.WCF.SurveyService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
@@ -355,7 +351,7 @@ namespace Epi.Web.WCF.SurveyService
                         if (!request.SurveyAnswerList[0].RecoverLastRecordVersion)
                         // if we are not keeping the version of xml found currently in the SurveyResponse table (meaning getting the original copy form the ResponseXml table)
                         {
-                        //check if any orphan records exists 
+                            //check if any orphan records exists 
                             foreach (var item in SurveyResponseBOList)
                             {
 
@@ -370,14 +366,14 @@ namespace Epi.Web.WCF.SurveyService
                                     // During the delete process below: 
                                     //  1) Delete the record from ResponseXml table.
                                     //  2) Update Record status in the SurveyResponse table which fires database triggers.
-                                     Implementation.DeleteResponseXml(ResponseXmlBO);
-                                     Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2); 
+                                    Implementation.DeleteResponseXml(ResponseXmlBO);
+                                    Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
 
                                     //This will handle the status update and the swapping of the Xml
                                     // but for this scenario I will keep the status unchanged 
-                                   // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
-                                   
-                                  
+                                    // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
+
+
                                 }
                             }
 
@@ -387,9 +383,9 @@ namespace Epi.Web.WCF.SurveyService
                         }
                         else
                         {
-                        // load the version curently found the SurveyResponse table 
-                        
-                           response.SurveyResponseList=  Mapper.ToDataTransferObject(SurveyResponseBOList);
+                            // load the version curently found the SurveyResponse table 
+
+                            response.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
                         }
                     }
                     else if (request.Action.Equals("CreateChild", StringComparison.OrdinalIgnoreCase))
@@ -462,7 +458,7 @@ namespace Epi.Web.WCF.SurveyService
                                 ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
                                 ResponseXmlBO.ResponseId = item.ResponseId;
                                 Implementation.DeleteResponseXml(ResponseXmlBO);
-                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2); 
+                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
 
                             }
                             catch
@@ -807,7 +803,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
                 Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao, IUserDao, IFormInfoDao);
-          Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml,pRequest.CurrentOrgId));
+                Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml, pRequest.CurrentOrgId));
 
 
 
@@ -845,7 +841,7 @@ namespace Epi.Web.WCF.SurveyService
                     {
                         if (pRequest.Criteria.IsEditMode)
                         {
-                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId),2);
+                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId), 2);
                         }
                         else
                         {
@@ -868,7 +864,7 @@ namespace Epi.Web.WCF.SurveyService
                     {
                         if (pRequest.Criteria.IsEditMode)
                         {
-                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId),2);
+                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId), 2);
                         }
                         else
                         {
@@ -1379,13 +1375,13 @@ namespace Epi.Web.WCF.SurveyService
             UserBO UserBO = Mapper.ToUserBO(request.User);
             OrganizationBO OrgBO = Mapper.ToOrgBusinessObject(request.Organization);
             UserBO result = new UserBO();
-           if (!request.IsAuthenticated)
+            if (!request.IsAuthenticated)
             {
-              result = Implementation.GetUserByUserIdAndOrgId(UserBO, OrgBO);
-           }
+                result = Implementation.GetUserByUserIdAndOrgId(UserBO, OrgBO);
+            }
             else
             {
-               result = Implementation.GetUserByEmail(UserBO);
+                result = Implementation.GetUserByEmail(UserBO);
             }
 
 
@@ -1460,7 +1456,6 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
-
         }
 
         public void UpdateResponseStatus(SurveyAnswerRequest request)
@@ -1495,10 +1490,6 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
-
-
-
-
         }
 
         public bool HasResponse(string SurveyId, string ResponseId)

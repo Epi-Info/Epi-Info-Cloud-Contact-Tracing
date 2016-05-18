@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 
 namespace Epi.Fields
@@ -63,7 +62,7 @@ namespace Epi.Fields
         {
             GetMetadata().UpdateGridColumn(this);
         }
-        
+
         #endregion
     }
 }

@@ -8,6 +8,6 @@ namespace Epi.Web.MVC.Models
         [Required]
         public string PassCode { get; set; }
 
-         
+
     }
 }

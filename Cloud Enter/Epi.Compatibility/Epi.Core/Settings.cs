@@ -1,5 +1,3 @@
-using System;
-
 namespace Epi
 {
 
@@ -7,7 +5,7 @@ namespace Epi
     /// Structure for all the settings, all in the public interface
     /// </summary>
 	public struct Settings
-	{
+    {
         /// <summary>Background Image Setting</summary>
         public string BackgroundImage;
         /// <summary>Default Database Format Setting</summary>
@@ -58,5 +56,5 @@ namespace Epi
         public int StatisticsLevel;
         /// <summary>Working Directory Setting</summary>
         public string WorkingDirectory;
-	}
+    }
 }

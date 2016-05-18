@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 using System;
- 
+
 namespace MvcDynamicForms.Fields
 {
     /// <summary>
@@ -33,11 +32,11 @@ namespace MvcDynamicForms.Fields
             }
 
             // list of checkboxes
-            var ul = new TagBuilder("ul");            
+            var ul = new TagBuilder("ul");
             ul.Attributes.Add("class", _orientation == Orientation.Vertical ? _verticalClass : _horizontalClass);
             ul.Attributes["class"] += " " + _listClass;
             html.Append(ul.ToString(TagRenderMode.StartTag));
-            
+
             var choicesList = _choices.ToList();
             for (int i = 0; i < choicesList.Count; i++)
             {
@@ -56,7 +55,7 @@ namespace MvcDynamicForms.Fields
                 if (choicesList[i].Value) chk.Attributes.Add("checked", "checked");
                 chk.MergeAttributes(_inputHtmlAttributes);
                 html.Append(chk.ToString(TagRenderMode.SelfClosing));
-                
+
                 // checkbox label
                 var lbl = new TagBuilder("label");
                 lbl.Attributes.Add("for", chkId);
@@ -77,7 +76,7 @@ namespace MvcDynamicForms.Fields
             hidden.Attributes.Add("name", inputName);
             hidden.Attributes.Add("value", string.Empty);
             html.Append(hidden.ToString(TagRenderMode.SelfClosing));
-           
+
 
             var wrapper = new TagBuilder(_fieldWrapper);
             wrapper.Attributes["class"] = _fieldWrapperClass;

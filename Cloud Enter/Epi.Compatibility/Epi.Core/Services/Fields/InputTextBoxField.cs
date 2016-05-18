@@ -1,41 +1,39 @@
 using System;
 using System.Data;
-using Epi;
-using Epi.Data;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Input text box field
-	/// </summary>
-	public abstract class InputTextBoxField : InputFieldWithSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore
-	{
+    /// <summary>
+    /// Input text box field
+    /// </summary>
+    public abstract class InputTextBoxField : InputFieldWithSeparatePrompt, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore
+    {
 
-		#region Private Members
-		
-		private string checkCodeAfter = string.Empty;
-		private string checkCodeBefore = string.Empty;
-		// protected DragableTextBox textbox;
+        #region Private Members
 
-		#endregion
+        private string checkCodeAfter = string.Empty;
+        private string checkCodeBefore = string.Empty;
+        // protected DragableTextBox textbox;
 
-		#region Constructors
+        #endregion
+
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">Page</param>
-		public InputTextBoxField(Page page) : base(page)
-		{
-		}
+        public InputTextBoxField(Page page) : base(page)
+        {
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public InputTextBoxField(View view): base(view)
-		{
-			Construct();
-		}
+		public InputTextBoxField(View view) : base(view)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Load from row
@@ -47,7 +45,7 @@ namespace Epi.Fields
             //checkCodeAfter = row["ControlAfterCheckCode"].ToString();
             //checkCodeBefore = row["ControlBeforeCheckCode"].ToString();
         }
-        
+
         public InputTextBoxField Clone()
         {
             InputTextBoxField clone = (InputTextBoxField)this.MemberwiseClone();
@@ -62,66 +60,66 @@ namespace Epi.Fields
             //(field as InputTextBoxField).checkCodeBefore = this.checkCodeBefore;
         }
 
-		private void Construct()
-		{
-			//this.Enter += new EnterEventHandler(InputTextBoxField_Enter);
-		}
-		#endregion Constructors
+        private void Construct()
+        {
+            //this.Enter += new EnterEventHandler(InputTextBoxField_Enter);
+        }
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
 
         /// <summary>
         /// Check Code After
         /// </summary>
-		public string CheckCodeAfter
-		{
-			get
-			{
-				return (checkCodeAfter);
-			}
-			set
-			{
-				checkCodeAfter = value;
-			}
-		}
+        public string CheckCodeAfter
+        {
+            get
+            {
+                return (checkCodeAfter);
+            }
+            set
+            {
+                checkCodeAfter = value;
+            }
+        }
 
         /// <summary>
         /// Check Code Before
         /// </summary>
 		public string CheckCodeBefore
-		{
-			get
-			{
-				return (checkCodeBefore);
-			}
-			set
-			{
-				checkCodeBefore = value;
-			}
-		}
+        {
+            get
+            {
+                return (checkCodeBefore);
+            }
+            set
+            {
+                checkCodeBefore = value;
+            }
+        }
 
-		#endregion Public Properties
+        #endregion Public Properties
 
-		#region Protected Properties
+        #region Protected Properties
 
-		#endregion Protected Properties
+        #endregion Protected Properties
 
-		#region Public Methods
+        #region Public Methods
 
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
-			GetMetadata().DeleteField(this);
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
+        }
 
-		#endregion Public Methods		
+        #endregion Public Methods		
 
-		#region Private Methods
+        #region Private Methods
 
-		#endregion
+        #endregion
 
-	}
+    }
 }

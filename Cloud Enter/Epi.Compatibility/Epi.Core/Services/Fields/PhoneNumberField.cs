@@ -1,46 +1,44 @@
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Phone Number Field.
-	/// </summary>
-	public class PhoneNumberField : InputTextBoxField, IPatternable
-	{
-		#region Private Members
+    /// <summary>
+    /// Phone Number Field.
+    /// </summary>
+    public class PhoneNumberField : InputTextBoxField, IPatternable
+    {
+        #region Private Members
 
         private XmlElement viewElement;
         private XmlNode fieldNode;
-		private string pattern = string.Empty;
+        private string pattern = string.Empty;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
 
-		#endregion
-		
-		#region Constructors
-		
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public PhoneNumberField(Page page) : base(page)
-		{
-			Construct();
-		}
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public PhoneNumberField(Page page) : base(page)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
 		public PhoneNumberField(View view) : base(view)
-		{
-			Construct();
-		}	
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor
@@ -65,11 +63,11 @@ namespace Epi.Fields
             this.view.Project.Metadata.GetFieldData(this, this.fieldNode);
         }
 
-		private void Construct()
-		{
+        private void Construct()
+        {
             genericDbColumnType = GenericDbColumnType.String;
             this.dbColumnType = DbType.String;
-		}
+        }
 
         /// <summary>
         /// Load from row
@@ -80,18 +78,18 @@ namespace Epi.Fields
             base.LoadFromRow(row);
             pattern = row[ColumnNames.PATTERN].ToString();
         }
-        
+
         public PhoneNumberField Clone()
         {
             PhoneNumberField clone = (PhoneNumberField)this.MemberwiseClone();
             base.AssignMembers(clone);
             return clone;
         }
-		
+
         #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -120,7 +118,7 @@ namespace Epi.Fields
                 base.CurrentRecordValueObject = value;
             }
         }
-        
+
         /// <summary>
         /// The view element of the field
         /// </summary>
@@ -138,26 +136,26 @@ namespace Epi.Fields
 
         #endregion Public Properties
 
-		#region IPatternableField Members
+        #region IPatternableField Members
 
         /// <summary>
         /// Gets and sets Pattern for field
         /// </summary>
-		public string Pattern
-		{
-			get
-			{
-				return (pattern);
-			}
-			set
-			{
-				pattern = value;
-			}
-		}
+        public string Pattern
+        {
+            get
+            {
+                return (pattern);
+            }
+            set
+            {
+                pattern = value;
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Public Methods
+        #region Public Methods
         /// <summary>
         /// Returns specific data type for the target DB.
         /// </summary>
@@ -167,9 +165,9 @@ namespace Epi.Fields
             return base.GetDbSpecificColumnType() + "(20)";
         }
 
-		#endregion Public Methods
+        #endregion Public Methods
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -243,10 +241,10 @@ namespace Epi.Fields
         //    }
         //}
 
-		#endregion Private Methods
+        #endregion Private Methods
 
-		#region Event Handlers
-		
-		#endregion Event Handler
-	}
+        #region Event Handlers
+
+        #endregion Event Handler
+    }
 }

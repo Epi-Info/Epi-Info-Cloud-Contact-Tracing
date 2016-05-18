@@ -1,28 +1,22 @@
-using System;
-using System.Data;
-using System.Drawing;
 using System.Xml;
-
-using Epi.Data.Services;
-using EpiInfo.Plugin;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Foreign Key Field to a Unique Key.
-	/// </summary>
-	public class ForeignKeyField : PredefinedDataField, IMirrorable, IInputField
-	{
-		#region Constructors
+    /// <summary>
+    /// Foreign Key Field to a Unique Key.
+    /// </summary>
+    public class ForeignKeyField : PredefinedDataField, IMirrorable, IInputField
+    {
+        #region Constructors
 
-		/// <summary>
-		/// Constructor for  the class. Instantiates a field
-		/// </summary>
-		/// <param name="view">The view this field belongs to.</param>
-		public ForeignKeyField(View view) : base(view)
-		{
-			Construct();
-		}
+        /// <summary>
+        /// Constructor for  the class. Instantiates a field
+        /// </summary>
+        /// <param name="view">The view this field belongs to.</param>
+        public ForeignKeyField(View view) : base(view)
+        {
+            Construct();
+        }
 
         /// <summary>
         /// Constructor for  the class.
@@ -30,9 +24,9 @@ namespace Epi.Fields
         /// <param name="view">The view this field belongs to.</param>
         /// <param name="viewElement">Xml element of field.</param>
         public ForeignKeyField(View view, XmlElement viewElement)
-            : this(view)          
+            : this(view)
         {
-            this.viewElement = viewElement;            
+            this.viewElement = viewElement;
         }
 
         /// <summary>
@@ -44,17 +38,17 @@ namespace Epi.Fields
             : this(view)
         {
             this.fieldNode = fieldNode;
-            this.view.Project.Metadata.GetFieldData(this, fieldNode);           
+            this.view.Project.Metadata.GetFieldData(this, fieldNode);
         }
 
         /// <summary>
         /// Common constructor code to provide a name for the class.
         /// </summary>
 		private void Construct()
-		{
+        {
             this.Name = ColumnNames.FOREIGN_KEY;
-		}		
-		#endregion Constructors
+        }
+        #endregion Constructors
 
         #region Private Data Members
         private XmlElement viewElement;
@@ -82,7 +76,7 @@ namespace Epi.Fields
             {
                 return SharedStrings.FOREIGN_KEY;
             }
-            set 
+            set
             {
                 throw new GeneralException("Prompt for Foreign key is pre-defined");
             }
@@ -93,7 +87,7 @@ namespace Epi.Fields
         /// <summary>
         /// Returns/sets the  is read only flag.
         /// </summary>
-        public  bool IsReadOnly
+        public bool IsReadOnly
         {
             get
             {
@@ -108,7 +102,7 @@ namespace Epi.Fields
         /// <summary>
         /// Returns/sets the  is required flag.
         /// </summary>
-        public  bool IsRequired
+        public bool IsRequired
         {
             get
             {
@@ -123,7 +117,7 @@ namespace Epi.Fields
         /// <summary>
         /// Returns/sets the should repeat last flag.
         /// </summary>
-        public  bool ShouldRepeatLast
+        public bool ShouldRepeatLast
         {
             get
             {
@@ -158,32 +152,32 @@ namespace Epi.Fields
         }
 
 
-         #endregion Public Properties
+        #endregion Public Properties
 
         #region Public Methods
 
         /// <summary>
-		/// Saves the field to the database
-		/// </summary>
-		protected override void InsertField()
-		{
-			if (this.Id == 0)
-			{
-                this.Id = GetMetadata().CreateField(this);                			
-			}
-			else
-			{
-				throw new System.ApplicationException("Foreign key field already exists");
-			}
-		}		
+        /// Saves the field to the database
+        /// </summary>
+        protected override void InsertField()
+        {
+            if (this.Id == 0)
+            {
+                this.Id = GetMetadata().CreateField(this);
+            }
+            else
+            {
+                throw new System.ApplicationException("Foreign key field already exists");
+            }
+        }
 
-		/// <summary>
-		/// Deletes the field
-		/// </summary>
-		public override void Delete()
-		{
-			GetMetadata().DeleteField(this);
-		}
+        /// <summary>
+        /// Deletes the field
+        /// </summary>
+        public override void Delete()
+        {
+            GetMetadata().DeleteField(this);
+        }
 
         /// <summary>
         /// Returns the string value that is reflected my a mirror field.
@@ -194,7 +188,7 @@ namespace Epi.Fields
             return this.CurrentRecordValueString;
         }
 
-		#endregion
+        #endregion
 
         #region ICloneable Members
 
@@ -204,5 +198,5 @@ namespace Epi.Fields
         }
 
         #endregion
-	}
+    }
 }

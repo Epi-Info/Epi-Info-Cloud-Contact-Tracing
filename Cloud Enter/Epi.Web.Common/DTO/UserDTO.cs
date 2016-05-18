@@ -75,7 +75,7 @@ namespace Epi.Web.Enter.Common.DTO
             get { return _Role; }
             set { _Role = value; }
         }
-        
+
         private Epi.Web.Enter.Common.Constants.Constant.OperationMode updateMode;
 
         public Epi.Web.Enter.Common.Constants.Constant.OperationMode Operation
@@ -87,10 +87,10 @@ namespace Epi.Web.Enter.Common.DTO
         private bool _IsActive;
 
         public bool IsActive
-            {
+        {
             get { return _IsActive; }
             set { _IsActive = value; }
-            }
+        }
         private int _UserHighestRole;
         public int UserHighestRole
         {

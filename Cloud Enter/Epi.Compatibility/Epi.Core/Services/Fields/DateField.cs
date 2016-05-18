@@ -2,18 +2,16 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Date Field.
-	/// </summary>
-	public class DateField : DateTimeField
-	{
-		#region Fields
+    /// <summary>
+    /// Date Field.
+    /// </summary>
+    public class DateField : DateTimeField
+    {
+        #region Fields
         private string _pattern = string.Empty;
         private string _lower = string.Empty;
         private string _upper = string.Empty;
@@ -21,30 +19,30 @@ namespace Epi.Fields
         private DateTime _upperDateTime;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-        private const string ISO8601 = "YYYY-MM-DD"; 
-		#endregion Fields
-		
-		#region Constructors
-		
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public DateField(Page page) 
+        private const string ISO8601 = "YYYY-MM-DD";
+        #endregion Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public DateField(Page page)
             : base(page)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public DateField(View view) 
+		public DateField(View view)
             : base(view)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -62,7 +60,7 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">View</param>
         /// <param name="fieldNode">Field Node</param>
-        public DateField(View view, XmlNode fieldNode) 
+        public DateField(View view, XmlNode fieldNode)
             : base(view, fieldNode)
         {
             construct();
@@ -90,7 +88,7 @@ namespace Epi.Fields
             LowerDate = GetRange(_lower);
             UpperDate = GetRange(_upper);
         }
-        
+
         public DateTimeField Clone()
         {
             DateTimeField clone = (DateTimeField)this.MemberwiseClone();
@@ -105,17 +103,17 @@ namespace Epi.Fields
                 return true;
             }
 
-            if (LowerDate <= dateCandidate && dateCandidate <= UpperDate )
+            if (LowerDate <= dateCandidate && dateCandidate <= UpperDate)
             {
                 return true;
             }
             else
             {
                 string warningMessage = String.Format(
-                    SharedStrings.INVALID_DATE_RANGE, 
-                    LowerDate.ToShortDateString(), 
+                    SharedStrings.INVALID_DATE_RANGE,
+                    LowerDate.ToShortDateString(),
                     UpperDate.ToShortDateString());
-            
+
                 System.Windows.Forms.MessageBox.Show(
                     warningMessage,
                     SharedStrings.WARNING,
@@ -135,7 +133,7 @@ namespace Epi.Fields
                 return formatInfo.ShortDatePattern.ToUpper();
             }
         }
-        
+
         /// <summary>
         /// Returns field type
         /// </summary>
@@ -252,7 +250,7 @@ namespace Epi.Fields
 
         #endregion Public Properties
 
-		#region Private Methods
+        #region Private Methods
 
         /// <summary>
         /// Inserts the field to the database
@@ -300,6 +298,6 @@ namespace Epi.Fields
             return dateCandidate;
         }
 
-		#endregion Private Methods	
-	}
+        #endregion Private Methods	
+    }
 }

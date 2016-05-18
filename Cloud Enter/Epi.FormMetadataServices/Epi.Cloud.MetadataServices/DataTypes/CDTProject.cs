@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Epi.Cloud.MetadataServices.DataTypes
+﻿namespace Epi.Cloud.MetadataServices.DataTypes
 {
-    public class CDTProject:CDTBase
+    public class CDTProject : CDTBase
     {
         public string ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string Name { get; set; }
         public string PageId { get; set; }
         public string FieldId { get; set; }
-
         public string UniqueId { get; set; }
         public string FieldTypeId { get; set; }
         public string ControlAfterCheckCode { get; set; }
@@ -34,16 +27,13 @@ namespace Epi.Cloud.MetadataServices.DataTypes
         public double? PromptLeftPositionPercentage { get; set; }
         public string PromptText { get; set; }
         public double? PromptFontSize { get; set; }
-
         public string PromptFontFamily { get; set; }
         public string PromptFontStyle { get; set; }
         //publi string ControlFontFamily{get;set;}
         // public string ControlFontSize { get; set; } 
         public string PromptScriptName { get; set; }
-
         public string ShouldRepeatLast { get; set; }
         public bool? IsRequired { get; set; }
-
         public bool? IsReadOnly { get; set; }
         public string ShouldRetainImageSize { get; set; }
         public string Pattern { get; set; }
@@ -61,9 +51,8 @@ namespace Epi.Cloud.MetadataServices.DataTypes
         public string IsExclusiveTable { get; set; }
         public int? TabIndex { get; set; }
         public string HasTabStop { get; set; }
-
         public string SourceFieldId { get; set; }
     }
 
-     
+
 }

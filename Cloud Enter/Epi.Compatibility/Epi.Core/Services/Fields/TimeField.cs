@@ -2,41 +2,39 @@ using System;
 using System.ComponentModel;
 using System.Data;
 using System.Xml;
-using Epi;
 using Epi.Data;
-using Epi.Data.Services;
 
 namespace Epi.Fields
 {
-	/// <summary>
-	/// Time Field.
-	/// </summary>
-	public class TimeField : DateTimeField
-	{
+    /// <summary>
+    /// Time Field.
+    /// </summary>
+    public class TimeField : DateTimeField
+    {
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
 
-		#region Constructors
-		
-		/// <summary>
-		/// Constructor for the class
-		/// </summary>
-		/// <param name="page">The page this field belongs to</param>
-		public TimeField(Page page) 
+        #region Constructors
+
+        /// <summary>
+        /// Constructor for the class
+        /// </summary>
+        /// <param name="page">The page this field belongs to</param>
+        public TimeField(Page page)
             : base(page)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">View</param>
-		public TimeField(View view) 
+		public TimeField(View view)
             : base(view)
-		{
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
@@ -54,7 +52,7 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">View</param>
         /// <param name="fieldNode">Xml field node</param>
-        public TimeField(View view, XmlNode fieldNode) 
+        public TimeField(View view, XmlNode fieldNode)
             : base(view, fieldNode)
         {
             construct();
@@ -66,18 +64,18 @@ namespace Epi.Fields
             this.dbColumnType = DbType.Time;
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
         #region Public Properties
         public override string Watermark
         {
-            get 
+            get
             {
                 System.Globalization.DateTimeFormatInfo formatInfo = System.Globalization.DateTimeFormatInfo.CurrentInfo;
                 return formatInfo.LongTimePattern.ToUpper();
             }
         }
-        
+
         /// <summary>
         /// Returns field type
         /// </summary>
@@ -128,6 +126,6 @@ namespace Epi.Fields
             GetMetadata().UpdateField(this);
         }
 
-		#endregion Private Methods
-	}
+        #endregion Private Methods
+    }
 }

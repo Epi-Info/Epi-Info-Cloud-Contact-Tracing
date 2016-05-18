@@ -12,7 +12,7 @@ namespace Epi.Web.MVC.Facade
         /// <summary>
         /// Insert survey question and answer to Document Db
         /// </summary>
-       
+
         /// <returns></returns>
         public bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
@@ -21,11 +21,11 @@ namespace Epi.Web.MVC.Facade
 
             SurveyProperties _surveyResponseData = new SurveyProperties()
             {
-                
+
                 RecStatus = "1",
                 GlobalRecordID = surveyInfoModel.SurveyId,
-                
-            }; 
+
+            };
             _storeSurvey.SurveyProperties = _surveyResponseData;
             _storeSurvey.SurveyQuestionandAnswer = ReadQuestionandAnswerFromAllPage(form, _storeSurvey);
             bool response = _surveyResponse.InsertToSruveyToDocumentDB(_storeSurvey);

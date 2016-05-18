@@ -1,7 +1,5 @@
 using System;
 using System.Data;
-using System.Xml;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Epi.Data
@@ -174,7 +172,7 @@ namespace Epi.Data
         /// <param name="column">The column</param>
         /// <returns>Boolean</returns>
         bool AddColumn(string tableName, TableColumn column);
-        
+
         /// <summary>
         /// Executes a sql query to select records into a data table
         /// </summary>
@@ -204,7 +202,7 @@ namespace Epi.Data
         /// </summary>
         /// <returns>returns false on error</returns>
         bool CompactDatabase();
-        
+
         /// <summary>
         /// Executes a SQL statement that does not return any records. 
         /// Returns the number of records affected

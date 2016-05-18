@@ -1,10 +1,7 @@
 #region Namespaces
 
-using System;
 using System.ComponentModel;
-using System.Data;
 using System.Xml;
-using Epi;
 
 #endregion  //Namespaces
 
@@ -15,25 +12,25 @@ namespace Epi.Fields
     /// 
     /// </summary>
 	public class LabelField : FieldWithoutSeparatePrompt
-	{
+    {
 
-		#region Private Members
-		// private DragableLabel label;
+        #region Private Members
+        // private DragableLabel label;
         private XmlElement viewElement;
         private XmlNode fieldNode;
         private BackgroundWorker _updater;
         private BackgroundWorker _inserter;
-		#endregion Private Members
+        #endregion Private Members
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">The page the field belongs to</param>
-		public LabelField(Page page) : base(page)
-		{
-		}
-		
+        public LabelField(Page page) : base(page)
+        {
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -51,8 +48,8 @@ namespace Epi.Fields
         /// </summary>
         /// <param name="view">The view the field belongs to</param>
 		public LabelField(View view) : base(view)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Constructor
@@ -73,10 +70,10 @@ namespace Epi.Fields
             return clone;
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Events
-		#endregion
+        #region Public Events
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -168,22 +165,22 @@ namespace Epi.Fields
         //        fieldsWaitingToUpdate--;
         //    }
         //}
-		
-		#endregion  //Protected Methods
 
-		#region Public Methods
+        #endregion  //Protected Methods
+
+        #region Public Methods
         /// <summary>
         /// Delete
         /// </summary>
-		public override void Delete()
-		{
+        public override void Delete()
+        {
             GetMetadata().DeleteField(this);
             view.MustRefreshFieldCollection = true;
-		}
-		#endregion  //Public Methods
+        }
+        #endregion  //Public Methods
 
-		#region Event Handlers		
-		#endregion
+        #region Event Handlers		
+        #endregion
 
         /// <summary>
         /// The view element of the field
@@ -200,5 +197,5 @@ namespace Epi.Fields
             }
         }
 
-	}
+    }
 }

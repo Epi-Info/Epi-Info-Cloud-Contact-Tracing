@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using Epi.Data.Services;
 using Epi.Data;
@@ -63,14 +62,14 @@ namespace Epi.Fields
             this.isReadOnly = (bool)gridRow[ColumnNames.IS_READ_ONLY];
 
             if (gridRow.Table.Columns.Contains(ColumnNames.IS_UNIQUE_FIELD) && gridRow[ColumnNames.IS_UNIQUE_FIELD] is bool)
-            { 
+            {
                 this.isUniqueField = (bool)gridRow[ColumnNames.IS_UNIQUE_FIELD];
             }
             else
             {
                 this.isUniqueField = false;
             }
-            
+
             this.position = (short)gridRow[ColumnNames.POSITION];
             this.width = int.Parse(gridRow["Width"].ToString());
             this.grid = grid;

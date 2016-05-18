@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.DTO
 {
@@ -101,18 +97,18 @@ namespace Epi.Web.Enter.Common.DTO
             get { return _isSQLProject; }
             set { _isSQLProject = value; }
         }
-         [DataMember]
+        [DataMember]
         public bool IsShareable
         {
             get { return _IsShareable; }
             set { _IsShareable = value; }
         }
         [DataMember]
-         public bool IsShared
-         {
-             get { return _IsShared; }
-             set { _IsShared = value; }
-         }
+        public bool IsShared
+        {
+            get { return _IsShared; }
+            set { _IsShared = value; }
+        }
         [DataMember]
         public bool EwavLiteToggleSwitch
         {

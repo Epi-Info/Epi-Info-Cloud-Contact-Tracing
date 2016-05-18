@@ -9,8 +9,6 @@ namespace Epi.Web.BLL
     {
         private IFormInfoDao FormInfoDao;
 
-
-
         public FormInfo(IFormInfoDao pSurveyInfoDao)
         {
             this.FormInfoDao = pSurveyInfoDao;
@@ -20,9 +18,6 @@ namespace Epi.Web.BLL
         {
             //Owner Forms
             List<FormInfoBO> result = this.FormInfoDao.GetFormInfo(UserId, CurrentOrgId);
-
-
-
             return result;
         }
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
 using System.Configuration;
 using Epi.Web.Enter.Common.Constants;
 using Epi.Web.Enter.Common.Email;
@@ -39,9 +36,7 @@ namespace Epi.Web.BLL
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationKeys(OrganizationName);
             foreach (OrganizationBO _result in result)
             {
-
                 _result.OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(_result.OrganizationKey);
-
             }
 
             return result;
@@ -281,7 +276,6 @@ namespace Epi.Web.BLL
             email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
 
             return Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(email);
-
         }
     }
 }

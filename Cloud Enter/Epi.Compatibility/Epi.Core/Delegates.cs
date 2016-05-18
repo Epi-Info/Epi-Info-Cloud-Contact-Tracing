@@ -1,7 +1,7 @@
 using System;
 
 namespace Epi
-{    
+{
     #region Custom EventArgs
 
     /// <summary>
@@ -11,7 +11,7 @@ namespace Epi
     {
         #region Private Attributes
         private string message;
-        private bool createLogEntry;        
+        private bool createLogEntry;
         #endregion Private Attributes
 
         #region Constructor
@@ -220,7 +220,7 @@ namespace Epi
         public string RecordGuid { get { return this._recordGuid; } }
         public string RecordFkey { get { return this._fKey; } }
     }
-    
+
     #endregion CustomEventArgs
 
     #region Delegates
@@ -266,7 +266,7 @@ namespace Epi
     /// The delegate that handles checking whether a dashboard gadget has been cancelled
     /// </summary>
     public delegate bool CheckForCancellationHandler();
-        
+
     /// <summary>
     /// Event handler that delivers a message
     /// </summary>
@@ -305,7 +305,7 @@ namespace Epi
     /// <param name="message"></param>
     public delegate void UpdateStatusEventHandler(string message);
 
-    public delegate void SaveRecordEventHandler(object sender, SaveRecordEventArgs e); 
+    public delegate void SaveRecordEventHandler(object sender, SaveRecordEventArgs e);
 
     #endregion Delegates
 }

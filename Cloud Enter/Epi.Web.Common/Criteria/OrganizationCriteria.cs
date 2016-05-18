@@ -19,10 +19,10 @@ namespace Epi.Web.Enter.Common.Criteria
         public Guid AdminstrationKey { get; set; }
 
         [DataMember]
-        public List<string> Organization  { get; set; }
+        public List<string> Organization { get; set; }
 
         [DataMember]
-        public List<Guid> OrganizationKey{ get; set; }
+        public List<Guid> OrganizationKey { get; set; }
 
     }
 }

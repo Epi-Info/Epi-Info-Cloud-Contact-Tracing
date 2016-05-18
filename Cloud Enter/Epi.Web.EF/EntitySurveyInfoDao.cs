@@ -8,8 +8,6 @@ using System.Collections.Generic;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
-using System.Data.Objects;
-using System.Data.SqlClient;
 
 namespace Epi.Web.EF
 {
@@ -86,19 +84,20 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, DateTime pClosingDate,string pOrganizationKey ,int pSurveyType = -1, int PageNumber = -1, int PageSize = -1)
+        public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string pOrganizationKey, int pSurveyType = -1, int PageNumber = -1, int PageSize = -1)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
 
             List<SurveyMetaData> responseList = new List<SurveyMetaData>();
 
-            int  OrganizationId =0;
-            try {
-            //using (var Context = DataObjectFactory.CreateContext())
-            //{
-               
-            //    OrganizationId =  Context.Organizations.FirstOrDefault(x => x.OrganizationKey == pOrganizationKey).OrganizationId;
-            //}
+            int OrganizationId = 0;
+            try
+            {
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+
+                //    OrganizationId =  Context.Organizations.FirstOrDefault(x => x.OrganizationKey == pOrganizationKey).OrganizationId;
+                //}
             }
             catch (Exception ex)
             {
@@ -110,12 +109,13 @@ namespace Epi.Web.EF
                 foreach (string surveyInfoId in SurveyInfoIdList.Distinct())
                 {
                     Guid Id = new Guid(surveyInfoId);
-                    try{
-                            using (var Context = DataObjectFactory.CreateContext())
-                            {
-                                //responseList.Add(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id && x.OrganizationId == OrganizationId));
-                                responseList.Add(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id ));
-                            }
+                    try
+                    {
+                        using (var Context = DataObjectFactory.CreateContext())
+                        {
+                            //responseList.Add(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id && x.OrganizationId == OrganizationId));
+                            responseList.Add(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id));
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -128,7 +128,7 @@ namespace Epi.Web.EF
                 using (var Context = DataObjectFactory.CreateContext())
                 {
                     responseList = Context.SurveyMetaDatas.ToList();
-                  
+
                 }
             }
 
@@ -199,19 +199,20 @@ namespace Epi.Web.EF
                                  where response.OrganizationKey == Okey
                                  select response).SingleOrDefault();
 
-                    if (Query != null) {
+                    if (Query != null)
+                    {
                         OrganizationId = Query.OrganizationId;
                     }
-                
+
                 }
             }
-           catch (Exception ex)
-           {
-               throw (ex);
-           }
-           
-           if (!string.IsNullOrEmpty(SurveyId))
-           {
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+            if (!string.IsNullOrEmpty(SurveyId))
+            {
                 try
                 {
                     Guid Id = new Guid(SurveyId);
@@ -228,7 +229,7 @@ namespace Epi.Web.EF
                 {
                     throw (ex);
                 }
-           }
+            }
 
             return result;
         }
@@ -296,35 +297,35 @@ namespace Epi.Web.EF
         /// Following insert, SurveyInfo object will contain the new identifier.
         /// </remarks>  
         /// <param name="SurveyInfo">SurveyInfo.</param>
-        public  void InsertSurveyInfo(SurveyInfoBO SurveyInfo)
+        public void InsertSurveyInfo(SurveyInfoBO SurveyInfo)
         {
-           int OrganizationId = 0;
-           try
-           {
-               using (var Context = DataObjectFactory.CreateContext())
-               {
+            int OrganizationId = 0;
+            try
+            {
+                using (var Context = DataObjectFactory.CreateContext())
+                {
 
-                   //retrieve OrganizationId based on OrganizationKey
-                   using (var ContextOrg = DataObjectFactory.CreateContext())
-                   {
-                       string OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
-                       OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
-                   }
+                    //retrieve OrganizationId based on OrganizationKey
+                    using (var ContextOrg = DataObjectFactory.CreateContext())
+                    {
+                        string OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
+                        OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
+                    }
 
-                   SurveyInfo.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
-                   SurveyInfo.DateCreated = DateTime.Now;
+                    SurveyInfo.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
+                    SurveyInfo.DateCreated = DateTime.Now;
 
-                   
 
-                   var SurveyMetaDataEntity = Mapper.Map(SurveyInfo);
-                   User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyInfo.OwnerId);
-                   SurveyMetaDataEntity.Users.Add(User);
 
-                   SurveyMetaDataEntity.OrganizationId = OrganizationId;
-                   Context.AddToSurveyMetaDatas(SurveyMetaDataEntity);
+                    var SurveyMetaDataEntity = Mapper.Map(SurveyInfo);
+                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyInfo.OwnerId);
+                    SurveyMetaDataEntity.Users.Add(User);
 
-                   Context.SaveChanges();
-               }
+                    SurveyMetaDataEntity.OrganizationId = OrganizationId;
+                    Context.AddToSurveyMetaDatas(SurveyMetaDataEntity);
+
+                    Context.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
@@ -337,7 +338,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="SurveyInfo">SurveyInfo.</param>
         public void UpdateSurveyInfo(SurveyInfoBO SurveyInfo)
-        { 
+        {
             try
             {
                 Guid Id = new Guid(SurveyInfo.SurveyId);
@@ -352,12 +353,12 @@ namespace Epi.Web.EF
                     //var DataRow = Query.Single();
                     //DataRow = Mapper.ToEF(SurveyInfo);
 
-                SurveyMetaData Row = Context.SurveyMetaDatas.First(x=>x.SurveyId == Id);
-                Row.IsSQLProject = SurveyInfo.IsSqlProject;
-                Row.TemplateXML = SurveyInfo.XML;
-                Row.IsDraftMode = SurveyInfo.IsDraftMode;
-                Row.IsShareable = SurveyInfo.IsShareable;
-                Row.DataAccessRuleId = SurveyInfo.DataAccessRuleId;
+                    SurveyMetaData Row = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
+                    Row.IsSQLProject = SurveyInfo.IsSqlProject;
+                    Row.TemplateXML = SurveyInfo.XML;
+                    Row.IsDraftMode = SurveyInfo.IsDraftMode;
+                    Row.IsShareable = SurveyInfo.IsShareable;
+                    Row.DataAccessRuleId = SurveyInfo.DataAccessRuleId;
                     Context.SaveChanges();
                 }
 
@@ -375,7 +376,7 @@ namespace Epi.Web.EF
         public void DeleteSurveyInfo(SurveyInfoBO SurveyInfo)
         {
 
-           //Delete Survey
+            //Delete Survey
         }
 
         /// <summary>
@@ -383,7 +384,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>PageInfoBO.</returns>
-        public List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList,int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
+        public List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
             List<SurveyInfoBO> resultRows = GetSurveyInfo(SurveyInfoIdList, PageNumber, PageSize);
             return resultRows;
@@ -395,9 +396,9 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>PageInfoBO.</returns>
-        public List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey,  int pSurveyType = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
+        public List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
-            List<SurveyInfoBO> resultRows =  GetSurveyInfo(SurveyInfoIdList, pClosingDate,Okey, pSurveyType, PageNumber, PageSize);
+            List<SurveyInfoBO> resultRows = GetSurveyInfo(SurveyInfoIdList, pClosingDate, Okey, pSurveyType, PageNumber, PageSize);
             return resultRows;
         }
 
@@ -414,74 +415,74 @@ namespace Epi.Web.EF
             return xml.Trim();
         }
 
-        public List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId) 
-            {
+        public List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId)
+        {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             try
-                {
+            {
 
                 Guid Id = new Guid(ParentFormId);
 
-                    using (var Context = DataObjectFactory.CreateContext())
-                        {
-                        result.Add(Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.ParentId == Id && x.ViewId == ViewId)));
-                        }
-                    
-                }
-            catch (Exception ex)
+                using (var Context = DataObjectFactory.CreateContext())
                 {
-                throw (ex);
+                    result.Add(Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.ParentId == Id && x.ViewId == ViewId)));
                 }
-            return result;
+
             }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            return result;
+        }
 
         public SurveyInfoBO GetParentInfoByChildId(string ChildId)
         {
-        SurveyInfoBO result = new SurveyInfoBO();
-        try
+            SurveyInfoBO result = new SurveyInfoBO();
+            try
             {
 
-            Guid Id = new Guid(ChildId);
+                Guid Id = new Guid(ChildId);
 
-            using (var Context = DataObjectFactory.CreateContext())
+                using (var Context = DataObjectFactory.CreateContext())
                 {
-                result = Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id ));
+                    result = Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id));
                 }
 
             }
-        catch (Exception ex)
+            catch (Exception ex)
             {
-            throw (ex);
+                throw (ex);
             }
-        return result;
+            return result;
         }
 
-   public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
+        public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
         {
 
-      List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-         
+            List<SurveyInfoBO> result = new List<SurveyInfoBO>();
+
             List<string> list = new List<string>();
-        try
+            try
             {
 
-            Guid Id = new Guid(RootId);
+                Guid Id = new Guid(RootId);
 
-            using (var Context = DataObjectFactory.CreateContext())
+                using (var Context = DataObjectFactory.CreateContext())
                 {
                     IQueryable<SurveyMetaData> Query = Context.SurveyMetaDatas.Where(x => x.SurveyId == Id).Traverse(x => x.SurveyMetaData1).AsQueryable();
                     result = Mapper.Map(Query);
 
 
- 
+
                 }
 
             }
-        catch (Exception ex)
+            catch (Exception ex)
             {
-            throw (ex);
+                throw (ex);
             }
-        return result;
+            return result;
 
         }
 
@@ -536,91 +537,91 @@ namespace Epi.Web.EF
                 throw (ex);
             }
         }
-        public void UpdateParentId(string SurveyId ,int ViewId , string ParentId)
-       {
-       try
-           {
-           Guid Id = new Guid(SurveyId);
-           Guid PId = new Guid(ParentId);
+        public void UpdateParentId(string SurveyId, int ViewId, string ParentId)
+        {
+            try
+            {
+                Guid Id = new Guid(SurveyId);
+                Guid PId = new Guid(ParentId);
 
-           //Update Survey
-           using (var Context = DataObjectFactory.CreateContext())
-               {
-               var Query = from Form in Context.SurveyMetaDatas
-                           where Form.SurveyId == Id && Form.ViewId == ViewId
-                           select Form;
+                //Update Survey
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    var Query = from Form in Context.SurveyMetaDatas
+                                where Form.SurveyId == Id && Form.ViewId == ViewId
+                                select Form;
 
-               var DataRow = Query.Single();
-               DataRow.ParentId = PId;
-               Context.SaveChanges();
-               }
+                    var DataRow = Query.Single();
+                    DataRow.ParentId = PId;
+                    Context.SaveChanges();
+                }
 
-           }
-       catch (Exception ex)
-           {
-           throw (ex);
-           }
-       }
-   private static List<string> MetaDaTaColumnNames()
-       {
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        private static List<string> MetaDaTaColumnNames()
+        {
 
-       List<string> columns = new List<string>();
-       columns.Add("_UserEmail");
-       columns.Add("_DateUpdated");
-       columns.Add("_DateCreated");
-       // columns.Add("IsDraftMode");
-       columns.Add("_Mode");
-       return columns;
+            List<string> columns = new List<string>();
+            columns.Add("_UserEmail");
+            columns.Add("_DateUpdated");
+            columns.Add("_DateCreated");
+            // columns.Add("IsDraftMode");
+            columns.Add("_Mode");
+            return columns;
 
-       }
-
-
-   public void InsertConnectionString(DbConnectionStringBO ConnectionString)
-       { 
-        try
-           {
-             
-              
-               using (var Context = DataObjectFactory.CreateContext())
-                   { 
-                   Context.usp_AddDatasource(ConnectionString.DatasourceServerName, ConnectionString.DatabaseType, ConnectionString.InitialCatalog, ConnectionString.PersistSecurityInfo, ConnectionString.DatabaseUserID, ConnectionString.SurveyId, ConnectionString.Password);
-
-                   Context.SaveChanges();
-                   
-                   }
-                 
-           }
-       catch (Exception ex)
-           {
-           throw (ex);
-           }
-       }
-   public void UpdateConnectionString(DbConnectionStringBO ConnectionString) 
-       {
-       try
-           {
+        }
 
 
-           using (var Context = DataObjectFactory.CreateContext())
-               {
-               var Query = from DataSource in Context.EIDatasources
-                           where DataSource.SurveyId == ConnectionString.SurveyId
-                           select DataSource;
+        public void InsertConnectionString(DbConnectionStringBO ConnectionString)
+        {
+            try
+            {
 
-               var DataRow = Query.Single();
-               DataRow = Mapper.Map(ConnectionString);
 
-               Context.AddToEIDatasources(DataRow);
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    Context.usp_AddDatasource(ConnectionString.DatasourceServerName, ConnectionString.DatabaseType, ConnectionString.InitialCatalog, ConnectionString.PersistSecurityInfo, ConnectionString.DatabaseUserID, ConnectionString.SurveyId, ConnectionString.Password);
 
-               Context.SaveChanges();
+                    Context.SaveChanges();
 
-               }
-           }
-       catch (Exception ex)
-           {
-           throw (ex);
-           }
-       }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+        public void UpdateConnectionString(DbConnectionStringBO ConnectionString)
+        {
+            try
+            {
+
+
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    var Query = from DataSource in Context.EIDatasources
+                                where DataSource.SurveyId == ConnectionString.SurveyId
+                                select DataSource;
+
+                    var DataRow = Query.Single();
+                    DataRow = Mapper.Map(ConnectionString);
+
+                    Context.AddToEIDatasources(DataRow);
+
+                    Context.SaveChanges();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
 
     }
 }

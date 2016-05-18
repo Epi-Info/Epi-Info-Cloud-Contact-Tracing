@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 
@@ -73,7 +72,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="Result"></param>
         /// <param name="user"></param>
-        public static UserBO MapToUserBO(User user , int Role = 0)
+        public static UserBO MapToUserBO(User user, int Role = 0)
         {
             UserBO Result = new UserBO();
             Result.UserId = user.UserID;
@@ -86,7 +85,7 @@ namespace Epi.Web.EF
             Result.Role = Role;
             if (!string.IsNullOrEmpty(user.UGuid.ToString()))
             {
-            Result.UGuid = Guid.Parse(user.UGuid.ToString());
+                Result.UGuid = Guid.Parse(user.UGuid.ToString());
             }
             return Result;
         }
@@ -112,15 +111,15 @@ namespace Epi.Web.EF
 
             if (entity.IsShareable != null)
             {
-            result.IsShareable = (bool)entity.IsShareable;
+                result.IsShareable = (bool)entity.IsShareable;
             }
             if (entity.DataAccessRuleId != null)
             {
-               // result. =  entity.DataAccessRuleId;
+                // result. =  entity.DataAccessRuleId;
             }
             result.OwnerFName = UserEntity.FirstName;
             result.OwnerLName = UserEntity.LastName;
-           
+
             if (GetXml)
             {
                 result.Xml = entity.TemplateXML;
@@ -169,7 +168,7 @@ namespace Epi.Web.EF
             SurveyMetaData.IsSQLProject = businessobject.IsSqlProject;
             SurveyMetaData.IsShareable = businessobject.IsShareable;
             SurveyMetaData.DataAccessRuleId = businessobject.DataAccessRuleId;
-          //  SurveyMetaData.DataAccessRuleId = businessobject.;
+            //  SurveyMetaData.DataAccessRuleId = businessobject.;
             if (!string.IsNullOrEmpty(businessobject.ParentId))
             {
                 SurveyMetaData.ParentId = new Guid(businessobject.ParentId);
@@ -307,7 +306,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="businessobject">A SurveyInfoBO business object.</param>
         /// <returns>A SurveyMetaData entity.</returns>
-        internal static SurveyResponse ToEF(SurveyResponseBO pBO,int OrgId = -1)
+        internal static SurveyResponse ToEF(SurveyResponseBO pBO, int OrgId = -1)
         {
 
             SurveyResponse SurveyResponse = new SurveyResponse();
@@ -406,7 +405,7 @@ namespace Epi.Web.EF
         internal static List<SurveyInfoBO> Map(IQueryable<SurveyMetaData> iQueryable)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-            foreach (SurveyMetaData Obj in iQueryable )
+            foreach (SurveyMetaData Obj in iQueryable)
             {
                 result.Add(Map(Obj));
 

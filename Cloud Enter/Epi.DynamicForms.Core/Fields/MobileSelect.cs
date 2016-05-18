@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using System.Web;
 using Epi.Core.EnterInterpreter;
 using System.Drawing;
 
@@ -14,7 +11,7 @@ namespace MvcDynamicForms.Fields
     /// </summary>
     [Serializable]
     public class MobileSelect : ListField
-    { 
+    {
         /// <summary>
         /// The number of options to display at a time.
         /// </summary>
@@ -89,7 +86,7 @@ namespace MvcDynamicForms.Fields
             StringBuilder StyleValues = new StringBuilder();
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), null, null, null, null, _IsHidden));
-           // prompt.Attributes.Add("style", StyleValues.ToString());
+            // prompt.Attributes.Add("style", StyleValues.ToString());
             prompt.Attributes.Add("style", "display:block !important; ");
             html.Append(prompt.ToString());
 
@@ -179,10 +176,10 @@ namespace MvcDynamicForms.Fields
             //{
             //    IsHiddenStyle = "display:none";
             //}
-         /* if (_IsHighlighted)
-            {
-            IsHighlightedStyle = "background-color:yellow";
-           }*/
+            /* if (_IsHighlighted)
+               {
+               IsHighlightedStyle = "background-color:yellow";
+              }*/
 
             //if (_IsDisabled)
             //{
@@ -190,16 +187,16 @@ namespace MvcDynamicForms.Fields
             //}
             //select.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px ; font-size:" + _ControlFontSize + "pt;" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
             select.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-          select.MergeAttributes(_inputHtmlAttributes);
+            select.MergeAttributes(_inputHtmlAttributes);
             html.Append(select.ToString(TagRenderMode.StartTag));
             // If readonly then add the following jquery script to make the field disabled 
             if (ReadOnly || _IsDisabled)
-                {
+            {
                 var scriptReadOnlyText = new TagBuilder("script");
                 //scriptReadOnlyText.InnerHtml = "$(function(){$('#" + inputName + "').attr('disabled','disabled')});";
                 scriptReadOnlyText.InnerHtml = "$(function(){  var List = new Array();List.push('" + _key + "');CCE_Disable(List, false);});";
                 html.Append(scriptReadOnlyText.ToString(TagRenderMode.Normal));
-                }
+            }
 
             // initial empty option
             if (ShowEmptyOption)
@@ -304,12 +301,12 @@ namespace MvcDynamicForms.Fields
                 wrapper.Attributes["class"] = _fieldWrapperClass;
 
             }
-         if (_IsHidden)
+            if (_IsHidden)
             {
                 wrapper.Attributes["style"] = "display:none";
-                
+
             }
-           
+
             //wrapper.Attributes["style"] = GetStyle( _IsHidden,  _IsHighlighted);
 
             wrapper.Attributes["id"] = inputName + "_fieldWrapper";
@@ -330,7 +327,7 @@ namespace MvcDynamicForms.Fields
                 Style += " background-color:yellow";
             }
 
-            return  Style;
+            return Style;
         }
     }
 }

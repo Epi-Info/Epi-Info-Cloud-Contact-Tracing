@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.BusinessObject
-    {
-      [DataContract(Namespace = "http://www.yourcompany.com/types/")]
+{
+    [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class FormSettingBO
-        {
-       
+    {
         private Dictionary<int, string> _ColumnNameList;
         private Dictionary<int, string> _FormControlNameList;
         private Dictionary<int, string> _AssignedUserList;
@@ -22,13 +18,13 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private Dictionary<int, string> _DataAccessRuleIds;
         private Dictionary<string, string> _DataAccessRuleDescription;
         private bool _DeleteDraftData;
-          [DataMember]
+        [DataMember]
         public Dictionary<string, string> DataAccessRuleDescription
         {
             get { return _DataAccessRuleDescription; }
             set { _DataAccessRuleDescription = value; }
         }
-        
+
         public Dictionary<int, string> DataAccessRuleIds
         {
             get { return _DataAccessRuleIds; }
@@ -41,33 +37,33 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _SelectedDataAccessRule = value; }
         }
         public Dictionary<int, string> ColumnNameList
-            {
+        {
             get { return _ColumnNameList; }
             set { _ColumnNameList = value; }
-            }
+        }
         public Dictionary<int, string> FormControlNameList
-            {
+        {
             get { return _FormControlNameList; }
             set { _FormControlNameList = value; }
-            }
+        }
 
         public Dictionary<int, string> AssignedUserList
-            {
+        {
             get { return _AssignedUserList; }
             set { _AssignedUserList = value; }
-            }
+        }
         public Dictionary<int, string> UserList
-            {
+        {
             get { return _UserList; }
             set { _UserList = value; }
-            }
+        }
 
         public bool IsShareable
         {
             get { return _IsShareable; }
             set { _IsShareable = value; }
         }
-    
+
 
 
         public Dictionary<int, string> AvailableOrgList
@@ -91,5 +87,5 @@ namespace Epi.Web.Enter.Common.BusinessObject
             get { return _DeleteDraftData; }
             set { _DeleteDraftData = value; }
         }
-        }
     }
+}

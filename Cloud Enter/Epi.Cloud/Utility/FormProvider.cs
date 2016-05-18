@@ -882,7 +882,7 @@ namespace Epi.Web.MVC.Utility
 
             foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)
             {
-                DropDownValues.Append(_SourceTableValue[CodeColumnName]);                
+                DropDownValues.Append(_SourceTableValue[CodeColumnName]);
 
                 DropDownValues.Append("&#;");
             }

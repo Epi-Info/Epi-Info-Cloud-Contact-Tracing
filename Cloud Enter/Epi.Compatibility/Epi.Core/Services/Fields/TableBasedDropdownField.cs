@@ -1,7 +1,4 @@
-using System;
 using System.Data;
-
-using Epi;
 using Epi.Data;
 
 namespace Epi.Fields
@@ -10,13 +7,13 @@ namespace Epi.Fields
     /// Table Based Drop Down Field abstract class
     /// </summary>
     public abstract class TableBasedDropDownField : DropDownField, IFieldWithCheckCodeAfter, IFieldWithCheckCodeBefore, IFieldWithCheckCodeClick
-	{
-		#region Private Class Members
-		private bool isExclusiveTable;
-		private string sourceTableName = string.Empty;
-		private bool shouldSort = false;
+    {
+        #region Private Class Members
+        private bool isExclusiveTable;
+        private string sourceTableName = string.Empty;
+        private bool shouldSort = false;
         private DataTable codeTable;
-		#endregion Private Class Members
+        #endregion Private Class Members
 
         #region Protected Members
         protected string checkCodeAfter = string.Empty;
@@ -26,22 +23,22 @@ namespace Epi.Fields
         protected string textColumnName = string.Empty;
         #endregion
 
-		#region Constructors
+        #region Constructors
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="page">The page this field belongs to</param>
-		public TableBasedDropDownField(Page page) : base(page)
-		{
+        public TableBasedDropDownField(Page page) : base(page)
+        {
             construct();
-		}
+        }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="view">The view this field belongs to</param>
 		public TableBasedDropDownField(View view) : base(view)
-		{
+        {
             construct();
         }
 
@@ -109,9 +106,9 @@ namespace Epi.Fields
             return displayTable;
         }
 
-		#endregion Constructors
+        #endregion Constructors
 
-		#region Public Properties
+        #region Public Properties
 
         public DataTable CodeTable
         {
@@ -121,7 +118,7 @@ namespace Epi.Fields
                 {
                     codeTable = GetSourceData();
                 }
-                
+
                 return codeTable;
             }
         }
@@ -142,80 +139,80 @@ namespace Epi.Fields
             }
         }
 
-		/// <summary>
-		/// Gets/sets Is Exclusive table flag.
-		/// </summary>
-		public bool IsExclusiveTable
-		{
-			get
-			{
-				return (isExclusiveTable);
-			}
-			set
-			{
-				isExclusiveTable = value;
-			}
-		}
+        /// <summary>
+        /// Gets/sets Is Exclusive table flag.
+        /// </summary>
+        public bool IsExclusiveTable
+        {
+            get
+            {
+                return (isExclusiveTable);
+            }
+            set
+            {
+                isExclusiveTable = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the table name of the source data.
         /// </summary>
 		public string SourceTableName
-		{
-			get
-			{
-				return sourceTableName;
-			}
-			set
-			{
-				sourceTableName = value;
-			}
-		}
+        {
+            get
+            {
+                return sourceTableName;
+            }
+            set
+            {
+                sourceTableName = value;
+            }
+        }
 
-		/// <summary>
-		/// Gets/sets the column name of the code (value) field.
-		/// </summary>
+        /// <summary>
+        /// Gets/sets the column name of the code (value) field.
+        /// </summary>
         public virtual string CodeColumnName
-		{
-			get
-			{
-				return codeColumnName;
-			}
-			set
-			{
-				codeColumnName = value;
-			}
-		}
+        {
+            get
+            {
+                return codeColumnName;
+            }
+            set
+            {
+                codeColumnName = value;
+            }
+        }
 
         /// <summary>
         /// Gets/sets the column name of the text (display) field.
         /// </summary>
 		public virtual string TextColumnName
-		{
-			get
-			{
-				return textColumnName.Trim();
-			}
-			set
-			{
-				textColumnName = value;
-			}
-		}
+        {
+            get
+            {
+                return textColumnName.Trim();
+            }
+            set
+            {
+                textColumnName = value;
+            }
+        }
 
         /// <summary>
         /// 
         /// </summary>
 		public bool ShouldSort
-		{
-			get
-			{
-				return (shouldSort);
-			}
-			set
-			{
-				shouldSort = value;
-			}
-		}
+        {
+            get
+            {
+                return (shouldSort);
+            }
+            set
+            {
+                shouldSort = value;
+            }
+        }
 
         //zack add Checkcode property for all dropdown list type fields,  5/14/08
         /// <summary>
@@ -262,20 +259,20 @@ namespace Epi.Fields
             }
         }
 
-		#endregion Public Properties
+        #endregion Public Properties
 
         #region Private Methods
 
-		/// <summary>
-		/// Returns the source data for this DDL
-		/// </summary>
-		/// <returns>Source Data</returns>
-		public DataTable GetSourceData()
-		{
-			if (string.IsNullOrEmpty(SourceTableName))
-			{
+        /// <summary>
+        /// Returns the source data for this DDL
+        /// </summary>
+        /// <returns>Source Data</returns>
+        public DataTable GetSourceData()
+        {
+            if (string.IsNullOrEmpty(SourceTableName))
+            {
                 return null;
-			}
+            }
 
             DataTable dataTable = new DataTable();
 
@@ -305,7 +302,7 @@ namespace Epi.Fields
                     DataView dataView = new DataView(targetPages);
 
                     filterExpression = string.Format("Name = '{0}'", pageName);
-                    
+
                     DataRow[] pageArray = targetPages.Select(filterExpression);
 
                     if (pageArray.Length > 0)
@@ -322,7 +319,7 @@ namespace Epi.Fields
             }
 
             return dataTable;
-		}
+        }
 
         /// <summary>
         /// Returns the source data for this DDL

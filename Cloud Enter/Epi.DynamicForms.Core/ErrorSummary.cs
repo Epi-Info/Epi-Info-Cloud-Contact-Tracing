@@ -1,7 +1,7 @@
-﻿ 
+﻿
 namespace MvcDynamicForms
 {
-   public class ErrorSummary
+    public class ErrorSummary
     {
         /// <summary>
         ///  

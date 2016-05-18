@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Data;
 //using ADOX;
@@ -403,7 +402,7 @@ namespace Epi.Data
             {
                 // do nothing for now
             }
-            
+
             return result;
         }
 
@@ -416,22 +415,22 @@ namespace Epi.Data
         public static bool CheckDatabaseTableExistance(string pFileString, string pTableName, bool pIsConnectionString = false)
         {
 
-            
-                DataSets.Config.DataDriverDataTable dataDrivers = Configuration.GetNewInstance().DataDrivers;
-                IDbDriverFactory dbFactory = null;
-                foreach (DataSets.Config.DataDriverRow dataDriver in dataDrivers)
+
+            DataSets.Config.DataDriverDataTable dataDrivers = Configuration.GetNewInstance().DataDrivers;
+            IDbDriverFactory dbFactory = null;
+            foreach (DataSets.Config.DataDriverRow dataDriver in dataDrivers)
+            {
+                dbFactory = DbDriverFactoryCreator.GetDbDriverFactory(dataDriver.Type);
+
+                if (dbFactory.CanClaimConnectionString(pFileString))
                 {
-                    dbFactory = DbDriverFactoryCreator.GetDbDriverFactory(dataDriver.Type);
-
-                    if (dbFactory.CanClaimConnectionString(pFileString))
-                    {
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                IDbDriver dbDriver = DBReadExecute.GetDataDriver(pFileString, pIsConnectionString);
+            IDbDriver dbDriver = DBReadExecute.GetDataDriver(pFileString, pIsConnectionString);
 
-                return dbDriver.CheckDatabaseTableExistance(pFileString, pTableName, pIsConnectionString);
+            return dbDriver.CheckDatabaseTableExistance(pFileString, pTableName, pIsConnectionString);
 
         }
 
@@ -539,7 +538,7 @@ namespace Epi.Data
                 try
                 {
                     Conn.Open();
-                    
+
                     cmd = builder.GetInsertCommand(true);
                     cmd.CommandTimeout = 1500;
                     cmd.Connection = Conn;
@@ -646,7 +645,7 @@ namespace Epi.Data
              *  NOTE FROM EPI1: The original contents of this method have been moved to SqlDatabase.Insert_1_Row 
              *  and OleDbDatabase.Insert_1_Row.
              * 
-             */ 
+             */
 
             bool result = false;
 
@@ -745,7 +744,7 @@ namespace Epi.Data
              *  NOTE FROM EPI1: The original contents of this method have been moved to SqlDatabase.Update_1_Row 
              *  and OleDbDatabase.Update_1_Row.
              * 
-             */ 
+             */
 
             bool result = false;
 
@@ -840,7 +839,7 @@ namespace Epi.Data
                 driver.ConnectionString = connString;
                 result = driver.GetCommand(pKeyString, pDataTable);
             }
-            
+
             return result;
         }
 
@@ -946,7 +945,7 @@ namespace Epi.Data
                         {
 
                             case "System.Boolean":
-                                if(Convert.ToBoolean(pDataRow[FieldName]) == true)
+                                if (Convert.ToBoolean(pDataRow[FieldName]) == true)
                                 {
                                     ValueSQL.Append("1");
                                 }
