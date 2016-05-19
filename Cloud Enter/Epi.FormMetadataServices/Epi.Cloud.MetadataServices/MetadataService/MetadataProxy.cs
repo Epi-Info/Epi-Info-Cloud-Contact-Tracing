@@ -12,8 +12,8 @@ namespace Epi.Cloud.MetadataServices
         public MetadataProxy()
         {
             //var test  = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
-            //_apiUrl = "http://epicloudapi.azurewebsites.net/";
-            _apiUrl = "https://localhost:44379/";
+            _apiUrl = "http://epicloudapi.azurewebsites.net/";
+            //_apiUrl = "https://localhost:44379/";
         }
 
 

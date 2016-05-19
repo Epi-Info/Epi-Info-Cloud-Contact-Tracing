@@ -319,8 +319,11 @@ namespace Epi.Web.MVC.Controllers
                         _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
                         //Insert Survey response to DocumentDB
-                        //_isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
-                        // _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                        _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+                        if (responseId != null)
+                        {
+                            // _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                        }
 
 
                         if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
