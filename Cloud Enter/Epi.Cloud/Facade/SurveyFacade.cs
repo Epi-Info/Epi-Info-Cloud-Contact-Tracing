@@ -92,8 +92,6 @@ namespace Epi.Web.MVC.Facade
                 var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == surveyAnswerDTO.SurveyId);
                 surveyInfoDTO = SurveyInfoDTO.SurveyInfo;
 
-
-
                 _SurveyAnswerDTOList = new List<SurveyAnswerDTO>();
                 _SurveyAnswerDTOList.Add(surveyAnswerDTO);
 
@@ -117,6 +115,10 @@ namespace Epi.Web.MVC.Facade
 
 
             }
+
+            //TODO: Temporary Garry
+            //System.IO.File.WriteAllText(@"C:\Temp\Template.XML", surveyInfoDTO.XML);
+
             MvcDynamicForms.Form form = null;
 
             if (IsMobileDevice)
