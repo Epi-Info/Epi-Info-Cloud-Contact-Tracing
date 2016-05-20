@@ -867,7 +867,7 @@ namespace Epi.Web.MVC.Utility
             select.ShowEmptyOption = true;
             select.EmptyOption = "Select";
             select.AddChoices(DropDownValues, "&#;");
-
+            select.SelectedValue = controlValue;
             if (!string.IsNullOrWhiteSpace(controlValue))
             {
                 select.Choices[controlValue] = true;
