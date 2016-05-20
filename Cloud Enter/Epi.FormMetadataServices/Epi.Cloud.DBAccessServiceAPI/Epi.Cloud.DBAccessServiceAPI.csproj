@@ -316,7 +316,9 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <None Include="Properties\PublishProfiles\epicloudapi - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\epicloudapi - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\epicloudapi - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\epicloudapi - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\epiclouddevapi - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\epiclouddevapi - Web Deploy.pubxml" />

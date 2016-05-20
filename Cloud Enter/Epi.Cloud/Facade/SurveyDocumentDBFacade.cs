@@ -19,39 +19,67 @@ namespace Epi.Web.MVC.Facade
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();
 
+            _storeSurvey.SurveyName = surveyInfoModel.SurveyName;
+
             SurveyProperties _surveyResponseData = new SurveyProperties()
             {
-
-                RecStatus = "1",
-                GlobalRecordID = surveyInfoModel.SurveyId,
-
+                RecStatus = form.StatusId,
+                SurveyID = surveyInfoModel.SurveyId,
+                GlobalRecordID = responseId,
+                PageId = form.PageId,
+                PagePosition = "0"
             };
+
             _storeSurvey.SurveyProperties = _surveyResponseData;
-            _storeSurvey.SurveyQuestionandAnswer = ReadQuestionandAnswerFromAllPage(form, _storeSurvey);
+
+            _storeSurvey.SurveyQuestionandAnswer = ReadQuestionandAnswerFromAllPage(form, _storeSurvey, surveyInfoModel, responseId);
             bool response = _surveyResponse.InsertToSruveyToDocumentDB(_storeSurvey);
             return true;
         }
 
 
 
-        public List<SurveyQuestionandAnswer> ReadQuestionandAnswerFromAllPage(Form form, Survey _surveyInfo)
+        public SurveyQuestionandAnswer ReadQuestionandAnswerFromAllPage(Form form, Survey _surveyInfo, SurveyInfoModel surveyInfoModel, string responseId)
         {
-            List<SurveyQuestionandAnswer> _surveyQAAllPages = new List<SurveyQuestionandAnswer>();
 
             SurveyQuestionandAnswer _surveyQA = new SurveyQuestionandAnswer();
             _surveyQA.SurveyQAList = new List<KeyValuePair<string, string>>();
-
             foreach (var field in form.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    _surveyQA.SurveyQAList.Add(new KeyValuePair<string, string>(field.Title, field.Response));
+                    _surveyQA.SurveyQAList.Add(new KeyValuePair<string, string>(field.Key, field.Response));
                 }
             }
-
-            //Add all pages 
-            _surveyQAAllPages.Add(_surveyQA);
-            return _surveyQAAllPages;
+            _surveyQA.GlobalRecordID = responseId;
+            _surveyQA.PageId = form.PageId;
+            return _surveyQA;
         }
+
+        #region ReadSurveyInfromDocumentDb
+        public SurveyQuestionandAnswer ReadSurveyInfromDocumentDocumentDB(string responseId, string PageNumber)
+        {
+            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+            SurveyQuestionandAnswer SurveyResponse = new SurveyQuestionandAnswer();
+            SurveyProperties _surveyProperties = new SurveyProperties();
+            _surveyProperties.GlobalRecordID = responseId;
+            _surveyProperties.PageId = PageNumber;
+            // SurveyResponse=_surveyResponse.ReadSruveyFromDocumentDB(_surveyProperties, SurveyName);
+            return SurveyResponse;
+        }
+        #endregion
+
+        #region ReadSurveyAnswerByResponseID,PageId 
+        public SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string suveyName, string surveyID, string responseID, string pageId)
+        {
+            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+            SurveyQuestionandAnswer surveyResponse = new SurveyQuestionandAnswer();
+            //surveyResponse.SurveyQAList = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(databaseName,responseId,pageId);
+            var respnse = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(suveyName, responseID, pageId);
+            surveyResponse.SurveyQAList = respnse.SurveyQAList;
+            return surveyResponse;
+        }
+        #endregion
+
     }
 }

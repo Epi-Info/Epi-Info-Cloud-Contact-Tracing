@@ -246,7 +246,7 @@ namespace MvcDynamicForms.Fields
                     {
                         var opt = new TagBuilder("option");
                         opt.Attributes.Add("value", choice.Key);
-                        if (choice.Key == SelectedValue.ToString()) opt.Attributes.Add("selected", "selected");
+                        if (choice.Key == SelectedValue) opt.Attributes.Add("selected", "selected");
                         opt.SetInnerText(choice.Key);
                         html.Append(opt.ToString());
                     }
@@ -257,7 +257,7 @@ namespace MvcDynamicForms.Fields
                     {
                         var opt = new TagBuilder("option");
                         opt.Attributes.Add("value", choice.Key);
-                        if (choice.Key == SelectedValue.ToString()) opt.Attributes.Add("selected", "selected");
+                        if (choice.Key == SelectedValue) opt.Attributes.Add("selected", "selected");
                         opt.SetInnerText(choice.Key);
                         html.Append(opt.ToString());
                     }
@@ -276,7 +276,7 @@ namespace MvcDynamicForms.Fields
 
                             opt.Attributes.Add("value", comment);
 
-                            if (choice.Value || comment == SelectedValue.ToString())
+                            if (choice.Value || comment == SelectedValue)
                             {
                                 opt.Attributes.Add("selected", "selected");
                             }
