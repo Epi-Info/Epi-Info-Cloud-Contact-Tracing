@@ -254,6 +254,7 @@ namespace Epi.Cloud.DataEntryServices
         {
             bool disableAutomaticIdGeneration = false;
             Document docs = new Document();
+
             try
             {
                 // var task = client.CreateDocumentAsync(collectionLink, surveyData,requestoption, disableAutomaticIdGeneration);
@@ -278,15 +279,16 @@ namespace Epi.Cloud.DataEntryServices
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
             var query = this.client.CreateDocumentQuery(collection.SelfLink, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'", queryOptions);
+            var _surveyDataFromDocumentDB1 =query.AsEnumerable().FirstOrDefault();
 
-            var _surveyDataFromDocumentDB = query.AsEnumerable().FirstOrDefault();
+            var _surveyDataFromDocumentDB =(SurveyQuestionandAnswer)query.AsEnumerable().FirstOrDefault();
 
 
             //IQueryable<SurveyQuestionandAnswer> surveyDataFromDocumentDB = this.client.CreateDocumentQuery<SurveyQuestionandAnswer>(
             // UriFactory.CreateDocumentCollectionUri("Testdemo1", collectionName),
             // "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'",
             // queryOptions); 
-            surveyData.SurveyQAList = _surveyDataFromDocumentDB;
+            surveyData.SurveyQAList = _surveyDataFromDocumentDB.SurveyQAList;
 
             return surveyData;
 

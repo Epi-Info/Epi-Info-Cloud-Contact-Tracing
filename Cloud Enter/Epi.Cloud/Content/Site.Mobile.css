@@ -27,4 +27,3 @@ input[type="password"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
-.clear { clear: both; }
