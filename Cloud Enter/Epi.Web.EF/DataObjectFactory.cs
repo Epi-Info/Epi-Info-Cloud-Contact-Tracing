@@ -38,8 +38,9 @@ namespace Epi.Web.EF
 #endif
                 {
                     // Encrypted connection strings here
-                    string connectionStringName = "EWEEntities";
-                    string EWEADOconnectionStringName = "EWEADO";
+                    string connectionStringName = ConfigurationManager.AppSettings["EWEEntitiesConnectionStringName"] ?? "EWEEntities";
+                    string EWEADOconnectionStringName = ConfigurationManager.AppSettings["EWEADOConnectionStringName"] ?? "EWEADO";
+
 
                     //Decrypt connection string here
                     _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString);
