@@ -25,6 +25,6 @@ namespace Epi.Cloud.DataEntryServices.Model
     {
         public string GlobalRecordID { get; set; }
         public string PageId { get; set; }
-        public List<KeyValuePair<string, string>> SurveyQAList { get; set; }
+        public Dictionary<string, string> SurveyQAList { get; set; }
     }
 }
