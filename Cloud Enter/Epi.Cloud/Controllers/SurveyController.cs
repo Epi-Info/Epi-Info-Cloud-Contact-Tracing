@@ -16,6 +16,7 @@ using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
+using Epi.Cloud.FormMetadataServices;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -319,10 +320,13 @@ namespace Epi.Web.MVC.Controllers
                         _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
                         //Insert Survey response to DocumentDB
+
+                        var metadataProvider = new MetadataProvider();
+                        var metadata = metadataProvider.GetMeta(PageNumber);
                         _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
                         if (responseId != null)
                         {
-                            // _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                            _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
                         }
 
 
@@ -1130,12 +1134,7 @@ namespace Epi.Web.MVC.Controllers
 
             SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(SurveyAnswer.ResponseId, SurveyAnswer.SurveyId).SurveyResponseList[0];
 
-
-
-
             return ResponseID.ToString();
-
-
         }
 
 

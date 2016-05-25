@@ -122,22 +122,22 @@ namespace Epi.Web.MVC.Utility
                 //Generate page level Java script (After)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
-                List<KeyValuePair<string, string>> _SurveyAnswerFromDocumentDB = null;
+                Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    // _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var Value = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
                     //StartNewcode
                     string FieldValue = string.Empty;
                     if (_SurveyAnswerFromDocumentDB != null)
                     {
-                        FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                                      where element.Key.ToLower() == fieldAttributes.Name.ToLower()
+                         FieldValue = (from element in _SurveyAnswerFromDocumentDB
+                                      where element.Key== fieldAttributes.Name.ToLower()
                                       select element.Value).FirstOrDefault();
                     }
 
@@ -323,14 +323,12 @@ namespace Epi.Web.MVC.Utility
         /// <param name="ResponseId"></param>
         /// <param name="SurveyId"></param>
         /// <param name="PageNo"></param> 
-        public static List<KeyValuePair<string, string>> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
+        public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
-            //ResponseId = "92540852-8927-44e7-8d8d-794d6375d977";
-            List<KeyValuePair<string, string>> surveyResponse = new List<KeyValuePair<string, string>>();
+            //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            surveyResponse = response.SurveyQAList;
-            return surveyResponse;
+            return response.SurveyQAList; 
         }
         #endregion
 
@@ -864,6 +862,8 @@ namespace Epi.Web.MVC.Utility
                 Value = controlValue
             };
             select.SelectType = FieldTypeId;
+            select.SelectedValue = controlValue; 
+
             select.ShowEmptyOption = true;
             select.EmptyOption = "Select";
             select.AddChoices(DropDownValues, "&#;");

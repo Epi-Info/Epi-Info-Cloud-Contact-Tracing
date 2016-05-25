@@ -4,6 +4,7 @@ using Epi.Web.MVC.Models;
 using MvcDynamicForms;
 using Epi.Cloud.DataEntryServices;
 using Epi.Cloud.DataEntryServices.Model;
+using MvcDynamicForms.Fields;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -13,8 +14,8 @@ namespace Epi.Web.MVC.Facade
         /// Insert survey question and answer to Document Db
         /// </summary>
 
-        /// <returns></returns>
-        public bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        #region Insert Into Servey Response to DocumentDB
+        public bool InsertSurveyResponseToDocumentDBStoreAsync(List<FieldAttributes> metadata, SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();
@@ -36,25 +37,26 @@ namespace Epi.Web.MVC.Facade
             bool response = _surveyResponse.InsertToSruveyToDocumentDB(_storeSurvey);
             return true;
         }
+        #endregion
 
-
-
+        #region Read Question and Answer from all pages
         public SurveyQuestionandAnswer ReadQuestionandAnswerFromAllPage(Form form, Survey _surveyInfo, SurveyInfoModel surveyInfoModel, string responseId)
         {
 
             SurveyQuestionandAnswer _surveyQA = new SurveyQuestionandAnswer();
-            _surveyQA.SurveyQAList = new List<KeyValuePair<string, string>>();
+            _surveyQA.SurveyQAList = new Dictionary<string, string>();
             foreach (var field in form.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    _surveyQA.SurveyQAList.Add(new KeyValuePair<string, string>(field.Key, field.Response));
+                    _surveyQA.SurveyQAList.Add(field.Key, field.Response);
                 }
             }
             _surveyQA.GlobalRecordID = responseId;
             _surveyQA.PageId = form.PageId;
             return _surveyQA;
         }
+        #endregion
 
         #region ReadSurveyInfromDocumentDb
         public SurveyQuestionandAnswer ReadSurveyInfromDocumentDocumentDB(string responseId, string PageNumber)
