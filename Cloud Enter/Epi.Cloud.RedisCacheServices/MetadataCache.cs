@@ -7,7 +7,7 @@ namespace Epi.Cloud.CacheServices
     /// <summary>
     /// MetadataCache
     /// </summary>
-    public class MetadataCache : RedisCache
+    public class MetadataCache : RedisCache, IMetadataCache
     {
         private const string MetadataPrefix = "metadata_";
 

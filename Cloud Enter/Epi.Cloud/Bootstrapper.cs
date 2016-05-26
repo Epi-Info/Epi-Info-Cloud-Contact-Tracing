@@ -75,6 +75,7 @@ namespace Epi.Web.MVC
             container.RegisterType<Enter.Common.DTO.SurveyAnswerDTO, Enter.Common.DTO.SurveyAnswerDTO>();
             container.RegisterType<Epi.Web.MVC.Facade.ISurveyFacade, Epi.Web.MVC.Facade.SurveyFacade>();
             container.RegisterType<Epi.Web.MVC.Facade.ISecurityFacade, Epi.Web.MVC.Facade.SecurityFacade>();
+            container.RegisterType<Epi.Cloud.CacheServices.IMetadataCache, Epi.Cloud.CacheServices.MetadataCache>();
             container.RegisterControllers();
 
             return container;

@@ -8,7 +8,7 @@
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{91794FFF-48C0-414F-933E-34412A29EEAC}</ProjectGuid>
-    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Epi.Web.MVC</RootNamespace>
@@ -1069,6 +1069,10 @@
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
+      <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
+      <Name>Epi.Cloud.CacheServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
