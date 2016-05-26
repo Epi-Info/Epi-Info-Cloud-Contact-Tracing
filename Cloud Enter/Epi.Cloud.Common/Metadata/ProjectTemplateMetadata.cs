@@ -14,6 +14,13 @@ namespace Epi.Cloud.Common.Metadata
         public string Level { get; set; }
         public ProjectMetadata Project { get; set; }
         public SourceTable[] SourceTables { get; set; }
+
+        public ProjectTemplateMetadata Clone()
+        {
+            var clone = (ProjectTemplateMetadata)MemberwiseClone();
+            clone.Project = Project != null ? Project.Clone() : null;
+            return clone;
+        }
     }
 
     [Serializable()]
@@ -22,7 +29,6 @@ namespace Epi.Cloud.Common.Metadata
     {
         public string MetadataSource { get; set; }
         public string EnterMakeviewInterpreter { get; set; }
-        public ViewMetadata View { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
         public string Location { get; set; }
@@ -41,8 +47,16 @@ namespace Epi.Cloud.Common.Metadata
         public bool EditorFontItalics { get; set; }
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
+        public ViewMetadata View { get; set; }
 
         //  public ProjectCollectedData CollectedData { get; set; }
+
+        public ProjectMetadata Clone()
+        {
+            var clone = (ProjectMetadata)MemberwiseClone();
+            clone.View = View != null ? View.Clone() : null;
+            return clone;
+        }
     }
 
     [Serializable()]
@@ -62,7 +76,14 @@ namespace Epi.Cloud.Common.Metadata
         public int Height { get; set; }
         public string Orientation { get; set; }
         public string LabelAlign { get; set; }
+        public int[] PageIds{ get; set; }
         public PageMetadata[] Pages { get; set; }
+
+        public ViewMetadata Clone()
+        {
+            var clone = (ViewMetadata)MemberwiseClone();
+            return clone;
+        }
     }
 
     [Serializable()]
