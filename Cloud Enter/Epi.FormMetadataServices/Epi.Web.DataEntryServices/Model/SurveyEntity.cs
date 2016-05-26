@@ -21,7 +21,7 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string PagePosition { get; set; }
         public DateTime DateOfInterview { get; set; }
     }
-    public class SurveyQuestionandAnswer
+    public class SurveyQuestionandAnswer : Resource
     {
         public string GlobalRecordID { get; set; }
         public string PageId { get; set; }

@@ -59,17 +59,9 @@ namespace Epi.Web.MVC.Facade
         /// <param name="pageNumber"></param>
         /// <param name="surveyAnswerDTO"></param>
         /// <returns></returns>
-        public MvcDynamicForms.Form GetSurveyFormData(
-            string surveyId,
-            int pageNumber,
-            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-            bool IsMobileDevice,
-            List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
-            List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
+        public MvcDynamicForms.Form GetSurveyFormData(string surveyId,int pageNumber,SurveyAnswerDTO surveyAnswerDTO,bool IsMobileDevice,List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,      List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
         {
             List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
-
-
             //Get the SurveyInfoDTO
             Epi.Web.Enter.Common.DTO.SurveyInfoDTO surveyInfoDTO;
             if (FormsHierarchyDTOList == null)
@@ -123,15 +115,15 @@ namespace Epi.Web.MVC.Facade
 
             if (IsMobileDevice)
             {
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
+                MobileFormProvider.SurveyInfoList = List;
+                MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
+                form = MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
             }
             else
             {
-                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
+                 FormProvider.SurveyInfoList = List;
+                 FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
+                form = FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO);
             }
             return form;
         }

@@ -123,7 +123,7 @@ namespace Epi.Web.MVC.Utility
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
                 Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
-                if (form.ResponseId != null)
+                if (form.ResponseId != null && surveyAnswerList!=null)
                 {
                     _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }

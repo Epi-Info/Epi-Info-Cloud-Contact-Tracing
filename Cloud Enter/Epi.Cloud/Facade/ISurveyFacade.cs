@@ -3,12 +3,13 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.DTO;
+using MvcDynamicForms;
 namespace Epi.Web.MVC.Facade
 {
     public interface ISurveyFacade
     {
 
-        MvcDynamicForms.Form GetSurveyFormData(string surveyId, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsMobileDevice,
+        Form GetSurveyFormData(string surveyId, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsMobileDevice,
             List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
             List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null);
         Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1);
