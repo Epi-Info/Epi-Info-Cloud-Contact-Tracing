@@ -250,15 +250,16 @@ namespace Epi.Cloud.DataEntryServices
         /// Get the collection and conver to json and send to document db
         /// </summary>
         /// <param name="collectionLink"></param>
-        private async Task<ResourceResponse<Document>> CreateDocumentsAsync(string collectionLink, dynamic surveyData, RequestOptions requestoption)
+        private async Task<ResourceResponse<Document>> CreateDocumentsAsync(string collectionLink, SurveyQuestionandAnswer surveyData, RequestOptions requestoption)
         {
-            bool disableAutomaticIdGeneration = false;
+            bool disableAutomaticIdGeneration = true;
             Document docs = new Document();
 
             try
             {
+                surveyData.Id = surveyData.GlobalRecordID;
                 // var task = client.CreateDocumentAsync(collectionLink, surveyData,requestoption, disableAutomaticIdGeneration);
-                var documentTasks = await client.CreateDocumentAsync(collectionLink, surveyData, requestoption, disableAutomaticIdGeneration);
+                var documentTasks = await client.UpsertDocumentAsync(collectionLink, surveyData, requestoption, disableAutomaticIdGeneration);
                 var _StatusCode = ((ResourceResponse<Document>)documentTasks).StatusCode;
 
             }

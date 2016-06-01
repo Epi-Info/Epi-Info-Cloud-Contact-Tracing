@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Epi.Cloud.DataEntryServices.Model
 {
-    public class Survey : Resource
+    public class Survey
     {
         public SurveyProperties SurveyProperties { get; set; }
         public SurveyQuestionandAnswer SurveyQuestionandAnswer { get; set; }
@@ -21,7 +21,7 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string PagePosition { get; set; }
         public DateTime DateOfInterview { get; set; }
     }
-    public class SurveyQuestionandAnswer
+    public class SurveyQuestionandAnswer:Resource
     {
         public string GlobalRecordID { get; set; }
         public string PageId { get; set; }

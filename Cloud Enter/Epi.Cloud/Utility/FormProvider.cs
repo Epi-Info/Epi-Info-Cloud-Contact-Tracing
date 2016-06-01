@@ -136,8 +136,8 @@ namespace Epi.Web.MVC.Utility
                     string FieldValue = string.Empty;
                     if (_SurveyAnswerFromDocumentDB != null)
                     {
-                         FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                                      where element.Key== fieldAttributes.Name.ToLower()
+                        FieldValue = (from element in _SurveyAnswerFromDocumentDB
+                                      where element.Key == fieldAttributes.Name.ToLower()
                                       select element.Value).FirstOrDefault();
                     }
 
@@ -183,13 +183,15 @@ namespace Epi.Web.MVC.Utility
                         case 7://DatePicker
 
                             var _DatePickerValue = FieldValue;
-                            form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
+                            form.AddFields(GetDatePicker(fieldAttributes, _Width, _Height, _DatePickerValue));
+                            //form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", Value)); 
                             break;
                         case 8: //TimePicker
                             var _timePickerValue = FieldValue;
-                            form.AddFields(GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form));
+                            form.AddFields(GetTimePicker(fieldAttributes, _Width, _Height, _timePickerValue));
+                            //form.AddFields(GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form));
 
                             break;
                         case 10://CheckBox
@@ -273,7 +275,8 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 20://RelateButton
-                            form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
+                                //form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
+                            form.AddFields(GetRelateButton(fieldAttributes, _Width, _Height));
                             break;
                         case 21://GroupBox
                             var _GroupBoxValue = FieldValue;
@@ -392,12 +395,14 @@ namespace Epi.Web.MVC.Utility
 
                         case "7": // 7 DatePicker
                             var _DatePickerValue = Value;
-                            field = GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form);
+                            field = GetDatePicker(fieldAttributes, _Width, _Height, _DatePickerValue);
+                            // field = GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form);
                             break;
 
                         case "8": //TimePicker
                             var _timePickerValue = Value;
-                            field = GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form);
+                            field = GetTimePicker(fieldAttributes, _Width, _Height, _timePickerValue);
+                            //field = GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form);
                             break;
 
                         case "10"://CheckBox
@@ -741,6 +746,17 @@ namespace Epi.Web.MVC.Utility
         }
 
 #endif
+
+        private static DatePicker GetDatePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var DatePicker = new DatePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return DatePicker;
+        }
         private static DatePicker GetDatePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -783,6 +799,17 @@ namespace Epi.Web.MVC.Utility
 
         }
 
+
+        private static TimePicker GetTimePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var TimePicker = new TimePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return TimePicker;
+        }
         private static TimePicker GetTimePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -850,6 +877,16 @@ namespace Epi.Web.MVC.Utility
             RelateButton.IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList");
             RelateButton.IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList");
             RelateButton.RelatedViewId = _FieldTypeID.Attribute("RelatedViewId").Value;
+            return RelateButton;
+        }
+
+        private static RelateButton GetRelateButton(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            var RelateButton = new RelateButton(fieldAttributes, formWidth, formHeight)
+            {
+               // Value = controlValue
+            };
+
             return RelateButton;
         }
 

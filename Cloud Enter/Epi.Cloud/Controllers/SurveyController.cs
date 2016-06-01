@@ -992,7 +992,7 @@ namespace Epi.Web.MVC.Controllers
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
             string ChildResponseId = CreateResponse(SurveyId, ResponseId);
-            this.UpdateStatus(ResponseId, SurveyId, 2);
+            //this.UpdateStatus(ResponseId, SurveyId, 2);
 
             return ChildResponseId;
         }

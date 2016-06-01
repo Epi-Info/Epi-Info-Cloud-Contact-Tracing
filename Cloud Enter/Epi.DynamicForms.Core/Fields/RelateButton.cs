@@ -8,7 +8,49 @@ namespace MvcDynamicForms.Fields
     public class RelateButton : InputField
     {
         new private string _promptClass = "MvcDynamicCommandButtonPrompt";
-        public string RelatedViewId;
+        public string RelatedViewId;       
+        public RelateButton()
+        {
+
+        }
+        public RelateButton(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+            Title = fieldAttributes.Name;
+            Prompt = fieldAttributes.PromptText;
+            DisplayOrder = fieldAttributes.TabIndex;
+            // Required = _FieldTypeID.Attribute("IsRequired").Value == "True" ? true : false,
+            //RequiredMessage = _FieldTypeID.Attribute("PromptText").Value + " is required",
+            RequiredMessage = "This field is required";
+            Key = fieldAttributes.Name;
+            PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
+            PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            fontstyle = fieldAttributes.PromptFontStyle;
+            fontSize = fieldAttributes.PromptFontSize;
+            fontfamily = fieldAttributes.PromptFontFamily;
+            // IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
+            //Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
+            InputFieldfontstyle = fieldAttributes.ControlFontStyle;
+            InputFieldfontSize = fieldAttributes.ControlFontSize;
+            InputFieldfontfamily = fieldAttributes.ControlFontFamily;
+            IsReadOnly = fieldAttributes.ReadOnly;
+            RelatedViewId = fieldAttributes.RelatedViewId;
+            //  Value = _ControlValue,
+            //IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList"),
+            // IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList"),
+            // IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList"),               
+
+        }
+
         public override string RenderHtml()
         {
             string name = "mvcdynamicfield_" + _key;

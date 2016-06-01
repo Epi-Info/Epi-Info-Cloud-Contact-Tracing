@@ -50,6 +50,7 @@ namespace MvcDynamicForms.Fields
             ShowTextOnRight = fieldType.AttributeValue("ShowTextOnRight");
             ChoicesList = fieldType.AttributeValue("List");
             BackgroundColor = fieldType.AttributeValue("BackgroundColor");
+            RelatedViewId = fieldType.AttributeValue("RelatedViewId");
         }
 
         public string UniqueId { get; set; }
@@ -91,6 +92,7 @@ namespace MvcDynamicForms.Fields
         public string ChoicesList { get; set; }
         public string BackgroundColor { get; set; }
         public List<string> SourceTableValues { get; set; }
+        public string RelatedViewId { get; set; }
     }
 
     public static class XmlAttributeExtensions

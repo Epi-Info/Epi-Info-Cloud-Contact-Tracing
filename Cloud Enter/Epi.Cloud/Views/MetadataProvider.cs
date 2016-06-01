@@ -64,7 +64,8 @@ namespace Epi.Cloud.FormMetadataServices
                     IsHighlighted = false,
                     IsDisabled = false,
                     ChoicesList = f.List,
-                    SourceTableValues = f.SourceTableValues
+                    SourceTableValues = f.SourceTableValues,
+                    RelatedViewId = f.RelatedViewId.ToString()
 
                 }).ToList();
             }

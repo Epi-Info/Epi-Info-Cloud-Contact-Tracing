@@ -267,22 +267,25 @@ namespace MvcDynamicForms.Fields
                     foreach (var choice in _choices)
                     {
                         var opt = new TagBuilder("option");
+                        opt.Attributes.Add("value", choice.Key);
+                        if (choice.Key == SelectedValue) opt.Attributes.Add("selected", "selected");
+                        opt.SetInnerText(choice.Key);
 
-                        if (choice.Key.Contains("-"))
-                        {
-                            string[] keyValue = choice.Key.Split(new char[] { '-' });
-                            string comment = keyValue[0].Trim();
-                            string description = keyValue[1].Trim();
+                        //if (choice.Key.Contains("-"))
+                        //{
+                        //    string[] keyValue = choice.Key.Split(new char[] { '-' });
+                        //    string comment = keyValue[0].Trim();
+                        //    string description = keyValue[1].Trim();
 
-                            opt.Attributes.Add("value", comment);
+                        //    opt.Attributes.Add("value", comment);
 
-                            if (choice.Value || comment == SelectedValue)
-                            {
-                                opt.Attributes.Add("selected", "selected");
-                            }
+                        //    if (choice.Value || comment == SelectedValue)
+                        //    {
+                        //        opt.Attributes.Add("selected", "selected");
+                        //    }
 
-                            opt.SetInnerText(description);
-                        }
+                        //    opt.SetInnerText(description);
+                        //}
 
                         html.Append(opt.ToString());
                     }
