@@ -12,7 +12,7 @@ namespace Epi.Cloud.DataEntryServices.Model
         public int TotalNoofPages { get; set; }
 
     }
-    public class SurveyProperties
+    public class SurveyProperties:Resource
     {
         public string SurveyID { get; set; }
         public string GlobalRecordID { get; set; }
@@ -20,6 +20,9 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string PageId { get; set; }
         public string PagePosition { get; set; }
         public DateTime DateOfInterview { get; set; }
+        public DateTime DateCreated { get; set; }
+        public DateTime DateUpdated { get; set; }
+        public string UserId { get; set; }
     }
     public class SurveyQuestionandAnswer:Resource
     {

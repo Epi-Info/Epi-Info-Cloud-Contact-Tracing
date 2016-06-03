@@ -60,7 +60,6 @@ namespace Epi.Web.MVC.Controllers
 
         //  [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")] 
         public ActionResult Index(string responseId, int PageNumber = 1, string Edit = "", string FormValuesHasChanged = "", string surveyid = "")
-
         {
             try
             {

@@ -5,6 +5,7 @@ using MvcDynamicForms;
 using Epi.Cloud.DataEntryServices;
 using Epi.Cloud.DataEntryServices.Model;
 using MvcDynamicForms.Fields;
+using System;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -28,7 +29,9 @@ namespace Epi.Web.MVC.Facade
                 SurveyID = surveyInfoModel.SurveyId,
                 GlobalRecordID = responseId,
                 PageId = form.PageId,
-                PagePosition = "0"
+                PagePosition = "0",
+                DateCreated=DateTime.UtcNow,
+                DateUpdated=DateTime.UtcNow
             };
 
             _storeSurvey.SurveyProperties = _surveyResponseData;

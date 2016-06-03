@@ -41,18 +41,19 @@ namespace Epi.Cloud.DataEntryServices
                     //var test = CreateDatabase(client, _surveyData.SurveyName);
 
                     //Getting reference to Database
+                    //Database database = ReadDatabase(_surveyData.SurveyName).Result;
                     Database database = ReadOrCreateDatabase(_surveyData.SurveyName);
 
                     //Create Survey Properties 
-                    // DocumentCollection collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName + "_Properties");
+                    DocumentCollection collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName);
 
                     RequestOptions _Requestoption = null;
-                    //Insert data to Properties collections
-                    //var surveyProperties =CreateDocumentsAsync(collection.SelfLink, _surveyData.SurveyProperties, _Requestoption);
+
+                    //If any opertaion first upsert table properties
+                    var surveyProperties = CreateSurveyDocumentPropertiesAsync(collection, _surveyData.SurveyProperties, _Requestoption, _surveyData.SurveyName);
 
                     //Create collection and store data 
-                    Console.WriteLine("4. Inserting Documents");
-                    DocumentCollection collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName + "_" + _surveyData.SurveyProperties.PageId);
+                    collection = ReadOrCreateCollection(database.SelfLink, _surveyData.SurveyName + "_" + _surveyData.SurveyProperties.PageId);
 
                     var surveyPage = CreateDocumentsAsync(collection.SelfLink, _surveyData.SurveyQuestionandAnswer, _Requestoption);
                 }
@@ -184,26 +185,37 @@ namespace Epi.Cloud.DataEntryServices
         /// <summary>
         ///If DB is not avaliable in Document Db create DB
         /// </summary>
-        private async Task<ResourceResponse<Database>> ReadDatabase(string databaseName)
+        private async Task<ResourceResponse<Database>> ReadorCreateDatabase(string databaseName)
         {
-            try
+
+            var Response = await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName));
+            if (Response != null)
             {
-                var Response = await this.client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(databaseName));
                 return Task.FromResult(Response).Result;
             }
-            catch (DocumentClientException de)
+            else
             {
-                // If the database does not exist, create a new database
-                if (de.StatusCode == HttpStatusCode.NotFound)
+                try
                 {
-                    //await this.client.CreateDatabaseAsync(new Database { Id = databaseName }); 
-                    //"Database not found";
+                    var dbresponse = await client.CreateDatabaseAsync(new Database { Id = databaseName });
+                    return Task.FromResult(dbresponse).Result;
                 }
-                else
+                catch (DocumentClientException de)
                 {
-                    throw;
+                    // If the database does not exist, create a new database
+                    if (de.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        //await this.client.CreateDatabaseAsync(new Database { Id = databaseName }); 
+                        //"Database not found";
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+
             }
+
             return null;
         }
         #endregion
@@ -244,21 +256,19 @@ namespace Epi.Cloud.DataEntryServices
         }
         #endregion
 
-        #region CreateDocuments
+        #region CreateOrUpdateDocuments
 
         /// <summary>
         /// Get the collection and conver to json and send to document db
         /// </summary>
         /// <param name="collectionLink"></param>
-        private async Task<ResourceResponse<Document>> CreateDocumentsAsync(string collectionLink, SurveyQuestionandAnswer surveyData, RequestOptions requestoption)
+        private async Task<ResourceResponse<Document>> CreateDocumentsAsync(string collectionLink, dynamic surveyData, RequestOptions requestoption)
         {
             bool disableAutomaticIdGeneration = true;
             Document docs = new Document();
-
             try
             {
                 surveyData.Id = surveyData.GlobalRecordID;
-                // var task = client.CreateDocumentAsync(collectionLink, surveyData,requestoption, disableAutomaticIdGeneration);
                 var documentTasks = await client.UpsertDocumentAsync(collectionLink, surveyData, requestoption, disableAutomaticIdGeneration);
                 var _StatusCode = ((ResourceResponse<Document>)documentTasks).StatusCode;
 
@@ -269,6 +279,38 @@ namespace Epi.Cloud.DataEntryServices
             }
             return null;
         }
+
+
+        private async Task<ResourceResponse<Document>> CreateSurveyDocumentPropertiesAsync(DocumentCollection collection, SurveyProperties surveyProperties, RequestOptions requestoption, string SurveyName)
+        {
+            bool disableAutomaticIdGeneration = true;
+            Document docs = new Document();
+            try
+            {
+                surveyProperties.Id = surveyProperties.GlobalRecordID;
+                var _responseDB = ReadSurveyDataPropertiesFromDocumentDB(surveyProperties, SurveyName, collection);
+                if (_responseDB == null)
+                {
+                    var documentTasks = await client.CreateDocumentAsync(collection.SelfLink, surveyProperties, requestoption, disableAutomaticIdGeneration);
+                    var _StatusCode = ((ResourceResponse<Document>)documentTasks).StatusCode;
+                }
+                else
+                {
+                    surveyProperties.DateCreated = _responseDB.DateCreated;
+                    surveyProperties.DateUpdated = surveyProperties.DateUpdated;
+                    var documentTasks = await client.ReplaceDocumentAsync(_responseDB.SelfLink, surveyProperties);
+                    var _StatusCode = ((ResourceResponse<Document>)documentTasks).StatusCode;
+                }
+                //Document doc = client.CreateDocumentQuery(collectionLink).Where(x => x.Id == surveyProperties.GlobalRecordID).AsEnumerable().FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                var xe = ex.ToString();
+            }
+            return null;
+        }
+
+
         #endregion
 
         #region ReadDataFromCollectionDocumentDB
@@ -280,15 +322,10 @@ namespace Epi.Cloud.DataEntryServices
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
             var query = this.client.CreateDocumentQuery(collection.SelfLink, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'", queryOptions);
-            var _surveyDataFromDocumentDB1 =query.AsEnumerable().FirstOrDefault();
+            var _surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
 
-            var _surveyDataFromDocumentDB =(SurveyQuestionandAnswer)query.AsEnumerable().FirstOrDefault();
+            var _surveyDataFromDocumentDB = (SurveyQuestionandAnswer)query.AsEnumerable().FirstOrDefault();
 
-
-            //IQueryable<SurveyQuestionandAnswer> surveyDataFromDocumentDB = this.client.CreateDocumentQuery<SurveyQuestionandAnswer>(
-            // UriFactory.CreateDocumentCollectionUri("Testdemo1", collectionName),
-            // "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'",
-            // queryOptions); 
             surveyData.SurveyQAList = _surveyDataFromDocumentDB.SurveyQAList;
 
             return surveyData;
@@ -296,7 +333,21 @@ namespace Epi.Cloud.DataEntryServices
         }
         #endregion
 
+        #region ReadDataFromCollectionDocumentDB
+        private SurveyProperties ReadSurveyDataPropertiesFromDocumentDB(SurveyProperties SurveyProperties, string surveyName, DocumentCollection collection)
+        {
 
+            SurveyQuestionandAnswer surveyData = new SurveyQuestionandAnswer();
+
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+
+            var query = this.client.CreateDocumentQuery(collection.SelfLink, "SELECT " + surveyName + ".DateCreated," + surveyName + "._self from " + surveyName + " WHERE " + surveyName + ".GlobalRecordID = '" + SurveyProperties.GlobalRecordID + "'" + " and " + surveyName + ".SurveyID ='" + SurveyProperties.SurveyID + "'", queryOptions);
+            var _surveyDataFromDocumentDB = (SurveyProperties)query.AsEnumerable().FirstOrDefault();
+            return _surveyDataFromDocumentDB;
+        }
+        #endregion
     }
 }
+
 
