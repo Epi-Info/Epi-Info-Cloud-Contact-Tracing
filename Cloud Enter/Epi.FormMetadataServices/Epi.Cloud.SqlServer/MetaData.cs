@@ -2,9 +2,23 @@
 using System.Linq;
 using Epi.Data.EF;
 using System.Data;
+using Epi.Cloud.Common.Metadata;
+using System;
+using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 
 namespace Epi.Cloud.SqlServer
 {
+    // EF follows a Code based Configuration model and will look for a class that
+    // derives from DbConfiguration for executing any Connection Resiliency strategies
+    public class DbConfigurationWithRetryStrategy : DbConfiguration
+    {
+        public DbConfigurationWithRetryStrategy()
+        {
+            this.SetExecutionStrategy("System.Data.SqlClient", () => new SqlAzureExecutionStrategy());
+        }
+    }
+
     /// <summary>
     /// Concret SQL Server Database Class
     /// </summary>
@@ -20,9 +34,9 @@ namespace Epi.Cloud.SqlServer
             }
         }
 
-        public List<MetadataDbFieldAttribute> GetFieldsByPageAsData(int? pageId)
+        public ProjectTemplateMetadata GetFieldsByPageAsData()
         {
-            List<MetadataDbFieldAttribute> lstGetFieldsData = new List<MetadataDbFieldAttribute>();
+            ProjectTemplateMetadata templateMetaInfo = new ProjectTemplateMetadata();
 
             using (EPIInfo7Entities metacontext = new EPIInfo7Entities())
             {
@@ -33,7 +47,8 @@ namespace Epi.Cloud.SqlServer
                                  from mp in lmp.DefaultIfEmpty()
                                  join mv in metacontext.metaViews on (mp.ViewId) equals mv.ViewId into lmv
                                  from mv in lmv.DefaultIfEmpty()
-                                 where (mf.PageId.HasValue && mf.PageId == pageId) || (!mf.PageId.HasValue && mf.PageId == pageId)
+                                 where mf.PageId != null
+                                 // where (mf.PageId.HasValue && mf.PageId == pageId) || (!mf.PageId.HasValue && mf.PageId == pageId)
                                  select new
                                  {
                                      mf.UniqueId,
@@ -86,70 +101,97 @@ namespace Epi.Cloud.SqlServer
                                      mf.SourceFieldId
                                  };
 
+                    var lstGetPages = result.GroupBy(u => u.PageId).Select(grp => grp.ToList()).ToList();
 
-                    foreach (var element in result)
+                    ProjectMetadata projMetaDataInfo = new ProjectMetadata();
+
+                    ViewMetadata viewMetaInfo = new ViewMetadata();
+
+                    var sourceTableNames = new List<Tuple<string, string>>();
+                    List<PageMetadata> lstPageMetadata = new List<PageMetadata>();
+                    foreach (var element in lstGetPages)
                     {
-                        MetadataDbFieldAttribute GetFieldsData = new MetadataDbFieldAttribute();
+                        PageMetadata metapage = new PageMetadata();
+                        List<FieldMetdata> lstFieldMetadata = new List<FieldMetdata>();
 
-                        GetFieldsData.UniqueId = element.UniqueId.HasValue ? element.UniqueId.Value.ToString("D") : string.Empty;
-                        GetFieldsData.Name = element.Name;
-                        GetFieldsData.PageId = element.PageId;
-                        GetFieldsData.FieldId = element.FieldId;
-                        GetFieldsData.FieldTypeId = element.FieldTypeId;
-                        GetFieldsData.ControlAfterCheckCode = element.ControlAfterCheckCode;
-                        GetFieldsData.ControlBeforeCheckCode = element.ControlBeforeCheckCode;
-                        GetFieldsData.PageName = element.PageName;
-                        GetFieldsData.PageBeforeCheckCode = element.PageBeforeCheckCode;
-                        GetFieldsData.PageAfterCheckCode = element.PageAfterCheckCode;
-                        GetFieldsData.Position = element.Position;
-                        GetFieldsData.ControlTopPositionPercentage = element.ControlTopPositionPercentage;
-                        GetFieldsData.ControlLeftPositionPercentage = element.ControlLeftPositionPercentage;
-                        GetFieldsData.ControlHeightPercentage = element.ControlHeightPercentage;
-                        GetFieldsData.ControlWidthPercentage = element.ControlWidthPercentage;
-                        GetFieldsData.ControlFontFamily = element.ControlFontFamily;
-                        GetFieldsData.ControlFontSize = element.ControlFontSize;
-                        GetFieldsData.ControlFontStyle = element.ControlFontStyle;
-                        GetFieldsData.ControlScriptName = element.ControlScriptName;
-                        GetFieldsData.PromptTopPositionPercentage = element.PromptTopPositionPercentage;
-                        GetFieldsData.PromptLeftPositionPercentage = element.PromptLeftPositionPercentage;
-                        GetFieldsData.PromptText = element.PromptText;
-                        GetFieldsData.PromptFontFamily = element.PromptFontFamily;
-                        GetFieldsData.PromptFontSize = element.PromptFontSize;
-                        GetFieldsData.PromptFontStyle = element.PromptFontStyle;
-                        GetFieldsData.PromptScriptName = element.PromptScriptName;
-                        GetFieldsData.ShouldRepeatLast = element.ShouldRepeatLast;
-                        GetFieldsData.IsRequired = element.IsRequired;
-                        GetFieldsData.IsReadOnly = element.IsReadOnly;
-                        GetFieldsData.ShouldRetainImageSize = element.ShouldRetainImageSize;
-                        GetFieldsData.Pattern = element.Pattern;
-                        GetFieldsData.MaxLength = element.MaxLength;
-                        GetFieldsData.ShowTextOnRight = element.ShowTextOnRight;
-                        GetFieldsData.Lower = element.Lower;
-                        GetFieldsData.Upper = element.Upper;
-                        GetFieldsData.RelateCondition = element.RelateCondition;
-                        GetFieldsData.ShouldReturnToParent = element.ShouldReturnToParent;
-                        GetFieldsData.RelatedViewId = element.RelatedViewId;
-                        GetFieldsData.List = element.List;
-                        GetFieldsData.SourceTableName = element.SourceTableName;
-                        GetFieldsData.CodeColumnName = element.CodeColumnName;
-                        GetFieldsData.TextColumnName = element.TextColumnName;
-                        GetFieldsData.BackgroundColor = element.BackgroundColor;
-                        GetFieldsData.Sort = element.Sort;
-                        GetFieldsData.IsExclusiveTable = element.IsExclusiveTable;
-                        GetFieldsData.TabIndex = element.TabIndex;
-                        GetFieldsData.HasTabStop = element.HasTabStop;
-                        GetFieldsData.SourceFieldId = element.SourceFieldId;
-                        lstGetFieldsData.Add(GetFieldsData);
+                        foreach (var fieldElement in element)
+                        {
+                            metapage.PageId = (int)fieldElement.PageId;
+                            FieldMetdata metaField = new FieldMetdata();
+                            metaField.UniqueId = new System.Guid(fieldElement.UniqueId.ToString());
+                            metaField.Name = fieldElement.Name;
+                            metaField.PageId = fieldElement.PageId;
+                            metaField.FieldId = fieldElement.FieldId;
+                            metaField.FieldTypeId = fieldElement.FieldTypeId;
+                            metaField.ControlAfterCheckCode = fieldElement.ControlAfterCheckCode;
+                            metaField.ControlBeforeCheckCode = fieldElement.ControlBeforeCheckCode;
+                            metaField.PageName = fieldElement.PageName;
+                            metaField.PageBeforeCheckCode = fieldElement.PageBeforeCheckCode;
+                            metaField.PageAfterCheckCode = fieldElement.PageAfterCheckCode;
+                            metaField.Position = fieldElement.Position;
+                            metaField.ControlTopPositionPercentage = fieldElement.ControlTopPositionPercentage;
+                            metaField.ControlLeftPositionPercentage = fieldElement.ControlLeftPositionPercentage;
+                            metaField.ControlHeightPercentage = fieldElement.ControlHeightPercentage;
+                            metaField.ControlWidthPercentage = fieldElement.ControlWidthPercentage;
+                            metaField.ControlFontFamily = fieldElement.ControlFontFamily;
+                            metaField.ControlFontSize = (double?)fieldElement.ControlFontSize;
+                            metaField.ControlFontStyle = fieldElement.ControlFontStyle;
+                            metaField.ControlScriptName = fieldElement.ControlScriptName;
+                            metaField.PromptTopPositionPercentage = fieldElement.PromptTopPositionPercentage;
+                            metaField.PromptLeftPositionPercentage = fieldElement.PromptLeftPositionPercentage;
+                            metaField.PromptText = fieldElement.PromptText;
+                            metaField.PromptFontFamily = fieldElement.PromptFontFamily;
+                            metaField.PromptFontSize = (double?)fieldElement.PromptFontSize;
+                            metaField.PromptFontStyle = fieldElement.PromptFontStyle;
+                            metaField.PromptScriptName = fieldElement.PromptScriptName;
+                            metaField.ShouldRepeatLast = fieldElement.ShouldRepeatLast;
+                            metaField.IsRequired = fieldElement.IsRequired;
+                            metaField.IsReadOnly = fieldElement.IsReadOnly;
+                            metaField.ShouldRetainImageSize = fieldElement.ShouldRetainImageSize;
+                            metaField.Pattern = fieldElement.Pattern;
+                            metaField.MaxLength = fieldElement.MaxLength;
+                            metaField.ShowTextOnRight = fieldElement.ShowTextOnRight;
+                            metaField.Lower = fieldElement.Lower;
+                            metaField.Upper = fieldElement.Upper;
+                            metaField.RelateCondition = fieldElement.RelateCondition;
+                            metaField.ShouldReturnToParent = fieldElement.ShouldReturnToParent;
+                            metaField.RelatedViewId = fieldElement.RelatedViewId;
+                            metaField.List = fieldElement.List;
+                            metaField.SourceTableName = fieldElement.SourceTableName;
+                            metaField.CodeColumnName = fieldElement.CodeColumnName;
+                            metaField.TextColumnName = fieldElement.TextColumnName;
+                            metaField.BackgroundColorSpecified = fieldElement.BackgroundColor;
+                            metaField.Sort = fieldElement.Sort;
+                            metaField.IsExclusiveTable = fieldElement.IsExclusiveTable;
+                            metaField.TabIndex = (int)fieldElement.TabIndex;
+                            metaField.HasTabStop = fieldElement.HasTabStop;
+                            metaField.SourceFieldId = fieldElement.SourceFieldId;
+                            lstFieldMetadata.Add(metaField);
+                        }
+                        metapage.Fields = lstFieldMetadata.ToArray();
+                        lstPageMetadata.Add(metapage);
+                        sourceTableNames.AddRange(metapage.Fields.Where(fields => !string.IsNullOrWhiteSpace(fields.SourceTableName))
+                            .Select(field => new Tuple<string, string>(field.SourceTableName, field.TextColumnName)).ToArray());
                     }
+                    viewMetaInfo.Pages = lstPageMetadata.ToArray();
+                    projMetaDataInfo.View = viewMetaInfo;
+
+                    sourceTableNames = sourceTableNames.Distinct().ToList();
+                    var sourceTables = new List<SourceTable>();
+                    foreach (var sourceTableInfo in sourceTableNames)
+                    {
+                        var sourceTable = new SourceTable { TableName = sourceTableInfo.Item1, Items = PopulateCodeTables(sourceTableInfo.Item1, sourceTableInfo.Item2).ToArray() };
+                        sourceTables.Add(sourceTable);
+                    }
+                    templateMetaInfo.SourceTables = sourceTables.ToArray();
+                    templateMetaInfo.Project = projMetaDataInfo;
                 }
                 catch (System.Exception ex)
                 {
 
                 }
 
-                return lstGetFieldsData;
-
-
+                return templateMetaInfo;
             }
         }
 
@@ -158,5 +200,23 @@ namespace Epi.Cloud.SqlServer
             SqlDatabase sqldb = new SqlDatabase();
             return sqldb.GetTableData(tableName, ColumnName, string.Empty);
         }
+
+        public static List<string> PopulateCodeTables(string TableName, string ColumnName)
+        {
+            if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(ColumnName)) return null;
+            List<string> lstSourceTableVal = new List<string>();
+
+            MetaData getDropdownVal = new MetaData();
+            DataTable dtDropDownVal = getDropdownVal.GetDropdownDB(TableName, ColumnName);
+
+            foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)
+            {
+                lstSourceTableVal.Add(_SourceTableValue[ColumnName].ToString());
+
+                //lstSourceTableVal.Append("&#;");
+            }
+            return lstSourceTableVal;
+        }
+
     }
 }

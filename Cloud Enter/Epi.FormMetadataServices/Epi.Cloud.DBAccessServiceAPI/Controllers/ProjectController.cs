@@ -1,10 +1,8 @@
-﻿
-using System.Web.Http;
+﻿using System.Web.Http;
 using Epi.Cloud.DBAccessService.Proxy.Interfaces;
 using Epi.Cloud.DBAccessService.Handlers;
 using Epi.Cloud.DBAccessService.Services;
-using System.Collections.Generic;
-using Epi.Cloud.MetadataServices.DataTypes;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.DBAccessService.Controllers
 {
@@ -20,14 +18,14 @@ namespace Epi.Cloud.DBAccessService.Controllers
         // GET: api/Project/5
         public IHttpActionResult Get()
         {
-            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(null), this);
+            return new ServiceResult<ProjectTemplateMetadata>(_projectService.GetProjectMetaData(null), this);
         }
 
         // GET: api/Project/5
         public IHttpActionResult Get(string ID)
         {
 
-            return new ServiceResult<List<MetadataFieldAttributes>>(_projectService.GetProjectMetaData(ID), this);
+            return new ServiceResult<ProjectTemplateMetadata>(_projectService.GetProjectMetaData(ID), this);
         }
 
     }

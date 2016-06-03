@@ -240,7 +240,7 @@ namespace Epi.Web.MVC.Utility
 
                             string DropDownValues1 = "";
                             DropDownValues1 = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
-                            var DropDownValues1FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //var DropDownValues1FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue1 = FieldValue;
                             form.AddFields(GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17));
                             //                                             pName, pType, pSource
@@ -307,12 +307,6 @@ namespace Epi.Web.MVC.Utility
                 //};
                 //sports.AddChoices("Baseball,Football,Soccer,Basketball,Tennis,Boxing,Golf", ",");
 
-
-
-
-
-
-
                 form.FormJavaScript = VariableDefinitions.ToString() + "\n" + JavaScript.ToString();
             }
 
@@ -331,7 +325,7 @@ namespace Epi.Web.MVC.Utility
             _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            return response.SurveyQAList; 
+            return response.SurveyQAList;
         }
         #endregion
 
@@ -884,7 +878,7 @@ namespace Epi.Web.MVC.Utility
         {
             var RelateButton = new RelateButton(fieldAttributes, formWidth, formHeight)
             {
-               // Value = controlValue
+                // Value = controlValue
             };
 
             return RelateButton;
@@ -899,7 +893,7 @@ namespace Epi.Web.MVC.Utility
                 Value = controlValue
             };
             select.SelectType = FieldTypeId;
-            select.SelectedValue = controlValue; 
+            select.SelectedValue = controlValue;
 
             select.ShowEmptyOption = true;
             select.EmptyOption = "Select";
