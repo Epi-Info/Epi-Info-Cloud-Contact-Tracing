@@ -71,6 +71,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EpiInfo-Metatables.edmx</DependentUpon>
     </Compile>
+    <Compile Include="EpiInfo-Metatables1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EpiInfo-Metatables.edmx</DependentUpon>
+    </Compile>
     <Compile Include="metaBackground.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
@@ -127,7 +132,7 @@
   <ItemGroup>
     <EntityDeploy Include="EpiInfo-Metatables.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>EpiInfo-Metatables.Designer.cs</LastGenOutput>
+      <LastGenOutput>EpiInfo-Metatables1.Designer.cs</LastGenOutput>
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
