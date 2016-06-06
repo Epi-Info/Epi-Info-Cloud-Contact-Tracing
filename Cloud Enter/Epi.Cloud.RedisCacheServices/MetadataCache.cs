@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Newtonsoft.Json;
 
@@ -100,6 +101,12 @@ namespace Epi.Cloud.CacheServices
                 var pageMetadata = pages[i];
                 int pageId = pageMetadata.PageId;
                 pageIds[i] = pageId;
+                var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
+                foreach (var field in fieldsRequiringSourceTable)
+                {
+                    field.SourceTableItems = projectTemplateMetadata
+                        .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
+                }
                 json = JsonConvert.SerializeObject(pageMetadata);
                 isSuccessful = Set(ComposePageKey(projectTemplateMetadata.Project.Name, pageId), json).Result;
             }

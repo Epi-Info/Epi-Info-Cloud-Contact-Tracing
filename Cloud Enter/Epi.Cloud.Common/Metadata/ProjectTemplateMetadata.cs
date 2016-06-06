@@ -156,13 +156,7 @@ namespace Epi.Cloud.Common.Metadata
         public string Expr1016 { get; set; }
         public string Expr1017 { get; set; }
 
-        /// <summary>
-        /// The SourceTableItems are not serialized at the PageMetadata level.
-        /// Serialization is performed at the ProjectTemplateMetadata level and
-        /// copied here later for page level access convienence.
-        /// </summary>
-        //[JsonIgnore]
-        public SourceTableItem[] Items { get; set; }
+        public string[] SourceTableItems { get; set; }
     }
 
     [DesignerCategory("code")]
