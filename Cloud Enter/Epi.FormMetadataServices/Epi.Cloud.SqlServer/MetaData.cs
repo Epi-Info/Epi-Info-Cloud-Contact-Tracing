@@ -173,8 +173,8 @@ namespace Epi.Cloud.SqlServer
                         sourceTableNames.AddRange(metapage.Fields.Where(fields => !string.IsNullOrWhiteSpace(fields.SourceTableName))
                             .Select(field => new Tuple<string, string>(field.SourceTableName, field.TextColumnName)).ToArray());
                     }
-                    viewMetaInfo.Pages = lstPageMetadata.ToArray();
-                    projMetaDataInfo.View = viewMetaInfo;
+                    projMetaDataInfo.Pages = lstPageMetadata.ToArray();
+                    projMetaDataInfo.Views = new ViewMetadata[] { viewMetaInfo };
 
                     sourceTableNames = sourceTableNames.Distinct().ToList();
                     var sourceTables = new List<SourceTable>();

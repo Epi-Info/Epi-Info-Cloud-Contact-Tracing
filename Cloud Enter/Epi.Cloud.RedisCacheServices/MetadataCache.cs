@@ -51,7 +51,7 @@ namespace Epi.Cloud.CacheServices
                 if (pageId.HasValue)
                 {
                     var pageMetadata = GetPageMetadata(projectName, pageId.Value);
-                    clonedMetadata.Project.View.Pages = new PageMetadata[] { pageMetadata };
+                    clonedMetadata.Project.Pages = new PageMetadata[] { pageMetadata };
                 }
             }
             return clonedMetadata;
@@ -89,7 +89,7 @@ namespace Epi.Cloud.CacheServices
             bool isSuccessful = false;
             string json;
             // save the pageMetadata list
-            var pages = projectTemplateMetadata.Project.View.Pages;
+            var pages = projectTemplateMetadata.Project.Pages;
 
             int numberOfPages = pages.Length;
             int[] pageIds = new int[numberOfPages];
@@ -105,15 +105,15 @@ namespace Epi.Cloud.CacheServices
             }
 
             // save the page ids in the cached object
-            projectTemplateMetadata.Project.View.PageIds = pageIds;
+            projectTemplateMetadata.Project.PageIds = pageIds;
 
             // don't save the page metadata with the cached project metadata
-            projectTemplateMetadata.Project.View.Pages = null;
+            projectTemplateMetadata.Project.Pages = null;
             json = JsonConvert.SerializeObject(projectTemplateMetadata);
             isSuccessful = Set(projectTemplateMetadata.Project.Name, json).Result;
 
             // restore the page metadata 
-            projectTemplateMetadata.Project.View.Pages = pages;
+            projectTemplateMetadata.Project.Pages = pages;
             return isSuccessful;
         }
 
@@ -127,7 +127,7 @@ namespace Epi.Cloud.CacheServices
             if (metadata != null)
             {
                 // remove each of the pages from cache
-                foreach (var pageId in metadata.Project.View.PageIds)
+                foreach (var pageId in metadata.Project.PageIds)
                 {
                     var pageKey = ComposePageKey(projectName, pageId);
                     _weakPageMetadataObjectCache.Remove(pageKey);

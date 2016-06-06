@@ -45,14 +45,20 @@ namespace Epi.Cloud.Common.Metadata
         public bool EditorFontItalics { get; set; }
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
-        public ViewMetadata View { get; set; }
+        public ViewMetadata[] Views { get; set; }
+        public int[] PageIds { get; set; }
+        public PageMetadata[] Pages { get; set; }
 
         //  public ProjectCollectedData CollectedData { get; set; }
 
         public ProjectMetadata Clone()
         {
             var clone = (ProjectMetadata)MemberwiseClone();
-            clone.View = View != null ? View.Clone() : null;
+            clone.Pages = new PageMetadata[Pages != null ? Pages.Length : 0];
+            for (int i = 0; i < clone.Pages.Length; ++i)
+            {
+                clone.Pages[i] = Pages[i];
+            }
             return clone;
         }
     }
@@ -73,8 +79,6 @@ namespace Epi.Cloud.Common.Metadata
         public int Height { get; set; }
         public string Orientation { get; set; }
         public string LabelAlign { get; set; }
-        public int[] PageIds { get; set; }
-        public PageMetadata[] Pages { get; set; }
 
         public ViewMetadata Clone()
         {

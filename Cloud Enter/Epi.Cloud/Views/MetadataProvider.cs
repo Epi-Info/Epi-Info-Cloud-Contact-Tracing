@@ -21,7 +21,7 @@ namespace Epi.Cloud.FormMetadataServices
             projectTemplateMetadata = p.GetProjectMetadataForPage(pageid.ToString()).Result;
 
             List<FieldAttributes> tempList = new List<FieldAttributes>();
-            var Results = projectTemplateMetadata.Project.View.Pages.Where(pid => pid.PageId == pageid).Single().Fields.Select(f => new FieldAttributes
+            var Results = projectTemplateMetadata.Project.Pages.Where(pid => pid.PageId == pageid).Single().Fields.Select(f => new FieldAttributes
             {
                 UniqueId = f.UniqueId.ToString("D"),
                 RequiredMessage = "This field is required",
