@@ -19,7 +19,7 @@ namespace Epi.Cloud.CacheServices
         {
         }
 
-        private string ComposePageKey(string projectName, int pageId)
+        private string ComposePageKey(string projectName, int? pageId)
         {
             return projectName + '#' + pageId;
         }
@@ -93,13 +93,13 @@ namespace Epi.Cloud.CacheServices
             var pages = projectTemplateMetadata.Project.Pages;
 
             int numberOfPages = pages.Length;
-            int[] pageIds = new int[numberOfPages];
+            int?[] pageIds = new int?[numberOfPages];
 
             // Cached the metadata for each of the pages and remember the pageIds
             for (int i = 0; i < numberOfPages; ++i)
             {
                 var pageMetadata = pages[i];
-                int pageId = pageMetadata.PageId;
+                int? pageId = pageMetadata.PageId;
                 pageIds[i] = pageId;
                 var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
                 foreach (var field in fieldsRequiringSourceTable)

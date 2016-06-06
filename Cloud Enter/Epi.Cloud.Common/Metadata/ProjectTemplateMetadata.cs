@@ -46,7 +46,7 @@ namespace Epi.Cloud.Common.Metadata
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
         public ViewMetadata[] Views { get; set; }
-        public int[] PageIds { get; set; }
+        public int?[] PageIds { get; set; }
         public PageMetadata[] Pages { get; set; }
 
         //  public ProjectCollectedData CollectedData { get; set; }
@@ -75,10 +75,14 @@ namespace Epi.Cloud.Common.Metadata
         public string RecordCheckCodeBefore { get; set; }
         public string RecordCheckCodeAfter { get; set; }
         public string CheckCodeVariableDefinitions { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public string Orientation { get; set; }
-        public string LabelAlign { get; set; }
+        public string LabelAlign { get; set; }            
+        public string EIWSOrganizationKey { get; set; }
+        public string EIWSFormId { get; set; }
+        public string EWEOrganizationKey { get; set; }
+        public string EWEFormId { get; set; }
 
         public ViewMetadata Clone()
         {
@@ -90,7 +94,7 @@ namespace Epi.Cloud.Common.Metadata
     [DesignerCategory("code")]
     public partial class PageMetadata
     {
-        public int PageId { get; set; }
+        public int? PageId { get; set; }
         public string Name { get; set; }
         public int Position { get; set; }
         public int BackgroundId { get; set; }
@@ -106,8 +110,7 @@ namespace Epi.Cloud.Common.Metadata
         public string Name { get; set; }
         public int? PageId { get; set; }
         public int FieldTypeId { get; set; }
-        public string PageName { get; set; }
-        public int Position { get; set; }
+        public string PageName { get; set; }       
         public double? ControlTopPositionPercentage { get; set; }
         public double? ControlLeftPositionPercentage { get; set; }
         public double? ControlHeightPercentage { get; set; }

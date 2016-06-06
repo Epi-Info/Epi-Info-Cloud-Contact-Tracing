@@ -33,7 +33,7 @@
         <AssociationConnector Association="EPIInfo7Model.FK__metaMapLa__MapId__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="EPIInfo7Model.FK__metaMapPo__MapId__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="EPIInfo7Model.FK__metaPages__ViewI__5441852A" ManuallyRouted="false" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

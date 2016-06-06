@@ -35,6 +35,10 @@ namespace Epi.Data.EF
         public Nullable<int> Height { get; set; }
         public string Orientation { get; set; }
         public string LabelAlign { get; set; }
+        public string EIWSOrganizationKey { get; set; }
+        public string EIWSFormId { get; set; }
+        public string EWEOrganizationKey { get; set; }
+        public string EWEFormId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<metaField> metaFields { get; set; }
