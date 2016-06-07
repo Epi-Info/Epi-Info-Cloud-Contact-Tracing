@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
@@ -7,7 +8,20 @@ namespace Epi.Cloud.CacheServices
     public abstract class RedisCache
     {
         private readonly string _prefix;
-        private static string CacheConnectionString = "";
+        private static string _cacheConnectionString;
+
+        private static string CacheConnectionString()
+        {
+            var environment = ConfigurationManager.AppSettings["Environment"];
+            var environmentSuffix = environment != null ? "@" + environment : string.Empty;
+            var cacheConnectionStringName = "CacheConnectionString" + environmentSuffix;
+            _cacheConnectionString = ConfigurationManager.ConnectionStrings[cacheConnectionStringName].ConnectionString;
+            return _cacheConnectionString;
+        }
+
+        public RedisCache()
+        {
+        }
 
         public RedisCache(string prefix)
         {
@@ -18,12 +32,20 @@ namespace Epi.Cloud.CacheServices
         {
             get
             {
-                return Connection.GetDatabase();
+                try
+                {
+                    return Connection.GetDatabase();
+                }
+                catch (Exception ex)
+                {
+                    ConnectionMultiplexer.Connect(CacheConnectionString());
+                    return Connection.GetDatabase();
+                }
             }
         }
 
         private static readonly Lazy<ConnectionMultiplexer> LazyConnection
-          = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(CacheConnectionString));
+          = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(CacheConnectionString()));
 
         public static ConnectionMultiplexer Connection
         {
@@ -37,21 +59,41 @@ namespace Epi.Cloud.CacheServices
         {
             key = _prefix + key;
             if (key == null) throw new ArgumentNullException("key");
-            return await Cache.StringGetAsync(key);
+            try
+            {
+                return await Cache.StringGetAsync(key);
+            }
+            catch (Exception ex)
+            {
+                return (string)null;
+            }
         }
 
         protected async Task<bool> Set(string key, string value)
         {
             key = _prefix + key;
             if (key == null) throw new ArgumentNullException("key");
-            return await Cache.StringSetAsync(key, value);
+            try
+            {
+                return await Cache.StringSetAsync(key, value);
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         protected async void Delete(string key)
         {
             key = _prefix + key;
             if (key == null) throw new ArgumentNullException("key");
-            await Cache.KeyDeleteAsync(key);
+            try
+            {
+                await Cache.KeyDeleteAsync(key);
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

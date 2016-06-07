@@ -39,7 +39,7 @@ namespace Epi.Web.MVC.Utility
             var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
 
             var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMeta(surveyInfo.SurveyId, pageNumber);
+            var metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
 
             string SurveyAnswer;
 

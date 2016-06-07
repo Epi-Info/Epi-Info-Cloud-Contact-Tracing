@@ -12,11 +12,11 @@ namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        public List<FieldAttributes> GetMeta(string formId, int pageNumber)
+        public List<FieldAttributes> GetMetadata(string formId, int pageNumber)
         {
             ProjectMetadataProvider p = new ProjectMetadataProvider();
             ProjectTemplateMetadata projectTemplateMetadata;
-            projectTemplateMetadata = p.GetProjectMetadataForPage("0" /* not used */).Result;
+            projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
             var pagePosition = pageNumber - 1;
             List<FieldAttributes> tempList = new List<FieldAttributes>();
