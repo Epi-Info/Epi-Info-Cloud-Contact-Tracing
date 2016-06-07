@@ -321,7 +321,7 @@ namespace Epi.Web.MVC.Controllers
                         //Insert Survey response to DocumentDB
 
                         var metadataProvider = new MetadataProvider();
-                        var metadata = metadataProvider.GetMeta(PageNumber);
+                        var metadata = metadataProvider.GetMeta(SurveyAnswer.SurveyId, PageNumber);
                         _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
                         if (responseId != null)
                         {

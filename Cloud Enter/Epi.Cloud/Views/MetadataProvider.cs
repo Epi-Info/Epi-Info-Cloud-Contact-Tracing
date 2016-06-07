@@ -12,16 +12,15 @@ namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        bool _useRawSqlMetadataHack = false;
-
-        public List<FieldAttributes> GetMeta(int pageid)
+        public List<FieldAttributes> GetMeta(string formId, int pageNumber)
         {
             ProjectMetadataProvider p = new ProjectMetadataProvider();
             ProjectTemplateMetadata projectTemplateMetadata;
-            projectTemplateMetadata = p.GetProjectMetadataForPage(pageid.ToString()).Result;
-
+            projectTemplateMetadata = p.GetProjectMetadataForPage("0" /* not used */).Result;
+            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
+            var pagePosition = pageNumber - 1;
             List<FieldAttributes> tempList = new List<FieldAttributes>();
-            var Results = projectTemplateMetadata.Project.Pages.Where(pid => pid.PageId == pageid).Single().Fields.Select(f => new FieldAttributes
+            var Results = projectTemplateMetadata.Project.Pages.Where(pg => pg.Position == pagePosition && pg.ViewId == view.ViewId).Single().Fields.Select(f => new FieldAttributes
             {
                 UniqueId = f.UniqueId.ToString("D"),
                 RequiredMessage = "This field is required",

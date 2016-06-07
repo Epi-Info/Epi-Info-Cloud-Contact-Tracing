@@ -513,7 +513,8 @@ namespace Epi.Web.EF
             }
             catch (Exception ex)
             {
-                throw (ex);
+                //TODO: GEL Don't throw this exception. This code will be removed when DocumentDB is fully implemented.
+                //throw (ex);
             }
         }
         public static string RemoveWhitespace(string xml)

@@ -36,8 +36,10 @@ namespace Epi.Web.MVC.Utility
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
 
+            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+
             var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMeta(pageNumber);
+            var metadata = metadataProvider.GetMeta(surveyInfo.SurveyId, pageNumber);
 
             string SurveyAnswer;
 
@@ -51,7 +53,7 @@ namespace Epi.Web.MVC.Utility
 
             form.ResponseId = surveyAnswer.ResponseId;
 
-            form.SurveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+            form.SurveyInfo = surveyInfo;
             //Watermark 
             if (form.SurveyInfo.IsDraftMode)
             {

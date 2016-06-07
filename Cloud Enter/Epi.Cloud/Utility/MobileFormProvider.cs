@@ -20,8 +20,9 @@ namespace Epi.Web.MVC.Utility
 
         public static Form GetForm(object SurveyMetaData, int PageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO _SurveyAnswer)
         {
+            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)SurveyMetaData;
             var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMeta(PageNumber);
+            var metadata = metadataProvider.GetMeta(surveyInfo.SurveyId, PageNumber);
 
             string SurveyAnswer;
 
@@ -36,7 +37,7 @@ namespace Epi.Web.MVC.Utility
 
             form.ResponseId = _SurveyAnswer.ResponseId;
 
-            form.SurveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)(SurveyMetaData);
+            form.SurveyInfo = surveyInfo;
 
             string XML = form.SurveyInfo.XML;
 
