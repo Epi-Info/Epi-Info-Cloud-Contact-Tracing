@@ -213,7 +213,7 @@ namespace Epi.Web.MVC.Controllers
 
             int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
 
-            SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, false, "", false, CuurentOrgId);
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, false, "", false, CuurentOrgId);
 
             // SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
             MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);

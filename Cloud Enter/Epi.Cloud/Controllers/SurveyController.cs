@@ -17,7 +17,6 @@ using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
 using Epi.Cloud.FormMetadataServices;
-using MvcDynamicForms;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -61,7 +60,6 @@ namespace Epi.Web.MVC.Controllers
 
         //  [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")] 
         public ActionResult Index(string responseId, int PageNumber = 1, string Edit = "", string FormValuesHasChanged = "", string surveyid = "")
-
         {
             try
             {
@@ -302,7 +300,7 @@ namespace Epi.Web.MVC.Controllers
 
 
                         //Update Survey Model Start
-                        Form form = UpDateSurveyModel(surveyInfoModel, IsMobileDevice, FormValuesHasChanged, SurveyAnswer);
+                        MvcDynamicForms.Form form = UpDateSurveyModel(surveyInfoModel, IsMobileDevice, FormValuesHasChanged, SurveyAnswer);
                         //Update Survey Model End
 
                         //PassCode start
@@ -323,11 +321,11 @@ namespace Epi.Web.MVC.Controllers
                         //Insert Survey response to DocumentDB
 
                         var metadataProvider = new MetadataProvider();
-                        var metadata = metadataProvider.GetMeta(PageNumber);
+                        var metadata = metadataProvider.GetMeta(SurveyAnswer.SurveyId, PageNumber);
                         _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
                         if (responseId != null)
                         {
-                          //  _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                            _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
                         }
 
 
@@ -804,7 +802,7 @@ namespace Epi.Web.MVC.Controllers
                         {
                             SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(SurveyAnswer.ResponseId, SurveyAnswer.SurveyId).SurveyResponseList[0];
 
-                             Form formRs = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, i, SurveyAnswer, IsMobileDevice);
+                            MvcDynamicForms.Form formRs = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, i, SurveyAnswer, IsMobileDevice);
 
                             formRs = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValues(formRs, Name, Value);
 
@@ -898,7 +896,7 @@ namespace Epi.Web.MVC.Controllers
             return surveyInfoModel;
 
         }
-        public Form SetLists(Form form)
+        public MvcDynamicForms.Form SetLists(MvcDynamicForms.Form form)
         {
 
             form.HiddenFieldsList = this.Request.Form["HiddenFieldsList"].ToString();
@@ -993,7 +991,7 @@ namespace Epi.Web.MVC.Controllers
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
             string ChildResponseId = CreateResponse(SurveyId, ResponseId);
-            this.UpdateStatus(ResponseId, SurveyId, 2);
+            //this.UpdateStatus(ResponseId, SurveyId, 2);
 
             return ChildResponseId;
         }
@@ -1063,14 +1061,14 @@ namespace Epi.Web.MVC.Controllers
             // create the first survey response
             // Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
             int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-            SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(SurveyId, ResponseID.ToString(), UserId, true, RelateResponseId, this.IsEditMode, CuurentOrgId);
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(SurveyId, ResponseID.ToString(), UserId, true, RelateResponseId, this.IsEditMode, CuurentOrgId);
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
 
             // set the survey answer to be production or test 
             SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
             XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
 
-            Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
+            MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
 
             var _FieldsTypeIDs = from _FieldTypeID in
                                      xdoc.Descendants("Field")
@@ -1139,7 +1137,7 @@ namespace Epi.Web.MVC.Controllers
         }
 
 
-        private Form SetFormPassCode(Form form, string responseId)
+        private MvcDynamicForms.Form SetFormPassCode(MvcDynamicForms.Form form, string responseId)
         {
 
             Epi.Web.Enter.Common.Message.UserAuthenticationResponse AuthenticationResponse = _isecurityFacade.GetAuthenticationResponse(responseId);
@@ -1163,9 +1161,9 @@ namespace Epi.Web.MVC.Controllers
             return form;
         }
 
-        private Form UpDateSurveyModel(SurveyInfoModel surveyInfoModel, bool IsMobileDevice, string FormValuesHasChanged, SurveyAnswerDTO SurveyAnswer, bool IsSaveAndClose = false, List<FormsHierarchyDTO> FormsHierarchy = null)
+        private MvcDynamicForms.Form UpDateSurveyModel(SurveyInfoModel surveyInfoModel, bool IsMobileDevice, string FormValuesHasChanged, SurveyAnswerDTO SurveyAnswer, bool IsSaveAndClose = false, List<FormsHierarchyDTO> FormsHierarchy = null)
         {
-            Form form = new Form();
+            MvcDynamicForms.Form form = new MvcDynamicForms.Form();
             int CurrentPageNum = GetSurveyPageNumber(SurveyAnswer.XML.ToString());
 
 
@@ -1255,7 +1253,7 @@ namespace Epi.Web.MVC.Controllers
             }
             return form;
         }
-        private void ExecuteRecordAfterCheckCode(Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int PageNumber, int UserId)
+        private void ExecuteRecordAfterCheckCode(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int PageNumber, int UserId)
         {
 
             EnterRule FunctionObject_A = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=after&identifier=");
@@ -1279,7 +1277,7 @@ namespace Epi.Web.MVC.Controllers
 
         }
 
-        private KeyValuePair<string, int> ValidateAll(Form form, int UserId, bool IsSubmited, bool IsSaved, bool IsMobileDevice, string FormValuesHasChanged)
+        private KeyValuePair<string, int> ValidateAll(MvcDynamicForms.Form form, int UserId, bool IsSubmited, bool IsSaved, bool IsMobileDevice, string FormValuesHasChanged)
         {
             List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
             KeyValuePair<string, int> result = new KeyValuePair<string, int>();
@@ -1297,7 +1295,7 @@ namespace Epi.Web.MVC.Controllers
                     for (int i = 1; i < form.NumberOfPages + 1; i++)
                     {
 
-                        form =FormProvider.GetForm(form.SurveyInfo, i, SurveyAnswer);
+                        form = Epi.Web.MVC.Utility.FormProvider.GetForm(form.SurveyInfo, i, SurveyAnswer);
                         if (!form.Validate(form.RequiredFieldsList))
                         {
                             TempData["isredirect"] = "true";
@@ -1320,7 +1318,7 @@ namespace Epi.Web.MVC.Controllers
             return result;
 
         }
-        private Form SaveCurrentForm(Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
+        private MvcDynamicForms.Form SaveCurrentForm(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
             bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null
             )
         {

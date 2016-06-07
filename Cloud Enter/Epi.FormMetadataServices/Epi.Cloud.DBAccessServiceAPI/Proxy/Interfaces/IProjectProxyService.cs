@@ -1,11 +1,9 @@
-﻿
-using Epi.Cloud.MetadataServices.DataTypes;
-using System.Collections.Generic;
+﻿using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.DBAccessService.Proxy.Interfaces
 {
     public interface IProjectProxyService
     {
-        List<MetadataFieldAttributes> GetProjectMetaData(string projectID);
+        ProjectTemplateMetadata GetProjectMetaData(string projectID);
     }
 }

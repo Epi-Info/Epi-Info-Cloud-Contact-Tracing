@@ -6,70 +6,63 @@ using System.Linq;
 using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
 using Epi.Cloud.MetadataServices;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        bool _useRawSqlMetadataHack = false;
-
-        public List<FieldAttributes> GetMeta(int pageid)
+        public List<FieldAttributes> GetMeta(string formId, int pageNumber)
         {
-            List<FieldAttributes> fieldattributes = null;
-            if (_useRawSqlMetadataHack)
+            ProjectMetadataProvider p = new ProjectMetadataProvider();
+            ProjectTemplateMetadata projectTemplateMetadata;
+            projectTemplateMetadata = p.GetProjectMetadataForPage("0" /* not used */).Result;
+            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
+            var pagePosition = pageNumber - 1;
+            List<FieldAttributes> tempList = new List<FieldAttributes>();
+            var Results = projectTemplateMetadata.Project.Pages.Where(pg => pg.Position == pagePosition && pg.ViewId == view.ViewId).Single().Fields.Select(f => new FieldAttributes
             {
-                GetmetadataDB _getmeta = new GetmetadataDB();
-                List<CDTProject> projectfields = new List<CDTProject>();
-                projectfields = _getmeta.MetaDataAsync(pageid);
-                //List<CDTFieldAttributes> fieldattributes = new List<CDTFieldAttributes>();
-                fieldattributes = _getmeta.GetFieldAttributes(projectfields);
-            }
-            else
-            {
-                ProjectMetadataProvider p = new ProjectMetadataProvider();
-                List<MetadataFieldAttributes> mdFieldattributes;
-                mdFieldattributes = p.GetProjectMetadataForPage(pageid.ToString()).Result;
-                fieldattributes = mdFieldattributes.Select(f => new FieldAttributes
-                {
-                    UniqueId = f.UniqueId,
-                    RequiredMessage = "This field is required",
-                    FieldTypeId = f.FieldTypeId.ValueOrDefault(),
-                    Name = f.Name,
-                    TabIndex = (int)f.TabIndex.ValueOrDefault(),
+                UniqueId = f.UniqueId.ToString("D"),
+                RequiredMessage = "This field is required",
+                FieldTypeId = f.FieldTypeId,
+                Name = f.Name,
+                TabIndex = (int)f.TabIndex,
 
-                    PromptText = f.PromptText,
-                    PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),
-                    PromptLeftPositionPercentage = f.PromptLeftPositionPercentage.ValueOrDefault(),
-                    PromptFontStyle = f.PromptFontStyle,
-                    PromptFontSize = (double)f.PromptFontSize.ValueOrDefault(),
-                    PromptFontFamily = f.PromptFontFamily,
+                PromptText = f.PromptText,
+                PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),
+                PromptLeftPositionPercentage = f.PromptLeftPositionPercentage.ValueOrDefault(),
+                PromptFontStyle = f.PromptFontStyle,
+                PromptFontSize = (double)f.PromptFontSize.ValueOrDefault(),
+                PromptFontFamily = f.PromptFontFamily,
 
-                    ControlTopPositionPercentage = f.ControlTopPositionPercentage.ValueOrDefault(),
-                    ControlLeftPositionPercentage = f.ControlLeftPositionPercentage.ValueOrDefault(),
-                    ControlWidthPercentage = f.ControlWidthPercentage.ValueOrDefault(),
-                    ControlHeightPercentage = f.ControlHeightPercentage.ValueOrDefault(),
-                    ControlFontStyle = f.ControlFontStyle,
-                    ControlFontSize = (double)f.ControlFontSize.ValueOrDefault(),
-                    ControlFontFamily = f.ControlFontFamily,
+                ControlTopPositionPercentage = f.ControlTopPositionPercentage.ValueOrDefault(),
+                ControlLeftPositionPercentage = f.ControlLeftPositionPercentage.ValueOrDefault(),
+                ControlWidthPercentage = f.ControlWidthPercentage.ValueOrDefault(),
+                ControlHeightPercentage = f.ControlHeightPercentage.ValueOrDefault(),
+                ControlFontStyle = f.ControlFontStyle,
+                ControlFontSize = (double)f.ControlFontSize.ValueOrDefault(),
+                ControlFontFamily = f.ControlFontFamily,
 
-                    MaxLength = f.MaxLength.ValueOrDefault(),
-                    Pattern = f.Pattern,
-                    Lower = f.Lower,
-                    Upper = f.Upper,
+                MaxLength = f.MaxLength.ValueOrDefault(),
+                Pattern = f.Pattern,
+                Lower = f.Lower,
+                Upper = f.Upper,
 
-                    IsRequired = false,
-                    Required = false,
-                    ReadOnly = false,
-                    IsHidden = false,
-                    IsHighlighted = false,
-                    IsDisabled = false,
-                    ChoicesList = f.List,
-                    SourceTableValues = f.SourceTableValues
+                IsRequired = false,
+                Required = false,
+                ReadOnly = false,
+                IsHidden = false,
+                IsHighlighted = false,
+                IsDisabled = false,
+                ChoicesList = f.List,
+                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables!=null && projectTemplateMetadata.SourceTables.Length>0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList():null,
+                RelatedViewId = f.RelatedViewId.ToString()
 
-                }).ToList();
-            }
+            }).ToList();
 
-            return fieldattributes;
+
+
+            return Results;
         }
     }
     public class CDTProject

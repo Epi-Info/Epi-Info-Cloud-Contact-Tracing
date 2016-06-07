@@ -36,8 +36,10 @@ namespace Epi.Web.MVC.Utility
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
 
+            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+
             var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMeta(pageNumber);
+            var metadata = metadataProvider.GetMeta(surveyInfo.SurveyId, pageNumber);
 
             string SurveyAnswer;
 
@@ -51,7 +53,7 @@ namespace Epi.Web.MVC.Utility
 
             form.ResponseId = surveyAnswer.ResponseId;
 
-            form.SurveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+            form.SurveyInfo = surveyInfo;
             //Watermark 
             if (form.SurveyInfo.IsDraftMode)
             {
@@ -125,21 +127,21 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                  //  _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
-                    ////StartNewcode
-                    //string FieldValue = string.Empty;
-                    //if (_SurveyAnswerFromDocumentDB != null)
-                    //{
-                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                    //                  where element.Key == fieldAttributes.Name.ToLower()
-                    //                  select element.Value).FirstOrDefault();
-                    //}
+                    //StartNewcode
+                    string FieldValue = string.Empty;
+                    if (_SurveyAnswerFromDocumentDB != null)
+                    {
+                        FieldValue = (from element in _SurveyAnswerFromDocumentDB
+                                      where element.Key == fieldAttributes.Name.ToLower()
+                                      select element.Value).FirstOrDefault();
+                    }
 
                     //EndNewcode 
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
@@ -183,13 +185,15 @@ namespace Epi.Web.MVC.Utility
                         case 7://DatePicker
 
                             var _DatePickerValue = FieldValue;
-                            form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
+                            form.AddFields(GetDatePicker(fieldAttributes, _Width, _Height, _DatePickerValue));
+                            //form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", Value)); 
                             break;
                         case 8: //TimePicker
                             var _timePickerValue = FieldValue;
-                            form.AddFields(GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form));
+                            form.AddFields(GetTimePicker(fieldAttributes, _Width, _Height, _timePickerValue));
+                            //form.AddFields(GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form));
 
                             break;
                         case 10://CheckBox
@@ -238,7 +242,7 @@ namespace Epi.Web.MVC.Utility
 
                             string DropDownValues1 = "";
                             DropDownValues1 = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
-                            var DropDownValues1FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //var DropDownValues1FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue1 = FieldValue;
                             form.AddFields(GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17));
                             //                                             pName, pType, pSource
@@ -249,7 +253,7 @@ namespace Epi.Web.MVC.Utility
 
                             string DropDownValues2 = "";
                             DropDownValues2 = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
-                            var DropDownValues2FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //var DropDownValues2FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue2 = FieldValue;
                             var dropdownselectedcodevalue = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
                             form.AddFields(dropdownselectedcodevalue);
@@ -263,7 +267,7 @@ namespace Epi.Web.MVC.Utility
 
                             string DropDownValues = "";
                             DropDownValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
-                            string DropDownValuesFromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            //string DropDownValuesFromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
                             var _DropDownSelectedValue = FieldValue;
                             //form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form));
                             var dropdownselectedcommentlegalval = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue, DropDownValues, 19);
@@ -273,7 +277,8 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 20://RelateButton
-                            form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
+                                //form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
+                            form.AddFields(GetRelateButton(fieldAttributes, _Width, _Height));
                             break;
                         case 21://GroupBox
                             var _GroupBoxValue = FieldValue;
@@ -304,12 +309,6 @@ namespace Epi.Web.MVC.Utility
                 //};
                 //sports.AddChoices("Baseball,Football,Soccer,Basketball,Tennis,Boxing,Golf", ",");
 
-
-
-
-
-
-
                 form.FormJavaScript = VariableDefinitions.ToString() + "\n" + JavaScript.ToString();
             }
 
@@ -328,7 +327,7 @@ namespace Epi.Web.MVC.Utility
             _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            return response.SurveyQAList; 
+            return response.SurveyQAList;
         }
         #endregion
 
@@ -392,12 +391,14 @@ namespace Epi.Web.MVC.Utility
 
                         case "7": // 7 DatePicker
                             var _DatePickerValue = Value;
-                            field = GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form);
+                            field = GetDatePicker(fieldAttributes, _Width, _Height, _DatePickerValue);
+                            // field = GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form);
                             break;
 
                         case "8": //TimePicker
                             var _timePickerValue = Value;
-                            field = GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form);
+                            field = GetTimePicker(fieldAttributes, _Width, _Height, _timePickerValue);
+                            //field = GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form);
                             break;
 
                         case "10"://CheckBox
@@ -741,6 +742,17 @@ namespace Epi.Web.MVC.Utility
         }
 
 #endif
+
+        private static DatePicker GetDatePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var DatePicker = new DatePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return DatePicker;
+        }
         private static DatePicker GetDatePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -783,6 +795,17 @@ namespace Epi.Web.MVC.Utility
 
         }
 
+
+        private static TimePicker GetTimePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var TimePicker = new TimePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return TimePicker;
+        }
         private static TimePicker GetTimePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -853,6 +876,16 @@ namespace Epi.Web.MVC.Utility
             return RelateButton;
         }
 
+        private static RelateButton GetRelateButton(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            var RelateButton = new RelateButton(fieldAttributes, formWidth, formHeight)
+            {
+                // Value = controlValue
+            };
+
+            return RelateButton;
+        }
+
 
         //renuka
         private static Select GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
@@ -862,7 +895,7 @@ namespace Epi.Web.MVC.Utility
                 Value = controlValue
             };
             select.SelectType = FieldTypeId;
-            select.SelectedValue = controlValue; 
+            select.SelectedValue = controlValue;
 
             select.ShowEmptyOption = true;
             select.EmptyOption = "Select";

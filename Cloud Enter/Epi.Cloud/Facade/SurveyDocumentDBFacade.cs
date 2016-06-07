@@ -30,8 +30,8 @@ namespace Epi.Web.MVC.Facade
                 GlobalRecordID = responseId,
                 PageId = form.PageId,
                 PagePosition = "0",
-                DateCreated = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow
+                DateCreated=DateTime.UtcNow,
+                DateUpdated=DateTime.UtcNow
             };
 
             _storeSurvey.SurveyProperties = _surveyResponseData;
@@ -79,6 +79,7 @@ namespace Epi.Web.MVC.Facade
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             SurveyQuestionandAnswer surveyResponse = new SurveyQuestionandAnswer();
+            //surveyResponse.SurveyQAList = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(databaseName,responseId,pageId);
             var respnse = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(suveyName, responseID, pageId);
             surveyResponse.SurveyQAList = respnse.SurveyQAList;
             return surveyResponse;

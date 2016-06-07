@@ -4,7 +4,25 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="EPIInfo7Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="EPIInfo7Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codebirthdefects1' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codecodes11' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codecommentlegal11' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codedidthepatientevervaccineforanyofthefollowing1' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codefetaldefects1' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codelegal11' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.codeyesnodontknow1' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.Form12' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.Form13' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="metaBackgrounds">
           <Key>
             <PropertyRef Name="BackgroundId" />
@@ -262,8 +280,14 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
           <Property Name="Height" Type="int" />
           <Property Name="Orientation" Type="nvarchar" MaxLength="16" Nullable="false" />
           <Property Name="LabelAlign" Type="nvarchar" MaxLength="16" Nullable="false" />
+          <Property Name="EIWSOrganizationKey" Type="nvarchar" MaxLength="64" />
+          <Property Name="EIWSFormId" Type="nvarchar" MaxLength="64" />
+          <Property Name="EWEOrganizationKey" Type="nvarchar" MaxLength="64" />
+          <Property Name="EWEFormId" Type="nvarchar" MaxLength="64" />
         </EntityType>
-        <Association Name="FK__metaField__DataT__3B75D760">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'EPIInfo7.dbo.TestForm12' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <Association Name="FK__metaField__DataT__7D2E8C24">
           <End Role="metaDataTypes" Type="Self.metaDataTypes" Multiplicity="1" />
           <End Role="metaFieldTypes" Type="Self.metaFieldTypes" Multiplicity="*" />
           <ReferentialConstraint>
@@ -275,7 +299,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaField__Field__571DF1D5">
+        <Association Name="FK__metaField__Field__18D6A699">
           <End Role="metaFieldTypes" Type="Self.metaFieldTypes" Multiplicity="1" />
           <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
           <ReferentialConstraint>
@@ -287,7 +311,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaField__PageI__59FA5E80">
+        <Association Name="FK__metaField__PageI__1BB31344">
           <End Role="metaPages" Type="Self.metaPages" Multiplicity="0..1" />
           <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
           <ReferentialConstraint>
@@ -299,7 +323,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaField__Relat__5812160E">
+        <Association Name="FK__metaField__Relat__19CACAD2">
           <End Role="metaViews" Type="Self.metaViews" Multiplicity="0..1" />
           <End Role="metaFields" Type="Self.metaFields" Multiplicity="*" />
           <ReferentialConstraint>
@@ -311,7 +335,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaField__ViewI__59063A47">
+        <Association Name="FK__metaField__ViewI__1ABEEF0B">
           <End Role="metaViews" Type="Self.metaViews" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -325,7 +349,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaMapLa__Layer__4D94879B">
+        <Association Name="FK__metaMapLa__Layer__0F4D3C5F">
           <End Role="metaLayers" Type="Self.metaLayers" Multiplicity="1" />
           <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -337,7 +361,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaMapLa__Layer__4E88ABD4">
+        <Association Name="FK__metaMapLa__Layer__10416098">
           <End Role="metaLayerRenderTypes" Type="Self.metaLayerRenderTypes" Multiplicity="1" />
           <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -349,7 +373,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaMapLa__MapId__4CA06362">
+        <Association Name="FK__metaMapLa__MapId__0E591826">
           <End Role="metaMaps" Type="Self.metaMaps" Multiplicity="1" />
           <End Role="metaMapLayers" Type="Self.metaMapLayers" Multiplicity="*" />
           <ReferentialConstraint>
@@ -361,7 +385,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaMapPo__MapId__5165187F">
+        <Association Name="FK__metaMapPo__MapId__131DCD43">
           <End Role="metaMaps" Type="Self.metaMaps" Multiplicity="1" />
           <End Role="metaMapPoints" Type="Self.metaMapPoints" Multiplicity="*" />
           <ReferentialConstraint>
@@ -373,7 +397,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaPages__ViewI__5441852A">
+        <Association Name="FK__metaPages__ViewI__15FA39EE">
           <End Role="metaViews" Type="Self.metaViews" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
@@ -387,7 +411,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__metaPatte__DataT__45F365D3">
+        <Association Name="FK__metaPatte__DataT__07AC1A97">
           <End Role="metaDataTypes" Type="Self.metaDataTypes" Multiplicity="1" />
           <End Role="metaPatterns" Type="Self.metaPatterns" Multiplicity="*" />
           <ReferentialConstraint>
@@ -425,53 +449,52 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
     [metaDbInfo].[Purpose] AS [Purpose]
     FROM [dbo].[metaDbInfo] AS [metaDbInfo]</DefiningQuery>
           </EntitySet>
-          <AssociationSet Name="FK__metaField__DataT__3B75D760" Association="Self.FK__metaField__DataT__3B75D760">
+          <AssociationSet Name="FK__metaField__DataT__7D2E8C24" Association="Self.FK__metaField__DataT__7D2E8C24">
             <End Role="metaDataTypes" EntitySet="metaDataTypes" />
             <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaField__Field__571DF1D5" Association="Self.FK__metaField__Field__571DF1D5">
+          <AssociationSet Name="FK__metaField__Field__18D6A699" Association="Self.FK__metaField__Field__18D6A699">
             <End Role="metaFieldTypes" EntitySet="metaFieldTypes" />
             <End Role="metaFields" EntitySet="metaFields" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaField__PageI__59FA5E80" Association="Self.FK__metaField__PageI__59FA5E80">
+          <AssociationSet Name="FK__metaField__PageI__1BB31344" Association="Self.FK__metaField__PageI__1BB31344">
             <End Role="metaPages" EntitySet="metaPages" />
             <End Role="metaFields" EntitySet="metaFields" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaField__Relat__5812160E" Association="Self.FK__metaField__Relat__5812160E">
+          <AssociationSet Name="FK__metaField__Relat__19CACAD2" Association="Self.FK__metaField__Relat__19CACAD2">
             <End Role="metaViews" EntitySet="metaViews" />
             <End Role="metaFields" EntitySet="metaFields" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaField__ViewI__59063A47" Association="Self.FK__metaField__ViewI__59063A47">
+          <AssociationSet Name="FK__metaField__ViewI__1ABEEF0B" Association="Self.FK__metaField__ViewI__1ABEEF0B">
             <End Role="metaViews" EntitySet="metaViews" />
             <End Role="metaFields" EntitySet="metaFields" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaMapLa__Layer__4D94879B" Association="Self.FK__metaMapLa__Layer__4D94879B">
+          <AssociationSet Name="FK__metaMapLa__Layer__0F4D3C5F" Association="Self.FK__metaMapLa__Layer__0F4D3C5F">
             <End Role="metaLayers" EntitySet="metaLayers" />
             <End Role="metaMapLayers" EntitySet="metaMapLayers" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaMapLa__Layer__4E88ABD4" Association="Self.FK__metaMapLa__Layer__4E88ABD4">
+          <AssociationSet Name="FK__metaMapLa__Layer__10416098" Association="Self.FK__metaMapLa__Layer__10416098">
             <End Role="metaLayerRenderTypes" EntitySet="metaLayerRenderTypes" />
             <End Role="metaMapLayers" EntitySet="metaMapLayers" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaMapLa__MapId__4CA06362" Association="Self.FK__metaMapLa__MapId__4CA06362">
+          <AssociationSet Name="FK__metaMapLa__MapId__0E591826" Association="Self.FK__metaMapLa__MapId__0E591826">
             <End Role="metaMaps" EntitySet="metaMaps" />
             <End Role="metaMapLayers" EntitySet="metaMapLayers" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaMapPo__MapId__5165187F" Association="Self.FK__metaMapPo__MapId__5165187F">
+          <AssociationSet Name="FK__metaMapPo__MapId__131DCD43" Association="Self.FK__metaMapPo__MapId__131DCD43">
             <End Role="metaMaps" EntitySet="metaMaps" />
             <End Role="metaMapPoints" EntitySet="metaMapPoints" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaPages__ViewI__5441852A" Association="Self.FK__metaPages__ViewI__5441852A">
+          <AssociationSet Name="FK__metaPages__ViewI__15FA39EE" Association="Self.FK__metaPages__ViewI__15FA39EE">
             <End Role="metaViews" EntitySet="metaViews" />
             <End Role="metaPages" EntitySet="metaPages" />
           </AssociationSet>
-          <AssociationSet Name="FK__metaPatte__DataT__45F365D3" Association="Self.FK__metaPatte__DataT__45F365D3">
+          <AssociationSet Name="FK__metaPatte__DataT__07AC1A97" Association="Self.FK__metaPatte__DataT__07AC1A97">
             <End Role="metaDataTypes" EntitySet="metaDataTypes" />
             <End Role="metaPatterns" EntitySet="metaPatterns" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="EPIInfo7Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -738,6 +761,10 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
           <NavigationProperty Name="metaFields" Relationship="Self.FK__metaField__Relat__5812160E" FromRole="metaViews" ToRole="metaFields" />
           <NavigationProperty Name="metaFields1" Relationship="Self.FK__metaField__ViewI__59063A47" FromRole="metaViews" ToRole="metaFields" />
           <NavigationProperty Name="metaPages" Relationship="Self.FK__metaPages__ViewI__5441852A" FromRole="metaViews" ToRole="metaPages" />
+          <Property Name="EIWSOrganizationKey" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="EIWSFormId" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="EWEOrganizationKey" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+          <Property Name="EWEFormId" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="metaDbInfo">
           <Key>
@@ -951,8 +978,8 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
             <End Role="metaViews" EntitySet="metaViews" />
             <End Role="metaPages" EntitySet="metaPages" />
           </AssociationSet>
-        </EntityContainer>
-      </Schema>
+          </EntityContainer>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1200,6 +1227,10 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
           <EntitySetMapping Name="metaViews">
             <EntityTypeMapping TypeName="EPIInfo7Model.metaView">
               <MappingFragment StoreEntitySet="metaViews">
+                <ScalarProperty Name="EWEFormId" ColumnName="EWEFormId" />
+                <ScalarProperty Name="EWEOrganizationKey" ColumnName="EWEOrganizationKey" />
+                <ScalarProperty Name="EIWSFormId" ColumnName="EIWSFormId" />
+                <ScalarProperty Name="EIWSOrganizationKey" ColumnName="EIWSOrganizationKey" />
                 <ScalarProperty Name="ViewId" ColumnName="ViewId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="IsRelatedView" ColumnName="IsRelatedView" />
@@ -1227,7 +1258,7 @@ warning 6002: The table/view 'EPIInfo7.dbo.metaDbInfo' does not have a primary k
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

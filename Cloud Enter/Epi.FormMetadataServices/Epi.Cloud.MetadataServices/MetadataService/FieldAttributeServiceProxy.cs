@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Epi.Cloud.MetadataServices.DataTypes;
 using static Epi.Cloud.MetadataServices.DataTypes.Constants;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.MetadataServices.ProxiesService
 {
@@ -10,13 +11,13 @@ namespace Epi.Cloud.MetadataServices.ProxiesService
     {
 
         //Forming url to call the DBAccess API
-        public async Task<List<MetadataFieldAttributes>> GetProjectMetadataAsync(string PageId)
+        public async Task<ProjectTemplateMetadata> GetProjectMetadataAsync(string PageId)
         {
-            List<MetadataFieldAttributes> projectResponse = new List<MetadataFieldAttributes>();
+            ProjectTemplateMetadata projectResponse= new ProjectTemplateMetadata();
             string url = string.Format("{0}?ID={1}", ApiEndPoints.Project, PageId);
             if (url != null)
             {
-                projectResponse = GetData<List<MetadataFieldAttributes>>(url);
+                projectResponse = GetData<ProjectTemplateMetadata>(url);
             }
             return await Task.FromResult(projectResponse);
         }

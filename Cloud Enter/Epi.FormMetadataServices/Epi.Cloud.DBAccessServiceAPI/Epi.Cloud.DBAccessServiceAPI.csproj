@@ -364,6 +364,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.EF\Epi.Cloud.EF.csproj">
       <Project>{7801686b-f77f-48b7-b36b-cfefcc2ad796}</Project>
       <Name>Epi.Cloud.EF</Name>

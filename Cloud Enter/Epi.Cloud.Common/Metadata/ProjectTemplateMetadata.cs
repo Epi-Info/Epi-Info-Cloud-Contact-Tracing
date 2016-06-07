@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 
 namespace Epi.Cloud.Common.Metadata
 {
-    [Serializable()]
     [DesignerCategory("code")]
     public class ProjectTemplateMetadata
     {
@@ -23,7 +22,6 @@ namespace Epi.Cloud.Common.Metadata
         }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public class ProjectMetadata
     {
@@ -47,19 +45,24 @@ namespace Epi.Cloud.Common.Metadata
         public bool EditorFontItalics { get; set; }
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
-        public ViewMetadata View { get; set; }
+        public ViewMetadata[] Views { get; set; }
+        public int?[] PageIds { get; set; }
+        public PageMetadata[] Pages { get; set; }
 
         //  public ProjectCollectedData CollectedData { get; set; }
 
         public ProjectMetadata Clone()
         {
             var clone = (ProjectMetadata)MemberwiseClone();
-            clone.View = View != null ? View.Clone() : null;
+            clone.Pages = new PageMetadata[Pages != null ? Pages.Length : 0];
+            for (int i = 0; i < clone.Pages.Length; ++i)
+            {
+                clone.Pages[i] = Pages[i];
+            }
             return clone;
         }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public partial class ViewMetadata
     {
@@ -72,12 +75,14 @@ namespace Epi.Cloud.Common.Metadata
         public string RecordCheckCodeBefore { get; set; }
         public string RecordCheckCodeAfter { get; set; }
         public string CheckCodeVariableDefinitions { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
+        public int? Width { get; set; }
+        public int? Height { get; set; }
         public string Orientation { get; set; }
-        public string LabelAlign { get; set; }
-        public int[] PageIds{ get; set; }
-        public PageMetadata[] Pages { get; set; }
+        public string LabelAlign { get; set; }            
+        public string EIWSOrganizationKey { get; set; }
+        public string EIWSFormId { get; set; }
+        public string EWEOrganizationKey { get; set; }
+        public string EWEFormId { get; set; }
 
         public ViewMetadata Clone()
         {
@@ -86,11 +91,10 @@ namespace Epi.Cloud.Common.Metadata
         }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public partial class PageMetadata
     {
-        public int PageId { get; set; }
+        public int? PageId { get; set; }
         public string Name { get; set; }
         public int Position { get; set; }
         public int BackgroundId { get; set; }
@@ -98,7 +102,6 @@ namespace Epi.Cloud.Common.Metadata
         public FieldMetdata[] Fields { get; set; }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public partial class FieldMetdata
     {
@@ -107,8 +110,7 @@ namespace Epi.Cloud.Common.Metadata
         public string Name { get; set; }
         public int? PageId { get; set; }
         public int FieldTypeId { get; set; }
-        public string PageName { get; set; }
-        public int Position { get; set; }
+        public string PageName { get; set; }       
         public double? ControlTopPositionPercentage { get; set; }
         public double? ControlLeftPositionPercentage { get; set; }
         public double? ControlHeightPercentage { get; set; }
@@ -124,13 +126,13 @@ namespace Epi.Cloud.Common.Metadata
         public double? PromptFontSize { get; set; }
         public string PromptFontStyle { get; set; }
         public string PromptScriptName { get; set; }
-        public bool ShouldRepeatLast { get; set; }
-        public string IsRequired { get; set; }
-        public bool IsReadOnly { get; set; }
-        public bool ShouldRetainImageSize { get; set; }
+        public bool? ShouldRepeatLast { get; set; }
+        public bool? IsRequired { get; set; }
+        public bool? IsReadOnly { get; set; }
+        public bool? ShouldRetainImageSize { get; set; }
         public string Pattern { get; set; }
         public int? MaxLength { get; set; }
-        public bool ShowTextOnRight { get; set; }
+        public bool? ShowTextOnRight { get; set; }
         public string Lower { get; set; }
         public string Upper { get; set; }
         public string RelateCondition { get; set; }
@@ -144,8 +146,8 @@ namespace Epi.Cloud.Common.Metadata
         public bool? IsExclusiveTable { get; set; }
         public int TabIndex { get; set; }
         public bool? HasTabStop { get; set; }
-        public string SourceFieldId { get; set; }
-        public bool BackgroundColorSpecified { get; set; }
+        public int? SourceFieldId { get; set; }
+        public int? BackgroundColorSpecified { get; set; }
         public string RelatedViewName { get; set; }
 
         public string ControlAfterCheckCode { get; set; }
@@ -157,24 +159,16 @@ namespace Epi.Cloud.Common.Metadata
         public string Expr1016 { get; set; }
         public string Expr1017 { get; set; }
 
-        /// <summary>
-        /// The SourceTableItems are not serialized at the PageMetadata level.
-        /// Serialization is performed at the ProjectTemplateMetadata level and
-        /// copied here later for page level access convienence.
-        /// </summary>
-        //[JsonIgnore]
-        public SourceTableItem[] Items { get; set; }
+        public string[] SourceTableItems { get; set; }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public partial class SourceTable
     {
         public string TableName { get; set; }
-        public SourceTableItem[] Items { get; set; }
+        public string[] Items { get; set; }
     }
 
-    [Serializable()]
     [DesignerCategory("code")]
     public partial class SourceTableItem
     {
@@ -182,7 +176,6 @@ namespace Epi.Cloud.Common.Metadata
         public string Text { get; set; }
     }
 
-    //[Serializable()]
     //[DesignerCategory("code")]
     //public partial class ProjectCollectedData
     //{

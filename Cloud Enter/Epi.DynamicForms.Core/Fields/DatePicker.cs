@@ -13,6 +13,16 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class DatePicker : DatePickerField
     {
+        public DatePicker()
+        {
+
+        }
+
+        public DatePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
         public override string RenderHtml()
         {
             var html = new StringBuilder();
@@ -138,8 +148,7 @@ namespace MvcDynamicForms.Fields
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
         }
-
-
+       
         public string GetControlClass(string Value)
         {
 
@@ -275,5 +284,37 @@ namespace MvcDynamicForms.Fields
                 return 0;
             }
         }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            DisplayOrder = int.Parse(fieldAttributes.TabIndex.ToString());
+            RequiredMessage = "This field is required";
+            Key = fieldAttributes.Name;
+            PromptTop = formHeight * (fieldAttributes.PromptTopPositionPercentage);
+            PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            fontstyle = fieldAttributes.PromptFontStyle;
+            fontSize = fieldAttributes.PromptFontSize;
+            fontfamily = fieldAttributes.PromptFontFamily;
+            // IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
+            // Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
+            InputFieldfontstyle = fieldAttributes.ControlFontStyle;
+            InputFieldfontSize = fieldAttributes.ControlFontSize;
+            InputFieldfontfamily = fieldAttributes.ControlFontFamily;
+            Lower = fieldAttributes.Lower;
+            Upper = fieldAttributes.Upper;
+            // Value = _ControlValue,
+            //IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList"),
+            // IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList"),
+            // IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList"),
+            ReadOnly = fieldAttributes.ReadOnly;
+            Pattern = fieldAttributes.Pattern;
+        }
+        
     }
 }

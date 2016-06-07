@@ -4,7 +4,7 @@ using StackExchange.Redis;
 
 namespace Epi.Cloud.CacheServices
 {
-    public class RedisCache
+    public abstract class RedisCache
     {
         private readonly string _prefix;
         private static string CacheConnectionString = "";
