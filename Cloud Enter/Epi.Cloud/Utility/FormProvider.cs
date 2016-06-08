@@ -35,9 +35,7 @@ namespace Epi.Web.MVC.Utility
             // Save last values for subsequent calls from ValidateAll in SurveyController
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
-
             var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
-
             var metadataProvider = new MetadataProvider();
             var metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
 
@@ -197,7 +195,6 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 10://CheckBox
-                                //Renuka
                             var _CheckBoxValue = FieldValue;
                             var checkbox = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
                             //var checkboxFromXml = GetCheckBoxFromXml(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue);
@@ -433,21 +430,21 @@ namespace Epi.Web.MVC.Utility
 
                         case "17": //DropDown LegalValues
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            // DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue1 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17);
                             break;
 
                         case "18": //DropDown Codes
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            // DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue2 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
                             break;
 
                         case "19": //DropDown CommentLegal
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            // DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue, DropDownValues, 19);
                             break;
@@ -573,6 +570,14 @@ namespace Epi.Web.MVC.Utility
             return ControlValue;
         }
 
+        /// <summary>
+        /// Render RadioList from Metadata 
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         private static RadioList GetRadioList(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
             var radiolist = new RadioList(fieldAttributes, formWidth, formHeight)
@@ -582,6 +587,7 @@ namespace Epi.Web.MVC.Utility
 
             return radiolist;
         }
+        /*
         private static RadioList GetRadioList(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string RadioListValues, Form form)
         {
 
@@ -643,7 +649,15 @@ namespace Epi.Web.MVC.Utility
             return RadioList;
 
         }
-
+        */
+        /// <summary>
+        /// Render Numeric from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         //private static NumericTextBox GetNumericTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         private static NumericTextBox GetNumericTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
@@ -655,12 +669,28 @@ namespace Epi.Web.MVC.Utility
             return numericTextBox;
         }
 
+        /// <summary>
+        /// Render Label from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <returns></returns>
         //private static Literal GetLabel(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer)
         private static Literal GetLabel(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             var label = new Literal(fieldAttributes, formWidth, formHeight);
             return label;
         }
+
+        /// <summary>
+        /// Render TextArea from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         //private static TextArea GetTextArea(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         private static TextArea GetTextArea(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
@@ -670,19 +700,28 @@ namespace Epi.Web.MVC.Utility
             };
             return textArea;
         }
-        private static Hidden GetHiddenField(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
-        {
-            var result = new Hidden
-            {
-                Title = _FieldTypeID.Attribute("Name").Value,
-                Key = _FieldTypeID.Attribute("Name").Value,
-                IsPlaceHolder = true,
-                Value = _ControlValue
-            };
 
-            return result;
-        }
+        /* private static Hidden GetHiddenField(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
+         {
+             var result = new Hidden
+             {
+                 Title = _FieldTypeID.Attribute("Name").Value,
+                 Key = _FieldTypeID.Attribute("Name").Value,
+                 IsPlaceHolder = true,
+                 Value = _ControlValue
+             };
 
+             return result;
+         }
+         */
+        /// <summary>
+        /// Render TextBox from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         //private static TextBox GetTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         private static TextBox GetTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
@@ -693,7 +732,14 @@ namespace Epi.Web.MVC.Utility
 
             return textBox;
         }
-        //Renuka
+        /// <summary>
+        /// Render Checkbox from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         private static CheckBox GetCheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
             var checkBox = new CheckBox(fieldAttributes, formWidth, formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
@@ -705,8 +751,7 @@ namespace Epi.Web.MVC.Utility
             return checkBox;
         }
 
-#if DEBUG
-        //Renuka
+        /*
         private static CheckBox GetCheckBoxFromXml(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {
             var CheckBox = new CheckBox
@@ -740,9 +785,16 @@ namespace Epi.Web.MVC.Utility
             return CheckBox;
 
         }
+        */
 
-#endif
-
+        /// <summary>
+        /// Render DatePicker from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         private static DatePicker GetDatePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
             var DatePicker = new DatePicker(fieldAttributes, formWidth, formHeight)
@@ -753,6 +805,7 @@ namespace Epi.Web.MVC.Utility
 
             return DatePicker;
         }
+        /*
         private static DatePicker GetDatePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -794,8 +847,16 @@ namespace Epi.Web.MVC.Utility
             return DatePicker;
 
         }
+        */
 
-
+        /// <summary>
+        /// Render TimePicker from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         private static TimePicker GetTimePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
             var TimePicker = new TimePicker(fieldAttributes, formWidth, formHeight)
@@ -806,6 +867,7 @@ namespace Epi.Web.MVC.Utility
 
             return TimePicker;
         }
+        /*
         private static TimePicker GetTimePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -847,7 +909,9 @@ namespace Epi.Web.MVC.Utility
             return TimePicker;
 
         }
+        */
 
+        /*
         private static RelateButton GetRelateButton(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, Form form)
         {
 
@@ -875,7 +939,16 @@ namespace Epi.Web.MVC.Utility
             RelateButton.RelatedViewId = _FieldTypeID.Attribute("RelatedViewId").Value;
             return RelateButton;
         }
+        */
 
+
+        /// <summary>
+        /// Render RelateButton from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <returns></returns>
         private static RelateButton GetRelateButton(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             var RelateButton = new RelateButton(fieldAttributes, formWidth, formHeight)
@@ -886,8 +959,16 @@ namespace Epi.Web.MVC.Utility
             return RelateButton;
         }
 
-
-        //renuka
+        /// <summary>
+        /// Render Dropdown from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <param name="DropDownValues"></param>
+        /// <param name="FieldTypeId"></param>
+        /// <returns></returns>
         private static Select GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
         {
             var select = new Select(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
@@ -908,11 +989,10 @@ namespace Epi.Web.MVC.Utility
 
             return select;
         }
+
+        /*
         private static Select GetDropDown(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string DropDownValues, int FieldTypeId, Form form)
         {
-
-
-
             Select DropDown = new Select();
 
             DropDown.Title = _FieldTypeID.Attribute("Name").Value;
@@ -957,6 +1037,8 @@ namespace Epi.Web.MVC.Utility
 
             return DropDown;
         }
+        */
+
         public static string GetDropDownValuesDb(string ControlName, string TableName, string CodeColumnName)
         {
             StringBuilder DropDownValues = new StringBuilder();
@@ -1020,6 +1102,14 @@ namespace Epi.Web.MVC.Utility
             return DropDownValues.ToString();
         }
 
+        /// <summary>
+        /// Render GroupBox from Metadata
+        /// </summary>
+        /// <param name="fieldAttributes"></param>
+        /// <param name="formWidth"></param>
+        /// <param name="formHeight"></param>
+        /// <param name="controlValue"></param>
+        /// <returns></returns>
         private static GroupBox GetGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
         {
             var groupbox = new GroupBox(fieldAttributes, formWidth, formHeight)
@@ -1030,46 +1120,43 @@ namespace Epi.Web.MVC.Utility
             return groupbox;
         }
 
-        private static GroupBox GetGroupBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
-        {
+        /* private static GroupBox GetGroupBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
+         {
 
 
-            var GroupBox = new GroupBox();
+             var GroupBox = new GroupBox();
 
-            GroupBox.Title = _FieldTypeID.Attribute("Name").Value;
-            GroupBox.Prompt = _FieldTypeID.Attribute("PromptText").Value;
-            GroupBox.RequiredMessage = "This field is required";
-            GroupBox.Key = _FieldTypeID.Attribute("Name").Value + "_GroupBox";
-            //GroupBox.Key = _FieldTypeID.Attribute("Name").Value;
-            GroupBox.PromptTop = _Height * double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value);
-            GroupBox.PromptLeft = _Width * double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value);
-            GroupBox.Top = _Height * double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value);
-            GroupBox.Left = _Width * double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value);
-            //GroupBox.PromptWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value);
-            GroupBox.ControlHeight = _Height * double.Parse(_FieldTypeID.Attribute("ControlHeightPercentage").Value) - 12;
-            GroupBox.ControlWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value) - 12;
-            GroupBox.fontstyle = _FieldTypeID.Attribute("ControlFontStyle").Value;
-            GroupBox.fontSize = double.Parse(_FieldTypeID.Attribute("ControlFontSize").Value);
-            GroupBox.fontfamily = _FieldTypeID.Attribute("ControlFontFamily").Value;
-            // GroupBox.ReadOnly = bool.Parse(_FieldTypeID.Attribute("IsReadOnly").Value);
-            GroupBox.IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
-            GroupBox.IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList");
-            GroupBox.IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList");
-            if (_FieldTypeID.Attribute("BackgroundColor") != null)
-            {
-                var color = Color.FromArgb((int)(int.Parse(_FieldTypeID.Attribute("BackgroundColor").Value)) + unchecked((int)0xFF000000));
-                string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
-                GroupBox.BackgroundColor = HexValue;
-            }
-
-
-            return GroupBox;
+             GroupBox.Title = _FieldTypeID.Attribute("Name").Value;
+             GroupBox.Prompt = _FieldTypeID.Attribute("PromptText").Value;
+             GroupBox.RequiredMessage = "This field is required";
+             GroupBox.Key = _FieldTypeID.Attribute("Name").Value + "_GroupBox";
+             //GroupBox.Key = _FieldTypeID.Attribute("Name").Value;
+             GroupBox.PromptTop = _Height * double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value);
+             GroupBox.PromptLeft = _Width * double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value);
+             GroupBox.Top = _Height * double.Parse(_FieldTypeID.Attribute("ControlTopPositionPercentage").Value);
+             GroupBox.Left = _Width * double.Parse(_FieldTypeID.Attribute("ControlLeftPositionPercentage").Value);
+             //GroupBox.PromptWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value);
+             GroupBox.ControlHeight = _Height * double.Parse(_FieldTypeID.Attribute("ControlHeightPercentage").Value) - 12;
+             GroupBox.ControlWidth = _Width * double.Parse(_FieldTypeID.Attribute("ControlWidthPercentage").Value) - 12;
+             GroupBox.fontstyle = _FieldTypeID.Attribute("ControlFontStyle").Value;
+             GroupBox.fontSize = double.Parse(_FieldTypeID.Attribute("ControlFontSize").Value);
+             GroupBox.fontfamily = _FieldTypeID.Attribute("ControlFontFamily").Value;
+             // GroupBox.ReadOnly = bool.Parse(_FieldTypeID.Attribute("IsReadOnly").Value);
+             GroupBox.IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
+             GroupBox.IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList");
+             GroupBox.IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList");
+             if (_FieldTypeID.Attribute("BackgroundColor") != null)
+             {
+                 var color = Color.FromArgb((int)(int.Parse(_FieldTypeID.Attribute("BackgroundColor").Value)) + unchecked((int)0xFF000000));
+                 string HexValue = string.Format("#{0:X2}{1:X2}{2:X2}", color.R, color.G, color.B);
+                 GroupBox.BackgroundColor = HexValue;
+             }
 
 
+             return GroupBox;
 
-
-
-        }
+         }
+         */
         private static int GetNumberOfPages(XDocument Xml)
         {
             var _FieldsTypeIDs = from _FieldTypeID in
