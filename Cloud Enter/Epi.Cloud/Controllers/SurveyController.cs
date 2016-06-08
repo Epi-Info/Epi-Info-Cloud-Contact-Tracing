@@ -320,19 +320,17 @@ namespace Epi.Web.MVC.Controllers
 
                         //Insert Survey response to DocumentDB
 
-                        var metadataProvider = new MetadataProvider();
-                        var metadata = metadataProvider.GetMetadata(SurveyAnswer.SurveyId, PageNumber);
-                        _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
-                        if (responseId != null)
-                        {
-                            _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
-                        }
+                        //var metadataProvider = new MetadataProvider();
+                        //var metadata = metadataProvider.GetMetadata(SurveyAnswer.SurveyId, PageNumber);
+                        //_isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+                        //if (responseId != null)
+                        //{
+                        //   // _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                        //}
 
 
                         if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
-
-
                             form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                             form = SetLists(form);
                             TempData["Width"] = form.Width + 5;
