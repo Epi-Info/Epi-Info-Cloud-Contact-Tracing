@@ -16,7 +16,7 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
 
         #region Insert Into Servey Response to DocumentDB
-        public bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        public bool InsertSurveyResponseToDocumentDBStoreAsync(List<FieldAttributes> metadata, SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();

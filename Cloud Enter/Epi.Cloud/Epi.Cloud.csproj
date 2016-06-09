@@ -403,6 +403,7 @@
     <Compile Include="Models\UserResetPasswordModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\IntegratedSurveyAnswerRepository.cs" />
+    <Compile Include="Repositories\EpiMetadataRepository.cs" />
     <Compile Include="Repositories\IntegratedSurveyInfoRepository.cs" />
     <Compile Include="Repositories\Core\Criterion.cs" />
     <Compile Include="Repositories\Core\IRepository.cs" />
@@ -1065,6 +1066,10 @@
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
+      <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
+      <Name>Epi.Cloud.CacheServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>

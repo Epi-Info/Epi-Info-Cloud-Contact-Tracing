@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using Epi.Cloud.MetadataServices.DataTypes;
 using MvcDynamicForms.Fields;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.Common.Metadata;
@@ -12,11 +11,11 @@ namespace Epi.Cloud.FormMetadataServices
 {
     public class MetadataProvider
     {
-        public List<FieldAttributes> GetMeta(string formId, int pageNumber)
+        public List<FieldAttributes> GetMetadata(string formId, int pageNumber)
         {
             ProjectMetadataProvider p = new ProjectMetadataProvider();
             ProjectTemplateMetadata projectTemplateMetadata;
-            projectTemplateMetadata = p.GetProjectMetadataForPage("0" /* not used */).Result;
+            projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
             var pagePosition = pageNumber - 1;
             List<FieldAttributes> tempList = new List<FieldAttributes>();
@@ -55,7 +54,7 @@ namespace Epi.Cloud.FormMetadataServices
                 IsHighlighted = false,
                 IsDisabled = false,
                 ChoicesList = f.List,
-                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables!=null && projectTemplateMetadata.SourceTables.Length>0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList():null,
+                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables != null && projectTemplateMetadata.SourceTables.Length > 0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
                 RelatedViewId = f.RelatedViewId.ToString()
 
             }).ToList();

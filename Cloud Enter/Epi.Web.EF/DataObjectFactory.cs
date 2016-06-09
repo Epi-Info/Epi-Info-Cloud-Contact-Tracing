@@ -37,13 +37,15 @@ namespace Epi.Web.EF
                 if (string.IsNullOrWhiteSpace(_connectionString) || string.IsNullOrWhiteSpace(_eweAdoConnectionString))
 #endif
                 {
+                    var environment = ConfigurationManager.AppSettings["Environment"];
+                    var environmentSuffix = environment != null ? "@" + environment : string.Empty;
                     // Encrypted connection strings here
-                    string connectionStringName = ConfigurationManager.AppSettings["EWEEntitiesConnectionStringName"] ?? "EWEEntities";
-                    string EWEADOconnectionStringName = ConfigurationManager.AppSettings["EWEADOConnectionStringName"] ?? "EWEADO";
+                    string EWEEntitiesConnectionStringName = "EWEEntities" + environmentSuffix;
+                    string EWEADOconnectionStringName = "EWEADO" + environmentSuffix;
 
 
                     //Decrypt connection string here
-                    _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString);
+                    _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[EWEEntitiesConnectionStringName].ConnectionString);
                     _eweAdoConnectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[EWEADOconnectionStringName].ConnectionString);
                 }
             }
@@ -81,11 +83,6 @@ namespace Epi.Web.EF
         {
             get
             {
-                //string connstr = _connectionString.Substring(_connectionString.IndexOf("connection string"));
-                //connstr = connstr.Replace("connection string=", "");
-                //connstr = connstr.Replace("\"", "");
-                //return connstr;
-
                 return _eweAdoConnectionString;
             }
         }
