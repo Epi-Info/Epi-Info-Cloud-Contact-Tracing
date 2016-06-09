@@ -124,8 +124,8 @@ namespace Epi.Cloud.FormMetadataServices
     public class GetmetadataDB
     {
         // string connStr = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
-        //string connStr = "Server=tcp:epiinfocloudserver.database.windows.net,1433;Database=EpiinfoCloudDB;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
-        string connStr = "Server=tcp:epiinfocloudserver.database.windows.net,1433;Database=EPIInfo7;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+        //string connStr = "Server=tcp:gelwebenterss.database.windows.net,1433;Database=EpiinfoCloudDB;User ID=saglenz@gelwebenterss;Password=Password123!@#;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+        string connStr = "Server=tcp:gelwebenterss.database.windows.net,1433;Database=EPIInfo7;User ID=saglenz@gelwebenterss;Password=Password123!@#;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
 
         public List<CDTProject> MetaDataAsync(int pageid)
         {
