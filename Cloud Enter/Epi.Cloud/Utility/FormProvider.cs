@@ -124,24 +124,24 @@ namespace Epi.Web.MVC.Utility
                 //Generate page level Java script (After)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
-                Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
-                if (form.ResponseId != null)
-                {
-                    _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
-                }
+                //Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
+                //if (form.ResponseId != null)
+                //{
+                //    _SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                //}
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
                     //StartNewcode
-                    string FieldValue = string.Empty;
-                    if (_SurveyAnswerFromDocumentDB != null)
-                    {
-                        FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                                      where element.Key == fieldAttributes.Name.ToLower()
-                                      select element.Value).FirstOrDefault();
-                    }
+                    //string FieldValue = string.Empty;
+                    //if (_SurveyAnswerFromDocumentDB != null)
+                    //{
+                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
+                    //                  where element.Key == fieldAttributes.Name.ToLower()
+                    //                  select element.Value).FirstOrDefault();
+                    //}
 
                     //EndNewcode 
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
