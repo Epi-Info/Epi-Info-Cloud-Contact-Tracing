@@ -318,17 +318,7 @@ namespace Epi.Web.MVC.Controllers
 
                         _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
 
-                        //Insert Survey response to DocumentDB
-
-                        var metadataProvider = new MetadataProvider();
-                        var metadata = metadataProvider.GetMeta(SurveyAnswer.SurveyId, PageNumber);
-                        _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
-                        if (responseId != null)
-                        {
-                            _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(metadata, surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
-                        }
-
-
+                      
                         if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
 
@@ -1322,7 +1312,11 @@ namespace Epi.Web.MVC.Controllers
             bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null
             )
         {
-
+            //_isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+            //if (responseId != null)
+            //{
+            //    _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+            //}
             //SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId).SurveyResponseList[0];
             SurveyAnswer = FormsHierarchyDTOList.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
 
