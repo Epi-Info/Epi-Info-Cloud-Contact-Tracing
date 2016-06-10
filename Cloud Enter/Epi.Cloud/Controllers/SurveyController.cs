@@ -922,7 +922,8 @@ namespace Epi.Web.MVC.Controllers
             SARequest.Criteria.IsEditMode = this.IsEditMode;
             SARequest.Criteria.IsDeleteMode = true;
             SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
-            SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
+            // TODO: GEL - Delete from DocumentDB
+            //SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
 
             return Json(Session[SessionKeys.RootFormId]);//string.Empty
             //return RedirectToAction("Index", "Home");
