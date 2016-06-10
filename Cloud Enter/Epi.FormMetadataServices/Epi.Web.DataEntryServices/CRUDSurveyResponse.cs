@@ -1,9 +1,12 @@
 ﻿
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Web.EF;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,7 +22,8 @@ namespace Epi.Cloud.DataEntryServices
     {
 
         public DocumentClient client;
-
+        public string serviceEndpoint = ConfigurationManager.AppSettings["serviceEndpoint"];
+        public string authKey = ConfigurationManager.AppSettings["authKey"];
 
         #region InsertToSruveyToDocumentDB
         /// <summary>
@@ -28,12 +32,7 @@ namespace Epi.Cloud.DataEntryServices
         ///
         public bool InsertToSruveyToDocumentDB(Survey _surveyData)
         {
-            //string serviceEndpoint = "https://epicloud.documents.azure.com:443/";// ConfigurationManager.AppSettings["serviceEndpoint"];
-            //string authKey = "mS47A4aocluPX5RjrMvcDjKlvcRiGUTF9pJGEKeCSUrFHfdc6GfX7gTvnbiFmX8Oqu9R1fG2ryowRC4rCJ3Rkg==";// ConfigurationManager.AppSettings["authKey"];
-
-            string serviceEndpoint = "https://epiclouddev.documents.azure.com:443/";// ConfigurationManager.AppSettings["serviceEndpoint"];
-            string authKey = "9y0faG9P1x0t5L95GCdSZtcQ37K7xbZaCe2Cs1LMkImqJUxED2lXuWvKfa9onyA1Ptguw5gNnwM5uFz8lcMbWA==";// ConfigurationManager.AppSettings["authKey"];
-
+           
 
             if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
             {
@@ -45,7 +44,7 @@ namespace Epi.Cloud.DataEntryServices
                 try
                 {
                     //Instance of DocumentClient"
-                    client = new DocumentClient(new Uri(serviceEndpoint), authKey);
+                    client = new DocumentClient(new Uri(serviceEndpoint),authKey);
 
                     //Getting reference to Database 
                     Database database = ReadDatabase(_surveyData.SurveyName);
@@ -72,7 +71,6 @@ namespace Epi.Cloud.DataEntryServices
             return true;
         }
         #endregion
-
 
         #region ReadOrCreateDabase
         /// <summary>
@@ -244,10 +242,7 @@ namespace Epi.Cloud.DataEntryServices
         #region ReadSurveyFromDocumentDBByResponseId,PAgeId
         public SurveyQuestionandAnswer ReadSruveyFromDocumentDBByPageandRespondId(string dbName, string responseId, string pageId)
         {
-            string serviceEndpoint = "https://epiclouddev.documents.azure.com:443/";// ConfigurationManager.AppSettings["serviceEndpoint"];
-            string authKey = "9y0faG9P1x0t5L95GCdSZtcQ37K7xbZaCe2Cs1LMkImqJUxED2lXuWvKfa9onyA1Ptguw5gNnwM5uFz8lcMbWA==";// ConfigurationManager.AppSettings["authKey"];
-
-
+            
             SurveyQuestionandAnswer _surveyAnswer = new SurveyQuestionandAnswer();
 
             if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
@@ -280,8 +275,82 @@ namespace Epi.Cloud.DataEntryServices
             return _surveyAnswer;
         }
         #endregion
+
+        #region ReadAllRecordsBySurveyID 
+        public List<SurveyResponse> ReadAllRecordsBySurveyID(string dbName, string surveyId)
+        { 
+            List<SurveyResponse> _surveyResponse=null;
+
+            if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
+            {
+                //Please provide  service endpoint and authkey
+            }
+            else
+            {
+                try
+                {
+                    //Instance of DocumentClient"
+                    this.client = new DocumentClient(new Uri(serviceEndpoint),authKey);
+
+                    //Getting reference to Database
+                    Database database = ReadDatabase(dbName);
+
+                    //Read Collection
+                    DocumentCollection collection = ReadCollection(database.SelfLink, dbName);
+
+
+                    //Read collection and store data  
+                    _surveyResponse = GellAllSurveyDataBySurveyId(dbName,surveyId);
+
+                }
+                catch (DocumentQueryException ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+            return _surveyResponse; 
+        }
+        #endregion
+
+        #region HelperMethod
+        #region GetllAllDataBySurveyId
+        #region ReadDataFromCollectionDocumentDB
+        private List<SurveyResponse> GellAllSurveyDataBySurveyId(string dbname, string surveyId)
+        {
+            // Use UriFactory to build the DocumentLink
+            string collectionName = dbname;
+            Uri docUri = UriFactory.CreateDocumentCollectionUri(dbname, collectionName);
+
+            SurveyQuestionandAnswer surveyData = new SurveyQuestionandAnswer();
+            // Set some common query options
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+            List<SurveyResponse> surveyList = new List<SurveyResponse>();
+            try
+            {
+                var query = client.CreateDocumentQuery("dbs/-9crAA==/colls/-9crAIJDZQA=/", "SELECT " + collectionName + ".GlobalRecordID,"+ collectionName + ".SurveyID,"+ collectionName+ ".RecStatus,"+ collectionName + ".PageId,"+ collectionName+ ".PagePosition,"+ collectionName+ ".DateOfInterview,"+ collectionName + ".DateCreated,"+ collectionName + ".DateUpdated FROM   " + collectionName + " WHERE " + collectionName + ".SurveyID = '" + surveyId + "'", queryOptions);
+                var _surveyDataFromDocumentDB = query.AsQueryable();
+                foreach(SurveyProperties item in _surveyDataFromDocumentDB)
+                {                    
+                    SurveyResponse surveyResponse = new SurveyResponse();
+                    surveyResponse.ResponseId =new Guid(item.GlobalRecordID);
+                    surveyResponse.SurveyId = new Guid(item.SurveyID);
+                    surveyResponse.DateUpdated = item.DateUpdated;
+                    surveyResponse.StatusId = item.RecStatus; 
+                    surveyResponse.DateCreated = item.DateCreated;
+                    surveyList.Add(surveyResponse);
+                } 
+            }
+            catch (DocumentQueryException ex)
+            {
+                Console.WriteLine(ex.ToString());
+            } 
+            return surveyList; 
+        }
+        #endregion
+        #endregion
+
+        #endregion
     }
 }
-
 
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define UseAsync
+
+using System;
 using System.Configuration;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Configuration;
@@ -54,8 +56,12 @@ namespace Epi.Cloud.CacheServices
             key = (prefix + key).ToLowerInvariant();
             try
             {
+#if UseAsync
                 var task = Cache.StringGetAsync(key);
                 var redisValue = await task;
+#else
+                var redisValue = Cache.StringGet(key);
+#endif
                 return redisValue;
             }
             catch (Exception ex)
@@ -71,8 +77,12 @@ namespace Epi.Cloud.CacheServices
             key = (prefix + key).ToLowerInvariant();
             try
             {
+#if UseAsync
                 var task = Cache.StringSetAsync(key, value);
                 isSuccessful = await task;
+#else
+                isSuccessful = Cache.StringSet(key, value);
+#endif
                 return isSuccessful;
             }
             catch (Exception ex)
@@ -86,7 +96,11 @@ namespace Epi.Cloud.CacheServices
             key = (prefix + key).ToLowerInvariant();
             try
             {
+#if UseAsync
                 await Cache.KeyDeleteAsync(key);
+#else
+                Cache.KeyDelete(key);
+#endif
             }
             catch (Exception ex)
             {

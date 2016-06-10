@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web;
 using Epi.Web.MVC.Repositories.Core;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
-using System.Web.Caching;
-using System.Configuration;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.Common.Metadata;
 
