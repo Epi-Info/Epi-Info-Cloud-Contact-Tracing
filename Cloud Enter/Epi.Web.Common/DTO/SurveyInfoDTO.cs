@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.Enter.Common.DTO
 {
@@ -15,6 +16,7 @@ namespace Epi.Web.Enter.Common.DTO
         private string _DepartmentName;
         private string _OrganizationName;
         private string _XML;
+        private ProjectTemplateMetadata _projectTemplateMetadata;
         private bool _IsSuccess;
         private DateTime _ClosingDate;
         private Guid _UserPublishKey;
@@ -105,6 +107,14 @@ namespace Epi.Web.Enter.Common.DTO
             get { return _XML; }
             set { _XML = value; }
         }
+
+        [DataMember]
+        public ProjectTemplateMetadata ProjectTemplateMetadata
+        {
+            get { return _projectTemplateMetadata; }
+            set { _projectTemplateMetadata = value; }
+        }
+
         [DataMember]
         public bool IsSuccess
         {

@@ -273,7 +273,6 @@
     <Compile Include="Proxy\Interfaces\IProjectProxyService.cs" />
     <Compile Include="Repository\GetmetadataDB.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
-    <Compile Include="Services\Interfaces\IProjectService.cs" />
     <Compile Include="Services\ProjectService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

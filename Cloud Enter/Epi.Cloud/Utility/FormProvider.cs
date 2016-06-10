@@ -10,7 +10,6 @@ using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using Epi.Cloud.SqlServer;
 using System.Data;
 using Epi.Web.MVC.Facade;
 
@@ -37,9 +36,16 @@ namespace Epi.Web.MVC.Utility
             SurveyInfoList = surveyInfoList;
 
             var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
-
-            var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
+            List<FieldAttributes> metadata;
+            if (surveyInfo.ProjectTemplateMetadata != null)
+            {
+                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber);
+            }
+            else
+            {
+                var metadataProvider = new MetadataProvider();
+                metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
+            }
 
             string SurveyAnswer;
 
@@ -957,23 +963,7 @@ namespace Epi.Web.MVC.Utility
 
             return DropDown;
         }
-        public static string GetDropDownValuesDb(string ControlName, string TableName, string CodeColumnName)
-        {
-            StringBuilder DropDownValues = new StringBuilder();
-
-            MetaData getDropdownVal = new MetaData();
-            DataTable dtDropDownVal = getDropdownVal.GetDropdownDB(TableName, CodeColumnName);
-
-
-            foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)
-            {
-                DropDownValues.Append(_SourceTableValue[CodeColumnName]);
-
-                DropDownValues.Append("&#;");
-            }
-            return DropDownValues.ToString();
-        }
-
+ 
         public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName, string CodeColumnName)
         {
             StringBuilder DropDownValues = new StringBuilder();

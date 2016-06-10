@@ -4,6 +4,6 @@ namespace Epi.Cloud.DBAccessService.Proxy.Interfaces
 {
     public interface IProjectProxyService
     {
-        ProjectTemplateMetadata GetProjectMetaData(string projectID);
+        ProjectTemplateMetadata GetProjectMetaData(string projectId);
     }
 }

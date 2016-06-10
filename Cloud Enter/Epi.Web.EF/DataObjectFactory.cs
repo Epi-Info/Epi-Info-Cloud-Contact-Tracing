@@ -1,6 +1,7 @@
 ﻿using System.Configuration;
 using System;
 using Epi.Web.Enter.Common.Security;
+using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Web.EF
 {
@@ -37,11 +38,9 @@ namespace Epi.Web.EF
                 if (string.IsNullOrWhiteSpace(_connectionString) || string.IsNullOrWhiteSpace(_eweAdoConnectionString))
 #endif
                 {
-                    var environment = ConfigurationManager.AppSettings["Environment"];
-                    var environmentSuffix = environment != null ? "@" + environment : string.Empty;
-                    // Encrypted connection strings here
-                    string EWEEntitiesConnectionStringName = "EWEEntities" + environmentSuffix;
-                    string EWEADOconnectionStringName = "EWEADO" + environmentSuffix;
+                    // Connection strings here
+                    string EWEEntitiesConnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEEntities");
+                    string EWEADOconnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEADO");
 
 
                     //Decrypt connection string here

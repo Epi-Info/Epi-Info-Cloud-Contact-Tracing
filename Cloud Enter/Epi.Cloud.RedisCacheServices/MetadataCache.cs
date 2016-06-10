@@ -8,16 +8,12 @@ namespace Epi.Cloud.CacheServices
     /// <summary>
     /// MetadataCache
     /// </summary>
-    public class MetadataCache : RedisCache, IMetadataCache
+    public partial class EpiCloudCache : RedisCache, IEpiCloudCache, IMetadataCache
     {
         private const string MetadataPrefix = "metadata_";
 
         private ConditionalWeakTable<string, ProjectTemplateMetadata> _weakProjectMetadataObjectCache = new ConditionalWeakTable<string, ProjectTemplateMetadata>();
         private ConditionalWeakTable<string, PageMetadata> _weakPageMetadataObjectCache = new ConditionalWeakTable<string, PageMetadata>();
-
-        public MetadataCache() : base(MetadataPrefix)
-        {
-        }
 
         private string ComposePageKey(string projectName, int? pageId)
         {
@@ -29,20 +25,20 @@ namespace Epi.Cloud.CacheServices
         /// Get the metadata for the specified project without page level metadata 
         /// unless an optional page id is provided.
         /// </summary>
-        /// <param name="projectName"></param>
+        /// <param name="projectId"></param>
         /// <param name="pageId"></param>
         /// <returns>ProjectTemplateMetadata</returns>
-        public ProjectTemplateMetadata GetProjectTemplateMetadata(string projectName, int? pageId = null)
+        public ProjectTemplateMetadata GetProjectTemplateMetadata(string projectId, int? pageId = null)
         {
             ProjectTemplateMetadata metadata = null;
             ProjectTemplateMetadata clonedMetadata = null;
-            if (!_weakProjectMetadataObjectCache.TryGetValue(projectName, out metadata))
+            if (!_weakProjectMetadataObjectCache.TryGetValue(projectId, out metadata))
             {
-                var json = Get(projectName).Result;
+                var json = Get(MetadataPrefix, projectId).Result;
                 if (json != null)
                 {
                     metadata = JsonConvert.DeserializeObject<ProjectTemplateMetadata>(json);
-                    _weakProjectMetadataObjectCache. Add(projectName, metadata);
+                    _weakProjectMetadataObjectCache. Add(projectId, metadata);
                 }
             }
 
@@ -51,7 +47,7 @@ namespace Epi.Cloud.CacheServices
                 clonedMetadata = metadata.Clone();
                 if (pageId.HasValue)
                 {
-                    var pageMetadata = GetPageMetadata(projectName, pageId.Value);
+                    var pageMetadata = GetPageMetadata(projectId, pageId.Value);
                     clonedMetadata.Project.Pages = new PageMetadata[] { pageMetadata };
                 }
             }
@@ -61,16 +57,16 @@ namespace Epi.Cloud.CacheServices
         /// <summary>
         /// GetPageMetadata
         /// </summary>
-        /// <param name="projectName"></param>
+        /// <param name="projectId"></param>
         /// <param name="pageId"></param>
         /// <returns>PageMetadata</returns>
-        public PageMetadata GetPageMetadata(string projectName, int pageId)
+        public PageMetadata GetPageMetadata(string projectId, int pageId)
         {
             PageMetadata metadata = null;
-            var pageKey = ComposePageKey(projectName, pageId);
+            var pageKey = ComposePageKey(projectId, pageId);
             if (!_weakPageMetadataObjectCache.TryGetValue(pageKey, out metadata))
             {
-                var json = Get(pageKey).Result;
+                var json = Get(MetadataPrefix, pageKey).Result;
                 if (json != null)
                 {
                     metadata = JsonConvert.DeserializeObject<PageMetadata>(json);
@@ -108,7 +104,7 @@ namespace Epi.Cloud.CacheServices
                         .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
                 }
                 json = JsonConvert.SerializeObject(pageMetadata);
-                isSuccessful = Set(ComposePageKey(projectTemplateMetadata.Project.Name, pageId), json).Result;
+                isSuccessful = Set(MetadataPrefix, ComposePageKey(projectTemplateMetadata.Project.Name, pageId), json).Result;
             }
 
             // save the page ids in the cached object
@@ -117,7 +113,7 @@ namespace Epi.Cloud.CacheServices
             // don't save the page metadata with the cached project metadata
             projectTemplateMetadata.Project.Pages = null;
             json = JsonConvert.SerializeObject(projectTemplateMetadata);
-            isSuccessful = Set(projectTemplateMetadata.Project.Name, json).Result;
+            isSuccessful = Set(MetadataPrefix, projectTemplateMetadata.Project.Id, json).Result;
 
             // restore the page metadata 
             projectTemplateMetadata.Project.Pages = pages;
@@ -127,22 +123,22 @@ namespace Epi.Cloud.CacheServices
         /// <summary>
         /// ClearProjectTemplateMetadataFromCache
         /// </summary>
-        /// <param name="projectName"></param>
-        public void ClearProjectTemplateMetadataFromCache(string projectName)
+        /// <param name="projectId"></param>
+        public void ClearProjectTemplateMetadataFromCache(string projectId)
         {
-            var metadata = GetProjectTemplateMetadata(projectName);
+            var metadata = GetProjectTemplateMetadata(projectId);
             if (metadata != null)
             {
                 // remove each of the pages from cache
                 foreach (var pageId in metadata.Project.PageIds)
                 {
-                    var pageKey = ComposePageKey(projectName, pageId);
+                    var pageKey = ComposePageKey(projectId, pageId);
                     _weakPageMetadataObjectCache.Remove(pageKey);
-                    Delete(pageKey);
+                    Delete(MetadataPrefix, pageKey);
                 }
 
-                _weakProjectMetadataObjectCache.Remove(projectName);
-                Delete(projectName);
+                _weakProjectMetadataObjectCache.Remove(projectId);
+                Delete(MetadataPrefix, projectId);
             }
         }
     }

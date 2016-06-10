@@ -6,6 +6,7 @@ using Epi.Cloud.Common.Metadata;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
+using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Cloud.SqlServer
 {
@@ -27,18 +28,18 @@ namespace Epi.Cloud.SqlServer
 
         public metaFieldType GetMetaDataType(int ProjectId)
         {
-            using (EPIInfo7Entities metacontext = new EPIInfo7Entities())
+            using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
             {
                 var metadata = metacontext.metaFieldTypes.Where(s => s.FieldTypeId == ProjectId).FirstOrDefault<metaFieldType>();
                 return metadata;
             }
         }
 
-        public ProjectTemplateMetadata GetFieldsByPageAsData()
+        public ProjectTemplateMetadata GetProjectTemplateMetadata(string projectId)
         {
             ProjectTemplateMetadata templateMetaInfo = new ProjectTemplateMetadata();
 
-            using (EPIInfo7Entities metacontext = new EPIInfo7Entities())
+            using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
             {
                 try
                 {

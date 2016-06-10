@@ -76,6 +76,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EpiInfo-Metatables.edmx</DependentUpon>
     </Compile>
+    <Compile Include="EpiInfo7EntitiesEx.cs" />
     <Compile Include="metaBackground.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>

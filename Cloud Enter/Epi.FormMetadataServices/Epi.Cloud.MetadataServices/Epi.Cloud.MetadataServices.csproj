@@ -59,13 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTypes\CDTFieldAttribute.cs" />
-    <Compile Include="DataTypes\CDTUser.cs" />
-    <Compile Include="MetadataService\Interface\IMetadataFieldAttributes.cs" />
     <Compile Include="ProjectMetadataProvider.cs" />
     <Compile Include="DataTypes\CDTBase.cs" />
-    <Compile Include="DataTypes\CDTHeaderInfo.cs" />
-    <Compile Include="DataTypes\CDTProject.cs" />
     <Compile Include="DataTypes\CDTResponse.cs" />
     <Compile Include="DataTypes\Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

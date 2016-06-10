@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Epi.Cloud.CacheServices
 {
-    public class ViewCache : RedisCache
+    public partial class EpiCloudCache : RedisCache
     {
-        public ViewCache() : base("view_")
-        {
-        }
     }
 }

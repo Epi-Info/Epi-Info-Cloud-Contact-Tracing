@@ -38,8 +38,8 @@ namespace Epi.Cloud.MVC.Repositories
                 //SurveyInfoResponse result = Client.GetSurveyInfo(pRequest);
                 //SurveyInfoResponse result = _iDataService.GetSurveyInfo(pRequest);
                 SurveyInfoResponse result = null;
-                string surveyId = pRequest.Criteria.SurveyIdList[0].ToString();
-                var metadata = _metadataCache.GetProjectTemplateMetadata(surveyId);
+                string projectId = pRequest.Criteria.SurveyIdList[0].ToString();
+                var metadata = _metadataCache.GetProjectTemplateMetadata(projectId);
                 if (metadata != null)
                 {
                 }
@@ -47,7 +47,7 @@ namespace Epi.Cloud.MVC.Repositories
                 {
                     ProjectMetadataProvider p = new ProjectMetadataProvider();
                     ProjectTemplateMetadata projectTemplateMetadata;
-                    projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
+                    projectTemplateMetadata = p.GetProjectMetadata(projectId).Result;
 
                     result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
                     _metadataCache.SetProjectTemplateMetadata(projectTemplateMetadata);

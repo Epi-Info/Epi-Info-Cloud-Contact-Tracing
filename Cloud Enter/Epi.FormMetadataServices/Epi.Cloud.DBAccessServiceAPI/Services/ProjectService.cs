@@ -13,14 +13,14 @@ namespace Epi.Cloud.DBAccessService.Services
         }
 
         /// <summary>
-        /// Get the meta data based on page id
+        /// Get the meta data based on project id
         /// </summary>
-        /// <param name="projectid"></param>
+        /// <param name="projectId"></param>
         /// <returns></returns>
-        public ProjectTemplateMetadata GetProjectMetaData(string projectid)
+        public ProjectTemplateMetadata GetProjectMetaData(string projectId)
         {
             GetmetadataDB getMetadata = new GetmetadataDB();
-            var task = getMetadata.MetaDataAsync(Convert.ToInt32(projectid));
+            var task = getMetadata.MetaDataAsync(projectId);
             return task.Result;
         }
     }

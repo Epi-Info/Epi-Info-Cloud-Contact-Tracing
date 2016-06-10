@@ -150,6 +150,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyName = pBO.SurveyName,
                 SurveyNumber = pBO.SurveyNumber,
                 XML = pBO.XML,
+                ProjectTemplateMetadata = pBO.ProjectTemplateMetadata,
                 IntroductionText = pBO.IntroductionText,
                 ExitText = pBO.ExitText,
                 OrganizationName = pBO.OrganizationName,

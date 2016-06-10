@@ -1075,10 +1075,6 @@
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
       <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Cloud.SqlServer\Epi.Cloud.SqlServer.csproj">
-      <Project>{1b1fdcfe-78e1-487c-9168-c9fee18ad936}</Project>
-      <Name>Epi.Cloud.SqlServer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Web.DataEntryServices\Epi.Cloud.DataEntryServices.csproj">
       <Project>{aa7bfd2a-ab8f-41af-8f37-f4207627563f}</Project>
       <Name>Epi.Cloud.DataEntryServices</Name>

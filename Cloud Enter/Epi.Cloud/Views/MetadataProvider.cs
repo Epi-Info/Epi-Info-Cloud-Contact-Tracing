@@ -17,6 +17,13 @@ namespace Epi.Cloud.FormMetadataServices
             ProjectMetadataProvider p = new ProjectMetadataProvider();
             ProjectTemplateMetadata projectTemplateMetadata;
             projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
+            List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
+
+            return Results;
+        }
+
+        public static List<FieldAttributes> GetFieldMedatadata(ProjectTemplateMetadata projectTemplateMetadata, string formId, int pageNumber)
+        {
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
             var pagePosition = pageNumber - 1;
             List<FieldAttributes> tempList = new List<FieldAttributes>();
@@ -55,13 +62,10 @@ namespace Epi.Cloud.FormMetadataServices
                 IsHighlighted = false,
                 IsDisabled = false,
                 ChoicesList = f.List,
-                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables!=null && projectTemplateMetadata.SourceTables.Length>0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList():null,
+                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables != null && projectTemplateMetadata.SourceTables.Length > 0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
                 RelatedViewId = f.RelatedViewId.ToString()
 
             }).ToList();
-
-
-
             return Results;
         }
     }

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
 using System.Text.RegularExpressions;
+using Epi.Cloud.Common.Configuration;
 using Epi.Data;
 
 namespace Epi.Cloud.SqlServer
@@ -1363,7 +1365,10 @@ namespace Epi.Cloud.SqlServer
         public override IDbConnection GetConnection()
         {
             //return GetNativeConnection(connectionString);
-            return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
+            var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("DBConnection");
+            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            return GetNativeConnection(connectionString);
+            //return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
         }
 
         /// <summary>
