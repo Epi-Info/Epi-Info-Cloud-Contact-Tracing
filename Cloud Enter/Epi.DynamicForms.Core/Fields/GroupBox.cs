@@ -205,14 +205,10 @@ namespace MvcDynamicForms.Fields
             ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage - 12;
             ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage - 12;
 
-            //fontstyle = fieldAttributes.ControlFontStyle;
-            //fontSize = fieldAttributes.ControlFontSize;
-            //fontfamily = fieldAttributes.ControlFontFamily;
-
-            fontstyle = fieldAttributes.PromptFontStyle;
-            fontSize = fieldAttributes.PromptFontSize;
-            fontfamily = fieldAttributes.PromptFontFamily;
-
+            fontstyle = fieldAttributes.ControlFontStyle;
+            fontSize = fieldAttributes.ControlFontSize;
+            fontfamily = fieldAttributes.ControlFontFamily;
+         
             if (fieldAttributes.BackgroundColor != null)
             {
                 var color = Color.FromArgb((int)(int.Parse(fieldAttributes.BackgroundColor)) + unchecked((int)0xFF000000));
