@@ -32,5 +32,18 @@ namespace Epi.Cloud.CacheServices
             _surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
             return isSuccessful;
         }
+
+        public bool SurveyInfoBoMetadataExists(string projectId)
+        {
+            bool keyExists = true;
+            string surveyInfoBOJson;
+            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBOJson)
+                            && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson))
+            {
+                keyExists = KeyExists(SurveyInfoBOPrefix, projectId).Result;
+            }
+            return keyExists;
+        }
+
     }
 }

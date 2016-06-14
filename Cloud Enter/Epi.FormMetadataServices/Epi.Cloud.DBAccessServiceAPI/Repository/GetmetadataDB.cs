@@ -12,13 +12,13 @@ namespace Epi.Cloud.DBAccessService.Repository
 
 
         //Call the Cloud EF and get the meta data
-        public async Task<ProjectTemplateMetadata> MetaDataAsync(string projectId)
+        public async Task<Template> MetaDataAsync(string projectId)
         {            
             DataTable dt = new DataTable();
 
             // Retrive the Template level Attributes
             MetaData metaDt = new MetaData();
-            ProjectTemplateMetadata lstMetaDataFieldsAtr = new ProjectTemplateMetadata();
+            Template lstMetaDataFieldsAtr = new Template();
 
             //Get the meta data using entity framework
             lstMetaDataFieldsAtr = metaDt.GetProjectTemplateMetadata(projectId);         

@@ -17,7 +17,7 @@ namespace Epi.Cloud.DBAccessService.Services
         /// </summary>
         /// <param name="projectId"></param>
         /// <returns></returns>
-        public ProjectTemplateMetadata GetProjectMetaData(string projectId)
+        public Template GetProjectMetaData(string projectId)
         {
             GetmetadataDB getMetadata = new GetmetadataDB();
             var task = getMetadata.MetaDataAsync(projectId);

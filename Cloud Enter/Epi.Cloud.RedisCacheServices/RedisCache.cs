@@ -50,6 +50,27 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
+        protected async Task<bool> KeyExists(string prefix, string key)
+        {
+            //return false;
+            var keyExists = false;
+            key = (prefix + key).ToLowerInvariant();
+            try
+            {
+#if UseAsync
+                var task = Cache.KeyExistsAsync(key);
+                keyExists = await task;
+#else
+                keyExists = Cache.KeyExists(key);
+#endif
+                return keyExists;
+            }
+            catch (Exception ex)
+            {
+                return keyExists;
+            }
+        }
+
         protected async Task<string> Get(string prefix, string key)
         {
  //           return null;

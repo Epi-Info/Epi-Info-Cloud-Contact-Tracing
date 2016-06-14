@@ -18,14 +18,14 @@ namespace Epi.Cloud.DBAccessService.Controllers
         // GET: api/Project/5
         public IHttpActionResult Get()
         {
-            return new ServiceResult<ProjectTemplateMetadata>(_projectService.GetProjectMetaData(null), this);
+            return new ServiceResult<Template>(_projectService.GetProjectMetaData(null), this);
         }
 
         // GET: api/Project/5
         public IHttpActionResult Get(string ID)
         {
 
-            return new ServiceResult<ProjectTemplateMetadata>(_projectService.GetProjectMetaData(ID), this);
+            return new ServiceResult<Template>(_projectService.GetProjectMetaData(ID), this);
         }
 
     }
