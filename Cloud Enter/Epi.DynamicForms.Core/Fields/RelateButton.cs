@@ -33,10 +33,12 @@ namespace MvcDynamicForms.Fields
             Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
             Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
             PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
-            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
-            fontstyle = fieldAttributes.PromptFontStyle;
-            fontSize = fieldAttributes.PromptFontSize;
-            fontfamily = fieldAttributes.PromptFontFamily;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;          
+
+
+            fontstyle = fieldAttributes.ControlFontStyle;
+            fontSize = fieldAttributes.ControlFontSize;
+            fontfamily = fieldAttributes.ControlFontFamily;
             // IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
             //Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
             InputFieldfontstyle = fieldAttributes.ControlFontStyle;
@@ -60,7 +62,28 @@ namespace MvcDynamicForms.Fields
             var commandButtonTag = new TagBuilder("button");
 
             //commandButtonTag.Attributes.Add("text", Prompt);
-            commandButtonTag.InnerHtml = Prompt;
+
+            // prompt label
+            var prompt = new TagBuilder("label");
+           // var inputName = _form.FieldPrefix + _key;
+            prompt.SetInnerText(Prompt);
+
+            StringBuilder StyleValues = new StringBuilder();
+            StyleValues.Append(GetStyle(_fontstyle.ToString()));
+
+            double PromptSize = Prompt.Length * fontSize;
+
+            if (PromptSize > this.ControlWidth)
+            {
+                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _ControlWidth.ToString() + "px");
+            }
+            else
+            {
+                prompt.Attributes.Add("style", StyleValues.ToString());
+
+            }        
+            commandButtonTag.InnerHtml = prompt.ToString();
+        
             commandButtonTag.Attributes.Add("id", name);
             commandButtonTag.Attributes.Add("name", "Relate");
             //commandButtonTag.Attributes.Add("name", name);
@@ -120,6 +143,88 @@ namespace MvcDynamicForms.Fields
             wrapper.Attributes["id"] = name + "_fieldWrapper";
             wrapper.InnerHtml = html.ToString();
             return wrapper.ToString();
+        }
+
+        public string GetStyle(string ControlFontStyle)
+        {
+
+            StringBuilder FontStyle = new StringBuilder();
+            StringBuilder FontWeight = new StringBuilder();
+            StringBuilder TextDecoration = new StringBuilder();
+            StringBuilder CssStyles = new StringBuilder();
+
+            char[] delimiterChars = { ' ', ',' };
+            string[] Styles = ControlFontStyle.Split(delimiterChars);
+
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Italic":
+                        FontStyle.Append(Style.ToString());
+                        break;
+                    case "Oblique":
+                        FontStyle.Append(Style.ToString());
+
+                        break;
+
+                }
+
+            }
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Bold":
+                        FontWeight.Append(Style.ToString());
+                        break;
+                    case "Normal":
+                        FontWeight.Append(Style.ToString());
+
+                        break;
+
+                }
+
+            }
+            CssStyles.Append("font:");//1
+            if (!string.IsNullOrEmpty(FontStyle.ToString()))
+            {
+
+                CssStyles.Append(FontStyle);//2
+                CssStyles.Append(" ");//3
+            }
+            CssStyles.Append(FontWeight);
+            CssStyles.Append(" ");
+            CssStyles.Append(_fontSize.ToString() + "pt ");
+            CssStyles.Append(" ");
+            CssStyles.Append(_fontfamily.ToString());
+
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Strikeout":
+                        TextDecoration.Append("line-through");
+                        break;
+                    case "Underline":
+                        TextDecoration.Append(Style.ToString());
+
+                        break;
+
+                }
+
+            }
+
+            if (!string.IsNullOrEmpty(TextDecoration.ToString()))
+            {
+                CssStyles.Append(";text-decoration:");
+            }
+
+            CssStyles.Append(TextDecoration);
+
+
+            return CssStyles.ToString();
+
         }
 
         public override bool Validate()
