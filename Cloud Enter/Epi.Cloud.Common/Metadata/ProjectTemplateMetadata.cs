@@ -4,25 +4,25 @@ using System.ComponentModel;
 namespace Epi.Cloud.Common.Metadata
 {
     [DesignerCategory("code")]
-    public class ProjectTemplateMetadata
+    public class Template
     {
         public string Name { get; set; }
         public string Description { get; set; }
         public string CreateDate { get; set; }
         public string Level { get; set; }
-        public ProjectMetadata Project { get; set; }
+        public Project Project { get; set; }
         public SourceTable[] SourceTables { get; set; }
 
-        public ProjectTemplateMetadata Clone()
+        public Template Clone()
         {
-            var clone = (ProjectTemplateMetadata)MemberwiseClone();
+            var clone = (Template)MemberwiseClone();
             clone.Project = Project != null ? Project.Clone() : null;
             return clone;
         }
     }
 
     [DesignerCategory("code")]
-    public class ProjectMetadata
+    public class Project
     {
         public string MetadataSource { get; set; }
         public string EnterMakeviewInterpreter { get; set; }
@@ -44,26 +44,30 @@ namespace Epi.Cloud.Common.Metadata
         public bool EditorFontItalics { get; set; }
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
-        public ViewMetadata[] Views { get; set; }
-        public int?[] PageIds { get; set; }
-        public PageMetadata[] Pages { get; set; }
+        public View[] Views { get; set; }
 
+        /// <summary>
+        /// Page Identifying information
+        /// </summary>
+        /// <remarks>Tuple - ViewId, PageId, Position</remarks>
+        public Tuple<int, int, int>[]PageIdInfo { get; set; }
+ 
         //  public ProjectCollectedData CollectedData { get; set; }
 
-        public ProjectMetadata Clone()
+        public Project Clone()
         {
-            var clone = (ProjectMetadata)MemberwiseClone();
-            clone.Pages = new PageMetadata[Pages != null ? Pages.Length : 0];
-            for (int i = 0; i < clone.Pages.Length; ++i)
+            var clone = (Project)MemberwiseClone();
+            clone.Views = new View[Views != null ? Views.Length : 0];
+            for (int i = 0; i < clone.Views.Length; ++i)
             {
-                clone.Pages[i] = Pages[i];
+                clone.Views[i] = Views[i];
             }
             return clone;
         }
     }
 
     [DesignerCategory("code")]
-    public partial class ViewMetadata
+    public partial class View
     {
         public int ViewId { get; set; }
         public string Name { get; set; }
@@ -83,26 +87,33 @@ namespace Epi.Cloud.Common.Metadata
         public string EWEOrganizationKey { get; set; }
         public string EWEFormId { get; set; }
 
-        public ViewMetadata Clone()
+        public Page[] Pages { get; set; }
+
+        public View Clone()
         {
-            var clone = (ViewMetadata)MemberwiseClone();
+            var clone = (View)MemberwiseClone();
+            clone.Pages = new Page[Pages != null ? Pages.Length : 0];
+            for (int i = 0; i < clone.Pages.Length; ++i)
+            {
+                clone.Pages[i] = Pages[i];
+            }
             return clone;
         }
     }
 
     [DesignerCategory("code")]
-    public partial class PageMetadata
+    public partial class Page
     {
         public int? PageId { get; set; }
         public string Name { get; set; }
         public int Position { get; set; }
         public int BackgroundId { get; set; }
         public int ViewId { get; set; }
-        public FieldMetdata[] Fields { get; set; }
+        public Field[] Fields { get; set; }
     }
 
     [DesignerCategory("code")]
-    public partial class FieldMetdata
+    public partial class Field
     {
         public int FieldId { get; set; }
         public Guid UniqueId { get; set; }
@@ -175,19 +186,19 @@ namespace Epi.Cloud.Common.Metadata
         public string Text { get; set; }
     }
 
-    //[DesignerCategory("code")]
-    //public partial class ProjectCollectedData
-    //{
-    //    public CollectedDataDatabase Database { get; set; }
-    //}
+    [DesignerCategory("code")]
+    public partial class CollectedData
+    {
+        public Database Database { get; set; }
+    }
 
-    ///// <remarks/>
-    //[Serializable()]
-    //[DesignerCategory("code")]
-    //public partial class CollectedDataDatabase
-    //{
-    //    public string Source { get; set; }
-    //    public string DataDriver { get; set; }
-    //}
+    /// <remarks/>
+    [Serializable()]
+    [DesignerCategory("code")]
+    public partial class Database
+    {
+        public string Source { get; set; }
+        public string DataDriver { get; set; }
+    }
 }
 

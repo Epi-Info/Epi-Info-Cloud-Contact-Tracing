@@ -35,9 +35,9 @@ namespace Epi.Cloud.SqlServer
             }
         }
 
-        public ProjectTemplateMetadata GetProjectTemplateMetadata(string projectId)
+        public Common.Metadata.Template GetProjectTemplateMetadata(string projectId)
         {
-            ProjectTemplateMetadata templateMetaInfo = new ProjectTemplateMetadata();
+            var template = new Common.Metadata.Template();
 
             using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
             {
@@ -55,7 +55,7 @@ namespace Epi.Cloud.SqlServer
 
                     foreach (var projElement in dbInfoResult)
                     {
-                        ProjectMetadata projMetaDataInfo = new ProjectMetadata();
+                        var projMetaDataInfo = new Common.Metadata.Project();
                         projMetaDataInfo.Id = projElement.ProjectId.ToString();
                         projMetaDataInfo.Name = projElement.ProjectName;
                         projMetaDataInfo.Location = projElement.ProjectLocation;
@@ -138,7 +138,7 @@ namespace Epi.Cloud.SqlServer
                                      };
 
 
-                        List<ViewMetadata> lstViewMetadata = new List<ViewMetadata>();
+                        var lstViewMetadata = new List<Common.Metadata.View>();
 
                         var lstGetViews = result.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToList();
 
@@ -146,37 +146,37 @@ namespace Epi.Cloud.SqlServer
                         {
                             foreach (var viewProp in element)
                             {
-                                ViewMetadata viewMetaInfo = new ViewMetadata();
-                                viewMetaInfo.ViewId = viewProp.ViewId;
-                                viewMetaInfo.Name = viewProp.ViewName;
-                                viewMetaInfo.IsRelatedView = viewProp.IsRelatedView;
-                                viewMetaInfo.CheckCode = viewProp.CheckCode;
-                                viewMetaInfo.CheckCodeBefore = viewProp.CheckCodeBefore;
-                                viewMetaInfo.CheckCodeAfter = viewProp.CheckCodeAfter;
-                                viewMetaInfo.RecordCheckCodeBefore = viewProp.RecordCheckCodeBefore;
-                                viewMetaInfo.RecordCheckCodeAfter = viewProp.RecordCheckCodeAfter;
-                                viewMetaInfo.CheckCodeVariableDefinitions = viewProp.CheckCodeVariableDefinitions;
-                                viewMetaInfo.Width = viewProp.Width;
-                                viewMetaInfo.Height = viewProp.Height;
-                                viewMetaInfo.Orientation = viewProp.Orientation;
-                                viewMetaInfo.LabelAlign = viewProp.LabelAlign;
-                                viewMetaInfo.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
-                                viewMetaInfo.EIWSFormId = viewProp.EIWSFormId;
-                                viewMetaInfo.EWEOrganizationKey = viewProp.EWEOrganizationKey;
-                                viewMetaInfo.EWEFormId = viewProp.EWEFormId;
-                                lstViewMetadata.Add(viewMetaInfo);
+                                var view = new Common.Metadata.View();
+                                view.ViewId = viewProp.ViewId;
+                                view.Name = viewProp.ViewName;
+                                view.IsRelatedView = viewProp.IsRelatedView;
+                                view.CheckCode = viewProp.CheckCode;
+                                view.CheckCodeBefore = viewProp.CheckCodeBefore;
+                                view.CheckCodeAfter = viewProp.CheckCodeAfter;
+                                view.RecordCheckCodeBefore = viewProp.RecordCheckCodeBefore;
+                                view.RecordCheckCodeAfter = viewProp.RecordCheckCodeAfter;
+                                view.CheckCodeVariableDefinitions = viewProp.CheckCodeVariableDefinitions;
+                                view.Width = viewProp.Width;
+                                view.Height = viewProp.Height;
+                                view.Orientation = viewProp.Orientation;
+                                view.LabelAlign = viewProp.LabelAlign;
+                                view.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
+                                view.EIWSFormId = viewProp.EIWSFormId;
+                                view.EWEOrganizationKey = viewProp.EWEOrganizationKey;
+                                view.EWEFormId = viewProp.EWEFormId;
+                                lstViewMetadata.Add(view);
                                 break;
                             }
                         }
 
                         projMetaDataInfo.Views = lstViewMetadata.ToArray();
-                        var lstGetPages = result.GroupBy(u => u.PageId).Select(grp => grp.ToList()).ToList();
+                        var lstGetPages = result.GroupBy(u => new { u.ViewId, u.PageId }).Select(group => group.ToList()).ToList();
 
                         var sourceTableNames = new List<Tuple<string, string>>();
-                        List<PageMetadata> lstPageMetadata = new List<PageMetadata>();
+                        var lstPageMetadata = new List<Common.Metadata.Page>();
                         foreach (var element in lstGetPages)
                         {
-                            PageMetadata metapage = new PageMetadata();
+                            var metapage = new Common.Metadata.Page();
                             foreach (var pageEle in element)
                             {
                                 metapage.PageId = pageEle.PageId;
@@ -187,12 +187,12 @@ namespace Epi.Cloud.SqlServer
                                 break;
                             }
 
-                            List<FieldMetdata> lstFieldMetadata = new List<FieldMetdata>();
+                            List<Field> lstFieldMetadata = new List<Field>();
 
                             foreach (var fieldElement in element)
                             {
                                 //Populate Fields Data                          
-                                FieldMetdata metaField = new FieldMetdata();
+                                Field metaField = new Field();
                                 metaField.UniqueId = new System.Guid(fieldElement.UniqueId.ToString());
                                 metaField.Name = fieldElement.Name;
                                 metaField.PageId = fieldElement.PageId;
@@ -250,7 +250,11 @@ namespace Epi.Cloud.SqlServer
                             sourceTableNames.AddRange(metapage.Fields.Where(fields => !string.IsNullOrWhiteSpace(fields.SourceTableName))
                                 .Select(field => new Tuple<string, string>(field.SourceTableName, field.TextColumnName)).ToArray());
                         }
-                        projMetaDataInfo.Pages = lstPageMetadata.ToArray();
+
+                        foreach (var view in projMetaDataInfo.Views)
+                        {
+                            view.Pages = lstPageMetadata.Where(v => v.ViewId == view.ViewId).ToArray();
+                        }
 
                         sourceTableNames = sourceTableNames.Distinct().ToList();
                         var sourceTables = new List<SourceTable>();
@@ -259,8 +263,8 @@ namespace Epi.Cloud.SqlServer
                             var sourceTable = new SourceTable { TableName = sourceTableInfo.Item1, Items = PopulateCodeTables(sourceTableInfo.Item1, sourceTableInfo.Item2).ToArray() };
                             sourceTables.Add(sourceTable);
                         }
-                        templateMetaInfo.SourceTables = sourceTables.ToArray();
-                        templateMetaInfo.Project = projMetaDataInfo;
+                        template.SourceTables = sourceTables.ToArray();
+                        template.Project = projMetaDataInfo;
                     }
                 }
                 catch (System.Exception ex)
@@ -268,7 +272,7 @@ namespace Epi.Cloud.SqlServer
 
                 }
 
-                return templateMetaInfo;
+                return template;
             }
         }
 

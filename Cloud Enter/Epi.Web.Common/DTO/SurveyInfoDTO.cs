@@ -16,7 +16,7 @@ namespace Epi.Web.Enter.Common.DTO
         private string _DepartmentName;
         private string _OrganizationName;
         private string _XML;
-        private ProjectTemplateMetadata _projectTemplateMetadata;
+        private Template _projectTemplateMetadata;
         private bool _IsSuccess;
         private DateTime _ClosingDate;
         private Guid _UserPublishKey;
@@ -109,7 +109,7 @@ namespace Epi.Web.Enter.Common.DTO
         }
 
         [DataMember]
-        public ProjectTemplateMetadata ProjectTemplateMetadata
+        public Template ProjectTemplateMetadata
         {
             get { return _projectTemplateMetadata; }
             set { _projectTemplateMetadata = value; }

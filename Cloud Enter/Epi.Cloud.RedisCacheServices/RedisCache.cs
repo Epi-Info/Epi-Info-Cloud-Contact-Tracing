@@ -1,4 +1,4 @@
-﻿//#define UseAsync
+﻿#define RunSynchronous 
 
 using System;
 using System.Configuration;
@@ -50,17 +50,40 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        protected async Task<string> Get(string prefix, string key)
+        protected async Task<bool> KeyExists(string prefix, string key)
         {
- //           return null;
             key = (prefix + key).ToLowerInvariant();
             try
             {
-#if UseAsync
-                var task = Cache.StringGetAsync(key);
-                var redisValue = await task;
+#if RunSynchronous
+                return Cache.KeyExists(key);
 #else
+                return await Cache.KeyExistsAsync(key);
+#endif
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        protected async Task<string> Get(string prefix, string key)
+        {
+            key = (prefix + key).ToLowerInvariant();
+            try
+            {
+#if RunSynchronous
                 var redisValue = Cache.StringGet(key);
+                if (redisValue.HasValue)
+                {
+                    Cache.KeyExpire(key, new TimeSpan(0, 5, 0));
+                }
+#else
+                var redisValue = await Cache.StringGetAsync(key);
+                if (redisValue.HasValue)
+                {
+                    Cache.KeyExpireAsync(key, new TimeSpan(0, 5, 0));
+                }
 #endif
                 return redisValue;
             }
@@ -72,22 +95,19 @@ namespace Epi.Cloud.CacheServices
 
         protected async Task<bool> Set(string prefix, string key, string value)
         {
-            //return false;
-            var isSuccessful = false;
             key = (prefix + key).ToLowerInvariant();
             try
             {
-#if UseAsync
-                var task = Cache.StringSetAsync(key, value);
-                isSuccessful = await task;
+#if RunSynchronous
+                return Cache.StringSet(key, value, new TimeSpan(0, 5, 0));
 #else
-                isSuccessful = Cache.StringSet(key, value);
+                return await Cache.StringSetAsync(key, value);
+                //return await Cache.StringSetAsync(key, value, new TimeSpan(0, 5, 0));
 #endif
-                return isSuccessful;
             }
             catch (Exception ex)
             {
-                return isSuccessful;
+                return false;
             }
         }
 
@@ -96,10 +116,10 @@ namespace Epi.Cloud.CacheServices
             key = (prefix + key).ToLowerInvariant();
             try
             {
-#if UseAsync
-                await Cache.KeyDeleteAsync(key);
-#else
+#if RunSynchronous
                 Cache.KeyDelete(key);
+#else
+                await Cache.KeyDeleteAsync(key);
 #endif
             }
             catch (Exception ex)

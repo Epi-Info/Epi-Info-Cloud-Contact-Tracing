@@ -14,19 +14,20 @@ namespace Epi.Cloud.FormMetadataServices
         public List<FieldAttributes> GetMetadata(string formId, int pageNumber)
         {
             ProjectMetadataProvider p = new ProjectMetadataProvider();
-            ProjectTemplateMetadata projectTemplateMetadata;
+            Template projectTemplateMetadata;
             projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
             List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 
             return Results;
         }
 
-        public static List<FieldAttributes> GetFieldMedatadata(ProjectTemplateMetadata projectTemplateMetadata, string formId, int pageNumber)
+        public static List<FieldAttributes> GetFieldMedatadata(Template projectTemplateMetadata, string formId, int pageNumber)
         {
-            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
             var pagePosition = pageNumber - 1;
-            List<FieldAttributes> tempList = new List<FieldAttributes>();
-            var Results = projectTemplateMetadata.Project.Pages.Where(pg => pg.Position == pagePosition && pg.ViewId == view.ViewId).Single().Fields.Select(f => new FieldAttributes
+            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).Single();
+            var results = view.Pages
+            .Where(p => p.Position == pagePosition).Single()
+            .Fields.Select(f => new FieldAttributes
             {
                 UniqueId = f.UniqueId.ToString("D"),
                 RequiredMessage = "This field is required",
@@ -65,7 +66,7 @@ namespace Epi.Cloud.FormMetadataServices
                 RelatedViewId = f.RelatedViewId.ToString()
 
             }).ToList();
-            return Results;
+            return results;
         }
     }
     public class CDTProject

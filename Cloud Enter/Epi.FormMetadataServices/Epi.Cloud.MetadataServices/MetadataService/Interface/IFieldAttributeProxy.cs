@@ -7,6 +7,6 @@ namespace Epi.Cloud.MetadataServices.ProxiesService.Interface
 {
     public interface IFieldAttributeProxy
     {
-        Task<ProjectTemplateMetadata> GetProjectMetadataAsync(string projectId);//Read project
+        Task<Template> GetProjectMetadataAsync(string projectId);//Read project
     }
 }

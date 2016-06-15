@@ -4,9 +4,9 @@ namespace Epi.Cloud.CacheServices
 {
     public interface IMetadataCache
     {
-        ProjectTemplateMetadata GetProjectTemplateMetadata(string projectId, int? pageId = null);
-        PageMetadata GetPageMetadata(string projectId, int pageId);
-        bool SetProjectTemplateMetadata(ProjectTemplateMetadata projectTemplateMetadata);
+        Template GetProjectTemplateMetadata(string projectId, int? pageId = null);
+        Page GetPageMetadata(string projectId, int pageId);
+        bool SetProjectTemplateMetadata(Template projectTemplateMetadata);
         void ClearProjectTemplateMetadataFromCache(string projectId);
     }
 }

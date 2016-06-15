@@ -9,7 +9,7 @@ namespace Epi.Cloud.MetadataServices
     public class ProjectMetadataProvider
     {
         //Pass the page id and call the DBAccess API and get the project fileds.
-        public async Task<ProjectTemplateMetadata> GetProjectMetadata(string projectId)
+        public async Task<Template> GetProjectMetadata(string projectId)
         {
             FieldAttributeServiceProxy serviceProxy = new FieldAttributeServiceProxy();
             var task = serviceProxy.GetProjectMetadataAsync(projectId);

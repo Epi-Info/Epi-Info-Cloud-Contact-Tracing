@@ -11,13 +11,13 @@ namespace Epi.Cloud.MetadataServices.ProxiesService
     {
 
         //Forming url to call the DBAccess API
-        public async Task<ProjectTemplateMetadata> GetProjectMetadataAsync(string projectId)
+        public async Task<Template> GetProjectMetadataAsync(string projectId)
         {
-            ProjectTemplateMetadata projectResponse= new ProjectTemplateMetadata();
+            Template projectResponse= new Template();
             string url = string.Format("{0}?ID={1}", ApiEndPoints.Project, projectId);
             if (url != null)
             {
-                projectResponse = GetData<ProjectTemplateMetadata>(url);
+                projectResponse = GetData<Template>(url);
             }
             return await Task.FromResult(projectResponse);
         }

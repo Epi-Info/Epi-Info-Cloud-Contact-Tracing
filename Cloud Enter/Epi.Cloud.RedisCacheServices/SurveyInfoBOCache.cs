@@ -21,6 +21,11 @@ namespace Epi.Cloud.CacheServices
                 && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson))
             {
                 surveyInfoBOJson = Get(SurveyInfoBOPrefix, projectId).Result;
+                if (surveyInfoBOJson != null)
+                {
+                    _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBOJson);
+                    _surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
+                }
             }
             return surveyInfoBOJson;
         }
@@ -31,6 +36,18 @@ namespace Epi.Cloud.CacheServices
             _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBOJson);
             _surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
             return isSuccessful;
+        }
+
+        public bool SurveyInfoBoMetadataExists(string projectId)
+        {
+            bool keyExists = true;
+            string surveyInfoBOJson;
+            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBOJson)
+                            && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson))
+            {
+                keyExists = KeyExists(SurveyInfoBOPrefix, projectId).Result;
+            }
+            return keyExists;
         }
     }
 }

@@ -75,6 +75,9 @@ namespace Epi.Web.MVC.Facade
             if (FormsHierarchyDTOList == null)
             {
                 surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
+                // TODO: GEL
+                //var surveyInfoBoCache = (Cloud.CacheServices.ISurveyInfoBOCache)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(Cloud.CacheServices.IEpiCloudCache));
+
                 if (_SurveyAnswerDTOList != null)
                 {
                     foreach (var item in _SurveyAnswerDTOList)
