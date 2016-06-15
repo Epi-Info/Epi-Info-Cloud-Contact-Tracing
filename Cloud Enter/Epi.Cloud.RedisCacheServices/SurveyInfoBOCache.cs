@@ -21,6 +21,11 @@ namespace Epi.Cloud.CacheServices
                 && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson))
             {
                 surveyInfoBOJson = Get(SurveyInfoBOPrefix, projectId).Result;
+                if (surveyInfoBOJson != null)
+                {
+                    _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBOJson);
+                    _surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
+                }
             }
             return surveyInfoBOJson;
         }
@@ -44,6 +49,5 @@ namespace Epi.Cloud.CacheServices
             }
             return keyExists;
         }
-
     }
 }
