@@ -789,204 +789,190 @@ namespace Epi.Web.EF
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
 
-            IsSqlProject = IsEISQLProject(criteria.SurveyId);//Checks to see if current form is SqlProject
+            //IsSqlProject = IsEISQLProject(criteria.SurveyId);//Checks to see if current form is SqlProject
 
             DataAccessRuleId = this.GetDataAccessRule(criteria.SurveyId, criteria.UserId);
 
-            if (IsSqlProject)
+            //if (IsSqlProject)
+            //{
+            //    //make a connection to datasource table to read the connection string.
+            //    //do a read to see which column belongs to which page/table.
+            //    //do a read from ResponseDisplaySettings to read the column names. if for a given survey they dont exist 
+            //    //read the first 5 columns from EI7 sql server database.
+
+            //    string tableName = ReadEI7DatabaseName(criteria.SurveyId);
+
+            //    string EI7ConnectionString = DataObjectFactory.EWEADOConnectionString.Substring(0, DataObjectFactory.EWEADOConnectionString.LastIndexOf('=')) + "=" + tableName;
+
+
+            //    SqlConnection EI7Connection = new SqlConnection(EI7ConnectionString);
+            //    string EI7Query;
+            //    if (!criteria.GetAllColumns)
+            //    {
+            //        EI7Query = BuildEI7Query(criteria.SurveyId, criteria.SortOrder, criteria.Sortfield, EI7ConnectionString, criteria.SearchCriteria, false, criteria.PageSize, criteria.PageNumber, false, "", criteria.UserId, criteria.IsShareable, criteria.UserOrganizationId, DataAccessRuleId);
+
+            //    }
+            //    else
+            //    {
+            //        EI7Query = BuildEI7ResponseAllFieldsQuery(criteria.SurveyAnswerIdList[0].ToString(), criteria.SurveyId, EI7ConnectionString, criteria.UserId);
+            //    }
+            //    if (EI7Query == string.Empty)
+            //    {
+            //        return result;
+            //    }
+
+            //    SqlCommand EI7Command = new SqlCommand(EI7Query, EI7Connection);
+            //    EI7Command.CommandType = CommandType.Text;
+
+            //    SqlDataAdapter EI7Adapter = new SqlDataAdapter(EI7Command);
+
+            //    DataSet EI7DS = new DataSet();
+
+            //    EI7Connection.Open();
+
+            //    try
+            //    {
+            //        EI7Adapter.Fill(EI7DS);
+            //        EI7Connection.Close();
+            //    }
+            //    catch (Exception)
+            //    {
+            //        EI7Connection.Close();
+            //        throw;
+            //    }
+
+
+            //    // List<Dictionary<string, string>> DataRows = new List<Dictionary<string, string>>();
+
+            //    for (int i = 0; i < EI7DS.Tables[0].Rows.Count; i++)
+            //    {
+            //        Dictionary<string, string> rowDic = new Dictionary<string, string>();
+            //        SurveyResponseBO SurveyResponseBO = new Enter.Common.BusinessObject.SurveyResponseBO();
+            //        for (int j = 0; j < EI7DS.Tables[0].Columns.Count; j++)
+            //        {
+            //            rowDic.Add(EI7DS.Tables[0].Columns[j].ColumnName, EI7DS.Tables[0].Rows[i][j].ToString());
+            //        }
+            //        //.Skip((PageNumber - 1) * PageSize).Take(PageSize); ;
+            //        //IEnumerable<KeyValuePair<string, string>> temp = rowDic.AsEnumerable();
+            //        //temp.Skip((PageNumber - 1) * PageSize).Take(PageSize); 
+
+            //        SurveyResponseBO.SqlData = rowDic;
+            //        result.Add(SurveyResponseBO);
+            //    }
+
+            //    //SqlProjectResponsesCount = EI7DS.Tables[0].Rows.Count;
+
+            //    //result = result.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize).ToList();
+            //    //SurveyResponseBO.SqlResponseDataBO.SqlData = DataRows;
+            //}
+            //else
+            //{
+
+
+            try
             {
-                //make a connection to datasource table to read the connection string.
-                //do a read to see which column belongs to which page/table.
-                //do a read from ResponseDisplaySettings to read the column names. if for a given survey they dont exist 
-                //read the first 5 columns from EI7 sql server database.
 
-                string tableName = ReadEI7DatabaseName(criteria.SurveyId);
+                Guid Id = new Guid(criteria.SurveyId);
 
-                string EI7ConnectionString = DataObjectFactory.EWEADOConnectionString.Substring(0, DataObjectFactory.EWEADOConnectionString.LastIndexOf('=')) + "=" + tableName;
-
-
-                SqlConnection EI7Connection = new SqlConnection(EI7ConnectionString);
-                string EI7Query;
-                if (!criteria.GetAllColumns)
+                using (var Context = DataObjectFactory.CreateContext())
                 {
-                    EI7Query = BuildEI7Query(criteria.SurveyId, criteria.SortOrder, criteria.Sortfield, EI7ConnectionString, criteria.SearchCriteria, false, criteria.PageSize, criteria.PageNumber, false, "", criteria.UserId, criteria.IsShareable, criteria.UserOrganizationId, DataAccessRuleId);
 
-                }
-                else
-                {
-                    EI7Query = BuildEI7ResponseAllFieldsQuery(criteria.SurveyAnswerIdList[0].ToString(), criteria.SurveyId, EI7ConnectionString, criteria.UserId);
-                }
-                if (EI7Query == string.Empty)
-                {
-                    return result;
-                }
-
-                SqlCommand EI7Command = new SqlCommand(EI7Query, EI7Connection);
-                EI7Command.CommandType = CommandType.Text;
-
-                SqlDataAdapter EI7Adapter = new SqlDataAdapter(EI7Command);
-
-                DataSet EI7DS = new DataSet();
-
-                EI7Connection.Open();
-
-                try
-                {
-                    EI7Adapter.Fill(EI7DS);
-                    EI7Connection.Close();
-                }
-                catch (Exception)
-                {
-                    EI7Connection.Close();
-                    throw;
-                }
-
-
-                // List<Dictionary<string, string>> DataRows = new List<Dictionary<string, string>>();
-
-                for (int i = 0; i < EI7DS.Tables[0].Rows.Count; i++)
-                {
-                    Dictionary<string, string> rowDic = new Dictionary<string, string>();
-                    SurveyResponseBO SurveyResponseBO = new Enter.Common.BusinessObject.SurveyResponseBO();
-                    for (int j = 0; j < EI7DS.Tables[0].Columns.Count; j++)
+                    IQueryable<SurveyResponse> SurveyResponseList;
+                    if (criteria.IsShareable)
                     {
-                        rowDic.Add(EI7DS.Tables[0].Columns[j].ColumnName, EI7DS.Tables[0].Rows[i][j].ToString());
-                    }
-                    //.Skip((PageNumber - 1) * PageSize).Take(PageSize); ;
-                    //IEnumerable<KeyValuePair<string, string>> temp = rowDic.AsEnumerable();
-                    //temp.Skip((PageNumber - 1) * PageSize).Take(PageSize); 
-
-                    SurveyResponseBO.SqlData = rowDic;
-                    result.Add(SurveyResponseBO);
-                }
-
-                //SqlProjectResponsesCount = EI7DS.Tables[0].Rows.Count;
-
-                //result = result.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize).ToList();
-                //SurveyResponseBO.SqlResponseDataBO.SqlData = DataRows;
-            }
-            else
-            {
-
-
-                try
-                {
-
-                    Guid Id = new Guid(criteria.SurveyId);
-
-                    using (var Context = DataObjectFactory.CreateContext())
-                    {
-
-                        IQueryable<SurveyResponse> SurveyResponseList;
-                        if (criteria.IsShareable)
+                        //Shareable
+                        switch (DataAccessRuleId)
                         {
-                            //Shareable
-                            switch (DataAccessRuleId)
-                            {
-                                case 1: //   Organization users can only access the data of there organization
-                                    SurveyResponseList = Context.SurveyResponses.Where(
-                                x => x.SurveyId == Id
-                                                      //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                      //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                      && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                      && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                      && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                       .OrderByDescending(x => x.DateUpdated);
-                                    break;
-                                case 2:    // All users in host organization will have access to all data of all organizations  
+                            case 1: //   Organization users can only access the data of there organization
+                                SurveyResponseList = Context.SurveyResponses.Where(
+                            x => x.SurveyId == Id
+                                                  //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                                                  //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                                                  && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                                  && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                                  && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                                   .OrderByDescending(x => x.DateUpdated);
+                                break;
+                            case 2:    // All users in host organization will have access to all data of all organizations  
 
-                                    // get All the users of Host organization
-                                    var Users = Context.UserOrganizations.Where(x => x.OrganizationID == criteria.UserOrganizationId && x.Active == true).ToList();
-                                    int Count = Users.Where(x => x.UserID == criteria.UserId).Count();
-                                    if (Count > 0)
-                                    {
-                                        SurveyResponseList = Context.SurveyResponses.Where(
-                                         x => x.SurveyId == Id
-                                                         //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                         //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                         && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                         && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                         && x.StatusId >= 1)
-                                                          .OrderByDescending(x => x.DateUpdated);
-                                    }
-                                    else
-                                    {
-
-                                        SurveyResponseList = Context.SurveyResponses.Where(
-                                           x => x.SurveyId == Id
-                                                         //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                         //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                         && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                         && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                         && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                          .OrderByDescending(x => x.DateUpdated);
-                                    }
-                                    break;
-                                case 3: // All users of all organizations can access all data 
+                                // get All the users of Host organization
+                                var Users = Context.UserOrganizations.Where(x => x.OrganizationID == criteria.UserOrganizationId && x.Active == true).ToList();
+                                int Count = Users.Where(x => x.UserID == criteria.UserId).Count();
+                                if (Count > 0)
+                                {
                                     SurveyResponseList = Context.SurveyResponses.Where(
-                               x => x.SurveyId == Id
-                                  // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                  //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                  && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                     x => x.SurveyId == Id
+                                                     //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                                                     //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                                                     && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                                      && x.StatusId >= 1)
                                                       .OrderByDescending(x => x.DateUpdated);
-                                    break;
-                                default:
+                                }
+                                else
+                                {
+
                                     SurveyResponseList = Context.SurveyResponses.Where(
-                                  x => x.SurveyId == Id
-                                      //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                      //  && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                      && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                          && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                         .OrderByDescending(x => x.DateUpdated);
-                                    break;
-
-                            }
-
-
-
-                        }
-                        else
-                        {
-
-                            //SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                            // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                            //    && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                            //    && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated); 
-
-                            SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                               && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                               && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
-
-
-
-                        }
-
-
-                        SurveyResponseList = SurveyResponseList.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
-
-
-                        foreach (SurveyResponse Response in SurveyResponseList)
-                        {
-
-                            result.Add(Mapper.Map(Response, Response.Users.First()));
+                                       x => x.SurveyId == Id
+                                                     //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                                                     //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                                                     && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                                     && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                                      .OrderByDescending(x => x.DateUpdated);
+                                }
+                                break;
+                            case 3: // All users of all organizations can access all data 
+                                SurveyResponseList = Context.SurveyResponses.Where(
+                           x => x.SurveyId == Id
+                              // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                              //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                              && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                            && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                                 && x.StatusId >= 1)
+                                                  .OrderByDescending(x => x.DateUpdated);
+                                break;
+                            default:
+                                SurveyResponseList = Context.SurveyResponses.Where(
+                              x => x.SurveyId == Id
+                                  //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                                  //  && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                                  && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                 && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                      && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                                     .OrderByDescending(x => x.DateUpdated);
+                                break;
 
                         }
+                        
+                    }
+                    else
+                    {
 
+                        //SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                        // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
+                        //    && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
+                        //    && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated); 
 
+                        SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                           && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                           && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
+                        
                     }
 
-                }
-                catch (Exception ex)
-                {
-                    throw (ex);
-                }
+                    SurveyResponseList = SurveyResponseList.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
 
+                    foreach (SurveyResponse Response in SurveyResponseList)
+                    {
+                        result.Add(Mapper.Map(Response, Response.Users.First()));
+                    }
+                }
             }
-
+            catch (Exception ex)
+            {
+                throw (ex);
+            }    
 
             return result;
         }

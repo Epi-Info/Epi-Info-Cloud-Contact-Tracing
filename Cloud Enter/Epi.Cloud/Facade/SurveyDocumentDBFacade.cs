@@ -4,7 +4,6 @@ using Epi.Web.MVC.Models;
 using MvcDynamicForms;
 using Epi.Cloud.DataEntryServices;
 using Epi.Cloud.DataEntryServices.Model;
-using MvcDynamicForms.Fields;
 using System;
 
 namespace Epi.Web.MVC.Facade
@@ -16,7 +15,7 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
 
         #region Insert Into Servey Response to DocumentDB
-        public bool InsertSurveyResponseToDocumentDBStoreAsync(List<FieldAttributes> metadata, SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        public bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();
@@ -30,8 +29,8 @@ namespace Epi.Web.MVC.Facade
                 GlobalRecordID = responseId,
                 PageId = form.PageId,
                 PagePosition = "0",
-                DateCreated=DateTime.UtcNow,
-                DateUpdated=DateTime.UtcNow
+                DateCreated = DateTime.UtcNow,
+                DateUpdated = DateTime.UtcNow
             };
 
             _storeSurvey.SurveyProperties = _surveyResponseData;
@@ -80,10 +79,16 @@ namespace Epi.Web.MVC.Facade
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             SurveyQuestionandAnswer surveyResponse = new SurveyQuestionandAnswer();
             //surveyResponse.SurveyQAList = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(databaseName,responseId,pageId);
-            var respnse = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(suveyName, responseID, pageId);
-            surveyResponse.SurveyQAList = respnse.SurveyQAList;
+
+            surveyResponse = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(suveyName, responseID, pageId);
+            if (surveyResponse != null)
+            {
+                surveyResponse.SurveyQAList = surveyResponse.SurveyQAList;
+            }
+
             return surveyResponse;
         }
+
         #endregion
 
     }

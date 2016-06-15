@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Epi.Cloud.DataEntryServices
@@ -32,7 +31,7 @@ namespace Epi.Cloud.DataEntryServices
         ///
         public bool InsertToSruveyToDocumentDB(Survey _surveyData)
         {
-           
+
 
             if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
             {
@@ -44,7 +43,7 @@ namespace Epi.Cloud.DataEntryServices
                 try
                 {
                     //Instance of DocumentClient"
-                    client = new DocumentClient(new Uri(serviceEndpoint),authKey);
+                    client = new DocumentClient(new Uri(serviceEndpoint), authKey);
 
                     //Getting reference to Database 
                     Database database = ReadDatabase(_surveyData.SurveyName);
@@ -205,14 +204,17 @@ namespace Epi.Cloud.DataEntryServices
             try
             {
                 var query = client.CreateDocumentQuery(docUri, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".id = '" + responseId + "'", queryOptions);
-                var _surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
+                //var _surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
 
 
                 var _surveyDataFromDocumentDB = (SurveyQuestionandAnswer)query.AsEnumerable().FirstOrDefault();
 
-                surveyData.SurveyQAList = _surveyDataFromDocumentDB.SurveyQAList;
+                if (_surveyDataFromDocumentDB != null)
+                {
+                    surveyData.SurveyQAList = _surveyDataFromDocumentDB.SurveyQAList;
 
-                return surveyData;
+                    return surveyData;
+                }
             }
             catch (DocumentQueryException ex)
             {
@@ -242,7 +244,7 @@ namespace Epi.Cloud.DataEntryServices
         #region ReadSurveyFromDocumentDBByResponseId,PAgeId
         public SurveyQuestionandAnswer ReadSruveyFromDocumentDBByPageandRespondId(string dbName, string responseId, string pageId)
         {
-            
+
             SurveyQuestionandAnswer _surveyAnswer = new SurveyQuestionandAnswer();
 
             if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
@@ -278,8 +280,8 @@ namespace Epi.Cloud.DataEntryServices
 
         #region ReadAllRecordsBySurveyID 
         public List<SurveyResponse> ReadAllRecordsBySurveyID(string dbName, string surveyId)
-        { 
-            List<SurveyResponse> _surveyResponse=null;
+        {
+            List<SurveyResponse> _surveyResponse = null;
 
             if (string.IsNullOrWhiteSpace(serviceEndpoint) || string.IsNullOrWhiteSpace(authKey))
             {
@@ -290,17 +292,8 @@ namespace Epi.Cloud.DataEntryServices
                 try
                 {
                     //Instance of DocumentClient"
-                    this.client = new DocumentClient(new Uri(serviceEndpoint),authKey);
-
-                    //Getting reference to Database
-                    Database database = ReadDatabase(dbName);
-
-                    //Read Collection
-                    DocumentCollection collection = ReadCollection(database.SelfLink, dbName);
-
-
-                    //Read collection and store data  
-                    _surveyResponse = GellAllSurveyDataBySurveyId(dbName,surveyId);
+                    this.client = new DocumentClient(new Uri(serviceEndpoint), authKey);
+                    _surveyResponse = GellAllSurveyDataBySurveyId(dbName, surveyId);
 
                 }
                 catch (DocumentQueryException ex)
@@ -308,7 +301,7 @@ namespace Epi.Cloud.DataEntryServices
                     Console.WriteLine(ex.ToString());
                 }
             }
-            return _surveyResponse; 
+            return _surveyResponse;
         }
         #endregion
 
@@ -327,24 +320,24 @@ namespace Epi.Cloud.DataEntryServices
             List<SurveyResponse> surveyList = new List<SurveyResponse>();
             try
             {
-                var query = client.CreateDocumentQuery("dbs/-9crAA==/colls/-9crAIJDZQA=/", "SELECT " + collectionName + ".GlobalRecordID,"+ collectionName + ".SurveyID,"+ collectionName+ ".RecStatus,"+ collectionName + ".PageId,"+ collectionName+ ".PagePosition,"+ collectionName+ ".DateOfInterview,"+ collectionName + ".DateCreated,"+ collectionName + ".DateUpdated FROM   " + collectionName + " WHERE " + collectionName + ".SurveyID = '" + surveyId + "'", queryOptions);
+                var query = client.CreateDocumentQuery(docUri, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".SurveyID," + collectionName + ".RecStatus," + collectionName + ".PageId," + collectionName + ".PagePosition," + collectionName + ".DateOfInterview," + collectionName + ".DateCreated," + collectionName + ".DateUpdated FROM   " + collectionName + " WHERE " + collectionName + ".SurveyID = '" + surveyId + "'", queryOptions);
                 var _surveyDataFromDocumentDB = query.AsQueryable();
-                foreach(SurveyProperties item in _surveyDataFromDocumentDB)
-                {                    
+                foreach (SurveyProperties item in _surveyDataFromDocumentDB)
+                {
                     SurveyResponse surveyResponse = new SurveyResponse();
-                    surveyResponse.ResponseId =new Guid(item.GlobalRecordID);
+                    surveyResponse.ResponseId = new Guid(item.GlobalRecordID);
                     surveyResponse.SurveyId = new Guid(item.SurveyID);
                     surveyResponse.DateUpdated = item.DateUpdated;
-                    surveyResponse.StatusId = item.RecStatus; 
+                    surveyResponse.StatusId = item.RecStatus;
                     surveyResponse.DateCreated = item.DateCreated;
                     surveyList.Add(surveyResponse);
-                } 
+                }
             }
             catch (DocumentQueryException ex)
             {
                 Console.WriteLine(ex.ToString());
-            } 
-            return surveyList; 
+            }
+            return surveyList;
         }
         #endregion
         #endregion

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using Newtonsoft.Json;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -78,7 +77,7 @@ namespace Epi.Cloud.Common.Metadata
         public int? Width { get; set; }
         public int? Height { get; set; }
         public string Orientation { get; set; }
-        public string LabelAlign { get; set; }            
+        public string LabelAlign { get; set; }
         public string EIWSOrganizationKey { get; set; }
         public string EIWSFormId { get; set; }
         public string EWEOrganizationKey { get; set; }
@@ -110,7 +109,7 @@ namespace Epi.Cloud.Common.Metadata
         public string Name { get; set; }
         public int? PageId { get; set; }
         public int FieldTypeId { get; set; }
-        public string PageName { get; set; }       
+        public string PageName { get; set; }
         public double? ControlTopPositionPercentage { get; set; }
         public double? ControlLeftPositionPercentage { get; set; }
         public double? ControlHeightPercentage { get; set; }

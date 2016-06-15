@@ -16,7 +16,6 @@ using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
-using Epi.Cloud.FormMetadataServices;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -1318,9 +1317,14 @@ namespace Epi.Web.MVC.Controllers
 
         }
         private MvcDynamicForms.Form SaveCurrentForm(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
-            bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null
+            bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<FormsHierarchyDTO> FormsHierarchyDTOList = null
             )
         {
+            //_isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+            //if (responseId != null)
+            //{
+            //    _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+            //}
 
             //SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId).SurveyResponseList[0];
             SurveyAnswer = FormsHierarchyDTOList.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
