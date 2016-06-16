@@ -133,7 +133,7 @@ namespace Epi.Cloud.CacheServices
             foreach (var endpoint in endpoints)
             {
                 var server = Connection.GetServer(endpoint);
-                var keys = server.Keys(0, prefix + "*");
+                var keys = server.Keys(0, prefix.ToLowerInvariant() + "*");
                 foreach (var key in keys)
                 {
                     Cache.KeyDelete(key);
