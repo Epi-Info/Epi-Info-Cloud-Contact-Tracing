@@ -140,7 +140,7 @@ namespace Epi.Web.MVC.Utility
                 {
                     var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
-                    //StartNewcode
+                    ////StartNewcode
                     //string FieldValue = string.Empty;
                     //if (_SurveyAnswerFromDocumentDB != null)
                     //{
@@ -333,7 +333,12 @@ namespace Epi.Web.MVC.Utility
             _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            return response.SurveyQAList;
+            if (response != null)
+            {
+                return response.SurveyQAList;
+            }
+
+            return null;
         }
         #endregion
 
@@ -963,7 +968,7 @@ namespace Epi.Web.MVC.Utility
 
             return DropDown;
         }
- 
+
         public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName, string CodeColumnName)
         {
             StringBuilder DropDownValues = new StringBuilder();
