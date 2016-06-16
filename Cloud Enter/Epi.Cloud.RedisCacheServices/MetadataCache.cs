@@ -135,7 +135,7 @@ namespace Epi.Cloud.CacheServices
         /// ClearProjectMetadataFromCache
         /// </summary>
         /// <param name="projectId"></param>
-        public void ClearProjectMetadataFromCache(string projectId)
+        public void ClearProjectTemplateMetadataFromCache(string projectId)
         {
             var metadata = GetProjectTemplateMetadata(projectId);
             if (metadata != null)
