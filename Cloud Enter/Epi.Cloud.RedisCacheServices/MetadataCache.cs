@@ -132,7 +132,7 @@ namespace Epi.Cloud.CacheServices
         }
 
         /// <summary>
-        /// ClearProjectTemplateMetadataFromCache
+        /// ClearProjectMetadataFromCache
         /// </summary>
         /// <param name="projectId"></param>
         public void ClearProjectTemplateMetadataFromCache(string projectId)
@@ -152,6 +152,11 @@ namespace Epi.Cloud.CacheServices
                 _weakProjectMetadataObjectCache.Remove(projectId);
                 Delete(MetadataPrefix, projectId);
             }
+        }
+
+        public void ClearAllMetadataFromCache()
+        {
+            DeleteAllKeys(MetadataPrefix);
         }
     }
 }

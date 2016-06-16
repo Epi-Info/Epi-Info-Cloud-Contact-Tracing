@@ -126,5 +126,39 @@ namespace Epi.Cloud.CacheServices
             {
             }
         }
+
+        protected void DeleteAllKeys(string prefix)
+        {
+            var endpoints = Connection.GetEndPoints(true);
+            foreach (var endpoint in endpoints)
+            {
+                var server = Connection.GetServer(endpoint);
+                var keys = server.Keys(0, prefix + "*");
+                foreach (var key in keys)
+                {
+                    Cache.KeyDelete(key);
+                }
+            }
+        }
+
+        public void ClearCache()
+        {
+            var endpoints = Connection.GetEndPoints(true);
+            foreach (var endpoint in endpoints)
+            {
+                var server = Connection.GetServer(endpoint);
+                server.FlushDatabase();
+            }
+        }
+
+        public void ClearAllDatabases()
+        {
+            var endpoints = Connection.GetEndPoints(true);
+            foreach (var endpoint in endpoints)
+            {
+                var server = Connection.GetServer(endpoint);
+                server.FlushAllDatabases();
+            }
+        }
     }
 }

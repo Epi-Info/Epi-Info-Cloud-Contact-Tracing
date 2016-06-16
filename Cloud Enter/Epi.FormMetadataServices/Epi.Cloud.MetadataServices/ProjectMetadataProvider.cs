@@ -12,8 +12,8 @@ namespace Epi.Cloud.MetadataServices
         public async Task<Template> GetProjectMetadata(string projectId)
         {
             FieldAttributeServiceProxy serviceProxy = new FieldAttributeServiceProxy();
-            var task = serviceProxy.GetProjectMetadataAsync(projectId);
-            return await task;
+            var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId);
+            return  templateMetadata;
         }
     }
 }
