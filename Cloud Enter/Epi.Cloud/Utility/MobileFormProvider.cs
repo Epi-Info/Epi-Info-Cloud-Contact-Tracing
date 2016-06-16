@@ -8,40 +8,61 @@ using Epi.Cloud.FormMetadataServices;
 using Epi.Core.EnterInterpreter;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
+using Epi.Web.Enter.Common.DTO;
+using Epi.Web.MVC.Facade;
+using System.Data;
+
 
 namespace Epi.Web.MVC.Utility
 {
     public class MobileFormProvider
     {
+        private static ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
-
-        public static Form GetForm(object SurveyMetaData, int PageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO _SurveyAnswer)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer)
         {
-            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)SurveyMetaData;
-            var metadataProvider = new MetadataProvider();
-            var metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, PageNumber);
+            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList);
+        }
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
+        {
+
+            SurveyAnswerList = surveyAnswerList;
+            SurveyInfoList = surveyInfoList;
+
+            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+            List<FieldAttributes> metadata;           
+            if (surveyInfo.ProjectTemplateMetadata != null)
+            {                
+                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber);
+            }
+            else
+            {
+                var metadataProvider = new MetadataProvider();
+                metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
+            }
 
             string SurveyAnswer;
 
-            if (_SurveyAnswer != null)
+            if (surveyAnswer != null)
             {
-                SurveyAnswer = _SurveyAnswer.XML;
+                SurveyAnswer = surveyAnswer.XML;
 
             }
             else { SurveyAnswer = ""; }
 
             var form = new Form();
 
-            form.ResponseId = _SurveyAnswer.ResponseId;
+            form.ResponseId = surveyAnswer.ResponseId;
 
             form.SurveyInfo = surveyInfo;
 
             string XML = form.SurveyInfo.XML;
 
-            form.CurrentPage = PageNumber;
+            form.CurrentPage = pageNumber;
             if (form.SurveyInfo.IsDraftMode)
             {
                 form.IsDraftModeStyleClass = "draft";
@@ -77,7 +98,7 @@ namespace Epi.Web.MVC.Utility
                 _Height = GetHeight(xdoc);
                 form.FormWrapperClass = "MvcDynamicMobileForm";
                 //form.FormWrapperClass = "";
-                form.PageId = GetPageId(xdoc, PageNumber);
+                form.PageId = GetPageId(xdoc, pageNumber);
                 form.IsMobile = true;
 
                 //form.Width = _Width;
@@ -92,7 +113,7 @@ namespace Epi.Web.MVC.Utility
                 string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
                 string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
 
-                XDocument xdocResponse = XDocument.Parse(_SurveyAnswer.XML);
+                XDocument xdocResponse = XDocument.Parse(surveyAnswer.XML);
 
                 form.HiddenFieldsList = xdocResponse.Root.Attribute("HiddenFieldsList").Value;
                 form.HighlightedFieldsList = xdocResponse.Root.Attribute("HighlightedFieldsList").Value;
@@ -113,17 +134,34 @@ namespace Epi.Web.MVC.Utility
                 form.FormCheckCodeObj.GetVariableJavaScript(VariableDefinitions);
                 form.FormCheckCodeObj.GetSubroutineJavaScript(VariableDefinitions);
 
-                string PageName = GetPageName(xdoc, PageNumber);
+                string PageName = GetPageName(xdoc, pageNumber);
 
 
                 //Generate page level Java script (Before)
-                JavaScript.Append(GetPageLevelJS(PageNumber, form, PageName, "Before"));
+                JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "Before"));
                 //Generate page level Java script (After)
-                JavaScript.Append(GetPageLevelJS(PageNumber, form, PageName, "After"));
+                JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
+
+                Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
+                if (form.ResponseId != null)
+                {
+                    //_SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var Value = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+
+                    //StartNewcode
+                    //string FieldValue = string.Empty;
+                    //if (_SurveyAnswerFromDocumentDB != null)
+                    //{
+                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
+                    //                  where element.Key == fieldAttributes.Name.ToLower()
+                    //                  select element.Value).FirstOrDefault();
+                    //}
+
+                    //EndNewcode 
 
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
 
@@ -135,14 +173,14 @@ namespace Epi.Web.MVC.Utility
                     {
                         case 1: // textbox
 
-                            var _TextBoxValue = Value;
-                            form.AddFields(GetTextBox(_FieldTypeID, _Width, _Height, xdocResponse, _TextBoxValue, form));
+                            var _TextBoxValue = FieldValue;
+                            form.AddFields(GetTextBox(fieldAttributes, _Width, _Height, _TextBoxValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value,"textbox","datasource",Value)); 
                             break;
 
                         case 2://Label/Title
-                            form.AddFields(GetLabel(_FieldTypeID, _Width, _Height, xdocResponse));
+                            form.AddFields(GetLabel(fieldAttributes, _Width, _Height));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "lable", "datasource",Value)); 
                             break;
@@ -151,43 +189,43 @@ namespace Epi.Web.MVC.Utility
                             break;
                         case 4://MultiLineTextBox
 
-                            var _TextAreaValue = Value;
-                            form.AddFields(GetTextArea(_FieldTypeID, _Width, _Height, xdocResponse, _TextAreaValue, form));
+                            var _TextAreaValue = FieldValue;
+                            form.AddFields(GetTextArea(fieldAttributes, _Width, _Height, _TextAreaValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "multiline", "datasource",Value)); 
                             break;
                         case 5://NumericTextBox
 
-                            var _NumericTextBoxValue = Value;
-                            form.AddFields(GetNumericTextBox(_FieldTypeID, _Width, _Height, xdocResponse, _NumericTextBoxValue, form));
+                            var _NumericTextBoxValue = FieldValue;
+                            form.AddFields(GetNumericTextBox(fieldAttributes, _Width, _Height, _NumericTextBoxValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", Value)); 
                             break;
                         // 7 DatePicker
                         case 7://NumericTextBox
 
-                            var _DatePickerValue = Value;
-                            form.AddFields(GetDatePicker(_FieldTypeID, _Width, _Height, xdocResponse, _DatePickerValue, form));
+                            var _DatePickerValue = FieldValue;
+                            form.AddFields(GetDatePicker(fieldAttributes, _Width, _Height, _DatePickerValue));
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", Value)); 
                             break;
                         case 8: //TimePicker
-                            var _timePickerValue = Value;
-                            form.AddFields(GetTimePicker(_FieldTypeID, _Width, _Height, xdocResponse, _timePickerValue, form));
+                            var _timePickerValue = FieldValue;
+                            form.AddFields(GetTimePicker(fieldAttributes, _Width, _Height, _timePickerValue));
 
                             break;
                         case 10://CheckBox
 
-                            var _CheckBoxValue = Value;
-                            form.AddFields(GetCheckBox(_FieldTypeID, _Width, _Height, xdocResponse, _CheckBoxValue));
+                            var _CheckBoxValue = FieldValue;
+                            var checkbox = GetCheckBox(fieldAttributes, _Width, _Height, _CheckBoxValue);
+ 								form.AddFields(checkbox);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "checkbox", "datasource",Value)); 
                             break;
 
                         case 11://DropDown Yes/No
 
-
-                            var _DropDownSelectedValueYN = Value;
+                            var _DropDownSelectedValueYN = FieldValue;
 
                             if (_DropDownSelectedValueYN == "1" || _DropDownSelectedValueYN == "true")
                             {
@@ -200,62 +238,59 @@ namespace Epi.Web.MVC.Utility
                                 _DropDownSelectedValueYN = "No";
                             }
 
+                            var dropdownselectedvalueYN = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValueYN, "Yes&#;No", 11);
 
-
-
-                            form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValueYN, "Yes&#;No", 11, form));
+                            form.AddFields(dropdownselectedvalueYN);//, "Yes&#;No", 11);
                             //                                             pName, pType, pSource
                             //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "yesno", "datasource",Value)); 
 
                             break;
                         case 12://RadioList
-                                //var _GroupBoxValue1 = GetControlValue(SurveyAnswer, _FieldTypeID.Attribute("UniqueId").Value);
-                                //form.AddFields(GetGroupBox(_FieldTypeID, _Width + 12, _Height, SurveyAnswer, _GroupBoxValue1));
-                            var _RadioListSelectedValue1 = Value;
+                            var _GroupBoxValue1 = string.Empty;
+                            form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, _GroupBoxValue1));
+                            var _RadioListSelectedValue1 = FieldValue;
                             string RadioListValues1 = "";
-                            RadioListValues1 = _FieldTypeID.Attribute("List").Value;
-                            form.AddFields(GetRadioList(_FieldTypeID, _Width, _Height, xdocResponse, _RadioListSelectedValue1, RadioListValues1, form));
-
+                            RadioListValues1 = fieldAttributes.ChoicesList;
+                            form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, _RadioListSelectedValue1));
                             break;
                         case 17://DropDown LegalValues
 
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
-                            var _DropDownSelectedValue1 = Value;
-                            form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue1, DropDownValues1, 17, form));
-                            //                                             pName, pType, pSource
-                            //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "legalvalue", "datasource",Value)); 
+                            DropDownValues1 = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
+                            //var DropDownValues1FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            var _DropDownSelectedValue1 = FieldValue;
+                            form.AddFields(GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17));
 
                             break;
                         case 18://DropDown Codes
 
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
-                            var _DropDownSelectedValue2 = Value;
-                            form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue2, DropDownValues2, 18, form));
-                            //                                             pName, pType, pSource
-                            //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "code", "datasource",Value)); 
+                            DropDownValues2 = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
+                            //var DropDownValues2FromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            var _DropDownSelectedValue2 = FieldValue;
+                            var dropdownselectedcodevalue = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
+                            form.AddFields(dropdownselectedcodevalue);
 
                             break;
                         case 19://DropDown CommentLegal
 
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
-                            var _DropDownSelectedValue = Value;
-                            form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form));
-                            //                                             pName, pType, pSource
-                            //VariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "commentlegal", "datasource",Value)); 
+                            DropDownValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
+                            //string DropDownValuesFromXml = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("TextColumnName").Value);
+                            var _DropDownSelectedValue = FieldValue;
+                            //form.AddFields(GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form));
+                            var dropdownselectedcommentlegalval = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue, DropDownValues, 19);
+                            form.AddFields(dropdownselectedcommentlegalval);
 
                             break;
 
                         case 20://RelateButton
-                            form.AddFields(GetRelateButton(_FieldTypeID, _Width, _Height, xdocResponse, form));
+                            form.AddFields(GetRelateButton(fieldAttributes, _Width, _Height));
                             break;
                         case 21://GroupBox
-                                //var _GroupBoxValue = GetControlValue(SurveyAnswer, _FieldTypeID.Attribute("UniqueId").Value);
-                                //form.AddFields(GetGroupBox(_FieldTypeID, _Width, _Height, SurveyAnswer, _GroupBoxValue));
+                            var _GroupBoxValue = FieldValue;
+                            form.AddFields(GetGroupBox(fieldAttributes, _Width, _Height, _GroupBoxValue));
 
-                            form.AddFields(GetGroupBox(_FieldTypeID, _Width, _Height, xdocResponse));
                             break;
                     }
                 }
@@ -293,6 +328,22 @@ namespace Epi.Web.MVC.Utility
 
             return form;
         }
+
+        #region Get Survey Response Data From DocumentDB
+        /// <summary>
+        /// GetSurveyResponseDataFrom DocumentDB
+        /// </summary>
+        /// <param name="ResponseId"></param>
+        /// <param name="SurveyId"></param>
+        /// <param name="PageNo"></param> 
+        public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
+        {
+            _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+            //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
+            var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            return response.SurveyQAList;
+        }
+        #endregion
 
         public static double GetHeight(XDocument xdoc)
         {
@@ -458,6 +509,15 @@ namespace Epi.Web.MVC.Utility
 
         }
 
+        private static MobileRadioList GetRadioList(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var radiolist = new MobileRadioList(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
+
+            return radiolist;
+        }
         private static MobileNumericTextBox GetNumericTextBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -493,6 +553,17 @@ namespace Epi.Web.MVC.Utility
             return MobileNumericTextBox;
 
         }
+
+        private static MobileNumericTextBox GetNumericTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var numericTextBox = new MobileNumericTextBox(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
+
+            return numericTextBox;
+        }
+
         private static MobileLiteral GetLabel(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer)
         {
 
@@ -518,6 +589,13 @@ namespace Epi.Web.MVC.Utility
             return Label;
 
         }
+       
+        private static MobileLiteral GetLabel(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            var label = new MobileLiteral(fieldAttributes, formWidth, formHeight);
+            return label;
+        }
+
         private static MobileTextArea GetTextArea(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -553,6 +631,16 @@ namespace Epi.Web.MVC.Utility
             return MobileTextArea;
 
         }
+
+        private static MobileTextArea GetTextArea(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var textArea = new MobileTextArea(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
+            return textArea;
+        }
+
         private static Hidden GetHiddenField(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {
 
@@ -627,6 +715,17 @@ namespace Epi.Web.MVC.Utility
             return TextBox;
 
         }
+
+        private static MobileTextBox GetTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var textBox = new MobileTextBox(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue
+            };
+
+            return textBox;
+        }
+
         private static MobileCheckBox GetCheckBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue)
         {
 
@@ -662,6 +761,18 @@ namespace Epi.Web.MVC.Utility
             return MobileCheckBox;
 
         }
+
+        private static MobileCheckBox GetCheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var checkBox = new MobileCheckBox(fieldAttributes, formWidth, formHeight)// CheckBox (fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return checkBox;
+        }
+
         private static MobileDatePicker GetDatePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -699,6 +810,18 @@ namespace Epi.Web.MVC.Utility
 
         }
 
+        private static MobileDatePicker GetDatePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var DatePicker = new MobileDatePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return DatePicker;
+        }
+
+
         private static MobileTimePicker GetTimePicker(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, Form form)
         {
 
@@ -735,6 +858,18 @@ namespace Epi.Web.MVC.Utility
             return MobileTimePicker;
 
         }
+
+        private static MobileTimePicker GetTimePicker(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var TimePicker = new MobileTimePicker(fieldAttributes, formWidth, formHeight)
+            {
+                Value = controlValue,
+                Response = controlValue
+            };
+
+            return TimePicker;
+        }
+
         private static MobileRelateButton GetRelateButton(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, Form form)
         {
 
@@ -763,7 +898,15 @@ namespace Epi.Web.MVC.Utility
             return RelateButton;
         }
 
+        private static MobileRelateButton GetRelateButton(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            var RelateButton = new MobileRelateButton(fieldAttributes, formWidth, formHeight)
+            {
+                // Value = controlValue
+            };
 
+            return RelateButton;
+        }
 
         private static MobileSelect GetDropDown(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer, string _ControlValue, string DropDownValues, int FieldTypeId, Form form)
         {
@@ -814,6 +957,27 @@ namespace Epi.Web.MVC.Utility
             return DropDown;
         }
 
+        private static MobileSelect GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
+        {
+            var select = new MobileSelect(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
+            {
+                Value = controlValue
+            };
+            select.SelectType = FieldTypeId;
+            select.SelectedValue = controlValue;
+
+            select.ShowEmptyOption = true;
+            select.EmptyOption = "Select";
+            select.AddChoices(DropDownValues, "&#;");
+            select.SelectedValue = controlValue;
+            if (!string.IsNullOrWhiteSpace(controlValue))
+            {
+                select.Choices[controlValue] = true;
+            }
+
+            return select;
+        }
+
         public static string GetDropDownValues(XDocument xdoc, string ControlName, string TableName)
         {
             StringBuilder DropDownValues = new StringBuilder();
@@ -850,6 +1014,7 @@ namespace Epi.Web.MVC.Utility
 
             return DropDownValues.ToString();
         }
+
         private static MobileGroupBox GetGroupBox(XElement _FieldTypeID, double _Width, double _Height, XDocument SurveyAnswer)
         {
 
@@ -883,6 +1048,17 @@ namespace Epi.Web.MVC.Utility
 
 
         }
+
+        private static MobileGroupBox GetGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
+        {
+            var groupbox = new MobileGroupBox(fieldAttributes, formWidth, formHeight)
+            {
+              //  Value = controlValue
+            };
+
+            return groupbox;
+        }
+
         private static int GetNumberOfPages(XDocument Xml)
         {
             var _FieldsTypeIDs = from _FieldTypeID in

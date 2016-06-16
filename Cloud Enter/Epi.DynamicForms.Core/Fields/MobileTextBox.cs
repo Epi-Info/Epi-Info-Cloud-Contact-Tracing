@@ -9,6 +9,16 @@ namespace MvcDynamicForms.Fields
     public class MobileTextBox : TextField
     {
 
+        public MobileTextBox()
+        {
+
+        }
+        public MobileTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+
         public override string RenderHtml()
         {
             var html = new StringBuilder();

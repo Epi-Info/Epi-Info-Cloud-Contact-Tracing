@@ -10,6 +10,16 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class MobileCheckBox : InputField
     {
+        public MobileCheckBox()
+        {
+        }
+
+        public MobileCheckBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+        //Renuka
         private string _checkedValue = "Yes";
         private string _uncheckedValue = "No";
         new private string _promptClass = "MvcDynamicCheckboxPrompt";
@@ -85,6 +95,16 @@ namespace MvcDynamicForms.Fields
             */
             ClearError();
             return true;
+        }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage + 2;
+            PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage + 20;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = 10;                    
         }
 
         public override string RenderHtml()
