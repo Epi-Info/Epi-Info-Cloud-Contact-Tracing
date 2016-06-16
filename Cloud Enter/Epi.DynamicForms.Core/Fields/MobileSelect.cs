@@ -12,6 +12,38 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class MobileSelect : ListField
     {
+
+        public MobileSelect()
+        {
+        }
+
+        public MobileSelect(FieldAttributes fieldAttributes, double formWidth, double formHeight)// string DropDownValues, int FieldTypeId)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);//, DropDownValues, FieldTypeId);
+        }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+
+            Title = fieldAttributes.Name;
+            Prompt = fieldAttributes.PromptText;
+            Key = fieldAttributes.Name;
+            PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
+            PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
+            PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlWidth = formWidth * fieldAttributes.ControlWidthPercentage;
+            ControlHeight = formHeight * fieldAttributes.ControlHeightPercentage;
+
+            InputFieldfontstyle = fieldAttributes.ControlFontStyle;
+            InputFieldfontfamily = fieldAttributes.ControlFontFamily;
+            InputFieldfontSize = fieldAttributes.ControlFontSize;
+
+            IsRequired = fieldAttributes.IsRequired;
+            Required = fieldAttributes.Required;
+            RequiredMessage = fieldAttributes.RequiredMessage;
+            ReadOnly = fieldAttributes.ReadOnly;
+        }
         /// <summary>
         /// The number of options to display at a time.
         /// </summary>

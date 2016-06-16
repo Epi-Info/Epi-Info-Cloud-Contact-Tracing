@@ -11,6 +11,15 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class MobileTextArea : TextField
     {
+        public MobileTextArea()
+        {          
+        }
+        public MobileTextArea(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
+
         public override string RenderHtml()
         {
             var html = new StringBuilder();

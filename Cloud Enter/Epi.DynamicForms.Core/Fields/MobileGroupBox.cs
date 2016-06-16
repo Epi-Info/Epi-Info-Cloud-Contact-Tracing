@@ -21,6 +21,16 @@ namespace MvcDynamicForms.Fields
         /// </summary>
         public string Html { get; set; }
 
+        public MobileGroupBox()
+        {
+
+        }
+
+        public MobileGroupBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
+
         public override string RenderHtml()
         {
             if (Wrap)
@@ -153,6 +163,28 @@ namespace MvcDynamicForms.Fields
 
             return CssStyles.ToString();
 
+        }
+
+        protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+            string[] TabIndex = fieldAttributes.TabIndex.ToString().Split('.');
+
+
+            FieldWrapper = "div";
+            Wrap = true;
+            DisplayOrder = int.Parse(TabIndex[0].ToString());
+            Html = fieldAttributes.PromptText;
+            Top = _Height * fieldAttributes.ControlTopPositionPercentage;
+            Left = _Width * fieldAttributes.ControlLeftPositionPercentage;
+            CssClass = "EpiLabel";
+            fontSize = fieldAttributes.ControlFontSize;
+            fontfamily = fieldAttributes.ControlFontFamily;
+            fontstyle = fieldAttributes.ControlFontStyle;
+            Height = _Height * fieldAttributes.ControlHeightPercentage;
+            //IsHidden = GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
+            Name = fieldAttributes.Name;
+            Width = _Width * fieldAttributes.ControlWidthPercentage;
         }
     }
 }

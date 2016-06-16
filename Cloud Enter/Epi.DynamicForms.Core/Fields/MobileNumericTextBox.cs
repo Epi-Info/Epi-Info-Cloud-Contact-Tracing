@@ -11,6 +11,14 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public class MobileNumericTextBox : NumericTextField
     {
+        public MobileNumericTextBox()
+        {
+
+        }
+     public MobileNumericTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight)
+        {
+            InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
+        }
 
         public override string RenderHtml()
         {
