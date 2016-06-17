@@ -127,7 +127,7 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        protected void DeleteAllKeys(string prefix)
+        protected void DeleteAllKeys(string prefix, Action<RedisKey> onDelete = null)
         {
             var endpoints = Connection.GetEndPoints(true);
             foreach (var endpoint in endpoints)
@@ -137,6 +137,7 @@ namespace Epi.Cloud.CacheServices
                 foreach (var key in keys)
                 {
                     Cache.KeyDelete(key);
+                    if (onDelete != null) onDelete(key);
                 }
             }
         }

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Epi.Web.Enter.Common.BusinessObject;
+using Newtonsoft.Json;
 
 namespace Epi.Cloud.CacheServices
 {
@@ -11,48 +13,50 @@ namespace Epi.Cloud.CacheServices
     {
         private const string SurveyInfoBOPrefix = "surveyInfoBO_";
 
-        private ConditionalWeakTable<string, string> _weakSurveyInfoBoMetadataJsonCache = new ConditionalWeakTable<string, string>();
-        //private static Dictionary<string, string> _surveyInfoBOStaticCache = new Dictionary<string, string>();
-
-        public string GetSurveyInfoBoMetadata(string projectId)
-        {
-            string surveyInfoBOJson;
-            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBOJson) 
-                /* && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson)*/)
-            {
-                surveyInfoBOJson = Get(SurveyInfoBOPrefix, projectId).Result;
-                if (surveyInfoBOJson != null)
-                {
-                    _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBOJson);
-                    //_surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
-                }
-            }
-            return surveyInfoBOJson;
-        }
-
-        public bool SetSurveyInfoBoMetadata(string projectId, string surveyInfoBOJson)
-        {
-            var isSuccessful = Set(SurveyInfoBOPrefix, projectId, surveyInfoBOJson).Result;
-            _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBOJson);
-            //_surveyInfoBOStaticCache[projectId] = surveyInfoBOJson;
-            return isSuccessful;
-        }
+        private ConditionalWeakTable<string, SurveyInfoBO> _weakSurveyInfoBoMetadataJsonCache = new ConditionalWeakTable<string, SurveyInfoBO>();
 
         public bool SurveyInfoBoMetadataExists(string projectId)
         {
             bool keyExists = true;
-            string surveyInfoBOJson;
-            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBOJson)
-                           /* && !_surveyInfoBOStaticCache.TryGetValue(projectId, out surveyInfoBOJson)*/)
+            SurveyInfoBO surveyInfoBO;
+            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBO))
             {
                 keyExists = KeyExists(SurveyInfoBOPrefix, projectId).Result;
             }
             return keyExists;
         }
 
+        public SurveyInfoBO GetSurveyInfoBoMetadata(string projectId)
+        {
+            SurveyInfoBO surveyInfoBO;
+            if (!_weakSurveyInfoBoMetadataJsonCache.TryGetValue(projectId, out surveyInfoBO))
+            {
+                string surveyInfoBOJson = Get(SurveyInfoBOPrefix, projectId).Result;
+                if (surveyInfoBOJson != null)
+                {
+                    surveyInfoBO = JsonConvert.DeserializeObject<SurveyInfoBO>(surveyInfoBOJson);
+
+                    _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBO);
+                }
+            }
+            return surveyInfoBO;
+        }
+
+        public bool SetSurveyInfoBoMetadata(string projectId, SurveyInfoBO surveyInfoBO)
+        {
+            string surveyInfoBOJson = JsonConvert.SerializeObject(surveyInfoBO);
+            var isSuccessful = Set(SurveyInfoBOPrefix, projectId, surveyInfoBOJson).Result;
+            _weakSurveyInfoBoMetadataJsonCache.Add(projectId, surveyInfoBO);
+            if (!ProjectTemplateMetadataExists(projectId))
+            {
+                SetProjectTemplateMetadata(surveyInfoBO.ProjectTemplateMetadata);
+            }
+            return isSuccessful;
+        }
+
         public void ClearAllSurveyInfoBoMetadataFromCache()
         {
-            DeleteAllKeys(SurveyInfoBOPrefix);
+            DeleteAllKeys(SurveyInfoBOPrefix, key => _weakSurveyInfoBoMetadataJsonCache.Remove(key));
         }
     }
 }
