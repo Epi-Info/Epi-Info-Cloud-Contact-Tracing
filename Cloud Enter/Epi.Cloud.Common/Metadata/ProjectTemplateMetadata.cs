@@ -60,7 +60,7 @@ namespace Epi.Cloud.Common.Metadata
             clone.Views = new View[Views != null ? Views.Length : 0];
             for (int i = 0; i < clone.Views.Length; ++i)
             {
-                clone.Views[i] = Views[i];
+                clone.Views[i] = Views[i].Clone();
             }
             return clone;
         }

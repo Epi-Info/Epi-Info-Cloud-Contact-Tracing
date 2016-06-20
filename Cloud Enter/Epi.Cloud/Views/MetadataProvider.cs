@@ -6,6 +6,7 @@ using System.Linq;
 using MvcDynamicForms.Fields;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.CacheServices;
 
 namespace Epi.Cloud.FormMetadataServices
 {
@@ -13,9 +14,19 @@ namespace Epi.Cloud.FormMetadataServices
     {
         public List<FieldAttributes> GetMetadata(string formId, int pageNumber)
         {
-            ProjectMetadataProvider p = new ProjectMetadataProvider();
             Template projectTemplateMetadata;
-            projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
+
+            ISurveyInfoBOCache surveyInfoBOCache = (ISurveyInfoBOCache)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(Cloud.CacheServices.IEpiCloudCache));
+            var surveyInfoBO = surveyInfoBOCache.GetSurveyInfoBoMetadata(formId);
+            if (surveyInfoBO != null)
+            {
+                projectTemplateMetadata = surveyInfoBO.ProjectTemplateMetadata;
+            }
+            else
+            {
+                ProjectMetadataProvider p = new ProjectMetadataProvider();
+                projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
+            }
             List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 
             return Results;
@@ -25,9 +36,20 @@ namespace Epi.Cloud.FormMetadataServices
         {
             var pagePosition = pageNumber - 1;
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).Single();
-            var results = view.Pages
-            .Where(p => p.Position == pagePosition).Single()
-            .Fields.Select(f => new FieldAttributes
+            var page = view.Pages
+            .Where(p => p.Position == pagePosition).Single();
+            return MapFieldMetadataToFieldAttributes(page, projectTemplateMetadata.SourceTables);
+        }
+
+        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables)
+        {
+            var fields = page.Fields;
+            return MapFieldMetadataToFieldAttributes(fields, sourceTables);
+        }
+
+        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables)
+        {
+            var results = fields.Select(f => new FieldAttributes
             {
                 UniqueId = f.UniqueId.ToString("D"),
                 RequiredMessage = "This field is required",
@@ -62,13 +84,14 @@ namespace Epi.Cloud.FormMetadataServices
                 IsHighlighted = false,
                 IsDisabled = false,
                 ChoicesList = f.List,
-                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && projectTemplateMetadata.SourceTables != null && projectTemplateMetadata.SourceTables.Length > 0) ? projectTemplateMetadata.SourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
+                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && sourceTables != null && sourceTables.Length > 0) ? sourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
                 RelatedViewId = f.RelatedViewId.ToString()
 
             }).ToList();
             return results;
         }
     }
+
     public class CDTProject
     {
         public string ProjectId { get; set; }

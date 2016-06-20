@@ -10,7 +10,6 @@ using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.CacheServices;
-using Newtonsoft.Json;
 
 namespace Epi.Web.EF
 {
@@ -41,26 +40,22 @@ namespace Epi.Web.EF
                     foreach (string surveyInfoId in SurveyInfoIdList.Distinct())
                     {
                         Guid Id = new Guid(surveyInfoId);
-                        SurveyInfoBO surveyInfoBO = null;
-                        string surveyInfoBOJson = _surveyInfoBOCache.GetSurveyInfoBoMetadata(surveyInfoId);
-                        if (string.IsNullOrEmpty(surveyInfoBOJson))
+                        SurveyInfoBO surveyInfoBO = _surveyInfoBOCache.GetSurveyInfoBoMetadata(surveyInfoId);
+                        if (surveyInfoBO == null)
                         {
                             using (var Context = DataObjectFactory.CreateContext())
                             {
                                 var surveyMetadata = Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id);
                                 surveyInfoBO = Mapper.Map(surveyMetadata);
                             }
+
+                            // TODO: GEL - Get ProjectMetadataProvider from Unitity Container
                             var projectMetadataProvider = new ProjectMetadataProvider();
+
                             var projectTemplateMetadata = projectMetadataProvider.GetProjectMetadata(surveyInfoId).Result;
                             surveyInfoBO.ProjectTemplateMetadata = projectTemplateMetadata;
-                            // serailize to json and cache it
-                            surveyInfoBOJson = JsonConvert.SerializeObject(surveyInfoBO);
-                            var isSuccessful = _surveyInfoBOCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBOJson);
-                        }
-                        else
-                        {
-                            // deserialize from json
-                            surveyInfoBO = JsonConvert.DeserializeObject<SurveyInfoBO>(surveyInfoBOJson);
+
+                            var isSuccessful = _surveyInfoBOCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);
                         }
                         result.Add(surveyInfoBO);
 

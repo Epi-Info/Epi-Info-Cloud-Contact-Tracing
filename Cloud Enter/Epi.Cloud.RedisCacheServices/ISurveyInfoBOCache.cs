@@ -1,9 +1,12 @@
-﻿namespace Epi.Cloud.CacheServices
+﻿using Epi.Web.Enter.Common.BusinessObject;
+
+namespace Epi.Cloud.CacheServices
 {
     public interface ISurveyInfoBOCache
     {
-        string GetSurveyInfoBoMetadata(string projectId);
-        bool SetSurveyInfoBoMetadata(string projectId, string surveyInfoBOJson);
+        SurveyInfoBO GetSurveyInfoBoMetadata(string projectId);
+        bool SetSurveyInfoBoMetadata(string projectId, SurveyInfoBO surveyInfoBO);
         bool SurveyInfoBoMetadataExists(string projectId);
+        void ClearAllSurveyInfoBoMetadataFromCache();
     }
 }

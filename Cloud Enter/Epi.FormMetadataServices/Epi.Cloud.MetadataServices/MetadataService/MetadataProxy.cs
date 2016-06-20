@@ -2,7 +2,8 @@
 using Newtonsoft.Json;
 using System.Net;
 using Epi.Cloud.MetadataServices.DataTypes;
-
+using Epi.Cloud.Common.Configuration;
+using System.Configuration;
 
 namespace Epi.Cloud.MetadataServices
 {
@@ -11,9 +12,8 @@ namespace Epi.Cloud.MetadataServices
         private string _apiUrl;
         public MetadataProxy()
         {
-            //var test  = ConfigurationManager.ConnectionStrings["ConString"].ConnectionString;
-            //_apiUrl = "http://epicloudapi.azurewebsites.net/";
-            _apiUrl = "https://localhost:44379/";
+            var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey("DBAccessServiceAPI", "Environment.API");
+            _apiUrl = ConfigurationManager.AppSettings[apiUrlKey];
         }
 
 
