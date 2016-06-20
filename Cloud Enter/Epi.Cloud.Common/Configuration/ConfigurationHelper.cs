@@ -4,12 +4,12 @@ namespace Epi.Cloud.Common.Configuration
 {
     public static class ConfigurationHelper
     {
-        public static string GetEnvironmentResourceKey(string resourceName)
+        public static string GetEnvironmentResourceKey(string resourceName, string environmentKeyName = "Environment")
         {
-            var environmentKey = ConfigurationManager.AppSettings["Environment"];
+            var environmentKey = ConfigurationManager.AppSettings[environmentKeyName];
             if (resourceName != null)
             {
-                environmentKey = ConfigurationManager.AppSettings["Environment/" + resourceName] ?? environmentKey;
+                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + resourceName] ?? environmentKey;
             }
             return string.IsNullOrWhiteSpace(environmentKey)? resourceName : resourceName + "@" + environmentKey ;
         }

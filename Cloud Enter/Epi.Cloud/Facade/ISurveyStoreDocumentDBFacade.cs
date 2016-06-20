@@ -2,6 +2,7 @@
 using Epi.Web.MVC.Models;
 using MvcDynamicForms.Fields;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -9,8 +10,9 @@ namespace Epi.Web.MVC.Facade
     {
         //Insert new record  survey response data in to table storage.
 
-        bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
+        Task<bool> InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
         SurveyQuestionandAnswer ReadSurveyInfromDocumentDocumentDB(string responseId, string PageNumber);
-        SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string suveyName, string surveyID, string responseID, string pageId);
+        SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId);
+        Task<SurveyQuestionandAnswer> ReadSurveyAnswerByResponseIDAsync(string surveyName, string surveyId, string responseId, string pageId);
     }
 }

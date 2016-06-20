@@ -104,15 +104,19 @@ namespace Epi.Cloud.CacheServices
         /// <summary>
         /// SetProjectTemplateMetadata
         /// </summary>
-        /// <param name="projectTemplateMetadata"></param>
+        /// <param name="projectTemplateMetadataClone"></param>
         /// <returns></returns>
         public bool SetProjectTemplateMetadata(Template projectTemplateMetadata)
         {
+            // Create a clone of the Template. We will make changes to the clone
+            // that we don't want reflected in the original.
+            var projectTemplateMetadataClone = projectTemplateMetadata.Clone();
+
             bool isSuccessful = false;
             string json;
             // save the pageMetadata list
             var pages = new Page[0];
-            foreach (var view in projectTemplateMetadata.Project.Views)
+            foreach (var view in projectTemplateMetadataClone.Project.Views)
             {
                 pages = pages.Union(view.Pages).ToArray();
                 // don't save the page metadata with the cached project metadata
@@ -133,24 +137,19 @@ namespace Epi.Cloud.CacheServices
                 var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
                 foreach (var field in fieldsRequiringSourceTable)
                 {
-                    field.SourceTableItems = projectTemplateMetadata
+                    field.SourceTableItems = projectTemplateMetadataClone
                         .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
                 }
                 json = JsonConvert.SerializeObject(pageMetadata);
-                isSuccessful = Set(MetadataPrefix, ComposePageKey(projectTemplateMetadata.Project.Id, pageId), json).Result;
+                isSuccessful = Set(MetadataPrefix, ComposePageKey(projectTemplateMetadataClone.Project.Id, pageId), json).Result;
             }
 
             // save the page ids in the cached object
+            projectTemplateMetadataClone.Project.PageIdInfo = pageIdInfo;
             projectTemplateMetadata.Project.PageIdInfo = pageIdInfo;
 
-            json = JsonConvert.SerializeObject(projectTemplateMetadata);
-            isSuccessful = Set(MetadataPrefix, projectTemplateMetadata.Project.Id, json).Result;
-
-            // restore the page metadata 
-            foreach (var view in projectTemplateMetadata.Project.Views)
-            {
-                view.Pages = pages.Where(p => p.ViewId == view.ViewId).ToArray();
-            }
+            json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
+            isSuccessful = Set(MetadataPrefix, projectTemplateMetadataClone.Project.Id, json).Result;
             return isSuccessful;
         }
 

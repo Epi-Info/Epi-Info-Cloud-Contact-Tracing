@@ -5,6 +5,7 @@ using MvcDynamicForms;
 using Epi.Cloud.DataEntryServices;
 using Epi.Cloud.DataEntryServices.Model;
 using System;
+using System.Threading.Tasks;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -15,7 +16,7 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
 
         #region Insert Into Servey Response to DocumentDB
-        public bool InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        public async Task<bool> InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();
@@ -36,7 +37,7 @@ namespace Epi.Web.MVC.Facade
             _storeSurvey.SurveyProperties = _surveyResponseData;
 
             _storeSurvey.SurveyQuestionandAnswer = ReadQuestionandAnswerFromAllPage(form, _storeSurvey, surveyInfoModel, responseId);
-            bool response = _surveyResponse.InsertToSruveyToDocumentDB(_storeSurvey);
+            bool response = await _surveyResponse.InsertToSurveyToDocumentDB(_storeSurvey);
             return true;
         }
         #endregion
@@ -68,19 +69,24 @@ namespace Epi.Web.MVC.Facade
             SurveyProperties _surveyProperties = new SurveyProperties();
             _surveyProperties.GlobalRecordID = responseId;
             _surveyProperties.PageId = PageNumber;
-            // SurveyResponse=_surveyResponse.ReadSruveyFromDocumentDB(_surveyProperties, SurveyName);
+            // SurveyResponse=_surveyResponse.ReadSurveyFromDocumentDB(_surveyProperties, SurveyName);
             return SurveyResponse;
         }
         #endregion
 
         #region ReadSurveyAnswerByResponseID,PageId 
-        public SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string suveyName, string surveyID, string responseID, string pageId)
+        public SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId)
         {
-            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+            return ReadSurveyAnswerByResponseIDAsync(surveyName, surveyId, responseId, pageId).Result;
+        }
+
+        public async Task<SurveyQuestionandAnswer> ReadSurveyAnswerByResponseIDAsync(string surveyName, string surveyId, string responseId, string pageId)
+        {
+            CRUDSurveyResponse crudSurveyResponse = new CRUDSurveyResponse();
             SurveyQuestionandAnswer surveyResponse = new SurveyQuestionandAnswer();
             //surveyResponse.SurveyQAList = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(databaseName,responseId,pageId);
 
-            surveyResponse = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(suveyName, responseID, pageId);
+            surveyResponse = await crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName, responseId, pageId);
             if (surveyResponse != null)
             {
                 surveyResponse.SurveyQAList = surveyResponse.SurveyQAList;

@@ -970,7 +970,6 @@
     <None Include="Properties\PublishProfiles\epiinfocloudenterqa - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\epiinfocloudenterqa - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\epiinfocloudenterqa - Web Deploy %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\epiinfocloudenterqa - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
