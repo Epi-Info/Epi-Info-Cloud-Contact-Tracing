@@ -710,14 +710,17 @@
     }
 
     function ReadRelatedResponse(ViewId) {
+         ShowSppiner();
+        
+       // var signoutUrl = '@Url.Action("ReadResponseInfo", "Survey")' + '?SurveyId=' + '@Model.Form.SurveyInfo.SurveyId' + '&ViewId=' + ViewId + '&ResponseId=' + '@Model.Form.ResponseId' + '&FormValuesHasChanged=' + $('#FormHasChanged').val() + '&CurrentPage=' + '@Model.Form.CurrentPage';
+        var signoutUrl = '@Url.Action("ReadResponseInfo", "Survey")' + '?SurveyId=' + '@Model.Form.SurveyInfo.SurveyId' + '&ViewId=' + ViewId + '&ResponseId=' + '@Model.Form.ResponseId' + '&CurrentPage=' + '@Model.Form.CurrentPage';
 
-        var signoutUrl = '@Url.Action("ReadResponseInfo", "Survey")' + '?SurveyId=' + '@Model.Form.SurveyInfo.SurveyId' + '&ViewId=' + ViewId + '&ResponseId=' + '@Model.Form.ResponseId' + '&FormValuesHasChanged=' + $('#FormHasChanged').val() + '&CurrentPage=' + '@Model.Form.CurrentPage';
-        ShowSppiner();
         $.ajax({
             url: signoutUrl,
-            type: 'GET',
+            type: 'POST',
             contentType: 'application/json; charset=utf-8',
             //data: JSON.stringify(model),
+            dataType: "text",
             async: false,
             success: successFunc,
             Error: errorFunc
@@ -807,7 +810,12 @@
     }
     function GoHome() {
         ShowSppiner();
-       $('#myform').validationEngine('detach');
+        var DisabledFieldsList = $('#DisabledFieldsList').val();   
+        
+        if (DisabledFieldsList.length > 0) {   
+            CCE_ProcessEnableAllControls(DisabledFieldsList);   
+        }  
+        $('#myform').validationEngine('detach');
         $("#myform")[0].Go_Home_action.value = 'true';
 
         $("#myform")[0].action = window.location.href;
@@ -819,6 +827,11 @@
 
     function GoOneLevelUp() {
         ShowSppiner();
+ 
+        var DisabledFieldsList = $('#DisabledFieldsList').val();   
+        if (DisabledFieldsList.length > 0) {   
+            CCE_ProcessEnableAllControls(DisabledFieldsList);   
+        }  
         $('#myform').validationEngine('detach');
         $("#myform")[0].Go_One_Level_Up_action.value = 'true';
 

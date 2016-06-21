@@ -110,6 +110,14 @@
 //        });
 //    });
     $(document).ready(function () {
+        $("div#demoheader").css({ "margin": "-2px 0px 0px 10px" });
+       
+            if ('@Session["IsDemoMode"]' == "TRUE") 
+            {
+                //  disableElements($('#content').children());
+                $('[name="input"]').attr("disabled", true);
+                $('[name="input"]').attr("title", "This feature is not available in demo mode");
+            }
         $("#ConfirmAdminEmail").change(function () {
         
             var _ConfirmAdminEmail = $("#ConfirmAdminEmail").val();
@@ -144,6 +152,13 @@
         });
        
     });
+    function disableElements(el) {
+        for (var i = 0; i < el.length; i++) {
+            el[i].disabled = true;
+
+            disableElements(el[i].children);
+        }
+    }
 
 
 </script>
@@ -159,7 +174,18 @@
 	  @*  <a href="#">Log Out</a>*@
 	  
 	  @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;
+@if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+{
+    if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+    {
+        <a href="http://www.cdc.gov/epiinfo/cloud/index.html">Log Out</a>
+
+    }
+    else
+    {
 	  @Html.ActionLink("Log Out", "LogOut", "Home", null, null)	
+    }
+}
 	</div>
 	<div style="clear: both;"></div>
 </div>
@@ -244,11 +270,11 @@
         <div style="clear:both;"></div>
          @if (!Model.IsEditMode)
              {
-		     <input type="submit" value="Create" id="Create"/>
+            <input class="createbtn" type="submit" name="input" value="Create" id="Create" />
              }
          else 
              { 
-              <input type="submit" value="Update" id="Update"/>
+              <input type="submit" name="input" value="Update" id="Update"/>
              
              }
 		@*<input type="button" onclick="Cancel();" value="Cancel"  style="margin-left:20px;"/>*@

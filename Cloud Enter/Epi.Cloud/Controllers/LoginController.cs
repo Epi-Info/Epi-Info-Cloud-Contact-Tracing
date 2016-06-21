@@ -55,6 +55,9 @@ namespace Epi.Web.MVC.Controllers
                     Session[SessionKeys.UserId] = UserId;
 
                     Session[SessionKeys.UserHighestRole] = 3;
+                     Session[SessionKeys.UserFirstName] = "John";
+                    Session[SessionKeys.UserLastName]= "Doe";
+                    Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
                     return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
                 }
             }
@@ -85,6 +88,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserId] = UserId;
                         //Session[SessionKeys.UsertRole] = result.User.Role;
                         Session[SessionKeys.UserHighestRole] = result.User[0].UserHighestRole;
+
                         Session[SessionKeys.UserEmailAddress] = result.User[0].EmailAddress;
                         Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
                         Session[SessionKeys.UserLastName] = result.User[0].LastName;
@@ -99,7 +103,6 @@ namespace Epi.Web.MVC.Controllers
                 }
                 catch (Exception ex)
                 {
-
                     return View("Index");
                 }
             }
@@ -303,9 +306,6 @@ namespace Epi.Web.MVC.Controllers
                 return View();
                 throw;
             }
-
-
-
         }
 
         private bool ValidatePassword(UserResetPasswordModel Model)

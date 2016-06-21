@@ -23,11 +23,11 @@ namespace Epi.Web.MVC.Utility
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
         {
-            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList);
+            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid = false)
         {
 
             SurveyAnswerList = surveyAnswerList;
@@ -55,7 +55,7 @@ namespace Epi.Web.MVC.Utility
             else { SurveyAnswer = ""; }
 
             var form = new Form();
-
+            form.IsAndroid = isAndroid;
             form.ResponseId = surveyAnswer.ResponseId;
 
             form.SurveyInfo = surveyInfo;

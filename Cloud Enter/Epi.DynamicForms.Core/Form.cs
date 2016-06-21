@@ -429,6 +429,6 @@ namespace MvcDynamicForms
             }
         }
 
-
+        public bool IsAndroid { get; set; }
     }
 }
