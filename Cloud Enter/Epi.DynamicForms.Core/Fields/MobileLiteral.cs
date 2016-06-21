@@ -40,6 +40,19 @@ namespace MvcDynamicForms.Fields
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
 
             Name = fieldAttributes.Name;
+            FieldWrapper = "div";
+            Wrap = true;
+            DisplayOrder = fieldAttributes.TabIndex;
+            Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
+            Left = formWidth * fieldAttributes.ControlLeftPositionPercentage;
+            Html = fieldAttributes.PromptText;
+            CssClass = "EpiLabel";
+            fontSize = fieldAttributes.ControlFontSize;
+            fontfamily = fieldAttributes.ControlFontFamily;
+            fontstyle = fieldAttributes.ControlFontStyle;
+            Height = formHeight * fieldAttributes.ControlHeightPercentage;
+            Width = formWidth * fieldAttributes.ControlWidthPercentage;
+            IsHidden = fieldAttributes.IsHidden;
         }
         public override string RenderHtml()
         {
