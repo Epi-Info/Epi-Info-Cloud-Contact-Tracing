@@ -27,7 +27,7 @@ namespace MvcDynamicForms.Fields
             PromptFontStyle = fieldType.AttributeValue("PromptFontStyle");
             PromptFontSize = double.TryParse(fieldType.AttributeValue("PromptFontSize"), out _tempDouble) ? _tempDouble : 0;
             PromptFontFamily = fieldType.AttributeValue("PromptFontFamily");
-
+            checkcode = fieldType.AttributeValue("checkcode");
             ControlTopPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlTopPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
             ControlLeftPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlLeftPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
             ControlWidthPercentage = double.TryParse(fieldType.AttributeValue("ControlWidthPercentage"), out _tempDouble) ? _tempDouble : 0;
@@ -67,7 +67,7 @@ namespace MvcDynamicForms.Fields
         public double ControlLeftPositionPercentage { get; set; }
         public double ControlWidthPercentage { get; set; }
         public double ControlHeightPercentage { get; set; }
-
+        public string checkcode { get; set; }
         public double PromptFontSize { get; set; }
         public string PromptFontStyle { get; set; }
         public string PromptFontFamily { get; set; }

@@ -97,8 +97,10 @@ namespace Epi.Web.MVC.Utility
                 form.Width = _Width;
                 form.Height = _Height;
                 //Add checkcode to Form
+                //TODO-Temporarily added to fieldAttributes, Going furter it will change to Metadata 
                 XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
+                string checkcode = metadata[0] != null ? metadata[0].checkcode : string.Empty;
+                //string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
                 StringBuilder JavaScript = new StringBuilder();
                 StringBuilder VariableDefinitions = new StringBuilder();
                 string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";

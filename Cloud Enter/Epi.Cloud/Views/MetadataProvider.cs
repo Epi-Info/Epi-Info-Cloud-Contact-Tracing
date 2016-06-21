@@ -36,27 +36,29 @@ namespace Epi.Cloud.FormMetadataServices
         {
             var pagePosition = pageNumber - 1;
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).Single();
+            var checkcode = view.CheckCode;
             var page = view.Pages
             .Where(p => p.Position == pagePosition).Single();
-            return MapFieldMetadataToFieldAttributes(page, projectTemplateMetadata.SourceTables);
+            return MapFieldMetadataToFieldAttributes(page, projectTemplateMetadata.SourceTables, checkcode);
         }
 
-        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables)
+        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables,string Checkcode)
         {
             var fields = page.Fields;
-            return MapFieldMetadataToFieldAttributes(fields, sourceTables);
+            return MapFieldMetadataToFieldAttributes(fields, sourceTables, Checkcode);
         }
 
-        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables)
+        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables, String CheckCode)
         {
             var results = fields.Select(f => new FieldAttributes
             {
+                checkcode = CheckCode,
                 UniqueId = f.UniqueId.ToString("D"),
                 RequiredMessage = "This field is required",
                 FieldTypeId = f.FieldTypeId,
                 Name = f.Name,
                 TabIndex = (int)f.TabIndex,
-
+            
                 PromptText = f.PromptText,
                 PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),
                 PromptLeftPositionPercentage = f.PromptLeftPositionPercentage.ValueOrDefault(),
