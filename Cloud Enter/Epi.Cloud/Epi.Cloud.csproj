@@ -740,7 +740,6 @@
     <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
-    <Content Include="Scripts\jquery.mobile-1.4.5.min.map" />
     <None Include="Service References\DataServiceClient\EWEDataService.disco" />
     <None Include="Service References\DataServiceClient\configuration91.svcinfo" />
     <None Include="Service References\DataServiceClient\configuration.svcinfo" />
