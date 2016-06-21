@@ -24,12 +24,12 @@ namespace Epi.Web.MVC.Utility
 
         [ThreadStatic]
         public static List<SurveyInfoDTO> SurveyInfoList;
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid= false)
         {
-            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList);
+            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
 
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid)
         {
             // Save last values for subsequent calls from ValidateAll in SurveyController
             SurveyAnswerList = surveyAnswerList;
@@ -56,7 +56,7 @@ namespace Epi.Web.MVC.Utility
             else { SurveyAnswer = ""; }
 
             var form = new Form();
-
+            form.IsAndroid = isAndroid;
             form.ResponseId = surveyAnswer.ResponseId;
 
             form.SurveyInfo = surveyInfo;
@@ -155,8 +155,8 @@ namespace Epi.Web.MVC.Utility
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
 
                     // TODO: Temporary until all field types are supported
-                    var uniqueId = fieldAttributes.UniqueId;
-                    var _FieldTypeID = _FieldsTypeIDs.Where(f => f.AttributeValue("UniqueId") == fieldAttributes.UniqueId).SingleOrDefault();
+                    //var uniqueId = fieldAttributes.UniqueId;
+                    //var _FieldTypeID = _FieldsTypeIDs.Where(f => f.AttributeValue("UniqueId") == fieldAttributes.UniqueId).SingleOrDefault();
 
                     switch (fieldAttributes.FieldTypeId)
                     {

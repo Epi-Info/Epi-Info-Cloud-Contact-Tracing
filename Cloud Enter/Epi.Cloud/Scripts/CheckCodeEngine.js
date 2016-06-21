@@ -457,9 +457,17 @@ CCE_Context.prototype.getValue = function (pName)
                         return value;
                     case "numeric": //string has been converted to number to compare with another number
                         value = new Number(field.val()).valueOf();
+                       
                         if (value == "" || isNaN(value))
                         {
-                            return null;
+                            if (value==0)
+                            {
+                                return value;
+                            }
+                            else
+                            {
+                                return null;
+                            }
                         }
                         else
                         {
@@ -502,7 +510,26 @@ CCE_Context.prototype.getValue = function (pName)
                             return false;
                         }
 
-
+                    case "datepicker": //string has been converted to date for comparison with another date
+                        value = new Date(cce_Symbol.Value).valueOf();
+                        if (value == "" || isNaN(value)) {
+                            return null;
+                        }
+                        else {
+                            return value;
+                        }
+                        return value;
+                    case "timepicker":
+                        var refDate = "01/01/1970 ";//It is a reference date 
+                        var dateTime = refDate + cce_Symbol.Value;
+                        value = new Date(dateTime).valueOf();
+                        if (value == "" || isNaN(value)) {
+                            return null;
+                        }
+                        else {
+                            return value;
+                        }
+                        return value;
                     default:
 
                         return cce_Symbol.Value;
@@ -1915,7 +1942,7 @@ function CCE_ContextOpenSimpleDialogBox(Title,Prompt,id)
         $('#SimpleDialogBoxPrempt').text(Prompt.toString());
         $('#SimpleDialogBoxButton').text('Ok');
         setTimeout(function () {
-        $("#SimpleDialogBox").dialog("open");
+            $("#SimpleDialogBox").dialog("open");
         }, 100);
      }else{
      
@@ -1937,7 +1964,7 @@ function CCE_ContextOpenDialogBox(Title,MaskOpt,Identifier,Prompt)
         $('#DialogBoxPrempt').text(Prompt.toString());
         $('#DialogBoxOkButton').text('Ok');
         $('#DialogBoxInput').datepicker( "hide" );
-         
+        
         setTimeout(function () {
             $("#DialogBox").dialog("open");
         }, 100);

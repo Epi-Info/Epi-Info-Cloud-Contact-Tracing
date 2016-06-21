@@ -6,6 +6,11 @@
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
  <link href="@Url.Content("~/Content/css/eweAdmin.css")" rel="Stylesheet" type="text/css" />
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $("div#demoheader").css({ "margin": "-2px 0px 0px 10px" });
+    });
+    </script>
 <div id="pageHeader">
 	<div id="pageTitleAdmin">
 		<h2 class="adminnav">@Html.ActionLink("Organizations", "OrgList", "AdminOrganization", null, new { @class = "orgbtn" })</h2>
@@ -21,14 +26,25 @@
 	  @*  <a href="#">Log Out</a>*@
 	  
 	  @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;
-	  @Html.ActionLink("Log Out", "LogOut", "Home", null, null)	
+@if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+{
+    if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+    {
+        <a href="http://www.cdc.gov/epiinfo/cloud/index.html">Log Out</a>
+
+    }
+    else
+    {
+	  @Html.ActionLink("Log Out", "LogOut", "Home", null, null)
+    }
+}
 	</div>
 	<div style="clear: both;"></div>
 </div>
 
-<div id="content" style="margin:15px 0 200px; padding-left: 10px; min-height: 375px;">
+<div id="content" style="margin:15px 0px 0px 0px; padding-left: 10px; min-height: 375px;">
 
-    <div id="formtitleadmin" style="display:block; ">
+    <div id="formtitleadmin" style="display:block; margin-bottom:25px">
         <h2 class="surveyTitle">Manage Organizations</h2>
     </div>
     <div style="clear:both;"></div>
@@ -45,7 +61,22 @@
     <div id="adminpaging">
 		<div>
 			@*@Html.ActionLink("Add New Organization","OrgInfo","AdminOrganization")*@
-             @Html.ActionLink("Add New Organization", "OrgInfo", "AdminOrganization", new { orgkey = -1, iseditmode = false }, null)	
+            @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] == null)
+            {
+                @Html.ActionLink("Add New Organization", "OrgInfo", "AdminOrganization", new { orgkey = -1, iseditmode = false }, null)
+            }
+            @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+            {
+                if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "FALSE")
+                {
+                    @Html.ActionLink("Add New Organization", "OrgInfo", "AdminOrganization", new { orgkey = -1, iseditmode = false }, null)
+                }
+                else if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+                {
+                    // @Html.ActionLink("Add New Organization", "OrgInfo", "AdminOrganization", new { onclick = "javascript:return false;" })
+                    @Html.ActionLink("Add New Organization", "OrgInfo", "AdminOrganization", new { orgkey = -1, iseditmode = false }, new { Class = "action", title = "Add a new organisation." })
+                }
+            }
 		</div>
 		@*<div style="float:right;">
 			<a href="#"><span>Previous</span></a>
@@ -76,7 +107,22 @@
 				<td>@item.OrganizationKey</td>
 				<td>@item.IsEnabled</td>
                 <td><span > 
-                @Html.ActionLink("Edit", "OrgInfo", "AdminOrganization", new { orgkey = item.OrganizationKey, iseditmode = true }, null)	
+              @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] == null)
+              {
+                @Html.ActionLink("Edit", "OrgInfo", "AdminOrganization", new { orgkey = item.OrganizationKey, iseditmode = true }, null)
+              }
+            @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+            {
+                if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "FALSE")
+                {
+                    @Html.ActionLink("Edit", "OrgInfo", "AdminOrganization", new { orgkey = item.OrganizationKey, iseditmode = true }, null)
+                }
+                else if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+                {
+                    // @Html.ActionLink("Edit", "OrgInfo", "AdminOrganization", new { onclick = "javascript:return false;" })
+                    @Html.ActionLink("Edit", "OrgInfo", "AdminOrganization", new { orgkey = item.OrganizationKey, iseditmode = true }, new { Class = "action", title = "Modify or change an existing user's information and organisation details." })
+                }
+            }
                 </span>
                 
                 </td>

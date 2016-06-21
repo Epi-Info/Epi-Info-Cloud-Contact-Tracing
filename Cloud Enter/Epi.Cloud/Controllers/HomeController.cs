@@ -75,22 +75,7 @@ namespace Epi.Web.MVC.Controllers
                 System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"(\r\n|\r|\n)+");
 
 
-                //if (surveyInfoModel.IntroductionText != null)
-                //{
-                //    string introText = regex.Replace(surveyInfoModel.IntroductionText.Replace("  ", " &nbsp;"), "<br />");
-                //    surveyInfoModel.IntroductionText = MvcHtmlString.Create(introText).ToString();
-                //}
-
-                //if (surveyInfoModel.IsDraftMode)
-                //{
-                //    surveyInfoModel.IsDraftModeStyleClass = "draft";
-                //    SurveyMode = "draft";
-                //}
-                //else
-                //{
-                //    surveyInfoModel.IsDraftModeStyleClass = "final";
-                //    SurveyMode = "final";
-                //}
+                
                 bool IsMobileDevice = false;
                 IsMobileDevice = this.Request.Browser.IsMobileDevice;
                 if (IsMobileDevice) // Because mobile doesn't need RootFormId until button click. 
@@ -344,9 +329,14 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult ReadSortedResponseInfo(string formid, int page, string sort, string sortfield, int orgid)//List<FormInfoModel> ModelList, string formid)
+        public ActionResult ReadSortedResponseInfo(string formid, int page, string sort, string sortfield, int orgid,bool reset = false)//List<FormInfoModel> ModelList, string formid)
         {
             //Code added to retain Search Starts
+            if(reset)
+            {
+	            Session[SessionKeys.SortOrder] = "";
+	            Session[SessionKeys.SortField] = "";
+            }
             Session[SessionKeys.SelectedOrgId] = orgid;
             if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootFormId].ToString() == formid)
             {
@@ -398,7 +388,14 @@ namespace Epi.Web.MVC.Controllers
                 return View("ListResponses", model);
             }
         }
-
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ResetSort(string formid)
+        {
+            Session["SortOrder"] = null;
+            Session["SortField"] = null;
+            return Json(true);
+        }
         private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel SearchModel, FormResponseInfoModel Model)
         {
             FormCollection Collection = new FormCollection(nameValueCollection);

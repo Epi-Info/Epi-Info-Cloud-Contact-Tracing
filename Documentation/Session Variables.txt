@@ -1,0 +1,27 @@
+CurrentFormId					Set but never retrieved
+CurrentOrgId
+EditForm						== ResponseId
+FormValuesHasChanged
+IsDemoMode						ConfigurationManager.AppSettings["IsDemoMode"].ToUpper()
+IsEditMode
+IsOwner							FormSettingResponse.FormInfo.IsOwner
+IsSqlProject					FormSettingResponse.FormInfo.IsSQLProject
+PageNumber | Pagenumber
+RecoverLastRecordVersion
+RelateButtonPageId				SetRelateSession(string responseId, int currentPage) | Dictionary of PageIds
+
+RequiredList
+RootFormId
+RootResponseId
+SearchCriteria
+SearchModel
+SelectedOrgId
+SortField
+SortOrder
+UGuid
+UserHighestRole
+UserEmailAddress
+UserFirstName
+UserId							Encrypted
+UserLastName
+UsertRole
