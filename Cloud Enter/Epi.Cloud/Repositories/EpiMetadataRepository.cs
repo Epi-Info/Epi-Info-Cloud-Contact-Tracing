@@ -44,7 +44,7 @@ namespace Epi.Cloud.MVC.Repositories
                 {
                     ProjectMetadataProvider p = new ProjectMetadataProvider();
                     Template projectTemplateMetadata;
-                    projectTemplateMetadata = p.GetProjectMetadata(projectId).Result;
+                    projectTemplateMetadata = p.GetProjectMetadataAsync(projectId).Result;
 
                     result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
                     _metadataCache.SetProjectTemplateMetadata(projectTemplateMetadata);

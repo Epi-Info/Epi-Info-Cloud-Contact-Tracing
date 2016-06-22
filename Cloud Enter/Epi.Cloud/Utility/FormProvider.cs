@@ -12,6 +12,7 @@ using MvcDynamicForms;
 using MvcDynamicForms.Fields;
 using System.Data;
 using Epi.Web.MVC.Facade;
+using System.Web.Mvc;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -43,8 +44,8 @@ namespace Epi.Web.MVC.Utility
             }
             else
             {
-                var metadataProvider = new MetadataProvider();
-                metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
+                var metadataProvider = DependencyResolver.Current.GetService<IMetadataProvider>();
+                metadata = metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result;
             }
 
             string SurveyAnswer;

@@ -11,7 +11,7 @@ using MvcDynamicForms.Fields;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.MVC.Facade;
 using System.Data;
-
+using System.Web.Mvc;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -27,13 +27,13 @@ namespace Epi.Web.MVC.Utility
         {
             return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid = false)
+        public static Form GetForm(object surveyMetadata, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid = false)
         {
 
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
 
-            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetaData;
+            var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetadata;
             List<FieldAttributes> metadata;           
             if (surveyInfo.ProjectTemplateMetadata != null)
             {                
@@ -41,8 +41,8 @@ namespace Epi.Web.MVC.Utility
             }
             else
             {
-                var metadataProvider = new MetadataProvider();
-                metadata = metadataProvider.GetMetadata(surveyInfo.SurveyId, pageNumber);
+                var metadataProvider = DependencyResolver.Current.GetService<IMetadataProvider>();
+                metadata = metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result;
             }
 
             string SurveyAnswer;

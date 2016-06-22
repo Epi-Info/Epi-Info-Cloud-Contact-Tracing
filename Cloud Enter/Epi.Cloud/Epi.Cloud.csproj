@@ -428,6 +428,7 @@
     <Compile Include="Utility\SurveyResponseXML.cs" />
     <Compile Include="Utility\ValidateResponse.cs" />
     <Compile Include="Utility\WindowsAuthentication.cs" />
+    <Compile Include="Views\IMetadataProvider.cs" />
     <Compile Include="Views\MetadataProvider.cs" />
   </ItemGroup>
   <ItemGroup>

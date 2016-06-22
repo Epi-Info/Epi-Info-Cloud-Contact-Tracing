@@ -219,3 +219,5 @@ ModelManifest.xml
 /Cloud Enter/Epi.Cloud/Properties/PublishProfiles/epiinfocloudenterqa - FTP (2).pubxml
 /Cloud Enter/Epi.Cloud/Properties/PublishProfiles/EpicloudenterDBAccessAPI - Web Deploy.pubxml
 /Cloud Enter/Epi.Cloud/Properties/PublishProfiles/EpicloudenterDBAccessAPI - FTP.pubxml
+/Documentation
+/Epiinfo.CloudEnter

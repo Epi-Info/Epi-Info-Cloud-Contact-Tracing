@@ -7,16 +7,27 @@ using MvcDynamicForms.Fields;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.CacheServices;
+using System.Threading.Tasks;
 
 namespace Epi.Cloud.FormMetadataServices
 {
-    public class MetadataProvider
+    public class MetadataProvider : IMetadataProvider
     {
-        public List<FieldAttributes> GetMetadata(string formId, int pageNumber)
+        private readonly Cloud.CacheServices.IEpiCloudCache _epiCloudCache;
+        private readonly IProjectMetadataProvider _projectMetadataProvider;
+
+        public MetadataProvider(Cloud.CacheServices.IEpiCloudCache epiCloudCache,
+            IProjectMetadataProvider projectMetadataProvider)
+        {
+            _epiCloudCache = epiCloudCache;
+            _projectMetadataProvider = projectMetadataProvider;
+        }
+
+        public async Task<List<FieldAttributes>> GetMetadataAsync(string formId, int pageNumber)
         {
             Template projectTemplateMetadata;
 
-            ISurveyInfoBOCache surveyInfoBOCache = (ISurveyInfoBOCache)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(Cloud.CacheServices.IEpiCloudCache));
+            ISurveyInfoBOCache surveyInfoBOCache = _epiCloudCache;
             var surveyInfoBO = surveyInfoBOCache.GetSurveyInfoBoMetadata(formId);
             if (surveyInfoBO != null)
             {
@@ -24,8 +35,7 @@ namespace Epi.Cloud.FormMetadataServices
             }
             else
             {
-                ProjectMetadataProvider p = new ProjectMetadataProvider();
-                projectTemplateMetadata = p.GetProjectMetadata("0" /* not used */).Result;
+                projectTemplateMetadata = await _projectMetadataProvider.GetProjectMetadataAsync(formId);
             }
             List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 

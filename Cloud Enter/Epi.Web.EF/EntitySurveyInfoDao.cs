@@ -49,7 +49,7 @@ namespace Epi.Web.EF
                             // TODO: GEL - Get ProjectMetadataProvider from Unitity Container
                             var projectMetadataProvider = new ProjectMetadataProvider();
 
-                            var projectTemplateMetadata = projectMetadataProvider.GetProjectMetadata(surveyInfoId).Result;
+                            var projectTemplateMetadata = projectMetadataProvider.GetProjectMetadataAsync(surveyInfoId).Result;
                             surveyInfoBO.ProjectTemplateMetadata = projectTemplateMetadata;
 
                             var isSuccessful = _surveyInfoBOCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);
