@@ -224,7 +224,16 @@ namespace Epi.Cloud.DataEntryServices
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
             try
             {
-                var query = client.CreateDocumentQuery(docUri, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".PageId," + collectionName + ".SurveyQAList FROM   " + collectionName + " WHERE " + collectionName + ".id = '" + responseId + "'", queryOptions);
+                var columnList = AssembleColumnList(collectionName,
+                    "GlobalRecordID",
+                    "PageId",
+                    "SurveyQAList");
+
+                var query = client.CreateDocumentQuery(docUri, "SELECT " 
+                    + columnList
+                    + " FROM " + collectionName 
+                    + " WHERE " + collectionName + ".id = '" + responseId + "'"
+                    , queryOptions);
                 //var surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
 
 
@@ -256,7 +265,15 @@ namespace Epi.Cloud.DataEntryServices
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-            var query = client.CreateDocumentQuery(collection.SelfLink, "SELECT " + surveyName + ".DateCreated," + surveyName + "._self from " + surveyName + " WHERE " + surveyName + ".GlobalRecordID = '" + SurveyProperties.GlobalRecordID + "'" + " and " + surveyName + ".SurveyID ='" + SurveyProperties.SurveyID + "'", queryOptions);
+            var columnList = AssembleColumnList(surveyName,
+                "DateCreated",
+                "_self");
+
+            var query = client.CreateDocumentQuery(collection.SelfLink, "SELECT "
+                + columnList
+                + " from " + surveyName 
+                + " WHERE " + surveyName + ".GlobalRecordID = '" + SurveyProperties.GlobalRecordID + "'" + " and " + surveyName + ".SurveyID ='" + SurveyProperties.SurveyID + "'"
+                , queryOptions);
             var surveyDataFromDocumentDB = (SurveyProperties)query.AsEnumerable().FirstOrDefault();
             return surveyDataFromDocumentDB;
         }
@@ -331,7 +348,21 @@ namespace Epi.Cloud.DataEntryServices
             List<SurveyResponse> surveyList = new List<SurveyResponse>();
             try
             {
-                var query = client.CreateDocumentQuery(docUri, "SELECT " + collectionName + ".GlobalRecordID," + collectionName + ".SurveyID," + collectionName + ".RecStatus," + collectionName + ".PageId," + collectionName + ".PagePosition," + collectionName + ".DateOfInterview," + collectionName + ".DateCreated," + collectionName + ".DateUpdated FROM   " + collectionName + " WHERE " + collectionName + ".SurveyID = '" + surveyId + "'", queryOptions);
+                var columnList = AssembleColumnList(collectionName,
+                    "GlobalRecordID",
+                    "SurveyID",
+                    "RecStatus",
+                    "PageId",
+                    "PagePosition",
+                    "DateOfInterview",
+                    "DateCreated",
+                    "DateUpdated");
+
+                var query = client.CreateDocumentQuery(docUri, "SELECT "
+                    + columnList
+                    + " FROM " + collectionName
+                    + " WHERE " + collectionName + ".SurveyID = '" + surveyId + "'"
+                    , queryOptions);
                 var surveyDataFromDocumentDB = query.AsQueryable();
                 foreach (SurveyProperties item in surveyDataFromDocumentDB)
                 {
@@ -349,6 +380,12 @@ namespace Epi.Cloud.DataEntryServices
                 Console.WriteLine(ex.ToString());
             }
             return surveyList;
+        }
+
+        private string AssembleColumnList(string collectionName, params string[] columnNames)
+        {
+            var columnList = collectionName + '.' + string.Join(',' + collectionName + '.', columnNames);
+            return columnList;
         }
         #endregion
         #endregion
