@@ -107,7 +107,8 @@ namespace Epi.Web.MVC.Utility
                 //form.Height =300;
                 //Add checkcode to Form
                 XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
+                string checkcode = metadata[0] != null ? metadata[0].checkcode : string.Empty;
+                // string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
                 StringBuilder JavaScript = new StringBuilder();
                 StringBuilder VariableDefinitions = new StringBuilder();
                 string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
@@ -246,8 +247,8 @@ namespace Epi.Web.MVC.Utility
 
                             break;
                         case 12://RadioList
-                            var _GroupBoxValue1 = string.Empty;
-                            form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, _GroupBoxValue1));
+                           // var _GroupBoxValue1 = string.Empty;
+                            //form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, _GroupBoxValue1));
                             var _RadioListSelectedValue1 = FieldValue;
                             string RadioListValues1 = "";
                             RadioListValues1 = fieldAttributes.ChoicesList;
@@ -1053,7 +1054,7 @@ namespace Epi.Web.MVC.Utility
         {
             var groupbox = new MobileGroupBox(fieldAttributes, formWidth, formHeight)
             {
-              //  Value = controlValue
+               //  Value = controlValue
             };
 
             return groupbox;
