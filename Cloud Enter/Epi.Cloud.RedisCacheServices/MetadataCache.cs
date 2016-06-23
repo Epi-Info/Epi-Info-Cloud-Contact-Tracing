@@ -124,16 +124,17 @@ namespace Epi.Cloud.CacheServices
             }
 
             int numberOfPages = pages.Length;
-            var pageIdInfo = new Tuple<int, int, int>[numberOfPages];
+            var digest = new ProjectDigest[numberOfPages];
 
-            // Cached the metadata for each of the pages and remember the pageIds
+            // Cache the metadata for each of the pages and build the digest for the project
             for (int i = 0; i < numberOfPages; ++i)
             {
                 var pageMetadata = pages[i];
                 int viewId = pageMetadata.ViewId;
                 int pageId = pageMetadata.PageId.Value;
                 int position = pageMetadata.Position;
-                pageIdInfo[i] = new Tuple<int, int, int>(viewId, pageId, position);
+                string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
+                digest[i] = new ProjectDigest(viewId, pageId, position, fieldNames);
                 var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
                 foreach (var field in fieldsRequiringSourceTable)
                 {
@@ -144,9 +145,9 @@ namespace Epi.Cloud.CacheServices
                 isSuccessful = Set(MetadataPrefix, ComposePageKey(projectTemplateMetadataClone.Project.Id, pageId), json).Result;
             }
 
-            // save the page ids in the cached object
-            projectTemplateMetadataClone.Project.PageIdInfo = pageIdInfo;
-            projectTemplateMetadata.Project.PageIdInfo = pageIdInfo;
+            // save the project digest in the cached object
+            projectTemplateMetadataClone.Project.Digest = digest;
+            projectTemplateMetadata.Project.Digest = digest;
 
             json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
             isSuccessful = Set(MetadataPrefix, projectTemplateMetadataClone.Project.Id, json).Result;

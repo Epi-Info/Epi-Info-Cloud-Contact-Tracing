@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ConfigurationHelper.cs" />
+    <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

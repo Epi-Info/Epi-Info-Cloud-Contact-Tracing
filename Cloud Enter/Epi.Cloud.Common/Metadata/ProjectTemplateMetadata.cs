@@ -45,12 +45,7 @@ namespace Epi.Cloud.Common.Metadata
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
         public View[] Views { get; set; }
-
-        /// <summary>
-        /// Page Identifying information
-        /// </summary>
-        /// <remarks>Tuple - ViewId, PageId, Position</remarks>
-        public Tuple<int, int, int>[]PageIdInfo { get; set; }
+        public ProjectDigest[] Digest { get; set; }
  
         //  public ProjectCollectedData CollectedData { get; set; }
 
@@ -64,6 +59,23 @@ namespace Epi.Cloud.Common.Metadata
             }
             return clone;
         }
+    }
+    public class ProjectDigest
+    {
+        public ProjectDigest()
+        {
+        }
+        public ProjectDigest(int viewId, int pageId, int position, string[] fieldNames = null)
+        {
+            ViewId = viewId;
+            PageId = pageId;
+            Position = position;
+            FieldNames = fieldNames;
+        }
+        public int ViewId { get; set; }
+        public int PageId { get; set; }
+        public int Position { get; set; }
+        public string[] FieldNames { get; set; }
     }
 
     [DesignerCategory("code")]

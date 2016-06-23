@@ -79,7 +79,7 @@ namespace Epi.Cloud.DataEntryServices
                     RequestOptions requestOption = null;
 
                     //If any opertaion first upsert table properties
-                    var surveyProperties = CreateSurveyDocumentPropertiesAsync(client, collection, surveyData.SurveyProperties, requestOption, surveyData.SurveyName);
+                    var surveyProperties = await CreateSurveyDocumentPropertiesAsync(client, collection, surveyData.SurveyProperties, requestOption, surveyData.SurveyName);
 
                     //Create collection and store data 
                     collection = await ReadCollectionAsync(client, database.SelfLink, surveyData.SurveyName + "_" + surveyData.SurveyProperties.PageId);
