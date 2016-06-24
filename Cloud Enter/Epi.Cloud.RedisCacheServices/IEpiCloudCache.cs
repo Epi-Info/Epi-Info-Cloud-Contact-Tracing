@@ -2,5 +2,6 @@
 {
     public interface IEpiCloudCache : IMetadataCache, ISurveyInfoBOCache, ISurveyIdProjectIdMapCache
     {
+        void ClearAllCache();
     }
 }
