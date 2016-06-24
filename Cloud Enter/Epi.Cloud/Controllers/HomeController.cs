@@ -15,15 +15,15 @@ using Epi.Web.Enter.Common.DTO;
 using System.Web.Configuration;
 using System.Text;
 using Epi.Web.MVC.Constants;
+using Epi.Web.MVC.Facade;
 
 namespace Epi.Web.MVC.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private Epi.Web.MVC.Facade.ISecurityFacade _isecurityFacade;
-        private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
-        private Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
+        private ISecurityFacade _isecurityFacade;
+        private ISurveyFacade _isurveyFacade;
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
         private int NumberOfPages = -1;
@@ -79,7 +79,7 @@ namespace Epi.Web.MVC.Controllers
                 System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"(\r\n|\r|\n)+");
 
 
-                
+
                 bool IsMobileDevice = false;
                 IsMobileDevice = this.Request.Browser.IsMobileDevice;
                 if (IsMobileDevice) // Because mobile doesn't need RootFormId until button click. 
@@ -333,14 +333,14 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult ReadSortedResponseInfo(string formid, int page, string sort, string sortfield, int orgid,bool reset = false)//List<FormInfoModel> ModelList, string formid)
+        public ActionResult ReadSortedResponseInfo(string formid, int page, string sort, string sortfield, int orgid, bool reset = false)//List<FormInfoModel> ModelList, string formid)
         {
 
             //Code added to retain Search Starts
-            if(reset)
+            if (reset)
             {
-	            Session[SessionKeys.SortOrder] = "";
-	            Session[SessionKeys.SortField] = "";
+                Session[SessionKeys.SortOrder] = "";
+                Session[SessionKeys.SortField] = "";
                 _iCacheServices.ClearAllCache();
             }
             Session[SessionKeys.SelectedOrgId] = orgid;
@@ -484,6 +484,13 @@ namespace Epi.Web.MVC.Controllers
             SARequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
             SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
 
+            //Survey surveyInfo = new Survey();
+            //surveyInfo.SurveyName = "TestFromSprint4";
+            //surveyInfo.SurveyProperties = new SurveyProperties();
+            //surveyInfo.SurveyProperties.SurveyID = "32c9277b-51d2-4d09-b556-a05a2ad9103d";
+            //surveyInfo.SurveyProperties.GlobalRecordID = "38dddc77-4d54-4d6e-a205-5bda223aa1ef";
+            //var check = _idocumentDBFacade.DeleteResponse(surveyInfo);
+
             return Json(string.Empty);
         }
 
@@ -611,7 +618,11 @@ namespace Epi.Web.MVC.Controllers
                 {
                     FormResponseReq.Criteria.Sortfield = sortfield;
                 }
-
+                FormResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
+                foreach (var sqlParam in Columns)
+                {
+                    FormResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
+                }
 
                 SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
 

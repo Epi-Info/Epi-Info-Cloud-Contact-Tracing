@@ -1,7 +1,6 @@
 ﻿using Epi.Cloud.DataEntryServices.Model;
+using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
-using MvcDynamicForms.Fields;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Epi.Web.MVC.Facade
@@ -14,5 +13,6 @@ namespace Epi.Web.MVC.Facade
         SurveyQuestionandAnswer ReadSurveyInfromDocumentDocumentDB(string responseId, string PageNumber);
         SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId);
         Task<SurveyQuestionandAnswer> ReadSurveyAnswerByResponseIDAsync(string surveyName, string surveyId, string responseId, string pageId);
+        SurveyAnswerResponse DeleteResponse(Survey SARequest);
     }
 }

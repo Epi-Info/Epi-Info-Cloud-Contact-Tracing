@@ -233,7 +233,7 @@ namespace Epi.Web.EF
             SurveyResponseBO.Status = entity.StatusId;
             SurveyResponseBO.DateUpdated = entity.DateUpdated;
             SurveyResponseBO.DateCompleted = entity.DateCompleted;
-            SurveyResponseBO.TemplateXMLSize = (long)entity.ResponseXMLSize;
+            SurveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
             SurveyResponseBO.DateCreated = entity.DateCreated;
             SurveyResponseBO.IsDraftMode = entity.IsDraftMode;
             SurveyResponseBO.IsLocked = entity.IsLocked;
@@ -252,8 +252,9 @@ namespace Epi.Web.EF
             }
             if (User != null)
             {
-                SurveyResponseBO.UserEmail = User.EmailAddress;
+                SurveyResponseBO.UserEmail = User == null ? string.Empty : User.EmailAddress;
             }
+            SurveyResponseBO.SurveyQAList = entity.SurveyQAList;
 
             return SurveyResponseBO;
         }
