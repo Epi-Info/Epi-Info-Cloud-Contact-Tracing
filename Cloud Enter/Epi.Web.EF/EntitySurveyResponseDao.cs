@@ -11,6 +11,8 @@ using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.Extension;
 using System.Data;
 using System.Data.SqlClient;
+using Epi.Cloud.DataEntryServices;
+
 namespace Epi.Web.EF
 {
     /// <summary>
@@ -785,7 +787,7 @@ namespace Epi.Web.EF
 
         List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria criteria)
         {
-
+            CRUDSurveyResponse documentDB = new CRUDSurveyResponse();
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
 
@@ -944,35 +946,46 @@ namespace Epi.Web.EF
                                 break;
 
                         }
-                        
+
                     }
                     else
                     {
+                        //    SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                        //    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                        //       && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                        //       && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
 
-                        //SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                        // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                        //    && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                        //    && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated); 
+                        List<string> DBParam = new List<string>();
 
-                        SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                           && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                           && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
-                        
+                        foreach (var Param in criteria.SurveyQAList)
+                        {
+                            DBParam.Add(Param.Value.ToLower());
+                        }
+
+                        var dbRespone = documentDB.ReadAllRecordsBySurveyID("TestFormSprint4", criteria.SurveyId, DBParam, criteria.PageNumber.ToString());
+                        IEnumerable<SurveyResponse> _recordsinDocumentDB = (IEnumerable<SurveyResponse>)dbRespone;
+                        if (_recordsinDocumentDB != null)
+                        {
+                            var SurveyList = _recordsinDocumentDB.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
+                            foreach (SurveyResponse Response in SurveyList)
+                            {
+                                result.Add(Mapper.Map(Response, null));
+                            }
+                        }
                     }
 
-                    SurveyResponseList = SurveyResponseList.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
+                    //SurveyResponseList = SurveyResponseList.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
 
-                    foreach (SurveyResponse Response in SurveyResponseList)
-                    {
-                        result.Add(Mapper.Map(Response, Response.Users.First()));
-                    }
+                    //foreach (SurveyResponse Response in SurveyResponseList)
+                    //{
+                    //    result.Add(Mapper.Map(Response, Response.Users.First()));
+                    //}
                 }
             }
             catch (Exception ex)
             {
                 throw (ex);
-            }    
+            }
 
             return result;
         }

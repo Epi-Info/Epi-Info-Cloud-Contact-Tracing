@@ -6,6 +6,7 @@ using Epi.Cloud.DataEntryServices;
 using Epi.Cloud.DataEntryServices.Model;
 using System;
 using System.Threading.Tasks;
+using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -28,10 +29,10 @@ namespace Epi.Web.MVC.Facade
                 RecStatus = form.StatusId,
                 SurveyID = surveyInfoModel.SurveyId,
                 GlobalRecordID = responseId,
+                FirstSaveTime = DateTime.UtcNow,
+                LastSaveTime = DateTime.UtcNow,
                 PageId = form.PageId,
-                PagePosition = "0",
-                DateCreated = DateTime.UtcNow,
-                DateUpdated = DateTime.UtcNow
+                UserId = UserId.ToString()
             };
 
             _storeSurvey.SurveyProperties = _surveyResponseData;
@@ -97,5 +98,16 @@ namespace Epi.Web.MVC.Facade
 
         #endregion
 
+        #region DeleteSurveyByResponseId
+        public SurveyAnswerResponse DeleteResponse(Survey SARequest)
+        {
+            SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
+            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+            var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
+            var result = tasks.Result;
+            return surveyAnsResponse;
+        }
+
+        #endregion
     }
 }

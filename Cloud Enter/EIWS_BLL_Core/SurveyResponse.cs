@@ -8,6 +8,8 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.ObjectMapping;
 using System.Xml.Linq;
 using Epi.Web.Enter.Common.Xml;
+using Epi.Web.Enter.Common.DTO;
+
 namespace Epi.Web.BLL
 {
     public class SurveyResponse

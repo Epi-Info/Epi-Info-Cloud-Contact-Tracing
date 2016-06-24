@@ -19,7 +19,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public DateTime? DateCompleted { get; set; }
         public int Status { get; set; }
         public string XML { get; set; }
-        public long TemplateXMLSize { get; set; }
+        public long? TemplateXMLSize { get; set; }
         public DateTime DateCreated { get; set; }
         public bool IsDraftMode { get; set; }
         public bool IsLocked { get; set; }
@@ -39,5 +39,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         {
             return this.MemberwiseClone();
         }
+        public IDictionary<string, string> SurveyQAList { get; set; }
     }
 }

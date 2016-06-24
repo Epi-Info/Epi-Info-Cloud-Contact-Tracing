@@ -115,6 +115,7 @@ namespace Epi.Web.Enter.Common.Criteria
             get;
             set;
         }
+        public IDictionary<string, string> SurveyQAList { get; set; }
 
     }
 }

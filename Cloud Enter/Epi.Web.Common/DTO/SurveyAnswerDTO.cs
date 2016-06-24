@@ -64,5 +64,6 @@ namespace Epi.Web.Enter.Common.DTO
             get;
             set;
         }
+        public IDictionary<string, string> SurveyQAList { get; set; }
     }
 }
