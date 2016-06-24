@@ -15,11 +15,14 @@ namespace Epi.Web.EF
     /// </summary>
     public class EntitySurveyInfoDao : ISurveyInfoDao
     {
-        private readonly ISurveyInfoBOCache _surveyInfoBOCache;
+        private readonly IEpiCloudCache _epiCloudCache;
+        private readonly IProjectMetadataProvider _projectMetadataProvider;
 
         public EntitySurveyInfoDao()
         {
-            _surveyInfoBOCache = new EpiCloudCache();
+            // TODO: GEL - Get ProjectMetadataProvider from Unitity Container
+            _epiCloudCache = new EpiCloudCache();
+            _projectMetadataProvider = new ProjectMetadataProvider(_epiCloudCache);
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace Epi.Web.EF
                     foreach (string surveyInfoId in SurveyInfoIdList.Distinct())
                     {
                         Guid Id = new Guid(surveyInfoId);
-                        SurveyInfoBO surveyInfoBO = _surveyInfoBOCache.GetSurveyInfoBoMetadata(surveyInfoId);
+                        SurveyInfoBO surveyInfoBO = _epiCloudCache.GetSurveyInfoBoMetadata(surveyInfoId);
                         if (surveyInfoBO == null)
                         {
                             using (var Context = DataObjectFactory.CreateContext())
@@ -45,14 +48,11 @@ namespace Epi.Web.EF
                                 var surveyMetadata = Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id);
                                 surveyInfoBO = Mapper.Map(surveyMetadata);
                             }
-
-                            // TODO: GEL - Get ProjectMetadataProvider from Unitity Container
-                            var projectMetadataProvider = new ProjectMetadataProvider();
-
-                            var projectTemplateMetadata = projectMetadataProvider.GetProjectMetadataAsync(surveyInfoId).Result;
+                            var projectId = _epiCloudCache.GetProjectIdFromSurveyId(surveyInfoId);
+                            var projectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(projectId).Result;
                             surveyInfoBO.ProjectTemplateMetadata = projectTemplateMetadata;
 
-                            var isSuccessful = _surveyInfoBOCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);
+                            var isSuccessful = _epiCloudCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);
                         }
                         result.Add(surveyInfoBO);
 

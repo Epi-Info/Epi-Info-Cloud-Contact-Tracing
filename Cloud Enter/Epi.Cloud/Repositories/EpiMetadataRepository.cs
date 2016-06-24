@@ -6,19 +6,22 @@ using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
 using Epi.Cloud.MetadataServices;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.CacheServices;
 
 namespace Epi.Cloud.MVC.Repositories
 {
     public class EpiMetadataRepository : RepositoryBase, ISurveyInfoRepository
     {
-        private Epi.Cloud.CacheServices.IMetadataCache _metadataCache;
-        private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
+        private readonly IEpiCloudCache _epiCloudCache;
+        private readonly Epi.Cloud.MetadataServices.IProjectMetadataProvider _projectMetadataProvider;
+        private readonly Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
-        public EpiMetadataRepository(Epi.Cloud.CacheServices.IMetadataCache metadataCache,
+        public EpiMetadataRepository(IEpiCloudCache epiCloudCache,
+                                     IProjectMetadataProvider projectMetadataProvider,
                                      Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
-
         {
-            _metadataCache = metadataCache;
+            _epiCloudCache = epiCloudCache;
+            _projectMetadataProvider = projectMetadataProvider;
             _iDataService = iDataService;
         }
 
@@ -29,31 +32,17 @@ namespace Epi.Cloud.MVC.Repositories
         /// <returns></returns>
         public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
         {
-
             try
             {
-                //SurveyInfoResponse result = Client.GetSurveyInfo(pRequest);
-                //SurveyInfoResponse result = _iDataService.GetSurveyInfo(pRequest);
                 SurveyInfoResponse result = null;
-                string projectId = pRequest.Criteria.SurveyIdList[0].ToString();
-                var metadata = _metadataCache.GetProjectTemplateMetadata(projectId);
-                if (metadata != null)
+                result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
+                foreach (var x in result.SurveyInfoList)
                 {
+                    var projectId = _epiCloudCache.GetProjectIdFromSurveyId(x.SurveyId);
+                    x.ProjectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(projectId).Result;
                 }
-                else
-                {
-                    ProjectMetadataProvider p = new ProjectMetadataProvider();
-                    Template projectTemplateMetadata;
-                    projectTemplateMetadata = p.GetProjectMetadataAsync(projectId).Result;
 
-                    result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
-                    _metadataCache.SetProjectTemplateMetadata(projectTemplateMetadata);
-                }
                 return result;
-
-
-
-                // return result;
             }
             catch (FaultException<CustomFaultException> cfe)
             {

@@ -27,7 +27,7 @@ namespace Epi.Cloud.CacheServices
             return keyExists;
         }
 
-        public SurveyInfoBO GetSurveyInfoBoMetadata(string projectId)
+        public SurveyInfoBO GetSurveyInfoBoMetadata(string surveyId)
         {
             SurveyInfoBO surveyInfoBO;
             //if (!_weakSurveyInfoBoMetadataCache.TryGetValue(projectId, out surveyInfoBO))
@@ -40,20 +40,36 @@ namespace Epi.Cloud.CacheServices
             //        _weakSurveyInfoBoMetadataCache.Add(projectId, surveyInfoBO);
             //    }
             //}
-            _dictionarySurveyInfoBoMetadataCache.TryGetValue(projectId, out surveyInfoBO);
+            _dictionarySurveyInfoBoMetadataCache.TryGetValue(surveyId, out surveyInfoBO);
+            if (surveyInfoBO != null && surveyInfoBO.ProjectTemplateMetadata != null)
+            {
+                var projectId = surveyInfoBO.ProjectTemplateMetadata.Project.Id;
+                if (GetProjectIdFromSurveyId(surveyId) != projectId)
+                {
+                    SetSurveyIdProjectIdMap(surveyId, projectId);
+                }
+            }
             return surveyInfoBO;
         }
 
-        public bool SetSurveyInfoBoMetadata(string projectId, SurveyInfoBO surveyInfoBO)
+        public bool SetSurveyInfoBoMetadata(string surveyId, SurveyInfoBO surveyInfoBO)
         {
             bool isSuccessful = true;
             //string surveyInfoBOJson = JsonConvert.SerializeObject(surveyInfoBO);
-            //var isSuccessful = Set(SurveyInfoBOPrefix, projectId, surveyInfoBOJson).Result;
-            //_weakSurveyInfoBoMetadataCache.Add(projectId, surveyInfoBO);
-            _dictionarySurveyInfoBoMetadataCache[projectId] = surveyInfoBO;
-            if (!ProjectTemplateMetadataExists(projectId))
+            //var isSuccessful = Set(SurveyInfoBOPrefix, surveyId, surveyInfoBOJson).Result;
+            //_weakSurveyInfoBoMetadataCache.Add(surveyId, surveyInfoBO);
+            _dictionarySurveyInfoBoMetadataCache[surveyId] = surveyInfoBO;
+            if (surveyInfoBO.ProjectTemplateMetadata != null)
             {
-                isSuccessful = SetProjectTemplateMetadata(surveyInfoBO.ProjectTemplateMetadata);
+                var projectId = surveyInfoBO.ProjectTemplateMetadata.Project.Id;
+                if (GetProjectIdFromSurveyId(surveyId) != projectId)
+                {
+                    SetSurveyIdProjectIdMap(surveyId, projectId);
+                }
+                if (!ProjectTemplateMetadataExists(projectId))
+                {
+                    isSuccessful = SetProjectTemplateMetadata(surveyInfoBO.ProjectTemplateMetadata);
+                }
             }
             return isSuccessful;
         }
