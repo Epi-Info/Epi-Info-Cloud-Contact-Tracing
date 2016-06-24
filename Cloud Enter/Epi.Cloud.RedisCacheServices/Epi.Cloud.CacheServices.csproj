@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EpiCloudCache.cs" />
     <Compile Include="ISurveyIdProjectIdMapCache.cs" />
     <Compile Include="IViewCache.cs" />
     <Compile Include="IEpiCloudCache.cs" />

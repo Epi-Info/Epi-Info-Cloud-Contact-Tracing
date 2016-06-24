@@ -24,7 +24,6 @@ namespace Epi.Web.MVC.Controllers
     {
         private ISecurityFacade _isecurityFacade;
         private ISurveyFacade _isurveyFacade;
-        private ISurveyStoreDocumentDBFacade _idocumentDBFacade;
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
         private int NumberOfPages = -1;
@@ -36,10 +35,13 @@ namespace Epi.Web.MVC.Controllers
         /// injecting surveyFacade to the constructor 
         /// </summary>
         /// <param name="surveyFacade"></param>
-        public HomeController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade, Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade)
+        public HomeController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade,
+                              Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade,
+                              Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices)
         {
             _isurveyFacade = isurveyFacade;
             _isecurityFacade = isecurityFacade;
+            _iCacheServices = iCacheServices;
         }
 
         public ActionResult Default()
@@ -333,11 +335,13 @@ namespace Epi.Web.MVC.Controllers
         [Authorize]
         public ActionResult ReadSortedResponseInfo(string formid, int page, string sort, string sortfield, int orgid, bool reset = false)//List<FormInfoModel> ModelList, string formid)
         {
+
             //Code added to retain Search Starts
             if (reset)
             {
                 Session[SessionKeys.SortOrder] = "";
                 Session[SessionKeys.SortField] = "";
+                _iCacheServices.ClearAllCache();
             }
             Session[SessionKeys.SelectedOrgId] = orgid;
             if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootFormId].ToString() == formid)
