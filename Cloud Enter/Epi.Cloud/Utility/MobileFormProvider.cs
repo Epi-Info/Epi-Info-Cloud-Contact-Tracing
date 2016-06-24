@@ -17,7 +17,15 @@ namespace Epi.Web.MVC.Utility
 {
     public class MobileFormProvider
     {
-        private static ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+        static MobileFormProvider()
+        {
+            var dependencyResolver = DependencyResolver.Current;
+            _metadataProvider = dependencyResolver.GetService<IMetadataProvider>();
+            _surveyDocumentDBStoreFacade = dependencyResolver.GetService<ISurveyStoreDocumentDBFacade>();
+        }
+
+        private static IMetadataProvider _metadataProvider;
+        private static ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
 
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
@@ -339,9 +347,8 @@ namespace Epi.Web.MVC.Utility
         /// <param name="PageNo"></param> 
         public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
-            _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            var response = _isurveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
             return response.SurveyQAList;
         }
         #endregion
