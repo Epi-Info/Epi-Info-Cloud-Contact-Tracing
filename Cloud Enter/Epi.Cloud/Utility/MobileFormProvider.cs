@@ -49,8 +49,8 @@ namespace Epi.Web.MVC.Utility
             }
             else
             {
-                var metadataProvider = DependencyResolver.Current.GetService<IMetadataProvider>();
-                metadata = metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result;
+               // var metadataProvider = DependencyResolver.Current.GetService<IMetadataProvider>();
+                metadata = _metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result;
             }
 
             string SurveyAnswer;
