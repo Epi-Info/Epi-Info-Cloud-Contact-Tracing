@@ -11,12 +11,18 @@ namespace Epi.Cloud.CacheServices
     /// </summary>
     public partial class EpiCloudCache : RedisCache, IEpiCloudCache, IMetadataCache
     {
+        private object _gate = new object();
+
         private const string MetadataPrefix = "metadata_";
         private const string PagePrefix = "#";
 
         private ConditionalWeakTable<string, Template> _weakProjectMetadataObjectCache = new ConditionalWeakTable<string, Template>();
         private ConditionalWeakTable<string, Page> _weakPageMetadataObjectCache = new ConditionalWeakTable<string, Page>();
 
+        private string ComposeFullMetadataKey(string projectId)
+        {
+            return projectId + '!';
+        }
         private string ComposePageKey(string projectId, int pageId)
         {
             return projectId + PagePrefix + Convert.ToInt32(pageId);
@@ -32,6 +38,19 @@ namespace Epi.Cloud.CacheServices
             }
             return keyExists;
         }
+        public Template GetProjectTemplateMetadata(string projectId)
+        {
+            Template metadata = null;
+
+            var fullMetadataKey = ComposeFullMetadataKey(projectId);
+
+            var json = Get(MetadataPrefix, fullMetadataKey).Result;
+            if (json != null)
+            {
+                metadata = JsonConvert.DeserializeObject<Template>(json);
+            }
+            return metadata;
+        }
 
         /// <summary>
         /// GetProjectTemplateMetadata
@@ -41,7 +60,7 @@ namespace Epi.Cloud.CacheServices
         /// <param name="projectId"></param>
         /// <param name="pageId"></param>
         /// <returns>ProjectTemplateMetadata</returns>
-        public Template GetProjectTemplateMetadata(string projectId, int? pageId = null)
+        public Template GetProjectTemplateMetadata(string projectId, int? pageId)
         {
             Template metadata = null;
             Template clonedMetadata = null;
@@ -61,6 +80,32 @@ namespace Epi.Cloud.CacheServices
                 if (pageId.HasValue)
                 {
                     var pageMetadata = GetPageMetadata(projectId, pageId.Value);
+                    clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
+                }
+            }
+            return clonedMetadata;
+        }
+        public Template GetProjectTemplateMetadata(string projectId, string formId, int pageNumber)
+        {
+            Template metadata = null;
+            Template clonedMetadata = null;
+            if (!_weakProjectMetadataObjectCache.TryGetValue(projectId, out metadata))
+            {
+                var json = Get(MetadataPrefix, projectId).Result;
+                if (json != null)
+                {
+                    metadata = JsonConvert.DeserializeObject<Template>(json);
+                    _weakProjectMetadataObjectCache.Add(projectId, metadata);
+                }
+            }
+
+            if (metadata != null)
+            {
+                clonedMetadata = metadata.Clone();
+                var pageId = metadata.PageIdFromPageNumber(formId, pageNumber);
+                if (pageId != 0)
+                {
+                    var pageMetadata = GetPageMetadata(projectId, pageId);
                     clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
                 }
             }
@@ -108,49 +153,51 @@ namespace Epi.Cloud.CacheServices
         /// <returns></returns>
         public bool SetProjectTemplateMetadata(Template projectTemplateMetadata)
         {
-            // Create a clone of the Template. We will make changes to the clone
-            // that we don't want reflected in the original.
-            var projectTemplateMetadataClone = projectTemplateMetadata.Clone();
-
             bool isSuccessful = false;
             string json;
-            // save the pageMetadata list
-            var pages = new Page[0];
-            foreach (var view in projectTemplateMetadataClone.Project.Views)
+            lock (_gate)
             {
-                pages = pages.Union(view.Pages).ToArray();
-                // don't save the page metadata with the cached project metadata
-                view.Pages = new Page[0];
-            }
+                var projectId = projectTemplateMetadata.Project.Id;
+                json = JsonConvert.SerializeObject(projectTemplateMetadata);
 
-            int numberOfPages = pages.Length;
-            var digest = new ProjectDigest[numberOfPages];
+                var fullMetadataKey = ComposeFullMetadataKey(projectId);
+                Set(MetadataPrefix, fullMetadataKey, json);
+                //ClearProjectTemplateMetadataFromCache(projectId);
 
-            // Cache the metadata for each of the pages and build the digest for the project
-            for (int i = 0; i < numberOfPages; ++i)
-            {
-                var pageMetadata = pages[i];
-                int viewId = pageMetadata.ViewId;
-                int pageId = pageMetadata.PageId.Value;
-                int position = pageMetadata.Position;
-                string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
-                digest[i] = new ProjectDigest(viewId, pageId, position, fieldNames);
-                var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
-                foreach (var field in fieldsRequiringSourceTable)
+                // Create a clone of the Template. We will make changes to the clone
+                // that we don't want reflected in the original.
+                var projectTemplateMetadataClone = projectTemplateMetadata.Clone();
+
+                // save the pageMetadata list
+                var pages = new Page[0];
+                foreach (var view in projectTemplateMetadataClone.Project.Views)
                 {
-                    field.SourceTableItems = projectTemplateMetadataClone
-                        .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
+                    pages = pages.Union(view.Pages).ToArray();
+                    // don't save the page metadata with the cached project metadata
+                    view.Pages = new Page[0];
                 }
-                json = JsonConvert.SerializeObject(pageMetadata);
-                isSuccessful = Set(MetadataPrefix, ComposePageKey(projectTemplateMetadataClone.Project.Id, pageId), json).Result;
+
+                int numberOfPages = pages.Length;
+
+                // Cache the metadata for each of the pages
+                for (int i = 0; i < numberOfPages; ++i)
+                {
+                    var pageMetadata = pages[i];
+                    var pageId = pageMetadata.PageId.Value;
+                    var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
+                    foreach (var field in fieldsRequiringSourceTable)
+                    {
+                        field.SourceTableItems = projectTemplateMetadataClone
+                            .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
+                    }
+                    json = JsonConvert.SerializeObject(pageMetadata);
+                    var pageKey = ComposePageKey(projectId, pageId);
+                    isSuccessful = Set(MetadataPrefix, pageKey, json).Result;
+                }
+
+                json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
+                isSuccessful = Set(MetadataPrefix, projectId, json).Result;
             }
-
-            // save the project digest in the cached object
-            projectTemplateMetadataClone.Project.Digest = digest;
-            projectTemplateMetadata.Project.Digest = digest;
-
-            json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
-            isSuccessful = Set(MetadataPrefix, projectTemplateMetadataClone.Project.Id, json).Result;
             return isSuccessful;
         }
 

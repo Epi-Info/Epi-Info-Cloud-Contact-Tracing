@@ -22,52 +22,22 @@ namespace Epi.Cloud.MetadataServices
             Template metadata = null;
             if (elements == ProjectElement.Full)
             {
-                metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId) : null;
-                if (metadata == null)
-                {
-                    metadata = await RefreshCache(projectId);
-                    PopulateRequiredPageLevelSourceTables(metadata);
-                }
+                metadata = await RefreshCache(projectId);
+                PopulateRequiredPageLevelSourceTables(metadata);
             }
             else if (elements == ProjectElement.TemplateWithoutPages)
             {
-                metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId, null) : null;
+                Template fullMetadata = null;
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId);
                 if (metadata == null)
                 {
-                    Template fullMetadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId) : null;
-                    if (fullMetadata == null)
+                    fullMetadata = await RefreshCache(projectId);
+                    metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId);
+                    if (metadata == null)
                     {
-                        fullMetadata = await RefreshCache(projectId);
-                        projectId = fullMetadata.Project.Id;
-                        metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, null);
-                        if (metadata == null)
-                        {
-                            metadata = fullMetadata;
-                        }
+                        metadata = fullMetadata;
                     }
                 }
-            }
-            return metadata;
-        }
-
-        public async Task<Template> GetProjectMetadataWithPageByPageIdAsync(string projectId, int pageId)
-        {
-            var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
-            if (metadata == null)
-            {
-                var fullMetadata = await RefreshCache(projectId);
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
-            }
-            return metadata;
-        }
-
-        public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int pageNumber)
-        {
-            var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, formId, pageNumber);
-            if (metadata == null)
-            {
-                var fullMetadata = await RefreshCache(projectId);
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, formId, pageNumber);
             }
             return metadata;
         }
@@ -86,12 +56,26 @@ namespace Epi.Cloud.MetadataServices
             var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId);
             return templateMetadata;
         }
+
+        public async Task<Template> GetProjectMetadataAsync(string projectId, int pageId)
+        {
+            var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
+            if (metadata == null)
+            {
+                var fullMetadata = await RefreshCache(projectId);
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
+            }
+            return metadata;
+        }
+
         private static void GenerateDigest(Template projectTemplateMetadata)
         {
             var pages = new Page[0];
             foreach (var view in projectTemplateMetadata.Project.Views)
             {
                 pages = pages.Union(view.Pages).ToArray();
+                // don't save the page metadata with the cached project metadata
+                view.Pages = new Page[0];
             }
 
             int numberOfPages = pages.Length;
@@ -105,7 +89,6 @@ namespace Epi.Cloud.MetadataServices
                 string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
                 digest[i] = new ProjectDigest(viewId, pageId, position, fieldNames);
             }
-            projectTemplateMetadata.Project.Digest = digest;
         }
 
         private void PopulateRequiredPageLevelSourceTables(Template metadata)

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Epi.Cloud.MetadataServices.ProxiesService.Interface
 {
-    public interface IFieldAttributeProxy
+    public interface IProjectMetadataProxy
     {
         Task<Template> GetProjectMetadataAsync(string projectId);//Read project
     }

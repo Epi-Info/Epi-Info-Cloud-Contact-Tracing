@@ -1,6 +1,6 @@
 ﻿namespace Epi.Cloud.CacheServices
 {
-    public interface IEpiCloudCache : IMetadataCache, ISurveyInfoBOCache, IViewCache
+    public interface IEpiCloudCache : IMetadataCache, ISurveyInfoBOCache, ISurveyIdProjectIdMapCache
     {
     }
 }

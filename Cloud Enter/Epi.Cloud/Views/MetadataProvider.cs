@@ -35,7 +35,8 @@ namespace Epi.Cloud.FormMetadataServices
             }
             else
             {
-                projectTemplateMetadata = await _projectMetadataProvider.GetProjectMetadataAsync(formId);
+                var projectId = _epiCloudCache.GetProjectIdFromSurveyId(formId);
+                projectTemplateMetadata = await _projectMetadataProvider.GetProjectMetadataAsync(projectId);
             }
             List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 

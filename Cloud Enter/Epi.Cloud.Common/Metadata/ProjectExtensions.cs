@@ -22,5 +22,22 @@ namespace Epi.Cloud.Common.Metadata
             }
             return filteredDigest.ToArray();
         }
+
+        public static int PageIdFromPageNumber(this Template projectTemplateMetadata, string formId, int pageNumber)
+        {
+            int pageId = 0;
+            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
+            if (view != null)
+            {
+                var viewId = view.ViewId;
+                var pagePosition = pageNumber - 1;
+                var digestElement = projectTemplateMetadata.Project.Digest.Where(p => p.Position == pagePosition).SingleOrDefault();
+                if (digestElement != null)
+                {
+                    pageId = digestElement.PageId;
+                }
+            }
+            return pageId;
+        }
     }
 }
