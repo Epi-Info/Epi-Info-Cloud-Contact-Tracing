@@ -38,9 +38,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Epi.Web.DataEntryServices">
-      <HintPath>..\Epi.FormMetadataServices\Epi.Web.DataEntryServices\bin\Debug\Epi.Web.DataEntryServices.dll</HintPath>
-    </Reference>
     <Reference Include="Epi.Web.Enter.Common">
       <HintPath>..\Epi.Web.Common\bin\Debug\Epi.Web.Enter.Common.dll</HintPath>
     </Reference>

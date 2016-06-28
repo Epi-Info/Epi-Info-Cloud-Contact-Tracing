@@ -24,6 +24,7 @@ namespace Epi.Web.MVC.Controllers
     {
         private ISecurityFacade _isecurityFacade;
         private ISurveyFacade _isurveyFacade;
+        private Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
         private int NumberOfPages = -1;

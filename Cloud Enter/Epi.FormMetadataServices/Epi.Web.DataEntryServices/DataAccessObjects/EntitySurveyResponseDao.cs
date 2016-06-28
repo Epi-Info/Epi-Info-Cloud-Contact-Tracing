@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-//using BusinessObjects;
-//using DataObjects.EntityFramework.ModelMapper;
-//using System.Linq.Dynamic;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
+//using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.DataEntryServices;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.Extension;
-using System.Data;
-using System.Data.SqlClient;
+using Epi.Cloud.DataEntryServices.Helpers;
+using Epi.Cloud.Interfaces.DataInterfaces;
+//using Epi.Web.EF;
 
-namespace Epi.Web.EF
+namespace Epi.Cloud.DataEntryServices.DataAccessObjects
 {
     /// <summary>
     /// Entity Framework implementation of the ISurveyResponseDao interface.
@@ -58,28 +57,30 @@ namespace Epi.Web.EF
                 {
                     Guid Id = new Guid(surveyResponseId);
 
-                    using (var Context = DataObjectFactory.CreateContext())
-                    {
-                        var Query = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
-                        if (Query != null)
-                        {
-                            LastActiveUserId = (int)Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id).UserId;
+                    //TODO Implement for DocumentDB
+                    //    using (var Context = DataObjectFactory.CreateContext())
+                    //    {
+                    //        var Query = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
+                    //        if (Query != null)
+                    //        {
+                    //            LastActiveUserId = (int)Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id).UserId;
 
-                        }
+                    //        }
 
-                        result.Add(Mapper.Map(Context.SurveyResponses.FirstOrDefault(x => x.ResponseId == Id), null, LastActiveUserId));
+                    //        result.Add(Mapper.Map(Context.SurveyResponses.FirstOrDefault(x => x.ResponseId == Id), null, LastActiveUserId));
 
 
-                    }
+                    //    }
                 }
             }
             else
             {
-                using (var Context = DataObjectFactory.CreateContext())
-                {
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
 
-                    result = Mapper.Map(Context.SurveyResponses.ToList());
-                }
+                //    result = Mapper.Map(Context.SurveyResponses.ToList());
+                //}
             }
 
             if (PageNumber > 0 && PageSize > 0)
@@ -91,14 +92,11 @@ namespace Epi.Web.EF
                     result.RemoveRange(0, PageSize);
                 }
 
-
-
                 if (PageNumber * PageSize < result.Count)
                 {
                     result.RemoveRange(PageNumber * PageSize, result.Count - PageNumber * PageSize);
                 }
             }
-
 
             return result;
         }
@@ -106,10 +104,7 @@ namespace Epi.Web.EF
 
         public List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
-
-
             List<SurveyResponseBO> resultRows = GetSurveyResponse(SurveyResponseIdList, UserPublishKey, PageNumber, PageSize);
-
 
             return resultRows;
         }
@@ -121,7 +116,6 @@ namespace Epi.Web.EF
         /// <returns>SurveyResponse.</returns>
         public List<SurveyResponseBO> GetSurveyResponseBySurveyId(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1)
         {
-
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
             try
@@ -130,11 +124,12 @@ namespace Epi.Web.EF
                 {
                     Guid Id = new Guid(surveyResponseId);
 
-                    using (var Context = DataObjectFactory.CreateContext())
-                    {
+                    //TODO Implement for DocumentDB
+                    //using (var Context = DataObjectFactory.CreateContext())
+                    //{
 
-                        result.Add(Mapper.Map(Context.SurveyResponses.FirstOrDefault(x => x.SurveyId == Id)));
-                    }
+                    //    result.Add(Mapper.Map(Context.SurveyResponses.FirstOrDefault(x => x.SurveyId == Id)));
+                    //}
                 }
             }
             catch (Exception ex)
@@ -157,121 +152,16 @@ namespace Epi.Web.EF
                 }
             }
 
-
             return result;
         }
 
 
         public List<SurveyResponseBO> GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
-
-
-
             List<SurveyResponseBO> resultRows = GetSurveyResponseBySurveyId(SurveyIdList, UserPublishKey, PageNumber, PageSize);
-
-
             return resultRows;
         }
 
-        /// <summary>
-        /// Gets SurveyResponses depending on criteria.
-        /// </summary>
-        /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
-        /// <returns>SurveyResponse.</returns>
-        //public List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, int pStatusId = -1, int PageNumber = -1, int PageSize = -1)
-        //{
-        //    List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-        //    List<SurveyResponse> responseList = new List<SurveyResponse>();
-
-        //    if (SurveyAnswerIdList.Count > 0)
-        //    {
-        //        foreach (string surveyResponseId in SurveyAnswerIdList.Distinct())
-        //        {
-        //            try
-        //            {
-        //                Guid Id = new Guid(surveyResponseId);
-
-
-        //                using (var Context = DataObjectFactory.CreateContext())
-        //                {
-        //                    SurveyResponse surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id );
-        //                    if (surveyResponse != null)
-        //                    {
-        //                        responseList.Add(surveyResponse);
-        //                    }
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                throw (ex);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        try{
-        //        using (var Context = DataObjectFactory.CreateContext())
-        //        {
-        //            if (!string.IsNullOrEmpty(pSurveyId))
-        //            {
-        //                Guid Id = new Guid(pSurveyId);
-        //                responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id).ToList();
-        //            }
-
-
-        //        }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            throw (ex);
-        //        }
-        //    }
-
-
-        //    //if(! string.IsNullOrEmpty(pSurveyId))
-        //    //{
-        //    //    Guid Id = new Guid(pSurveyId);
-        //    //    List<SurveyResponse> surveyList = new List<SurveyResponse>();
-        //    //    surveyList.AddRange(responseList.Where(x => x.SurveyId == Id));
-        //    //    responseList = surveyList;
-        //    //}
-
-        //    if (pStatusId > -1)
-        //    {
-        //        List<SurveyResponse> statusList = new List<SurveyResponse>();
-        //        statusList.AddRange(responseList.Where(x => x.StatusId == pStatusId));
-        //        responseList = statusList;
-        //    }
-
-        //    if (pDateCompleted > DateTime.MinValue)
-        //    {
-        //        List<SurveyResponse> dateList = new List<SurveyResponse>();
-
-        //        //dateList.AddRange(responseList.Where(x => x.DateCompleted.Value.Month ==  pDateCompleted.Month && x.DateCompleted.Value.Year == pDateCompleted.Year && x.DateCompleted.Value.Day == pDateCompleted.Day));
-        //        dateList.AddRange(responseList.Where(x =>x.DateCompleted !=null && x.DateCompleted.Value.Month == pDateCompleted.Month && x.DateCompleted.Value.Year == pDateCompleted.Year && x.DateCompleted.Value.Day == pDateCompleted.Day));
-        //        responseList = dateList;
-        //    }
-
-        //    result = Mapper.Map(responseList);
-
-        //    if (PageNumber > 0 && PageSize > 0)
-        //    {
-        //        result.Sort(CompareByDateCreated);
-        //        // remove the items to skip
-        //        if (PageNumber * PageSize - PageSize > 0)
-        //        {
-        //            result.RemoveRange(0, PageSize);
-        //        }
-
-        //        if (PageNumber * PageSize < result.Count)
-        //        {
-        //            result.RemoveRange(PageNumber * PageSize, result.Count - PageNumber * PageSize);
-        //        }
-        //    }
-
-
-        //    return result;
-        //}
         public List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1)
         {
             List<SurveyResponseBO> Finalresult = new List<SurveyResponseBO>();
@@ -284,16 +174,17 @@ namespace Epi.Web.EF
                 {
                     try
                     {
+                        SurveyResponse surveyResponse = null;
                         Guid Id = new Guid(surveyResponseId);
 
-                        var Context = DataObjectFactory.CreateContext();
+                        //TODO Implement for DocumentDB
+                        //var Context = DataObjectFactory.CreateContext();
+                        //surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id);
 
-                        SurveyResponse surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id);
                         if (surveyResponse != null)
                         {
                             responseList.Add(surveyResponse);
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -305,23 +196,21 @@ namespace Epi.Web.EF
             {
                 try
                 {
-
                     if (!string.IsNullOrEmpty(pSurveyId))
                     {
-                        var Context = DataObjectFactory.CreateContext();
-                        Guid Id = new Guid(pSurveyId);
-                        if (pStatusId == 3)
-                        {
-                            responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.StatusId != 4 && x.IsDraftMode == IsDraftMode).ToList();
-                        }
-                        else
-                        {
+                        //TODO Implement for DocumentDB
+                        //var Context = DataObjectFactory.CreateContext();
+                        //Guid Id = new Guid(pSurveyId);
+                        //if (pStatusId == 3)
+                        //{
+                        //    responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.StatusId != 4 && x.IsDraftMode == IsDraftMode).ToList();
+                        //}
+                        //else
+                        //{
 
-                            responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.IsDraftMode == IsDraftMode).ToList();
+                        //    responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.IsDraftMode == IsDraftMode).ToList();
 
-                        }
-
-
+                        //}
                     }
                 }
                 catch (Exception ex)
@@ -329,31 +218,6 @@ namespace Epi.Web.EF
                     throw (ex);
                 }
             }
-
-
-            //if (pStatusId > -1)
-            //    {
-            //    List<SurveyResponse> statusList = new List<SurveyResponse>();
-            //    statusList.AddRange(responseList.Where(x => x.StatusId == pStatusId));
-            //    responseList = statusList;
-            //    }
-
-            //if (pDateCompleted > DateTime.MinValue)
-            //    {
-            //    List<SurveyResponse> dateList = new List<SurveyResponse>();
-
-            //    dateList.AddRange(responseList.Where(x => x.DateCompleted != null && x.DateCompleted.Value.Month == pDateCompleted.Month && x.DateCompleted.Value.Year == pDateCompleted.Year && x.DateCompleted.Value.Day == pDateCompleted.Day));
-            //    responseList = dateList;
-            //    }
-
-
-
-
-
-
-
-
-
 
             if (PageSize != -1 && PageNumber != -1)
             {
@@ -367,7 +231,6 @@ namespace Epi.Web.EF
 
                 }
 
-
                 result = result.Skip((PageNumber - 1) * PageSize).Take(PageSize);
                 foreach (var item in result)
                 {
@@ -378,8 +241,6 @@ namespace Epi.Web.EF
             }
             else
             {
-
-
                 Finalresult = Mapper.Map(responseList);
                 foreach (SurveyResponseBO item in Finalresult)
                 {
@@ -391,23 +252,12 @@ namespace Epi.Web.EF
 
                 return Finalresult;
             }
-
-
-
-
-
         }
-
 
         public List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
-
-
             List<SurveyResponseBO> resultRows = GetSurveyResponse(SurveyAnswerIdList, pSurveyId, pDateCompleted, IsDraftMode, pStatusId, PageNumber, PageSize);
-
-
             return resultRows;
-
         }
 
         /// <summary>
@@ -421,25 +271,26 @@ namespace Epi.Web.EF
         {
             try
             {
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
-                    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
-                    if (SurveyResponse.CurrentOrgId > 0)
-                    {
-                        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
-                    }
-                    else
-                    {
-                        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
-                    }
-                    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
-                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-                    SurveyResponseEntity.Users.Add(User);
-                    Context.AddToSurveyResponses(SurveyResponseEntity);
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
+                //    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
+                //    if (SurveyResponse.CurrentOrgId > 0)
+                //    {
+                //        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
+                //    }
+                //    else
+                //    {
+                //        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
+                //    }
+                //    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
+                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //    SurveyResponseEntity.Users.Add(User);
+                //    Context.AddToSurveyResponses(SurveyResponseEntity);
 
-                    Context.SaveChanges();
-                }
+                //    Context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
@@ -457,26 +308,23 @@ namespace Epi.Web.EF
         /// <param name="SurveyResponse">SurveyResponse.</param>
         public void InsertChildSurveyResponse(SurveyResponseBO SurveyResponse)
         {
-
-
-
             try
             {
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    SurveyResponse SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
-                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-                    SurveyResponseEntity.Users.Add(User);
-                    Context.AddToSurveyResponses(SurveyResponseEntity);
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    SurveyResponse SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
+                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //    SurveyResponseEntity.Users.Add(User);
+                //    Context.AddToSurveyResponses(SurveyResponseEntity);
 
-                    Context.SaveChanges();
-                }
+                //    Context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
         }
         /// <summary>
         /// Updates a SurveyResponse.
@@ -488,29 +336,29 @@ namespace Epi.Web.EF
             {
                 Guid Id = new Guid(SurveyResponse.ResponseId);
 
-                //Update Survey
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    var Query = from response in Context.SurveyResponses
-                                where response.ResponseId == Id
-                                select response;
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    var Query = from response in Context.SurveyResponses
+                //                where response.ResponseId == Id
+                //                select response;
 
-                    var DataRow = Query.Single();
+                //    var DataRow = Query.Single();
 
-                    if (!string.IsNullOrEmpty(SurveyResponse.RelateParentId) && SurveyResponse.RelateParentId != Guid.Empty.ToString())
-                    {
-                        DataRow.RelateParentId = new Guid(SurveyResponse.RelateParentId);
-                    }
-                    DataRow.ResponseXML = SurveyResponse.XML;
-                    //DataRow.DateCompleted = DateTime.Now;
-                    DataRow.DateCompleted = SurveyResponse.DateCompleted;
-                    DataRow.StatusId = SurveyResponse.Status;
-                    DataRow.DateUpdated = DateTime.Now;
-                    //   DataRow.ResponsePasscode = SurveyResponse.ResponsePassCode;
-                    DataRow.IsDraftMode = SurveyResponse.IsDraftMode;
-                    DataRow.ResponseXMLSize = RemoveWhitespace(SurveyResponse.XML).Length;
-                    Context.SaveChanges();
-                }
+                //    if (!string.IsNullOrEmpty(SurveyResponse.RelateParentId) && SurveyResponse.RelateParentId != Guid.Empty.ToString())
+                //    {
+                //        DataRow.RelateParentId = new Guid(SurveyResponse.RelateParentId);
+                //    }
+                //    DataRow.ResponseXML = SurveyResponse.XML;
+                //    //DataRow.DateCompleted = DateTime.Now;
+                //    DataRow.DateCompleted = SurveyResponse.DateCompleted;
+                //    DataRow.StatusId = SurveyResponse.Status;
+                //    DataRow.DateUpdated = DateTime.Now;
+                //    //   DataRow.ResponsePasscode = SurveyResponse.ResponsePassCode;
+                //    DataRow.IsDraftMode = SurveyResponse.IsDraftMode;
+                //    DataRow.ResponseXMLSize = RemoveWhitespace(SurveyResponse.XML).Length;
+                //    Context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
@@ -525,49 +373,51 @@ namespace Epi.Web.EF
 
             return xml.Trim();
         }
-        public void UpdatePassCode(UserAuthenticationRequestBO passcodeBO)
+
+#if RequiresUserAuthenticationObjects
+        public void UpdatePassCode(Enter.Common.BusinessObject.UserAuthenticationRequestBO passcodeBO)
         {
 
             try
             {
                 Guid Id = new Guid(passcodeBO.ResponseId);
 
-                //Update Survey
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    var Query = from response in Context.SurveyResponses
-                                where response.ResponseId == Id
-                                select response;
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    var Query = from response in Context.SurveyResponses
+                //                where response.ResponseId == Id
+                //                select response;
 
-                    var DataRow = Query.Single();
+                //    var DataRow = Query.Single();
 
-                    DataRow.ResponsePasscode = passcodeBO.PassCode;
-                    Context.SaveChanges();
-                }
+                //    DataRow.ResponsePasscode = passcodeBO.PassCode;
+                //    Context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
         }
-        public UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO UserAuthenticationRequestBO)
+        public Enter.Common.BusinessObject.UserAuthenticationResponseBO GetAuthenticationResponse(Enter.Common.BusinessObject.UserAuthenticationRequestBO UserAuthenticationRequestBO)
         {
 
-            UserAuthenticationResponseBO UserAuthenticationResponseBO = Mapper.ToAuthenticationResponseBO(UserAuthenticationRequestBO);
+            Enter.Common.BusinessObject.UserAuthenticationResponseBO UserAuthenticationResponseBO = Mapper.ToAuthenticationResponseBO(UserAuthenticationRequestBO);
             try
             {
 
                 Guid Id = new Guid(UserAuthenticationRequestBO.ResponseId);
 
-
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    SurveyResponse surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id);
-                    if (surveyResponse != null)
-                    {
-                        UserAuthenticationResponseBO.PassCode = surveyResponse.ResponsePasscode;
-                    }
-                }
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    SurveyResponse surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id);
+                //    if (surveyResponse != null)
+                //    {
+                //        UserAuthenticationResponseBO.PassCode = surveyResponse.ResponsePasscode;
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -576,6 +426,7 @@ namespace Epi.Web.EF
             return UserAuthenticationResponseBO;
 
         }
+#endif //RequiresUserAuthenticationObjects
 
         /// <summary>
         /// Deletes a SurveyResponse
@@ -583,50 +434,41 @@ namespace Epi.Web.EF
         /// <param name="SurveyResponse">SurveyResponse.</param>
         public void DeleteSurveyResponse(SurveyResponseBO SurveyResponse)
         {
-
-
-
-
-
             try
             {
                 List<SurveyResponseBO> result = new List<SurveyResponseBO>();
                 Guid Id = new Guid(SurveyResponse.ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
-                    result = Mapper.Map(Query);
-                    foreach (var Obj in result)
-                    {
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
+                //    result = Mapper.Map(Query);
+                //    foreach (var Obj in result)
+                //    {
 
-                        if (!string.IsNullOrEmpty(Obj.ResponseId))
-                        {
-                            Guid NewId = new Guid(Obj.ResponseId);
+                //        if (!string.IsNullOrEmpty(Obj.ResponseId))
+                //        {
+                //            Guid NewId = new Guid(Obj.ResponseId);
 
-                            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
 
-                            if (User == null)
-                            {
-                                var ResponseXml = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == new Guid(SurveyResponse.ResponseId));
-                                User = Context.Users.FirstOrDefault(x => x.UserID == ResponseXml.UserId);
-                            }
+                //            if (User == null)
+                //            {
+                //                var ResponseXml = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == new Guid(SurveyResponse.ResponseId));
+                //                User = Context.Users.FirstOrDefault(x => x.UserID == ResponseXml.UserId);
+                //            }
 
-
-                            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == NewId);
-                            Response.Users.Remove(User);
-
-
-                            Context.SurveyResponses.DeleteObject(Response);
-
-                            Context.SaveChanges();
-                        }
+                //            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == NewId);
+                //            Response.Users.Remove(User);
 
 
-                    }
+                //            Context.SurveyResponses.DeleteObject(Response);
 
-
-                }
+                //            Context.SaveChanges();
+                //        }
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -639,68 +481,63 @@ namespace Epi.Web.EF
 
         public void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse)
         {
-
-
             string parentRecordId;
-
 
             try
             {
                 List<SurveyResponseBO> result = new List<SurveyResponseBO>();
                 Guid Id = new Guid(SurveyResponse.ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
-                    result = Mapper.Map(Query);
-                    foreach (var Obj in result)
-                    {
-                        parentRecordId = "";
-                        if (!string.IsNullOrEmpty(Obj.ParentRecordId))
-                        {
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
+                //    result = Mapper.Map(Query);
+                //    foreach (var Obj in result)
+                //    {
+                //        parentRecordId = "";
+                //        if (!string.IsNullOrEmpty(Obj.ParentRecordId))
+                //        {
 
-                            parentRecordId = Obj.ParentRecordId;
-                        }
-                        if (!string.IsNullOrEmpty(Obj.ResponseId))
-                        {
-                            Guid NewId = new Guid(Obj.ResponseId);
+                //            parentRecordId = Obj.ParentRecordId;
+                //        }
+                //        if (!string.IsNullOrEmpty(Obj.ResponseId))
+                //        {
+                //            Guid NewId = new Guid(Obj.ResponseId);
 
-                            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
 
-                            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == NewId);
-                            Response.Users.Remove(User);
+                //            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == NewId);
+                //            Response.Users.Remove(User);
 
-                            Context.SurveyResponses.DeleteObject(Response);
+                //            Context.SurveyResponses.DeleteObject(Response);
 
-                            Context.SaveChanges();
-                        }
+                //            Context.SaveChanges();
+                //        }
 
-                        if (!string.IsNullOrEmpty(parentRecordId))
-                        {
-                            Guid pId = new Guid(parentRecordId);
-                            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //        if (!string.IsNullOrEmpty(parentRecordId))
+                //        {
+                //            Guid pId = new Guid(parentRecordId);
+                //            User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
 
-                            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == pId);
-                            Response.Users.Remove(User);
+                //            SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == pId);
+                //            Response.Users.Remove(User);
 
-                            Context.SurveyResponses.DeleteObject(Response);
+                //            Context.SurveyResponses.DeleteObject(Response);
 
-                            Context.SaveChanges();
-
-
-                        }
-                    }
+                //            Context.SaveChanges();
 
 
-                }
+                //        }
+                //   }
+
+
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
         }
 
 
@@ -711,31 +548,25 @@ namespace Epi.Web.EF
 
             try
             {
-
                 Guid Id = new Guid(SurveyResponse.ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
 
-                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                //    SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == Id);
+                //    Response.Users.Remove(User);
 
-                    SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == Id);
-                    Response.Users.Remove(User);
+                //    Context.SurveyResponses.DeleteObject(Response);
 
-                    Context.SurveyResponses.DeleteObject(Response);
-
-                    Context.SaveChanges();
-
-                }
+                //    Context.SaveChanges();
+                //}
             }
-
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
         }
 
 
@@ -745,7 +576,7 @@ namespace Epi.Web.EF
         }
 
 
-        List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(string FormId, int PageNumber, int PageSize)
+        public List<SurveyResponseBO> GetFormResponseByFormId(string FormId, int PageNumber, int PageSize)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             try
@@ -753,29 +584,23 @@ namespace Epi.Web.EF
 
                 Guid Id = new Guid(FormId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                //        //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true 
+                //        //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true 
+                //        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                //        && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                //        && x.StatusId > 1).OrderByDescending(x => x.DateUpdated);
 
-                    IQueryable<SurveyResponse> SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                        //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true 
-                        //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true 
-                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                        && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                        && x.StatusId > 1).OrderByDescending(x => x.DateUpdated);
+                //    SurveyResponseList = SurveyResponseList.Skip((PageNumber - 1) * PageSize).Take(PageSize);
 
-                    SurveyResponseList = SurveyResponseList.Skip((PageNumber - 1) * PageSize).Take(PageSize);
-
-
-                    foreach (SurveyResponse Response in SurveyResponseList)
-                    {
-
-                        result.Add(Mapper.Map(Response, Response.Users.First()));
-
-                    }
-
-
-                }
-
+                //    foreach (SurveyResponse Response in SurveyResponseList)
+                //    {
+                //        result.Add(Mapper.Map(Response, Response.Users.First()));
+                //    }
+                //}
             }
             catch (Exception ex)
             {
@@ -784,15 +609,15 @@ namespace Epi.Web.EF
             return result;
         }
 
-        List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria criteria)
+        public List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria)
         {
+            CRUDSurveyResponse documentDB = new CRUDSurveyResponse();
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-
 
             //IsSqlProject = IsEISQLProject(criteria.SurveyId);//Checks to see if current form is SqlProject
 
             DataAccessRuleId = this.GetDataAccessRule(criteria.SurveyId, criteria.UserId);
-            #region IsSqlProject
+#region IsSqlProject
             //if (IsSqlProject)
             //{
             //    //make a connection to datasource table to read the connection string.
@@ -867,31 +692,29 @@ namespace Epi.Web.EF
             //}
             //else
             //{
-            #endregion //IsSqlProject
+#endregion //IsSqlProject
 
             try
             {
-
                 Guid Id = new Guid(criteria.SurveyId);
 
-                using (var Context = DataObjectFactory.CreateContext())
+                using (var Context = Epi.Web.EF.DataObjectFactory.CreateContext())
                 {
 
                     IQueryable<SurveyResponse> SurveyResponseList;
                     if (criteria.IsShareable)
                     {
+#if ImplementSharableRules
                         //Shareable
                         switch (DataAccessRuleId)
                         {
                             case 1: //   Organization users can only access the data of there organization
                                 SurveyResponseList = Context.SurveyResponses.Where(
-                            x => x.SurveyId == Id
-                                                  //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                  //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                  && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                  && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                  && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                   .OrderByDescending(x => x.DateUpdated);
+                                    x => x.SurveyId == Id
+                                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                        && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                        && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                        .OrderByDescending(x => x.DateUpdated);
                                 break;
                             case 2:    // All users in host organization will have access to all data of all organizations  
 
@@ -901,58 +724,44 @@ namespace Epi.Web.EF
                                 if (Count > 0)
                                 {
                                     SurveyResponseList = Context.SurveyResponses.Where(
-                                     x => x.SurveyId == Id
-                                                     //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                     //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                     && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                     && x.StatusId >= 1)
-                                                      .OrderByDescending(x => x.DateUpdated);
+                                        x => x.SurveyId == Id
+                                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                            && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                            && x.StatusId >= 1)
+                                            .OrderByDescending(x => x.DateUpdated);
                                 }
                                 else
                                 {
 
                                     SurveyResponseList = Context.SurveyResponses.Where(
                                        x => x.SurveyId == Id
-                                                     //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                                     //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                                     && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                     && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                      .OrderByDescending(x => x.DateUpdated);
+                                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                            && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                            && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                            .OrderByDescending(x => x.DateUpdated);
                                 }
                                 break;
                             case 3: // All users of all organizations can access all data 
                                 SurveyResponseList = Context.SurveyResponses.Where(
-                           x => x.SurveyId == Id
-                              // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                              //&& string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                              && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                            && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                                 && x.StatusId >= 1)
-                                                  .OrderByDescending(x => x.DateUpdated);
+                                   x => x.SurveyId == Id
+                                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                        && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                        && x.StatusId >= 1)
+                                        .OrderByDescending(x => x.DateUpdated);
                                 break;
                             default:
                                 SurveyResponseList = Context.SurveyResponses.Where(
                               x => x.SurveyId == Id
-                                  //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true
-                                  //  && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true
-                                  && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                 && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                                      && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
-                                                     .OrderByDescending(x => x.DateUpdated);
+                                    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                                    && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
+                                    && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
+                                    .OrderByDescending(x => x.DateUpdated);
                                 break;
-
                         }
-
+#endif //ImplementSharableRules
                     }
                     else
                     {
-                        //    SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                        //    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                        //       && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
-                        //       && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
-
                         List<string> DBParam = new List<string>();
 
                         foreach (var Param in criteria.SurveyQAList)
@@ -960,6 +769,16 @@ namespace Epi.Web.EF
                             DBParam.Add(Param.Value.ToLower());
                         }
 
+                        var dbRespone = documentDB.ReadAllRecordsBySurveyID("TestFormSprint4", criteria.SurveyId, DBParam, criteria.PageNumber.ToString());
+                        IEnumerable<SurveyResponse> _recordsinDocumentDB = (IEnumerable<SurveyResponse>)dbRespone;
+                        if (_recordsinDocumentDB != null)
+                        {
+                            var SurveyList = _recordsinDocumentDB.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
+                            foreach (SurveyResponse Response in SurveyList)
+                            {
+                                result.Add(Mapper.Map(Response, null));
+                            }
+                        }
                     }
 
                     //SurveyResponseList = SurveyResponseList.Skip((criteria.PageNumber - 1) * criteria.PageSize).Take(criteria.PageSize);
@@ -978,7 +797,7 @@ namespace Epi.Web.EF
             return result;
         }
 
-
+#if IncludeEpi7Compatibilty
         /// <summary>
         /// Builds SQL Select query by reading the columns, tablename from the EWE database.
         /// </summary>
@@ -1859,12 +1678,12 @@ namespace Epi.Web.EF
 
 
         }
+#endif //IncludeEpi7Compatibilty
 
 
 
         public SurveyResponseBO GetFormResponseByResponseId(string ResponseId)
         {
-
             SurveyResponseBO result = new SurveyResponseBO();
 
             try
@@ -1872,26 +1691,17 @@ namespace Epi.Web.EF
 
                 Guid Id = new Guid(ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-                    SurveyResponse Response = Context.SurveyResponses.Where(x => x.ResponseId == Id).First();
-                    result = (Mapper.Map(Response));
-
-
-
-
-                }
-
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    SurveyResponse Response = Context.SurveyResponses.Where(x => x.ResponseId == Id).First();
+                //    result = (Mapper.Map(Response));
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
 
             return result;
         }
@@ -1903,18 +1713,14 @@ namespace Epi.Web.EF
 
             try
             {
-
                 Guid Id = new Guid(ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-                    SurveyResponse Response = Context.SurveyResponses.Where(x => x.ResponseId == Id).First();
-                    result = (Mapper.Map(Response));
-
-                }
-
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    SurveyResponse Response = Context.SurveyResponses.Where(x => x.ResponseId == Id).First();
+                //    result = (Mapper.Map(Response));
+                //}
             }
             catch (Exception ex)
             {
@@ -1937,72 +1743,51 @@ namespace Epi.Web.EF
 
             try
             {
-
                 Guid Id = new Guid(ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-                    var Response = Context.SurveyResponses.Where(x => x.ResponseId == Id);//.First();
-                    if (Response.Count() > 0)
-                    {
-                        result = (Mapper.Map(Response.First()));
-
-                    }
-
-
-                }
-
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    var Response = Context.SurveyResponses.Where(x => x.ResponseId == Id);//.First();
+                //    if (Response.Count() > 0)
+                //    {
+                //        result = (Mapper.Map(Response.First()));
+                //    }
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
-
             return result;
-
         }
 
         public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string RootId)
         {
-
-
-
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
             List<string> list = new List<string>();
             try
             {
-
                 Guid Id = new Guid(RootId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).Traverse(x => x.SurveyResponse1).AsQueryable();
-                    result = Mapper.Map(Query);
-
-
-
-                }
-
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).Traverse(x => x.SurveyResponse1).AsQueryable();
+                //    result = Mapper.Map(Query);
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
+
             return result;
-
-
-
         }
 
         public SurveyResponseBO GetFormResponseByParentRecordId(string ParentRecordId)
         {
-
             SurveyResponseBO result = new SurveyResponseBO();
 
             try
@@ -2010,28 +1795,21 @@ namespace Epi.Web.EF
 
                 Guid Id = new Guid(ParentRecordId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-                    var Response = Context.SurveyResponses.Where(x => x.ParentRecordId == Id);
-                    if (Response.Count() > 0)
-                    {
-                        result = (Mapper.Map(Response.Single()));
-
-                    }
-
-
-                }
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    var Response = Context.SurveyResponses.Where(x => x.ParentRecordId == Id);
+                //    if (Response.Count() > 0)
+                //    {
+                //        result = (Mapper.Map(Response.Single()));
+                //    }
+                //}
 
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
 
             return result;
         }
@@ -2047,15 +1825,12 @@ namespace Epi.Web.EF
 
                 Guid Id = new Guid(ChildId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).Traverse(x => Context.SurveyResponses.Where(y => x.RelateParentId == y.ResponseId)).AsQueryable();
-
-                    result = Mapper.Map(Query);
-
-
-
-                }
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).Traverse(x => Context.SurveyResponses.Where(y => x.RelateParentId == y.ResponseId)).AsQueryable();
+                //    result = Mapper.Map(Query);
+                //}
 
             }
             catch (Exception ex)
@@ -2063,29 +1838,22 @@ namespace Epi.Web.EF
                 throw (ex);
             }
             return result;
-
-
-
         }
 
         public List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, string SurveyId)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
-
             try
             {
-
                 Guid RId = new Guid(ResponseId);
                 Guid SId = new Guid(SurveyId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-                    result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
-
-                }
-
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
+                //}
 
             }
             catch (Exception ex)
@@ -2094,7 +1862,6 @@ namespace Epi.Web.EF
             }
 
             return result;
-
         }
 
 
@@ -2102,6 +1869,7 @@ namespace Epi.Web.EF
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
+#if IncludeEpi7Compatibilty
             IsSqlProject = IsEISQLProject(Criteria.SurveyId);//Checks to see if current form is SqlProject
 
             if (IsSqlProject)
@@ -2168,6 +1936,8 @@ namespace Epi.Web.EF
                 //SurveyResponseBO.SqlResponseDataBO.SqlData = DataRows;
             }
             else
+#endif //IncludeEpi7Compatibilty
+
             {
 
                 try
@@ -2176,24 +1946,20 @@ namespace Epi.Web.EF
                     Guid RId = new Guid(ResponseId);
                     Guid SId = new Guid(Criteria.SurveyId);
 
-                    using (var Context = DataObjectFactory.CreateContext())
-                    {
+                    //TODO Implement for DocumentDB
+                    //using (var Context = DataObjectFactory.CreateContext())
+                    //{
+                    //    //result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
 
-                        //result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
-
-                        if (Criteria.IsShareable && DataAccessRuleId == 1)
-                        {
-                            result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId && x.OrganizationId == Criteria.UserOrganizationId)).OrderBy(x => x.DateCreated).ToList();
-                        }
-                        else
-                        {
-                            result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
-
-                        }
-
-                    }
-
-
+                    //    if (Criteria.IsShareable && DataAccessRuleId == 1)
+                    //    {
+                    //        result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId && x.OrganizationId == Criteria.UserOrganizationId)).OrderBy(x => x.DateCreated).ToList();
+                    //    }
+                    //    else
+                    //    {
+                    //        result = Mapper.Map(Context.SurveyResponses.Where(x => x.RelateParentId == RId && x.SurveyId == SId)).OrderBy(x => x.DateCreated).ToList();
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -2201,7 +1967,6 @@ namespace Epi.Web.EF
                 }
             }
             return result;
-
         }
 
 
@@ -2209,123 +1974,97 @@ namespace Epi.Web.EF
          * 
          * */
 
-        public SurveyResponseBO GetResponseXml(string ResponseId)
+        public SurveyResponseBO GetResponse(string ResponseId)
         {
-
-
             SurveyResponseBO result = new SurveyResponseBO();
 
             try
             {
-
                 Guid Id = new Guid(ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-                    var Response = Context.ResponseXmls.Where(x => x.ResponseId == Id);
-                    if (Response.Count() > 0)
-                    {
-                        result = (Mapper.Map(Response.Single()));
-
-                    }
-
-                }
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    var Response = Context.ResponseXmls.Where(x => x.ResponseId == Id);
+                //    if (Response.Count() > 0)
+                //    {
+                //        result = (Mapper.Map(Response.Single()));
+                //    }
+                //}
 
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
-
             return result;
-
         }
 
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        //TODO Implement for DocumentDB
+        public void DeleteResponse(ResponseXmlBO ResponseXmlBO)
         {
+        //    Guid Id = new Guid(ResponseXmlBO.ResponseId);
 
+        //    using (var Context = DataObjectFactory.CreateContext())
+        //    {
 
-            Guid Id = new Guid(ResponseXmlBO.ResponseId);
+        //        ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
 
-            using (var Context = DataObjectFactory.CreateContext())
-            {
-
-                ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
-
-                if (Response != null)
-                {
-                    Context.ResponseXmls.DeleteObject(Response);
-                    Context.SaveChanges();
-                }
-                //Update Status
-                //var Query = from response in Context.SurveyResponses
-                //            where response.ResponseId == Id
-                //            select response;
-                //if (Query.Count() > 0)
-                //    {
-                //      var DataRow = Query.Single();
-                //      DataRow.StatusId = 2;
-                //      Context.SaveChanges();
-                //    }
-            }
-
+        //        if (Response != null)
+        //        {
+        //            Context.ResponseXmls.DeleteObject(Response);
+        //            Context.SaveChanges();
+        //        }
+        //    }
         }
 
         public void UpdateRecordStatus(string ResponseId, int Status)
         {
-
             Guid Id = new Guid(ResponseId);
 
-            using (var Context = DataObjectFactory.CreateContext())
-            {
-                var Query = from response in Context.SurveyResponses
-                            where response.ResponseId == Id
-                            select response;
-                if (Query.Count() > 0)
-                {
-                    var DataRow = Query.Single();
-                    DataRow.StatusId = Status;
-                    Context.SaveChanges();
-                }
-            }
-
+            //TODO Implement for DocumentDB
+            //using (var Context = DataObjectFactory.CreateContext())
+            //{
+            //    var Query = from response in Context.SurveyResponses
+            //                where response.ResponseId == Id
+            //                select response;
+            //    if (Query.Count() > 0)
+            //    {
+            //        var DataRow = Query.Single();
+            //        DataRow.StatusId = Status;
+            //        Context.SaveChanges();
+            //    }
+            //}
         }
 
 
         public void InsertResponseXml(ResponseXmlBO ResponseXmlBO)
         {
-
             try
             {
                 Guid Id = new Guid(ResponseXmlBO.ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    ResponseXml ResponseXml = Mapper.ToEF(ResponseXmlBO);
-                    Context.AddToResponseXmls(ResponseXml);
+                //TODO Implement for DocumentDB
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    ResponseXml ResponseXml = Mapper.ToEF(ResponseXmlBO);
+                //    Context.AddToResponseXmls(ResponseXml);
 
-                    //Update Status
-                    var Query = from response in Context.SurveyResponses
-                                where response.ResponseId == Id
-                                select response;
+                //    //Update Status
+                //    var Query = from response in Context.SurveyResponses
+                //                where response.ResponseId == Id
+                //                select response;
 
-                    var DataRow = Query.Single();
-                    DataRow.StatusId = 1;
-                    Context.SaveChanges();
-                }
+                //    var DataRow = Query.Single();
+                //    DataRow.StatusId = 1;
+                //    Context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
         }
 
 
@@ -2334,6 +2073,7 @@ namespace Epi.Web.EF
         {
             int ResponseCount = 0;
 
+#if IncludeEpi7Compatibilty
             //If SqlProject read responses from property SqlProjectResponsesCount.
             IsSqlProject = IsEISQLProject(Criteria.SurveyId);
             if (IsSqlProject)
@@ -2367,125 +2107,110 @@ namespace Epi.Web.EF
                 }
             }
             else
+#endif //IncludeEpi7Compatibilty
             {
-
-
                 try
                 {
 
                     Guid Id = new Guid(Criteria.SurveyId);
                     IQueryable<SurveyResponse> SurveyResponseList;
-                    using (var Context = DataObjectFactory.CreateContext())
-                    {
-                        if (Criteria.IsShareable && this.DataAccessRuleId == 1)
-                        {
-                            SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                                //&& string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true 
-                                && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                    //using (var Context = DataObjectFactory.CreateContext())
+                    //{
+                    //    if (Criteria.IsShareable && this.DataAccessRuleId == 1)
+                    //    {
+                    //        SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                    //            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
 
-                                && x.StatusId >= 1
-                                && x.OrganizationId == Criteria.UserOrganizationId);
-                        }
-                        else
-                        {
+                    //            && x.StatusId >= 1
+                    //            && x.OrganizationId == Criteria.UserOrganizationId);
+                    //    }
+                    //    else
+                    //    {
 
-                            //   SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true && x.StatusId >= 1);
-                            SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                                && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
-                                && x.StatusId >= 1);
+                    //        SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
+                    //            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                    //            && x.StatusId >= 1);
 
 
 
-                        }
-                        ResponseCount = SurveyResponseList.Count();
+                    //    }
+                    //    ResponseCount = SurveyResponseList.Count();
 
-                    }
+                    //}
 
                 }
                 catch (Exception ex)
                 {
                     throw (ex);
                 }
-
-
             }
             return ResponseCount;
-
-
-
         }
         public void UpdateRecordStatus(SurveyResponseBO SurveyResponse)
         {
-
             try
             {
                 List<SurveyResponseBO> result = new List<SurveyResponseBO>();
                 Guid Id = new Guid(SurveyResponse.ResponseId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
-                    result = Mapper.Map(Query);
-                    if (result.Count() > 0)
-                    {
-                        foreach (var Obj in result)
-                        {
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
+                //    result = Mapper.Map(Query);
+                //    if (result.Count() > 0)
+                //    {
+                //        foreach (var Obj in result)
+                //        {
+                //            if (!string.IsNullOrEmpty(Obj.ResponseId))
+                //            {
+                //                Guid NewId = new Guid(Obj.ResponseId);
 
-                            if (!string.IsNullOrEmpty(Obj.ResponseId))
-                            {
-                                Guid NewId = new Guid(Obj.ResponseId);
+                //                Obj.Status = SurveyResponse.Status;
+                //                UpdateSurveyResponse(Obj);
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        Context.usp_soft_delete_Epi7_record(new Guid(SurveyResponse.ResponseId), new Guid(SurveyResponse.SurveyId), false);
+                //        Context.SaveChanges();
+                //    }
 
-
-                                Obj.Status = SurveyResponse.Status;
-                                UpdateSurveyResponse(Obj);
-
-                                //Context.usp_soft_delete_Epi7_record(new Guid(Obj.ResponseId), new Guid(Obj.SurveyId), Obj.Status);
-                                //Context.SaveChanges();
-
-                            }
-
-
-                        }
-                    }
-                    else
-                    {
-
-                        Context.usp_soft_delete_Epi7_record(new Guid(SurveyResponse.ResponseId), new Guid(SurveyResponse.SurveyId), false);
-                        Context.SaveChanges();
-                    }
-
-                }
+                //}
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
-
-
-
         }
-
-
 
         public int GetDataAccessRule(string FormId, int UserId)
         {
             int RuleId = 0;
             Guid Id = new Guid(FormId);
-            using (var Context = DataObjectFactory.CreateContext())
-            {
-                var FormInfo = Context.SurveyMetaDatas.Where(x => x.SurveyId == Id).First();
+            //using (var Context = Epi.Web.EF.DataObjectFactory.CreateContext())
+            //{
+            //    var FormInfo = Context.SurveyMetaDatas.Where(x => x.SurveyId == Id).First();
 
-                RuleId = int.Parse(FormInfo.DataAccessRuleId.ToString());
+            //    RuleId = int.Parse(FormInfo.DataAccessRuleId.ToString());
 
-            }
-
-
+            //}
             return RuleId;
-
-
-
         }
 
+        public int GetFormResponseCount(string FormId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ISResponseExists(Guid ResponseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HasResponse(SurveyAnswerCriteria Criteria)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

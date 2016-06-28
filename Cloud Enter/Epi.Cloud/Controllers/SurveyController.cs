@@ -22,6 +22,7 @@ namespace Epi.Web.MVC.Controllers
     [Authorize]
     public class SurveyController : Controller
     {
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
         private ISecurityFacade _isecurityFacade;
 
         //declare SurveyTransactionObject object
@@ -1348,6 +1349,12 @@ namespace Epi.Web.MVC.Controllers
             bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<FormsHierarchyDTO> FormsHierarchyDTOList = null
             )
         {
+            _isurveyDocumentDBStoreFacade = new SurveyDocumentDBFacade();
+            if (responseId != null && FormValuesHasChanged == "True")
+            {
+                _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+            }
+
             bool IsAndroid = false;
 
             if (this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0)
