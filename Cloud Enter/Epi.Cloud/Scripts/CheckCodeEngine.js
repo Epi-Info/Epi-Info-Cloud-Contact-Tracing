@@ -1933,22 +1933,22 @@ function OpenVideoDialog()
 
 
 /////////////////Simple  Dialogbox //////////////////////
-function CCE_ContextOpenSimpleDialogBox(Title,Prompt,id) 
-{
- if (!eval(document.getElementById("IsMobile")))
-    {
-        $('#ui-dialog-title-SimpledialogBox').text(Title.toString());
-        $('.ui-dialog-title').text(Title.toString());
+function CCE_ContextOpenSimpleDialogBox(Title, Prompt, id) {
+    if (!eval(document.getElementById("IsMobile"))) {
+        $('#ui-dialog-title-SimpledialogBox span').text("simo");
+
         $('#SimpleDialogBoxPrempt').text(Prompt.toString());
         $('#SimpleDialogBoxButton').text('Ok');
         setTimeout(function () {
+
+            $("#SimpleDialogBox").dialog('option', 'title', Title.toString());
             $("#SimpleDialogBox").dialog("open");
         }, 100);
-     }else{
-     
-     CCE_ContextOpenMobileSimpleDialogBox(Title,Prompt,id) 
-     
-     }
+    } else {
+
+        CCE_ContextOpenMobileSimpleDialogBox(Title, Prompt, id)
+
+    }
 }
 
 function CCE_CloseSimpleDialogBox() 
