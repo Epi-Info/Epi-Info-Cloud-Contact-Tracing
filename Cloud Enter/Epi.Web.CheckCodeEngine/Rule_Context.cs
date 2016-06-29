@@ -14,6 +14,7 @@ using Epi.Fields;
 using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;*/
 using Epi.Core.EnterInterpreter.Rules;
 using EpiInfo.Plugin;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Core.EnterInterpreter
 {
@@ -583,15 +584,13 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
         public void LoadTemplate(XDocument pTemplateDoc, XDocument pSurveyResponseDoc)
         {
-
-            // todo for each page in 
-            var _FieldsTypeIDs = from _FieldTypeID in pTemplateDoc.Descendants("Field")
-                                 select _FieldTypeID;
-
             string PageNumber = "";
             string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
             string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
 
+            // todo for each page in 
+            var _FieldsTypeIDs = from _FieldTypeID in pTemplateDoc.Descendants("Field")
+                                 select _FieldTypeID;
 
             foreach (var _FieldTypeID in _FieldsTypeIDs)
             {
@@ -706,6 +705,126 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             }
         }
 
+        public void LoadTemplate(IEnumerable<FieldAttributes> fields, Dictionary<string, string> qaResponse)
+        {
+            string pageNumber = "";
+            string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
+            string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
+
+
+            foreach (var field in fields)
+            {
+
+                PluginVariable var = new PluginVariable();
+                var.Name = field.Name;
+                var.VariableScope = VariableScope.DataSource;
+                var.PageNumber = pageNumber;
+
+                if (qaResponse != null)
+                {
+                    var.Expression = GetControlValue(qaResponse, var.Name);
+                }
+
+
+                switch (field.FieldTypeId)
+                {
+                    case 1: // textbox
+                        var.DataType = DataType.Text;
+                        var.ControlType = "textbox";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "textbox", "datasource", var.Expression)); 
+                        break;
+
+                    case 2://Label/Title
+                        var.DataType = DataType.Text;
+                        var.ControlType = "label";
+                        //continue;
+                        break;
+                    case 3://Label
+                        var.DataType = DataType.Text;
+                        var.ControlType = "label";
+                        continue;
+                    //break;
+                    case 4://MultiLineTextBox
+                        var.DataType = DataType.Text;
+                        var.ControlType = "multiline";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "multiline", "datasource", var.Expression)); 
+                        break;
+                    case 5://NumericTextBox
+                        var.DataType = DataType.Number;
+                        var.ControlType = "numeric";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineNumberFormat, field.Name, "number", "datasource", var.Expression)); 
+                        break;
+                    case 7:// 7 DatePicker
+                        var.DataType = DataType.Date;
+                        var.ControlType = "datepicker";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "number", "datasource", var.Expression)); 
+                        break;
+                    case 8: //TimePicker
+                        var.DataType = DataType.Time;
+                        var.ControlType = "timepicker";
+
+                        break;
+
+                    case 10://CheckBox
+                        var.DataType = DataType.Boolean;
+                        var.ControlType = "checkbox";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "checkbox", "datasource", var.Expression)); 
+                        break;
+                    case 11://DropDown Yes/No
+                        var.DataType = DataType.Boolean;
+                        var.ControlType = "yesno";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "yesno", "datasource", var.Expression)); 
+                        break;
+                    case 12://RadioButton
+                        var.DataType = DataType.Number;
+                        var.ControlType = "radiobutton";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "yesno", "datasource", var.Expression)); 
+                        break;
+
+                    case 17://DropDown LegalValues
+                        var.DataType = DataType.Text;
+                        var.ControlType = "legalvalues";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "legalvalue", "datasource", var.Expression));
+                        break;
+                    case 18://DropDown Codes
+                        var.DataType = DataType.Text;
+                        var.ControlType = "codes";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "code", "datasource", var.Expression));
+                        break;
+                    case 19://DropDown CommentLegal
+                        var.DataType = DataType.Text;
+                        var.ControlType = "commentlegal";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "commentlegal", "datasource", var.Expression)); 
+                        break;
+                    case 21://GroupBox
+                        var.DataType = DataType.Unknown;
+                        var.ControlType = "groupbox";
+                        var.Expression = field.ChoicesList;
+                        //List="Otherpleasespecify,DoubleHearingProtectionWearingEarPlugsandMuffsatthesametime,FittedEarPlugs,EarMuffs,DisposableEarPlugs,FullFaceAirPurifyingCartridgeRespirator,FullFaceorHoodSuppliedAirRespirator,HalfFaceAirPurifyingCartridgeRespirator,DisposibleRespiratorDustMask,WeldingHelmetwithDarkFacePlate,ProtectiveLongSleeveJacket,HeatResistantandFlameRetardantClothing,HeavyLeatherGloves,InsulatedGloves,FaceShield,DarkGoggles,Goggles,None2"
+                        string[] IdentifierList = var.Expression.Split(',');
+                        string Identifier = field.Name;
+                        if (this.GroupVariableList.ContainsKey(Identifier))
+                        {
+                            this.GroupVariableList[Identifier].Clear();
+                        }
+                        else
+                        {
+                            this.GroupVariableList.Add(Identifier, new List<string>());
+                        }
+
+                        foreach (string s in IdentifierList)
+                        {
+                            this.GroupVariableList[Identifier].Add(s);
+                            this.GroupVariableList[Identifier].Add(Identifier);
+                        }
+
+                        break;
+                }
+                this.DefineVariable(var);
+
+            }
+        }
+
         public static string GetControlValue(XDocument xdoc, string ControlName)
         {
 
@@ -723,6 +842,13 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
 
             return ControlValue;
+        }
+
+        public static string GetControlValue(Dictionary<string, string> qaResponse, string controlName)
+        {
+            string controlValue = null;
+            qaResponse.TryGetValue(controlName, out controlValue);
+            return controlValue;
         }
 
 

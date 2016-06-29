@@ -10,13 +10,13 @@ using Epi.Cloud.CacheServices;
 
 namespace Epi.Cloud.MVC.Repositories
 {
-    public class EpiMetadataRepository : RepositoryBase, ISurveyInfoRepository
+    public class IntegratedSurveyInfoEpiMetadataRepository : RepositoryBase, ISurveyInfoRepository
     {
         private readonly IEpiCloudCache _epiCloudCache;
         private readonly Epi.Cloud.MetadataServices.IProjectMetadataProvider _projectMetadataProvider;
         private readonly Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
-        public EpiMetadataRepository(IEpiCloudCache epiCloudCache,
+        public IntegratedSurveyInfoEpiMetadataRepository(IEpiCloudCache epiCloudCache,
                                      IProjectMetadataProvider projectMetadataProvider,
                                      Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
         {

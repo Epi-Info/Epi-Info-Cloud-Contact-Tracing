@@ -50,8 +50,8 @@ namespace Epi.Web.MVC
                     .Configure<InjectedMembers>()
                     .ConfigureInjectionFor<SurveyResponseXML>(new InjectionConstructor());
 
-                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
-                //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.EpiMetadataRepository>();
+                //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
+                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();
             }
             else
             {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Web.Mvc;
+using Epi.Cloud.Common.Metadata;
 
 namespace MvcDynamicForms.Fields
 {

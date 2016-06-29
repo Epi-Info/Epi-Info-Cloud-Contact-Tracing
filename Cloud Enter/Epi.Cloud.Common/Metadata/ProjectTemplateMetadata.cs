@@ -148,12 +148,15 @@ namespace Epi.Cloud.Common.Metadata
     [DesignerCategory("code")]
     public partial class Field
     {
+        public int ViewId { get; set; }
+        public string PageName { get; set; }
+        public int? PageId { get; set; }
+        public int? PagePosition { get; set; }
+
         public int FieldId { get; set; }
         public Guid UniqueId { get; set; }
         public string Name { get; set; }
-        public int? PageId { get; set; }
         public int FieldTypeId { get; set; }
-        public string PageName { get; set; }
         public double? ControlTopPositionPercentage { get; set; }
         public double? ControlLeftPositionPercentage { get; set; }
         public double? ControlHeightPercentage { get; set; }

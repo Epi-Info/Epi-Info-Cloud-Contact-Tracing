@@ -69,17 +69,37 @@ namespace Epi.Cloud.SqlServer
                                      where mf.PageId != null
                                      select new
                                      {
+                                         ViewName = mv.Name,
+                                         mv.ViewId,
+                                         mv.IsRelatedView,
+                                         mv.CheckCode,
+                                         mv.CheckCodeBefore,
+                                         mv.CheckCodeAfter,
+                                         mv.RecordCheckCodeBefore,
+                                         mv.RecordCheckCodeAfter,
+                                         mv.CheckCodeVariableDefinitions,
+                                         mv.Width,
+                                         mv.Height,
+                                         mv.Orientation,
+                                         mv.LabelAlign,
+                                         mv.EIWSOrganizationKey,
+                                         mv.EIWSFormId,
+                                         mv.EWEOrganizationKey,
+                                         mv.EWEFormId,
+
+                                         PageName = mp.Name,
+                                         mp.PageId,
+                                         mp.Position,
+                                         mp.BackgroundId,
+                                         PageBeforeCheckCode = mp.CheckCodeBefore,
+                                         PageAfterCheckCode = mp.CheckCodeAfter,
+
                                          mf.UniqueId,
                                          mf.Name,
-                                         mf.PageId,
                                          mf.FieldId,
                                          mf.FieldTypeId,
                                          ControlAfterCheckCode = mf.CheckCodeAfter,
                                          ControlBeforeCheckCode = mf.CheckCodeBefore,
-                                         PageName = mp.Name,
-                                         PageBeforeCheckCode = mp.CheckCodeBefore,
-                                         PageAfterCheckCode = mp.CheckCodeAfter,
-                                         mp.Position,
                                          mf.ControlTopPositionPercentage,
                                          mf.ControlLeftPositionPercentage,
                                          mf.ControlHeightPercentage,
@@ -116,25 +136,7 @@ namespace Epi.Cloud.SqlServer
                                          mf.IsExclusiveTable,
                                          mf.TabIndex,
                                          mf.HasTabStop,
-                                         mf.SourceFieldId,
-                                         mv.ViewId,
-                                         mp.BackgroundId,
-                                         ViewName = mv.Name,
-                                         mv.IsRelatedView,
-                                         mv.CheckCode,
-                                         mv.CheckCodeBefore,
-                                         mv.CheckCodeAfter,
-                                         mv.RecordCheckCodeBefore,
-                                         mv.RecordCheckCodeAfter,
-                                         mv.CheckCodeVariableDefinitions,
-                                         mv.Width,
-                                         mv.Height,
-                                         mv.Orientation,
-                                         mv.LabelAlign,
-                                         mv.EIWSOrganizationKey,
-                                         mv.EIWSFormId,
-                                         mv.EWEOrganizationKey,
-                                         mv.EWEFormId
+                                         mf.SourceFieldId
                                      };
 
 
@@ -193,14 +195,17 @@ namespace Epi.Cloud.SqlServer
                             {
                                 //Populate Fields Data                          
                                 Field metaField = new Field();
+                                metaField.ViewId = fieldElement.ViewId;
+                                metaField.PageId = fieldElement.PageId;
+                                metaField.PageName = fieldElement.PageName;
+                                metaField.PagePosition = fieldElement.Position;
+
                                 metaField.UniqueId = new System.Guid(fieldElement.UniqueId.ToString());
                                 metaField.Name = fieldElement.Name;
-                                metaField.PageId = fieldElement.PageId;
                                 metaField.FieldId = fieldElement.FieldId;
                                 metaField.FieldTypeId = fieldElement.FieldTypeId;
                                 metaField.ControlAfterCheckCode = fieldElement.ControlAfterCheckCode;
                                 metaField.ControlBeforeCheckCode = fieldElement.ControlBeforeCheckCode;
-                                metaField.PageName = fieldElement.PageName;
                                 metaField.PageBeforeCheckCode = fieldElement.PageBeforeCheckCode;
                                 metaField.PageAfterCheckCode = fieldElement.PageAfterCheckCode;
 

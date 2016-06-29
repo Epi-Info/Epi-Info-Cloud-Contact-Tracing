@@ -77,6 +77,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.Interfaces", "Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj", "{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
 		Debug (Exclude EpiMap)|Mixed Platforms = Debug (Exclude EpiMap)|Mixed Platforms

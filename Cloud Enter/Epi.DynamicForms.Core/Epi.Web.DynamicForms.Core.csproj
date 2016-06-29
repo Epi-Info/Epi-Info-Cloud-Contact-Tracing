@@ -111,8 +111,6 @@
     <Compile Include="Fields\Abstract\TimePickerField.cs" />
     <Compile Include="Fields\CheckBox.cs" />
     <Compile Include="Fields\CheckBoxList.cs" />
-    <Compile Include="Fields\FieldAttributes.cs" />
-    <Compile Include="Fields\Helpers.cs" />
     <Compile Include="Fields\Hidden.cs" />
     <Compile Include="Fields\DatePicker.cs" />
     <Compile Include="Fields\GroupBox.cs" />
@@ -169,6 +167,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
       <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
       <Name>Epi.Web.Common</Name>

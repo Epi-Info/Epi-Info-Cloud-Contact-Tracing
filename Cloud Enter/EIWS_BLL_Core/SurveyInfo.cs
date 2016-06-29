@@ -4,6 +4,8 @@ using System.Linq;
 using Epi.Web.Enter.Common.BusinessObject;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Epi.Cloud.Common.Metadata;
+
 namespace Epi.Web.BLL
 {
 
@@ -136,9 +138,8 @@ namespace Epi.Web.BLL
             SurveyInfoBO result = pRequestMessage;
             if (ValidateSurveyFields(pRequestMessage))
             {
-                if (this.IsRelatedForm(pRequestMessage.XML))
+                if (this.IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
                 {
-
                     List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(pRequestMessage.SurveyId.ToString());
 
                     // 1- breck down the xml to n views
@@ -269,22 +270,9 @@ namespace Epi.Web.BLL
             FormsHierarchyIds = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             return FormsHierarchyIds;
         }
-        private bool IsRelatedForm(string Xml)
+        private bool IsRelatedForm(Template projectTemplateMetadata)
         {
-
-            bool IsRelatedForm = false;
-            XDocument xdoc = XDocument.Parse(Xml);
-
-
-            int NumberOfViews = xdoc.Descendants("View").Count();
-            if (NumberOfViews > 1)
-            {
-                IsRelatedForm = true;
-
-            }
-
-            return IsRelatedForm;
-
+            return projectTemplateMetadata.Project.Views.Length > 1;
         }
 
 

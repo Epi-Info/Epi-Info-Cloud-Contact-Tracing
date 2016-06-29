@@ -50,6 +50,8 @@
     <Compile Include="BusinessObjects\SurveyResponseBO.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="EntityObjects\SurveyResponse.cs" />
+    <Compile Include="Metadata\FieldAttributes.cs" />
+    <Compile Include="Metadata\Helpers.cs" />
     <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

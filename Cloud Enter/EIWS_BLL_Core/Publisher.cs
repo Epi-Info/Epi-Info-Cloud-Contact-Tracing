@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Epi.Cloud.Common.Metadata;
 using Epi.Web.Enter.Common.BusinessObject;
 namespace Epi.Web.BLL
 {
@@ -38,7 +39,7 @@ namespace Epi.Web.BLL
         {
             SurveyRequestResultBO result = new SurveyRequestResultBO();
 
-            if (IsRelatedForm(pRequestMessage.XML))
+            if (IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
             {
                 result = PublishRelatedFormSurvey(pRequestMessage);
             }
@@ -57,7 +58,7 @@ namespace Epi.Web.BLL
         {
 
             SurveyRequestResultBO result = new SurveyRequestResultBO();
-            if (IsRelatedForm(pRequestMessage.XML))
+            if (IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
             {
                 result = RePublishRelatedFormSurvey(pRequestMessage);
             }
@@ -83,7 +84,7 @@ namespace Epi.Web.BLL
 
             }
 
-            else if (string.IsNullOrEmpty(pRequestMessage.XML) || string.IsNullOrWhiteSpace(pRequestMessage.XML))
+            else if (pRequestMessage.ProjectTemplateMetadata == null)
             {
 
                 isValid = false;
@@ -141,36 +142,17 @@ namespace Epi.Web.BLL
             return URL.ToString();
         }
 
-        private bool IsRelatedForm(string Xml)
+        private bool IsRelatedForm(Template projectTemplateMetadata)
         {
-
-            bool IsRelatedForm = false;
-            XDocument xdoc = XDocument.Parse(Xml);
-
-
-            int NumberOfViews = xdoc.Descendants("View").Count();
-            if (NumberOfViews > 1)
-            {
-                IsRelatedForm = true;
-
-            }
-
-            return IsRelatedForm;
-
+            return projectTemplateMetadata.Project.Views.Length > 1;
         }
-        private int GetViewId(string Xml)
+
+        private int GetViewId(Template projectTemplateMetadata)
         {
-
-            int ViewId = 0;
-            XDocument xdoc = XDocument.Parse(Xml);
-
-            XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-
-            int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
-
-            return ViewId;
-
+            int viewId = projectTemplateMetadata.Project.Views[0].ViewId;
+            return viewId;
         }
+
         private SurveyRequestResultBO Publish(SurveyInfoBO pRequestMessage)
         {
             SurveyRequestResultBO result = new SurveyRequestResultBO();
@@ -204,7 +186,7 @@ namespace Epi.Web.BLL
                             // Set Survey Settings
                             this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject, GetSurveyControls(BO));
                             Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
-                            SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
+                            SurveyIdsList.Add(GetViewId(pRequestMessage.ProjectTemplateMetadata), SurveyId.ToString());
                             result.ViewIdAndFormIdList = SurveyIdsList;
                             result.URL = GetURL(pRequestMessage, SurveyId);
                             result.IsPulished = true;
@@ -323,7 +305,7 @@ namespace Epi.Web.BLL
                             var BO = ToBusinessObject(pRequestMessage, SurveyId);
                             this.SurveyInfoDao.InsertFormdefaultSettings(SurveyId.ToString(), pRequestMessage.IsSqlProject, GetSurveyControls(BO));
                             Dictionary<int, string> SurveyIdsList = new Dictionary<int, string>();
-                            SurveyIdsList.Add(GetViewId(pRequestMessage.XML), SurveyId.ToString());
+                            SurveyIdsList.Add(GetViewId(pRequestMessage.ProjectTemplateMetadata), SurveyId.ToString());
                             result.ViewIdAndFormIdList = SurveyIdsList;
                             result.URL = GetURL(pRequestMessage, SurveyId);
                             result.IsPulished = true;

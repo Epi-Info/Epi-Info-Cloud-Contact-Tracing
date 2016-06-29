@@ -23,7 +23,7 @@ namespace Epi.Cloud.FormMetadataServices
             _projectMetadataProvider = projectMetadataProvider;
         }
 
-        public async Task<List<FieldAttributes>> GetMetadataAsync(string formId, int pageNumber)
+        public async Task<IEnumerable<FieldAttributes>> GetMetadataAsync(string formId, int pageNumber)
         {
             Template projectTemplateMetadata;
 
@@ -38,12 +38,12 @@ namespace Epi.Cloud.FormMetadataServices
                 var projectId = _epiCloudCache.GetProjectIdFromSurveyId(formId);
                 projectTemplateMetadata = await _projectMetadataProvider.GetProjectMetadataAsync(projectId);
             }
-            List<FieldAttributes> Results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
+            IEnumerable<FieldAttributes> results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 
-            return Results;
+            return results;
         }
 
-        public static List<FieldAttributes> GetFieldMedatadata(Template projectTemplateMetadata, string formId, int pageNumber)
+        public static IEnumerable<FieldAttributes> GetFieldMedatadata(Template projectTemplateMetadata, string formId, int pageNumber)
         {
             var pagePosition = pageNumber - 1;
             var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).Single();
@@ -53,19 +53,24 @@ namespace Epi.Cloud.FormMetadataServices
             return MapFieldMetadataToFieldAttributes(page, projectTemplateMetadata.SourceTables, checkcode);
         }
 
-        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables,string Checkcode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables,string Checkcode)
         {
             var fields = page.Fields;
             return MapFieldMetadataToFieldAttributes(fields, sourceTables, Checkcode);
         }
 
-        public static List<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables, String CheckCode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables, String CheckCode)
         {
             var results = fields.Select(f => new FieldAttributes
             {
+                RequiredMessage = "This field is required",
+
+                ViewId = f.ViewId,
+                PageId = Convert.ToInt32(f.PageId),
+                PageName = f.PageName,
+                PagePosition = Convert.ToInt32(f.PagePosition),
                 checkcode = CheckCode,
                 UniqueId = f.UniqueId.ToString("D"),
-                RequiredMessage = "This field is required",
                 FieldTypeId = f.FieldTypeId,
                 Name = f.Name,
                 TabIndex = (int)f.TabIndex,
@@ -100,7 +105,7 @@ namespace Epi.Cloud.FormMetadataServices
                 SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && sourceTables != null && sourceTables.Length > 0) ? sourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
                 RelatedViewId = f.RelatedViewId.ToString()
 
-            }).ToList();
+            });
             return results;
         }
     }
@@ -109,14 +114,14 @@ namespace Epi.Cloud.FormMetadataServices
     {
         public string ProjectId { get; set; }
         public string ProjectName { get; set; }
-        public string Name { get; set; }
+        public string PageName { get; set; }
         public string PageId { get; set; }
         public string FieldId { get; set; }
         public string UniqueId { get; set; }
         public int? FieldTypeId { get; set; }
         public string ControlAfterCheckCode { get; set; }
         public string ControlBeforeCheckCode { get; set; }
-        public string PageName { get; set; }
+        public string Name { get; set; }
         public string PageBeforeCheckCode { get; set; }
         public string PageAfterCheckCode { get; set; }
         public string Position { get; set; }
@@ -184,7 +189,7 @@ namespace Epi.Cloud.FormMetadataServices
                 {
                     CDTProject pfiled = new CDTProject();
                     //pfileds = new List<pfiled>();
-                    pfiled.Name = dr["Name"].ToString();
+                    pfiled.PageName = dr["Name"].ToString();
                     pfiled.PageId = dr["PageId"].ToString();
                     pfiled.FieldId = dr["FieldId"].ToString();
                     pfiled.UniqueId = dr["UniqueId"].ToString();

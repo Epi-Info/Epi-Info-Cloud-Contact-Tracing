@@ -5,7 +5,6 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
 
-
 namespace Epi.Web.MVC.Repositories
 {
     public class SurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
@@ -52,6 +51,7 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
+
         public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest pRequest)
         {
             try
@@ -81,6 +81,7 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
+
         public FormSettingResponse GetFormSettings(FormSettingRequest pRequest)
         {
             try
@@ -201,40 +202,6 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
-
-
-        public UserAuthenticationResponse GetUserInfo(UserAuthenticationRequest pRequest)
-        {
-
-            try
-            {
-
-                UserAuthenticationResponse result = _iDataService.GetUser(pRequest);
-                return result;
-            }
-            catch (FaultException<CustomFaultException> cfe)
-            {
-                throw cfe;
-            }
-            catch (FaultException fe)
-            {
-                throw fe;
-            }
-            catch (CommunicationException ce)
-            {
-                throw ce;
-            }
-            catch (TimeoutException te)
-            {
-                throw te;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-
         public UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest pRequest)
         {
             try
@@ -292,7 +259,6 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
-
         public SurveyAnswerResponse DeleteResponseXml(SurveyAnswerRequest pRequest)
         {
             try
@@ -321,9 +287,36 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
+        public UserAuthenticationResponse GetUserInfo(UserAuthenticationRequest pRequest)
+        {
 
+            try
+            {
 
-
+                UserAuthenticationResponse result = _iDataService.GetUser(pRequest);
+                return result;
+            }
+            catch (FaultException<CustomFaultException> cfe)
+            {
+                throw cfe;
+            }
+            catch (FaultException fe)
+            {
+                throw fe;
+            }
+            catch (CommunicationException ce)
+            {
+                throw ce;
+            }
+            catch (TimeoutException te)
+            {
+                throw te;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         #region stubcode
         public List<Enter.Common.DTO.SurveyAnswerDTO> GetList(Criterion criterion = null)
@@ -377,7 +370,6 @@ namespace Epi.Web.MVC.Repositories
         {
             throw new NotImplementedException();
         }
-
         public SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest SurveyAnswerRequest)
         {
 
@@ -407,6 +399,7 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
+
 
         public FormSettingResponse SaveSettings(FormSettingRequest FormSettingReq)
         {
@@ -439,8 +432,6 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
-
-
         public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest pRequest)
         {
 
@@ -472,7 +463,6 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
-
         public SurveyAnswerResponse GetSurveyAnswerAncestor(SurveyAnswerRequest pRequest)
         {
 
@@ -570,6 +560,7 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
+
         public OrganizationResponse GetUserOrganizations(OrganizationRequest OrgReq)
         {
 
@@ -602,6 +593,7 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
+
         public OrganizationResponse GetAdminOrganizations(OrganizationRequest OrgReq)
         {
 
@@ -634,6 +626,8 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
+
+
         public OrganizationResponse GetOrganizationInfo(OrganizationRequest OrgRequest)
         {
 
@@ -669,6 +663,7 @@ namespace Epi.Web.MVC.Repositories
 
 
         }
+
         public OrganizationResponse SetOrganization(OrganizationRequest Request)
         {
 
@@ -700,13 +695,10 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
 
             }
-
-
-
         }
+
         public OrganizationResponse GetOrganizationUsers(OrganizationRequest OrgReq)
         {
-
             try
             {
 
@@ -736,13 +728,11 @@ namespace Epi.Web.MVC.Repositories
             }
 
         }
-
         public UserResponse GetUserInfo(UserRequest Request)
         {
 
             try
             {
-
                 UserResponse result = _iDataService.GetUserInfo(Request);
                 return result;
             }
@@ -773,7 +763,6 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-
                 UserResponse result = _iDataService.SetUserInfo(Request);
                 return result;
             }
@@ -839,9 +828,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-
                 return _iDataService.HasResponse(SurveyId, ResponseId);
-
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -864,7 +851,6 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
 
             }
-
 
         }
     }

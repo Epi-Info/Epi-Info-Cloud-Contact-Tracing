@@ -192,6 +192,12 @@
     <Content Include="EpiInfo.Plugin.dll" />
     <Content Include="GoldParserEngine.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

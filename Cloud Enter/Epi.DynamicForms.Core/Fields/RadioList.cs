@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Epi.Cloud.Common.Metadata;
 using Epi.Core.EnterInterpreter;
 
 namespace MvcDynamicForms.Fields

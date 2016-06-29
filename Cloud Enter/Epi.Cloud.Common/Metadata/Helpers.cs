@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace MvcDynamicForms.Fields
+namespace Epi.Cloud.Common.Metadata
 {
     public static class Helpers
     {

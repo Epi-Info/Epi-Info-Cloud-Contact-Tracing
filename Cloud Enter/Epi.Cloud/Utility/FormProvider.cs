@@ -13,6 +13,7 @@ using MvcDynamicForms.Fields;
 using System.Data;
 using Epi.Web.MVC.Facade;
 using System.Web.Mvc;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -48,11 +49,11 @@ namespace Epi.Web.MVC.Utility
             List<FieldAttributes> metadata;
             if (surveyInfo.ProjectTemplateMetadata != null)
             {
-                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber);
+                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber).ToList();
             }
             else
             {
-                metadata = _metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result;
+                metadata = _metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result.ToList();
             }
 
             string SurveyAnswer;
@@ -104,11 +105,13 @@ namespace Epi.Web.MVC.Utility
                 form.PageId = GetPageId(xdoc, pageNumber);
                 form.Width = _Width;
                 form.Height = _Height;
+
                 //Add checkcode to Form
-                //TODO-Temporarily added to fieldAttributes, Going furter it will change to Metadata 
-                XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                string checkcode = metadata[0] != null ? metadata[0].checkcode : string.Empty;
+                //XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
                 //string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
+
+                string checkcode = metadata[0] != null ? metadata[0].checkcode : string.Empty;
+
                 StringBuilder JavaScript = new StringBuilder();
                 StringBuilder VariableDefinitions = new StringBuilder();
                 string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
@@ -134,16 +137,15 @@ namespace Epi.Web.MVC.Utility
 
                 string PageName = GetPageName(xdoc, pageNumber);
 
-
                 //Generate page level Java script (Before)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "Before"));
                 //Generate page level Java script (After)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
-                Dictionary<string, string> _SurveyAnswerFromDocumentDB = null;
+                Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    //_SurveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    //surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
@@ -383,7 +385,7 @@ namespace Epi.Web.MVC.Utility
                 if (IsFound)
                 {
                     MvcDynamicForms.Fields.Field field = null;
-                    FieldAttributes fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form);
+                    FieldAttributes fieldAttributes = new FieldAttributes(_FieldTypeID, xdocResponse, form.RequiredFieldsList);
 
                     switch (_FieldTypeID.Attribute("FieldTypeId").Value)
                     {
