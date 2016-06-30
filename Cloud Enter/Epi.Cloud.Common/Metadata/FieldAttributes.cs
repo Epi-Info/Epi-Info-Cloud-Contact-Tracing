@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace Epi.Cloud.Common.Metadata
@@ -98,14 +100,64 @@ namespace Epi.Cloud.Common.Metadata
         public string BackgroundColor { get; set; }
         public List<string> SourceTableValues { get; set; }
         public string RelatedViewId { get; set; }
-    }
 
-    public static class XmlAttributeExtensions
-    {
-        public static string AttributeValue(this XElement fieldType, XName attrName, string defaultValue = null)
+
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables, string Checkcode)
         {
-            var attribute = fieldType.Attribute(attrName);
-            return attribute != null ? attribute.Value : defaultValue;
+            var fields = page.Fields;
+            return MapFieldMetadataToFieldAttributes(fields, sourceTables, Checkcode);
+        }
+
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables, string CheckCode)
+        {
+            var results = fields.Select(f => new FieldAttributes
+            {
+                RequiredMessage = "This field is required",
+
+                ViewId = f.ViewId,
+                PageId = f.PageId.ValueOrDefault(),
+                PageName = f.PageName,
+                PagePosition = f.PagePosition.ValueOrDefault(),
+                checkcode = CheckCode,
+                UniqueId = f.UniqueId.ToString("D"),
+                FieldTypeId = f.FieldTypeId,
+                Name = f.Name,
+                TabIndex = (int)f.TabIndex,
+
+                PromptText = f.PromptText,
+                PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),
+                PromptLeftPositionPercentage = f.PromptLeftPositionPercentage.ValueOrDefault(),
+                PromptFontStyle = f.PromptFontStyle,
+                PromptFontSize = (double)f.PromptFontSize.ValueOrDefault(),
+                PromptFontFamily = f.PromptFontFamily,
+
+                ControlTopPositionPercentage = f.ControlTopPositionPercentage.ValueOrDefault(),
+                ControlLeftPositionPercentage = f.ControlLeftPositionPercentage.ValueOrDefault(),
+                ControlWidthPercentage = f.ControlWidthPercentage.ValueOrDefault(),
+                ControlHeightPercentage = f.ControlHeightPercentage.ValueOrDefault(),
+                ControlFontStyle = f.ControlFontStyle,
+                ControlFontSize = (double)f.ControlFontSize.ValueOrDefault(),
+                ControlFontFamily = f.ControlFontFamily,
+
+                MaxLength = f.MaxLength.ValueOrDefault(),
+                Pattern = f.Pattern,
+                Lower = f.Lower,
+                Upper = f.Upper,
+
+                IsRequired = false,
+                Required = false,
+                ReadOnly = false,
+                IsHidden = false,
+                IsHighlighted = false,
+                IsDisabled = false,
+                ChoicesList = f.List,
+                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && sourceTables != null && sourceTables.Length > 0) ? sourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
+                RelatedViewId = f.RelatedViewId.ToString()
+
+            });
+            return results;
         }
     }
+
+
 }

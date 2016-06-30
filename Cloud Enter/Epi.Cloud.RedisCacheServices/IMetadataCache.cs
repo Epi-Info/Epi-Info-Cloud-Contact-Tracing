@@ -12,5 +12,10 @@ namespace Epi.Cloud.CacheServices
         Page GetPageMetadata(string projectId, int pageId);
         bool SetProjectTemplateMetadata(Template projectTemplateMetadata);
         void ClearProjectTemplateMetadataFromCache(string projectId);
+
+        bool PageFieldAttributesExists(string projectId, string formId, int pageNumber);
+        FieldAttributes[] GetPageFieldAttributes(string projectId, string formId, int pageNumber);
+        bool SetPageFieldAttributes(FieldAttributes[] fieldAttributes, string projectId, string formId, int pageNumber);
+        void ClearPageFieldAttributesFromCache(string projectId);
     }
 }

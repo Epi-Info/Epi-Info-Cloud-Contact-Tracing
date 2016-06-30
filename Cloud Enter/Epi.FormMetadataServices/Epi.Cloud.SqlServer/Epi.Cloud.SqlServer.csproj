@@ -201,6 +201,7 @@
     <Compile Include="Forms\NonExistingConnectionStringDialog.Designer.cs">
       <DependentUpon>NonExistingConnectionStringDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="GetmetadataDB.cs" />
     <Compile Include="IDataSource.cs" />
     <Compile Include="MetaData.cs" />
     <Compile Include="Model\DataCDTFieldAttribute.cs" />
