@@ -46,11 +46,10 @@ namespace Epi.Web.MVC.Utility
             List<FieldAttributes> metadata;           
             if (surveyInfo.ProjectTemplateMetadata != null)
             {                
-                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber).ToList();
+                metadata = _metadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber).ToList();
             }
             else
             {
-               // var metadataProvider = DependencyResolver.Current.GetService<IMetadataProvider>();
                 metadata = _metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result.ToList();
             }
 

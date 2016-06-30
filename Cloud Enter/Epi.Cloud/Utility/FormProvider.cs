@@ -23,12 +23,10 @@ namespace Epi.Web.MVC.Utility
         static FormProvider()
         {
             var dependencyResolver = DependencyResolver.Current;
-            _epiCloudCache = dependencyResolver.GetService<IEpiCloudCache>();
             _metadataProvider = dependencyResolver.GetService<IMetadataProvider>();
             _surveyDocumentDBStoreFacade = dependencyResolver.GetService<ISurveyStoreDocumentDBFacade>();
         }
 
-        private static IEpiCloudCache _epiCloudCache;
         private static IMetadataProvider _metadataProvider;
         private static ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
 
@@ -52,7 +50,7 @@ namespace Epi.Web.MVC.Utility
             List<FieldAttributes> metadata;
             if (surveyInfo.ProjectTemplateMetadata != null)
             {
-                metadata = MetadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber, _epiCloudCache).ToList();
+                metadata = _metadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber).ToList();
             }
             else
             {

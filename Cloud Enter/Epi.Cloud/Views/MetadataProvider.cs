@@ -35,18 +35,18 @@ namespace Epi.Cloud.FormMetadataServices
                 var projectId = _epiCloudCache.GetProjectIdFromSurveyId(formId);
                 projectTemplateMetadata = await _projectMetadataProvider.GetProjectMetadataAsync(projectId);
             }
-            IEnumerable<FieldAttributes> results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber, _epiCloudCache);
+            IEnumerable<FieldAttributes> results = GetFieldMedatadata(projectTemplateMetadata, formId, pageNumber);
 
             return results;
         }
 
-        public static IEnumerable<FieldAttributes> GetFieldMedatadata(Template projectTemplateMetadata, string formId, int pageNumber, IEpiCloudCache epiCloudCache = null)
+        public IEnumerable<FieldAttributes> GetFieldMedatadata(Template projectTemplateMetadata, string formId, int pageNumber)
         {
             IEnumerable<FieldAttributes> fieldAttributesArray = null;
             var projectId = projectTemplateMetadata.Project.Id;
-            if (epiCloudCache != null)
+            if (_epiCloudCache != null)
             {
-                fieldAttributesArray = epiCloudCache.GetPageFieldAttributes(projectId, formId, pageNumber);
+                fieldAttributesArray = _epiCloudCache.GetPageFieldAttributes(projectId, formId, pageNumber);
             }
             if (fieldAttributesArray == null)
             {
@@ -56,9 +56,9 @@ namespace Epi.Cloud.FormMetadataServices
                 var page = view.Pages
                 .Where(p => p.Position == pagePosition).Single();
                 fieldAttributesArray = FieldAttributes.MapFieldMetadataToFieldAttributes(page, projectTemplateMetadata.SourceTables, checkcode);
-                if (epiCloudCache != null)
+                if (_epiCloudCache != null)
                 {
-                    epiCloudCache.SetPageFieldAttributes(fieldAttributesArray.ToArray(), projectId, formId, pageNumber);
+                    _epiCloudCache.SetPageFieldAttributes(fieldAttributesArray.ToArray(), projectId, formId, pageNumber);
                 }
             }
             return fieldAttributesArray;
