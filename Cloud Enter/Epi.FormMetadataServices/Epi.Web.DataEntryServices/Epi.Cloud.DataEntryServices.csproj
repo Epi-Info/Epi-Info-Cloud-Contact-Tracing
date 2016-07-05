@@ -93,10 +93,13 @@
     <Compile Include="DataAccessObjects\EntitySurveyResponseDao.cs" />
     <Compile Include="DataEntryService.cs" />
     <Compile Include="DocumentDBServices.cs" />
+    <Compile Include="Facade\ISurveyDocumentDBFacade.cs" />
+    <Compile Include="Model\SurveyInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\SurveyEntity.cs" />
     <Compile Include="Model\SurveyTableEntity.cs" />
     <Compile Include="Helpers\Mapper.cs" />
+    <Compile Include="Facade\SurveyDocumentDBFacade.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -111,6 +114,10 @@
     <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.DynamicForms.Core\Epi.Web.DynamicForms.Core.csproj">
+      <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>
+      <Name>Epi.Web.DynamicForms.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>

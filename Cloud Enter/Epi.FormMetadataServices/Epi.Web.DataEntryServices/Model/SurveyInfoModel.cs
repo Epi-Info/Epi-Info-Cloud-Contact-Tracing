@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.DataEntryServices.Model
 {
 
     /// <summary>

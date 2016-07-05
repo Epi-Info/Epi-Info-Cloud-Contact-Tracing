@@ -22,7 +22,7 @@ namespace Epi.Cloud.MetadataServices
             Template metadata = null;
             if (elements == ProjectElement.Full)
             {
-                metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId) : null;
+                metadata = projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(projectId) : null;
                 if (metadata == null)
                 {
                     metadata = await RefreshCache(projectId);
@@ -34,7 +34,7 @@ namespace Epi.Cloud.MetadataServices
                 metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId, null) : null;
                 if (metadata == null)
                 {
-                    Template fullMetadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId) : null;
+                    Template fullMetadata = projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(projectId) : null;
                     if (fullMetadata == null)
                     {
                         fullMetadata = await RefreshCache(projectId);

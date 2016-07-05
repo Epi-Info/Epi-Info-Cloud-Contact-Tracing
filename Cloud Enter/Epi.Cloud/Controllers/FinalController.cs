@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Xml.Linq;
+using Epi.Cloud.DataEntryServices.Model;
 using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 namespace Epi.Web.MVC.Controllers

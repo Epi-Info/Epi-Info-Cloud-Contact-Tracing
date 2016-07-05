@@ -396,7 +396,6 @@
     <Compile Include="Models\ResponseInfoModel.cs" />
     <Compile Include="Models\ResponseModel.cs" />
     <Compile Include="Models\SettingsInfoModel.cs" />
-    <Compile Include="Models\SurveyInfoModel.cs" />
     <Compile Include="Models\SurveyModel.cs" />
     <Compile Include="Models\SurveyResponseModel.cs" />
     <Compile Include="Models\EIWSTModel.cs" />

@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Text.RegularExpressions;
 using System.Web.Security;
+using Epi.Cloud.DataEntryServices.Model;
+
 namespace Epi.Web.MVC.Utility
 {
     public class SurveyHelper

@@ -16,6 +16,7 @@ using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
+using Epi.Cloud.DataEntryServices.Model;
 
 namespace Epi.Web.MVC.Controllers
 {

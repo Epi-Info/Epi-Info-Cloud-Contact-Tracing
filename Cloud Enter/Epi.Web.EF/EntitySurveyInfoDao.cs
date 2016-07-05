@@ -50,6 +50,10 @@ namespace Epi.Web.EF
                             }
                             var projectId = _epiCloudCache.GetProjectIdFromSurveyId(surveyInfoId);
                             var projectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(projectId).Result;
+                            if (projectId == null && projectTemplateMetadata != null)
+                            {
+                                _epiCloudCache.SetSurveyIdProjectIdMap(surveyInfoId, projectTemplateMetadata.Project.Id);
+                            }
                             surveyInfoBO.ProjectTemplateMetadata = projectTemplateMetadata;
 
                             var isSuccessful = _epiCloudCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);

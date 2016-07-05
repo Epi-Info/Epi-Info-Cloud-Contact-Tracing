@@ -8,7 +8,7 @@ namespace Epi.Web.Enter.Common.DTO
     public class SurveyAnswerDTO
     {
         [DataMember]
-        public string ResponseId { get; set; }
+        public string ResponseId { get; set; }                                                                  
         [DataMember]
         public string SurveyId { get; set; }
         [DataMember]

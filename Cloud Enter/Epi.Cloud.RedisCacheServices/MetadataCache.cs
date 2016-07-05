@@ -3,6 +3,7 @@ using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Epi.Cloud.CacheServices
 {
@@ -19,6 +20,7 @@ namespace Epi.Cloud.CacheServices
 
         private ConditionalWeakTable<string, Template> _weakProjectMetadataObjectCache = new ConditionalWeakTable<string, Template>();
         private ConditionalWeakTable<string, Page> _weakPageMetadataObjectCache = new ConditionalWeakTable<string, Page>();
+        private static Dictionary<string, Template> _dictionaryProjectMetadataObjectCache = new Dictionary<string, Template>();
 
         private string ComposeFullMetadataKey(string projectId)
         {
@@ -34,26 +36,32 @@ namespace Epi.Cloud.CacheServices
             return projectId + FormPrefix + formId + PagePrefix + Convert.ToInt32(pageNumber);
         }
 
-        public bool ProjectTemplateMetadataExists(string projectId)
+        public bool FullProjectTemplateMetadataExists(string projectId)
         {
             bool keyExists = true;
+            string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
             Template metadata;
-            if (!_weakProjectMetadataObjectCache.TryGetValue(projectId, out metadata))
+            if (!_weakProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata))
             {
-                keyExists = KeyExists(MetadataPrefix, projectId).Result;
+                lock (_gate)
+                {
+                    keyExists = _dictionaryProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata);
+                }
             }
             return keyExists;
         }
-        public Template GetProjectTemplateMetadata(string projectId)
+        public Template GetFullProjectTemplateMetadata(string projectId)
         {
+            string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
+            
             Template metadata = null;
 
-            var fullMetadataKey = ComposeFullMetadataKey(projectId);
-
-            var json = Get(MetadataPrefix, fullMetadataKey).Result;
-            if (json != null)
+            if (!_weakProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata))
             {
-                metadata = JsonConvert.DeserializeObject<Template>(json);
+                lock (_gate)
+                {
+                    _dictionaryProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata);
+                }
             }
             return metadata;
         }
@@ -70,13 +78,14 @@ namespace Epi.Cloud.CacheServices
         {
             Template metadata = null;
             Template clonedMetadata = null;
-            if (!_weakProjectMetadataObjectCache.TryGetValue(projectId, out metadata))
+            var projectMetadataWithOutPagesKey = projectId;
+            if (!_weakProjectMetadataObjectCache.TryGetValue(projectMetadataWithOutPagesKey, out metadata))
             {
-                var json = Get(MetadataPrefix, projectId).Result;
+                var json = Get(MetadataPrefix, projectMetadataWithOutPagesKey).Result;
                 if (json != null)
                 {
                     metadata = JsonConvert.DeserializeObject<Template>(json);
-                    _weakProjectMetadataObjectCache. Add(projectId, metadata);
+                    _weakProjectMetadataObjectCache. Add(projectMetadataWithOutPagesKey, metadata);
                 }
             }
 
@@ -95,13 +104,14 @@ namespace Epi.Cloud.CacheServices
         {
             Template metadata = null;
             Template clonedMetadata = null;
-            if (!_weakProjectMetadataObjectCache.TryGetValue(projectId, out metadata))
+            var projectMetadataWithOutPagesKey = projectId;
+            if (!_weakProjectMetadataObjectCache.TryGetValue(projectMetadataWithOutPagesKey, out metadata))
             {
-                var json = Get(MetadataPrefix, projectId).Result;
+                var json = Get(MetadataPrefix, projectMetadataWithOutPagesKey).Result;
                 if (json != null)
                 {
                     metadata = JsonConvert.DeserializeObject<Template>(json);
-                    _weakProjectMetadataObjectCache.Add(projectId, metadata);
+                    _weakProjectMetadataObjectCache.Add(projectMetadataWithOutPagesKey, metadata);
                 }
             }
 
@@ -164,11 +174,11 @@ namespace Epi.Cloud.CacheServices
             lock (_gate)
             {
                 var projectId = projectTemplateMetadata.Project.Id;
-                json = JsonConvert.SerializeObject(projectTemplateMetadata);
 
                 var fullMetadataKey = ComposeFullMetadataKey(projectId);
-                var task = Set(MetadataPrefix, fullMetadataKey, json);
-                //ClearProjectTemplateMetadataFromCache(projectId);
+                _weakProjectMetadataObjectCache.Remove(fullMetadataKey);
+                _weakProjectMetadataObjectCache.Add(fullMetadataKey, projectTemplateMetadata);
+                _dictionaryProjectMetadataObjectCache[fullMetadataKey] = projectTemplateMetadata;
 
                 // Create a clone of the Template. We will make changes to the clone
                 // that we don't want reflected in the original.
@@ -184,8 +194,6 @@ namespace Epi.Cloud.CacheServices
                 }
 
                 int numberOfPages = pages.Length;
-
-                isSuccessful = task.Result;
 
                 // Cache the metadata for each of the pages
                 for (int i = 0; i < numberOfPages; ++i)
@@ -215,16 +223,24 @@ namespace Epi.Cloud.CacheServices
         /// <param name="projectId"></param>
         public void ClearProjectTemplateMetadataFromCache(string projectId)
         {
-            DeleteAllKeys(MetadataPrefix + projectId, key =>
+            lock (_gate)
             {
-                if (((string)key).Contains(PagePrefix)) _weakPageMetadataObjectCache.Remove(key);
-                else _weakProjectMetadataObjectCache.Remove(key);
-            });
+                _dictionaryProjectMetadataObjectCache.Remove(ComposeFullMetadataKey(projectId));
+                _dictionaryProjectMetadataObjectCache.Remove(projectId);
+                DeleteAllKeys(MetadataPrefix + projectId, key =>
+                {
+                    if (((string)key).Contains(PagePrefix)) _weakPageMetadataObjectCache.Remove(key);
+                    else _weakProjectMetadataObjectCache.Remove(key);
+                });
+            }
         }
 
         public void ClearAllMetadataFromCache()
         {
-            DeleteAllKeys(MetadataPrefix);
+            lock (_gate)
+            {
+                DeleteAllKeys(MetadataPrefix);
+            }
         }
 
         public bool PageFieldAttributesExists(string projectId, string formId, int pageNumber)

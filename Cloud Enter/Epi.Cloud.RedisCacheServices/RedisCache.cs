@@ -154,8 +154,15 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        private static readonly Lazy<ConnectionMultiplexer> LazyConnection
-          = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(CacheConnectionString()));
+        private static Lazy<ConnectionMultiplexer> LazyConnection = new Lazy<ConnectionMultiplexer>(() =>
+        {
+            var redisConfig = ConfigurationOptions.Parse(CacheConnectionString());
+            redisConfig.SyncTimeout = 3000;
+            return ConnectionMultiplexer.Connect(redisConfig);
+        });
+
+        //private static readonly Lazy<ConnectionMultiplexer> LazyConnection
+        //  = new Lazy<ConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(CacheConnectionString()));
 
         public static ConnectionMultiplexer Connection
         {

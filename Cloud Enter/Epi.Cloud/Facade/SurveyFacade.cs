@@ -5,6 +5,8 @@ using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Models;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.DataEntryServices.Model;
+
 namespace Epi.Web.MVC.Facade
 {
     public class SurveyFacade : ISurveyFacade

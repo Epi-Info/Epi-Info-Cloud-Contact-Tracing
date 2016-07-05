@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Epi.Cloud.DataEntryServices.Model;
+
 namespace Epi.Web.MVC.Models
 {
     /// <summary>

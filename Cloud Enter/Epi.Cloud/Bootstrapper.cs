@@ -80,7 +80,7 @@ namespace Epi.Web.MVC
             container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(new Epi.Cloud.CacheServices.EpiCloudCache());
             container.RegisterType<Epi.Cloud.MetadataServices.IProjectMetadataProvider, Epi.Cloud.MetadataServices.ProjectMetadataProvider>();
             container.RegisterType<Epi.Cloud.FormMetadataServices.IMetadataProvider, Epi.Cloud.FormMetadataServices.MetadataProvider>();
-            container.RegisterType<Epi.Web.MVC.Facade.ISurveyStoreDocumentDBFacade, Epi.Web.MVC.Facade.SurveyDocumentDBFacade>();
+            container.RegisterType<Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade, Epi.Cloud.DataEntryServices.Facade.SurveyDocumentDBFacade>();
             container.RegisterControllers();
 
             return container;
