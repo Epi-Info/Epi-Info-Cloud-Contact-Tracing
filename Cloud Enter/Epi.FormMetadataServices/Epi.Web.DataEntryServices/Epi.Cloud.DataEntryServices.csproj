@@ -91,7 +91,8 @@
   <ItemGroup>
     <Compile Include="CRUDSurveyResponse.cs" />
     <Compile Include="DataAccessObjects\EntitySurveyResponseDao.cs" />
-    <Compile Include="DataEntryServices.cs" />
+    <Compile Include="DataEntryService.cs" />
+    <Compile Include="DocumentDBServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\SurveyEntity.cs" />
     <Compile Include="Model\SurveyTableEntity.cs" />

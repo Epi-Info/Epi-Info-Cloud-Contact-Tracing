@@ -290,7 +290,7 @@ namespace Epi.Web.MVC.Utility
                 //IEnumerable<XElement> nodes;
                 //  var document = XDocument.Parse(item.XML);
                 //TODO: Temparary Fix for Survey Response List
-                if (item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).ToList().Count != 0)
+                if (item.ResponseQA.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).ToList().Count != 0)
                 {
                     if (MetaDataColumns.Contains(Columns[0].Value.ToString()))
                     {
@@ -300,7 +300,7 @@ namespace Epi.Web.MVC.Utility
                     {
                         // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[0].Value.ToString());
 
-                        ResponseModel.Column1 = item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).FirstOrDefault().Value;
+                        ResponseModel.Column1 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).FirstOrDefault().Value;
                     }
                     if (Columns.Count >= 2)
                     {
@@ -312,7 +312,7 @@ namespace Epi.Web.MVC.Utility
                         else
                         {
                             // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[1].Value.ToString());
-                            ResponseModel.Column2 = item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[1].Value.ToLower().ToString()).FirstOrDefault().Value;
+                            ResponseModel.Column2 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[1].Value.ToLower().ToString()).FirstOrDefault().Value;
                         }
                     }
 
@@ -327,7 +327,7 @@ namespace Epi.Web.MVC.Utility
                         else
                         {
                             // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[2].Value.ToString());
-                            ResponseModel.Column3 = item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[2].Value.ToLower().ToString()).FirstOrDefault().Value;
+                            ResponseModel.Column3 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[2].Value.ToLower().ToString()).FirstOrDefault().Value;
                         }
                     }
 
@@ -341,7 +341,7 @@ namespace Epi.Web.MVC.Utility
                         else
                         {
                             //nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[3].Value.ToString());
-                            ResponseModel.Column4 = item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[3].Value.ToLower().ToString()).FirstOrDefault().Value;
+                            ResponseModel.Column4 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[3].Value.ToLower().ToString()).FirstOrDefault().Value;
                         }
                     }
 
@@ -355,7 +355,7 @@ namespace Epi.Web.MVC.Utility
                         else
                         {
                             //nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[4].Value.ToString());
-                            ResponseModel.Column5 = item.SurveyQAList.Where(e => e.Key.ToLower() == Columns[4].Value.ToLower().ToString()).FirstOrDefault().Value;
+                            ResponseModel.Column5 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[4].Value.ToLower().ToString()).FirstOrDefault().Value;
                         }
                     }
                 }

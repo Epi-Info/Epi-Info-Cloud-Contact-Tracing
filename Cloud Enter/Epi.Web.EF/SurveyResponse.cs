@@ -8,7 +8,7 @@ namespace Epi.Web.EF
 {
     public partial class SurveyResponse
     {
-        public Dictionary<string, string> SurveyQAList { get; set; }
+        public Dictionary<string, string> ResponseQA { get; set; }
         public Int32 UserId { get; set; }
     }
 }

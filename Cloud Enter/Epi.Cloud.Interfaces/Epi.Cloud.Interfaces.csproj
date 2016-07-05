@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataInterface\IDataEntryService.cs" />
     <Compile Include="DataInterface\ISurveyResponseDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

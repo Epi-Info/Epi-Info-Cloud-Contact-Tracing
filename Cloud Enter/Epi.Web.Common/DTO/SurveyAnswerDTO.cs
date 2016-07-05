@@ -20,8 +20,6 @@ namespace Epi.Web.Enter.Common.DTO
         [DataMember]
         public int Status { get; set; }
         [DataMember]
-        public string XML { get; set; }
-        [DataMember]
         public Guid UserPublishKey { get; set; }
 
         [DataMember]
@@ -64,6 +62,14 @@ namespace Epi.Web.Enter.Common.DTO
             get;
             set;
         }
-        public IDictionary<string, string> SurveyQAList { get; set; }
+
+        [DataMember]
+        public string XML { get; set; }
+
+        /// <summary>
+        /// Response Question/Answer from DocumentDB.
+        /// </summary>
+        [DataMember]
+        public IDictionary<string, string> ResponseQA { get; set; }
     }
 }

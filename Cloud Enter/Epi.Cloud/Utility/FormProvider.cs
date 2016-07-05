@@ -14,7 +14,6 @@ using System.Data;
 using Epi.Web.MVC.Facade;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.CacheServices;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -35,7 +34,7 @@ namespace Epi.Web.MVC.Utility
 
         [ThreadStatic]
         public static List<SurveyInfoDTO> SurveyInfoList;
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid= false)
+        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
         {
             return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }

@@ -254,7 +254,7 @@ namespace Epi.Web.EF
             {
                 SurveyResponseBO.UserEmail = User == null ? string.Empty : User.EmailAddress;
             }
-            SurveyResponseBO.SurveyQAList = entity.SurveyQAList;
+            SurveyResponseBO.ResponseQA = entity.ResponseQA;
 
             return SurveyResponseBO;
         }
@@ -330,7 +330,7 @@ namespace Epi.Web.EF
             SurveyResponse.DateCompleted = pBO.DateCompleted;
             SurveyResponse.DateCreated = pBO.DateCreated;
             SurveyResponse.IsDraftMode = pBO.IsDraftMode;
-            SurveyResponse.RecordSourceId = pBO.RecrodSourceId;
+            SurveyResponse.RecordSourceId = pBO.RecordSourceId;
             if (!string.IsNullOrEmpty(pBO.RelateParentId) && RelateParentId != Guid.Empty)
             {
                 SurveyResponse.RelateParentId = new Guid(pBO.RelateParentId);

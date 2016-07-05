@@ -18,8 +18,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public DateTime DateUpdated { get; set; }
         public DateTime? DateCompleted { get; set; }
         public int Status { get; set; }
-        public string XML { get; set; }
-        public long? TemplateXMLSize { get; set; }
         public DateTime DateCreated { get; set; }
         public bool IsDraftMode { get; set; }
         public bool IsLocked { get; set; }
@@ -33,12 +31,28 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public int ViewId { get; set; }
         public int LastActiveUserId { get; set; }
         public Dictionary<string, string> SqlData { get; set; }
-        public int RecrodSourceId { get; set; }
+        public int RecordSourceId { get; set; }
         public int CurrentOrgId { get; set; }
+        public long? TemplateXMLSize { get; set; }
+
+        string _xml;
+
+        public string XML
+        {
+            get { return _xml; }
+            set { _xml = value; }
+        }
+
+        IDictionary<string, string> _responseQA;
+        public IDictionary<string, string> ResponseQA
+        {
+            get { return _responseQA; }
+            set { _responseQA = value; }
+        }
+
         public object Clone()
         {
             return this.MemberwiseClone();
         }
-        public IDictionary<string, string> SurveyQAList { get; set; }
     }
 }

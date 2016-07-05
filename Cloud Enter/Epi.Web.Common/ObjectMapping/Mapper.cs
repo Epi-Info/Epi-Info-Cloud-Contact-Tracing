@@ -190,7 +190,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             SurveyAnswerDTO.SurveyId = pBO.SurveyId;
             SurveyAnswerDTO.ResponseId = pBO.ResponseId;
             SurveyAnswerDTO.DateUpdated = pBO.DateUpdated;
-            SurveyAnswerDTO.XML = pBO.XML;
             SurveyAnswerDTO.DateCompleted = pBO.DateCompleted;
             SurveyAnswerDTO.DateCreated = pBO.DateCreated;
             SurveyAnswerDTO.Status = pBO.Status;
@@ -202,7 +201,10 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             SurveyAnswerDTO.RelateParentId = pBO.RelateParentId;
             SurveyAnswerDTO.SqlData = pBO.SqlData;
             SurveyAnswerDTO.LastActiveUserId = pBO.LastActiveUserId;
-            SurveyAnswerDTO.SurveyQAList = pBO.SurveyQAList;
+
+            SurveyAnswerDTO.XML = pBO.XML;
+            SurveyAnswerDTO.ResponseQA = pBO.ResponseQA;
+
             if (pBO.ResponseHierarchyIds != null)
             {
                 SurveyAnswerDTO.ResponseHierarchyIds = ToDataTransferObject(pBO.ResponseHierarchyIds);
@@ -232,16 +234,17 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyId = pDTO.SurveyId,
                 ResponseId = pDTO.ResponseId,
                 DateUpdated = pDTO.DateUpdated,
-                XML = pDTO.XML,
                 DateCompleted = pDTO.DateCompleted,
                 DateCreated = pDTO.DateCreated,
                 Status = pDTO.Status,
                 IsDraftMode = pDTO.IsDraftMode,
                 UserId = UserId,
                 ParentRecordId = pDTO.ParentRecordId,
-                RecrodSourceId = pDTO.RecordSourceId
+                RecordSourceId = pDTO.RecordSourceId,
 
-            };
+                XML = pDTO.XML,
+                ResponseQA = pDTO.ResponseQA
+           };
         }
 
         public static List<SurveyResponseBO> ToBusinessObject(List<SurveyAnswerDTO> pSurveyAnswerList, int UserId)
@@ -442,28 +445,28 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             };
         }
 
-        public static SurveyResponseBO ToBusinessObject(string Xml, string SurveyId, string ParentRecordId, string ResponseId, int UserId)
+        public static SurveyResponseBO ToBusinessObject(string Xml, string SurveyId, string ParentRecordId, string ResponseId, int UserId, IDictionary<string, string> ResponseQA = null)
         {
-
             return new SurveyResponseBO
             {
 
                 SurveyId = SurveyId,
                 ResponseId = ResponseId,
-                XML = Xml,
                 DateCreated = DateTime.Now,
                 Status = 2,
                 IsDraftMode = false,
                 ParentId = ParentRecordId,
                 RelateParentId = ParentRecordId,
                 TemplateXMLSize = RemoveWhitespace(Xml).Length,
-                RecrodSourceId = 2,
+                RecordSourceId = 2,
                 ParentRecordId = ParentRecordId,
-                UserId = UserId
+                UserId = UserId,
 
+                XML = Xml,
+                ResponseQA = ResponseQA
             };
-
         }
+
         private static List<SurveyAnswerDTO> ToSurveyAnswerDTO(List<SurveyResponseBO> list)
         {
             List<SurveyAnswerDTO> ModelList = new List<SurveyAnswerDTO>();
@@ -475,9 +478,12 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyAnswerModel.DateUpdated = Obj.DateUpdated;
                 SurveyAnswerModel.DateCompleted = Obj.DateCompleted;
                 SurveyAnswerModel.Status = Obj.Status;
-                SurveyAnswerModel.XML = Obj.XML;
                 SurveyAnswerModel.ParentRecordId = Obj.ParentRecordId;
                 SurveyAnswerModel.RelateParentId = Obj.RelateParentId;
+
+                SurveyAnswerModel.XML = Obj.XML;
+                SurveyAnswerModel.ResponseQA = Obj.ResponseQA;
+
                 ModelList.Add(SurveyAnswerModel);
             }
             return ModelList;
