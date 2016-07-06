@@ -455,21 +455,21 @@ namespace Epi.Web.MVC.Utility
 
                         case "17": //DropDown LegalValues
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue1 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17);
                             break;
 
                         case "18": //DropDown Codes
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue2 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
                             break;
 
                         case "19": //DropDown CommentLegal
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue, DropDownValues, 19);
                             break;
