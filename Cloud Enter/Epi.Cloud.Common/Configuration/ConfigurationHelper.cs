@@ -9,7 +9,7 @@ namespace Epi.Cloud.Common.Configuration
             var environmentKey = ConfigurationManager.AppSettings[environmentKeyName];
             if (resourceName != null)
             {
-                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + resourceName] ?? environmentKey;
+                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + '/' + resourceName] ?? environmentKey;
             }
             return string.IsNullOrWhiteSpace(environmentKey)? resourceName : resourceName + "@" + environmentKey ;
         }
