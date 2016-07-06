@@ -398,7 +398,11 @@ namespace Epi.Web.MVC.Controllers
                 FormResponseReq.Criteria.Sortfield = SortField;
             }
 
-
+            FormResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
+            foreach (var sqlParam in Columns)
+            {
+                FormResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
+            }
             //Getting Resposes
             SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
 
