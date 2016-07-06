@@ -145,21 +145,21 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    //surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
                     ////StartNewcode
-                    //string FieldValue = string.Empty;
-                    //if (_SurveyAnswerFromDocumentDB != null)
-                    //{
-                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                    //                  where element.Key == fieldAttributes.Name.ToLower()
-                    //                  select element.Value).FirstOrDefault();
-                    //}
+                    string FieldValue = string.Empty;
+                    if (surveyAnswerFromDocumentDB != null)
+                    {
+                        FieldValue = (from element in surveyAnswerFromDocumentDB
+                                      where element.Key == fieldAttributes.Name.ToLower()
+                                      select element.Value).FirstOrDefault();
+                    }
 
                     //EndNewcode 
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
@@ -343,7 +343,8 @@ namespace Epi.Web.MVC.Utility
         public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            SurveyDocumentDBFacade GetDataFromDocumentDB = new SurveyDocumentDBFacade();
+            var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
             if (response != null)
             {
                 return response.SurveyQAList;
