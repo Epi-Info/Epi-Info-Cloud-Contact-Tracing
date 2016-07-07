@@ -95,12 +95,18 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _ExitText = value; }
         }
 
+        /// <summary>
+        /// Metadata XML
+        /// </summary>
         public string XML
         {
             get { return _XML; }
             set { _XML = value; }
         }
 
+        /// <summary>
+        /// Metadata Template Object
+        /// </summary>
         public Template ProjectTemplateMetadata
         {
             get { return _projectTemplateMetadata; }

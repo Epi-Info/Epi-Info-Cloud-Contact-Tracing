@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.Enter.Common.DTO
 {
@@ -70,6 +71,6 @@ namespace Epi.Web.Enter.Common.DTO
         /// Response Question/Answer from DocumentDB.
         /// </summary>
         [DataMember]
-        public IDictionary<string, string> ResponseQA { get; set; }
+        public FormResponseDetail ResponseDetail { get; set; }
     }
 }

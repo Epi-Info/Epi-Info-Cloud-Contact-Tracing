@@ -4,6 +4,8 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Epi.Cloud.Common.EntityObjects;
+
 namespace Epi.Web.MVC.Utility
 {
     public class SurveyResponseXML
@@ -252,6 +254,35 @@ namespace Epi.Web.MVC.Utility
 
             return xml;
         }
+        public FormResponseDetail GetResponse(string SurveyId, bool AddRoot, int CurrentPage, int PageId)
+        {
+            var formResponseDetail = new FormResponseDetail();
+            if (CurrentPage == 0)
+            {
+                formResponseDetail.FormId = SurveyId;
+                formResponseDetail.LastPageVisited = 1;
+            }
+
+            var pageResponseDetail = new PageResponseDetail();
+            formResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
+
+            if (CurrentPage != 0)
+            {
+                pageResponseDetail.PageNumber = CurrentPage;
+                pageResponseDetail.PageId = PageId;
+                pageResponseDetail.MetadataPageId = PageId;
+            }
+
+            foreach (var Field in this.PageFields)
+            {
+                pageResponseDetail.ResponseQA.Add(Field.Attribute("Name").Value, Field.Value);
+                //Start Adding required controls to the list
+                SetRequiredList(Field);
+            }
+
+            return formResponseDetail;
+        }
+
         public void SetRequiredList(XElement _Fields)
         {
             bool isRequired = false;
@@ -287,81 +318,50 @@ namespace Epi.Web.MVC.Utility
             {
                 ResponseModel.Column0 = item.ResponseId;
                 ResponseModel.IsLocked = item.IsLocked;
-                //IEnumerable<XElement> nodes;
-                //  var document = XDocument.Parse(item.XML);
-                //TODO: Temparary Fix for Survey Response List
-                if (item.ResponseQA.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).ToList().Count != 0)
+
+                var responseQA = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
+                string value;
+                var columnsCount = Columns.Count;
+                for (int i = 0; i < 5; ++i)
                 {
-                    if (MetaDataColumns.Contains(Columns[0].Value.ToString()))
+                    if (i >= columnsCount)
                     {
-                        ResponseModel.Column1 = GetColumnValue(item, Columns[0].Value.ToString());
+                        // set value to empty string for unspecified columns
+                        value = string.Empty;
+                    }
+                    else if (MetaDataColumns.Contains(Columns[i].Value))
+                    {
+                        // set value to value of special column
+                        value = GetColumnValue(item, Columns[i].Value);
                     }
                     else
                     {
-                        // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[0].Value.ToString());
-
-                        ResponseModel.Column1 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[0].Value.ToLower().ToString()).FirstOrDefault().Value;
-                    }
-                    if (Columns.Count >= 2)
-                    {
-                        if (MetaDataColumns.Contains(Columns[1].Value.ToString()))
-                        {
-
-                            ResponseModel.Column2 = GetColumnValue(item, Columns[1].Value.ToString());
-                        }
-                        else
-                        {
-                            // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[1].Value.ToString());
-                            ResponseModel.Column2 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[1].Value.ToLower().ToString()).FirstOrDefault().Value;
-                        }
+                        // set value to value in the response
+                        value = responseQA.TryGetValue(Columns[i].Value.ToLower(), out value) ? (value ?? string.Empty) : string.Empty;
                     }
 
-
-                    if (Columns.Count >= 3)
+                    // set the associated ResponseModel column
+                    switch (i)
                     {
-                        if (MetaDataColumns.Contains(Columns[2].Value.ToString()))
-                        {
-
-                            ResponseModel.Column3 = GetColumnValue(item, Columns[2].Value.ToString());
-                        }
-                        else
-                        {
-                            // nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[2].Value.ToString());
-                            ResponseModel.Column3 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[2].Value.ToLower().ToString()).FirstOrDefault().Value;
-                        }
-                    }
-
-                    if (Columns.Count >= 4)
-                    {
-                        if (MetaDataColumns.Contains(Columns[3].Value.ToString()))
-                        {
-
-                            ResponseModel.Column4 = GetColumnValue(item, Columns[3].Value.ToString());
-                        }
-                        else
-                        {
-                            //nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[3].Value.ToString());
-                            ResponseModel.Column4 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[3].Value.ToLower().ToString()).FirstOrDefault().Value;
-                        }
-                    }
-
-                    if (Columns.Count >= 5)
-                    {
-                        if (MetaDataColumns.Contains(Columns[4].Value.ToString()))
-                        {
-
-                            ResponseModel.Column5 = GetColumnValue(item, Columns[4].Value.ToString());
-                        }
-                        else
-                        {
-                            //nodes = document.Descendants().Where(e => e.Name.LocalName.StartsWith("ResponseDetail") && e.Attribute("QuestionName").Value == Columns[4].Value.ToString());
-                            ResponseModel.Column5 = item.ResponseQA.Where(e => e.Key.ToLower() == Columns[4].Value.ToLower().ToString()).FirstOrDefault().Value;
-                        }
+                        case 0:
+                            ResponseModel.Column1 = value;
+                            break;
+                        case 1:
+                            ResponseModel.Column2 = value;
+                            break;
+                        case 2:
+                            ResponseModel.Column3 = value;
+                            break;
+                        case 3:
+                            ResponseModel.Column4 = value;
+                            break;
+                        case 4:
+                            ResponseModel.Column5 = value;
+                            break;
                     }
                 }
 
                 return ResponseModel;
-
             }
             catch (Exception Ex)
             {

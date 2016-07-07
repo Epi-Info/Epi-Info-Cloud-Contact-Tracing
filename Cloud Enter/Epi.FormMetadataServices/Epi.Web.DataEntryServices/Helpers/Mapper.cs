@@ -44,7 +44,7 @@ namespace Epi.Cloud.DataEntryServices.Helpers
             //{
             //    SurveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
             //}
-            SurveyResponseBO.SurveyQAList = surveyResponse.SurveyQAList;
+            SurveyResponseBO.ResponseQA = surveyResponse.ResponseQA;
 
             return SurveyResponseBO;
         }

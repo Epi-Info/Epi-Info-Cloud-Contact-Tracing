@@ -5,6 +5,8 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Constants;
 using System;
+using Epi.Cloud.Common.EntityObjects;
+
 namespace Epi.Web.Enter.Common.ObjectMapping
 {
     /// <summary>
@@ -203,7 +205,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             SurveyAnswerDTO.LastActiveUserId = pBO.LastActiveUserId;
 
             SurveyAnswerDTO.XML = pBO.XML;
-            SurveyAnswerDTO.ResponseQA = pBO.ResponseQA;
+            SurveyAnswerDTO.ResponseDetail = pBO.ResponseDetail;
 
             if (pBO.ResponseHierarchyIds != null)
             {
@@ -243,8 +245,8 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 RecordSourceId = pDTO.RecordSourceId,
 
                 XML = pDTO.XML,
-                ResponseQA = pDTO.ResponseQA
-           };
+                ResponseDetail = pDTO.ResponseDetail
+            };
         }
 
         public static List<SurveyResponseBO> ToBusinessObject(List<SurveyAnswerDTO> pSurveyAnswerList, int UserId)
@@ -445,7 +447,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             };
         }
 
-        public static SurveyResponseBO ToBusinessObject(string Xml, string SurveyId, string ParentRecordId, string ResponseId, int UserId, IDictionary<string, string> ResponseQA = null)
+        public static SurveyResponseBO ToBusinessObject(string Xml, string SurveyId, string ParentRecordId, string ResponseId, int UserId, FormResponseDetail responseDetail = null)
         {
             return new SurveyResponseBO
             {
@@ -463,7 +465,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 UserId = UserId,
 
                 XML = Xml,
-                ResponseQA = ResponseQA
+                ResponseDetail = responseDetail
             };
         }
 
@@ -482,7 +484,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyAnswerModel.RelateParentId = Obj.RelateParentId;
 
                 SurveyAnswerModel.XML = Obj.XML;
-                SurveyAnswerModel.ResponseQA = Obj.ResponseQA;
+                SurveyAnswerModel.ResponseDetail = Obj.ResponseDetail;
 
                 ModelList.Add(SurveyAnswerModel);
             }

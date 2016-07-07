@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Web.Mvc;
+using Epi.Cloud.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
@@ -12,22 +14,59 @@ namespace Epi.Cloud.MVC.Repositories
     public class IntegratedSurveyAnswerDocumentDBRepository : RepositoryBase, ISurveyAnswerRepository
     {
         private IEWEDataService _iDataService;
+        private IDataEntryService _dataEntryService;
 
-        public IntegratedSurveyAnswerDocumentDBRepository(IEWEDataService iDataService)
+        public IntegratedSurveyAnswerDocumentDBRepository(IDataEntryService dataEntryService,
+                                                          IEWEDataService iDataService)
         {
+            _dataEntryService = dataEntryService;
             _iDataService = iDataService;
         }
 
         /// <summary>
-        /// Calling the proxy client to fetch a SurveyResponseResponse object
+        /// GetSurveyAnswer
         /// </summary>
-        /// <param name="surveyid"></param>
+        /// <param name="pRequest"></param>
         /// <returns></returns>
         public SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest pRequest)
         {
             try
             {
-                SurveyAnswerResponse result = _iDataService.GetSurveyAnswer(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.GetSurveyAnswer(pRequest);
+                return result;
+            }
+            catch (FaultException<CustomFaultException> cfe)
+            {
+                throw cfe;
+            }
+            catch (FaultException fe)
+            {
+                throw fe;
+            }
+            catch (CommunicationException ce)
+            {
+                throw ce;
+            }
+            catch (TimeoutException te)
+            {
+                throw te;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// SurveyAnswerResponse
+        /// </summary>
+        /// <param name="pRequest"></param>
+        /// <returns></returns>
+        public SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest pRequest)
+        {
+            try
+            {
+                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -205,34 +244,6 @@ namespace Epi.Cloud.MVC.Repositories
             {
 
                 UserAuthenticationResponse result = _iDataService.GetAuthenticationResponse(pRequest);
-                return result;
-            }
-            catch (FaultException<CustomFaultException> cfe)
-            {
-                throw cfe;
-            }
-            catch (FaultException fe)
-            {
-                throw fe;
-            }
-            catch (CommunicationException ce)
-            {
-                throw ce;
-            }
-            catch (TimeoutException te)
-            {
-                throw te;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest pRequest)
-        {
-            try
-            {
-                SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)

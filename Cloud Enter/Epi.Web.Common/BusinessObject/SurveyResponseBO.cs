@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
@@ -43,11 +44,11 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _xml = value; }
         }
 
-        IDictionary<string, string> _responseQA;
-        public IDictionary<string, string> ResponseQA
+        FormResponseDetail _responseDetail;
+        public FormResponseDetail ResponseDetail
         {
-            get { return _responseQA; }
-            set { _responseQA = value; }
+            get { return _responseDetail; }
+            set { _responseDetail = value; }
         }
 
         public object Clone()
