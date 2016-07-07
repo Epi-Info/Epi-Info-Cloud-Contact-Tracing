@@ -8,6 +8,11 @@ namespace Epi.Web.Enter.Common.DTO
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class SurveyAnswerDTO
     {
+        public SurveyAnswerDTO()
+        {
+            ResponseDetail = new FormResponseDetail();
+        }
+
         [DataMember]
         public string ResponseId { get; set; }                                                                  
         [DataMember]

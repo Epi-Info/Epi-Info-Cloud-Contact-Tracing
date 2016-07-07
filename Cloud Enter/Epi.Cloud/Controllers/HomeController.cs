@@ -643,16 +643,22 @@ namespace Epi.Web.MVC.Controllers
 
 
                 EntitySurveyResponseDao ReturnValuesFromDdb = new EntitySurveyResponseDao();
-                var FormResddponseLists = ReturnValuesFromDdb.GetFormResponseByFormId(criteria);
+                var formResponseList = ReturnValuesFromDdb.GetFormResponseByFormId(criteria);
 
 
                 FormResponseList.SurveyResponseList = new List<SurveyAnswerDTO>();
-                foreach (var item in FormResddponseLists)
+                foreach (var item in formResponseList)
                 {
                     SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
                     surveyAnswer.IsLocked = false;
                     surveyAnswer.ResponseId = item.ResponseId;
-                    surveyAnswer.ResponseQA = item.SurveyQAList;
+                    var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
+                    if (pageResponseDetail == null)
+                    {
+                        pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail();
+                        surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
+                    }
+                    pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
                     FormResponseList.SurveyResponseList.Add(surveyAnswer);
                 }
 
