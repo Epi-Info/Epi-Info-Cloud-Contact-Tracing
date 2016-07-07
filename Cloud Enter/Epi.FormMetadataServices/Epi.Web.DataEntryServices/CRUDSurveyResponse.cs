@@ -12,6 +12,7 @@ using Microsoft.Azure.Documents.Linq;
 using System.Collections;
 using Newtonsoft.Json;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -377,7 +378,7 @@ namespace Epi.Cloud.DataEntryServices
                     //var responseDB = ReadDataFromDocumentDB(client,surveyInfo.SurveyName, Query, docUri);
                     surveyPropertie.FirstSaveTime = surveyInfo.SurveyProperties.FirstSaveTime;
                     surveyPropertie.LastSaveTime = DateTime.UtcNow;
-                    surveyPropertie.RecStatus = 0;
+                    surveyPropertie.RecStatus = RecordStatus.Deleted;
                     surveyPropertie.Id = surveyInfo.SurveyProperties.GlobalRecordID;
                     surveyPropertie.GlobalRecordID = surveyInfo.SurveyProperties.GlobalRecordID;
                     surveyPropertie.SurveyID = surveyInfo.SurveyProperties.SurveyID;
@@ -417,7 +418,7 @@ namespace Epi.Cloud.DataEntryServices
 
                 IQueryable<SurveyProperties> surveyInfo = client.CreateDocumentQuery<SurveyProperties>(
                                                     UriFactory.CreateDocumentCollectionUri(dbname, dbname), queryOptions)
-                                                    .Where(f => f.SurveyID == surveyId && f.RecStatus == 1);
+                                                    .Where(f => f.SurveyID == surveyId && f.RecStatus == RecordStatus.InProcess);
                 foreach (var survey in surveyInfo)
                 {
                     var query = client.CreateDocumentQuery(docUri, "SELECT " + collectionName + ".GlobalRecordID," + PerameterString + " FROM  " + collectionName + " WHERE " + collectionName + ".GlobalRecordID = '" + survey.GlobalRecordID + "'", queryOptions);
@@ -436,10 +437,10 @@ namespace Epi.Cloud.DataEntryServices
                         surveyResponse.SurveyId = new Guid(surveyId);
                         surveyResponse.StatusId = 1;
 
-                        surveyResponse.SurveyQAList = new Dictionary<string, string>();
+                        surveyResponse.ResponseQA = new Dictionary<string, string>();
                         foreach (var column in values)
                         {
-                            surveyResponse.SurveyQAList.Add(column.Key, column.Value);
+                            surveyResponse.ResponseQA.Add(column.Key, column.Value);
                         }
                         surveyList.Add(surveyResponse);
                     }

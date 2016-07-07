@@ -1,23 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Epi.Cloud.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.Message;
 
-namespace Epi.Web.DataEntryServices
+namespace Epi.Cloud.DataEntryServices
 {
     public class DataEntryService : IDataEntryService
     {
+        public DataEntryService()
+        {
+        }
+
         public SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest pRequest)
         {
-            throw new NotImplementedException();
+            return new SurveyAnswerResponse();
         }
 
         public SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest pRequest)
         {
-            throw new NotImplementedException();
+            return new SurveyAnswerResponse();
         }
     }
 }

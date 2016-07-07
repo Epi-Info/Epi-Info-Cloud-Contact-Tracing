@@ -18,8 +18,6 @@ namespace Epi.Cloud.Common.BusinessObjects
         public DateTime DateUpdated { get; set; }
         public DateTime? DateCompleted { get; set; }
         public int Status { get; set; }
-        public string XML { get; set; }
-        public long? TemplateXMLSize { get; set; }
         public DateTime DateCreated { get; set; }
         public bool IsDraftMode { get; set; }
         public bool IsLocked { get; set; }
@@ -35,10 +33,13 @@ namespace Epi.Cloud.Common.BusinessObjects
         public Dictionary<string, string> SqlData { get; set; }
         public int RecrodSourceId { get; set; }
         public int CurrentOrgId { get; set; }
+        public IDictionary<string, string> ResponseQA { get; set; }
+        public string XML { get; set; }
+        public long? TemplateXMLSize { get; set; }
+
         public object Clone()
         {
             return this.MemberwiseClone();
         }
-        public IDictionary<string, string> SurveyQAList { get; set; }
     }
 }

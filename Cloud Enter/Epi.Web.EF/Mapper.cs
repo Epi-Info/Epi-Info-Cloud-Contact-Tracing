@@ -254,7 +254,7 @@ namespace Epi.Web.EF
             {
                 SurveyResponseBO.UserEmail = User == null ? string.Empty : User.EmailAddress;
             }
-            SurveyResponseBO.ResponseQA = entity.ResponseQA;
+            SurveyResponseBO.ResponseDetail = entity.ResponseDetail;
 
             return SurveyResponseBO;
         }

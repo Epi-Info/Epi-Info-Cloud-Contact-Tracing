@@ -65,7 +65,7 @@ namespace Epi.Web.MVC
 
             if (IsIntegrated)
             {
-                //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyAnswerDocumentDBRepository>();
+                container.RegisterType<Epi.Cloud.Interfaces.DataInterface.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
                 container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Web.MVC.Repositories.IntegratedSurveyAnswerRepository>();
             }
             else

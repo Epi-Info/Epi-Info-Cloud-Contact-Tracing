@@ -10,10 +10,13 @@ namespace Epi.Web.MVC.Repositories
     public class IntegratedSurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
     {
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
+        private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
 
-        public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
+        public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService,
+                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService)
         {
             _iDataService = iDataService;
+            _dataEntryService = dataEntryService;
         }
 
         /// <summary>
@@ -27,6 +30,7 @@ namespace Epi.Web.MVC.Repositories
             {
                 //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
                 SurveyAnswerResponse result = _iDataService.GetSurveyAnswer(pRequest);
+                //var result2 = _dataEntryService.GetSurveyAnswer(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -235,6 +239,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
                 SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
+                //var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
