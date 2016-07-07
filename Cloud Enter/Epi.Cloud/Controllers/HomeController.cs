@@ -16,7 +16,10 @@ using System.Web.Configuration;
 using System.Text;
 using Epi.Web.MVC.Constants;
 using Epi.Web.MVC.Facade;
+using Epi.Cloud.DataEntryServices.Facade;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.DataEntryServices.DataAccessObjects;
+using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -25,6 +28,7 @@ namespace Epi.Web.MVC.Controllers
     {
         private ISecurityFacade _isecurityFacade;
         private ISurveyFacade _isurveyFacade;
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBFacade;
         private Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
@@ -626,8 +630,31 @@ namespace Epi.Web.MVC.Controllers
                     FormResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
                 }
 
-                SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
 
+                //Test
+                SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
+                SurveyAnswerCriteria criteria = new SurveyAnswerCriteria();
+                criteria.SurveyId = SurveyId.ToString();
+                criteria.UserId = UserId;
+                criteria.PageNumber = 1;
+                criteria.IsShareable = false;
+                criteria.PageSize = 20;
+                criteria.SurveyQAList = FormResponseReq.Criteria.SurveyQAList;
+
+
+                EntitySurveyResponseDao ReturnValuesFromDdb = new EntitySurveyResponseDao();
+                var FormResddponseLists = ReturnValuesFromDdb.GetFormResponseByFormId(criteria);
+
+
+                FormResponseList.SurveyResponseList = new List<SurveyAnswerDTO>();
+                foreach (var item in FormResddponseLists)
+                {
+                    SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
+                    surveyAnswer.IsLocked = false;
+                    surveyAnswer.ResponseId = item.ResponseId;
+                    surveyAnswer.ResponseQA = item.SurveyQAList;
+                    FormResponseList.SurveyResponseList.Add(surveyAnswer);
+                }
 
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List

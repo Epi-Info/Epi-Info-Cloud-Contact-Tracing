@@ -237,7 +237,7 @@ namespace Epi.Cloud.DataEntryServices
         #endregion
 
         #region ReadDataFromCollectionDocumentDB
-        private SurveyQuestionandAnswer ReadSurveyDataFromDocumentDB(DocumentClient client, string dbname, string collectionName, string responseId, DocumentCollection collection)
+        private SurveyQuestionandAnswer ReadSurveyDataFromDocumentDB(DocumentClient client, string dbname, string collectionName, string responseId)
         {
             // Use UriFactory to build the DocumentLink
             Uri docUri = UriFactory.CreateDocumentCollectionUri(dbname, collectionName);
@@ -314,15 +314,20 @@ namespace Epi.Cloud.DataEntryServices
                 using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
                 {
                     //Getting reference to Database
-                    Database database = await ReadDatabaseAsync(client, dbName);
+                    //Database database = await ReadDatabaseAsync(client, dbName);
 
                     //Read Collection
-                    DocumentCollection collection = await ReadCollectionAsync(client, database.SelfLink, dbName);
+                    //DocumentCollection collection = await ReadCollectionAsync(client, database.SelfLink, dbName);
 
-
-                    //Read collection and store data  
-                    surveyAnswer = ReadSurveyDataFromDocumentDB(client, dbName, dbName + "_" + pageId, responseId, collection);
-                    return surveyAnswer;
+                    //DocumentCollection DocumentDbResponse =await CollectionIsExistorNotAsync(client, dbName, dbName + "_" + pageId);
+                    //var DocumentDbResponse = client.ReadDocumentCollectionAsync(docUri).Result;
+                    //var statusCode = DocumentDbResponse.SelfLink;
+                    if (true)
+                    {
+                        //Read collection and store data  
+                        surveyAnswer = ReadSurveyDataFromDocumentDB(client, dbName, dbName + "_" + pageId, responseId);
+                        return surveyAnswer;
+                    }
                 }
             }
             catch (DocumentQueryException ex)
@@ -356,6 +361,7 @@ namespace Epi.Cloud.DataEntryServices
             return surveyResponse;
         }
         #endregion
+
         #region DeleteDocumentById
         public async Task<string> DeleteDocumentByIdAsync(Survey surveyInfo)
         {
@@ -453,6 +459,24 @@ namespace Epi.Cloud.DataEntryServices
             return columnList;
         }
         #endregion
+        #endregion
+
+
+        #region CollectionIsExistorNot
+        private async Task<DocumentCollection> CollectionIsExistorNotAsync(DocumentClient client, string dbname, string collectionName)
+        {
+            try
+            {
+                var documentTasks = await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(dbname, collectionName));
+                return documentTasks;
+
+            }
+            catch (DocumentClientException ex)
+            {
+
+            }
+            return null;
+        }
         #endregion
 
         #endregion

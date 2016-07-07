@@ -10,8 +10,8 @@ using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using System.Data;
-using Epi.Web.MVC.Facade;
+using System.Data; 
+using Epi.Cloud.DataEntryServices.Facade;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 
@@ -152,7 +152,7 @@ namespace Epi.Web.MVC.Utility
                 {
                     //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
-                    ////StartNewcode
+                    //StartNewcode
                     string FieldValue = string.Empty;
                     if (surveyAnswerFromDocumentDB != null)
                     {
@@ -343,8 +343,7 @@ namespace Epi.Web.MVC.Utility
         public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            SurveyDocumentDBFacade GetDataFromDocumentDB = new SurveyDocumentDBFacade();
-            var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
             if (response != null)
             {
                 return response.SurveyQAList;

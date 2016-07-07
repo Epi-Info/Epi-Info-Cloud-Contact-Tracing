@@ -372,9 +372,7 @@
     <Compile Include="Facade\ISecurityFacade.cs" />
     <Compile Include="Facade\ISurveyFacade.cs" />
     <Compile Include="Facade\CloudSecurityFacade.cs" />
-    <Compile Include="Facade\ISurveyStoreDocumentDBFacade.cs" />
     <Compile Include="Facade\SecurityFacade.cs" />
-    <Compile Include="Facade\SurveyDocumentDBFacade.cs" />
     <Compile Include="Facade\SurveyFacade.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
