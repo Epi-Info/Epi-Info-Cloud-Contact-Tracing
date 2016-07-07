@@ -145,21 +145,21 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    //surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
                     ////StartNewcode
-                    //string FieldValue = string.Empty;
-                    //if (_SurveyAnswerFromDocumentDB != null)
-                    //{
-                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                    //                  where element.Key == fieldAttributes.Name.ToLower()
-                    //                  select element.Value).FirstOrDefault();
-                    //}
+                    string FieldValue = string.Empty;
+                    if (surveyAnswerFromDocumentDB != null)
+                    {
+                        FieldValue = (from element in surveyAnswerFromDocumentDB
+                                      where element.Key == fieldAttributes.Name.ToLower()
+                                      select element.Value).FirstOrDefault();
+                    }
 
                     //EndNewcode 
                     JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
@@ -343,7 +343,8 @@ namespace Epi.Web.MVC.Utility
         public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            SurveyDocumentDBFacade GetDataFromDocumentDB = new SurveyDocumentDBFacade();
+            var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
             if (response != null)
             {
                 return response.SurveyQAList;
@@ -455,21 +456,21 @@ namespace Epi.Web.MVC.Utility
 
                         case "17": //DropDown LegalValues
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue1 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue1, DropDownValues1, 17);
                             break;
 
                         case "18": //DropDown Codes
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue2 = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
                             break;
 
                         case "19": //DropDown CommentLegal
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
+                            //DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value, _FieldTypeID.Attribute("CodeColumnName").Value);
                             var _DropDownSelectedValue = Value;
                             field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue, DropDownValues, 19);
                             break;

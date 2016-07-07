@@ -154,21 +154,21 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    //surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
-                    //StartNewcode
-                    //string FieldValue = string.Empty;
-                    //if (_SurveyAnswerFromDocumentDB != null)
-                    //{
-                    //    FieldValue = (from element in _SurveyAnswerFromDocumentDB
-                    //                  where element.Key == fieldAttributes.Name.ToLower()
-                    //                  select element.Value).FirstOrDefault();
-                    //}
+                    ////StartNewcode
+                    string FieldValue = string.Empty;
+                    if (surveyAnswerFromDocumentDB != null)
+                    {
+                        FieldValue = (from element in surveyAnswerFromDocumentDB
+                                      where element.Key == fieldAttributes.Name.ToLower()
+                                      select element.Value).FirstOrDefault();
+                    }
 
                     //EndNewcode 
 
@@ -348,8 +348,14 @@ namespace Epi.Web.MVC.Utility
         public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            return response.SurveyQAList;
+            SurveyDocumentDBFacade GetDataFromDocumentDB = new SurveyDocumentDBFacade();
+            var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            if (response != null)
+            {
+                return response.SurveyQAList;
+            }
+
+            return null;
         }
         #endregion
 
@@ -1378,7 +1384,7 @@ namespace Epi.Web.MVC.Utility
                         case "17"://DropDown LegalValues
 
                             string DropDownValues1 = "";
-                            DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                           // DropDownValues1 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
                             var _DropDownSelectedValue1 = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue1, DropDownValues1, 17, form);
                             //                                             pName, pType, pSource
@@ -1388,7 +1394,7 @@ namespace Epi.Web.MVC.Utility
                         case "18"://DropDown Codes
 
                             string DropDownValues2 = "";
-                            DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                           // DropDownValues2 = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
                             var _DropDownSelectedValue2 = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue2, DropDownValues2, 18, form);
                             //                                             pName, pType, pSource
@@ -1398,7 +1404,7 @@ namespace Epi.Web.MVC.Utility
                         case "19"://DropDown CommentLegal
 
                             string DropDownValues = "";
-                            DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
+                            //DropDownValues = GetDropDownValues(xdoc, _FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("SourceTableName").Value);
                             var _DropDownSelectedValue = Value;
                             field = GetDropDown(_FieldTypeID, _Width, _Height, xdocResponse, _DropDownSelectedValue, DropDownValues, 19, form);
                             //                                             pName, pType, pSource
