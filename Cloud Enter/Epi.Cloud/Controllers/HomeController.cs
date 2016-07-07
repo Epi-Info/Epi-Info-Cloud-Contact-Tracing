@@ -655,7 +655,7 @@ namespace Epi.Web.MVC.Controllers
                     var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
                     if (pageResponseDetail == null)
                     {
-                        pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail();
+                        pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
                         surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
                     }
                     pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
