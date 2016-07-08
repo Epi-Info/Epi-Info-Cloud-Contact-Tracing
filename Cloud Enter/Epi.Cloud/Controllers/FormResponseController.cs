@@ -980,7 +980,7 @@ namespace Epi.Web.MVC.Controllers
 					}
 					else
 					{
-						ResponseList.Add(SurveyResponseXML.ConvertXMLToModel(item, Columns));
+						ResponseList.Add(SurveyResponseXML.ConvertResponseDetailToModel(item, Columns));
 					}
 				}
 

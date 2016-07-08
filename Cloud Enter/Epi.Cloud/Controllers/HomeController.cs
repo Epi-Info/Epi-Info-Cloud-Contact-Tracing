@@ -554,7 +554,7 @@ namespace Epi.Web.MVC.Controllers
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
             FormResponseInfoModel.SearchModel = new SearchBoxModel();
-            SurveyResponseXML SurveyResponseXML = new SurveyResponseXML();
+            var SurveyResponseXML = new SurveyResponseXML();
             if (!string.IsNullOrEmpty(SurveyId))
             {
                 SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
@@ -673,7 +673,7 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
-                        ResponseList.Add(SurveyResponseXML.ConvertXMLToModel(item, Columns));
+                        ResponseList.Add(SurveyResponseXML.ConvertResponseDetailToModel(item, Columns));
                     }
 
                 }

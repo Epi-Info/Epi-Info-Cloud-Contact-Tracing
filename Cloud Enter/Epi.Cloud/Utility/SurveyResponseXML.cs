@@ -307,7 +307,7 @@ namespace Epi.Web.MVC.Utility
             }
         }
 
-        public Epi.Web.MVC.Models.ResponseModel ConvertXMLToModel(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
+        public Epi.Web.MVC.Models.ResponseModel ConvertResponseDetailToModel(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
         {
             Epi.Web.MVC.Models.ResponseModel ResponseModel = new Models.ResponseModel();
 
@@ -398,7 +398,5 @@ namespace Epi.Web.MVC.Utility
             }
             return ColumnValue;
         }
-
-
     }
 }

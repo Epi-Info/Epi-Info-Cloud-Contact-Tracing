@@ -46,12 +46,12 @@ namespace Epi.Cloud.DataEntryServices.Facade
         {
 
             SurveyQuestionandAnswer _surveyQA = new SurveyQuestionandAnswer();
-            _surveyQA.SurveyQAList = new Dictionary<string, string>();
+            _surveyQA.ResponseQA = new Dictionary<string, string>();
             foreach (var field in form.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    _surveyQA.SurveyQAList.Add(field.Key, field.Response);
+                    _surveyQA.ResponseQA.Add(field.Key, field.Response);
                 }
             }
             _surveyQA.GlobalRecordID = responseId;
@@ -82,14 +82,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
         public async Task<SurveyQuestionandAnswer> ReadSurveyAnswerByResponseIDAsync(string surveyName, string surveyId, string responseId, string pageId)
         {
             CRUDSurveyResponse crudSurveyResponse = new CRUDSurveyResponse();
-            SurveyQuestionandAnswer surveyResponse = new SurveyQuestionandAnswer();
             //surveyResponse.SurveyQAList = _surveyResponse.ReadSruveyFromDocumentDBByPageandRespondId(databaseName,responseId,pageId);
 
-            surveyResponse = await crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName, responseId, pageId);
-            if (surveyResponse != null)
-            {
-                surveyResponse.SurveyQAList = surveyResponse.SurveyQAList;
-            }
+            SurveyQuestionandAnswer surveyResponse = await crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName, responseId, pageId);
 
             return surveyResponse;
         }

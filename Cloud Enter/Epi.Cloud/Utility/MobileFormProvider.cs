@@ -353,7 +353,7 @@ namespace Epi.Web.MVC.Utility
             var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
             if (response != null)
             {
-                return response.SurveyQAList;
+                return response.ResponseQA;
             }
 
             return null;

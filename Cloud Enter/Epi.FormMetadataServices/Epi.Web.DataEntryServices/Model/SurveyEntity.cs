@@ -30,6 +30,6 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string SurveyID { get; set; }
         public string GlobalRecordID { get; set; }
         public string PageId { get; set; }
-        public Dictionary<string, string> SurveyQAList { get; set; }
+        public Dictionary<string, string> ResponseQA { get; set; }
     }
 }

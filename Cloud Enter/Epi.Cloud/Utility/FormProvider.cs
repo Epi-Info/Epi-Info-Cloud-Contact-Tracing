@@ -10,10 +10,11 @@ using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using System.Data; 
+using System.Data;
 using Epi.Cloud.DataEntryServices.Facade;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Model;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -142,10 +143,10 @@ namespace Epi.Web.MVC.Utility
                 //Generate page level Java script (After)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
-                Dictionary<string, string> surveyAnswerFromDocumentDB = null;
+                SurveyQuestionandAnswer surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, "surveyid", Convert.ToString(pageNumber));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, surveyInfo.SurveyId, Convert.ToString(pageNumber));
                 }
 
                 foreach (var fieldAttributes in metadata)
@@ -156,7 +157,7 @@ namespace Epi.Web.MVC.Utility
                     string FieldValue = string.Empty;
                     if (surveyAnswerFromDocumentDB != null)
                     {
-                        FieldValue = (from element in surveyAnswerFromDocumentDB
+                        FieldValue = (from element in surveyAnswerFromDocumentDB.ResponseQA
                                       where element.Key == fieldAttributes.Name.ToLower()
                                       select element.Value).FirstOrDefault();
                     }
@@ -340,16 +341,11 @@ namespace Epi.Web.MVC.Utility
         /// <param name="ResponseId"></param>
         /// <param name="SurveyId"></param>
         /// <param name="PageNo"></param> 
-        public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
+        public static SurveyQuestionandAnswer GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
-            if (response != null)
-            {
-                return response.SurveyQAList;
-            }
-
-            return null;
+            return response;
         }
         #endregion
 

@@ -256,7 +256,8 @@ namespace Epi.Cloud.DataEntryServices
                 var query = client.CreateDocumentQuery(docUri, "SELECT "
                     + columnList
                     + " FROM " + collectionName
-                    + " WHERE " + collectionName + ".id = '" + responseId + "'"
+                    //+ " WHERE " + collectionName + ".id = '" + responseId + "'"
+                    + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'"
                     , queryOptions);
                 //var surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
 
@@ -265,7 +266,7 @@ namespace Epi.Cloud.DataEntryServices
 
                 if (surveyDataFromDocumentDB != null)
                 {
-                    surveyData.SurveyQAList = surveyDataFromDocumentDB.SurveyQAList;
+                    surveyData.ResponseQA = surveyDataFromDocumentDB.ResponseQA;
 
                     return surveyData;
                 }
@@ -429,19 +430,13 @@ namespace Epi.Cloud.DataEntryServices
                     foreach (var items in surveyDataFromDocumentDB)
                     {
                         SurveyResponse surveyResponse = new SurveyResponse();
-                        var json = JsonConvert.SerializeObject(items);
-                        Dictionary<string, string> values = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-
                         surveyResponse.ResponseId = new Guid(items.GlobalRecordID);
                         surveyResponse.SurveyId = new Guid(surveyId);
-                        surveyResponse.StatusId = 1;
+                        surveyResponse.StatusId = RecordStatus.InProcess;
 
-                        surveyResponse.ResponseQA = new Dictionary<string, string>();
-                        foreach (var column in values)
-                        {
-                            surveyResponse.ResponseQA.Add(column.Key, column.Value);
-                        }
+                        var json = JsonConvert.SerializeObject(items);
+                        surveyResponse.ResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
                         surveyList.Add(surveyResponse);
                     }
                 }
