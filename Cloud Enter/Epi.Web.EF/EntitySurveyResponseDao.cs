@@ -1729,6 +1729,9 @@ namespace Epi.Web.EF
             IsSqlProject = IsEISQLProject(Criteria.SurveyId);
             if (IsSqlProject)
             {
+                //TODO: return true hack
+                return true;
+
                 string tableName = ReadEI7DatabaseName(Criteria.SurveyId);
 
                 string EI7ConnectionString = DataObjectFactory.EWEADOConnectionString.Substring(0, DataObjectFactory.EWEADOConnectionString.LastIndexOf('=')) + "=" + tableName;
