@@ -157,7 +157,7 @@ namespace Epi.Web.MVC.Utility
                     string FieldValue = string.Empty;
                     if (surveyAnswerFromDocumentDB != null)
                     {
-                        FieldValue = (from element in surveyAnswerFromDocumentDB.ResponseQA
+                        FieldValue = (from element in surveyAnswerFromDocumentDB.SurveyQAList
                                       where element.Key == fieldAttributes.Name.ToLower()
                                       select element.Value).FirstOrDefault();
                     }

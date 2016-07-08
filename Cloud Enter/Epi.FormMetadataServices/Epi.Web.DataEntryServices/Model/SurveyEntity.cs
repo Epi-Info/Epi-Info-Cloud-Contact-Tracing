@@ -12,7 +12,7 @@ namespace Epi.Cloud.DataEntryServices.Model
         public int TotalNoofPages { get; set; }
 
     }
-    public class SurveyProperties:Resource
+    public class SurveyProperties : Resource
     {
         public string SurveyID { get; set; }
         public int RecStatus { get; set; }
@@ -24,12 +24,12 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string UserId { get; set; }
         public string PageId { get; set; }
     }
-    public class SurveyQuestionandAnswer:Resource
+    public class SurveyQuestionandAnswer : Resource
     {
         public int RecStatus { get; set; }
         public string SurveyID { get; set; }
         public string GlobalRecordID { get; set; }
         public string PageId { get; set; }
-        public Dictionary<string, string> ResponseQA { get; set; }
+        public Dictionary<string, string> SurveyQAList { get; set; }
     }
 }

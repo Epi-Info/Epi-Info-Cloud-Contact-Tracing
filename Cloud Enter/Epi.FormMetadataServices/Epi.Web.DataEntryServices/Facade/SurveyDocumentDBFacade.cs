@@ -46,12 +46,12 @@ namespace Epi.Cloud.DataEntryServices.Facade
         {
 
             SurveyQuestionandAnswer _surveyQA = new SurveyQuestionandAnswer();
-            _surveyQA.ResponseQA = new Dictionary<string, string>();
+            _surveyQA.SurveyQAList = new Dictionary<string, string>();
             foreach (var field in form.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    _surveyQA.ResponseQA.Add(field.Key, field.Response);
+                    _surveyQA.SurveyQAList.Add(field.Key, field.Response);
                 }
             }
             _surveyQA.GlobalRecordID = responseId;

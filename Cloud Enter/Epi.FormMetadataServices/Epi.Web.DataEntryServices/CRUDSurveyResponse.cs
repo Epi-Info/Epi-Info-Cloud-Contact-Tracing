@@ -9,7 +9,6 @@ using Epi.Cloud.DataEntryServices.Model;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
-using System.Collections;
 using Newtonsoft.Json;
 using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Constants;
@@ -259,14 +258,13 @@ namespace Epi.Cloud.DataEntryServices
                     //+ " WHERE " + collectionName + ".id = '" + responseId + "'"
                     + " WHERE " + collectionName + ".GlobalRecordID = '" + responseId + "'"
                     , queryOptions);
-                //var surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();
-
+                //var surveyDataFromDocumentDB1 = query.AsEnumerable().FirstOrDefault();                
 
                 var surveyDataFromDocumentDB = (SurveyQuestionandAnswer)query.AsEnumerable().FirstOrDefault();
 
-                if (surveyDataFromDocumentDB != null)
+                if (surveyDataFromDocumentDB != null && surveyDataFromDocumentDB.SurveyQAList != null)
                 {
-                    surveyData.ResponseQA = surveyDataFromDocumentDB.ResponseQA;
+                    surveyData.SurveyQAList = surveyDataFromDocumentDB.SurveyQAList;
 
                     return surveyData;
                 }
