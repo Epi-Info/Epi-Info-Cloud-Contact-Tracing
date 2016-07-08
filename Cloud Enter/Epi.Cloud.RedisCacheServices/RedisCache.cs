@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Configuration;
 using StackExchange.Redis;
@@ -12,6 +13,9 @@ namespace Epi.Cloud.CacheServices
     public abstract class RedisCache
     {
         private static string _cacheConnectionString;
+
+        private static int _numberOfRetries = 3;
+        private static TimeSpan _interval = TimeSpan.FromMilliseconds(100);
 
         private static Dictionary<string, CacheStats> _statistics = new Dictionary<string, CacheStats>();
 
@@ -172,6 +176,33 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
+        private T ExecuteWithRetry<T>(Func<T> action)
+        {
+            return ExecuteWithRetry<T>(_numberOfRetries, _interval, action);
+        }
+
+        private T ExecuteWithRetry<T>(int numberOfRetries, TimeSpan interval, Func<T> action)
+        {
+            T result = default(T);
+            while (true)
+            {
+                try
+                {
+                    result = action();
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    numberOfRetries -= 1;
+                    if (numberOfRetries > 0)
+                        Thread.Sleep(interval);
+                    else
+                        throw;
+                }
+            }
+            return result;
+        }
+
         protected async Task<bool> KeyExists(string prefix, string key)
         {
             key = (prefix + key).ToLowerInvariant();
@@ -179,7 +210,7 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                exists = Cache.KeyExists(key);
+                exists = ExecuteWithRetry(() => Cache.KeyExists(key));
                 if (exists)
                 {
                     Cache.KeyExpire(key, new TimeSpan(1, 0, 0));
@@ -207,7 +238,7 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                var redisValue = Cache.StringGet(key);
+                var redisValue = ExecuteWithRetry(() => Cache.StringGet(key));
                 if (redisValue.HasValue)
                 {
                     Cache.KeyExpire(key, new TimeSpan(1, 0, 0));
@@ -241,7 +272,7 @@ namespace Epi.Cloud.CacheServices
             {
                 bool isSuccesful = false;
 #if RunSynchronous
-                isSuccesful = Cache.StringSet(key, value, new TimeSpan(1, 0, 0));
+                isSuccesful = ExecuteWithRetry(() => Cache.StringSet(key, value, new TimeSpan(1, 0, 0)));
 #else
                 //isSuccesful = await Cache.StringSetAsync(key, value);
                 isSuccesful = await Cache.StringSetAsync(key, value, new TimeSpan(1, 0, 0));
@@ -262,7 +293,7 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                Cache.KeyDelete(key);
+                ExecuteWithRetry(() => Cache.KeyDelete(key));
 #else
                 await Cache.KeyDeleteAsync(key);
 #endif
