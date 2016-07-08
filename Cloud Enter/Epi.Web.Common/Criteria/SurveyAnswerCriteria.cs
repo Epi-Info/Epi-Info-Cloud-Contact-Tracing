@@ -51,6 +51,8 @@ namespace Epi.Web.Enter.Common.Criteria
         [DataMember]
         public string SurveyId { get; set; }
 
+        public string FormName { get; set; }
+
 
         /// <summary>
         /// Complete / Inprogress indicator

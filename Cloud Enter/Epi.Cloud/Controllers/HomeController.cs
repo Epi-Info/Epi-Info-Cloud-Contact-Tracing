@@ -551,32 +551,37 @@ namespace Epi.Web.MVC.Controllers
 
         public FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, int PageNumber, string sort = "", string sortfield = "", int orgid = -1)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
-            FormResponseInfoModel.SearchModel = new SearchBoxModel();
-            var SurveyResponseXML = new SurveyResponseXML();
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
+            formResponseInfoModel.SearchModel = new SearchBoxModel();
+            var surveyResponseXML = new SurveyResponseXML();
             if (!string.IsNullOrEmpty(SurveyId))
             {
-                SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
-                FormSettingRequest FormSettingReq = new Enter.Common.Message.FormSettingRequest();
+                SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
+                FormSettingRequest formSettingReq = new Enter.Common.Message.FormSettingRequest();
 
                 //Populating the request
 
-                FormSettingReq.FormInfo.FormId = SurveyId;
-                FormSettingReq.FormInfo.UserId = UserId;
+                formSettingReq.FormInfo.FormId = SurveyId;
+                formSettingReq.FormInfo.UserId = userId;
                 //Getting Column Name  List
-                FormSettingReq.CurrentOrgId = orgid;
-                FormSettingResponse FormSettingResponse = _isurveyFacade.GetFormSettings(FormSettingReq);
-                Columns = FormSettingResponse.FormSetting.ColumnNameList.ToList();
+                formSettingReq.CurrentOrgId = orgid;
+                FormSettingResponse formSettingResponse = _isurveyFacade.GetFormSettings(formSettingReq);
+                formSettingResponse.FormSetting.FormId = SurveyId;
+                Columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
                 Columns.Sort(Compare);
 
                 // Setting  Column Name  List
-                FormResponseInfoModel.Columns = Columns;
+                formResponseInfoModel.Columns = Columns;
 
-                FormResponseInfoModel.FormInfoModel.IsShared = FormSettingResponse.FormInfo.IsShared;
-                FormResponseInfoModel.FormInfoModel.IsShareable = FormSettingResponse.FormInfo.IsShareable;
+                formResponseInfoModel.FormInfoModel.IsShared = formSettingResponse.FormInfo.IsShared;
+                formResponseInfoModel.FormInfoModel.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                formResponseInfoModel.FormInfoModel.FormName = formSettingResponse.FormInfo.FormName;
+                formResponseInfoModel.FormInfoModel.FormNumber = formSettingResponse.FormInfo.FormNumber;
+
+
                 // Set User Role 
-                //if (FormResponseInfoModel.FormInfoModel.IsShared)
+                //if (formResponseInfoModel.FormInfoModel.IsShared)
                 //{
 
                 //    SetUserRole(UserId, orgid);
@@ -585,69 +590,71 @@ namespace Epi.Web.MVC.Controllers
                 //{
                 //SetUserRole(UserId, FormSettingResponse.FormInfo.OrganizationId);
                 //}
-                SetUserRole(UserId, orgid);
+                SetUserRole(userId, orgid);
 
-                FormResponseReq.Criteria.SurveyId = SurveyId.ToString();
-                FormResponseReq.Criteria.PageNumber = PageNumber;
-                FormResponseReq.Criteria.UserId = UserId;
-                FormResponseReq.Criteria.IsSqlProject = FormSettingResponse.FormInfo.IsSQLProject;
-                FormResponseReq.Criteria.IsShareable = FormSettingResponse.FormInfo.IsShareable;
-                FormResponseReq.Criteria.UserOrganizationId = orgid;
-                Session[SessionKeys.IsSqlProject] = FormSettingResponse.FormInfo.IsSQLProject;
-                Session[SessionKeys.IsOwner] = FormSettingResponse.FormInfo.IsOwner;
+                formResponseReq.Criteria.SurveyId = SurveyId.ToString();
+                formResponseReq.Criteria.PageNumber = PageNumber;
+                formResponseReq.Criteria.UserId = userId;
+                formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
+                formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                formResponseReq.Criteria.UserOrganizationId = orgid;
+                Session[SessionKeys.IsSqlProject] = formSettingResponse.FormInfo.IsSQLProject;
+                Session[SessionKeys.IsOwner] = formSettingResponse.FormInfo.IsOwner;
                 //if (Session[SessionKeys.SearchCriteria] != null)
                 //{
-                //    FormResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchCriteria];
+                //    formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchCriteria];
                 //}
                 // Following code retain search starts
                 if (Session[SessionKeys.SearchCriteria] != null &&
                     !string.IsNullOrEmpty(Session[SessionKeys.SearchCriteria].ToString()) &&
                     (Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined"))
                 {
-                    FormResponseReq.Criteria.SearchCriteria = Session[SessionKeys.SearchCriteria].ToString();
-                    FormResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchModel];
+                    formResponseReq.Criteria.SearchCriteria = Session[SessionKeys.SearchCriteria].ToString();
+                    formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchModel];
                 }
                 else
                 {
-                    FormResponseReq.Criteria.SearchCriteria = CreateSearchCriteria(Request.QueryString, FormResponseInfoModel.SearchModel, FormResponseInfoModel);
-                    Session[SessionKeys.SearchModel] = FormResponseInfoModel.SearchModel;
-                    Session[SessionKeys.SearchCriteria] = FormResponseReq.Criteria.SearchCriteria;
+                    formResponseReq.Criteria.SearchCriteria = CreateSearchCriteria(Request.QueryString, formResponseInfoModel.SearchModel, formResponseInfoModel);
+                    Session[SessionKeys.SearchModel] = formResponseInfoModel.SearchModel;
+                    Session[SessionKeys.SearchCriteria] = formResponseReq.Criteria.SearchCriteria;
                 }
                 // Following code retain search ends
-                PopulateDropDownlists(FormResponseInfoModel, FormSettingResponse.FormSetting.FormControlNameList.ToList());
+                PopulateDropDownlists(formResponseInfoModel, formSettingResponse.FormSetting.FormControlNameList.ToList());
 
                 if (sort.Length > 0)
                 {
-                    FormResponseReq.Criteria.SortOrder = sort;
+                    formResponseReq.Criteria.SortOrder = sort;
                 }
                 if (sortfield.Length > 0)
                 {
-                    FormResponseReq.Criteria.Sortfield = sortfield;
+                    formResponseReq.Criteria.Sortfield = sortfield;
                 }
-                FormResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
+                formResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
                 foreach (var sqlParam in Columns)
                 {
-                    FormResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
+                    formResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
                 }
 
 
                 //Test
-                SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
+                SurveyAnswerResponse formResponseList = _isurveyFacade.GetFormResponseList(formResponseReq);
                 SurveyAnswerCriteria criteria = new SurveyAnswerCriteria();
                 criteria.SurveyId = SurveyId.ToString();
-                criteria.UserId = UserId;
+                criteria.FormName = formResponseInfoModel.FormInfoModel.FormName;
+                criteria.UserId = userId;
                 criteria.PageNumber = 1;
                 criteria.IsShareable = false;
                 criteria.PageSize = 20;
-                criteria.SurveyQAList = FormResponseReq.Criteria.SurveyQAList;
+                criteria.SurveyQAList = formResponseReq.Criteria.SurveyQAList;
+
+                var entityDaoFactory = new EF.EntityDaoFactory();
+
+                var returnValuesFromDdb = new Epi.Cloud.DataEntryServices.DataAccessObjects.EntitySurveyResponseDao();
+                var formResponseListFromDdb = returnValuesFromDdb.GetFormResponseByFormId(criteria);
 
 
-                EntitySurveyResponseDao ReturnValuesFromDdb = new EntitySurveyResponseDao();
-                var formResponseList = ReturnValuesFromDdb.GetFormResponseByFormId(criteria);
-
-
-                FormResponseList.SurveyResponseList = new List<SurveyAnswerDTO>();
-                foreach (var item in formResponseList)
+                formResponseList.SurveyResponseList = new List<SurveyAnswerDTO>();
+                foreach (var item in formResponseListFromDdb)
                 {
                     SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
                     surveyAnswer.IsLocked = false;
@@ -659,13 +666,13 @@ namespace Epi.Web.MVC.Controllers
                         surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
                     }
                     pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
-                    FormResponseList.SurveyResponseList.Add(surveyAnswer);
+                    formResponseList.SurveyResponseList.Add(surveyAnswer);
                 }
 
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
-                foreach (var item in FormResponseList.SurveyResponseList)
+                foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)
                     {
@@ -673,7 +680,7 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
-                        ResponseList.Add(SurveyResponseXML.ConvertResponseDetailToModel(item, Columns));
+                        ResponseList.Add(surveyResponseXML.ConvertResponseDetailToModel(item, Columns));
                     }
 
                 }
@@ -683,19 +690,19 @@ namespace Epi.Web.MVC.Controllers
                 //    ResponseList.Add(SurveyResponseXML.ConvertXMLToModel(item, Columns));
                 //}
 
-                FormResponseInfoModel.ResponsesList = ResponseList;
+                formResponseInfoModel.ResponsesList = ResponseList;
                 //Setting Form Info 
-                FormResponseInfoModel.FormInfoModel = Mapper.ToFormInfoModel(FormResponseList.FormInfo);
+                formResponseInfoModel.FormInfoModel = Mapper.ToFormInfoModel(formResponseList.FormInfo);
                 //Setting Additional Data
 
-                FormResponseInfoModel.NumberOfPages = FormResponseList.NumberOfPages;
-                FormResponseInfoModel.PageSize = ReadPageSize();
-                FormResponseInfoModel.NumberOfResponses = FormResponseList.NumberOfResponses;
-                FormResponseInfoModel.sortfield = sortfield;
-                FormResponseInfoModel.sortOrder = sort;
-                FormResponseInfoModel.CurrentPage = PageNumber;
+                formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
+                formResponseInfoModel.PageSize = ReadPageSize();
+                formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;
+                formResponseInfoModel.sortfield = sortfield;
+                formResponseInfoModel.sortOrder = sort;
+                formResponseInfoModel.CurrentPage = PageNumber;
             }
-            return FormResponseInfoModel;
+            return formResponseInfoModel;
         }
 
         private void SetUserRole(int UserId, int OrgId)

@@ -769,7 +769,7 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
                             DBParam.Add(Param.Value.ToLower());
                         }
 
-                        var dbRespone = documentDB.ReadAllRecordsBySurveyID("Zika", criteria.SurveyId, DBParam, criteria.PageNumber.ToString());
+                        var dbRespone = documentDB.ReadAllRecordsBySurveyID(criteria.FormName, criteria.SurveyId, DBParam, criteria.PageNumber.ToString());
                         IEnumerable<SurveyResponse> _recordsinDocumentDB = (IEnumerable<SurveyResponse>)dbRespone;
                         if (_recordsinDocumentDB != null)
                         {
