@@ -17,10 +17,10 @@ namespace Epi.Cloud.MetadataServices
 
         //Pass the project id and call the DBAccess API and get the project metadata.
 
-        public async Task<Template> GetProjectMetadataAsync(string projectId, ProjectElement elements = ProjectElement.Full)
+        public async Task<Template> GetProjectMetadataAsync(string projectId, ProjectScope scope = ProjectScope.TemplateWithAllPages)
         {
             Template metadata = null;
-            if (elements == ProjectElement.Full)
+            if (scope == ProjectScope.TemplateWithAllPages)
             {
                 metadata = projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(projectId) : null;
                 if (metadata == null)
@@ -29,7 +29,7 @@ namespace Epi.Cloud.MetadataServices
                     PopulateRequiredPageLevelSourceTables(metadata);
                 }
             }
-            else if (elements == ProjectElement.TemplateWithoutPages)
+            else if (scope == ProjectScope.TemplateWithNoPages)
             {
                 metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId, null) : null;
                 if (metadata == null)
@@ -61,7 +61,16 @@ namespace Epi.Cloud.MetadataServices
             return metadata;
         }
 
-        public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int pageNumber)
+        public Task<Template> GetProjectMetadataAsync(string projectId, string formId, ProjectScope scope = ProjectScope.TemplateWithNoPages)
+        {
+            if (scope == ProjectScope.TemplateWithAllPages)
+            {
+                return GetProjectMetadataAsync(projectId, scope);
+            }
+            return GetProjectMetadataWithPageByPageNumberAsync(projectId, formId, null);
+        }
+
+        public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int? pageNumber)
         {
             var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, formId, pageNumber);
             if (metadata == null)

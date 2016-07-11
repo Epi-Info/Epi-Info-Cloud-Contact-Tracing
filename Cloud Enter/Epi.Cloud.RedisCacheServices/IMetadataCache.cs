@@ -8,7 +8,7 @@ namespace Epi.Cloud.CacheServices
         bool PageMetadataExists(string projectId, int pageId);
         Template GetFullProjectTemplateMetadata(string projectId);
         Template GetProjectTemplateMetadata(string projectId, int? pageId);
-        Template GetProjectTemplateMetadata(string projectId, string formId, int pageNumber);
+        Template GetProjectTemplateMetadata(string projectId, string formId, int? pageNumber);
         Page GetPageMetadata(string projectId, int pageId);
         bool SetProjectTemplateMetadata(Template projectTemplateMetadata);
         void ClearProjectTemplateMetadataFromCache(string projectId);

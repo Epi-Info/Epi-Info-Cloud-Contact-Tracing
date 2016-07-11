@@ -100,7 +100,7 @@ namespace Epi.Cloud.CacheServices
             }
             return clonedMetadata;
         }
-        public Template GetProjectTemplateMetadata(string projectId, string formId, int pageNumber)
+        public Template GetProjectTemplateMetadata(string projectId, string formId, int? pageNumber)
         {
             Template metadata = null;
             Template clonedMetadata = null;
@@ -118,11 +118,14 @@ namespace Epi.Cloud.CacheServices
             if (metadata != null)
             {
                 clonedMetadata = metadata.Clone();
-                var pageId = metadata.PageIdFromPageNumber(formId, pageNumber);
-                if (pageId != 0)
+                if (pageNumber.HasValue)
                 {
-                    var pageMetadata = GetPageMetadata(projectId, pageId);
-                    clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
+                    var pageId = metadata.PageIdFromPageNumber(formId, pageNumber.Value);
+                    if (pageId != 0)
+                    {
+                        var pageMetadata = GetPageMetadata(projectId, pageId);
+                        clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
+                    }
                 }
             }
             return clonedMetadata;
