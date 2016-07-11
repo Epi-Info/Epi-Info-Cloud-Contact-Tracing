@@ -183,6 +183,9 @@ namespace Epi.Cloud.CacheServices
                 _weakProjectMetadataObjectCache.Add(fullMetadataKey, projectTemplateMetadata);
                 _dictionaryProjectMetadataObjectCache[fullMetadataKey] = projectTemplateMetadata;
 
+                // Cache the project digest
+                SetProjectDigest(projectId, projectTemplateMetadata.Project.Digest);
+
                 // Create a clone of the Template. We will make changes to the clone
                 // that we don't want reflected in the original.
                 var projectTemplateMetadataClone = projectTemplateMetadata.Clone();
@@ -243,6 +246,7 @@ namespace Epi.Cloud.CacheServices
             lock (_gate)
             {
                 DeleteAllKeys(MetadataPrefix);
+                DeleteAllKeys(ProjectDigestPrefix);
             }
         }
 

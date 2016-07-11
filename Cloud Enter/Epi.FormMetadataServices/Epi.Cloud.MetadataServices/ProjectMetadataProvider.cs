@@ -4,6 +4,7 @@ using Epi.Cloud.MetadataServices.ProxiesService;
 using Epi.Cloud.Common.Metadata;
 using System;
 using Epi.Cloud.CacheServices;
+using System.Collections.Generic;
 
 namespace Epi.Cloud.MetadataServices
 {
@@ -97,9 +98,11 @@ namespace Epi.Cloud.MetadataServices
         }
         private static void GenerateDigest(Template projectTemplateMetadata)
         {
+            var viewIdToViewMap = new Dictionary<int, View>();
             var pages = new Page[0];
             foreach (var view in projectTemplateMetadata.Project.Views)
             {
+                viewIdToViewMap[view.ViewId] = view;
                 pages = pages.Union(view.Pages).ToArray();
             }
 
@@ -109,10 +112,13 @@ namespace Epi.Cloud.MetadataServices
             {
                 var pageMetadata = pages[i];
                 int viewId = pageMetadata.ViewId;
+                bool isRelatedView = viewIdToViewMap[viewId].IsRelatedView;
+                string formName = viewIdToViewMap[viewId].Name;
+                string formId = viewIdToViewMap[viewId].EWEFormId;
                 int pageId = pageMetadata.PageId.Value;
                 int position = pageMetadata.Position;
                 string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
-                digest[i] = new ProjectDigest(viewId, pageId, position, fieldNames);
+                digest[i] = new ProjectDigest(formName, formId, viewId, isRelatedView, pageId, position, fieldNames);
             }
             projectTemplateMetadata.Project.Digest = digest;
         }

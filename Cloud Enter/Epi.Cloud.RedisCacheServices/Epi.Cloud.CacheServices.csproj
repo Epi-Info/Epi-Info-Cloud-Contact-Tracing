@@ -55,12 +55,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EpiCloudCache.cs" />
+    <Compile Include="IProjectDigestCache.cs" />
     <Compile Include="ISurveyIdProjectIdMapCache.cs" />
     <Compile Include="IViewCache.cs" />
     <Compile Include="IEpiCloudCache.cs" />
     <Compile Include="IMetadataCache.cs" />
     <Compile Include="ISurveyInfoBOCache.cs" />
     <Compile Include="MetadataCache.cs" />
+    <Compile Include="ProjectDigestCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedisCache.cs" />
     <Compile Include="SurveyIdProjectIdMapCache.cs" />

@@ -1,6 +1,6 @@
 ﻿namespace Epi.Cloud.CacheServices
 {
-    public interface IEpiCloudCache : IMetadataCache, ISurveyInfoBOCache, ISurveyIdProjectIdMapCache
+    public interface IEpiCloudCache : IMetadataCache, IProjectDigestCache, ISurveyInfoBOCache, ISurveyIdProjectIdMapCache
     {
         void ClearAllCache();
     }

@@ -73,14 +73,20 @@ namespace Epi.Cloud.Common.Metadata
         public ProjectDigest()
         {
         }
-        public ProjectDigest(int viewId, int pageId, int position, string[] fieldNames = null)
+        public ProjectDigest(string formName, string formId, int viewId, bool isRelatedView, int pageId, int position, string[] fieldNames = null)
         {
+            FormName = formName;
+            FormId = formId;
             ViewId = viewId;
+            IsRelatedView = isRelatedView;
             PageId = pageId;
             Position = position;
             FieldNames = fieldNames;
         }
+        public string FormName { get; set; }
+        public string FormId { get; set; }
         public int ViewId { get; set; }
+        public bool IsRelatedView { get; set; }
         public int PageId { get; set; }
         public int Position { get; set; }
         public string[] FieldNames { get; set; }

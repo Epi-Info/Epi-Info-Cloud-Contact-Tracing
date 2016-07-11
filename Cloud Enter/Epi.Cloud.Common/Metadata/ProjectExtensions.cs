@@ -16,7 +16,7 @@ namespace Epi.Cloud.Common.Metadata
                     digest.FieldNames.Where(n => { if (fieldNames.Contains(n)) { filteredFieldsNames.Add(n); return true; } else return false; });
                     if (filteredFieldsNames.Count > 0)
                     {
-                        filteredDigest.Add(new ProjectDigest(digest.ViewId, digest.PageId, digest.Position, filteredFieldsNames.ToArray()));
+                        filteredDigest.Add(new ProjectDigest(digest.FormName, digest.FormId, digest.ViewId, digest.IsRelatedView, digest.PageId, digest.Position, filteredFieldsNames.ToArray()));
                     }
                 }
             }
