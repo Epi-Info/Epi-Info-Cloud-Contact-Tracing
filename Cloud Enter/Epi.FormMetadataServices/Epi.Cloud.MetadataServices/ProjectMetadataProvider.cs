@@ -82,6 +82,17 @@ namespace Epi.Cloud.MetadataServices
             return metadata;
         }
 
+        public async Task<ProjectDigest[]> GetProjectDigest(string projectId)
+        {
+            var projectDigest = _epiCloudCache.GetProjectDigest(projectId);
+            if (projectDigest == null)
+            {
+                var fullMetadata = await RefreshCache(projectId);
+                projectDigest = fullMetadata.Project.Digest;
+            }
+            return projectDigest;
+        }
+
         private async Task<Template> RefreshCache(string projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);

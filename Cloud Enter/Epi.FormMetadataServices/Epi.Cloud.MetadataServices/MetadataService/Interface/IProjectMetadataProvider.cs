@@ -10,6 +10,7 @@ namespace Epi.Cloud.MetadataServices
         Task<Template> GetProjectMetadataAsync(string projectId, string formId, ProjectScope scope = ProjectScope.TemplateWithNoPages);
         Task<Template> GetProjectMetadataWithPageByPageIdAsync(string projectId, int pageId);
         Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int? pageNumber);
+        Task<ProjectDigest[]> GetProjectDigest(string projectId);
     }
 
     public enum ProjectScope

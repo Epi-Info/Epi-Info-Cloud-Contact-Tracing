@@ -36,7 +36,7 @@ namespace Epi.Cloud.CacheServices
             {
                 _dictionarySurveyIdProjectIdMapCache[surveyId] = projectId;
             }
-            Set(SurveyIdProjectIdMapPrefix, surveyId, projectId);
+            Set(SurveyIdProjectIdMapPrefix, surveyId, projectId, NoTimeout);
             return isSuccessful;
         }
 

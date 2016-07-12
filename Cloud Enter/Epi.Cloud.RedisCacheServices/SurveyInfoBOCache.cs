@@ -38,10 +38,6 @@ namespace Epi.Cloud.CacheServices
             if (surveyInfoBO.ProjectTemplateMetadata != null)
             {
                 var projectId = surveyInfoBO.ProjectTemplateMetadata.Project.Id;
-                if (GetProjectIdFromSurveyId(surveyId) != projectId)
-                {
-                    SetSurveyIdProjectIdMap(surveyId, projectId);
-                }
                 if (!FullProjectTemplateMetadataExists(projectId))
                 {
                     isSuccessful = SetProjectTemplateMetadata(surveyInfoBO.ProjectTemplateMetadata);

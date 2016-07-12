@@ -12,6 +12,10 @@ namespace Epi.Cloud.CacheServices
 {
     public abstract class RedisCache
     {
+        protected static readonly TimeSpan NoTimeout = TimeSpan.Zero;
+        private static readonly TimeSpan InitialTimeout = new TimeSpan(1, 0, 0); // 1 hour
+        private static readonly TimeSpan RenewTimeout = new TimeSpan(1, 0, 0); // 1 hour
+
         private static string _cacheConnectionString;
 
         private static int _numberOfRetries = 3;
@@ -205,6 +209,10 @@ namespace Epi.Cloud.CacheServices
 
         protected async Task<bool> KeyExists(string prefix, string key)
         {
+            return await KeyExists(prefix, key, RenewTimeout);
+        }
+        protected async Task<bool> KeyExists(string prefix, string key, TimeSpan renewTimeout)
+        {
             key = (prefix + key).ToLowerInvariant();
             bool exists = false;
             try
@@ -213,7 +221,10 @@ namespace Epi.Cloud.CacheServices
                 exists = ExecuteWithRetry(() => Cache.KeyExists(key));
                 if (exists)
                 {
-                    Cache.KeyExpire(key, new TimeSpan(1, 0, 0));
+                    if (renewTimeout != NoTimeout)
+                    {
+                        Cache.KeyExpire(key, renewTimeout);
+                    }
                 }
 #else
                 exists = await Cache.KeyExistsAsync(key);
@@ -234,6 +245,11 @@ namespace Epi.Cloud.CacheServices
 
         protected async Task<string> Get(string prefix, string key)
         {
+            return await Get(prefix, key, RenewTimeout);
+        }
+
+        protected async Task<string> Get(string prefix, string key, TimeSpan renewTimeout)
+        {
             key = (prefix + key).ToLowerInvariant();
             try
             {
@@ -241,7 +257,10 @@ namespace Epi.Cloud.CacheServices
                 var redisValue = ExecuteWithRetry(() => Cache.StringGet(key));
                 if (redisValue.HasValue)
                 {
-                    Cache.KeyExpire(key, new TimeSpan(1, 0, 0));
+                    if (renewTimeout != NoTimeout)
+                    {
+                        Cache.KeyExpire(key, renewTimeout);
+                    }
                     UpdateStats(key, StatType.Hit);
                 }
 #else
@@ -267,15 +286,20 @@ namespace Epi.Cloud.CacheServices
 
         protected async Task<bool> Set(string prefix, string key, string value)
         {
+            return await Set(prefix, key, value, InitialTimeout);
+        }
+
+        protected async Task<bool> Set(string prefix, string key, string value, TimeSpan timeout)
+        {
             key = (prefix + key).ToLowerInvariant();
             try
             {
                 bool isSuccesful = false;
 #if RunSynchronous
-                isSuccesful = ExecuteWithRetry(() => Cache.StringSet(key, value, new TimeSpan(1, 0, 0)));
+                isSuccesful = ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet(key, value) : Cache.StringSet(key, value, timeout));
 #else
                 //isSuccesful = await Cache.StringSetAsync(key, value);
-                isSuccesful = await Cache.StringSetAsync(key, value, new TimeSpan(1, 0, 0));
+                isSuccesful = await Cache.StringSetAsync(key, value, timeout);
 #endif
                 UpdateStats(key, isSuccesful ? StatType.Set : StatType.SetFail);
                 return isSuccesful;
