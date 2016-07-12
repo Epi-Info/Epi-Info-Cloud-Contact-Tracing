@@ -82,7 +82,7 @@ namespace Epi.Cloud.MetadataServices
             return metadata;
         }
 
-        public async Task<ProjectDigest[]> GetProjectDigest(string projectId)
+        public async Task<ProjectDigest[]> GetProjectDigestAsync(string projectId)
         {
             var projectDigest = _epiCloudCache.GetProjectDigest(projectId);
             if (projectDigest == null)
