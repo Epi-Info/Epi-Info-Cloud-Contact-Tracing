@@ -60,6 +60,7 @@
     <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
     <Compile Include="Metadata\XmlAttributeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RetryStrategies.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

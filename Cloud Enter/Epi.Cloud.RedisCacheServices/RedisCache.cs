@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Threading;
 using System.Threading.Tasks;
+using Epi.Cloud.Common;
 using Epi.Cloud.Common.Configuration;
 using StackExchange.Redis;
 
@@ -20,6 +20,8 @@ namespace Epi.Cloud.CacheServices
 
         private static int _numberOfRetries = 3;
         private static TimeSpan _interval = TimeSpan.FromMilliseconds(100);
+
+        private RetryStrategies _retryStrategy = new RetryStrategies(_numberOfRetries, _interval);
 
         private static Dictionary<string, CacheStats> _statistics = new Dictionary<string, CacheStats>();
 
@@ -180,32 +182,6 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        private T ExecuteWithRetry<T>(Func<T> action)
-        {
-            return ExecuteWithRetry<T>(_numberOfRetries, _interval, action);
-        }
-
-        private T ExecuteWithRetry<T>(int numberOfRetries, TimeSpan interval, Func<T> action)
-        {
-            T result = default(T);
-            while (true)
-            {
-                try
-                {
-                    result = action();
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    numberOfRetries -= 1;
-                    if (numberOfRetries > 0)
-                        Thread.Sleep(interval);
-                    else
-                        throw;
-                }
-            }
-            return result;
-        }
 
         protected async Task<bool> KeyExists(string prefix, string key)
         {
@@ -218,7 +194,7 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                exists = ExecuteWithRetry(() => Cache.KeyExists(key));
+                exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExists(key));
                 if (exists)
                 {
                     if (renewTimeout != NoTimeout)
@@ -227,10 +203,13 @@ namespace Epi.Cloud.CacheServices
                     }
                 }
 #else
-                exists = await Cache.KeyExistsAsync(key);
+                exists = await _retryStrategy.ExecuteWithRetry(() => Cache.KeyExistsAsync(key));
                 if (exists)
                 {
-                    Cache.KeyExpireAsync(key, new TimeSpan(1, 0, 0));
+                    if (renewTimeout != NoTimeout)
+                    {
+                        var task = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(key, renewTimeout).ConfigureAwait(false));
+                    }
                 }
 #endif
                 UpdateStats(key, exists ? StatType.ExistHit : StatType.ExistMiss);
@@ -254,7 +233,7 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                var redisValue = ExecuteWithRetry(() => Cache.StringGet(key));
+                var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGet(key));
                 if (redisValue.HasValue)
                 {
                     if (renewTimeout != NoTimeout)
@@ -264,11 +243,14 @@ namespace Epi.Cloud.CacheServices
                     UpdateStats(key, StatType.Hit);
                 }
 #else
-                var redisValue = await Cache.StringGetAsync(key);
+                var redisValue = await _retryStrategy.ExecuteWithRetry(() => Cache.StringGetAsync(key));
                 if (redisValue.HasValue)
                 {
                     UpdateStats(key, StatType.Hit);
-                    Cache.KeyExpireAsync(key, new TimeSpan(1, 0, 0));
+                    if (renewTimeout != NoTimeout)
+                    {
+                        var task = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(key, renewTimeout).ConfigureAwait(false));
+                    }
                 }
 #endif
                 else
@@ -296,10 +278,10 @@ namespace Epi.Cloud.CacheServices
             {
                 bool isSuccesful = false;
 #if RunSynchronous
-                isSuccesful = ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet(key, value) : Cache.StringSet(key, value, timeout));
+                isSuccesful = _retryStrategy.ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet(key, value) : Cache.StringSet(key, value, timeout));
 #else
                 //isSuccesful = await Cache.StringSetAsync(key, value);
-                isSuccesful = await Cache.StringSetAsync(key, value, timeout);
+                isSuccesful = await _retryStrategy.ExecuteWithRetry(() => (timeout == NoTimeout ?  Cache.StringSetAsync(key, value) : Cache.StringSetAsync(key, value, timeout)));
 #endif
                 UpdateStats(key, isSuccesful ? StatType.Set : StatType.SetFail);
                 return isSuccesful;
@@ -317,9 +299,9 @@ namespace Epi.Cloud.CacheServices
             try
             {
 #if RunSynchronous
-                ExecuteWithRetry(() => Cache.KeyDelete(key));
+                _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(key));
 #else
-                await Cache.KeyDeleteAsync(key);
+                await _retryStrategy.ExecuteWithRetry(() => Cache.KeyDeleteAsync(key));
 #endif
             }
             catch (Exception ex)
@@ -336,8 +318,8 @@ namespace Epi.Cloud.CacheServices
                 var keys = server.Keys(0, prefix.ToLowerInvariant() + "*");
                 foreach (var key in keys)
                 {
-                    Cache.KeyDelete(key);
-                    if (onDelete != null) onDelete(key);
+                    _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(key));
+                    onDelete?.Invoke(key);
                 }
             }
         }
