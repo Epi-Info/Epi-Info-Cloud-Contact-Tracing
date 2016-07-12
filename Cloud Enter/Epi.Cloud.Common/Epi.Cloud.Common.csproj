@@ -55,6 +55,7 @@
     <Compile Include="Metadata\FieldAttributes.cs" />
     <Compile Include="Metadata\Helpers.cs" />
     <Compile Include="Metadata\NullableExtensions.cs" />
+    <Compile Include="Metadata\ProjectDigest.cs" />
     <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
     <Compile Include="Metadata\XmlAttributeExtensions.cs" />

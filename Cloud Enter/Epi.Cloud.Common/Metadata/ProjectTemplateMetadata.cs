@@ -68,29 +68,6 @@ namespace Epi.Cloud.Common.Metadata
             return clone;
         }
     }
-    public class ProjectDigest
-    {
-        public ProjectDigest()
-        {
-        }
-        public ProjectDigest(string formName, string formId, int viewId, bool isRelatedView, int pageId, int position, string[] fieldNames = null)
-        {
-            FormName = formName;
-            FormId = formId;
-            ViewId = viewId;
-            IsRelatedView = isRelatedView;
-            PageId = pageId;
-            Position = position;
-            FieldNames = fieldNames;
-        }
-        public string FormName { get; set; }
-        public string FormId { get; set; }
-        public int ViewId { get; set; }
-        public bool IsRelatedView { get; set; }
-        public int PageId { get; set; }
-        public int Position { get; set; }
-        public string[] FieldNames { get; set; }
-    }
 
     [DesignerCategory("code")]
     public partial class View
