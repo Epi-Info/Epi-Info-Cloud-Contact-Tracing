@@ -26,6 +26,7 @@ namespace Epi.Web.MVC.Controllers
 		// GET: /FormResponse/
 
 		private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
+
 		private IEnumerable<XElement> PageFields;
 		private string RequiredList = "";
 		List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
@@ -249,15 +250,15 @@ namespace Epi.Web.MVC.Controllers
 			///////////////////////////// Execute - Record Before - start//////////////////////
 			Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
 			EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-			SurveyResponseXML SurveyResponseXML = new SurveyResponseXML(PageFields, RequiredList);
+			SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper(PageFields, RequiredList);
 			if (FunctionObject_B != null && !FunctionObject_B.IsNull())
 			{
 				try
 				{
-					SurveyAnswer.XML = SurveyResponseXML.CreateResponseDocument(xdoc, SurveyAnswer.XML);
+					SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);
 					//SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
-					Session[SessionKeys.RequiredList] = SurveyResponseXML._RequiredList;
-					this.RequiredList = SurveyResponseXML._RequiredList;
+					Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
+					this.RequiredList = surveyResponseHelper.RequiredList;
 					form.RequiredFieldsList = this.RequiredList;
 					FunctionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
 					FunctionObject_B.Context.HighlightedFieldList = form.HighlightedFieldsList;
@@ -941,7 +942,7 @@ namespace Epi.Web.MVC.Controllers
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
 
-			SurveyResponseXML SurveyResponseXML = new SurveyResponseXML();
+			SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper();
 			if (!string.IsNullOrEmpty(SurveyId))
 			{
 				SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
@@ -980,7 +981,7 @@ namespace Epi.Web.MVC.Controllers
 					}
 					else
 					{
-						ResponseList.Add(SurveyResponseXML.ConvertResponseDetailToModel(item, Columns));
+						ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
 					}
 				}
 

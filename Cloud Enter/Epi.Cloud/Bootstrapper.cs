@@ -46,9 +46,9 @@ namespace Epi.Web.MVC
             {
 
                 container.RegisterType<Epi.Web.WCF.SurveyService.IEWEDataService, Epi.Web.WCF.SurveyService.EWEDataService>();
-                container.RegisterType<SurveyResponseXML, SurveyResponseXML>()
+                container.RegisterType<SurveyResponseHelper, SurveyResponseHelper>()
                     .Configure<InjectedMembers>()
-                    .ConfigureInjectionFor<SurveyResponseXML>(new InjectionConstructor());
+                    .ConfigureInjectionFor<SurveyResponseHelper>(new InjectionConstructor());
 
                 //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
                 container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();

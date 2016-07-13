@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Epi.Web.Enter.Common.MessageBase;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.Enter.Common.Message
 {
@@ -16,6 +17,7 @@ namespace Epi.Web.Enter.Common.Message
         {
             this.Criteria = new SurveyAnswerCriteria();
             this.SurveyAnswerList = new List<SurveyAnswerDTO>();
+            this.ResponseDetail = new FormResponseDetail();
         }
 
         /// <summary>
@@ -29,5 +31,8 @@ namespace Epi.Web.Enter.Common.Message
         /// </summary>
         [DataMember]
         public List<SurveyAnswerDTO> SurveyAnswerList;
+
+        [DataMember]
+        public FormResponseDetail ResponseDetail;
     }
 }

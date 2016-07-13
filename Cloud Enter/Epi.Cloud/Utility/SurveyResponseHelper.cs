@@ -8,44 +8,45 @@ using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.MVC.Utility
 {
-    public class SurveyResponseXML
+    public class SurveyResponseHelper
     {
-        private IEnumerable<XElement> PageFields;
-        private string RequiredList = "";
+        private IEnumerable<XElement> _pageFields;
+        private string _requiredList = "";
 
-        public string _RequiredList
+        private Dictionary<string, string> _responseDetailList = new Dictionary<string, string>();
+
+        public string RequiredList
         {
-            get { return RequiredList; }
-            set { RequiredList = value; }
+            get { return _requiredList; }
+            set { _requiredList = value; }
         }
 
-        public SurveyResponseXML(IEnumerable<XElement> _PageFields, string _RequiredList)
+        public SurveyResponseHelper(IEnumerable<XElement> pageFields, string requiredList)
         {
 
-            PageFields = _PageFields;
-            RequiredList = _RequiredList;
+            _pageFields = pageFields;
+            _requiredList = requiredList;
 
         }
-        public SurveyResponseXML()
+        public SurveyResponseHelper()
         {
         }
-        Dictionary<string, string> ResponseDetailList = new Dictionary<string, string>();
 
 
         public void Add(MvcDynamicForms.Form pForm)
         {
-            ResponseDetailList.Clear();
+            _responseDetailList.Clear();
             foreach (var field in pForm.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    if (this.ResponseDetailList.ContainsKey(field.Title))
+                    if (this._responseDetailList.ContainsKey(field.Title))
                     {
-                        this.ResponseDetailList[field.Title] = field.Response;
+                        this._responseDetailList[field.Title] = field.Response;
                     }
                     else
                     {
-                        this.ResponseDetailList.Add(field.Title, field.Response);
+                        this._responseDetailList.Add(field.Title, field.Response);
                     }
                 }
             }
@@ -53,25 +54,25 @@ namespace Epi.Web.MVC.Utility
 
         public void Add(MvcDynamicForms.Fields.InputField pField)
         {
-            if (this.ResponseDetailList.ContainsKey(pField.Title))
+            if (this._responseDetailList.ContainsKey(pField.Title))
             {
-                this.ResponseDetailList[pField.Title] = pField.GetXML();
+                this._responseDetailList[pField.Title] = pField.GetXML();
             }
             else
             {
-                this.ResponseDetailList.Add(pField.Title, pField.GetXML());
+                this._responseDetailList.Add(pField.Title, pField.GetXML());
             }
         }
 
         public void SetValue(string pKey, string pXMLValue)
         {
-            if (this.ResponseDetailList.ContainsKey(pKey))
+            if (this._responseDetailList.ContainsKey(pKey))
             {
-                this.ResponseDetailList[pKey] = pXMLValue;
+                this._responseDetailList[pKey] = pXMLValue;
             }
             else
             {
-                this.ResponseDetailList.Add(pKey, pXMLValue);
+                this._responseDetailList.Add(pKey, pXMLValue);
             }
         }
 
@@ -80,23 +81,39 @@ namespace Epi.Web.MVC.Utility
         {
             string result = null;
 
-            if (this.ResponseDetailList.ContainsKey(pKey))
+            if (this._responseDetailList.ContainsKey(pKey))
             {
-                result = this.ResponseDetailList[pKey];
+                result = this._responseDetailList[pKey];
             }
 
             return result;
         }
 
-        public XmlDocument CreateResponseXml(string SurveyId, bool AddRoot, int CurrentPage, string Pageid)
+        public FormResponseDetail CreateResponseDetail(string formId, bool AddRoot, int CurrentPage, string Pageid, out XmlDocument xml)
         {
-            XmlDocument xml = new XmlDocument();
+            var formResponseDetail = new FormResponseDetail
+            {
+                FormId = formId,
+                LastPageVisited = CurrentPage == 0 ? 1 : 0
+            };
+
+            if (CurrentPage != 0 || _responseDetailList.Count > 0)
+            {
+                var pageResponseDetail = new PageResponseDetail();
+                pageResponseDetail.PageNumber = CurrentPage;
+                pageResponseDetail.PageId = CurrentPage;
+                pageResponseDetail.MetadataPageId = string.IsNullOrWhiteSpace(Pageid) ? 0 : Convert.ToInt32(Pageid);
+                pageResponseDetail.ResponseQA = _responseDetailList;
+                formResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
+            }
+
+            #region Generate XML
+            xml = new XmlDocument();
             XmlElement root = xml.CreateElement("SurveyResponse");
 
             if (CurrentPage == 0)
             {
-
-                root.SetAttribute("SurveyId", SurveyId);
+                root.SetAttribute("SurveyId", formId);
                 root.SetAttribute("LastPageVisited", "1");
                 root.SetAttribute("HiddenFieldsList", "");
                 root.SetAttribute("HighlightedFieldsList", "");
@@ -109,8 +126,6 @@ namespace Epi.Web.MVC.Utility
             XmlElement PageRoot = xml.CreateElement("Page");
             if (CurrentPage != 0)
             {
-
-
                 PageRoot.SetAttribute("PageNumber", CurrentPage.ToString());
                 //PageRoot.SetAttribute("PageId", Pageid);//Added PageId Attribute to the page node
                 PageRoot.SetAttribute("PageId", CurrentPage.ToString());//Added PageId Attribute to the page node
@@ -118,16 +133,16 @@ namespace Epi.Web.MVC.Utility
                 xml.AppendChild(PageRoot);
             }
 
-            foreach (KeyValuePair<string, string> pair in this.ResponseDetailList)
+            foreach (KeyValuePair<string, string> pair in this._responseDetailList)
             {
                 XmlElement child = xml.CreateElement(Epi.Web.MVC.Constants.Constant.RESPONSE_DETAILS);
                 child.SetAttribute("QuestionName", pair.Key);
                 child.InnerText = pair.Value;
                 PageRoot.AppendChild(child);
             }
+            #endregion // Generate XML
 
-
-            return xml;
+            return formResponseDetail;
         }
         public int GetNumberOfPages(XDocument Xml)
         {
@@ -148,11 +163,11 @@ namespace Epi.Web.MVC.Utility
                                      where _FieldTypeID.Attribute("Position").Value == (i - 1).ToString()
                                      select _FieldTypeID;
 
-                this.PageFields = _FieldsTypeIDs;
+                this._pageFields = _FieldsTypeIDs;
                 string PageId;
-                if (this.PageFields.Count() > 0)
+                if (this._pageFields.Count() > 0)
                 {
-                    PageId = this.PageFields.First().Attribute("PageId").Value;
+                    PageId = this._pageFields.First().Attribute("PageId").Value;
                 }
                 else
                 {
@@ -242,7 +257,7 @@ namespace Epi.Web.MVC.Utility
                 xml.AppendChild(PageRoot);
             }
 
-            foreach (var Field in this.PageFields)
+            foreach (var Field in this._pageFields)
             {
                 XmlElement child = xml.CreateElement(Epi.Web.MVC.Constants.Constant.RESPONSE_DETAILS);
                 child.SetAttribute("QuestionName", Field.Attribute("Name").Value);
@@ -273,7 +288,7 @@ namespace Epi.Web.MVC.Utility
                 pageResponseDetail.MetadataPageId = PageId;
             }
 
-            foreach (var Field in this.PageFields)
+            foreach (var Field in this._pageFields)
             {
                 pageResponseDetail.ResponseQA.Add(Field.Attribute("Name").Value, Field.Value);
                 //Start Adding required controls to the list
@@ -292,15 +307,15 @@ namespace Epi.Web.MVC.Utility
             {
                 if (isRequired)
                 {
-                    if (!this.RequiredList.Contains(_Fields.Attribute("Name").Value))
+                    if (!this._requiredList.Contains(_Fields.Attribute("Name").Value))
                     {
-                        if (this.RequiredList != "")
+                        if (this._requiredList != "")
                         {
-                            this.RequiredList = this.RequiredList + "," + _Fields.Attribute("Name").Value.ToLower();
+                            this._requiredList = this._requiredList + "," + _Fields.Attribute("Name").Value.ToLower();
                         }
                         else
                         {
-                            this.RequiredList = _Fields.Attribute("Name").Value.ToLower();
+                            this._requiredList = _Fields.Attribute("Name").Value.ToLower();
                         }
                     }
                 }

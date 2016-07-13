@@ -423,7 +423,7 @@
     <Compile Include="Utility\MobileFormProvider.cs" />
     <Compile Include="Utility\OmnitureHelper.cs" />
     <Compile Include="Utility\SurveyHelper.cs" />
-    <Compile Include="Utility\SurveyResponseXML.cs" />
+    <Compile Include="Utility\SurveyResponseHelper.cs" />
     <Compile Include="Utility\ValidateResponse.cs" />
     <Compile Include="Utility\WindowsAuthentication.cs" />
     <Compile Include="Views\IMetadataProvider.cs" />

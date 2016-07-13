@@ -233,15 +233,15 @@ namespace Epi.Web.MVC.Controllers
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
             EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-            SurveyResponseXML SurveyResponseXML = new SurveyResponseXML(PageFields, RequiredList);
+            SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper(PageFields, RequiredList);
             if (FunctionObject_B != null && !FunctionObject_B.IsNull())
             {
                 try
                 {
-                    SurveyAnswer.XML = SurveyResponseXML.CreateResponseDocument(xdoc, SurveyAnswer.XML);
-                    Session[SessionKeys.RequiredList] = SurveyResponseXML._RequiredList;
+                    SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);
+                    Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                     //SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
-                    this.RequiredList = SurveyResponseXML._RequiredList;
+                    this.RequiredList = surveyResponseHelper.RequiredList;
                     form.RequiredFieldsList = this.RequiredList;
                     FunctionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
                     FunctionObject_B.Context.HighlightedFieldList = form.HighlightedFieldsList;
@@ -270,9 +270,9 @@ namespace Epi.Web.MVC.Controllers
             }
             else
             {
-                SurveyAnswer.XML = SurveyResponseXML.CreateResponseDocument(xdoc, SurveyAnswer.XML);//, RequiredList);
-                this.RequiredList = SurveyResponseXML._RequiredList;
-                Session[SessionKeys.RequiredList] = SurveyResponseXML._RequiredList;
+                SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);//, RequiredList);
+                this.RequiredList = surveyResponseHelper.RequiredList;
+                Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                 form.RequiredFieldsList = RequiredList;
                 _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
             }
@@ -554,7 +554,7 @@ namespace Epi.Web.MVC.Controllers
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
-            var surveyResponseXML = new SurveyResponseXML();
+            var surveyResponseHelper = new SurveyResponseHelper();
             if (!string.IsNullOrEmpty(SurveyId))
             {
                 SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
@@ -680,7 +680,7 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
-                        ResponseList.Add(surveyResponseXML.ConvertResponseDetailToModel(item, Columns));
+                        ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
                     }
 
                 }

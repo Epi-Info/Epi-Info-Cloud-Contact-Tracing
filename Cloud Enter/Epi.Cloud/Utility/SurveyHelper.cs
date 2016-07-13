@@ -11,6 +11,7 @@ using System.Xml.XPath;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -23,11 +24,11 @@ namespace Epi.Web.MVC.Utility
         /// <param name="responseId"></param>
         /// <param name="surveyAnswerRequest"></param>
         /// <param name="surveyAnswerDTO"></param>
-        /// <param name="surveyResponseXML"></param>
+        /// <param name="surveyResponseHelper"></param>
         /// <param name="iSurveyAnswerRepository"></param>
         public static Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyResponse(string surveyId, string responseId, SurveyAnswerRequest surveyAnswerRequest1,
                                           Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-                                          SurveyResponseXML surveyResponseXML, ISurveyAnswerRepository iSurveyAnswerRepository, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
+                                          SurveyResponseHelper surveyResponseHelper, ISurveyAnswerRepository iSurveyAnswerRepository, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
         {
             bool AddRoot = false;
             SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
@@ -50,7 +51,12 @@ namespace Epi.Web.MVC.Utility
             //    {
             //    surveyAnswerDTO.Status = (int)Constant.Status.InProgress;
             //    }
-            surveyAnswerDTO.XML = surveyResponseXML.CreateResponseXml(surveyId, AddRoot, 0, "").InnerXml;
+
+            XmlDocument xml;
+            FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyId, AddRoot, 0, "", out xml);
+            surveyAnswerDTO.ResponseDetail = responseDetail;
+
+            surveyAnswerDTO.XML = xml.InnerXml;
             surveyAnswerDTO.RelateParentId = RelateResponseId;
             surveyAnswerRequest.Criteria.UserId = UserId;
             surveyAnswerRequest.Criteria.UserOrganizationId = CurrentOrgId;
@@ -77,7 +83,7 @@ namespace Epi.Web.MVC.Utility
         }
 
         public static void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, MvcDynamicForms.Form form, SurveyAnswerRequest surveyAnswerRequest,
-                                                             SurveyResponseXML surveyResponseXML,
+                                                             SurveyResponseHelper surveyResponseHelper,
                                                             ISurveyAnswerRepository iSurveyAnswerRepository,
                                                              SurveyAnswerResponse surveyAnswerResponse, string responseId, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
         {
@@ -90,14 +96,19 @@ namespace Epi.Web.MVC.Utility
                 // 2 a. update the current survey answer request
                 surveyAnswerRequest.SurveyAnswerList = surveyAnswerResponse.SurveyResponseList;
 
-                surveyResponseXML.Add(form);
+                surveyResponseHelper.Add(form);
                 XDocument SavedXml = XDocument.Parse(surveyAnswerDTO.XML);
                 bool AddRoot = false;
                 if (SavedXml.Root.FirstAttribute.Value.ToString() == "0")
                 {
                     AddRoot = true;
                 }
-                surveyAnswerRequest.SurveyAnswerList[0].XML = surveyResponseXML.CreateResponseXml(surveyInfoModel.SurveyId, AddRoot, form.CurrentPage, form.PageId).InnerXml;
+
+                XmlDocument xml;
+                FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, AddRoot, form.CurrentPage, form.PageId, out xml);
+
+                surveyAnswerRequest.ResponseDetail = responseDetail;
+                surveyAnswerRequest.SurveyAnswerList[0].XML = xml.InnerXml;
                 // 2 b. save the current survey response
                 surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UPDATE;  //"Update";
                                                                                      // surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UpdateMulti; 
