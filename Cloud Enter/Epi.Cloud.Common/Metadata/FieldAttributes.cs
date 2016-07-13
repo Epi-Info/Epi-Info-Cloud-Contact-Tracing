@@ -9,7 +9,7 @@ namespace Epi.Cloud.Common.Metadata
     {
         int _tempInt;
         double _tempDouble;
-        bool _tempBool;
+        bool _tempBool;       
 
         public FieldAttributes()
         {
@@ -141,12 +141,10 @@ namespace Epi.Cloud.Common.Metadata
 
                 MaxLength = f.MaxLength.ValueOrDefault(),
                 Pattern = f.Pattern,
-                Lower = f.Lower,
-                Upper = f.Upper,
-
-                IsRequired = false,
-                Required = false,
-                ReadOnly = false,
+                Lower = f.Lower,             
+               IsRequired =  f.IsRequired?? false,
+               Required = f.IsRequired?? false,
+               ReadOnly = f.IsReadOnly ?? false,
                 IsHidden = false,
                 IsHighlighted = false,
                 IsDisabled = false,
