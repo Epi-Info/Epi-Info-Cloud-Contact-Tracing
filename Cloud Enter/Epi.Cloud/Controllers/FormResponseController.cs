@@ -399,9 +399,14 @@ namespace Epi.Web.MVC.Controllers
 				FormResponseReq.Criteria.Sortfield = SortField;
 			}
 
+            FormResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
+            foreach (var sqlParam in Columns)
+            {
+                FormResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
+            }
 
-			//Getting Resposes
-			SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
+            //Getting Resposes
+            SurveyAnswerResponse FormResponseList = _isurveyFacade.GetFormResponseList(FormResponseReq);
 
 			//Setting Resposes List
 			List<ResponseModel> ResponseList = new List<ResponseModel>();
@@ -967,7 +972,8 @@ namespace Epi.Web.MVC.Controllers
 				FormResponseReq.Criteria.PageNumber = 1;
 				FormResponseReq.Criteria.UserId = UserId;
 				FormResponseReq.Criteria.IsMobile = true;
-				SurveyAnswerResponse FormResponseList = _isurveyFacade.GetResponsesByRelatedFormId(FormResponseReq);
+                FormResponseReq.Criteria.SurveyQAList = FormResponseReq.Criteria.SurveyQAList;
+                SurveyAnswerResponse FormResponseList = _isurveyFacade.GetResponsesByRelatedFormId(FormResponseReq);
 
 
 				//Setting Resposes List
