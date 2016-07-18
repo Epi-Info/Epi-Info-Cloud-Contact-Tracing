@@ -36,20 +36,9 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public int CurrentOrgId { get; set; }
         public long? TemplateXMLSize { get; set; }
 
-        string _xml;
+        public string XML { get; set; }
 
-        public string XML
-        {
-            get { return _xml; }
-            set { _xml = value; }
-        }
-
-        FormResponseDetail _responseDetail;
-        public FormResponseDetail ResponseDetail
-        {
-            get { return _responseDetail; }
-            set { _responseDetail = value; }
-        }
+        public FormResponseDetail ResponseDetail { get; set; }
 
         public object Clone()
         {

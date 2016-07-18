@@ -212,12 +212,12 @@ namespace Epi.Cloud.CacheServices
                         field.SourceTableItems = projectTemplateMetadataClone
                             .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
                     }
-                    json = JsonConvert.SerializeObject(pageMetadata);
+                    json = JsonConvert.SerializeObject(pageMetadata, DontSerializeNulls);
                     var pageKey = ComposePageKey(projectId, pageId);
                     isSuccessful &= Set(MetadataPrefix, pageKey, json).Result;
                 }
 
-                json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
+                json = JsonConvert.SerializeObject(projectTemplateMetadataClone, DontSerializeNulls);
                 isSuccessful &= Set(MetadataPrefix, projectId, json).Result;
             }
             return isSuccessful;
@@ -276,7 +276,7 @@ namespace Epi.Cloud.CacheServices
             string json;
             lock (_gate)
             {
-                json = JsonConvert.SerializeObject(fieldAttributes);
+                json = JsonConvert.SerializeObject(fieldAttributes, DontSerializeNulls);
                 var pageFieldAttributesKey = ComposePageFieldAttributesKey(projectId, formId, pageNumber);
                 isSuccessful = Set(MetadataPrefix, pageFieldAttributesKey, json).Result;
             }

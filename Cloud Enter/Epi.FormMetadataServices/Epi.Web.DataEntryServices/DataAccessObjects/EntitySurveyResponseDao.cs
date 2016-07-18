@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Epi.Cloud.Common.BusinessObjects;
-//using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.DataEntryServices;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Cloud.DataEntryServices.Helpers;
-using Epi.Cloud.Interfaces.DataInterfaces;
-//using Epi.Web.EF;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Web.Enter.Common.BusinessObject;
 
 namespace Epi.Cloud.DataEntryServices.DataAccessObjects
 {
@@ -18,6 +14,7 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
     /// </summary> 
     public class EntitySurveyResponseDao : ISurveyResponseDao
     {
+        Epi.Web.EF.EntitySurveyResponseDao eweEntitySurveyResponseDao = new Epi.Web.EF.EntitySurveyResponseDao();
 
         private int sqlProjectResponsesCount;
         int DataAccessRuleId;
@@ -1514,7 +1511,7 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
 
             return ConnectionString.Substring(ConnectionString.LastIndexOf('=') + 1);
         }
-        public bool ISResponseExists(Guid ResponseId)
+        public bool DoesResponseExist(Guid ResponseId)
         {
             bool Exists = false;
 
@@ -2002,9 +1999,9 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
 
 
         //TODO Implement for DocumentDB
-        public void DeleteResponse(ResponseXmlBO ResponseXmlBO)
+        public void DeleteResponse(ResponseBO ResponseBO)
         {
-        //    Guid Id = new Guid(ResponseXmlBO.ResponseId);
+        //    Guid Id = new Guid(ResponseBO.ResponseId);
 
         //    using (var Context = DataObjectFactory.CreateContext())
         //    {
@@ -2039,11 +2036,11 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
         }
 
 
-        public void InsertResponseXml(ResponseXmlBO ResponseXmlBO)
+        public void InsertResponse(ResponseBO responseBO)
         {
             try
             {
-                Guid Id = new Guid(ResponseXmlBO.ResponseId);
+                Guid Id = new Guid(responseBO.ResponseId);
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -2203,12 +2200,115 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
             throw new NotImplementedException();
         }
 
-        public bool ISResponseExists(Guid ResponseId)
+        public bool DoesResponseExist(Guid ResponseId)
         {
             throw new NotImplementedException();
         }
 
         public bool HasResponse(SurveyAnswerCriteria Criteria)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponse(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber, int PageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber, int PageSize, int ResponseMaxSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponseBySurveyId(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber, int PageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber, int PageSize, int ResponseMaxSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode, int pStatusId, int PageNumber, int PageSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetSurveyResponseSize(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode, int pStatusId, int PageNumber, int PageSize, int ResponseMaxSize)
+        {
+            throw new NotImplementedException();
+        }
+        public void UpdatePassCode(UserAuthenticationRequestBO passcodeBO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(string formId, int pageNumber, int pageSize)
+        {
+            var eweResponse = eweEntitySurveyResponseDao.GetFormResponseByFormId(formId, pageNumber, pageSize);
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                return eweResponse;
+            }
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria criteria)
+        {
+            var eweResponse = eweEntitySurveyResponseDao.GetFormResponseByFormId(criteria);
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                return eweResponse;
+            }
+        }
+
+        Web.Enter.Common.BusinessObject.SurveyResponseBO ISurveyResponseDao.GetSingleResponse(string ResponseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetResponsesHierarchyIdsByRootId(string RootId)
+        {
+            var eweResponse = eweEntitySurveyResponseDao.GetResponsesHierarchyIdsByRootId(RootId);
+            try
+            {
+                throw new NotImplementedException();
+            }
+            catch (Exception ex)
+            {
+                return eweResponse;
+            }
+        }
+
+        Web.Enter.Common.BusinessObject.SurveyResponseBO ISurveyResponseDao.GetFormResponseByParentRecordId(string ResponseId)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetAncestorResponseIdsByChildId(string ChildId)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetResponsesByRelatedFormId(string ResponseId, string SurveyId)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Web.Enter.Common.BusinessObject.SurveyResponseBO> ISurveyResponseDao.GetResponsesByRelatedFormId(string ResponseId, SurveyAnswerCriteria Criteria)
         {
             throw new NotImplementedException();
         }

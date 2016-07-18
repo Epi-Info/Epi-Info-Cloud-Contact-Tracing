@@ -744,8 +744,8 @@ namespace Epi.Web.EF
             return x.DateCreated.CompareTo(y.DateCreated);
         }
 
-
-        List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(string FormId, int PageNumber, int PageSize)
+        //List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(string FormId, int PageNumber, int PageSize)
+        public List<SurveyResponseBO> GetFormResponseByFormId(string FormId, int PageNumber, int PageSize)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             try
@@ -784,7 +784,8 @@ namespace Epi.Web.EF
             return result;
         }
 
-        List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria criteria)
+        //List<SurveyResponseBO> ISurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria criteria)
+        public List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
@@ -1695,7 +1696,7 @@ namespace Epi.Web.EF
 
             return ConnectionString.Substring(ConnectionString.LastIndexOf('=') + 1);
         }
-        public bool ISResponseExists(Guid ResponseId)
+        public bool DoesResponseExist(Guid ResponseId)
         {
             bool Exists = false;
 
@@ -2212,7 +2213,7 @@ namespace Epi.Web.EF
          * 
          * */
 
-        public SurveyResponseBO GetResponseXml(string ResponseId)
+        public SurveyResponseBO GetResponse(string ResponseId)
         {
 
 
@@ -2250,7 +2251,7 @@ namespace Epi.Web.EF
         }
 
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        public void DeleteResponse(ResponseBO ResponseXmlBO)
         {
 
 
@@ -2301,7 +2302,7 @@ namespace Epi.Web.EF
         }
 
 
-        public void InsertResponseXml(ResponseXmlBO ResponseXmlBO)
+        public void InsertResponse(ResponseBO ResponseXmlBO)
         {
 
             try

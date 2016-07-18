@@ -19,6 +19,6 @@ namespace Epi.Cloud.Common.EntityObjects
         public Int32 RecordSourceId { get; set; }
         public Int32 OrganizationId { get; set; }
         public Int32 UserId { get; set; }
-        public Dictionary<string, string> ResponseQA { get; set; }
+        public FormResponseDetail ResponseDetail { get; set; }
     }
 }

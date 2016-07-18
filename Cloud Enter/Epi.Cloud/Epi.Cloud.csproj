@@ -832,6 +832,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.BLL\Epi.Cloud.BLL.csproj">
+      <Project>{dfb453a2-9bcc-418f-a7da-ebfd74c08a87}</Project>
+      <Name>Epi.Cloud.BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>

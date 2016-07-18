@@ -33,7 +33,7 @@ namespace Epi.Web.BLL
 
             //Check if this Response exists in EWE DataBase
             Guid Id = new Guid(Criteria.SurveyAnswerIdList[0]);
-            bool ResponseExists = this.SurveyResponseDao.ISResponseExists(Id);
+            bool ResponseExists = this.SurveyResponseDao.DoesResponseExist(Id);
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             if (ResponseExists)
             {
@@ -225,12 +225,12 @@ namespace Epi.Web.BLL
 
             foreach (var item in pValue)
             {
-                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                ResponseBO ResponseXmlBO = new ResponseBO();
                 ResponseXmlBO.User = UserId;
                 ResponseXmlBO.ResponseId = item.ResponseId;
                 ResponseXmlBO.Xml = item.XML;
                 ResponseXmlBO.IsNewRecord = IsNewRecord;
-                this.SurveyResponseDao.InsertResponseXml(ResponseXmlBO);
+                this.SurveyResponseDao.InsertResponse(ResponseXmlBO);
 
             }
 
@@ -292,7 +292,7 @@ namespace Epi.Web.BLL
             //Check if the record existes.If it does update otherwise insert new 
             this.SurveyResponseDao.UpdateSurveyResponse(pValue);
 
-            SurveyResponseBO SurveyResponseBO = SurveyResponseDao.GetResponseXml(pValue.ResponseId);
+            SurveyResponseBO SurveyResponseBO = SurveyResponseDao.GetResponse(pValue.ResponseId);
 
 
 
@@ -354,7 +354,7 @@ namespace Epi.Web.BLL
             foreach (var child in Children)
             {
                 //Get the original copy of the xml
-                SurveyResponseBO ResponseXml = this.SurveyResponseDao.GetResponseXml(child.ResponseId);
+                SurveyResponseBO ResponseXml = this.SurveyResponseDao.GetResponse(child.ResponseId);
                 if (!ResponseXml.IsNewRecord)
                 {
                     child.XML = ResponseXml.XML;
@@ -368,9 +368,9 @@ namespace Epi.Web.BLL
                 }
                 // delete record from ResponseXml Table
 
-                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                ResponseBO ResponseXmlBO = new ResponseBO();
                 ResponseXmlBO.ResponseId = child.ResponseId;
-                this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
+                this.SurveyResponseDao.DeleteResponse(ResponseXmlBO);
                 if (Status > -1)
                 {
                     this.SurveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
@@ -494,15 +494,15 @@ namespace Epi.Web.BLL
         {
             SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetResponseXml(ResponseId);
+            SurveyResponseBO = this.SurveyResponseDao.GetResponse(ResponseId);
 
             return SurveyResponseBO;
         }
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        public void DeleteResponseXml(ResponseBO ResponseXmlBO)
         {
 
-            this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
+            this.SurveyResponseDao.DeleteResponse(ResponseXmlBO);
         }
         public void UpdateRecordStatus(string ResponseId, int StatusId)
         {

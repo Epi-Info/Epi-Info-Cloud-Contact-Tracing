@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace Epi.Cloud.Common.Metadata
 {
     public class FieldAttributes
     {
+        [JsonIgnore]
         int _tempInt;
+        [JsonIgnore]
         double _tempDouble;
+        [JsonIgnore]
         bool _tempBool;       
 
         public FieldAttributes()

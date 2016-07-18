@@ -16,6 +16,8 @@ using System.Text;
 using Epi.Web.MVC.Constants;
 using System.Reflection;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -241,8 +243,9 @@ namespace Epi.Web.MVC.Controllers
 			TempData["Width"] = form.Width + 100;
 
 			XDocument xdocResponse = XDocument.Parse(SurveyAnswer.XML);
+            FormResponseDetail responseDetail = SurveyAnswer.ResponseDetail;
 
-			XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
+            XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
 			string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
 
 			form.FormCheckCodeObj = form.GetCheckCodeObj(xdoc, xdocResponse, checkcode);
@@ -255,8 +258,11 @@ namespace Epi.Web.MVC.Controllers
 			{
 				try
 				{
-					SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);
-					//SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
+                    ProjectDigest[] projectDigestArray = surveyInfoModel.ProjectTemplateMetadata.Project.Digest;
+                    string responseXML;
+                    responseDetail = surveyResponseHelper.CreateResponseDocument(projectDigestArray, responseDetail, xdoc, SurveyAnswer.XML, out responseXML);
+                    SurveyAnswer.XML = responseXML;
+
 					Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
 					this.RequiredList = surveyResponseHelper.RequiredList;
 					form.RequiredFieldsList = this.RequiredList;

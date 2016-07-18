@@ -29,7 +29,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
                 //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
-                SurveyAnswerResponse result = _iDataService.GetSurveyAnswer(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.GetSurveyAnswer(pRequest);
                 //var result2 = _dataEntryService.GetSurveyAnswer(pRequest);
                 return result;
             }
@@ -60,7 +60,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
                 //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
-                SurveyAnswerResponse result = _iDataService.GetFormResponseList(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.GetFormResponseList(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -238,7 +238,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-                SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(pRequest);
                 //var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
                 return result;
             }
@@ -267,7 +267,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-                SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -379,7 +379,7 @@ namespace Epi.Web.MVC.Repositories
 
             try
             {
-                SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(SurveyAnswerRequest);
+                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(SurveyAnswerRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -442,7 +442,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                SurveyAnswerResponse result = _iDataService.GetSurveyAnswerHierarchy(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.GetSurveyAnswerHierarchy(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -473,7 +473,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                SurveyAnswerResponse result = _iDataService.GetAncestorResponseIdsByChildId(pRequest);
+                SurveyAnswerResponse result = _dataEntryService.GetAncestorResponseIdsByChildId(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -505,7 +505,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                SurveyAnswerResponse result = _iDataService.GetResponsesByRelatedFormId(FormResponseReq);
+                SurveyAnswerResponse result = _dataEntryService.GetResponsesByRelatedFormId(FormResponseReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -800,7 +800,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                _iDataService.UpdateResponseStatus(Request);
+                _dataEntryService.UpdateResponseStatus(Request);
 
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -832,7 +832,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-                return _iDataService.HasResponse(SurveyId, ResponseId);
+                return _dataEntryService.HasResponse(SurveyId, ResponseId);
             }
             catch (FaultException<CustomFaultException> cfe)
             {

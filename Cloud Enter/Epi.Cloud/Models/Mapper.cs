@@ -53,7 +53,6 @@ namespace Epi.Web.MVC.Models
                 DepartmentName = SurveyInfoDTO.DepartmentName,
                 IntroductionText = SurveyInfoDTO.IntroductionText,
                 ExitText = SurveyInfoDTO.ExitText,
-                XML = SurveyInfoDTO.XML,
                 IsSuccess = SurveyInfoDTO.IsSuccess,
                 SurveyType = SurveyInfoDTO.SurveyType,
                 ClosingDate = SurveyInfoDTO.ClosingDate,
@@ -61,9 +60,10 @@ namespace Epi.Web.MVC.Models
                 IsDraftMode = SurveyInfoDTO.IsDraftMode,
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
-                FormOwnerId = SurveyInfoDTO.OwnerId
+                FormOwnerId = SurveyInfoDTO.OwnerId,
+                ProjectTemplateMetadata = SurveyInfoDTO.ProjectTemplateMetadata,
+                XML = SurveyInfoDTO.XML
             };
-
         }
 
         /// <summary>
@@ -83,13 +83,13 @@ namespace Epi.Web.MVC.Models
                 DepartmentName = SurveyInfoModel.DepartmentName,
                 IntroductionText = SurveyInfoModel.IntroductionText,
                 ExitText = SurveyInfoModel.ExitText,
-                XML = SurveyInfoModel.XML,
                 IsSuccess = SurveyInfoModel.IsSuccess,
                 ClosingDate = SurveyInfoModel.ClosingDate,
                 UserPublishKey = SurveyInfoModel.UserPublishKey,
                 IsDraftMode = SurveyInfoModel.IsDraftMode,
                 StartDate = SurveyInfoModel.StartDate,
-
+                ProjectTemplateMetadata = SurveyInfoModel.ProjectTemplateMetadata,
+                XML = SurveyInfoModel.XML
             };
         }
 
@@ -296,7 +296,6 @@ namespace Epi.Web.MVC.Models
                 DepartmentName = SurveyInfoDTO.DepartmentName,
                 IntroductionText = SurveyInfoDTO.IntroductionText,
                 ExitText = SurveyInfoDTO.ExitText,
-                XML = SurveyInfoDTO.XML,
                 IsSuccess = SurveyInfoDTO.IsSuccess,
                 SurveyType = SurveyInfoDTO.SurveyType,
                 ClosingDate = SurveyInfoDTO.ClosingDate,
@@ -304,7 +303,9 @@ namespace Epi.Web.MVC.Models
                 IsDraftMode = SurveyInfoDTO.IsDraftMode,
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
-                FormOwnerId = SurveyInfoDTO.OwnerId
+                FormOwnerId = SurveyInfoDTO.OwnerId,
+                ProjectTemplateMetadata = SurveyInfoDTO.ProjectTemplateMetadata,
+                XML = SurveyInfoDTO.XML
             };
         }
     }

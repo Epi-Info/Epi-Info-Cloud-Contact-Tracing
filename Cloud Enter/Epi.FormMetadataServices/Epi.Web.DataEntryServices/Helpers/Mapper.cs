@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Web.Enter.Common.BusinessObject;
 
 namespace Epi.Cloud.DataEntryServices.Helpers
 {
@@ -44,7 +44,7 @@ namespace Epi.Cloud.DataEntryServices.Helpers
             //{
             //    SurveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
             //}
-            SurveyResponseBO.ResponseQA = surveyResponse.ResponseQA;
+            SurveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
 
             return SurveyResponseBO;
         }

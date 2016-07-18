@@ -361,7 +361,7 @@ namespace Epi.Web.WCF.SurveyService
                                 if (!string.IsNullOrEmpty(SurveyResponseBO.ResponseId))
                                 {
                                     SurveyResponseBO.UserId = request.Criteria.UserId;
-                                    ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                                    ResponseBO ResponseXmlBO = new ResponseBO();
                                     ResponseXmlBO.ResponseId = SurveyResponseBO.ResponseId;
                                     // During the delete process below: 
                                     //  1) Delete the record from ResponseXml table.
@@ -455,7 +455,7 @@ namespace Epi.Web.WCF.SurveyService
                         {
                             try
                             {
-                                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                                ResponseBO ResponseXmlBO = new ResponseBO();
                                 ResponseXmlBO.ResponseId = item.ResponseId;
                                 Implementation.DeleteResponseXml(ResponseXmlBO);
                                 Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);

@@ -18,6 +18,7 @@ using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.DataEntryServices.Facade;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -1115,8 +1116,13 @@ namespace Epi.Web.MVC.Controllers
                 try
                 {
 
-                    SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);
-                    //SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
+                    ProjectDigest[] projectDigestArray = surveyInfoModel.ProjectTemplateMetadata.Project.Digest;
+                    var responseDetail = SurveyAnswer.ResponseDetail;
+
+                    string responseXML;
+                    responseDetail = surveyResponseHelper.CreateResponseDocument(projectDigestArray, responseDetail, xdoc, SurveyAnswer.XML, out responseXML);
+                    SurveyAnswer.XML = responseXML;
+
                     Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                     this.RequiredList = surveyResponseHelper.RequiredList;
                     form.RequiredFieldsList = this.RequiredList;
@@ -1147,7 +1153,13 @@ namespace Epi.Web.MVC.Controllers
             }
             else
             {
-                SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);//, RequiredList);
+                ProjectDigest[] projectDigestArray = surveyInfoModel.ProjectTemplateMetadata.Project.Digest;
+                var responseDetail = SurveyAnswer.ResponseDetail;
+
+                string responseXML;
+                responseDetail = surveyResponseHelper.CreateResponseDocument(projectDigestArray, responseDetail, xdoc, SurveyAnswer.XML, out responseXML);
+                SurveyAnswer.XML = responseXML;
+
                 this.RequiredList = surveyResponseHelper.RequiredList;
                 Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                 form.RequiredFieldsList = RequiredList;

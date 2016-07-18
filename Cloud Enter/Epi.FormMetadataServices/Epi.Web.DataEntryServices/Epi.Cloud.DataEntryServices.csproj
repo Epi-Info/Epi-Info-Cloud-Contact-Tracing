@@ -127,6 +127,10 @@
       <Project>{b8af69bd-3ce1-4aa5-875d-3fb87c7fce44}</Project>
       <Name>Epi.Web.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
+      <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
+      <Name>Epi.Web.WCF.SurveyService</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.7.1\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.7.1\build\Microsoft.Azure.DocumentDB.targets')" />

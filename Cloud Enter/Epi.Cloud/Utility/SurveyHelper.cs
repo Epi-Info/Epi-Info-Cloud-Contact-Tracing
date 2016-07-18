@@ -82,10 +82,17 @@ namespace Epi.Web.MVC.Utility
             return surveyAnswerDTO;
         }
 
-        public static void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, MvcDynamicForms.Form form, SurveyAnswerRequest surveyAnswerRequest,
-                                                             SurveyResponseHelper surveyResponseHelper,
-                                                            ISurveyAnswerRepository iSurveyAnswerRepository,
-                                                             SurveyAnswerResponse surveyAnswerResponse, string responseId, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        public static void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, MvcDynamicForms.Form form,
+                                                SurveyAnswerRequest surveyAnswerRequest,
+                                                SurveyResponseHelper surveyResponseHelper,
+                                                ISurveyAnswerRepository iSurveyAnswerRepository,
+                                                SurveyAnswerResponse surveyAnswerResponse, 
+                                                string responseId, 
+                                                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, 
+                                                bool IsSubmited, 
+                                                bool IsSaved, 
+                                                int PageNumber, 
+                                                int UserId)
         {
             // 1 Get the record for the current survey response
             // 2 update the current survey response
@@ -113,7 +120,7 @@ namespace Epi.Web.MVC.Utility
                 surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UPDATE;  //"Update";
                                                                                      // surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UpdateMulti; 
                                                                                      //Append to Response Xml
-
+                FormResponseDetail currentPageResponse = surveyAnswerRequest.ResponseDetail;
                 XDocument CurrentPageResponseXml = XDocument.Parse(surveyAnswerRequest.SurveyAnswerList[0].XML);
                 if (SavedXml.Root.FirstAttribute.Value.ToString() != "0")
                 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.DataEntryServices.Model
 {
@@ -16,6 +17,7 @@ namespace Epi.Cloud.DataEntryServices.Model
         private string _DepartmentName;
         private string _OrganizationName;
         private string _XML;
+        private Template _projectTemplateMetadata;
         private bool _IsSuccess;
         private DateTime _ClosingDate;
         private DateTime _StartDate;
@@ -68,11 +70,7 @@ namespace Epi.Cloud.DataEntryServices.Model
             get { return _ExitText; }
             set { _ExitText = value; }
         }
-        public string XML
-        {
-            get { return _XML; }
-            set { _XML = value; }
-        }
+
         public bool IsSuccess
         {
             get { return _IsSuccess; }
@@ -118,6 +116,16 @@ namespace Epi.Cloud.DataEntryServices.Model
         {
             get { return _FormOwnerId; }
             set { _FormOwnerId = value; }
+        }
+        public Template ProjectTemplateMetadata
+        {
+            get { return _projectTemplateMetadata; }
+            set { _projectTemplateMetadata = value; }
+        }
+        public string XML
+        {
+            get { return _XML; }
+            set { _XML = value; }
         }
     }
 }

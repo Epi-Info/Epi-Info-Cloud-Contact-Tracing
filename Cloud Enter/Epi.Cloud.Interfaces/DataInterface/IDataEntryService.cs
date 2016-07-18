@@ -1,16 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Cloud.Interfaces.DataInterface
 {
     public interface IDataEntryService
     {
-        SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest pRequest);
+ 
+        bool HasResponse(string formId, string responseId);
 
-        SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest pRequest);
+        void UpdateResponseStatus(Epi.Web.Enter.Common.Message.SurveyAnswerRequest Request);
+
+        SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest request);
+
+        SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest request);
+
+
+
+        SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest request);
+
+        SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest);
+
+
+
+        FormsInfoResponse GetFormsInfo(FormsInfoRequest request);
+
+        FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest request);
+
+        FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest);
     }
 }

@@ -20,6 +20,8 @@ using Epi.Cloud.DataEntryServices.Facade;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.DataEntryServices.DataAccessObjects;
 using Epi.Web.Enter.Common.Criteria;
+using Epi.Cloud.Common.Metadata;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -28,6 +30,7 @@ namespace Epi.Web.MVC.Controllers
     {
         private ISecurityFacade _isecurityFacade;
         private ISurveyFacade _isurveyFacade;
+        private ISurveyResponseDao _surveyResponseDao;
         private ISurveyStoreDocumentDBFacade _isurveyDocumentDBFacade;
         private Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
         private IEnumerable<XElement> PageFields;
@@ -208,7 +211,13 @@ namespace Epi.Web.MVC.Controllers
 
             int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
 
-            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, false, "", false, CuurentOrgId);
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, 
+                                                                                                      ResponseID.ToString(), 
+                                                                                                      UserId, 
+                                                                                                      false, 
+                                                                                                      "", 
+                                                                                                      false, 
+                                                                                                      CuurentOrgId);
 
             // SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
             MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
@@ -238,7 +247,12 @@ namespace Epi.Web.MVC.Controllers
             {
                 try
                 {
-                    SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);
+                    ProjectDigest[] projectDigestArray = surveyInfoModel.ProjectTemplateMetadata.Project.Digest;
+                    var responseDetail = SurveyAnswer.ResponseDetail;
+
+                    string responseXML;
+                    responseDetail = surveyResponseHelper.CreateResponseDocument(projectDigestArray, responseDetail, xdoc, SurveyAnswer.XML, out responseXML);
+                    SurveyAnswer.XML = responseXML;
                     Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                     //SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
                     this.RequiredList = surveyResponseHelper.RequiredList;
@@ -260,7 +274,14 @@ namespace Epi.Web.MVC.Controllers
                     ContextDetailList = Epi.Web.MVC.Utility.SurveyHelper.GetContextDetailList(FunctionObject_B);
                     form = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
 
-                    _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, ResponseID.ToString(), form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
+                    _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, 
+                                                        ResponseID.ToString(), 
+                                                        form, 
+                                                        SurveyAnswer, 
+                                                        false, 
+                                                        false,
+                                                        0, 
+                                                        SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
                 }
                 catch (Exception ex)
                 {
@@ -270,7 +291,13 @@ namespace Epi.Web.MVC.Controllers
             }
             else
             {
-                SurveyAnswer.XML = surveyResponseHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML);//, RequiredList);
+                ProjectDigest[] projectDigestArray = surveyInfoModel.ProjectTemplateMetadata.Project.Digest;
+                var responseDetail = SurveyAnswer.ResponseDetail;
+
+                string responseXML;
+                responseDetail = surveyResponseHelper.CreateResponseDocument(projectDigestArray, responseDetail, xdoc, SurveyAnswer.XML, out responseXML);
+                SurveyAnswer.XML = responseXML;
+
                 this.RequiredList = surveyResponseHelper.RequiredList;
                 Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                 form.RequiredFieldsList = RequiredList;
@@ -665,7 +692,7 @@ namespace Epi.Web.MVC.Controllers
                         pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
                         surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
                     }
-                    pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
+                    pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
                     formResponseList.SurveyResponseList.Add(surveyAnswer);
                 }
 

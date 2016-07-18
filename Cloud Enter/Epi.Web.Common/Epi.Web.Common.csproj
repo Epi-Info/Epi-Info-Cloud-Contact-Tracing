@@ -62,7 +62,7 @@
     <Compile Include="BusinessObject\FormsHierarchyBO.cs" />
     <Compile Include="BusinessObject\OrganizationBO.cs" />
     <Compile Include="BusinessObject\PageInfoBO.cs" />
-    <Compile Include="BusinessObject\ResponseXmlBO.cs" />
+    <Compile Include="BusinessObject\ResponseBO.cs" />
     <Compile Include="BusinessObject\UserAuthenticationRequestBO.cs" />
     <Compile Include="BusinessObject\SurveyInfoBO.cs" />
     <Compile Include="BusinessObject\SurveyRequestBO.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="DTO\PageInfoDTO.cs" />
     <Compile Include="DTO\PassCodeDTO.cs" />
     <Compile Include="DTO\PreFilledAnswerDTO.cs" />
-    <Compile Include="DTO\ResponseXmlDTO.cs" />
+    <Compile Include="DTO\ResponseDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
     <Compile Include="DTO\SurveyControlDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

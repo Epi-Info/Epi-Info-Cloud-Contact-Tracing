@@ -148,7 +148,13 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
         /// <param name="SurveyId"></param>
         /// <returns></returns>
-        public Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
+        public Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
+                                                                           string responseId, 
+                                                                           int UserId, 
+                                                                           bool IsChild = false, 
+                                                                           string RelateResponseId = "", 
+                                                                           bool IsEditMode = false, 
+                                                                           int CurrentOrgId = -1)
         {
 
             return SurveyHelper.CreateSurveyResponse(surveyId, responseId, _surveyAnswerRequest, _surveyAnswerDTO, _surveyResponseHelper, _iSurveyAnswerRepository, UserId, IsChild, RelateResponseId, IsEditMode, CurrentOrgId);
@@ -156,7 +162,14 @@ namespace Epi.Web.MVC.Facade
 
 
 
-        public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
+        public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, 
+                                         string responseId, 
+                                         MvcDynamicForms.Form form, 
+                                         Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, 
+                                         bool IsSubmited, 
+                                         bool IsSaved, 
+                                         int PageNumber, 
+                                         int UserId)
         {
             // 1 Get the record for the current survey response
             // 2 update the current survey response and save the response
@@ -166,7 +179,18 @@ namespace Epi.Web.MVC.Facade
             surveyAnswerResponse.SurveyResponseList.Add(surveyAnswerDTO);
             ///2 Update the current survey response and save it
 
-            SurveyHelper.UpdateSurveyResponse(surveyInfoModel, form, _surveyAnswerRequest, _surveyResponseHelper, _iSurveyAnswerRepository, surveyAnswerResponse, responseId, surveyAnswerDTO, IsSubmited, IsSaved, PageNumber, UserId);
+            SurveyHelper.UpdateSurveyResponse(surveyInfoModel, 
+                                              form, 
+                                              _surveyAnswerRequest, 
+                                              _surveyResponseHelper, 
+                                              _iSurveyAnswerRepository, 
+                                              surveyAnswerResponse, 
+                                              responseId, 
+                                              surveyAnswerDTO, 
+                                              IsSubmited, 
+                                              IsSaved, 
+                                              PageNumber, 
+                                              UserId);
         }
 
 

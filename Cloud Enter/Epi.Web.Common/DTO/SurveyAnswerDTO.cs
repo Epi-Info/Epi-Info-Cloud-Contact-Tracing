@@ -69,8 +69,13 @@ namespace Epi.Web.Enter.Common.DTO
             set;
         }
 
+        string _xml;
         [DataMember]
-        public string XML { get; set; }
+        public string XML
+        {
+            get { return _xml; }
+            set { _xml = value; }
+        }
 
         /// <summary>
         /// Response Question/Answer from DocumentDB.

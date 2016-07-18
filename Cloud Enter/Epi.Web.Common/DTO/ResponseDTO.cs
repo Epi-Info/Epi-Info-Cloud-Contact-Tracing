@@ -3,7 +3,7 @@
 namespace Epi.Web.Enter.Common.DTO
 {
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
-    public class ResponseXmlDTO
+    public class ResponseDTO
     {
         [DataMember]
         public string ResponseId { get; set; }

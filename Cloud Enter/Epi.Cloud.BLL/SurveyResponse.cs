@@ -9,11 +9,8 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using System.Xml.Linq;
 using Epi.Web.Enter.Common.Xml;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Cloud.Common.BusinessObjects;
 
-using SurveyResponseBO = Epi.Cloud.Common.BusinessObjects.SurveyResponseBO;
-
-using ResponseXmlBO = Epi.Web.Enter.Common.BusinessObject.ResponseXmlBO;
+using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
 
 namespace Epi.Cloud.BLL
 {
@@ -25,10 +22,10 @@ namespace Epi.Cloud.BLL
             Success = 2,
 
         }
-        private Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _eweSurveyResponseDao;
-        private Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao _surveyResponseDao;
+        private Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _surveyResponseDao;
+        private readonly Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _eweSurveyResponseDao;
 
-        public SurveyResponse(Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao,
+        public SurveyResponse(Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao,
                               Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao eweSurveyResponseDao)
         {
             _surveyResponseDao = surveyResponseDao;
@@ -41,7 +38,7 @@ namespace Epi.Cloud.BLL
 
             //Check if this Response exists in DocumentDB
             Guid Id = new Guid(Criteria.SurveyAnswerIdList[0]);
-            bool ResponseExists = _surveyResponseDao.ISResponseExists(Id);
+            bool ResponseExists = _surveyResponseDao.DoesResponseExist(Id);
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             if (ResponseExists)
             {
@@ -171,7 +168,7 @@ namespace Epi.Cloud.BLL
             List<string> ResponseIdList = new List<string>();
             ResponseIdList.Add(PassCodeBoObj.ResponseId);
 
-            UserAuthenticationResponseBO results = _eweSurveyResponseDao.GetAuthenticationResponse(PassCodeBoObj);
+            UserAuthenticationResponseBO results = _surveyResponseDao.GetAuthenticationResponse(PassCodeBoObj);
 
 
 
@@ -233,12 +230,12 @@ namespace Epi.Cloud.BLL
 
             foreach (var item in pValue)
             {
-                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                ResponseBO ResponseXmlBO = new ResponseBO();
                 ResponseXmlBO.User = UserId;
                 ResponseXmlBO.ResponseId = item.ResponseId;
                 ResponseXmlBO.Xml = item.XML;
                 ResponseXmlBO.IsNewRecord = IsNewRecord;
-                _eweSurveyResponseDao.InsertResponseXml(ResponseXmlBO);
+                _eweSurveyResponseDao.InsertResponse(ResponseXmlBO);
 
             }
 
@@ -523,7 +520,7 @@ namespace Epi.Cloud.BLL
 #endif
         }
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        public void DeleteResponseXml(ResponseBO ResponseXmlBO)
         {
             throw new NotImplementedException("SurveyResponse.DeleteResponseXml is not implemented");
 #if NotImplemented

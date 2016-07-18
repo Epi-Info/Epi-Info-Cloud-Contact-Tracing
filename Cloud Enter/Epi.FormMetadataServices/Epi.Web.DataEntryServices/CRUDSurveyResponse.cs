@@ -433,7 +433,9 @@ namespace Epi.Cloud.DataEntryServices
                         surveyResponse.StatusId = RecordStatus.InProcess;
 
                         var json = JsonConvert.SerializeObject(items);
-                        surveyResponse.ResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+
+                        // TODO: GEL
+                        //surveyResponse.ResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
                         surveyList.Add(surveyResponse);
                     }

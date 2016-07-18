@@ -26,7 +26,7 @@ namespace Epi.Web.EF
 
         public ISurveyResponseDao SurveyResponseDao
         {
-            get { return new EntitySurveyResponseDao(); }
+            get { return Cloud.Common.Configuration.DependencyHelper.GetService<ISurveyResponseDao>() ?? new EntitySurveyResponseDao(); }
         }
 
         public IOrganizationDao OrganizationDao

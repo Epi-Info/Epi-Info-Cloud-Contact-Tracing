@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -152,8 +153,11 @@ namespace Epi.Web.MVC.Utility
 
             return _FieldsTypeIDs.Elements().Count();
         }
-        public string CreateResponseDocument(XDocument pMetaData, string pXML)
+
+         public FormResponseDetail CreateResponseDocument(ProjectDigest[] projectDigest, FormResponseDetail formResponseDetail,
+                                             XDocument pMetaData, string pXML, out string xmlResponse)
         {
+
             XDocument XmlResponse = new XDocument();
             int NumberOfPages = GetNumberOfPages(pMetaData);
             for (int i = 0; NumberOfPages > i - 1; i++)
@@ -187,7 +191,8 @@ namespace Epi.Web.MVC.Utility
                 }
             }
 
-            return XmlResponse.ToString();
+            xmlResponse = XmlResponse.ToString();
+            return formResponseDetail;
         }
 
         //public IEnumerable<XElement> GetFormFields(int NumberOfPages, XDocument pMetaData)

@@ -439,7 +439,7 @@ namespace Epi.Web.EF
             return SurveyResponseBO;
         }
 
-        internal static ResponseXml ToEF(ResponseXmlBO ResponseXmlBO)
+        internal static ResponseXml ToEF(ResponseBO ResponseXmlBO)
         {
             ResponseXml ResponseXml = new ResponseXml();
             ResponseXml.ResponseId = new Guid(ResponseXmlBO.ResponseId);
