@@ -5,6 +5,7 @@ using Epi.Cloud.DataEntryServices.Model;
 using System;
 using System.Threading.Tasks;
 using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -36,7 +37,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _storeSurvey.SurveyProperties = _surveyResponseData;
 
             _storeSurvey.SurveyQuestionandAnswer = ReadQuestionandAnswerFromAllPage(form, _storeSurvey, surveyInfoModel, responseId);
-            bool response = await _surveyResponse.InsertToSurveyToDocumentDB(_storeSurvey);
+            bool response = await _surveyResponse.InsertToSurveyToDocumentDBAsync(_storeSurvey);
             return true;
         }
         #endregion
@@ -46,16 +47,33 @@ namespace Epi.Cloud.DataEntryServices.Facade
         {
 
             SurveyQuestionandAnswer _surveyQA = new SurveyQuestionandAnswer();
-            _surveyQA.SurveyQAList = new Dictionary<string, string>();
+
+            _surveyQA.Digest = new List<Digest>();
+            Digest _digest = new Digest();
+            _digest.Fields = new Dictionary<string, string>();
+
+            foreach (var item in form.SurveyInfo.ProjectTemplateMetadata.Project.Digest)
+            {
+                if (item.PageId == Convert.ToInt32(form.PageId))
+                {
+                    _digest.FormId = item.FormId;
+                    _digest.FormName = item.FormName;
+                    _digest.PageId = item.PageId;
+                    _digest.Position = item.Position;
+                    _digest.ViewId = item.ViewId;
+
+                }
+            }
             foreach (var field in form.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    _surveyQA.SurveyQAList.Add(field.Key, field.Response);
+                    _digest.Fields.Add(field.Key, field.Response);
                 }
             }
+            _surveyQA.Digest.Add(_digest);
             _surveyQA.GlobalRecordID = responseId;
-            _surveyQA.PageId = form.PageId;
+            _surveyQA.PageId = Convert.ToInt32(form.PageId);
             return _surveyQA;
         }
         #endregion
@@ -101,6 +119,39 @@ namespace Epi.Cloud.DataEntryServices.Facade
             return surveyAnsResponse;
         }
 
+        #endregion
+
+
+
+        #region Save SurveyQuestionAnswer to DocumentDB
+
+        public bool SaveSurveyAnswerToDocumentDB(ProjectDigest[] ProjectMetaData, int Status, int UserId, string ResponseId)
+        {
+            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+            Survey _storeSurvey = new Survey();
+            SurveyProperties _surveyResponseData = new SurveyProperties()
+            {
+                RecStatus = Status,
+                SurveyID = ProjectMetaData[0].FormId,
+                GlobalRecordID = ResponseId,
+                FirstSaveTime = DateTime.UtcNow,
+                LastSaveTime = DateTime.UtcNow,
+                UserId = UserId.ToString()
+            };
+
+            _storeSurvey.SurveyProperties = new SurveyProperties();
+            _storeSurvey.SurveyProperties = _surveyResponseData;
+            _storeSurvey.SurveyName = ProjectMetaData[0].FormName;
+            _storeSurvey.SurveyQuestionandAnswer = new SurveyQuestionandAnswer();
+            _storeSurvey.SurveyQuestionandAnswer.ProjectDigest = ProjectMetaData;
+            _storeSurvey.SurveyQuestionandAnswer.GlobalRecordID = ResponseId;
+            _storeSurvey.SurveyQuestionandAnswer.SurveyID = ProjectMetaData[0].FormId;
+
+            var DocumentDBResponse = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(_storeSurvey);
+
+            //  bool response = DocumentDBResponse.Result;
+            return true;
+        }
         #endregion
     }
 }

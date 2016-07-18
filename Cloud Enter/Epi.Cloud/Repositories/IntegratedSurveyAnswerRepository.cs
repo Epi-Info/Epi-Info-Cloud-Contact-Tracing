@@ -4,6 +4,9 @@ using System.ServiceModel;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Repositories.Core;
+using Epi.Cloud.MetadataServices;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Facade;
 
 namespace Epi.Web.MVC.Repositories
 {
@@ -11,12 +14,17 @@ namespace Epi.Web.MVC.Repositories
     {
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
         private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
-
+        private IProjectMetadataProvider _iProjectMetadataProvider;
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
         public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService,
-                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService)
+                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService,
+                                                IProjectMetadataProvider iProjectMetadataProvider,
+                                                ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade)
         {
             _iDataService = iDataService;
             _dataEntryService = dataEntryService;
+            _iProjectMetadataProvider = iProjectMetadataProvider;
+            _isurveyDocumentDBStoreFacade = isurveyDocumentDBStoreFacade;
         }
 
         /// <summary>
@@ -238,6 +246,11 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
+                var Projectdata = _iProjectMetadataProvider.GetProjectDigestAsync(pRequest.SurveyAnswerList[0].SurveyId);
+                ProjectDigest[] ProjectMetaData = Projectdata.Result;
+
+                var results = _isurveyDocumentDBStoreFacade.SaveSurveyAnswerToDocumentDB(ProjectMetaData, 1, 1014, pRequest.SurveyAnswerList[0].ResponseId);
+
                 SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
                 //var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
                 return result;

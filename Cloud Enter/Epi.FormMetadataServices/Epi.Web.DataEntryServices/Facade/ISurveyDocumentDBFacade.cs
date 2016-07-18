@@ -1,4 +1,5 @@
-﻿using Epi.Cloud.DataEntryServices.Model;
+﻿using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Model;
 using Epi.Web.Enter.Common.Message;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
         SurveyQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId);
         Task<SurveyQuestionandAnswer> ReadSurveyAnswerByResponseIDAsync(string surveyName, string surveyId, string responseId, string pageId);
         SurveyAnswerResponse DeleteResponse(Survey SARequest);
+
+        bool SaveSurveyAnswerToDocumentDB(ProjectDigest[] ProjectMetaData, int Status, int UserId, string ResponseId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Documents;
+﻿using Epi.Cloud.Common.Metadata;
+using Microsoft.Azure.Documents;
 using System;
 using System.Collections.Generic;
 
@@ -29,7 +30,14 @@ namespace Epi.Cloud.DataEntryServices.Model
         public int RecStatus { get; set; }
         public string SurveyID { get; set; }
         public string GlobalRecordID { get; set; }
-        public string PageId { get; set; }
+        public int PageId { get; set; }
+        public List<Digest> Digest { get; set; }
         public Dictionary<string, string> SurveyQAList { get; set; }
+        public ProjectDigest[] ProjectDigest { get; set; }
+    }
+
+    public class Digest : ProjectDigest
+    {
+        public Dictionary<string, string> Fields { get; set; }
     }
 }
