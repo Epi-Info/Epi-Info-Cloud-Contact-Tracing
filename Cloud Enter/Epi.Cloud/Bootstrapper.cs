@@ -8,23 +8,8 @@ namespace Epi.Web.MVC
 {
     public static class Bootstrapper
     {
-        public static bool IsIntegrated = false;
-
         public static void Initialise()
         {
-            string s = ConfigurationManager.AppSettings["INTEGRATED_SERVICE_MODE"];
-            if (!string.IsNullOrEmpty(s))
-            {
-                if (s.Equals("TRUE", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    IsIntegrated = true;
-                }
-                else
-                {
-                    IsIntegrated = false;
-                }
-            }
-
             IUnityContainer container = BuildUnityContainer();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
@@ -42,46 +27,33 @@ namespace Epi.Web.MVC
             // e.g. container.RegisterType<ITestService, TestService>();            
 
             container.RegisterType<Epi.Web.Enter.Common.Message.SurveyInfoRequest, Epi.Web.Enter.Common.Message.SurveyInfoRequest>();
-            if (IsIntegrated)
-            {
-
-                container.RegisterType<Epi.Web.WCF.SurveyService.IEWEDataService, Epi.Web.WCF.SurveyService.EWEDataService>();
-                container.RegisterType<SurveyResponseHelper, SurveyResponseHelper>()
-                    .Configure<InjectedMembers>()
-                    .ConfigureInjectionFor<SurveyResponseHelper>(new InjectionConstructor());
-
-                //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
-                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();
-            }
-            else
-            {
-                container.RegisterType<Epi.Web.MVC.DataServiceClient.IEWEDataService, Epi.Web.MVC.DataServiceClient.EWEDataServiceClient>()
+            container.RegisterType<Epi.Web.WCF.SurveyService.IEWEDataService, Epi.Web.WCF.SurveyService.EWEDataService>();
+            container.RegisterType<SurveyResponseDocDb, SurveyResponseDocDb>()
                 .Configure<InjectedMembers>()
-                .ConfigureInjectionFor<Epi.Web.MVC.DataServiceClient.EWEDataServiceClient>(new InjectionConstructor(ConfigurationManager.AppSettings["ENDPOINT_USED"]));
-                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.SurveyInfoRepository>();
-            }
+                .ConfigureInjectionFor<SurveyResponseDocDb>(new InjectionConstructor());
+
+            //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
+            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();
 
             container.RegisterType<Epi.Web.Enter.Common.Message.SurveyAnswerRequest, Epi.Web.Enter.Common.Message.SurveyAnswerRequest>();
 
-            if (IsIntegrated)
-            {
-                container.RegisterType<Epi.Cloud.Interfaces.DataInterface.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
-                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Web.MVC.Repositories.IntegratedSurveyAnswerRepository>();
-            }
-            else
-            {
-                container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Web.MVC.Repositories.SurveyAnswerRepository>();
-            }
+            container.RegisterType<Epi.Cloud.Interfaces.DataInterface.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
+            //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyAnswerDocumentDBRepository>();
+            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Web.MVC.Repositories.IntegratedSurveyAnswerRepository>();
+
+            var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
+            var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
 
             container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
             container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();
             container.RegisterType<Epi.Web.MVC.Facade.ISurveyFacade, Epi.Web.MVC.Facade.SurveyFacade>();
             container.RegisterType<Epi.Web.MVC.Facade.ISecurityFacade, Epi.Web.MVC.Facade.SecurityFacade>();
-            container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(new Epi.Cloud.CacheServices.EpiCloudCache());
-            container.RegisterType<Epi.Cloud.MetadataServices.IProjectMetadataProvider, Epi.Cloud.MetadataServices.ProjectMetadataProvider>();
-            container.RegisterType<Epi.Cloud.FormMetadataServices.IMetadataProvider, Epi.Cloud.FormMetadataServices.MetadataProvider>();
+            container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
+            container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
             container.RegisterType<Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade, Epi.Cloud.DataEntryServices.Facade.SurveyDocumentDBFacade>();
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DataAccessObjects.EntitySurveyResponseDao>();
+            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
+            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao>();
+            container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
             container.RegisterControllers();
 
             return container;

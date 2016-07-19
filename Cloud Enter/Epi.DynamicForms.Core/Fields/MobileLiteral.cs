@@ -40,7 +40,7 @@ namespace MvcDynamicForms.Fields
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
 
-            Name = fieldAttributes.Name;
+            Name = fieldAttributes.FieldName;
             FieldWrapper = "div";
             Wrap = true;
             DisplayOrder = fieldAttributes.TabIndex;

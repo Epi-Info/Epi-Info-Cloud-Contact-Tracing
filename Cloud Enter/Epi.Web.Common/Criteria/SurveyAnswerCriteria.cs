@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.Enter.Common.Criteria
 {
@@ -19,18 +20,17 @@ namespace Epi.Web.Enter.Common.Criteria
             this.DateCompleted = DateTime.MinValue;
         }
 
-
         /// <summary>
         /// Which page to retrieve
         /// </summary>
         [DataMember]
-        public int PageNumber { get; set; }
+        public int GridPageNumber { get; set; }
 
         /// <summary>
         /// Number of Records per page
         /// </summary>
         [DataMember]
-        public int PageSize { get; set; }
+        public int GridPageSize { get; set; }
 
         /// <summary>
         /// Number of Records per page
@@ -50,9 +50,6 @@ namespace Epi.Web.Enter.Common.Criteria
         /// </summary>
         [DataMember]
         public string SurveyId { get; set; }
-
-        public string FormName { get; set; }
-
 
         /// <summary>
         /// Complete / Inprogress indicator
@@ -117,7 +114,10 @@ namespace Epi.Web.Enter.Common.Criteria
             get;
             set;
         }
-        public IDictionary<string, string> SurveyQAList { get; set; }
 
+        public int? FormResponseCount { get; set; }
+
+        public IDictionary<string, string> SurveyQAList { get; set; }
+        public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
     }
 }

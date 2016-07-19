@@ -77,7 +77,6 @@ namespace Epi.Web.MVC.Controllers
                 Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyId, responseId.ToString(), 0);
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
                 XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
-                var templateMetadata = surveyInfoModel.ProjectTemplateMetadata;
 
                 MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
 

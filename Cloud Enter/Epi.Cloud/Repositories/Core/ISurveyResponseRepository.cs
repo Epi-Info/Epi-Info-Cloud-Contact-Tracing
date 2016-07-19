@@ -9,6 +9,7 @@ namespace Epi.Web.MVC.Repositories.Core
     public interface ISurveyAnswerRepository : IRepository<Epi.Web.Enter.Common.Message.SurveyAnswerResponse>
     {
         SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest pRequest);
+        SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest pRequest);
         SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest pRequest);
         UserAuthenticationResponse ValidateUser(UserAuthenticationRequest pRequest);
         UserAuthenticationResponse UpdatePassCode(UserAuthenticationRequest PassCodeDTO);

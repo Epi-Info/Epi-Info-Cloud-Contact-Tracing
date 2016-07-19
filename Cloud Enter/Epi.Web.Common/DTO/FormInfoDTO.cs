@@ -22,6 +22,9 @@ namespace Epi.Web.Enter.Common.DTO
         private bool _ewavLiteToggleSwitch;
         private int _OwnerId;
         private bool _HasDraftModeData;
+
+        public string ProjectId { get; set; }
+
         [DataMember]
         public bool DataAccessRuleId
         {

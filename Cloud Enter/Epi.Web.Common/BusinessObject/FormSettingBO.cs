@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {

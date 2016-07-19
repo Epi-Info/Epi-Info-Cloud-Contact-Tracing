@@ -33,8 +33,6 @@ namespace MvcDynamicForms.Fields
                 _regexMessage = value;
             }
         }
-        public string Value { get; set; }
-        //public string Value { get { return _Value; } set { _Value = value; } }
         public override string Response
         {
             get { return Value; }

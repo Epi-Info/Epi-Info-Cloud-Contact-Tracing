@@ -76,8 +76,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.Common", "Epi.Clo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.Interfaces", "Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj", "{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.BLL", "Epi.Cloud.BLL\Epi.Cloud.BLL.csproj", "{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}"
-EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -683,36 +681,6 @@ Global
 		{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}.Release|x86.ActiveCfg = Release|Any CPU
 		{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}.Release|x86.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Debug|x86.Build.0 = Debug|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|Any CPU.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|Any CPU.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|x86.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Linux|x86.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|x86.ActiveCfg = Release|Any CPU
-		{DFB453A2-9BCC-418F-A7DA-EBFD74C08A87}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

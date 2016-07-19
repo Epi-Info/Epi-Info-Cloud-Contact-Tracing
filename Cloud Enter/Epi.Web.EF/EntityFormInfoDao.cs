@@ -137,6 +137,7 @@ namespace Epi.Web.EF
             return Shared;
         }
 
+
         private static List<string> GetAssignedForms(OSELS_EWEEntities Context, User CurrentUser)
         {
             List<string> Assigned = new List<string>();
@@ -334,7 +335,7 @@ namespace Epi.Web.EF
         {
             try
             {
-
+                // TODO: DocumentDB implementation required
                 Guid Id = new Guid(FormId);
                 bool _HasDraftRecords = false;
                 using (var Context = DataObjectFactory.CreateContext())

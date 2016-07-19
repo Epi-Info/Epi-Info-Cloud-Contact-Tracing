@@ -10,15 +10,15 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public string ResponseId { get; set; }
 
         [DataMember]
-        public string Xml { get; set; }
+        public int User { get; set; }
+
+        [DataMember]
+        public bool IsNewRecord { get; set; }
 
         [DataMember]
         public FormResponseDetail ResponseDetail { get; set; }
 
         [DataMember]
-        public int User { get; set; }
-
-        [DataMember]
-        public bool IsNewRecord { get; set; }
+        public string Xml { get; set; }
     }
 }

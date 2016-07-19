@@ -223,7 +223,7 @@ namespace MvcDynamicForms.Fields
             ControlHeight = 0;
             this.Width = formWidth;
             this.Height = formHeight;
-            string ListString = fieldAttributes.ChoicesList;
+            string ListString = fieldAttributes.List;
             ListString = ListString.Replace("||", "|");
             ChoicesList = ListString;
             List<string> Lists = ChoicesList.Split('|').ToList<string>();

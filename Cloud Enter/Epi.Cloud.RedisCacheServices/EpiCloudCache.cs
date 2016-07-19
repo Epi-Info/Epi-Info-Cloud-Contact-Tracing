@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Epi.Cloud.CacheServices
 {
     public partial class EpiCloudCache : RedisCache, IEpiCloudCache
     {
-        public void ClearAllCache()
+        public void ClearAllCache(string projectId)
         {
-            ClearAllMetadataFromCache();
-            ClearAllSurveyInfoBoMetadataFromCache();
-            DeleteAllKeys(MetadataPrefix);
-            ClearAllSurveyIdMap();
+            DeleteAllKeys(new Guid(projectId), null);
         }
     }
 }

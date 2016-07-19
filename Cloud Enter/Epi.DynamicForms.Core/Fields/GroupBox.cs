@@ -196,7 +196,7 @@ namespace MvcDynamicForms.Fields
         protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
-            Key = fieldAttributes.Name + "_GroupBox";
+            Key = fieldAttributes.FieldName + "_GroupBox";
             PromptTop = formHeight * fieldAttributes.ControlTopPositionPercentage;
             PromptLeft = formWidth * fieldAttributes.ControlLeftPositionPercentage;
             PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;

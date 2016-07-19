@@ -184,7 +184,7 @@ namespace MvcDynamicForms.Fields
             fontstyle = fieldAttributes.ControlFontStyle;
             Height = _Height * fieldAttributes.ControlHeightPercentage;
             //IsHidden = GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList");
-            Name = fieldAttributes.Name;
+            Name = fieldAttributes.FieldName;
             Width = _Width * fieldAttributes.ControlWidthPercentage;
         }
     }

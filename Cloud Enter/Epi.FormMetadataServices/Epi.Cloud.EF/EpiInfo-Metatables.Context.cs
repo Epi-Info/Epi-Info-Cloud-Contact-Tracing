@@ -42,5 +42,27 @@ namespace Epi.Data.EF
         public virtual DbSet<metaProgram> metaPrograms { get; set; }
         public virtual DbSet<metaView> metaViews { get; set; }
         public virtual DbSet<metaDbInfo> metaDbInfoes { get; set; }
+        public virtual DbSet<Canva> Canvas { get; set; }
+        public virtual DbSet<DataAccessRule> DataAccessRules { get; set; }
+        public virtual DbSet<Datasource> Datasources { get; set; }
+        public virtual DbSet<EIDatasource> EIDatasources { get; set; }
+        public virtual DbSet<lk_RecordSource> lk_RecordSource { get; set; }
+        public virtual DbSet<lk_Status> lk_Status { get; set; }
+        public virtual DbSet<lk_SurveyType> lk_SurveyType { get; set; }
+        public virtual DbSet<Organization> Organizations { get; set; }
+        public virtual DbSet<ResponseDisplaySetting> ResponseDisplaySettings { get; set; }
+        public virtual DbSet<ResponseXml> ResponseXmls { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<SharedCanvas> SharedCanvases { get; set; }
+        public virtual DbSet<SurveyMetaData> SurveyMetaDatas { get; set; }
+        public virtual DbSet<SurveyMetaDataView> SurveyMetaDataViews { get; set; }
+        public virtual DbSet<SurveyResponse> SurveyResponses { get; set; }
+        public virtual DbSet<SurveyResponseTracking> SurveyResponseTrackings { get; set; }
+        public virtual DbSet<SurveyResponseUser> SurveyResponseUsers { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserOrganization> UserOrganizations { get; set; }
+        public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
+        public virtual DbSet<familyset> familysets { get; set; }
+        public virtual DbSet<SurveyMetaDataTransform> SurveyMetaDataTransforms { get; set; }
     }
 }

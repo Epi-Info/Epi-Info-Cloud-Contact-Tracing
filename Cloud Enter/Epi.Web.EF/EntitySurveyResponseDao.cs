@@ -11,6 +11,7 @@ using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.Extension;
 using System.Data;
 using System.Data.SqlClient;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF
 {
@@ -310,9 +311,9 @@ namespace Epi.Web.EF
                     {
                         var Context = DataObjectFactory.CreateContext();
                         Guid Id = new Guid(pSurveyId);
-                        if (pStatusId == 3)
+                        if (pStatusId == RecordStatus.Completed)
                         {
-                            responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.StatusId != 4 && x.IsDraftMode == IsDraftMode).ToList();
+                            responseList = Context.SurveyResponses.Where(x => x.SurveyId == Id && x.StatusId != RecordStatus.Downloaded && x.IsDraftMode == IsDraftMode).ToList();
                         }
                         else
                         {
@@ -501,14 +502,14 @@ namespace Epi.Web.EF
                     {
                         DataRow.RelateParentId = new Guid(SurveyResponse.RelateParentId);
                     }
-                    DataRow.ResponseXML = SurveyResponse.XML;
+                    DataRow.ResponseXML = SurveyResponse.XML ?? string.Empty;
                     //DataRow.DateCompleted = DateTime.Now;
                     DataRow.DateCompleted = SurveyResponse.DateCompleted;
                     DataRow.StatusId = SurveyResponse.Status;
-                    DataRow.DateUpdated = DateTime.Now;
+                    DataRow.DateUpdated = DateTime.UtcNow;
                     //   DataRow.ResponsePasscode = SurveyResponse.ResponsePassCode;
                     DataRow.IsDraftMode = SurveyResponse.IsDraftMode;
-                    DataRow.ResponseXMLSize = RemoveWhitespace(SurveyResponse.XML).Length;
+                    DataRow.ResponseXMLSize = RemoveWhitespace(SurveyResponse.XML ?? string.Empty).Length;
                     Context.SaveChanges();
                 }
             }
@@ -954,12 +955,12 @@ namespace Epi.Web.EF
                         //       && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                         //       && x.StatusId >= 1).OrderByDescending(x => x.DateUpdated);
 
-                        List<string> DBParam = new List<string>();
+                        //List<string> DBParam = new List<string>();
 
-                        foreach (var Param in criteria.SurveyQAList)
-                        {
-                            DBParam.Add(Param.Value.ToLower());
-                        }
+                        //foreach (var Param in criteria.SurveyQAList)
+                        //{
+                        //    DBParam.Add(Param.Value.ToLower());
+                        //}
 
                     }
 
@@ -2464,10 +2465,6 @@ namespace Epi.Web.EF
             {
                 throw (ex);
             }
-
-
-
-
         }
 
 
@@ -2491,5 +2488,9 @@ namespace Epi.Web.EF
 
         }
 
+        public SurveyResponseBO GetSurveyResponseState(string responseId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

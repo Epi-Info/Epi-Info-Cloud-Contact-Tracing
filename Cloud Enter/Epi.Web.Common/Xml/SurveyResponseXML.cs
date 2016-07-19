@@ -5,6 +5,8 @@ using System.Xml;
 using System.Xml.Linq;
 using Epi.Web.Enter.Common.Message;
 using System.Xml.XPath;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.Enter.Common.Xml
 {
@@ -93,8 +95,8 @@ namespace Epi.Web.Enter.Common.Xml
         private XmlDocument CreateResponseXml(string SurveyId, bool AddRoot, int CurrentPage, string Pageid)
         {
 
-            XmlDocument xml = new XmlDocument();
-            XmlElement root = xml.CreateElement("SurveyResponse");
+            XmlDocument responseXml = new XmlDocument();
+            XmlElement root = responseXml.CreateElement("SurveyResponse");
 
             if (CurrentPage == 0)
             {
@@ -105,21 +107,22 @@ namespace Epi.Web.Enter.Common.Xml
                 root.SetAttribute("DisabledFieldsList", "");
                 root.SetAttribute("RequiredFieldsList", "");
                 root.SetAttribute("RecordBeforeFlag", "");
-                xml.AppendChild(root);
+                responseXml.AppendChild(root);
             }
 
-            XmlElement PageRoot = xml.CreateElement("Page");
+            XmlElement PageRoot = responseXml.CreateElement("Page");
             if (CurrentPage != 0)
             {
                 PageRoot.SetAttribute("PageNumber", CurrentPage.ToString());
                 PageRoot.SetAttribute("MetaDataPageId", Pageid.ToString());
                 PageRoot.SetAttribute("PageId", Pageid);
-                xml.AppendChild(PageRoot);
+                responseXml.AppendChild(PageRoot);
             }
 
 
-            PageRoot = SetResponseValues(PageRoot, xml);
-            return xml;
+            PageRoot = SetResponseValues(PageRoot, responseXml);
+
+            return responseXml;
         }
 
         private static XDocument MergeXml(XDocument SavedXml, XDocument CurrentPageResponseXml, int Pagenumber)
@@ -160,12 +163,11 @@ namespace Epi.Web.Enter.Common.Xml
                 return XDocument.Load(nodeReader);
             }
         }
-        public string CreateResponseDocument(XDocument pMetaData)
+        public FormResponseDetail CreateResponseDocument(PageDigest[] pageDigests, XDocument pMetaData, out string xmlResponse)
         {
-
             XDocument XmlResponse = new XDocument();
-            int NumberOfPages = GetNumberOfPages(pMetaData);
-            for (int i = 0; NumberOfPages > i - 1; i++)
+            int numberOfPages = GetNumberOfPages(pMetaData);
+            for (int i = 0; numberOfPages > i - 1; i++)
             {
                 var _FieldsTypeIDs = from _FieldTypeID in
                                          pMetaData.Descendants("Field")
@@ -188,7 +190,33 @@ namespace Epi.Web.Enter.Common.Xml
                 PageFields = null;
             }
             XmlResponse.Root.SetAttributeValue("RequiredFieldsList", RequiredList);
-            return XmlResponse.ToString();
+            xmlResponse = XmlResponse.ToString();
+
+            // -----------------------------------------------------------------------
+
+            var firstPageDigest = pageDigests.First();
+            var formId = firstPageDigest.FormId;
+            string formName = firstPageDigest.FormName;
+
+            var formResponseDetail = new FormResponseDetail { FormId = formId, FormName = formName, LastPageVisited = 1 };
+
+            numberOfPages = pageDigests.Length;
+            for (int pageNumber = 1; pageNumber <= numberOfPages; ++pageNumber)
+            {
+                var position = pageNumber - 1;
+                var pageDigest = pageDigests.Where(d => d.Position == position).SingleOrDefault();
+                var fieldNames = pageDigest.FieldNames;
+                var pageResponseDetail = new PageResponseDetail
+                {
+                    FormId = formId,
+                    FormName = formName,
+                    PageNumber = pageNumber,
+                    PageId = pageDigest.PageId,
+                    ResponseQA = fieldNames.Select(n => new { Key = n.ToLower(), Value = string.Empty }).ToDictionary(k => k.Key, v => v.Value)
+                };
+                formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+            }
+            return formResponseDetail;
         }
 
         private XmlElement SetResponseValues(XmlElement PageRoot, XmlDocument xml)

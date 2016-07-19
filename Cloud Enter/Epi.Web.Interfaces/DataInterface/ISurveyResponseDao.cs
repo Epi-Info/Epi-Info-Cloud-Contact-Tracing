@@ -21,6 +21,8 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         List<SurveyResponseBO> GetSurveyResponse(List<string> surveyResponseIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1);
         List<SurveyResponseBO> GetSurveyResponseSize(List<string> surveyResponseIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1, int responseMaxSize = -1);
 
+        SurveyResponseBO GetSurveyResponseState(string responseId);
+
         /// <summary>
         /// Gets a specific SurveyResponse.
         /// </summary>

@@ -15,6 +15,8 @@ using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;
 using Epi.Core.EnterInterpreter.Rules;
 using EpiInfo.Plugin;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata.Interfaces;
 
 namespace Epi.Core.EnterInterpreter
 {
@@ -585,8 +587,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
         public void LoadTemplate(XDocument pTemplateDoc, XDocument pSurveyResponseDoc)
         {
             string PageNumber = "";
-            string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
-            string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
 
             // todo for each page in 
             var _FieldsTypeIDs = from _FieldTypeID in pTemplateDoc.Descendants("Field")
@@ -611,76 +611,72 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                     case "1": // textbox
                         var.DataType = DataType.Text;
                         var.ControlType = "textbox";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "textbox", "datasource", var.Expression)); 
                         break;
 
                     case "2"://Label/Title
                         var.DataType = DataType.Text;
                         var.ControlType = "label";
-                        //continue;
                         break;
+
                     case "3"://Label
                         var.DataType = DataType.Text;
                         var.ControlType = "label";
                         continue;
-                    //break;
+
                     case "4"://MultiLineTextBox
                         var.DataType = DataType.Text;
                         var.ControlType = "multiline";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "multiline", "datasource", var.Expression)); 
                         break;
+
                     case "5"://NumericTextBox
                         var.DataType = DataType.Number;
                         var.ControlType = "numeric";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineNumberFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", var.Expression)); 
                         break;
+
                     case "7":// 7 DatePicker
                         var.DataType = DataType.Date;
                         var.ControlType = "datepicker";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "number", "datasource", var.Expression)); 
                         break;
+
                     case "8": //TimePicker
                         var.DataType = DataType.Time;
                         var.ControlType = "timepicker";
-
                         break;
 
                     case "10"://CheckBox
                         var.DataType = DataType.Boolean;
                         var.ControlType = "checkbox";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "checkbox", "datasource", var.Expression)); 
                         break;
+
                     case "11"://DropDown Yes/No
                         var.DataType = DataType.Boolean;
                         var.ControlType = "yesno";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "yesno", "datasource", var.Expression)); 
                         break;
+
                     case "12"://RadioButton
                         var.DataType = DataType.Number;
                         var.ControlType = "radiobutton";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "yesno", "datasource", var.Expression)); 
                         break;
 
                     case "17"://DropDown LegalValues
                         var.DataType = DataType.Text;
                         var.ControlType = "legalvalues";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "legalvalue", "datasource", var.Expression));
                         break;
+
                     case "18"://DropDown Codes
                         var.DataType = DataType.Text;
                         var.ControlType = "codes";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "code", "datasource", var.Expression));
                         break;
+
                     case "19"://DropDown CommentLegal
                         var.DataType = DataType.Text;
                         var.ControlType = "commentlegal";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "commentlegal", "datasource", var.Expression)); 
                         break;
+
                     case "21"://GroupBox
                         var.DataType = DataType.Unknown;
                         var.ControlType = "groupbox";
                         var.Expression = _FieldTypeID.Attribute("List").Value;
-                        //List="Otherpleasespecify,DoubleHearingProtectionWearingEarPlugsandMuffsatthesametime,FittedEarPlugs,EarMuffs,DisposableEarPlugs,FullFaceAirPurifyingCartridgeRespirator,FullFaceorHoodSuppliedAirRespirator,HalfFaceAirPurifyingCartridgeRespirator,DisposibleRespiratorDustMask,WeldingHelmetwithDarkFacePlate,ProtectiveLongSleeveJacket,HeatResistantandFlameRetardantClothing,HeavyLeatherGloves,InsulatedGloves,FaceShield,DarkGoggles,Goggles,None2"
                         string[] IdentifierList = var.Expression.Split(',');
                         string Identifier = _FieldTypeID.Attribute("Name").Value;
                         if (this.GroupVariableList.ContainsKey(Identifier))
@@ -705,104 +701,96 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             }
         }
 
-        public void LoadTemplate(IEnumerable<FieldAttributes> fields, Dictionary<string, string> qaResponse)
+        public void LoadTemplate(IEnumerable<IAbridgedFieldInfo> fields, Dictionary<string, string> responseQA)
         {
             string pageNumber = "";
-            string defineFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", \"{3}\");";
-            string defineNumberFormat = "cce_Context.define(\"{0}\", \"{1}\", \"{2}\", new Number({3}));";
-
 
             foreach (var field in fields)
             {
-
                 PluginVariable var = new PluginVariable();
-                var.Name = field.Name;
+                var.Name = field.FieldName;
                 var.VariableScope = VariableScope.DataSource;
                 var.PageNumber = pageNumber;
 
-                if (qaResponse != null)
+                if (responseQA != null && responseQA.Count > 0)
                 {
-                    var.Expression = GetControlValue(qaResponse, var.Name);
+                    var.Expression = GetControlValue(responseQA, var.Name);
                 }
 
 
-                switch (field.FieldTypeId)
+                switch ((int)field.FieldType)
                 {
                     case 1: // textbox
                         var.DataType = DataType.Text;
                         var.ControlType = "textbox";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "textbox", "datasource", var.Expression)); 
                         break;
 
                     case 2://Label/Title
                         var.DataType = DataType.Text;
                         var.ControlType = "label";
-                        //continue;
                         break;
+
                     case 3://Label
                         var.DataType = DataType.Text;
                         var.ControlType = "label";
                         continue;
-                    //break;
+
                     case 4://MultiLineTextBox
                         var.DataType = DataType.Text;
                         var.ControlType = "multiline";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "multiline", "datasource", var.Expression)); 
                         break;
+
                     case 5://NumericTextBox
                         var.DataType = DataType.Number;
                         var.ControlType = "numeric";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineNumberFormat, field.Name, "number", "datasource", var.Expression)); 
                         break;
+
                     case 7:// 7 DatePicker
                         var.DataType = DataType.Date;
                         var.ControlType = "datepicker";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "number", "datasource", var.Expression)); 
                         break;
+
                     case 8: //TimePicker
                         var.DataType = DataType.Time;
                         var.ControlType = "timepicker";
-
                         break;
 
                     case 10://CheckBox
                         var.DataType = DataType.Boolean;
                         var.ControlType = "checkbox";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "checkbox", "datasource", var.Expression)); 
                         break;
+
                     case 11://DropDown Yes/No
                         var.DataType = DataType.Boolean;
                         var.ControlType = "yesno";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "yesno", "datasource", var.Expression)); 
                         break;
+
                     case 12://RadioButton
                         var.DataType = DataType.Number;
                         var.ControlType = "radiobutton";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "yesno", "datasource", var.Expression)); 
                         break;
 
                     case 17://DropDown LegalValues
                         var.DataType = DataType.Text;
                         var.ControlType = "legalvalues";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "legalvalue", "datasource", var.Expression));
                         break;
+
                     case 18://DropDown Codes
                         var.DataType = DataType.Text;
                         var.ControlType = "codes";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "code", "datasource", var.Expression));
                         break;
+
                     case 19://DropDown CommentLegal
                         var.DataType = DataType.Text;
                         var.ControlType = "commentlegal";
-                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, field.Name, "commentlegal", "datasource", var.Expression)); 
                         break;
+
                     case 21://GroupBox
                         var.DataType = DataType.Unknown;
                         var.ControlType = "groupbox";
-                        var.Expression = field.ChoicesList;
-                        //List="Otherpleasespecify,DoubleHearingProtectionWearingEarPlugsandMuffsatthesametime,FittedEarPlugs,EarMuffs,DisposableEarPlugs,FullFaceAirPurifyingCartridgeRespirator,FullFaceorHoodSuppliedAirRespirator,HalfFaceAirPurifyingCartridgeRespirator,DisposibleRespiratorDustMask,WeldingHelmetwithDarkFacePlate,ProtectiveLongSleeveJacket,HeatResistantandFlameRetardantClothing,HeavyLeatherGloves,InsulatedGloves,FaceShield,DarkGoggles,Goggles,None2"
+                        var.Expression = field.List;
                         string[] IdentifierList = var.Expression.Split(',');
-                        string Identifier = field.Name;
+                        string Identifier = field.FieldName;
                         if (this.GroupVariableList.ContainsKey(Identifier))
                         {
                             this.GroupVariableList[Identifier].Clear();
@@ -821,13 +809,11 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         break;
                 }
                 this.DefineVariable(var);
-
             }
         }
 
         public static string GetControlValue(XDocument xdoc, string ControlName)
         {
-
             string ControlValue = "";
 
             var _ControlValues = from _ControlValue in
@@ -840,7 +826,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                 ControlValue = _ControlValue.Value;
             }
 
-
             return ControlValue;
         }
 
@@ -848,7 +833,7 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
         {
             string controlValue = null;
             qaResponse.TryGetValue(controlName, out controlValue);
-            return controlValue;
+            return controlValue ?? string.Empty;
         }
 
 

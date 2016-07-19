@@ -33,6 +33,41 @@
         <AssociationConnector Association="EPIInfo7Model.FK__metaMapLa__MapId__4CA06362" ManuallyRouted="false" />
         <AssociationConnector Association="EPIInfo7Model.FK__metaMapPo__MapId__5165187F" ManuallyRouted="false" />
         <AssociationConnector Association="EPIInfo7Model.FK__metaPages__ViewI__5441852A" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="EPIInfo7Model.Canva" Width="1.5" PointX="22.125" PointY="18.875" />
+        <EntityTypeShape EntityType="EPIInfo7Model.DataAccessRule" Width="1.5" PointX="12.375" PointY="7.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.Datasource" Width="1.5" PointX="14.625" PointY="19.875" />
+        <EntityTypeShape EntityType="EPIInfo7Model.EIDatasource" Width="1.5" PointX="16.875" PointY="13.375" />
+        <EntityTypeShape EntityType="EPIInfo7Model.lk_RecordSource" Width="1.5" PointX="7.375" PointY="12.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.lk_Status" Width="1.5" PointX="9.375" PointY="12.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.lk_SurveyType" Width="1.5" PointX="11.375" PointY="12.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.Organization" Width="1.5" PointX="12.375" PointY="16.375" />
+        <EntityTypeShape EntityType="EPIInfo7Model.ResponseDisplaySetting" Width="1.5" PointX="16.875" PointY="10.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.ResponseXml" Width="1.5" PointX="14.375" PointY="7.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.Role" Width="1.5" PointX="22.875" PointY="13.25" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SharedCanvas" Width="1.5" PointX="22.125" PointY="16.25" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyMetaData" Width="1.5" PointX="14.625" PointY="11.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyMetaDataView" Width="1.5" PointX="15.375" PointY="0.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyResponse" Width="1.5" PointX="7.375" PointY="15.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyResponseTracking" Width="1.5" PointX="15.375" PointY="3.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyResponseUser" Width="1.5" PointX="9.375" PointY="15.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.User" Width="1.5" PointX="19.875" PointY="16.375" />
+        <EntityTypeShape EntityType="EPIInfo7Model.UserOrganization" Width="1.5" PointX="25.125" PointY="17" />
+        <EntityTypeShape EntityType="EPIInfo7Model.ErrorLog" Width="1.5" PointX="17.375" PointY="0.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.familyset" Width="1.5" PointX="9.375" PointY="18.75" />
+        <EntityTypeShape EntityType="EPIInfo7Model.SurveyMetaDataTransform" Width="1.5" PointX="16.875" PointY="16.875" />
+        <AssociationConnector Association="EPIInfo7Model.FK_Canvas__Datasource" />
+        <AssociationConnector Association="EPIInfo7Model.FK_Canvas_CreatorUser" />
+        <AssociationConnector Association="EPIInfo7Model.FK_Datasource_Organization" />
+        <AssociationConnector Association="EPIInfo7Model.FK_Datasource_SurveyMetaData" />
+        <AssociationConnector Association="EPIInfo7Model.FK_UserOrganization_Organization" />
+        <AssociationConnector Association="EPIInfo7Model.FK_ResponseGridcolumns_SurveyMetaData" />
+        <AssociationConnector Association="EPIInfo7Model.FK_UserOrganization_Role" />
+        <AssociationConnector Association="EPIInfo7Model.FK_CanvasUser_User" />
+        <AssociationConnector Association="EPIInfo7Model.FK_SurveyMetaDataTransform_SurveyMetaData" />
+        <AssociationConnector Association="EPIInfo7Model.FK_UserOrganization_User" />
+        <AssociationConnector Association="EPIInfo7Model.DatasourceUser" />
+        <AssociationConnector Association="EPIInfo7Model.SurveyMetadataOrganization" />
+        <AssociationConnector Association="EPIInfo7Model.SurveyMetaDataUser" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

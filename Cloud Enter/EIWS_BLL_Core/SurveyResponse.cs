@@ -9,6 +9,8 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using System.Xml.Linq;
 using Epi.Web.Enter.Common.Xml;
 using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.BLL
 {
@@ -20,67 +22,70 @@ namespace Epi.Web.BLL
             Success = 2,
 
         }
-        private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao;
+        private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _surveyResponseDao;
 
         public SurveyResponse(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao pSurveyResponseDao)
         {
-            this.SurveyResponseDao = pSurveyResponseDao;
+            _surveyResponseDao = pSurveyResponseDao;
         }
 
 
         public List<SurveyResponseBO> GetSurveyResponseById(SurveyAnswerCriteria Criteria, List<SurveyInfoBO> SurveyBOList = null)
         {
-
-            //Check if this Response exists in EWE DataBase
             Guid Id = new Guid(Criteria.SurveyAnswerIdList[0]);
-            bool ResponseExists = this.SurveyResponseDao.DoesResponseExist(Id);
+            bool ResponseExists = this._surveyResponseDao.DoesResponseExist(Id);
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             if (ResponseExists)
             {
-                result = this.SurveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
-
+                result = _surveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
             }
-            else
-            {
+            //else
+            //{
 
-                //Get Form Name
-                // string 
-                //Retrieve response data sets from Epi 7 DataBase
-                SurveyAnswerCriteria SurveyAnswerCriteria = new Enter.Common.Criteria.SurveyAnswerCriteria();
-                SurveyAnswerCriteria.GetAllColumns = true;
-                SurveyAnswerCriteria.SurveyId = Criteria.SurveyId;
-                SurveyAnswerCriteria.SurveyAnswerIdList.Add(Criteria.SurveyAnswerIdList[0]);
-                SurveyAnswerCriteria.PageSize = 1;
-                SurveyAnswerCriteria.PageNumber = 1;
-                SurveyAnswerCriteria.IsSqlProject = Criteria.IsSqlProject;
-                result = this.SurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria);
-                if (result[0].SqlData != null)
-                {
-                    var DataList = result[0].SqlData.ToList();
-                    DataList.RemoveAt(0);
+            //    //Get Form Name
+            //    // string 
+            //    //Retrieve response data sets from Epi 7 DataBase
+            //    SurveyAnswerCriteria SurveyAnswerCriteria = new Enter.Common.Criteria.SurveyAnswerCriteria();
+            //    SurveyAnswerCriteria.GetAllColumns = true;
+            //    SurveyAnswerCriteria.SurveyId = Criteria.SurveyId;
+            //    SurveyAnswerCriteria.SurveyAnswerIdList.Add(Criteria.SurveyAnswerIdList[0]);
+            //    SurveyAnswerCriteria.GridPageSize = 1;
+            //    SurveyAnswerCriteria.GridPageNumber = 1;
+            //    SurveyAnswerCriteria.IsSqlProject = Criteria.IsSqlProject;
+            //    result = SurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria);
+            //    if (result.Count > 0 && result[0].SqlData != null)
+            //    {
+            //        var DataList = result[0].SqlData.ToList();
+            //        DataList.RemoveAt(0);
 
-                    //Build Response Xml
-                    PreFilledAnswerRequest Request = new PreFilledAnswerRequest();
-                    Request.AnswerInfo.ResponseId = new Guid(Criteria.SurveyAnswerIdList[0]);
-                    Request.AnswerInfo.SurveyId = new Guid(Criteria.SurveyId);
-                    Request.AnswerInfo.UserId = Criteria.UserId;
-                    Request.AnswerInfo.SurveyQuestionAnswerList = new Dictionary<string, string>();
-                    foreach (var item in DataList)
-                    {
+            //        //Build Response Xml
+            //        PreFilledAnswerRequest Request = new PreFilledAnswerRequest();
+            //        Request.AnswerInfo.ResponseId = new Guid(Criteria.SurveyAnswerIdList[0]);
+            //        Request.AnswerInfo.SurveyId = new Guid(Criteria.SurveyId);
+            //        Request.AnswerInfo.UserId = Criteria.UserId;
+            //        Request.AnswerInfo.SurveyQuestionAnswerList = new Dictionary<string, string>();
+            //        foreach (var item in DataList)
+            //        {
 
 
-                        Request.AnswerInfo.SurveyQuestionAnswerList.Add(item.Key, item.Value);
+            //            Request.AnswerInfo.SurveyQuestionAnswerList.Add(item.Key, item.Value);
 
-                    }
-                    //  Request.AnswerInfo.OrganizationKey = new Guid ( "a4b6a687-610d-442a-a80c-d1c781087181");
-                    var response = SetSurveyAnswer(Request);
-                }
-                // string Xml = CreateResponseXml(  Request,  SurveyBOList);
+            //        }
+            //        //  Request.AnswerInfo.OrganizationKey = new Guid ( "a4b6a687-610d-442a-a80c-d1c781087181");
+            //        var response = SetSurveyAnswer(Request);
+            //    }
+            //    // string Xml = CreateResponseXml(  Request,  SurveyBOList);
 
-                //Insert response xml into EWE
+            //    //Insert response xml into EWE
 
-                result = this.SurveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
-            }
+            //    result = SurveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
+            //}
+            return result;
+        }
+        public SurveyResponseBO GetSurveyResponseStateById(SurveyAnswerCriteria Criteria)
+        {
+            string  responseId = Criteria.SurveyAnswerIdList[0];
+            SurveyResponseBO result = _surveyResponseDao.GetSurveyResponseState(responseId);
             return result;
         }
 
@@ -97,7 +102,7 @@ namespace Epi.Web.BLL
             {
                 PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
             }
-            result = this.SurveyResponseDao.GetFormResponseByFormId(FormId, PageNumber, PageSize);
+            result = _surveyResponseDao.GetFormResponseByFormId(FormId, PageNumber, PageSize);
             return result;
         }
 
@@ -108,13 +113,13 @@ namespace Epi.Web.BLL
             //int PageSize;
             if (criteria.IsMobile)
             {
-                criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
+                criteria.GridPageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
             }
             else
             {
-                criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
+                criteria.GridPageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
             }
-            result = this.SurveyResponseDao.GetFormResponseByFormId(criteria);
+            result = _surveyResponseDao.GetFormResponseByFormId(criteria);
             return result;
         }
         public int GetNumberOfPages(string FormId, bool IsMobile)
@@ -128,7 +133,7 @@ namespace Epi.Web.BLL
             {
                 PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
             }
-            int result = this.SurveyResponseDao.GetFormResponseCount(FormId);
+            int result = _surveyResponseDao.GetFormResponseCount(FormId);
             if (PageSize > 0)
             {
                 result = (result + PageSize - 1) / PageSize;
@@ -141,16 +146,16 @@ namespace Epi.Web.BLL
             //int PageSize;
             if (Criteria.IsMobile)
             {
-                Criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
+                Criteria.GridPageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
             }
             else
             {
-                Criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
+                Criteria.GridPageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
             }
-            int result = this.SurveyResponseDao.GetFormResponseCount(Criteria);
-            if (Criteria.PageSize > 0)
+            int result = _surveyResponseDao.GetFormResponseCount(Criteria);
+            if (Criteria.GridPageSize > 0)
             {
-                result = (result + Criteria.PageSize - 1) / Criteria.PageSize;
+                result = (result + Criteria.GridPageSize - 1) / Criteria.GridPageSize;
             }
             return result;
         }
@@ -163,7 +168,7 @@ namespace Epi.Web.BLL
             List<string> ResponseIdList = new List<string>();
             ResponseIdList.Add(PassCodeBoObj.ResponseId);
 
-            UserAuthenticationResponseBO results = this.SurveyResponseDao.GetAuthenticationResponse(PassCodeBoObj);
+            UserAuthenticationResponseBO results = _surveyResponseDao.GetAuthenticationResponse(PassCodeBoObj);
 
 
 
@@ -189,7 +194,7 @@ namespace Epi.Web.BLL
         public void SavePassCode(UserAuthenticationRequestBO pValue)
         {
             UserAuthenticationRequestBO result = pValue;
-            this.SurveyResponseDao.UpdatePassCode(pValue);
+            _surveyResponseDao.UpdatePassCode(pValue);
 
 
 
@@ -197,27 +202,27 @@ namespace Epi.Web.BLL
         // Get Authentication Response
         public UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO pValue)
         {
-            UserAuthenticationResponseBO result = this.SurveyResponseDao.GetAuthenticationResponse(pValue);
+            UserAuthenticationResponseBO result = _surveyResponseDao.GetAuthenticationResponse(pValue);
 
             return result;
 
         }
         public List<SurveyResponseBO> GetSurveyResponseBySurveyId(List<String> pSurveyIdList, Guid UserPublishKey)
         {
-            List<SurveyResponseBO> result = this.SurveyResponseDao.GetSurveyResponseBySurveyId(pSurveyIdList, UserPublishKey);
+            List<SurveyResponseBO> result = _surveyResponseDao.GetSurveyResponseBySurveyId(pSurveyIdList, UserPublishKey);
             return result;
         }
 
         public List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, int pStatusId, bool IsDraftMode = false)
         {
-            List<SurveyResponseBO> result = this.SurveyResponseDao.GetSurveyResponse(SurveyAnswerIdList, pSurveyId, pDateCompleted, IsDraftMode, pStatusId);
+            List<SurveyResponseBO> result = _surveyResponseDao.GetSurveyResponse(SurveyAnswerIdList, pSurveyId, pDateCompleted, IsDraftMode, pStatusId);
             return result;
         }
 
         public SurveyResponseBO InsertSurveyResponse(SurveyResponseBO pValue)
         {
             SurveyResponseBO result = pValue;
-            this.SurveyResponseDao.InsertSurveyResponse(pValue);
+            _surveyResponseDao.InsertSurveyResponse(pValue);
             return result;
         }
         public List<SurveyResponseBO> InsertSurveyResponse(List<SurveyResponseBO> pValue, int UserId, bool IsNewRecord = false)
@@ -230,7 +235,7 @@ namespace Epi.Web.BLL
                 ResponseXmlBO.ResponseId = item.ResponseId;
                 ResponseXmlBO.Xml = item.XML;
                 ResponseXmlBO.IsNewRecord = IsNewRecord;
-                this.SurveyResponseDao.InsertResponse(ResponseXmlBO);
+                _surveyResponseDao.InsertResponse(ResponseXmlBO);
 
             }
 
@@ -245,7 +250,7 @@ namespace Epi.Web.BLL
             SurveyResponseBO result = pValue;
             pValue.ParentId = ParentSurveyInfo.ParentId;
             pValue.RelateParentId = RelateParentId;
-            this.SurveyResponseDao.InsertChildSurveyResponse(pValue);
+            _surveyResponseDao.InsertChildSurveyResponse(pValue);
             return result;
         }
 
@@ -253,7 +258,7 @@ namespace Epi.Web.BLL
         {
             SurveyResponseBO result = pValue;
             //Check if this respose has prent
-            string ParentId = SurveyResponseDao.GetResponseParentId(pValue.ResponseId);
+            string ParentId = _surveyResponseDao.GetResponseParentId(pValue.ResponseId);
             Guid ParentIdGuid = Guid.Empty;
             if (!string.IsNullOrEmpty(ParentId))
             {
@@ -266,33 +271,33 @@ namespace Epi.Web.BLL
             //    {
             //    //read the child 
 
-            //    SurveyResponseBO Child = this.SurveyResponseDao.GetSingleResponse(pValue.ResponseId);
+            //    SurveyResponseBO Child = SurveyResponseDao.GetSingleResponse(pValue.ResponseId);
             //    // read the parent
-            //    SurveyResponseBO Parent = this.SurveyResponseDao.GetSingleResponse(ParentId);
+            //    SurveyResponseBO Parent = SurveyResponseDao.GetSingleResponse(ParentId);
             //    //copy and update
             //    Parent.XML = Child.XML;
-            //    this.SurveyResponseDao.UpdateSurveyResponse(Parent);
+            //    SurveyResponseDao.UpdateSurveyResponse(Parent);
             //    result = Parent;
             //    //Check if this child has a related form (subchild)
-            //    List<SurveyResponseBO> Children = this.GetResponsesHierarchyIdsByRootId(Child.ResponseId);
+            //    List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(Child.ResponseId);
             //    if (Children.Count() > 1)
             //    {
             //        SurveyResponseBO NewChild = Children[1];
             //        NewChild.RelateParentId = Parent.ResponseId;
-            //        this.SurveyResponseDao.UpdateSurveyResponse(NewChild);
+            //        SurveyResponseDao.UpdateSurveyResponse(NewChild);
             //    }
             //    // Set  child recod UserId
             //    Child.UserId = pValue.UserId;
             //    // delete the child
-            //    this.DeleteSingleSurveyResponse(Child);
+            //    DeleteSingleSurveyResponse(Child);
 
             //}
             //else
             //{
             //Check if the record existes.If it does update otherwise insert new 
-            this.SurveyResponseDao.UpdateSurveyResponse(pValue);
+            _surveyResponseDao.UpdateSurveyResponse(pValue);
 
-            SurveyResponseBO SurveyResponseBO = SurveyResponseDao.GetResponse(pValue.ResponseId);
+            SurveyResponseBO SurveyResponseBO = _surveyResponseDao.GetResponse(pValue.ResponseId);
 
 
 
@@ -310,24 +315,24 @@ namespace Epi.Web.BLL
                 //{
                 //    //read the child 
 
-                //    SurveyResponseBO Child = this.SurveyResponseDao.GetSingleResponse(Obj.ResponseId);
+                //    SurveyResponseBO Child = SurveyResponseDao.GetSingleResponse(Obj.ResponseId);
                 //    // read the parent
-                //    SurveyResponseBO Parent = this.SurveyResponseDao.GetSingleResponse(ParentId);
+                //    SurveyResponseBO Parent = SurveyResponseDao.GetSingleResponse(ParentId);
                 //    //copy and update
                 //    Parent.XML = Child.XML;
                 //    Parent.Status = Status;
-                //    this.SurveyResponseDao.UpdateSurveyResponse(Parent);
+                //    SurveyResponseDao.UpdateSurveyResponse(Parent);
                 //    result.Add(Parent);
                 //    // Set  child recod UserId
                 //    Child.UserId = Obj.UserId;
                 //    // delete the child
-                //    this.DeleteSurveyResponse(Child);
+                //    DeleteSurveyResponse(Child);
 
                 //}
                 //else
                 //{
                 Obj.Status = Status;
-                this.SurveyResponseDao.UpdateSurveyResponse(Obj);
+                _surveyResponseDao.UpdateSurveyResponse(Obj);
                 // }
             }
             return result;
@@ -335,13 +340,13 @@ namespace Epi.Web.BLL
         public void UpdateFormResponse(SurveyResponseBO pValue)
         {
 
-            this.SurveyResponseDao.UpdateSurveyResponse(pValue);
+            _surveyResponseDao.UpdateSurveyResponse(pValue);
         }
         public bool DeleteSurveyResponse(SurveyResponseBO pValue)
         {
             bool result = false;
 
-            this.SurveyResponseDao.DeleteSurveyResponse(pValue);
+            _surveyResponseDao.DeleteSurveyResponse(pValue);
             result = true;
 
             return result;
@@ -349,31 +354,31 @@ namespace Epi.Web.BLL
         public bool DeleteSurveyResponseInEditMode(SurveyResponseBO pValue, int Status = -1)
         {
             bool result = false;
-            List<SurveyResponseBO> Children = this.GetResponsesHierarchyIdsByRootId(pValue.ResponseId);
+            List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(pValue.ResponseId);
 
             foreach (var child in Children)
             {
                 //Get the original copy of the xml
-                SurveyResponseBO ResponseXml = this.SurveyResponseDao.GetResponse(child.ResponseId);
+                SurveyResponseBO ResponseXml = _surveyResponseDao.GetResponse(child.ResponseId);
                 if (!ResponseXml.IsNewRecord)
                 {
                     child.XML = ResponseXml.XML;
-                    this.SurveyResponseDao.UpdateSurveyResponse(child);
+                    _surveyResponseDao.UpdateSurveyResponse(child);
                 }
                 else
                 {
                     child.UserId = pValue.UserId;
-                    this.SurveyResponseDao.DeleteSurveyResponse(child);
+                    _surveyResponseDao.DeleteSurveyResponse(child);
 
                 }
                 // delete record from ResponseXml Table
 
                 ResponseBO ResponseXmlBO = new ResponseBO();
                 ResponseXmlBO.ResponseId = child.ResponseId;
-                this.SurveyResponseDao.DeleteResponse(ResponseXmlBO);
+                _surveyResponseDao.DeleteResponse(ResponseXmlBO);
                 if (Status > -1)
                 {
-                    this.SurveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
+                    _surveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
                 }
             }
 
@@ -385,7 +390,7 @@ namespace Epi.Web.BLL
         {
             bool result = false;
 
-            this.SurveyResponseDao.DeleteSingleSurveyResponse(pValue);
+            _surveyResponseDao.DeleteSingleSurveyResponse(pValue);
             result = true;
 
             return result;
@@ -393,7 +398,7 @@ namespace Epi.Web.BLL
 
         public PageInfoBO GetResponseSurveySize(List<string> SurveyResponseIdList, string SurveyId, DateTime pClosingDate, int BandwidthUsageFactor, bool IsDraftMode = false, int pSurveyType = -1, int pPageNumber = -1, int pPageSize = -1, int pResponseMaxSize = -1)
         {
-            List<SurveyResponseBO> SurveyResponseBOList = this.SurveyResponseDao.GetSurveyResponseSize(SurveyResponseIdList, SurveyId, pClosingDate, IsDraftMode, pSurveyType, pPageNumber, pPageSize, pResponseMaxSize);
+            List<SurveyResponseBO> SurveyResponseBOList = _surveyResponseDao.GetSurveyResponseSize(SurveyResponseIdList, SurveyId, pClosingDate, IsDraftMode, pSurveyType, pPageNumber, pPageSize, pResponseMaxSize);
             PageInfoBO result = new PageInfoBO();
 
             result = Epi.Web.BLL.Common.GetSurveySize(SurveyResponseBOList, BandwidthUsageFactor, pResponseMaxSize);
@@ -402,7 +407,7 @@ namespace Epi.Web.BLL
 
         public PageInfoBO GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey, int BandwidthUsageFactor, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
-            List<SurveyResponseBO> SurveyResponseBOList = this.SurveyResponseDao.GetSurveyResponseBySurveyIdSize(SurveyIdList, UserPublishKey, PageNumber, PageSize, ResponseMaxSize);
+            List<SurveyResponseBO> SurveyResponseBOList = _surveyResponseDao.GetSurveyResponseBySurveyIdSize(SurveyIdList, UserPublishKey, PageNumber, PageSize, ResponseMaxSize);
 
             PageInfoBO result = new PageInfoBO();
 
@@ -413,7 +418,7 @@ namespace Epi.Web.BLL
         public PageInfoBO GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int BandwidthUsageFactor, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
         {
 
-            List<SurveyResponseBO> SurveyResponseBOList = this.SurveyResponseDao.GetSurveyResponseSize(SurveyResponseIdList, UserPublishKey, PageNumber, PageSize, ResponseMaxSize);
+            List<SurveyResponseBO> SurveyResponseBOList = _surveyResponseDao.GetSurveyResponseSize(SurveyResponseIdList, UserPublishKey, PageNumber, PageSize, ResponseMaxSize);
 
             PageInfoBO result = new PageInfoBO();
 
@@ -423,7 +428,7 @@ namespace Epi.Web.BLL
         public int GetNumberOfResponses(string FormId)
         {
 
-            int result = this.SurveyResponseDao.GetFormResponseCount(FormId);
+            int result = _surveyResponseDao.GetFormResponseCount(FormId);
 
             return result;
         }
@@ -431,7 +436,7 @@ namespace Epi.Web.BLL
         public int GetNumberOfResponses(SurveyAnswerCriteria Criteria)
         {
 
-            int result = this.SurveyResponseDao.GetFormResponseCount(Criteria);
+            int result = _surveyResponseDao.GetFormResponseCount(Criteria);
 
             return result;
         }
@@ -440,7 +445,7 @@ namespace Epi.Web.BLL
         {
             List<SurveyResponseBO> SurveyResponseBO = new List<SurveyResponseBO>();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetResponsesHierarchyIdsByRootId(RootId);
+            SurveyResponseBO = _surveyResponseDao.GetResponsesHierarchyIdsByRootId(RootId);
 
 
             return SurveyResponseBO;
@@ -453,7 +458,7 @@ namespace Epi.Web.BLL
         {
             SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetFormResponseByParentRecordId(ParentRecordId);
+            SurveyResponseBO = _surveyResponseDao.GetFormResponseByParentRecordId(ParentRecordId);
             return SurveyResponseBO;
         }
 
@@ -461,7 +466,7 @@ namespace Epi.Web.BLL
         {
             List<SurveyResponseBO> SurveyResponseBO = new List<SurveyResponseBO>();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetAncestorResponseIdsByChildId(ChildId);
+            SurveyResponseBO = _surveyResponseDao.GetAncestorResponseIdsByChildId(ChildId);
 
 
             return SurveyResponseBO;
@@ -472,7 +477,7 @@ namespace Epi.Web.BLL
         {
             List<SurveyResponseBO> SurveyResponseBO = new List<SurveyResponseBO>();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetResponsesByRelatedFormId(ResponseId, SurveyId);
+            SurveyResponseBO = _surveyResponseDao.GetResponsesByRelatedFormId(ResponseId, SurveyId);
 
 
             return SurveyResponseBO;
@@ -483,7 +488,7 @@ namespace Epi.Web.BLL
         {
             List<SurveyResponseBO> SurveyResponseBO = new List<SurveyResponseBO>();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetResponsesByRelatedFormId(ResponseId, Criteria);
+            SurveyResponseBO = _surveyResponseDao.GetResponsesByRelatedFormId(ResponseId, Criteria);
 
 
             return SurveyResponseBO;
@@ -494,7 +499,7 @@ namespace Epi.Web.BLL
         {
             SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
 
-            SurveyResponseBO = this.SurveyResponseDao.GetResponse(ResponseId);
+            SurveyResponseBO = _surveyResponseDao.GetResponse(ResponseId);
 
             return SurveyResponseBO;
         }
@@ -502,12 +507,12 @@ namespace Epi.Web.BLL
         public void DeleteResponseXml(ResponseBO ResponseXmlBO)
         {
 
-            this.SurveyResponseDao.DeleteResponse(ResponseXmlBO);
+            _surveyResponseDao.DeleteResponse(ResponseXmlBO);
         }
         public void UpdateRecordStatus(string ResponseId, int StatusId)
         {
 
-            this.SurveyResponseDao.UpdateRecordStatus(ResponseId, StatusId);
+            _surveyResponseDao.UpdateRecordStatus(ResponseId, StatusId);
         }
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
         {
@@ -517,14 +522,14 @@ namespace Epi.Web.BLL
             Dictionary<string, string> ErrorMessageList = new Dictionary<string, string>();
             PreFilledAnswerResponse response;
 
-
-            SurveyResponseBO SurveyResponse = new SurveyResponseBO();
+            SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             UserAuthenticationRequestBO UserAuthenticationRequestBO = new UserAuthenticationRequestBO();
             //Get Survey Info (MetaData)
             List<SurveyInfoBO> SurveyBOList = GetSurveyInfo(request);
             //Build Survey Response Xml
 
-            string Xml = CreateResponseXml(request, SurveyBOList);
+            string xmlResponse;
+            FormResponseDetail formResponseDetail = CreateResponseXml(request, SurveyBOList, out xmlResponse);
             //Validate Response values
 
             ErrorMessageList = ValidateResponse(SurveyBOList, request);
@@ -538,16 +543,16 @@ namespace Epi.Web.BLL
             else
             {
                 //Insert Survey Response
-                SurveyResponse = this.SurveyResponseDao.GetSingleResponse(request.AnswerInfo.ResponseId.ToString());
-                if (SurveyResponse.SurveyId == null)
+                surveyResponseBO = _surveyResponseDao.GetSingleResponse(request.AnswerInfo.ResponseId.ToString());
+                if (surveyResponseBO.SurveyId == null)
                 {
-                    SurveyResponse = InsertSurveyResponse(Mapper.ToBusinessObject(Xml, request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId));
+                    surveyResponseBO = InsertSurveyResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
                     response = new PreFilledAnswerResponse();
                     response.Status = ((Message)2).ToString();
                 }
                 else
                 {
-                    UpdateFormResponse(Mapper.ToBusinessObject(Xml, request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId));
+                    UpdateFormResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
                     response = new PreFilledAnswerResponse();
                     response.Status = ((Message)2).ToString();
                 }
@@ -560,7 +565,7 @@ namespace Epi.Web.BLL
         private Dictionary<string, string> ValidateResponse(List<SurveyInfoBO> SurveyBOList, PreFilledAnswerRequest request)
         {
 
-            XDocument SurveyXml = new XDocument();
+            XDocument SurveyXml = new XDocument(); 
             foreach (var item in SurveyBOList)
             {
                 SurveyXml = XDocument.Parse(item.XML);
@@ -601,10 +606,10 @@ namespace Epi.Web.BLL
             return SurveyBOList;
 
         }
-        private string CreateResponseXml(Epi.Web.Enter.Common.Message.PreFilledAnswerRequest request, List<SurveyInfoBO> SurveyBOList)
+        private FormResponseDetail CreateResponseXml(Epi.Web.Enter.Common.Message.PreFilledAnswerRequest request, List<SurveyInfoBO> SurveyBOList, out string responseXml)
         {
-
-            string ResponseXml;
+            var formId = request.AnswerInfo.SurveyId.ToString();
+            var metadataAccessor = new MetadataAccessor(formId);
 
             XDocument SurveyXml = new XDocument();
 
@@ -613,10 +618,10 @@ namespace Epi.Web.BLL
                 SurveyXml = XDocument.Parse(item.XML);
             }
             SurveyResponseXML Implementation = new SurveyResponseXML(request, SurveyXml);
-            ResponseXml = Implementation.CreateResponseDocument(SurveyXml).ToString();
+            var pageDigests = metadataAccessor.GetPageDigests(formId);
+            var formResponseDetail = Implementation.CreateResponseDocument(pageDigests, SurveyXml, out responseXml);
 
-
-            return ResponseXml;
+            return formResponseDetail;
         }
 
 
@@ -627,7 +632,7 @@ namespace Epi.Web.BLL
             SurveyAnswerCriteria.SurveyAnswerIdList = new List<string>();
             SurveyAnswerCriteria.SurveyAnswerIdList.Add(ResponseId);
 
-            return this.SurveyResponseDao.HasResponse(SurveyAnswerCriteria);
+            return _surveyResponseDao.HasResponse(SurveyAnswerCriteria);
         }
 
         public void UpdateRecordStatus(SurveyResponseBO SurveyResponseBO)
@@ -637,7 +642,7 @@ namespace Epi.Web.BLL
                 SurveyResponseBO.Status = 2;
             }
 
-            this.SurveyResponseDao.UpdateRecordStatus(SurveyResponseBO);
+            _surveyResponseDao.UpdateRecordStatus(SurveyResponseBO);
         }
     }
 }

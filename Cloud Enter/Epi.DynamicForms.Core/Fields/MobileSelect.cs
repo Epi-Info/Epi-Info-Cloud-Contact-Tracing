@@ -27,9 +27,9 @@ namespace MvcDynamicForms.Fields
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
 
-            Title = fieldAttributes.Name;
+            Title = fieldAttributes.FieldName;
             Prompt = fieldAttributes.PromptText;
-            Key = fieldAttributes.Name;
+            Key = fieldAttributes.FieldName;
             PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
             PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
             PromptWidth = formWidth * fieldAttributes.ControlWidthPercentage;
@@ -43,7 +43,7 @@ namespace MvcDynamicForms.Fields
             IsRequired = fieldAttributes.IsRequired;
             Required = fieldAttributes.Required;
             RequiredMessage = fieldAttributes.RequiredMessage;
-            ReadOnly = fieldAttributes.ReadOnly;
+            ReadOnly = fieldAttributes.IsReadOnly;
         }
         /// <summary>
         /// The number of options to display at a time.

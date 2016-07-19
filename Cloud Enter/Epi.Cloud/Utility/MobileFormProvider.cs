@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Epi.Cloud.FormMetadataServices;
 using Epi.Core.EnterInterpreter;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Web.MVC.Facade;
 using System.Data;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Facade;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -22,20 +22,21 @@ namespace Epi.Web.MVC.Utility
         static MobileFormProvider()
         {
             var dependencyResolver = DependencyResolver.Current;
-            _metadataProvider = dependencyResolver.GetService<IMetadataProvider>();
             _surveyDocumentDBStoreFacade = dependencyResolver.GetService<ISurveyStoreDocumentDBFacade>();
         }
 
-        private static IMetadataProvider _metadataProvider;
         private static ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
+
 
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO> SurveyAnswerList;
         [ThreadStatic]
         public static List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> SurveyInfoList;
-        public static Form GetForm(object surveyMetaData, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
+
+
+        public static Form GetForm(object surveyMetadata, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
         {
-            return GetForm(surveyMetaData, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
+            return GetForm(surveyMetadata, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
         public static Form GetForm(object surveyMetadata, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid = false)
         {
@@ -44,22 +45,23 @@ namespace Epi.Web.MVC.Utility
             SurveyInfoList = surveyInfoList;
 
             var surveyInfo = (Epi.Web.Enter.Common.DTO.SurveyInfoDTO)surveyMetadata;
-            List<FieldAttributes> metadata;           
-            if (surveyInfo.ProjectTemplateMetadata != null)
-            {                
-                metadata = _metadataProvider.GetFieldMedatadata(surveyInfo.ProjectTemplateMetadata, surveyInfo.SurveyId, pageNumber).ToList();
-            }
-            else
-            {
-                metadata = _metadataProvider.GetMetadataAsync(surveyInfo.SurveyId, pageNumber).Result.ToList();
-            }
+
+            FormDigest currentFormDigest = surveyInfo.GetCurrentFormDigest();
+            PageDigest currentPageDigest = surveyInfo.GetCurrentFormPageDigestByPageNumber(pageNumber);
+
+            var pageId = currentPageDigest.PageId;
+
+            IEnumerable<FieldAttributes> currentPageFieldAttributes = surveyInfo.GetCurrentFormPageFieldAttributesByPageId(pageId);
+
+            PageResponseDetail pageResponseDetail = surveyAnswer.ResponseDetail != null
+                ? surveyAnswer.ResponseDetail.GetPageResponseDetailByPageId(pageId)
+                : new PageResponseDetail { PageId = pageId };
 
             string SurveyAnswer;
 
             if (surveyAnswer != null)
             {
                 SurveyAnswer = surveyAnswer.XML;
-
             }
             else { SurveyAnswer = ""; }
 
@@ -80,7 +82,6 @@ namespace Epi.Web.MVC.Utility
             XDocument xdoc = XDocument.Parse(XML);
             if (string.IsNullOrEmpty(XML))
             {
-
                 form.NumberOfPages = 1;
             }
             else
@@ -116,7 +117,7 @@ namespace Epi.Web.MVC.Utility
                 //form.Height =300;
                 //Add checkcode to Form
                 XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                string checkcode = metadata[0] != null ? metadata[0].checkcode : string.Empty;
+                string checkcode = currentFormDigest.CheckCode;
                 // string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
                 StringBuilder JavaScript = new StringBuilder();
                 StringBuilder VariableDefinitions = new StringBuilder();
@@ -155,10 +156,10 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
                 }
 
-                foreach (var fieldAttributes in metadata)
+                foreach (var fieldAttributes in currentPageFieldAttributes)
                 {
                     //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
@@ -167,19 +168,19 @@ namespace Epi.Web.MVC.Utility
                     if (surveyAnswerFromDocumentDB != null)
                     {
                         FieldValue = (from element in surveyAnswerFromDocumentDB
-                                      where element.Key == fieldAttributes.Name.ToLower()
+                                      where element.Key == fieldAttributes.FieldName.ToLower()
                                       select element.Value).FirstOrDefault();
                     }
 
                     //EndNewcode 
 
-                    JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.Name));
+                    JavaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.FieldName));
 
                     // TODO: Temporary until all field types are supported
                     var uniqueId = fieldAttributes.UniqueId;
                     var _FieldTypeID = _FieldsTypeIDs.Where(f => f.AttributeValue("UniqueId") == fieldAttributes.UniqueId).SingleOrDefault();
 
-                    switch (fieldAttributes.FieldTypeId)
+                    switch ((int)fieldAttributes.FieldType)
                     {
                         case 1: // textbox
 
@@ -260,7 +261,7 @@ namespace Epi.Web.MVC.Utility
                             //form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, _GroupBoxValue1));
                             var _RadioListSelectedValue1 = FieldValue;
                             string RadioListValues1 = "";
-                            RadioListValues1 = fieldAttributes.ChoicesList;
+                            RadioListValues1 = fieldAttributes.List;
                             form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, _RadioListSelectedValue1));
                             break;
                         case 17://DropDown LegalValues
@@ -346,14 +347,13 @@ namespace Epi.Web.MVC.Utility
         /// <param name="ResponseId"></param>
         /// <param name="SurveyId"></param>
         /// <param name="PageNo"></param> 
-        public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
+        public static Dictionary<string, string> GetSurveyDataFromDocumentDB(string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
-            SurveyDocumentDBFacade GetDataFromDocumentDB = new SurveyDocumentDBFacade();
-            var response = GetDataFromDocumentDB.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);
+            var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(SurveyId, ResponseId, PageId);
             if (response != null)
             {
-                return response.SurveyQAList;
+                return response.ResponseQA;
             }
 
             return null;
@@ -1262,7 +1262,7 @@ namespace Epi.Web.MVC.Utility
 
         }
 
-        public static void UpdateHiddenFields(int CurrentPage, Form form, XDocument xdoc, XDocument xdocResponse, System.Collections.Specialized.NameValueCollection pPostedForm)
+        public static void UpdateHiddenFields(int CurrentPage, Form form, MetadataAccessor metadataAccessor, XDocument xdoc, XDocument xdocResponse, System.Collections.Specialized.NameValueCollection pPostedForm)
         {
             double _Width, _Height;
             _Width = 1024;

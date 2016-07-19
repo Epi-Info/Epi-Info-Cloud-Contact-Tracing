@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Web.Security;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -28,16 +29,15 @@ namespace Epi.Web.MVC.Utility
         /// <param name="iSurveyAnswerRepository"></param>
         public static Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyResponse(string surveyId, string responseId, SurveyAnswerRequest surveyAnswerRequest1,
                                           Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-                                          SurveyResponseHelper surveyResponseHelper, ISurveyAnswerRepository iSurveyAnswerRepository, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
+                                          SurveyResponseDocDb surveyResponseHelper, ISurveyAnswerRepository iSurveyAnswerRepository, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
         {
             bool AddRoot = false;
             SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
             surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId.ToString());
             surveyAnswerDTO.ResponseId = responseId.ToString();
-            //surveyAnswerDTO.DateCompleted = DateTime.Now;
-            surveyAnswerDTO.DateCreated = DateTime.Now;
+            surveyAnswerDTO.DateCreated = DateTime.UtcNow;
             surveyAnswerDTO.SurveyId = surveyId;
-            surveyAnswerDTO.Status = (int)Constant.Status.InProgress;
+            surveyAnswerDTO.Status = RecordStatus.InProcess;
             surveyAnswerDTO.RecordSourceId = 1;
             if (IsEditMode)
             {
@@ -45,11 +45,11 @@ namespace Epi.Web.MVC.Utility
             }
             //if (IsEditMode)
             //    {
-            //    surveyAnswerDTO.Status = (int)Constant.Status.Complete;
+            //    surveyAnswerDTO.Status = RecordStatus.Complete;
             //    }
             //else
             //    {
-            //    surveyAnswerDTO.Status = (int)Constant.Status.InProgress;
+            //    surveyAnswerDTO.Status = RecordStatus.InProcess;
             //    }
 
             XmlDocument xml;
@@ -84,19 +84,22 @@ namespace Epi.Web.MVC.Utility
 
         public static void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, MvcDynamicForms.Form form,
                                                 SurveyAnswerRequest surveyAnswerRequest,
-                                                SurveyResponseHelper surveyResponseHelper,
+                                                SurveyResponseDocDb surveyResponseHelper,
                                                 ISurveyAnswerRepository iSurveyAnswerRepository,
-                                                SurveyAnswerResponse surveyAnswerResponse, 
-                                                string responseId, 
-                                                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, 
-                                                bool IsSubmited, 
-                                                bool IsSaved, 
-                                                int PageNumber, 
+                                                SurveyAnswerResponse surveyAnswerResponse,
+                                                string responseId,
+                                                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
+                                                bool IsSubmited,
+                                                bool IsSaved,
+                                                int PageNumber,
                                                 int UserId)
         {
             // 1 Get the record for the current survey response
             // 2 update the current survey response
             // 3 save the current survey response
+
+            var savedResponseDetail = surveyAnswerDTO.ResponseDetail;
+
             if (!IsSubmited)
             {
 
@@ -104,115 +107,145 @@ namespace Epi.Web.MVC.Utility
                 surveyAnswerRequest.SurveyAnswerList = surveyAnswerResponse.SurveyResponseList;
 
                 surveyResponseHelper.Add(form);
-                XDocument SavedXml = XDocument.Parse(surveyAnswerDTO.XML);
-                bool AddRoot = false;
-                if (SavedXml.Root.FirstAttribute.Value.ToString() == "0")
+                bool addRoot = false;
+                XDocument savedXml = null;
+                if (surveyAnswerDTO.XML != null)
                 {
-                    AddRoot = true;
+                    savedXml = XDocument.Parse(surveyAnswerDTO.XML);
+                    if (savedXml.Root.FirstAttribute.Value.ToString() == "0")
+                    {
+                        addRoot = true;
+                    }
                 }
 
                 XmlDocument xml;
-                FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, AddRoot, form.CurrentPage, form.PageId, out xml);
+                FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, addRoot, form.CurrentPage, form.PageId, out xml);
 
-                surveyAnswerRequest.ResponseDetail = responseDetail;
-                surveyAnswerRequest.SurveyAnswerList[0].XML = xml.InnerXml;
+                surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
+                surveyAnswerRequest.SurveyAnswerList[0].XML = xml != null ? xml.InnerXml : null;
                 // 2 b. save the current survey response
                 surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UPDATE;  //"Update";
                                                                                      // surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UpdateMulti; 
                                                                                      //Append to Response Xml
-                FormResponseDetail currentPageResponse = surveyAnswerRequest.ResponseDetail;
-                XDocument CurrentPageResponseXml = XDocument.Parse(surveyAnswerRequest.SurveyAnswerList[0].XML);
-                if (SavedXml.Root.FirstAttribute.Value.ToString() != "0")
+                var currentPageNumber = form.CurrentPage;
+                FormResponseDetail currentFormResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
+                PageResponseDetail currentPageResponseDetail = currentFormResponseDetail.GetPageResponseDetailByPageNumber(currentPageNumber);
+                XDocument currentPageResponseXml = surveyAnswerRequest.SurveyAnswerList[0].XML != null ? XDocument.Parse(surveyAnswerRequest.SurveyAnswerList[0].XML) : null;
+                if (addRoot == false)
                 {
-                    surveyAnswerRequest.SurveyAnswerList[0].XML = MergeXml(SavedXml, CurrentPageResponseXml, form.CurrentPage).ToString();
+                    //surveyAnswerRequest.SurveyAnswerList[0].XML = MergeXml(savedXml, currentPageResponseXml, currentPageNumber).ToString();
+                    surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail, currentPageNumber);
                 }
             }
-            ////Update page number before saving response XML
 
-            XDocument Xdoc = XDocument.Parse(surveyAnswerRequest.SurveyAnswerList[0].XML);
-            if (PageNumber != 0)
+            var updatedFromResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
+
+            ////Update page number before saving response 
+            if (surveyAnswerRequest.SurveyAnswerList[0].CurrentPageNumber != 0)
             {
-                Xdoc.Root.Attribute("LastPageVisited").Value = PageNumber.ToString();
+                updatedFromResponseDetail.LastPageVisited = PageNumber;
             }
-            ////Update Hidden Fields List before saving response XML
             if (form.HiddenFieldsList != null)
             {
-
-                Xdoc.Root.Attribute("HiddenFieldsList").Value = "";
-                Xdoc.Root.Attribute("HiddenFieldsList").Value = form.HiddenFieldsList.ToString();
-
+                updatedFromResponseDetail.HiddenFieldsList = form.HiddenFieldsList;
             }
             if (form.HighlightedFieldsList != null)
             {
-
-                Xdoc.Root.Attribute("HighlightedFieldsList").Value = "";
-                Xdoc.Root.Attribute("HighlightedFieldsList").Value = form.HighlightedFieldsList.ToString();
-
+                updatedFromResponseDetail.HighlightedFieldsList = form.HighlightedFieldsList;
             }
             if (form.DisabledFieldsList != null)
             {
-
-                Xdoc.Root.Attribute("DisabledFieldsList").Value = "";
-                Xdoc.Root.Attribute("DisabledFieldsList").Value = form.DisabledFieldsList.ToString();
-
+                updatedFromResponseDetail.DisabledFieldsList = form.DisabledFieldsList;
             }
             if (form.RequiredFieldsList != null)
             {
-
-                Xdoc.Root.Attribute("RequiredFieldsList").Value = "";
-                Xdoc.Root.Attribute("RequiredFieldsList").Value = form.RequiredFieldsList.ToString();
-
-            }
-            //  AssignList 
-            List<KeyValuePair<string, String>> FieldsList = new List<KeyValuePair<string, string>>();
-
-            FieldsList = GetHiddenFieldsList(form);
-            if (FieldsList != null)
-            {
-                IEnumerable<XElement> XElementList = Xdoc.XPathSelectElements("SurveyResponse/Page/ResponseDetail");
-                for (var i = 0; i < FieldsList.Count; i++)
-                {
-                    foreach (XElement Element in XElementList)
-                    {
-                        if (Element.Attribute("QuestionName").Value.ToString().Equals(FieldsList[i].Key, StringComparison.OrdinalIgnoreCase))
-                        {
-                            if (FieldsList[i].Value != null)
-                            {
-                                Element.Value = FieldsList[i].Value;
-                            }
-                            break;
-                        }
-                    }
-                }
+                updatedFromResponseDetail.RequiredFieldsList = form.RequiredFieldsList;
             }
 
-
-
-
-            ////Update survey response Status
-            //if (IsSubmited)
+            //#region Xml
+            //if (surveyAnswerRequest.SurveyAnswerList[0].XML != null)
             //{
+            //    XDocument Xdoc = XDocument.Parse(surveyAnswerRequest.SurveyAnswerList[0].XML);
+            //    if (PageNumber != 0)
+            //    {
+            //        Xdoc.Root.Attribute("LastPageVisited").Value = PageNumber.ToString();
+            //    }
 
-            //    surveyAnswerRequest.SurveyAnswerList[0].Status = 3;
-            //    surveyAnswerRequest.SurveyAnswerList[0].DateCompleted = DateTime.Now;
-            //    Xdoc.Root.Attribute("LastPageVisited").Remove();
-            //    Xdoc.Root.Attribute("HiddenFieldsList").Remove();
-            //    Xdoc.Root.Attribute("HighlightedFieldsList").Remove();
-            //    Xdoc.Root.Attribute("DisabledFieldsList").Remove();
-            //    Xdoc.Root.Attribute("RequiredFieldsList").Remove(); 
-            //    RemovePageNumAtt(Xdoc);
+            //    ////Update Hidden Fields List before saving response XML
+            //    if (form.HiddenFieldsList != null)
+            //    {
+            //        Xdoc.Root.Attribute("HiddenFieldsList").Value = "";
+            //        Xdoc.Root.Attribute("HiddenFieldsList").Value = form.HiddenFieldsList.ToString();
+            //    }
+            //    if (form.HighlightedFieldsList != null)
+            //    {
+            //        Xdoc.Root.Attribute("HighlightedFieldsList").Value = "";
+            //        Xdoc.Root.Attribute("HighlightedFieldsList").Value = form.HighlightedFieldsList.ToString();
+            //    }
+            //    if (form.DisabledFieldsList != null)
+            //    {
+            //        Xdoc.Root.Attribute("DisabledFieldsList").Value = "";
+            //        Xdoc.Root.Attribute("DisabledFieldsList").Value = form.DisabledFieldsList.ToString();
+            //    }
+            //    if (form.RequiredFieldsList != null)
+            //    {
+            //        Xdoc.Root.Attribute("RequiredFieldsList").Value = "";
+            //        Xdoc.Root.Attribute("RequiredFieldsList").Value = form.RequiredFieldsList.ToString();
+            //    }
+
+
+            //    //  AssignList 
+
+            //    // TODO Must be implemented without XML
+            //    List<KeyValuePair<string, String>> FieldsList = new List<KeyValuePair<string, string>>();
+
+            //    FieldsList = GetHiddenFieldsList(form);
+            //    if (FieldsList != null)
+            //    {
+            //        IEnumerable<XElement> XElementList = Xdoc.XPathSelectElements("SurveyResponse/Page/ResponseDetail");
+            //        for (var i = 0; i < FieldsList.Count; i++)
+            //        {
+            //            foreach (XElement Element in XElementList)
+            //            {
+            //                if (Element.Attribute("QuestionName").Value.ToString().Equals(FieldsList[i].Key, StringComparison.OrdinalIgnoreCase))
+            //                {
+            //                    if (FieldsList[i].Value != null)
+            //                    {
+            //                        Element.Value = FieldsList[i].Value;
+            //                    }
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //    }
+
+            //    ////Update survey response Status
+            //    //if (IsSubmited)
+            //    //{
+
+            //    //    surveyAnswerRequest.SurveyAnswerList[0].Status = RecordStatus.Submitted;
+            //    //    surveyAnswerRequest.SurveyAnswerList[0].DateCompleted = DateTime.Now;
+            //    //    Xdoc.Root.Attribute("LastPageVisited").Remove();
+            //    //    Xdoc.Root.Attribute("HiddenFieldsList").Remove();
+            //    //    Xdoc.Root.Attribute("HighlightedFieldsList").Remove();
+            //    //    Xdoc.Root.Attribute("DisabledFieldsList").Remove();
+            //    //    Xdoc.Root.Attribute("RequiredFieldsList").Remove(); 
+            //    //    RemovePageNumAtt(Xdoc);
+            //    //}
+            //    if (IsSaved)
+            //    {
+            //        surveyAnswerRequest.SurveyAnswerList[0].Status = RecordStatus.Saved;
+            //    }
+            //    surveyAnswerRequest.SurveyAnswerList[0].XML = Xdoc.ToString();
+            //    /////Update Survey Mode ////////////////////
+            //    surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
+            //    surveyAnswerRequest.Criteria.UserId = UserId;
+            //    iSurveyAnswerRepository.SaveSurveyAnswer(surveyAnswerRequest);
             //}
-            if (IsSaved)
-            {
-                surveyAnswerRequest.SurveyAnswerList[0].Status = 2;
-            }
-            surveyAnswerRequest.SurveyAnswerList[0].XML = Xdoc.ToString();
-            /////Update Survey Mode ////////////////////
-            surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
-            surveyAnswerRequest.Criteria.UserId = UserId;
-            iSurveyAnswerRepository.SaveSurveyAnswer(surveyAnswerRequest);
+            //#endregion Xml
 
         }
+
         //Remove PageNumber attribute
         private static void RemovePageNumAtt(XDocument Xdoc)
         {
@@ -398,7 +431,7 @@ namespace Epi.Web.MVC.Utility
 
 
 
-        public static int GetNumberOfPags(string ResponseXml)
+        public static int GetNumberOfPages(string ResponseXml)
         {
 
             XDocument xdoc = XDocument.Parse(ResponseXml);
@@ -545,6 +578,20 @@ namespace Epi.Web.MVC.Utility
                 xdoc.Root.Add(CurrentPageResponseXml.Elements());
                 return xdoc;
             }
+        }
+
+        public static FormResponseDetail MergeResponseDetail(FormResponseDetail savedResponseDetail, PageResponseDetail currentPageResponseDetail, int pageNumber)
+        {
+            savedResponseDetail = savedResponseDetail ?? new FormResponseDetail { FormId = currentPageResponseDetail.FormId, FormName = currentPageResponseDetail.FormName };
+            var savedPageResponseDetail = savedResponseDetail.GetPageResponseDetailByPageNumber(pageNumber);
+            if (savedPageResponseDetail != null)
+            {
+                savedResponseDetail.PageResponseDetailList.Remove(savedPageResponseDetail);
+            }
+
+            savedResponseDetail.AddPageResponseDetail(currentPageResponseDetail);
+
+            return savedResponseDetail;
         }
 
         public static void SetRequiredList(XElement _Fields, string RequiredList)

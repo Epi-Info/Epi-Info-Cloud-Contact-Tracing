@@ -30,6 +30,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CDCDev|AnyCPU'">
+    <OutputPath>bin\CDCDev\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CDCQA|AnyCPU'">
+    <OutputPath>bin\CDCQA\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
@@ -56,6 +62,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Canva.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataAccessRule.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Datasource.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EIDatasource.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
     <Compile Include="EpiInfo-Metatables.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -77,6 +95,21 @@
       <DependentUpon>EpiInfo-Metatables.edmx</DependentUpon>
     </Compile>
     <Compile Include="EpiInfo7EntitiesEx.cs" />
+    <Compile Include="ErrorLog.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="familyset.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="lk_RecordSource.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="lk_Status.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="lk_SurveyType.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
     <Compile Include="metaBackground.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
@@ -128,7 +161,46 @@
     <Compile Include="metaView.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
+    <Compile Include="Organization.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseDisplaySetting.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ResponseXml.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Role.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SharedCanvas.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyMetaData.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyMetaDataTransform.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyMetaDataView.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyResponse.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyResponseTracking.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SurveyResponseUser.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserOrganization.cs">
+      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="EpiInfo-Metatables.edmx">

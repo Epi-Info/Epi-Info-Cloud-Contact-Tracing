@@ -17,12 +17,14 @@ namespace Epi.Cloud.CacheServices
         private static readonly TimeSpan InitialTimeout = new TimeSpan(1, 0, 0); // 1 hour
         private static readonly TimeSpan RenewTimeout = new TimeSpan(1, 0, 0); // 1 hour
 
-        protected static JsonSerializerSettings DontSerializeNulls = new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore };
+        protected static JsonSerializerSettings DontSerializeNulls = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         private static int _numberOfRetries = 3;
         private static TimeSpan _interval = TimeSpan.FromMilliseconds(100);
 
         private RetryStrategies _retryStrategy = new RetryStrategies(_numberOfRetries, _interval);
+
+        private static Dictionary<string, object> _transientCache = new Dictionary<string, object>();
 
 
         public RedisCache()
@@ -66,49 +68,49 @@ namespace Epi.Cloud.CacheServices
             public Exception LastExistException { get; set; }
         }
 
-        private void UpdateStats(string key, StatType statType, Exception exception = null)
+        private void UpdateStats(string cacheKey, StatType statType, Exception exception = null)
         {
             lock (_statistics)
             {
                 CacheStats stats;
-                if (!_statistics.TryGetValue(key, out stats))
+                if (!_statistics.TryGetValue(cacheKey, out stats))
                 {
                     switch (statType)
                     {
                         case StatType.Hit:
-                            stats = new CacheStats { Key = key, Hits = 1 };
+                            stats = new CacheStats { Key = cacheKey, Hits = 1 };
                             break;
                         case StatType.Miss:
-                            stats = new CacheStats { Key = key, Misses = 1 };
+                            stats = new CacheStats { Key = cacheKey, Misses = 1 };
                             break;
                         case StatType.GetException:
-                            stats = new CacheStats { Key = key, GetExceptions = 1 };
+                            stats = new CacheStats { Key = cacheKey, GetExceptions = 1 };
                             if (exception != null) stats.LastGetException = exception;
                             break;
                         case StatType.Set:
-                            stats = new CacheStats { Key = key, SetSuccesses = 1 };
+                            stats = new CacheStats { Key = cacheKey, SetSuccesses = 1 };
                             break;
                         case StatType.SetFail:
-                            stats = new CacheStats { Key = key, SetFailures = 1 };
+                            stats = new CacheStats { Key = cacheKey, SetFailures = 1 };
                             break;
                         case StatType.SetException:
-                            stats = new CacheStats { Key = key, SetExceptions = 1 };
+                            stats = new CacheStats { Key = cacheKey, SetExceptions = 1 };
                             if (exception != null) stats.LastSetException = exception;
                             break;
                         case StatType.ExistHit:
-                            stats = new CacheStats { Key = key, ExistHits = 1 };
+                            stats = new CacheStats { Key = cacheKey, ExistHits = 1 };
                             break;
                         case StatType.ExistMiss:
-                            stats = new CacheStats { Key = key, ExistMisses = 1 };
+                            stats = new CacheStats { Key = cacheKey, ExistMisses = 1 };
                             break;
                         case StatType.ExistException:
-                            stats = new CacheStats { Key = key, ExistExceptions = 1 };
+                            stats = new CacheStats { Key = cacheKey, ExistExceptions = 1 };
                             if (exception != null) stats.LastExistException = exception;
                             break;
 
                     }
 
-                    _statistics.Add(key, stats);
+                    _statistics.Add(cacheKey, stats);
                 }
                 else
                 {
@@ -193,124 +195,165 @@ namespace Epi.Cloud.CacheServices
 
         #endregion // Conection
 
-        protected async Task<bool> KeyExists(string prefix, string key)
+        protected async Task<bool> KeyExists(Guid projectId, string key)
         {
-            return KeyExists(prefix, key, RenewTimeout).Result;
+            return KeyExists(projectId, key, RenewTimeout).Result;
         }
-        protected async Task<bool> KeyExists(string prefix, string key, TimeSpan renewTimeout)
+        protected async Task<bool> KeyExists(Guid projectId, string key, TimeSpan renewTimeout)
         {
-            key = (prefix + key).ToLowerInvariant();
+            object transientTemp;
+            var cacheKey = CacheExtenstions.ToCacheKey(projectId, key);
             bool exists = false;
             try
             {
 #if RunSynchronous
-                exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExists(key));
-                if (exists)
+                if (_transientCache.Count > 0)
                 {
-                    if (renewTimeout != NoTimeout)
+                    exists = _transientCache.TryGetValue(cacheKey, out transientTemp);
+                }
+                else
+                {
+                    exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExists(cacheKey), 
+                        (ex, numberOfRetries, remainingRetries) => 
+                            ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) 
+                            ? new RetryResponse<bool> { Action = RetryAction.ReturnResult, Result = false } 
+                            : new RetryResponse<bool> { Action = RetryAction.ContinueRetrying } );
+
+                    if (exists)
                     {
-                        Cache.KeyExpire(key, renewTimeout);
+                        if (renewTimeout != NoTimeout)
+                        {
+                            Cache.KeyExpire(cacheKey, renewTimeout);
+                        }
                     }
                 }
 #else
-                exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExistsAsync(key)).Result;
+                exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExistsAsync(cacheKey)).Result;
                 if (exists)
                 {
                     if (renewTimeout != NoTimeout)
                     {
-                        var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(key, renewTimeout)).Result ;
+                        var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result ;
                     }
                 }
 #endif
-                UpdateStats(key, exists ? StatType.ExistHit : StatType.ExistMiss);
+                UpdateStats(cacheKey, exists ? StatType.ExistHit : StatType.ExistMiss);
                 return exists;
             }
             catch (Exception ex)
             {
-                UpdateStats(key, exists ? StatType.ExistHit : StatType.ExistMiss);
+                UpdateStats(cacheKey, StatType.ExistException, ex);
+
+                if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException))
+                    return _transientCache.TryGetValue(cacheKey, out transientTemp);
                 return false;
             }
         }
 
-        protected async Task<string> Get(string prefix, string key)
+        protected async Task<string> Get(Guid projectId, string key)
         {
-            return Get(prefix, key, RenewTimeout).Result;
+            return Get(projectId, key, RenewTimeout).Result;
         }
 
-        protected async Task<string> Get(string prefix, string key, TimeSpan renewTimeout)
+        protected async Task<string> Get(Guid projectId, string key, TimeSpan renewTimeout)
         {
-            key = (prefix + key).ToLowerInvariant();
+            object transientTemp;
+            var cacheKey = CacheExtenstions.ToCacheKey(projectId, key);
+            if (_transientCache.Count > 0)
+            {
+                var value =  _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
+                return value;
+            }
+
             try
             {
 #if RunSynchronous
-                var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGet(key));
+                var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGet(cacheKey));
                 if (redisValue.HasValue)
                 {
                     if (renewTimeout != NoTimeout)
                     {
-                        Cache.KeyExpire(key, renewTimeout);
+                        Cache.KeyExpire(cacheKey, renewTimeout);
                     }
-                    UpdateStats(key, StatType.Hit);
+                    UpdateStats(cacheKey, StatType.Hit);
                 }
 #else
-                var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGetAsync(key)).Result;
+                var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGetAsync(cacheKey)).Result;
                 if (redisValue.HasValue)
                 {
-                    UpdateStats(key, StatType.Hit);
+                    UpdateStats(cacheKey, StatType.Hit);
                     if (renewTimeout != NoTimeout)
                     {
-                        var isSuccessful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(key, renewTimeout)).Result;
+                        var isSuccessful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result;
                     }
                 }
 #endif
                 else
                 {
-                    UpdateStats(key, StatType.Miss);
+                    UpdateStats(cacheKey, StatType.Miss);
                 }
                 return redisValue;
             }
             catch (Exception ex)
             {
-                UpdateStats(key, StatType.GetException, ex);
+                UpdateStats(cacheKey, StatType.GetException, ex);
+
+                if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) || ex.GetType() == typeof(System.NullReferenceException))
+                    return _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
                 return (string)null;
             }
         }
 
-        protected async Task<bool> Set(string prefix, string key, string value)
+        protected async Task<bool> Set(Guid projectId, string key, string value)
         {
-            return Set(prefix, key, value, InitialTimeout).Result;
+            return Set(projectId, key, value, InitialTimeout).Result;
         }
 
-        protected async Task<bool> Set(string prefix, string key, string value, TimeSpan timeout)
+        protected async Task<bool> Set(Guid projectId, string key, string value, TimeSpan timeout)
         {
-            key = (prefix + key).ToLowerInvariant();
+            var cacheKey = CacheExtenstions.ToCacheKey(projectId, key);
+            if (_transientCache.Count > 0)
+            {
+                _transientCache[cacheKey] = value;
+                return true;
+            }
             try
             {
                 bool isSuccesful = false;
 #if RunSynchronous
-                isSuccesful = _retryStrategy.ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet(key, value) : Cache.StringSet(key, value, timeout));
+                isSuccesful = _retryStrategy.ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet((RedisKey)cacheKey, value) : Cache.StringSet((RedisKey)cacheKey, value, timeout));
 #else
-                isSuccesful =  _retryStrategy.ExecuteWithRetry(() => (timeout == NoTimeout ?  Cache.StringSetAsync(key, value) : Cache.StringSetAsync(key, value, timeout))).Result;
+                isSuccesful =  _retryStrategy.ExecuteWithRetry(() => (timeout == NoTimeout ?  Cache.StringSetAsync(cacheKey, value) : Cache.StringSetAsync(cacheKey, value, timeout))).Result;
 #endif
-                UpdateStats(key, isSuccesful ? StatType.Set : StatType.SetFail);
+                UpdateStats(cacheKey, isSuccesful ? StatType.Set : StatType.SetFail);
                 return isSuccesful;
             }
             catch (Exception ex)
             {
-                UpdateStats(key, StatType.SetException, ex);
+                UpdateStats(cacheKey, StatType.SetException, ex);
+                if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) || ex.GetType() == typeof(System.NullReferenceException))
+                {
+                    _transientCache[cacheKey] = value;
+                    return true;
+                }
                 return false;
             }
         }
 
-        protected async void Delete(string prefix, string key)
+        protected async void Delete(Guid projectId, string key)
         {
-            key = (prefix + key).ToLowerInvariant();
+            var cacheKey = CacheExtenstions.ToCacheKey(projectId, key);
+            if (_transientCache.Count > 0)
+            {
+                _transientCache.Remove(cacheKey);
+                return;
+            }
             try
             {
 #if RunSynchronous
-                _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(key));
+                _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(cacheKey));
 #else
-                var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyDeleteAsync(key)).Result;
+                var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyDeleteAsync(cacheKey)).Result;
 #endif
             }
             catch (Exception ex)
@@ -318,23 +361,34 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        protected void DeleteAllKeys(string prefix, Action<RedisKey> onDelete = null)
+        protected void DeleteAllKeys(Guid projectId, string keyPrefix, Action<RedisKey> onDelete = null)
         {
+            if (_transientCache.Count > 0)
+            {
+                _transientCache.Clear();
+                return;
+            }
             var endpoints = Connection.GetEndPoints(true);
             foreach (var endpoint in endpoints)
             {
                 var server = Connection.GetServer(endpoint);
-                var keys = server.Keys(0, prefix.ToLowerInvariant() + "*");
-                foreach (var key in keys)
+                var cacheKeyPrefix = CacheExtenstions.ToCacheKey(projectId, keyPrefix);
+                var cacheKeys = server.Keys(0, cacheKeyPrefix + "*");
+                foreach (var cacheKey in cacheKeys)
                 {
-                    _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(key));
-                    onDelete?.Invoke(key);
+                    _retryStrategy.ExecuteWithRetry(() => Cache.KeyDelete(cacheKey));
+                    onDelete?.Invoke(cacheKey);
                 }
             }
         }
 
         public void ClearCache()
         {
+            if (_transientCache.Count > 0)
+            {
+                _transientCache.Clear();
+                return;
+            }
             var endpoints = Connection.GetEndPoints(true);
             foreach (var endpoint in endpoints)
             {
@@ -345,12 +399,25 @@ namespace Epi.Cloud.CacheServices
 
         public void ClearAllDatabases()
         {
+            if (_transientCache.Count > 0)
+            {
+                _transientCache.Clear();
+                return;
+            }
             var endpoints = Connection.GetEndPoints(true);
             foreach (var endpoint in endpoints)
             {
                 var server = Connection.GetServer(endpoint);
                 server.FlushAllDatabases();
             }
+        }
+    }
+
+    public static class CacheExtenstions
+    {
+        public static string ToCacheKey(Guid projectId, string key)
+        {
+            return projectId.ToString("N") + (!string.IsNullOrWhiteSpace(key) ? ("_" + key) : string.Empty);
         }
     }
 }

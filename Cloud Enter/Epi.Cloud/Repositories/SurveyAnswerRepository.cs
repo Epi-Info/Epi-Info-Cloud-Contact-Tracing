@@ -52,6 +52,38 @@ namespace Epi.Web.MVC.Repositories
             }
         }
 
+
+        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest pRequest)
+        {
+            try
+            {
+                //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
+                SurveyAnswerResponse result = null;
+                return result;
+            }
+            catch (FaultException<CustomFaultException> cfe)
+            {
+                throw cfe;
+            }
+            catch (FaultException fe)
+            {
+                throw fe;
+            }
+            catch (CommunicationException ce)
+            {
+                throw ce;
+            }
+            catch (TimeoutException te)
+            {
+                throw te;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest pRequest)
         {
             try

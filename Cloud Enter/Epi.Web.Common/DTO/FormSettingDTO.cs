@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Epi.Cloud.Common.Metadata;
+using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Web.Enter.Common.DTO
 {
@@ -10,6 +12,7 @@ namespace Epi.Web.Enter.Common.DTO
         }
 
         private Dictionary<int, string> _ColumnNameList;
+        private Dictionary<int, FieldDigest> _ColumnDigestList;
         private Dictionary<int, string> _FormControlNameList;
         private Dictionary<int, string> _AssignedUserList;
         private Dictionary<int, string> _UserList;
@@ -42,6 +45,11 @@ namespace Epi.Web.Enter.Common.DTO
         {
             get { return _ColumnNameList; }
             set { _ColumnNameList = value; }
+        }
+        public Dictionary<int, FieldDigest> ColumnDigestList
+        {
+            get { return _ColumnDigestList; }
+            set { _ColumnDigestList = value; }
         }
         public Dictionary<int, string> FormControlNameList
         {

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
-using Epi.Cloud.MetadataServices;
-using Epi.Cloud.CacheServices;
+using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Web.EF
 {
@@ -15,14 +15,11 @@ namespace Epi.Web.EF
     /// </summary>
     public class EntitySurveyInfoDao : ISurveyInfoDao
     {
-        private readonly IEpiCloudCache _epiCloudCache;
         private readonly IProjectMetadataProvider _projectMetadataProvider;
 
         public EntitySurveyInfoDao()
         {
-            // TODO: GEL - Get ProjectMetadataProvider from Unitity Container
-            _epiCloudCache = new EpiCloudCache();
-            _projectMetadataProvider = new ProjectMetadataProvider(_epiCloudCache);
+            _projectMetadataProvider = DependencyHelper.GetService<IProjectMetadataProvider>();
         }
 
         /// <summary>
@@ -30,7 +27,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, int PageNumber = -1, int PageSize = -1)
+        public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, int displayPageNumber = -1, int displayPageSize = -1)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             if (SurveyInfoIdList.Count > 0)
@@ -40,26 +37,13 @@ namespace Epi.Web.EF
                     foreach (string surveyInfoId in SurveyInfoIdList.Distinct())
                     {
                         Guid Id = new Guid(surveyInfoId);
-                        SurveyInfoBO surveyInfoBO = _epiCloudCache.GetSurveyInfoBoMetadata(surveyInfoId);
-                        if (surveyInfoBO == null)
+                        using (var Context = DataObjectFactory.CreateContext())
                         {
-                            using (var Context = DataObjectFactory.CreateContext())
-                            {
-                                var surveyMetadata = Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id);
-                                surveyInfoBO = Mapper.Map(surveyMetadata);
-                            }
-                            var projectId = _epiCloudCache.GetProjectIdFromSurveyId(surveyInfoId);
-                            var projectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(projectId).Result;
-                            if (projectId == null && projectTemplateMetadata != null)
-                            {
-                                _epiCloudCache.SetSurveyIdProjectIdMap(surveyInfoId, projectTemplateMetadata.Project.Id);
-                            }
-                            surveyInfoBO.ProjectTemplateMetadata = projectTemplateMetadata;
-
-                            var isSuccessful = _epiCloudCache.SetSurveyInfoBoMetadata(surveyInfoId, surveyInfoBO);
+                            var surveyMetadata = Context.SurveyMetaDatas.FirstOrDefault(x => x.SurveyId == Id);
+                            var surveyInfoBO = Mapper.Map(surveyMetadata);
+                            var projectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithAllPages).Result;
+                            result.Add(surveyInfoBO);
                         }
-                        result.Add(surveyInfoBO);
-
                     }
                 }
                 catch (Exception ex)
@@ -84,24 +68,23 @@ namespace Epi.Web.EF
 
             // remove the items to skip
             // remove the items after the page size
-            if (PageNumber > 0 && PageSize > 0)
+            if (displayPageNumber > 0 && displayPageSize > 0)
             {
                 result.Sort(CompareByDateCreated);
                 // remove the items to skip
-                if (PageNumber * PageSize - PageSize > 0)
+                if (displayPageNumber * displayPageSize - displayPageSize > 0)
                 {
-                    result.RemoveRange(0, PageSize);
+                    result.RemoveRange(0, displayPageSize);
                 }
 
-                if (PageNumber * PageSize < result.Count)
+                if (displayPageNumber * displayPageSize < result.Count)
                 {
-                    result.RemoveRange(PageNumber * PageSize, result.Count - PageNumber * PageSize);
+                    result.RemoveRange(displayPageNumber * displayPageSize, result.Count - displayPageNumber * displayPageSize);
                 }
             }
 
             return result;
         }
-
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
@@ -486,6 +469,7 @@ namespace Epi.Web.EF
 
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
 
+#if UseXml
             List<string> list = new List<string>();
             try
             {
@@ -501,13 +485,30 @@ namespace Epi.Web.EF
 
                 }
 
+            return result;
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-            return result;
+#endif
 
+            var metadatAccessor = new Cloud.Common.Metadata.MetadataAccessor(RootId);
+            var formDigests = metadatAccessor.FormDigests;
+            result = formDigests
+                .Select(d => new SurveyInfoBO
+                {
+                    SurveyId = d.FormId,
+                    SurveyName = d.FormName,
+                    ParentId = d.ParentFormId,
+                    ViewId = d.ViewId,
+                    OwnerId = d.OwnerUserId,
+                    OrganizationName = d.OrganizationName,
+                    DataAccessRuleId = d.DataAccessRuleId,
+                    IsDraftMode = d.IsDraftMode
+                }).ToList();
+
+            return result;
         }
 
 
@@ -646,6 +647,5 @@ namespace Epi.Web.EF
                 throw (ex);
             }
         }
-
     }
 }

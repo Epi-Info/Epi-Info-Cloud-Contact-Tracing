@@ -257,7 +257,7 @@ namespace MvcDynamicForms.Fields
 
             DisplayOrder = int.Parse(fieldAttributes.TabIndex.ToString());
             RequiredMessage = "This field is required";
-            Key = fieldAttributes.Name;
+            Key = fieldAttributes.FieldName;
             PromptTop = formHeight * (fieldAttributes.PromptTopPositionPercentage);
             PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
             Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
@@ -278,7 +278,7 @@ namespace MvcDynamicForms.Fields
             //IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList"),
             // IsHighlighted = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HighlightedFieldsList"),
             // IsDisabled = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "DisabledFieldsList"),
-            ReadOnly = fieldAttributes.ReadOnly;
+            ReadOnly = fieldAttributes.IsReadOnly;
             Pattern = fieldAttributes.Pattern;
         }
     }

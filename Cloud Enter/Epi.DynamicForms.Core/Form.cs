@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Common.Metadata.Interfaces;
 using MvcDynamicForms.Fields;
 using MvcDynamicForms.Utilities;
 
@@ -19,14 +22,14 @@ namespace MvcDynamicForms
         private string _formWrapperClass = "MvcDynamicForm";
         private string _fieldPrefix = "MvcDynamicField_";
         private FieldList _fields;
-        private Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfo;
-        private string _PageId = "";
+        private Epi.Web.Enter.Common.DTO.SurveyInfoDTO _surveyInfo;
         public double Width { get; set; }
         public double Height { get; set; }
         public bool IsMobile { get; set; }
         public string FormValuesHasChanged { get; set; }
         private string _IsDraftModeStyleClass = "";
 
+        public MetadataAccessor MetadataAccessor { get { return _surveyInfo; } }
 
         /// <summary>
         /// The html element that wraps all rendered html.
@@ -97,6 +100,7 @@ namespace MvcDynamicForms
         public Form()
         {
             _fields = new FieldList(this);
+            PageId = string.Empty;
         }
         /// <summary>
         /// Validates each InputField object contained in the Fields collection. Validation also causes the Error property to be set for each InputField object.
@@ -225,7 +229,7 @@ namespace MvcDynamicForms
         /// This method provides a convenient way of adding multiple Field objects at once.
         /// </summary>
         /// <param name="fields">Field object(s)</param>
-        public void AddFields(params Field[] fields)
+        public void AddFields(params Fields.Field[] fields)
         {
             foreach (var field in fields)
             {
@@ -338,21 +342,11 @@ namespace MvcDynamicForms
         }
         public Epi.Web.Enter.Common.DTO.SurveyInfoDTO SurveyInfo
         {
-            get { return this._SurveyInfo; }
-            set { this._SurveyInfo = value; }
+            get { return this._surveyInfo; }
+            set { this._surveyInfo = value; }
         }
 
-        public string PageId
-        {
-            get
-            {
-                return _PageId;
-            }
-            set
-            {
-                _PageId = value;
-            }
-        }
+        public string PageId { get; set; }
         public int NumberOfPages { get; set; }
         public int CurrentPage { get; set; }
         /// <summary>
@@ -367,31 +361,23 @@ namespace MvcDynamicForms
         public int StatusId { get; set; }
         // To return to survey after exit
         public string PassCode { get; set; }
-        public string HiddenFieldsList
-        {
-            get; set;
-        }
-        public string HighlightedFieldsList
-        {
-            get;
-            set;
-        }
-        public string DisabledFieldsList
-        {
-            get;
-            set;
-        }
-        public string AssignList
-        {
-            get;
-            set;
-        }
-        public string RequiredFieldsList
-        {
-            get;
-            set;
-        }
+        public string HiddenFieldsList { get; set; }
+        public string HighlightedFieldsList { get; set; }
+        public string DisabledFieldsList { get; set; }
+        public string AssignList { get; set; }
+        public string RequiredFieldsList { get; set; }
+
         public Epi.Core.EnterInterpreter.Rule_Context FormCheckCodeObj { get; set; }
+
+        public Epi.Core.EnterInterpreter.Rule_Context GetCheckCodeObj(IEnumerable<IAbridgedFieldInfo> fields, FormResponseDetail formResponseDetail, string formCheckCode)
+        {
+            Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
+            Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
+            result.LoadTemplate(fields, formResponseDetail.FlattenedResponseQA());
+            EIP.Execute(formCheckCode);
+
+            return result;
+        }
 
         public Epi.Core.EnterInterpreter.Rule_Context GetCheckCodeObj(System.Xml.Linq.XDocument xdoc, System.Xml.Linq.XDocument xdocResponse, string FormCheckCode)
         {
@@ -402,15 +388,16 @@ namespace MvcDynamicForms
 
             return result;
         }
-        public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> Obj, string FormCheckCode)
+        public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> Obj, string formCheckCode)
         {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
             Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
             foreach (var item in Obj)
             {
-                result.LoadTemplate(item.MetaData, item.Response);
+                //result.LoadTemplate(item.MetaData, item.Response);
+                result.LoadTemplate(item.FieldDigests, item.ResponseDetail.FlattenedResponseQA());
             }
-            EIP.Execute(FormCheckCode);
+            EIP.Execute(formCheckCode);
 
             return result;
         }

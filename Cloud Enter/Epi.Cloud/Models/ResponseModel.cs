@@ -1,4 +1,6 @@
-﻿namespace Epi.Web.MVC.Models
+﻿using Epi.Web.Enter.Common.Criteria;
+
+namespace Epi.Web.MVC.Models
 {
     public class ResponseModel
     {

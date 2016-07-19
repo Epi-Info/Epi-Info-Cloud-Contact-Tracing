@@ -21,32 +21,16 @@ namespace Epi.Web.EF
         {
             try
             {
-#if false
-                //Unencrypted (Clear Text) connections string here
-                string ctConnectionStringName = "ctEWEEntities";
-                string ctEWEADOconnectionStringName = "ctEWEADO";
-                try
-                {
-                    _connectionString = ConfigurationManager.ConnectionStrings[ctConnectionStringName].ConnectionString;
-                    _eweAdoConnectionString = ConfigurationManager.ConnectionStrings[ctEWEADOconnectionStringName].ConnectionString;
-                }
-                catch
-                {
-                    _connectionString = null;
-                    _eweAdoConnectionString = null;
-                }
-                if (string.IsNullOrWhiteSpace(_connectionString) || string.IsNullOrWhiteSpace(_eweAdoConnectionString))
-#endif
-                {
-                    // Connection strings here
-                    string EWEEntitiesConnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEEntities");
-                    string EWEADOconnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEADO");
+                // Connection strings here
+                string EWEEntitiesConnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEEntities");
+                string EWEADOconnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEADO");
 
+                //Decrypt connection string here
+                var connectionInfo = ConfigurationManager.ConnectionStrings[EWEEntitiesConnectionStringName];
+                _connectionString = connectionInfo != null ?Cryptography.Decrypt(connectionInfo.ConnectionString) : null;
 
-                    //Decrypt connection string here
-                    _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[EWEEntitiesConnectionStringName].ConnectionString);
-                    _eweAdoConnectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[EWEADOconnectionStringName].ConnectionString);
-                }
+                connectionInfo = ConfigurationManager.ConnectionStrings[EWEADOconnectionStringName];
+                _eweAdoConnectionString = connectionInfo != null ? Cryptography.Decrypt(connectionInfo.ConnectionString) : null;
             }
             catch (Exception ex)
             {

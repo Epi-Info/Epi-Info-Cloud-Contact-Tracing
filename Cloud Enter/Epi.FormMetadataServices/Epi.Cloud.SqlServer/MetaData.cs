@@ -66,6 +66,8 @@ namespace Epi.Cloud.SqlServer
                                      from mp in lmp.DefaultIfEmpty()
                                      join mv in metacontext.metaViews on (mp.ViewId) equals mv.ViewId into lmv
                                      from mv in lmv.DefaultIfEmpty()
+                                     //join sm in metacontext.SurveyMetaDatas on new Guid(mv.EWEFormId) equals sm.SurveyId into lsm
+                                     //from sm in lsm.DefaultIfEmpty()
                                      where mf.PageId != null
                                      select new
                                      {
@@ -86,6 +88,8 @@ namespace Epi.Cloud.SqlServer
                                          mv.EIWSFormId,
                                          mv.EWEOrganizationKey,
                                          mv.EWEFormId,
+
+                                         DataAccessRuleId = 0,
 
                                          PageName = mp.Name,
                                          mp.PageId,
@@ -137,44 +141,78 @@ namespace Epi.Cloud.SqlServer
                                          mf.TabIndex,
                                          mf.HasTabStop,
                                          mf.SourceFieldId
+
+                                         //sm.DataAccessRuleId,
+                                         //sm.IsDraftMode,
+                                         //sm.IsShareable,
+                                         //sm.IsSQLProject,
+                                         //sm.OrganizationId,
+                                         //sm.OrganizationName,
+                                         //sm.OwnerId,
+                                         //sm.ParentId,
+                                         //sm.SurveyName
                                      };
 
 
                         var lstViewMetadata = new List<Common.Metadata.View>();
 
-                        var lstGetViews = result.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToList();
+                        var lstGetViews = result.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToArray();
 
-                        foreach (var element in lstGetViews)
+                        var viewProperties = lstGetViews.Select(v => v.First());
+                        var eweFormIds = viewProperties.Select(vp => new Guid(vp.EWEFormId)).Distinct().ToArray();
+                        var surveyMetadataProperties = metacontext.SurveyMetaDatas
+                            .Where(x => eweFormIds.Contains(x.SurveyId))
+                            .Select(x => new { x.SurveyId,
+                                               x.DataAccessRuleId,
+                                               x.IsDraftMode,
+                                               x.IsShareable,
+                                               x.IsSQLProject,
+                                               x.OrganizationId,
+                                               x.OrganizationName,
+                                               x.OwnerId,
+                                               x.ParentId,
+                                               x.SurveyName}).ToArray();
+
+                        foreach (var viewProp in viewProperties)
                         {
-                            foreach (var viewProp in element)
+                            var view = new Common.Metadata.View();
+                            view.ViewId = viewProp.ViewId;
+                            view.Name = viewProp.ViewName;
+                            view.IsRelatedView = viewProp.IsRelatedView;
+                            view.CheckCode = viewProp.CheckCode;
+                            view.CheckCodeBefore = viewProp.CheckCodeBefore;
+                            view.CheckCodeAfter = viewProp.CheckCodeAfter;
+                            view.RecordCheckCodeBefore = viewProp.RecordCheckCodeBefore;
+                            view.RecordCheckCodeAfter = viewProp.RecordCheckCodeAfter;
+                            view.CheckCodeVariableDefinitions = viewProp.CheckCodeVariableDefinitions;
+                            view.Width = viewProp.Width;
+                            view.Height = viewProp.Height;
+                            view.Orientation = viewProp.Orientation;
+                            view.LabelAlign = viewProp.LabelAlign;
+                            view.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
+                            view.EIWSFormId = viewProp.EIWSFormId;
+                            view.OrganizationKey = viewProp.EWEOrganizationKey;
+                            view.FormId = viewProp.EWEFormId;
+                            var eweViewProps = surveyMetadataProperties.Where(x => x.SurveyId == new Guid(viewProp.EWEFormId)).SingleOrDefault();
+                            if (eweViewProps != null)
                             {
-                                var view = new Common.Metadata.View();
-                                view.ViewId = viewProp.ViewId;
-                                view.Name = viewProp.ViewName;
-                                view.IsRelatedView = viewProp.IsRelatedView;
-                                view.CheckCode = viewProp.CheckCode;
-                                view.CheckCodeBefore = viewProp.CheckCodeBefore;
-                                view.CheckCodeAfter = viewProp.CheckCodeAfter;
-                                view.RecordCheckCodeBefore = viewProp.RecordCheckCodeBefore;
-                                view.RecordCheckCodeAfter = viewProp.RecordCheckCodeAfter;
-                                view.CheckCodeVariableDefinitions = viewProp.CheckCodeVariableDefinitions;
-                                view.Width = viewProp.Width;
-                                view.Height = viewProp.Height;
-                                view.Orientation = viewProp.Orientation;
-                                view.LabelAlign = viewProp.LabelAlign;
-                                view.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
-                                view.EIWSFormId = viewProp.EIWSFormId;
-                                view.EWEOrganizationKey = viewProp.EWEOrganizationKey;
-                                view.EWEFormId = viewProp.EWEFormId;
-                                lstViewMetadata.Add(view);
-                                break;
+                                view.FormName = eweViewProps.SurveyName;
+                                view.DataAccessRuleId = eweViewProps.DataAccessRuleId.HasValue ? eweViewProps.DataAccessRuleId.Value : 0;
+                                view.IsDraftMode = eweViewProps.IsDraftMode;
+                                view.IsShareable = eweViewProps.IsShareable.HasValue ? eweViewProps.IsShareable.Value : false;
+                                view.OrganizationId = eweViewProps.OrganizationId;
+                                view.OrganizationName = eweViewProps.OrganizationName;
+                                view.OwnerUserId = eweViewProps.OwnerId;
+                                view.ParentFormId = eweViewProps.ParentId.HasValue ? eweViewProps.ParentId.Value.ToString() : null;
                             }
+
+                            lstViewMetadata.Add(view);
                         }
 
                         projMetaDataInfo.Views = lstViewMetadata.ToArray();
                         var lstGetPages = result.GroupBy(u => new { u.ViewId, u.PageId }).Select(group => group.ToList()).ToList();
 
-                        var sourceTableNames = new List<Tuple<string, string>>();
+                        var sourceTableNames = new List<SourceTableInfo>();
                         var lstPageMetadata = new List<Common.Metadata.Page>();
                         foreach (var element in lstGetPages)
                         {
@@ -253,7 +291,7 @@ namespace Epi.Cloud.SqlServer
                             metapage.Fields = lstFieldMetadata.ToArray();
                             lstPageMetadata.Add(metapage);
                             sourceTableNames.AddRange(metapage.Fields.Where(fields => !string.IsNullOrWhiteSpace(fields.SourceTableName))
-                                .Select(field => new Tuple<string, string>(field.SourceTableName, field.TextColumnName)).ToArray());
+                                .Select(field => new SourceTableInfo(field.SourceTableName, field.TextColumnName)).ToArray());
                         }
 
                         foreach (var view in projMetaDataInfo.Views)
@@ -265,7 +303,7 @@ namespace Epi.Cloud.SqlServer
                         var sourceTables = new List<SourceTable>();
                         foreach (var sourceTableInfo in sourceTableNames)
                         {
-                            var sourceTable = new SourceTable { TableName = sourceTableInfo.Item1, Items = PopulateCodeTables(sourceTableInfo.Item1, sourceTableInfo.Item2).ToArray() };
+                            var sourceTable = new SourceTable { TableName = sourceTableInfo.TableName, Values = PopulateCodeTables(sourceTableInfo.TableName, sourceTableInfo.ColumnName).ToArray() };
                             sourceTables.Add(sourceTable);
                         }
                         template.SourceTables = sourceTables.ToArray();
@@ -279,6 +317,17 @@ namespace Epi.Cloud.SqlServer
 
                 return template;
             }
+        }
+
+        private class SourceTableInfo
+        {
+            public SourceTableInfo(string tableName, string columnName)
+            {
+                TableName = tableName;
+                ColumnName = columnName;
+            }
+            public string TableName { get; set; }
+            public string ColumnName { get; set; }
         }
 
         public DataTable GetDropdownDB(string tableName, string ColumnName)

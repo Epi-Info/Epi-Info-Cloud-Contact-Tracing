@@ -152,7 +152,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyName = pBO.SurveyName,
                 SurveyNumber = pBO.SurveyNumber,
                 XML = pBO.XML,
-                ProjectTemplateMetadata = pBO.ProjectTemplateMetadata,
                 IntroductionText = pBO.IntroductionText,
                 ExitText = pBO.ExitText,
                 OrganizationName = pBO.OrganizationName,
@@ -407,6 +406,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             foreach (FormsHierarchyBO Obj in AllChildIDsList)
             {
                 FormsHierarchyDTO FormsHierarchyDTO = new FormsHierarchyDTO();
+                FormsHierarchyDTO.RootFormId = Obj.RootFormId;
                 FormsHierarchyDTO.FormId = Obj.FormId;
                 FormsHierarchyDTO.ViewId = Obj.ViewId;
                 FormsHierarchyDTO.IsSqlProject = Obj.IsSqlProject;
@@ -447,7 +447,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             };
         }
 
-        public static SurveyResponseBO ToBusinessObject(string Xml, string SurveyId, string ParentRecordId, string ResponseId, int UserId, FormResponseDetail responseDetail = null)
+        public static SurveyResponseBO ToBusinessObject(string SurveyId, string ParentRecordId, string ResponseId, int UserId, FormResponseDetail responseDetail, string Xml = null /* , FormResponseDetail responseDetail = null*/)
         {
             return new SurveyResponseBO
             {

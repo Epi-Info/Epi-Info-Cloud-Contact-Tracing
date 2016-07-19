@@ -47,26 +47,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Configuration\DependencyHelper.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
+    <Compile Include="EntityObjects\FormResponseDetailMethods.cs" />
+    <Compile Include="EntityObjects\PageResponseDetail.cs" />
     <Compile Include="EntityObjects\SurveyResponse.cs" />
     <Compile Include="EntityObjects\FormResponseDetail.cs" />
+    <Compile Include="Metadata\AbridgedFieldInfo.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />
+    <Compile Include="Metadata\FieldDataType.cs" />
+    <Compile Include="Metadata\FieldDigest.cs" />
+    <Compile Include="Metadata\FieldMetadata.cs" />
+    <Compile Include="Metadata\FieldType.cs" />
+    <Compile Include="Metadata\FormDigest.cs" />
     <Compile Include="Metadata\Helpers.cs" />
+    <Compile Include="Metadata\Interfaces\IAbridgedFieldInfo.cs" />
+    <Compile Include="Metadata\Interfaces\IProjectMetadataProvider.cs" />
+    <Compile Include="Metadata\MetadataAccessor.cs" />
     <Compile Include="Metadata\NullableExtensions.cs" />
-    <Compile Include="Metadata\ProjectDigest.cs" />
+    <Compile Include="Metadata\PageDigest.cs" />
     <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
     <Compile Include="Metadata\XmlAttributeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryStrategies.cs" />
+    <Compile Include="Utilities\StringCompressor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="BusinessObjects\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

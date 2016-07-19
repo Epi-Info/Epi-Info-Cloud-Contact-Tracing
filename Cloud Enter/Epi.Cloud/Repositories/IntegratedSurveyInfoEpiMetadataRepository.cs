@@ -4,16 +4,15 @@ using Epi.Web.MVC.Repositories.Core;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
-using Epi.Cloud.MetadataServices;
-using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.CacheServices;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Cloud.MVC.Repositories
 {
     public class IntegratedSurveyInfoEpiMetadataRepository : RepositoryBase, ISurveyInfoRepository
     {
         private readonly IEpiCloudCache _epiCloudCache;
-        private readonly Epi.Cloud.MetadataServices.IProjectMetadataProvider _projectMetadataProvider;
+        private readonly Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider _projectMetadataProvider;
         private readonly Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
         public IntegratedSurveyInfoEpiMetadataRepository(IEpiCloudCache epiCloudCache,
@@ -34,14 +33,7 @@ namespace Epi.Cloud.MVC.Repositories
         {
             try
             {
-                SurveyInfoResponse result = null;
-                result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
-                foreach (var x in result.SurveyInfoList)
-                {
-                    var projectId = _epiCloudCache.GetProjectIdFromSurveyId(x.SurveyId);
-                    x.ProjectTemplateMetadata = _projectMetadataProvider.GetProjectMetadataAsync(projectId).Result;
-                }
-
+                SurveyInfoResponse result = (SurveyInfoResponse)_iDataService.GetSurveyInfo(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)

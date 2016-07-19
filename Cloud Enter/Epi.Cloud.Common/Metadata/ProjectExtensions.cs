@@ -5,37 +5,48 @@ namespace Epi.Cloud.Common.Metadata
 {
     public static class ProjectExtensions
     {
-        public static ProjectDigest[] FilterDigest(this ProjectDigest[] projectDigest, string[] fieldNames)
+        public static PageDigest[] FilterDigest(this PageDigest[] pageDigest, string[] fieldNames)
         {
-            List<ProjectDigest> filteredDigest = new List<ProjectDigest>();
-            if (projectDigest != null)
+            fieldNames = fieldNames.Select(n => n.ToLower()).ToArray();
+            List<PageDigest> filteredDigest = new List<PageDigest>();
+            if (pageDigest != null)
             {
-                foreach (var digest in projectDigest)
+                foreach (var digest in pageDigest)
                 {
-                    var filteredFieldsNames = new List<string>();
-                    digest.FieldNames.Where(n => { if (fieldNames.Contains(n)) { filteredFieldsNames.Add(n); return true; } else return false; });
-                    if (filteredFieldsNames.Count > 0)
+                    var filteredFields = new List<AbridgedFieldInfo>();
+                    digest.Fields.Where(f => { if (fieldNames.Contains(f.FieldName.ToLower())) { filteredFields.Add(f); return true; } else return false; });
+                    if (filteredFields.Count > 0)
                     {
-                        filteredDigest.Add(new ProjectDigest(digest.FormName, digest.FormId, digest.ViewId, digest.IsRelatedView, digest.PageId, digest.Position, filteredFieldsNames.ToArray()));
+                        filteredDigest.Add(new PageDigest(digest.FormName, digest.FormId, digest.ViewId, digest.IsRelatedView,
+                                                          digest.PageName, digest.PageId, digest.Position, filteredFields.ToArray()));
                     }
                 }
             }
             return filteredDigest.ToArray();
         }
 
-        public static int PageIdFromPageNumber(this Template projectTemplateMetadata, string formId, int pageNumber)
+        public static int PageIdFromPageNumber(this PageDigest[][] projectPageDigests, string formId, int pageNumber)
         {
             int pageId = 0;
-            var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
-            if (view != null)
+            var formPageDigests = projectPageDigests.SingleOrDefault(p => p[0].FormId == formId);
+            if (formPageDigests != null)
             {
-                var viewId = view.ViewId;
-                var pagePosition = pageNumber - 1;
-                var digestElement = projectTemplateMetadata.Project.Digest.Where(p => p.Position == pagePosition).SingleOrDefault();
-                if (digestElement != null)
+                var pageDigest = formPageDigests.SingleOrDefault(p => p.PageNumber == pageNumber);
+                if (pageDigest != null)
                 {
-                    pageId = digestElement.PageId;
+                    pageId = pageDigest.PageId;
                 }
+            }
+            return pageId;
+        }
+
+        public static int PageIdFromPageNumber(this PageDigest[] formPageDigests, int pageNumber)
+        {
+            int pageId = 0;
+            var pageDigest = formPageDigests.SingleOrDefault(p => p.PageNumber == pageNumber);
+            if (pageDigest != null)
+            {
+                pageId = pageDigest.PageId;
             }
             return pageId;
         }

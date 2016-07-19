@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.Enter.Common.DTO
 {
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
-    public class SurveyAnswerDTO
+    public class SurveyAnswerDTO : SurveyAnswerStateDTO
     {
         public SurveyAnswerDTO()
         {
@@ -14,73 +13,15 @@ namespace Epi.Web.Enter.Common.DTO
         }
 
         [DataMember]
-        public string ResponseId { get; set; }                                                                  
-        [DataMember]
-        public string SurveyId { get; set; }
-        [DataMember]
-        public DateTime DateUpdated { get; set; }
-        [DataMember]
-        public DateTime? DateCompleted { get; set; }
-        [DataMember]
-        public DateTime DateCreated { get; set; }
-        [DataMember]
-        public int Status { get; set; }
-        [DataMember]
-        public Guid UserPublishKey { get; set; }
-
-        [DataMember]
-        public bool IsDraftMode { get; set; }
-        [DataMember]
-        public bool IsLocked { get; set; }
-        [DataMember]
-        public string ParentRecordId { get; set; }
-        [DataMember]
-        public string UserEmail { get; set; }
-        [DataMember]
-        public int LastActiveUserId { get; set; }
-        [DataMember]
-        public string RelateParentId { get; set; }
-        [DataMember]
-        public int RecordSourceId { get; set; }
-        [DataMember]
         public List<SurveyAnswerDTO> ResponseHierarchyIds { get; set; }
 
         [DataMember]
         public Dictionary<string, string> SqlData { get; set; }
 
         [DataMember]
-        public int ViewId { get; set; }
-        [DataMember]
-        public int FormOwnerId
-        {
-            get;
-            set;
-        }
-        [DataMember]
-        public int LoggedInUserId
-        {
-            get;
-            set;
-        }
-        [DataMember]
-        public bool RecoverLastRecordVersion
-        {
-            get;
-            set;
-        }
-
-        string _xml;
-        [DataMember]
-        public string XML
-        {
-            get { return _xml; }
-            set { _xml = value; }
-        }
-
-        /// <summary>
-        /// Response Question/Answer from DocumentDB.
-        /// </summary>
-        [DataMember]
         public FormResponseDetail ResponseDetail { get; set; }
+
+        [DataMember]
+        public string XML { get; set; }
     }
 }

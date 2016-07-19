@@ -756,6 +756,7 @@ namespace Epi.Web.WCF.SurveyService
                 SurveyAnswerCriteria criteria = pRequest.Criteria;
                 //result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(pRequest.Criteria.SurveyId, pRequest.Criteria.PageNumber, pRequest.Criteria.IsMobile));
                 result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(criteria));
+                pRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
                 //Query The number of records
 
                 //result.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria.SurveyId, pRequest.Criteria.IsMobile);
@@ -1017,7 +1018,8 @@ namespace Epi.Web.WCF.SurveyService
                 AllResponsesIDsList = null;
             }
             //3 Combining the lists.
-
+            // TODO: Temporary until DocumentDB is fully implemented
+            AllResponsesIDsList[0].SurveyId = RelatedFormIDsList[0].FormId;
             FormsHierarchyResponse.FormsHierarchy = Mapper.ToFormHierarchyDTO(CombineLists(RelatedFormIDsList, AllResponsesIDsList));
 
             return FormsHierarchyResponse;
@@ -1034,6 +1036,7 @@ namespace Epi.Web.WCF.SurveyService
             foreach (var Item in RelatedFormIDsList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
+                FormsHierarchyBO.RootFormId = Item.RootFormId;
                 FormsHierarchyBO.FormId = Item.FormId;
                 FormsHierarchyBO.ViewId = Item.ViewId;
                 FormsHierarchyBO.IsSqlProject = Item.IsSqlProject;

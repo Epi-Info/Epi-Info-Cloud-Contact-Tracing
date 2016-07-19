@@ -5,208 +5,82 @@ using Epi.Cloud.Common.Metadata;
 namespace Epi.Web.Enter.Common.DTO
 {
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
-    public class SurveyInfoDTO
+    public class SurveyInfoDTO : MetadataAccessor
     {
-        private string _SurveyId;
-        private string _SurveyNumber;
-        private string _SurveyName;
-        private int _SurveyType;
-        private string _IntroductionText;
-        private string _ExitText;
-        private string _DepartmentName;
-        private string _OrganizationName;
-        private string _XML;
-        private Template _projectTemplateMetadata;
-        private bool _IsSuccess;
-        private DateTime _ClosingDate;
-        private Guid _UserPublishKey;
-        private Guid _OrganizationKey;
-        private bool _IsDraftMode;
-        private DateTime _StartDate;
-        private int _ViewId;
-        private int _OwnerId;
-        private bool _IsSqlProject;
-        private bool _IsShareable;
-        private string _DBConnectionString;
-        private int _DataAccessRuleId;
-        private bool _HasDraftModeData;
-        private bool _ewavLiteToggleSwitch;
-        private bool _IsShared;
-        public string _ParentId;
         [DataMember]
-        public string ParentId
-        {
-            get { return _ParentId; }
-            set { _ParentId = value; }
-        }
-        [DataMember]
-        public int DataAccessRuleId
-        {
-            get { return _DataAccessRuleId; }
-            set { _DataAccessRuleId = value; }
-        }
-        [DataMember]
-        public string SurveyId
-        {
-            get { return _SurveyId; }
-            set { _SurveyId = value; }
-        }
-        [DataMember]
-        public string SurveyNumber
-        {
-            get { return _SurveyNumber; }
-            set { _SurveyNumber = value; }
-        }
+        public string ParentId { get; set; }
 
         [DataMember]
-        public string SurveyName
-        {
-            get { return _SurveyName; }
-            set { _SurveyName = value; }
-        }
+        public int DataAccessRuleId { get; set; }
 
         [DataMember]
-        public int SurveyType
-        {
-            get { return _SurveyType; }
-            set { _SurveyType = value; }
-        }
+        public string SurveyId { get { return _formId; } set { _formId = value; } }
 
         [DataMember]
-        public string OrganizationName
-        {
-            get { return _OrganizationName; }
-            set { _OrganizationName = value; }
-        }
+        public string SurveyNumber { get; set; }
 
         [DataMember]
-        public string DepartmentName
-        {
-            get { return _DepartmentName; }
-            set { _DepartmentName = value; }
-        }
+        public string SurveyName { get; set; }
+
+        [DataMember]
+        public int SurveyType { get; set; }
+
+        [DataMember]
+        public string OrganizationName { get; set; }
+
+        [DataMember]
+        public string DepartmentName { get; set; }
+
+        [DataMember]
+        public string IntroductionText { get; set; }
+
+        [DataMember]
+        public string ExitText { get; set; }
+
+        [DataMember]
+        public string XML { get; set; }
+
+        [DataMember]
+        public bool IsSuccess { get; set; }
+
+        [DataMember]
+        public DateTime ClosingDate { get; set; }
+
+        [DataMember]
+        public Guid UserPublishKey { get; set; }
+
+        [DataMember]
+        public Guid OrganizationKey { get; set; }
 
 
         [DataMember]
-        public string IntroductionText
-        {
-            get { return _IntroductionText; }
-            set { _IntroductionText = value; }
-        }
+        public bool IsDraftMode { get; set; }
 
         [DataMember]
-        public string ExitText
-        {
-            get { return _ExitText; }
-            set { _ExitText = value; }
-        }
+        public DateTime StartDate { get; set; }
 
         [DataMember]
-        public string XML
-        {
-            get { return _XML; }
-            set { _XML = value; }
-        }
+        public int ViewId { get; set; }
 
         [DataMember]
-        public Template ProjectTemplateMetadata
-        {
-            get { return _projectTemplateMetadata; }
-            set { _projectTemplateMetadata = value; }
-        }
+        public int OwnerId { get; set; }
 
         [DataMember]
-        public bool IsSuccess
-        {
-            get { return _IsSuccess; }
-            set { _IsSuccess = value; }
-        }
+        public bool IsSqlProject { get; set; }
 
         [DataMember]
-        public DateTime ClosingDate
-        {
-            get { return _ClosingDate; }
-            set { _ClosingDate = value; }
-        }
+        public string DBConnectionString { get; set; }
 
         [DataMember]
-        public Guid UserPublishKey
-        {
-            get { return _UserPublishKey; }
-            set { _UserPublishKey = value; }
-        }
+        public bool IsShareable { get; set; }
 
         [DataMember]
-        public Guid OrganizationKey
-        {
-            get { return _OrganizationKey; }
-            set { _OrganizationKey = value; }
-        }
+        public bool IsShared { get; set; }
 
         [DataMember]
-        public bool IsDraftMode
-        {
-            get { return _IsDraftMode; }
-            set { _IsDraftMode = value; }
-        }
-
+        public bool HasDraftModeData { get; set; }
 
         [DataMember]
-        public DateTime StartDate
-        {
-            get { return _StartDate; }
-            set { _StartDate = value; }
-        }
-
-        [DataMember]
-        public int ViewId
-        {
-            get { return _ViewId; }
-            set { _ViewId = value; }
-        }
-        [DataMember]
-        public int OwnerId
-        {
-            get { return _OwnerId; }
-            set { _OwnerId = value; }
-        }
-
-
-        [DataMember]
-        public bool IsSqlProject
-        {
-            get { return _IsSqlProject; }
-            set { _IsSqlProject = value; }
-        }
-        [DataMember]
-        public string DBConnectionString
-        {
-            get { return _DBConnectionString; }
-            set { _DBConnectionString = value; }
-        }
-        [DataMember]
-        public bool IsShareable
-        {
-            get { return _IsShareable; }
-            set { _IsShareable = value; }
-        }
-        [DataMember]
-        public bool IsShared
-        {
-            get { return _IsShared; }
-            set { _IsShared = value; }
-        }
-        [DataMember]
-        public bool HasDraftModeData
-        {
-            get { return _HasDraftModeData; }
-            set { _HasDraftModeData = value; }
-        }
-        [DataMember]
-        public bool EwavLiteToggleSwitch
-        {
-            get { return _ewavLiteToggleSwitch; }
-            set { _ewavLiteToggleSwitch = value; }
-        }
+        public bool EwavLiteToggleSwitch { get; set; }
     }
 }

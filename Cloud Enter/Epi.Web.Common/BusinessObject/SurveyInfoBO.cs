@@ -14,7 +14,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private string _DepartmentName;
         private string _OrganizationName;
         private string _XML;
-        private Template _projectTemplateMetadata;
         private string _ExitText;
         private long _TemplateXMLSize;
         private Guid _UserPublishKey;
@@ -102,15 +101,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         {
             get { return _XML; }
             set { _XML = value; }
-        }
-
-        /// <summary>
-        /// Metadata Template Object
-        /// </summary>
-        public Template ProjectTemplateMetadata
-        {
-            get { return _projectTemplateMetadata; }
-            set { _projectTemplateMetadata = value; }
         }
 
         public DateTime ClosingDate

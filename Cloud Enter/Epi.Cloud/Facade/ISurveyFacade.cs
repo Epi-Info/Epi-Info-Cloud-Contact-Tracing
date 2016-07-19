@@ -20,6 +20,7 @@ namespace Epi.Web.MVC.Facade
         SurveyInfoModel GetSurveyInfoModel(string surveyId);
         List<FormInfoModel> GetFormsInfoModelList(FormsInfoRequest formReq);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, string FormId = "", int UserId = 0);
+        SurveyAnswerResponse GetSurveyAnswerState(string responseId);
         ISurveyAnswerRepository GetSurveyAnswerRepository();
         SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest FormResponseReq);
         FormSettingResponse GetFormSettings(FormSettingRequest FormSettingRequest);

@@ -4,11 +4,17 @@ namespace Epi.Web.MVC.Models
 {
     public class RelateModel
     {
+        private string _rootFormId;
         private string _FormId;
         private List<SurveyAnswerModel> _ResponseIds;
         private bool _IsRoot;
         private int _ViewId;
         private bool _IsSqlProject;
+        public string RootFormId
+        {
+            get { return _rootFormId; }
+            set { _rootFormId = value; }
+        }
         public string FormId
         {
             get { return _FormId; }

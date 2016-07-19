@@ -12,6 +12,9 @@ namespace Epi.Cloud.Interfaces.DataInterface
 
         SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest request);
 
+        SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest request);
+
+
         SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest request);
 
         SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest request);

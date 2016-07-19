@@ -24,13 +24,13 @@ namespace MvcDynamicForms.Fields
         protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
-            Title = fieldAttributes.Name;
+            Title = fieldAttributes.FieldName;
             Prompt = fieldAttributes.PromptText;
             DisplayOrder = fieldAttributes.TabIndex;
             // Required = _FieldTypeID.Attribute("IsRequired").Value == "True" ? true : false,
             //RequiredMessage = _FieldTypeID.Attribute("PromptText").Value + " is required",
             RequiredMessage = "This field is required";
-            Key = fieldAttributes.Name;
+            Key = fieldAttributes.FieldName;
             PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
             PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
             Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
@@ -45,7 +45,7 @@ namespace MvcDynamicForms.Fields
             InputFieldfontstyle = fieldAttributes.ControlFontStyle;
             InputFieldfontSize = fieldAttributes.ControlFontSize;
             InputFieldfontfamily = fieldAttributes.ControlFontFamily;
-            IsReadOnly = fieldAttributes.ReadOnly;
+            IsReadOnly = fieldAttributes.IsReadOnly;
             RelatedViewId = fieldAttributes.RelatedViewId;
             //  Value = _ControlValue,
             //IsHidden = Helpers.GetControlState(SurveyAnswer, _FieldTypeID.Attribute("Name").Value, "HiddenFieldsList"),

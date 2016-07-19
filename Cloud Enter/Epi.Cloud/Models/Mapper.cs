@@ -61,7 +61,6 @@ namespace Epi.Web.MVC.Models
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
                 FormOwnerId = SurveyInfoDTO.OwnerId,
-                ProjectTemplateMetadata = SurveyInfoDTO.ProjectTemplateMetadata,
                 XML = SurveyInfoDTO.XML
             };
         }
@@ -88,7 +87,6 @@ namespace Epi.Web.MVC.Models
                 UserPublishKey = SurveyInfoModel.UserPublishKey,
                 IsDraftMode = SurveyInfoModel.IsDraftMode,
                 StartDate = SurveyInfoModel.StartDate,
-                ProjectTemplateMetadata = SurveyInfoModel.ProjectTemplateMetadata,
                 XML = SurveyInfoModel.XML
             };
         }
@@ -145,6 +143,7 @@ namespace Epi.Web.MVC.Models
             foreach (var Obj in FormsHierarchy)
             {
                 RelateModel RelateModel = new RelateModel();
+                RelateModel.RootFormId = Obj.RootFormId;
                 RelateModel.FormId = Obj.FormId;
                 RelateModel.ViewId = Obj.ViewId;
                 RelateModel.IsSqlProject = Obj.IsSqlProject;
@@ -304,7 +303,6 @@ namespace Epi.Web.MVC.Models
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
                 FormOwnerId = SurveyInfoDTO.OwnerId,
-                ProjectTemplateMetadata = SurveyInfoDTO.ProjectTemplateMetadata,
                 XML = SurveyInfoDTO.XML
             };
         }

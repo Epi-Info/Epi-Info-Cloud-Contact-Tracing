@@ -260,8 +260,8 @@ namespace Epi.Web.SurveyManager.Client
 
                         for (int i = 1; i <= SizeResult.NumberOfPages; i++)
                         {
-                            Request.Criteria.PageNumber = i;
-                            Request.Criteria.PageSize = PageSize;
+                            Request.Criteria.GridPageNumber = i;
+                            Request.Criteria.GridPageSize = PageSize;
                             Epi.Web.Enter.Common.Message.SurveyAnswerResponse Result = client.GetSurveyAnswer(Request);
                             SurveyAnswerResponseTextBox.AppendText(string.Format(" -Number of available records: {0}\n\n", Result.SurveyResponseList.Count));
                             foreach (Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer in Result.SurveyResponseList)

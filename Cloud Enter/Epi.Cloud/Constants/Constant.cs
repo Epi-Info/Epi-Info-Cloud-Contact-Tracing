@@ -4,12 +4,6 @@ namespace Epi.Web.MVC.Constants
 {
     public static class Constant
     {
-        public enum Status
-        { 
-           InProgress = 1,
-           Complete = 2
-        }
-
         /*sql commands*/
         public const string UPDATE = "Update";
         public const string UpdateMulti = "UpdateMulti";

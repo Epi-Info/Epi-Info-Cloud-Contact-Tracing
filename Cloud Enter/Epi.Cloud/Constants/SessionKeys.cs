@@ -11,6 +11,7 @@
         public const string IsOwner = "IsOwner";
         public const string IsSqlProject = "IsSqlProject";
         public const string PageNumber = "PageNumber";
+        public const string ProjectId = "ProjectId";
         public const string RecoverLastRecordVersion = "RecoverLastRecordVersion";
         public const string RelateButtonPageId = "RelateButtonPageId";
         public const string RequestedViewId = "RequestedViewId";

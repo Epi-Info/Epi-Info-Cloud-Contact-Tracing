@@ -6,6 +6,7 @@ using Epi.Web.MVC.Models;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -29,9 +30,11 @@ namespace Epi.Web.MVC.Facade
         private Enter.Common.DTO.SurveyAnswerDTO _surveyAnswerDTO;
 
         //declare SurveyResponseXML object
-        private SurveyResponseHelper _surveyResponseHelper;
+        private SurveyResponseDocDb _surveyResponseHelper;
 
         private FormInfoDTO _FormInfoDTO;
+
+        private readonly IProjectMetadataProvider _projectMetadataProvider;
 
         /// <summary>
         /// Injectinting ISurveyInfoRepository through Constructor
@@ -42,9 +45,10 @@ namespace Epi.Web.MVC.Facade
                             Epi.Web.Enter.Common.Message.SurveyInfoRequest surveyInfoRequest,
                             Epi.Web.Enter.Common.Message.SurveyAnswerRequest surveyResponseRequest,
                             Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-                            SurveyResponseHelper surveyResponseXML, 
+                            SurveyResponseDocDb surveyResponseXML, 
                             UserAuthenticationRequest surveyAuthenticationRequest, 
-                            FormInfoDTO FormInfoDTO)
+                            FormInfoDTO FormInfoDTO,
+                            IProjectMetadataProvider projectMetadataProvider)
         {
             _iSurveyInfoRepository = iSurveyInfoRepository;
             _iSurveyAnswerRepository = iSurveyResponseRepository;
@@ -53,7 +57,7 @@ namespace Epi.Web.MVC.Facade
             _surveyAnswerDTO = surveyAnswerDTO;
             _surveyResponseHelper = surveyResponseXML;
             _FormInfoDTO = FormInfoDTO;
-
+            _projectMetadataProvider = projectMetadataProvider;
 
         }
 
@@ -82,8 +86,6 @@ namespace Epi.Web.MVC.Facade
             if (FormsHierarchyDTOList == null)
             {
                 surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
-                // TODO: GEL
-                //var surveyInfoBoCache = (Cloud.CacheServices.ISurveyInfoBOCache)System.Web.Mvc.DependencyResolver.Current.GetService(typeof(Cloud.CacheServices.IEpiCloudCache));
 
                 if (_SurveyAnswerDTOList != null)
                 {
@@ -99,7 +101,7 @@ namespace Epi.Web.MVC.Facade
 
             else
             {
-                var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == surveyAnswerDTO.SurveyId);
+                var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == (surveyAnswerDTO != null ? surveyAnswerDTO.SurveyId : surveyId));
                 surveyInfoDTO = SurveyInfoDTO.SurveyInfo;
 
                 _SurveyAnswerDTOList = new List<SurveyAnswerDTO>();
@@ -119,11 +121,12 @@ namespace Epi.Web.MVC.Facade
 
                 foreach (var item in _SurveyAnswerDTOList)
                 {
-                    var _SurveyInfoDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == item.SurveyId);
-                    List.Add(_SurveyInfoDTO.SurveyInfo);
+                    if (item != null)
+                    {
+                        var _SurveyInfoDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == item.SurveyId);
+                        List.Add(_SurveyInfoDTO.SurveyInfo);
+                    }
                 }
-
-
             }
 
             MvcDynamicForms.Form form = null;
@@ -132,13 +135,13 @@ namespace Epi.Web.MVC.Facade
             {
                 Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
                 Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO,IsAndroid );
+                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid );
             }
             else
             {
                 Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
                 Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO,IsAndroid );
+                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid );
             }
             return form;
         }
@@ -212,16 +215,23 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
         /// <param name="ResponseId"></param>
         /// <returns></returns>
-        public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, string FormId = "", int UserId = 0)
+        public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, string formId = "", int userId = 0)
         {
             _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Clear();
             _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
-            _surveyAnswerRequest.Criteria.SurveyId = FormId;
-            _surveyAnswerRequest.Criteria.UserId = UserId;
+            _surveyAnswerRequest.Criteria.SurveyId = formId;
+            _surveyAnswerRequest.Criteria.UserId = userId;
             SurveyAnswerResponse surveyAnswerResponse = _iSurveyAnswerRepository.GetSurveyAnswer(_surveyAnswerRequest);
             return surveyAnswerResponse;
         }
 
+        public SurveyAnswerResponse GetSurveyAnswerState(string responseId)
+        {
+            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Clear();
+            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
+            SurveyAnswerResponse surveyAnswerResponse = _iSurveyAnswerRepository.GetSurveyAnswerState(_surveyAnswerRequest);
+            return surveyAnswerResponse;
+        }
 
         /// <summary>
         /// Gets the information of Forms User has assigned/authorized.
@@ -264,9 +274,15 @@ namespace Epi.Web.MVC.Facade
         }
         public FormSettingResponse GetFormSettings(FormSettingRequest pRequest)
         {
-            FormSettingResponse FormSettingResponse = _iSurveyAnswerRepository.GetFormSettings(pRequest);
+            var projectId = pRequest.ProjectId;
+            var formId = pRequest.FormInfo.FormId;
+            FormSettingResponse formSettingResponse = _iSurveyAnswerRepository.GetFormSettings(pRequest);
+            var formSetting = formSettingResponse.FormSetting;
+            var fieldDigests = _projectMetadataProvider.GetFieldDigestsAsync(formId, formSetting.ColumnNameList.Values).Result;
+            var reverseDictionary = formSetting.ColumnNameList.Select(t => new { t.Key, t.Value }).ToDictionary(t => t.Value, t => t.Key);
+            formSetting.ColumnDigestList = fieldDigests.Select(t => new { Key = reverseDictionary[t.FieldName], Digest = t }).ToDictionary(t => t.Key, t => t.Digest);
 
-            return FormSettingResponse;
+            return formSettingResponse;
 
         }
 

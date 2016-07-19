@@ -11,21 +11,21 @@ namespace Epi.Cloud.DataEntryServices.Helpers
         /// </summary>
         /// <param name="surveyResponse">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A SurveyInfoBO business object.</returns>
-        public static SurveyResponseBO Map(SurveyResponse surveyResponse, Web.EF.User user = null, int LastActiveUseerId = -1)
+        public static SurveyResponseBO Map(SurveyResponse surveyResponse, Web.EF.User user = null, int LastActiveUserId = -1)
         {
-            SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
+            SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
 
-            SurveyResponseBO.SurveyId = surveyResponse.SurveyId.ToString();
-            SurveyResponseBO.ResponseId = surveyResponse.ResponseId.ToString();
-            //SurveyResponseBO.XML = entity.ResponseXML;
-            SurveyResponseBO.Status = surveyResponse.StatusId;
-            SurveyResponseBO.DateUpdated = surveyResponse.DateUpdated;
-            SurveyResponseBO.DateCompleted = surveyResponse.DateCompleted;
-            //SurveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
-            SurveyResponseBO.DateCreated = surveyResponse.DateCreated;
-            SurveyResponseBO.IsDraftMode = surveyResponse.IsDraftMode;
-            SurveyResponseBO.IsLocked = surveyResponse.IsLocked;
-            SurveyResponseBO.LastActiveUserId = LastActiveUseerId;
+            surveyResponseBO.SurveyId = surveyResponse.SurveyId.ToString();
+            surveyResponseBO.ResponseId = surveyResponse.ResponseId.ToString();
+            //surveyResponseBO.XML = entity.ResponseXML;
+            surveyResponseBO.Status = surveyResponse.StatusId;
+            surveyResponseBO.DateUpdated = surveyResponse.DateUpdated;
+            surveyResponseBO.DateCompleted = surveyResponse.DateCompleted;
+            //surveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
+            surveyResponseBO.DateCreated = surveyResponse.DateCreated;
+            surveyResponseBO.IsDraftMode = surveyResponse.IsDraftMode;
+            surveyResponseBO.IsLocked = surveyResponse.IsLocked;
+            surveyResponseBO.LastActiveUserId = LastActiveUserId;
             //TODO Implement for DocumentDB
             //if (surveyResponse.SurveyMetaData != null)
             //{
@@ -33,20 +33,61 @@ namespace Epi.Cloud.DataEntryServices.Helpers
             //}
             if (surveyResponse.ParentRecordId != null)
             {
-                SurveyResponseBO.ParentRecordId = surveyResponse.ParentRecordId.ToString();
+                surveyResponseBO.ParentRecordId = surveyResponse.ParentRecordId.ToString();
             }
             if (surveyResponse.RelateParentId != null)
             {
-                SurveyResponseBO.RelateParentId = surveyResponse.RelateParentId.ToString();
+                surveyResponseBO.RelateParentId = surveyResponse.RelateParentId.ToString();
             }
-            //TODO Implement for DocumentDB
-            //if (user != null)
-            //{
-            //    SurveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
-            //}
-            SurveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
+            if (user != null)
+            {
+                surveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
+            }
+            surveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
 
-            return SurveyResponseBO;
+            return surveyResponseBO;
+        }
+
+        /// <summary>
+        /// Maps SurveyMetaData entity to SurveyInfoBO business object.
+        /// </summary>
+        /// <param name="surveyResponse">A SurveyMetaData entity to be transformed.</param>
+        /// <returns>A SurveyInfoBO business object.</returns>
+        public static SurveyResponseBO Map(Epi.Web.EF.SurveyResponse surveyResponse, Web.EF.User user = null, int LastActiveUserId = -1)
+        {
+            SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
+
+            surveyResponseBO.SurveyId = surveyResponse.SurveyId.ToString();
+            surveyResponseBO.ResponseId = surveyResponse.ResponseId.ToString();
+            //surveyResponseBO.XML = entity.ResponseXML;
+            surveyResponseBO.Status = surveyResponse.StatusId;
+            surveyResponseBO.DateUpdated = surveyResponse.DateUpdated;
+            surveyResponseBO.DateCompleted = surveyResponse.DateCompleted;
+            //surveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
+            surveyResponseBO.DateCreated = surveyResponse.DateCreated;
+            surveyResponseBO.IsDraftMode = surveyResponse.IsDraftMode;
+            surveyResponseBO.IsLocked = surveyResponse.IsLocked;
+            surveyResponseBO.LastActiveUserId = LastActiveUserId;
+            //TODO Implement for DocumentDB
+            //if (surveyResponse.SurveyMetaData != null)
+            //{
+            //    SurveyResponseBO.ViewId = (int)surveyResponse.SurveyMetaData.ViewId;
+            //}
+            if (surveyResponse.ParentRecordId != null)
+            {
+                surveyResponseBO.ParentRecordId = surveyResponse.ParentRecordId.ToString();
+            }
+            if (surveyResponse.RelateParentId != null)
+            {
+                surveyResponseBO.RelateParentId = surveyResponse.RelateParentId.ToString();
+            }
+            if (user != null)
+            {
+                surveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
+            }
+            surveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
+
+            return surveyResponseBO;
         }
 
         public static List<SurveyResponseBO> Map(List<SurveyResponse> entities)

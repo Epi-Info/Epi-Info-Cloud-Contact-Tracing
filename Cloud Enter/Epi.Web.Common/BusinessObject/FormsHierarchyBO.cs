@@ -6,12 +6,20 @@ namespace Epi.Web.Enter.Common.BusinessObject
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class FormsHierarchyBO
     {
+        private string _rootFormId;
         private string _FormId;
         private List<SurveyResponseBO> _ResponseIds;
         private bool _IsRoot;
         private int _ViewId;
         private bool _IsSqlProject;
         private SurveyInfoBO _SurveyInfo;
+
+        [DataMember]
+        public string RootFormId
+        {
+            get { return _rootFormId; }
+            set { _rootFormId = value; }
+        }
         [DataMember]
         public string FormId
         {

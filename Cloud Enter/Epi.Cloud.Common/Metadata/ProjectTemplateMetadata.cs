@@ -51,9 +51,9 @@ namespace Epi.Cloud.Common.Metadata
         public string EditorFontName { get; set; }
         public decimal EditorFontSize { get; set; }
         public View[] Views { get; set; }
-        public ProjectDigest[] Digest { get; set; }
- 
-        //  public ProjectCollectedData CollectedData { get; set; }
+
+        public FormDigest[] FormDigests { get; set; }
+        public PageDigest[][] FormPageDigests { get; set; }
 
         public Project Clone()
         {
@@ -87,10 +87,22 @@ namespace Epi.Cloud.Common.Metadata
         public int? Height { get; set; }
         public string Orientation { get; set; }
         public string LabelAlign { get; set; }
+
+
+        public string FormId { get; set; }
+        public string FormName { get; set; }
+        public string ParentFormId { get; set; }
+        public int OrganizationId { get; set; }
+        public string OrganizationName { get; set; }
+        public string OrganizationKey { get; set; }
+        public int OwnerUserId { get; set; }
+        public bool IsShareable { get; set; }
+        public int DataAccessRuleId { get; set; }
+        public bool IsDraftMode { get; set; }
+
+
         public string EIWSOrganizationKey { get; set; }
         public string EIWSFormId { get; set; }
-        public string EWEOrganizationKey { get; set; }
-        public string EWEFormId { get; set; }
 
         public Page[] Pages { get; set; }
 
@@ -119,6 +131,8 @@ namespace Epi.Cloud.Common.Metadata
         public int BackgroundId { get; set; }
         public int ViewId { get; set; }
         public Field[] Fields { get; set; }
+        public SourceTable[] SourceTables { get; set; }
+
         public Page Clone()
         {
             var clone = (Page)MemberwiseClone();
@@ -188,14 +202,14 @@ namespace Epi.Cloud.Common.Metadata
         public string Expr1016 { get; set; }
         public string Expr1017 { get; set; }
 
-        public string[] SourceTableItems { get; set; }
+        public string[] SourceTableValues { get; set; }
     }
 
     [DesignerCategory("code")]
     public partial class SourceTable
     {
         public string TableName { get; set; }
-        public string[] Items { get; set; }
+        public string[] Values { get; set; }
     }
 
     [DesignerCategory("code")]

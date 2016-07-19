@@ -25,42 +25,6 @@ namespace Epi.Web.WCF.SurveyService
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="pRequestMessage"></param>
-        /// <returns></returns>
-        public PublishResponse PublishSurvey(PublishRequest pRequest)
-        {
-            try
-            {
-                PublishResponse result = new PublishResponse(pRequest.RequestId);
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EF.EntityOrganizationDao();
-
-
-                Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
-                SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
-                SurveyRequestResultBO surveyRequestResultBO = Implementation.PublishSurvey(surveyInfoBO);
-                result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
-            }
-        }
-
-
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="pRequest"></param>
         /// <returns></returns>
         public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
@@ -909,38 +873,6 @@ namespace Epi.Web.WCF.SurveyService
                     validSurvey = Implementation.IsSurveyInfoValidByOrgKey(request.Criteria.SurveyIdList[0].ToString(), request.Criteria.OrganizationKey.ToString());
                 }
                 return validSurvey;
-            }
-            catch (Exception ex)
-            {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="pRequestMessage"></param>
-        /// <returns></returns>
-        public PublishResponse RePublishSurvey(PublishRequest pRequest)
-        {
-            try
-            {
-                PublishResponse result = new PublishResponse(pRequest.RequestId);
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EF.EntityOrganizationDao();
-
-
-                Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
-                SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
-                SurveyRequestResultBO surveyRequestResultBO = Implementation.RePublishSurvey(surveyInfoBO);
-                result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
-
-                return result;
             }
             catch (Exception ex)
             {

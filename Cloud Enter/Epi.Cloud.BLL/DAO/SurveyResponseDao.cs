@@ -131,6 +131,35 @@ namespace Epi.Cloud.BLL.DAO
         public void InsertSurveyResponse(SurveyResponseBO surveyResponse)
         {
             throw new NotImplementedException();
+#if WebEnterCode
+            try
+            {
+                using (var Context = DataObjectFactory.CreateContext())
+                {
+                    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
+                    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
+                    if (SurveyResponse.CurrentOrgId > 0)
+                    {
+                        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
+                    }
+                    else
+                    {
+                        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
+                    }
+                    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
+                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+                    SurveyResponseEntity.Users.Add(User);
+                    Context.AddToSurveyResponses(SurveyResponseEntity);
+
+                    Context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+#endif //WebEnterCode
         }
 
         public bool DoesResponseExist(Guid responseId)
@@ -153,7 +182,7 @@ namespace Epi.Cloud.BLL.DAO
             throw new NotImplementedException();
         }
 
-        #region Security API
+#region Security API
         public void UpdatePassCode(UserAuthenticationRequestBO passcodeBO)
         {
             throw new NotImplementedException();
@@ -173,6 +202,6 @@ namespace Epi.Cloud.BLL.DAO
         {
             throw new NotImplementedException();
         }
-        #endregion Security API
+#endregion Security API
     }
 }

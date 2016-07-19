@@ -12,7 +12,7 @@ namespace Epi.Web.BLL
     /// 
     /// </summary>
 
-    public class Publisher
+    public class Publisher : MetadataAccessor
     {
         private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
         private Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
@@ -31,15 +31,17 @@ namespace Epi.Web.BLL
             this.SurveyInfoDao = pSurveyInfoDao;
             this.OrganizationDao = pPrganizationDao;
         }
+
         public Publisher()
         {
 
         }
+
         public SurveyRequestResultBO PublishSurvey(SurveyInfoBO pRequestMessage)
         {
             SurveyRequestResultBO result = new SurveyRequestResultBO();
 
-            if (IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
+            if (IsRelatedForm(GetFormDigest(pRequestMessage.SurveyId)))
             {
                 result = PublishRelatedFormSurvey(pRequestMessage);
             }
@@ -51,14 +53,11 @@ namespace Epi.Web.BLL
             return result;
         }
 
-
-
-
         public SurveyRequestResultBO RePublishSurvey(SurveyInfoBO pRequestMessage)
         {
 
             SurveyRequestResultBO result = new SurveyRequestResultBO();
-            if (IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
+            if (IsRelatedForm(GetFormDigest(pRequestMessage.SurveyId)))
             {
                 result = RePublishRelatedFormSurvey(pRequestMessage);
             }
@@ -69,39 +68,24 @@ namespace Epi.Web.BLL
             return result;
         }
 
-
-
         private static bool ValidateSurveyFields(SurveyInfoBO pRequestMessage)
         {
-
             bool isValid = true;
-
 
             if (pRequestMessage.ClosingDate == null)
             {
-
-                isValid = false;
-
-            }
-
-            else if (pRequestMessage.ProjectTemplateMetadata == null)
-            {
-
                 isValid = false;
             }
-            else if (string.IsNullOrEmpty(pRequestMessage.SurveyName))
-            {
 
+            if (string.IsNullOrEmpty(pRequestMessage.SurveyName))
+            {
                 isValid = false;
             }
 
             else if (string.IsNullOrEmpty(pRequestMessage.UserPublishKey.ToString()))
             {
-
                 isValid = false;
             }
-
-
 
             return isValid;
         }
@@ -142,9 +126,9 @@ namespace Epi.Web.BLL
             return URL.ToString();
         }
 
-        private bool IsRelatedForm(Template projectTemplateMetadata)
+        private bool IsRelatedForm(FormDigest formDigest)
         {
-            return projectTemplateMetadata.Project.Views.Length > 1;
+            return formDigest.ParentFormId != null;
         }
 
         private int GetViewId(Template projectTemplateMetadata)
@@ -157,16 +141,13 @@ namespace Epi.Web.BLL
         {
             SurveyRequestResultBO result = new SurveyRequestResultBO();
 
-
             var SurveyId = Guid.NewGuid();
 
             if (pRequestMessage != null)
             {
-
                 //if (! string.IsNullOrEmpty(pRequestMessage.SurveyNumber)  &&  ValidateOrganizationKey(pRequestMessage.OrganizationKey))
                 if (ValidateOrganizationKeyByUser(pRequestMessage.OrganizationKey, pRequestMessage.OwnerId))//EW-96
                 {
-
                     if (ValidateSurveyFields(pRequestMessage))
                     {
                         try
@@ -199,27 +180,19 @@ namespace Epi.Web.BLL
                             result.IsPulished = false;
                             result.StatusText = "An Error has occurred while publishing your survey.";
                         }
-
-
-
-
                     }
                     else
                     {
-
                         result.URL = "";
                         result.IsPulished = false;
                         result.StatusText = "One or more survey required fields are missing values.";
                     }
-
                 }
                 else
                 {
-
                     result.URL = "";
                     result.IsPulished = false;
                     result.StatusText = "Organization Key is invalid.";
-
                 }
             }
 

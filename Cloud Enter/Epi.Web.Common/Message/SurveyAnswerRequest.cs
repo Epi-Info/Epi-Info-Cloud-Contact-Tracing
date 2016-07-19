@@ -17,22 +17,21 @@ namespace Epi.Web.Enter.Common.Message
         {
             this.Criteria = new SurveyAnswerCriteria();
             this.SurveyAnswerList = new List<SurveyAnswerDTO>();
-            this.ResponseDetail = new FormResponseDetail();
         }
 
         /// <summary>
         /// Selection criteria and sort order
         /// </summary>
         [DataMember]
-        public SurveyAnswerCriteria Criteria;
+        public SurveyAnswerCriteria Criteria { get; set; }
 
         /// <summary>
         /// SurveyInfo object.
         /// </summary>
         [DataMember]
-        public List<SurveyAnswerDTO> SurveyAnswerList;
+        public List<SurveyAnswerDTO> SurveyAnswerList { get; set; }
 
         [DataMember]
-        public FormResponseDetail ResponseDetail;
+        public FormResponseDetail ResponseDetail { get; set; }
     }
 }

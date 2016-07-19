@@ -14,9 +14,16 @@ namespace Epi.Web.BLL
         private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
         Dictionary<int, int> ViewIds = new Dictionary<int, int>();
 
+        MetadataAccessor _metadataAcessor;
+
         public SurveyInfo(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao pSurveyInfoDao)
         {
             this.SurveyInfoDao = pSurveyInfoDao;
+        }
+
+        public MetadataAccessor MetadataAccessor
+        {
+            get { return _metadataAcessor = _metadataAcessor ?? new MetadataAccessor(); }
         }
 
         public SurveyInfoBO GetSurveyInfoById(string pId)
@@ -27,18 +34,9 @@ namespace Epi.Web.BLL
                 IdList.Add(pId);
             }
             List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfo(IdList);
-            if (result.Count > 0)
-            {
-                return result[0];
-            }
-            else
-            {
-                return null;
-            }
+
+            return result.Count > 0 ? result[0] : null;
         }
-
-
-
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
@@ -59,48 +57,23 @@ namespace Epi.Web.BLL
 
             result = Epi.Web.BLL.Common.GetSurveySize(SurveyInfoBOList, BandwidthUsageFactor, pResponseMaxSize);
             return result;
-
-
         }
-
 
         public bool IsSurveyInfoValidByOrgKeyAndPublishKey(string SurveyId, string Okey, Guid publishKey)
         {
-
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
             List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfoByOrgKeyAndPublishKey(SurveyId, EncryptedKey, publishKey);
 
-
-            if (result != null && result.Count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return result != null && result.Count > 0;
         }
-
-
 
         public bool IsSurveyInfoValidByOrgKey(string SurveyId, string pOrganizationKey)
         {
-
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(pOrganizationKey);
             List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfoByOrgKey(SurveyId, EncryptedKey);
 
-
-            if (result != null && result.Count > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return result != null && result.Count > 0;
         }
-
-
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
@@ -113,9 +86,9 @@ namespace Epi.Web.BLL
             List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize);
             return result;
         }
+
         public PageInfoBO GetSurveySizeInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int BandwidthUsageFactor, int pSurveyType = -1, int pPageNumber = -1, int pPageSize = -1, int pResponseMaxSize = -1)
         {
-
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
 
             List<SurveyInfoBO> SurveyInfoBOList = this.SurveyInfoDao.GetSurveySizeInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize, pResponseMaxSize);
@@ -124,7 +97,6 @@ namespace Epi.Web.BLL
 
             result = Epi.Web.BLL.Common.GetSurveySize(SurveyInfoBOList, BandwidthUsageFactor, pResponseMaxSize);
             return result;
-
         }
 
         public SurveyInfoBO InsertSurveyInfo(SurveyInfoBO pValue)
@@ -133,12 +105,13 @@ namespace Epi.Web.BLL
             this.SurveyInfoDao.InsertSurveyInfo(pValue);
             return result;
         }
+
         public SurveyInfoBO UpdateSurveyInfo(SurveyInfoBO pRequestMessage)
         {
             SurveyInfoBO result = pRequestMessage;
             if (ValidateSurveyFields(pRequestMessage))
             {
-                if (this.IsRelatedForm(pRequestMessage.ProjectTemplateMetadata))
+                if (this.IsRelatedForm(MetadataAccessor.GetFormDigest(pRequestMessage.SurveyId)))
                 {
                     List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(pRequestMessage.SurveyId.ToString());
 
@@ -251,8 +224,9 @@ namespace Epi.Web.BLL
             foreach (var item in SurveyInfoBOList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
-                FormsHierarchyBO.ViewId = item.ViewId;
+                FormsHierarchyBO.RootFormId = RootId;
                 FormsHierarchyBO.FormId = item.SurveyId;
+                FormsHierarchyBO.ViewId = item.ViewId;
                 FormsHierarchyBO.SurveyInfo = item;
                 if (item.SurveyId == RootId)
                 {
@@ -270,28 +244,28 @@ namespace Epi.Web.BLL
             FormsHierarchyIds = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             return FormsHierarchyIds;
         }
-        private bool IsRelatedForm(Template projectTemplateMetadata)
-        {
-            return projectTemplateMetadata.Project.Views.Length > 1;
-        }
 
+        private bool IsRelatedForm(FormDigest formDigest)
+        {
+            return formDigest.ParentFormId != null;
+        }
 
         private void GetRelateViewIds(XElement ViewElement, int ViewId)
         {
 
-            var _RelateFields = from _Field in
-                                    ViewElement.Descendants("Field")
-                                where _Field.Attribute("FieldTypeId").Value == "20"
-                                select _Field;
+            //var _RelateFields = from _Field in
+            //                        ViewElement.Descendants("Field")
+            //                    where _Field.Attribute("FieldTypeId").Value == ((int)FieldType.Relate).ToString();
+            //                    select _Field;
 
-            foreach (var Item in _RelateFields)
-            {
+            //foreach (var Item in _RelateFields)
+            //{
 
-                int RelateViewId = 0;
-                int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
+            //    int RelateViewId = 0;
+            //    int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
 
-                this.ViewIds.Add(RelateViewId, ViewId);
-            }
+            //    this.ViewIds.Add(RelateViewId, ViewId);
+            //}
 
 
         }

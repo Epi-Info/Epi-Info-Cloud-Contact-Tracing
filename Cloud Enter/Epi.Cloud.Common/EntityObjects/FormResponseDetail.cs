@@ -1,66 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Epi.Cloud.Common.EntityObjects
 {
-    [DataContract]
-    public class FormResponseDetail
+    public partial class FormResponseDetail
     {
-        public FormResponseDetail()
-        {
-            HiddenFieldsList = new List<string>();
-            HighlightedFieldsList = new List<string>();
-            DisabledFieldsList = new List<string>();
-            RequiredFieldsList = new List<string>();
-            PageResponseDetailList = new List<PageResponseDetail>();
-        }
-
-        /// <summary>
-        /// FormId (aka SurveyId)
-        /// </summary>
-        [DataMember]
+        public string GlobalRecordID { get; set; }
         public string FormId { get; set; }
-        [DataMember]
+        public string FormName { get; set; }
+        public int RecStatus { get; set; }
+        public string RelateParentId { get; set; }
+        public string FirstSaveLogonName { get; set; }
+        public string LastSaveLogonName { get; set; }
+        public DateTime FirstSaveTime { get; set; }
+        public DateTime LastSaveTime { get; set; }
+        public int UserId { get; set; }
+        public bool IsRelatedView { get; set; }
+        public bool IsDraftMode { get; set; }
+        public List<int> PageIds { get; set; }
+
         public int LastPageVisited { get; set; }
-        [DataMember]
-        public List<string> HiddenFieldsList { get; set; }
-        [DataMember]
-        public List<string> HighlightedFieldsList { get; set; }
-        [DataMember]
-        public List<string> DisabledFieldsList { get; set; }
-        [DataMember]
-        public List<string> RequiredFieldsList { get; set; }
-        [DataMember]
-        public List<PageResponseDetail> PageResponseDetailList{ get; set; }
 
-        public Dictionary<string, string> FlattenedResponseQA(Func<string, string> keyModifier = null) 
-        {
-            var flattenedResponseQA = new Dictionary<string, string>();
-            foreach (var pageResponseDetail in PageResponseDetailList)
-            {
-                foreach (var qa in pageResponseDetail.ResponseQA)
-                    flattenedResponseQA[keyModifier != null ? keyModifier(qa.Key) : qa.Key] = qa.Value;
-            }
-            return flattenedResponseQA;
-        }
+        public string RequiredFieldsList { get; set; }
+        public string HiddenFieldsList { get; set; }
+        public string HighlightedFieldsList { get; set; }
+        public string DisabledFieldsList { get; set; }
+        public List<PageResponseDetail> PageResponseDetailList{ get; private set; }
+
+        public List<FormResponseDetail> ChildFormResponseDetailList { get; private set; }
     }
 
-    [DataContract]
-    public class PageResponseDetail
-    {
-        public PageResponseDetail()
-        {
-            ResponseQA = new Dictionary<string, string>();
-        }
-
-        [DataMember]
-        public int PageNumber { get; set; }
-        [DataMember]
-        public int PageId { get; set; }
-        [DataMember]
-        public int MetadataPageId { get; set; }
-        [DataMember]
-        public Dictionary<string, string> ResponseQA { get; set; }
-    }
 }

@@ -24,13 +24,13 @@ namespace MvcDynamicForms.Fields
         protected override void InitializeFromMetadata(FieldAttributes fieldAttributes, double formWidth, double formHeight)
         {
             base.InitializeFromMetadata(fieldAttributes, formWidth, formHeight);
-            Title = fieldAttributes.Name;
+            Title = fieldAttributes.FieldName;
             Prompt = fieldAttributes.PromptText;
             DisplayOrder = fieldAttributes.TabIndex;
             // Required = _FieldTypeID.Attribute("IsRequired").Value == "True" ? true : false,
             //RequiredMessage = _FieldTypeID.Attribute("PromptText").Value + " is required",
             RequiredMessage = "This field is required";
-            Key = fieldAttributes.Name;
+            Key = fieldAttributes.FieldName;
             PromptTop = formHeight * fieldAttributes.PromptTopPositionPercentage;
             PromptLeft = formWidth * fieldAttributes.PromptLeftPositionPercentage;
             Top = formHeight * fieldAttributes.ControlTopPositionPercentage;
@@ -42,7 +42,7 @@ namespace MvcDynamicForms.Fields
             fontfamily = fieldAttributes.PromptFontFamily;
             // IsRequired = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),
             //Required = Helpers.GetRequiredControlState(form.RequiredFieldsList.ToString(), _FieldTypeID.Attribute("Name").Value, "RequiredFieldsList"),           
-            IsReadOnly = fieldAttributes.ReadOnly;
+            IsReadOnly = fieldAttributes.IsReadOnly;
             Lower = fieldAttributes.Lower;
             Upper = fieldAttributes.Upper;
             //  Value = _ControlValue,

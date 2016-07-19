@@ -16,7 +16,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A SurveyInfoBO business object.</returns>
-        internal static SurveyInfoBO Map(SurveyMetaData entity)
+        public static SurveyInfoBO Map(SurveyMetaData entity)
         {
             SurveyInfoBO result = new SurveyInfoBO();
 
@@ -97,7 +97,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A FormInfoBO business object.</returns>
-        internal static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity, bool GetXml = false)
+        public static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity, bool GetXml = false)
         {
             FormInfoBO result = new FormInfoBO();
             result.IsSQLProject = (entity.IsSQLProject == null) ? false : (bool)entity.IsSQLProject;
@@ -128,7 +128,7 @@ namespace Epi.Web.EF
             return result;
         }
 
-        internal static List<SurveyInfoBO> Map(List<SurveyMetaData> entities)
+        public static List<SurveyInfoBO> Map(List<SurveyMetaData> entities)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             foreach (SurveyMetaData surveyMetaData in entities)
@@ -144,7 +144,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="businessobject">A SurveyInfoBO business object.</param>
         /// <returns>A SurveyMetaData entity.</returns>
-        internal static SurveyMetaData Map(SurveyInfoBO businessobject)
+        public static SurveyMetaData Map(SurveyInfoBO businessobject)
         {
             SurveyMetaData SurveyMetaData = new SurveyMetaData();
 
@@ -184,7 +184,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A SurveyInfoBO business object.</returns>
-        internal static SurveyResponseBO Map(SurveyAnswerDTO entity)
+        public static SurveyResponseBO Map(SurveyAnswerDTO entity)
         {
             return new SurveyResponseBO
             {
@@ -203,7 +203,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="businessobject">A SurveyInfoBO business object.</param>
         /// <returns>A SurveyMetaData entity.</returns>
-        internal static SurveyAnswerDTO Map(SurveyResponseBO businessobject)
+        public static SurveyAnswerDTO Map(SurveyResponseBO businessobject)
         {
             return new SurveyAnswerDTO
             {
@@ -223,43 +223,45 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A SurveyInfoBO business object.</returns>
-        internal static SurveyResponseBO Map(SurveyResponse entity, User User = null, int LastActiveUseerId = -1)
+        public static SurveyResponseBO Map(SurveyResponse entity, User user = null, int lastActiveUseerId = -1)
         {
-            SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
-
-            SurveyResponseBO.SurveyId = entity.SurveyId.ToString();
-            SurveyResponseBO.ResponseId = entity.ResponseId.ToString();
-            SurveyResponseBO.XML = entity.ResponseXML;
-            SurveyResponseBO.Status = entity.StatusId;
-            SurveyResponseBO.DateUpdated = entity.DateUpdated;
-            SurveyResponseBO.DateCompleted = entity.DateCompleted;
-            SurveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
-            SurveyResponseBO.DateCreated = entity.DateCreated;
-            SurveyResponseBO.IsDraftMode = entity.IsDraftMode;
-            SurveyResponseBO.IsLocked = entity.IsLocked;
-            SurveyResponseBO.LastActiveUserId = LastActiveUseerId;
-            if (entity.SurveyMetaData != null)
+            SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
+            if (surveyResponseBO != null)
             {
-                SurveyResponseBO.ViewId = (int)entity.SurveyMetaData.ViewId;
+                surveyResponseBO.SurveyId = entity.SurveyId.ToString();
+                surveyResponseBO.ResponseId = entity.ResponseId.ToString();
+                surveyResponseBO.XML = entity.ResponseXML;
+                surveyResponseBO.Status = entity.StatusId;
+                surveyResponseBO.DateUpdated = entity.DateUpdated;
+                surveyResponseBO.DateCompleted = entity.DateCompleted;
+                surveyResponseBO.TemplateXMLSize = (long?)entity.ResponseXMLSize;
+                surveyResponseBO.DateCreated = entity.DateCreated;
+                surveyResponseBO.IsDraftMode = entity.IsDraftMode;
+                surveyResponseBO.IsLocked = entity.IsLocked;
+                surveyResponseBO.LastActiveUserId = lastActiveUseerId;
+                if (entity.SurveyMetaData != null)
+                {
+                    surveyResponseBO.ViewId = (int)entity.SurveyMetaData.ViewId;
+                }
+                if (entity.ParentRecordId != null)
+                {
+                    surveyResponseBO.ParentRecordId = entity.ParentRecordId.ToString();
+                }
+                if (entity.RelateParentId != null)
+                {
+                    surveyResponseBO.RelateParentId = entity.RelateParentId.ToString();
+                }
+                if (user != null)
+                {
+                    surveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
+                }
+                surveyResponseBO.ResponseDetail = entity.ResponseDetail;
+                //SurveyResponseBO.ResponseDetail = entity.ResponseDetail;
             }
-            if (entity.ParentRecordId != null)
-            {
-                SurveyResponseBO.ParentRecordId = entity.ParentRecordId.ToString();
-            }
-            if (entity.RelateParentId != null)
-            {
-                SurveyResponseBO.RelateParentId = entity.RelateParentId.ToString();
-            }
-            if (User != null)
-            {
-                SurveyResponseBO.UserEmail = User == null ? string.Empty : User.EmailAddress;
-            }
-            SurveyResponseBO.ResponseDetail = entity.ResponseDetail;
-
-            return SurveyResponseBO;
+            return surveyResponseBO;
         }
 
-        internal static List<SurveyResponseBO> Map(List<SurveyResponse> entities)
+        public static List<SurveyResponseBO> Map(List<SurveyResponse> entities)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             foreach (var surveyResponse in entities)
@@ -269,7 +271,7 @@ namespace Epi.Web.EF
 
             return result;
         }
-        internal static OrganizationBO Map(Organization entity)
+        public static OrganizationBO Map(Organization entity)
         {
             return new OrganizationBO
             {
@@ -281,7 +283,7 @@ namespace Epi.Web.EF
 
             };
         }
-        internal static OrganizationBO Map(string Organization)
+        public static OrganizationBO Map(string Organization)
         {
             return new OrganizationBO
             {
@@ -291,15 +293,13 @@ namespace Epi.Web.EF
 
             };
         }
-        internal static Organization ToEF(OrganizationBO pBo)
+        public static Organization ToEF(OrganizationBO pBo)
         {
             return new Organization
             {
                 Organization1 = pBo.Organization,
                 IsEnabled = pBo.IsEnabled,
                 OrganizationKey = pBo.OrganizationKey,
-
-
             };
         }
         /// <summary>
@@ -307,7 +307,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="businessobject">A SurveyInfoBO business object.</param>
         /// <returns>A SurveyMetaData entity.</returns>
-        internal static SurveyResponse ToEF(SurveyResponseBO pBO, int OrgId = -1)
+        public static SurveyResponse ToEF(SurveyResponseBO pBO, int OrgId = -1)
         {
 
             SurveyResponse SurveyResponse = new SurveyResponse();
@@ -345,7 +345,7 @@ namespace Epi.Web.EF
             }
             return SurveyResponse;
         }
-        internal static UserAuthenticationResponseBO ToAuthenticationResponseBO(UserAuthenticationRequestBO AuthenticationRequestBO)
+        public static UserAuthenticationResponseBO ToAuthenticationResponseBO(UserAuthenticationRequestBO AuthenticationRequestBO)
         {
 
 
@@ -357,7 +357,7 @@ namespace Epi.Web.EF
 
         }
 
-        internal static ResponseDisplaySetting ToColumnName(KeyValuePair<int, string> ColumnList, Guid FormId)
+        public static ResponseDisplaySetting ToColumnName(KeyValuePair<int, string> ColumnList, Guid FormId)
         {
             return new ResponseDisplaySetting
             {
@@ -367,7 +367,7 @@ namespace Epi.Web.EF
             };
         }
 
-        internal static SurveyMetaData ToEF(SurveyInfoBO SurveyInfo)
+        public static SurveyMetaData ToEF(SurveyInfoBO SurveyInfo)
         {
             SurveyMetaData DataRow = new SurveyMetaData();
             DataRow.SurveyName = SurveyInfo.SurveyName;
@@ -393,7 +393,7 @@ namespace Epi.Web.EF
             return xml.Trim();
         }
 
-        internal static SurveyMetaData ToEF(FormInfoBO FormInfoBO)
+        public static SurveyMetaData ToEF(FormInfoBO FormInfoBO)
         {
             return new SurveyMetaData
             {
@@ -403,7 +403,7 @@ namespace Epi.Web.EF
 
 
 
-        internal static List<SurveyInfoBO> Map(IQueryable<SurveyMetaData> iQueryable)
+        public static List<SurveyInfoBO> Map(IQueryable<SurveyMetaData> iQueryable)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             foreach (SurveyMetaData Obj in iQueryable)
@@ -417,7 +417,7 @@ namespace Epi.Web.EF
 
 
 
-        internal static List<SurveyResponseBO> Map(IQueryable<SurveyResponse> entities)
+        public static List<SurveyResponseBO> Map(IQueryable<SurveyResponse> entities)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             foreach (SurveyResponse surveyResponse in entities)
@@ -429,7 +429,7 @@ namespace Epi.Web.EF
         }
 
 
-        internal static SurveyResponseBO Map(ResponseXml ResponseXml)
+        public static SurveyResponseBO Map(ResponseXml ResponseXml)
         {
             SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
             SurveyResponseBO.ResponseId = ResponseXml.ResponseId.ToString();
@@ -439,7 +439,7 @@ namespace Epi.Web.EF
             return SurveyResponseBO;
         }
 
-        internal static ResponseXml ToEF(ResponseBO ResponseXmlBO)
+        public static ResponseXml ToEF(ResponseBO ResponseXmlBO)
         {
             ResponseXml ResponseXml = new ResponseXml();
             ResponseXml.ResponseId = new Guid(ResponseXmlBO.ResponseId);
@@ -449,7 +449,7 @@ namespace Epi.Web.EF
             return ResponseXml;
         }
 
-        internal static ResponseDisplaySetting Map(string FormId, int i, string Column)
+        public static ResponseDisplaySetting Map(string FormId, int i, string Column)
         {
             ResponseDisplaySetting ResponseDisplaySetting = new ResponseDisplaySetting();
             ResponseDisplaySetting.FormId = new Guid(FormId);
@@ -459,12 +459,12 @@ namespace Epi.Web.EF
 
         }
 
-        internal static Organization MapToOrganizationBO(OrganizationBO organizationBO)
+        public static Organization MapToOrganizationBO(OrganizationBO organizationBO)
         {
             throw new NotImplementedException();
         }
 
-        internal static User ToUserEntity(UserBO User)
+        public static User ToUserEntity(UserBO User)
         {
             User UserEntity = new User();
             UserEntity.EmailAddress = User.EmailAddress;
@@ -478,7 +478,7 @@ namespace Epi.Web.EF
             return UserEntity;
         }
 
-        internal static UserOrganization ToUserOrganizationEntity(bool IsActive, UserBO User, OrganizationBO Organization)
+        public static UserOrganization ToUserOrganizationEntity(bool IsActive, UserBO User, OrganizationBO Organization)
         {
             UserOrganization UserOrganization = new UserOrganization();
             UserOrganization.Active = IsActive;
@@ -507,7 +507,7 @@ namespace Epi.Web.EF
             return UserOrganization;
         }
 
-        internal static UserOrganization ToUserOrganizationEntity(bool IsActive, int UserId, int RoleId, OrganizationBO Organization)
+        public static UserOrganization ToUserOrganizationEntity(bool IsActive, int UserId, int RoleId, OrganizationBO Organization)
         {
             UserOrganization UserOrganization = new UserOrganization();
             UserOrganization.Active = IsActive;
@@ -527,7 +527,7 @@ namespace Epi.Web.EF
 
             return UserOrganization;
         }
-        internal static UserOrganization ToUserOrganizationEntity(UserBO User, OrganizationBO Organization)
+        public static UserOrganization ToUserOrganizationEntity(UserBO User, OrganizationBO Organization)
         {
             UserOrganization UserOrganization = new UserOrganization();
             UserOrganization.Active = User.IsActive;
@@ -538,7 +538,7 @@ namespace Epi.Web.EF
             return UserOrganization;
         }
 
-        internal static EIDatasource Map(DbConnectionStringBO ConnectionString)
+        public static EIDatasource Map(DbConnectionStringBO ConnectionString)
         {
             EIDatasource Datasource = new EIDatasource();
             Datasource.DatabaseType = ConnectionString.DatabaseType;

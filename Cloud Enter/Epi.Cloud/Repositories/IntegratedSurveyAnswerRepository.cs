@@ -4,6 +4,10 @@ using System.ServiceModel;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Repositories.Core;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Facade;
+using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Web.MVC.Repositories
 {
@@ -11,12 +15,15 @@ namespace Epi.Web.MVC.Repositories
     {
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
         private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
-
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
         public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService,
-                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService)
+                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService,
+                                                ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade)
         {
             _iDataService = iDataService;
             _dataEntryService = dataEntryService;
+            _isurveyDocumentDBStoreFacade = isurveyDocumentDBStoreFacade;
+
         }
 
         /// <summary>
@@ -28,9 +35,41 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-                //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
                 SurveyAnswerResponse result = _dataEntryService.GetSurveyAnswer(pRequest);
-                //var result2 = _dataEntryService.GetSurveyAnswer(pRequest);
+                return result;
+            }
+            catch (FaultException<CustomFaultException> cfe)
+            {
+                throw cfe;
+            }
+            catch (FaultException fe)
+            {
+                throw fe;
+            }
+            catch (CommunicationException ce)
+            {
+                throw ce;
+            }
+            catch (TimeoutException te)
+            {
+                throw te;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Calling the proxy client to fetch a SurveyResponseState object
+        /// </summary>
+        /// <param name="surveyid"></param>
+        /// <returns></returns>
+        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest pRequest)
+        {
+            try
+            {
+                SurveyAnswerResponse result = _dataEntryService.GetSurveyAnswerState(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -234,13 +273,18 @@ namespace Epi.Web.MVC.Repositories
                 throw ex;
             }
         }
-        public SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest pRequest)
+        public PageResponseProperties SaveSurveyAnswer(SurveyAnswerRequest pRequest)
         {
             try
             {
-                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(pRequest);
-                //var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
-                return result;
+                PageDigest[] pageDigests = (new MetadataAccessor(pRequest.Criteria.SurveyId)).GetCurrentFormPageDigests();
+
+                //var results = _isurveyDocumentDBStoreFacade.SaveSurveyAnswerToDocumentDB(pageDigests, 1, pRequest.Criteria.UserId, pRequest.SurveyAnswerList[0].ResponseId);
+
+                //SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(pRequest);
+                ////var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
+                //return result;
+                throw new NotImplementedException();
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -856,6 +900,24 @@ namespace Epi.Web.MVC.Repositories
 
             }
 
+        }
+
+        SurveyAnswerResponse ISurveyAnswerRepository.SaveSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
+
+            #region WebEnter Implementation
+            try
+            {
+                SurveyAnswerResponse webEnterResult = _iDataService.SetSurveyAnswer(surveyAnswerRequest);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            #endregion  WebEnter Implementation
+
+            return result;
         }
     }
 }

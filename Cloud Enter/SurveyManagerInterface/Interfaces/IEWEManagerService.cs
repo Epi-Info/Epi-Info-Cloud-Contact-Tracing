@@ -8,10 +8,6 @@ namespace Epi.Web.WCF.SurveyService
     {
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse PublishSurvey(PublishRequest pRequestMessage);
-
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
         SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest);
 
         [OperationContract]
@@ -48,13 +44,6 @@ namespace Epi.Web.WCF.SurveyService
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         bool IsValidOrgKey(SurveyInfoRequest pRequest);
-
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        PublishResponse RePublishSurvey(PublishRequest pRequestMessage);
-        //[OperationContract]
-        //[FaultContract(typeof(CustomFaultException))]
-        //AdminResponse GetOrganizationAdmins(AdminRequest request); 
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]

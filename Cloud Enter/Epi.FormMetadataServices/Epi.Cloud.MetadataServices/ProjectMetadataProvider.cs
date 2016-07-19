@@ -2,45 +2,50 @@
 using System.Linq;
 using Epi.Cloud.MetadataServices.ProxiesService;
 using Epi.Cloud.Common.Metadata;
-using System;
 using Epi.Cloud.CacheServices;
 using System.Collections.Generic;
+using Epi.Cloud.Common;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Cloud.MetadataServices
 {
     public class ProjectMetadataProvider : IProjectMetadataProvider
     {
+        private static string _projectId;
         private readonly IEpiCloudCache _epiCloudCache;
         public ProjectMetadataProvider(IEpiCloudCache epiCloudCache)
         {
             _epiCloudCache = epiCloudCache;
         }
 
+        public IEpiCloudCache Cache { get { return _epiCloudCache; } }
+
+        public string ProjectId { get { return _projectId; } }
+
         //Pass the project id and call the DBAccess API and get the project metadata.
 
-        public async Task<Template> GetProjectMetadataAsync(string projectId, ProjectScope scope = ProjectScope.TemplateWithAllPages)
+        public async Task<Template> GetProjectMetadataAsync(ProjectScope scope)
         {
             Template metadata = null;
             if (scope == ProjectScope.TemplateWithAllPages)
             {
-                metadata = projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(projectId) : null;
+                metadata = _projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(_projectId) : null;
                 if (metadata == null)
                 {
-                    metadata = await RefreshCache(projectId);
-                    PopulateRequiredPageLevelSourceTables(metadata);
+                    metadata = await RefreshCache(_projectId);
                 }
             }
             else if (scope == ProjectScope.TemplateWithNoPages)
             {
-                metadata = projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(projectId, null) : null;
+                metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, null, null) : null;
                 if (metadata == null)
                 {
-                    Template fullMetadata = projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(projectId) : null;
+                    Template fullMetadata = _projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(_projectId) : null;
                     if (fullMetadata == null)
                     {
-                        fullMetadata = await RefreshCache(projectId);
-                        projectId = fullMetadata.Project.Id;
-                        metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, null);
+                        fullMetadata = await RefreshCache(_projectId);
+                        _projectId = fullMetadata.Project.Id;
+                        metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, null, null);
                         if (metadata == null)
                         {
                             metadata = fullMetadata;
@@ -51,52 +56,161 @@ namespace Epi.Cloud.MetadataServices
             return metadata;
         }
 
-        public async Task<Template> GetProjectMetadataWithPageByPageIdAsync(string projectId, int pageId)
+        public async Task<Template> GetProjectMetadataWithPageByPageIdAsync(string formId, int pageId)
         {
-            var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
+            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, formId, pageId) : null;
             if (metadata == null)
             {
-                var fullMetadata = await RefreshCache(projectId);
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, pageId);
+                var fullMetadata = await RefreshCache(_projectId);
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, formId, pageId);
             }
             return metadata;
         }
 
-        public Task<Template> GetProjectMetadataAsync(string projectId, string formId, ProjectScope scope = ProjectScope.TemplateWithNoPages)
+        public Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope)
         {
             if (scope == ProjectScope.TemplateWithAllPages)
             {
-                return GetProjectMetadataAsync(projectId, scope);
+                return GetProjectMetadataAsync(scope);
             }
-            return GetProjectMetadataWithPageByPageNumberAsync(projectId, formId, null);
+            return GetProjectMetadataWithPageByPageNumberAsync(formId, null);
         }
 
-        public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int? pageNumber)
+        public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string formId, int? pageNumber)
         {
-            var metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, formId, pageNumber);
+            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadataByPageNumber(_projectId, formId, pageNumber) : null;
             if (metadata == null)
             {
-                var fullMetadata = await RefreshCache(projectId);
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(projectId, formId, pageNumber);
+                var fullMetadata = await RefreshCache(_projectId);
+                var trueProjectId = metadata.Project.FormDigests.FirstOrDefault().FormId;
+
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(trueProjectId, formId, pageNumber);
             }
             return metadata;
         }
 
-        public async Task<ProjectDigest[]> GetProjectDigestAsync(string projectId)
+        public async Task<Page> GetPageMetadataAsync(string formId, int pageId)
         {
-            var projectDigest = _epiCloudCache.GetProjectDigest(projectId);
-            if (projectDigest == null)
+            var metadata = _epiCloudCache.GetPageMetadata(_projectId, formId, pageId);
+            if (metadata == null)
             {
-                var fullMetadata = await RefreshCache(projectId);
-                projectDigest = fullMetadata.Project.Digest;
+                var fullMetadata = await RefreshCache(_projectId);
+                metadata = _epiCloudCache.GetPageMetadata(_projectId, formId, pageId);
             }
-            return projectDigest;
+            return metadata;
+        }
+
+        public async Task<FormDigest[]> GetFormDigestsAsync()
+        {
+            var formDigests = _projectId != null ? _epiCloudCache.GetFormDigests(_projectId) : null;
+            if (formDigests == null)
+            {
+                var fullMetadata = await RefreshCache(_projectId);
+
+                formDigests = _epiCloudCache.GetFormDigests(_projectId);
+            }
+            return formDigests;
+        }
+
+        public async Task<FormDigest> GetFormDigestAsync(string formId)
+        {
+            var formDigests = _projectId != null ? _epiCloudCache.GetFormDigests(_projectId) : null;
+            if (formDigests == null)
+            {
+                var fullMetadata = await RefreshCache(_projectId);
+
+                formDigests = _epiCloudCache.GetFormDigests(_projectId);
+            }
+            var formDigest = formDigests != null ? formDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).SingleOrDefault() : null;
+            return formDigest;
+        }
+
+        public async Task<PageDigest[][]> GetProjectPageDigestsAsync()
+        {
+            var projectPageDigests = _projectId != null ? _epiCloudCache.GetProjectPageDigests(_projectId) : null;
+            if (projectPageDigests == null)
+            {
+                var fullMetadata = await RefreshCache(_projectId);
+                projectPageDigests = fullMetadata.Project.FormPageDigests;
+            }
+            return projectPageDigests;
+        }
+
+        public async Task<PageDigest[]> GetPageDigestsAsync(string formId)
+        {
+            var pageDigests = _epiCloudCache.GetPageDigests(_projectId, formId);
+            if (pageDigests == null)
+            {
+                var projectPageDigests = GetProjectPageDigestsAsync().Result;
+                foreach (var projectPageDigest in projectPageDigests)
+                {
+                    if (projectPageDigest[0].FormId == formId)
+                    {
+                        pageDigests = projectPageDigest;
+                    }
+                }
+            }
+            return await Task.FromResult(pageDigests);
+        }
+
+        public async Task<FieldDigest> GetFieldDigestAsync(string formId, string fieldName)
+        {
+            fieldName = fieldName.ToLower();
+            var pageDigests = await GetPageDigestsAsync(formId);
+
+            foreach (var pageDigest in pageDigests)
+            {
+                var field = pageDigest.Fields.Where(f => f.FieldName.ToLower() == fieldName).SingleOrDefault();
+                if (field != null)
+                {
+                    return new FieldDigest(field, pageDigest);
+                }
+            }
+            return null;
+        }
+
+        public async Task<FieldDigest[]> GetFieldDigestsAsync(string formId)
+        {
+            formId = formId.ToLower();
+            List<FieldDigest> fieldDigests = new List<FieldDigest>();
+            var pageDigests = await GetPageDigestsAsync(formId);
+            foreach (var pageDigest in pageDigests)
+            {
+                fieldDigests.AddRange(pageDigest.Fields.Select(field => new FieldDigest(field, pageDigest)));
+            }
+            return fieldDigests.ToArray();
+        }
+
+        public async Task<FieldDigest[]> GetFieldDigestsAsync(string formId, IEnumerable<string> fieldNames)
+        {
+            formId = formId.ToLower();
+            List<string> fieldNameList = fieldNames.Select(n => n.ToLower()).ToList();
+            List<string> remainingFieldNamesList = fieldNames.Select(n => n.ToLower()).ToList();
+            List<FieldDigest> fieldDigests = new List<FieldDigest>();
+            int fieldNamesCount = fieldNames.Count();
+            var pageDigests = await GetPageDigestsAsync(formId);
+            foreach (var pageDigest in pageDigests)
+            {
+                fieldNameList = remainingFieldNamesList.ToList();
+                foreach (string fieldName in fieldNameList)
+                {
+                    AbridgedFieldInfo field = pageDigest.Fields.Where(f => f.FieldName.ToLower() == fieldName).SingleOrDefault();
+                    if (field != null)
+                    {
+                        fieldDigests.Add(new FieldDigest(field, pageDigest));
+                        remainingFieldNamesList.Remove(fieldName);
+                    }
+                }
+                if (remainingFieldNamesList.Count == 0) break;
+            }
+            return fieldDigests.ToArray();
         }
 
         private async Task<Template> RefreshCache(string projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);
-            GenerateDigest(metadata);
+            PopulateRequiredPageLevelSourceTables(metadata);
+            GenerateDigests(metadata);
             _epiCloudCache.SetProjectTemplateMetadata(metadata);
             return metadata;
         }
@@ -105,33 +219,74 @@ namespace Epi.Cloud.MetadataServices
         {
             ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
             var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId);
+            _projectId = templateMetadata != null ? templateMetadata.Project.Id : null;
             return templateMetadata;
         }
-        private static void GenerateDigest(Template projectTemplateMetadata)
+
+        private void GenerateDigests(Template projectTemplateMetadata)
         {
+            projectTemplateMetadata.Project.FormDigests = GenerateFormDigests(projectTemplateMetadata);
+            projectTemplateMetadata.Project.FormPageDigests = GeneratePageDigests(projectTemplateMetadata);
+        }
+
+        private static FormDigest[] GenerateFormDigests(Template projectTemplateMetadata)
+        {
+            var formDigests = new List<FormDigest>();
+            foreach (var view in projectTemplateMetadata.Project.Views)
+            {
+                formDigests.Add(new FormDigest
+                {
+                    ViewId = view.ViewId,
+                    FormId = view.FormId,
+                    FormName = view.Name,
+                    ParentFormId = view.ParentFormId,
+                    OrganizationId = view.OrganizationId,
+                    OrganizationName = view.OrganizationName,
+                    OrganizationKey = view.OrganizationKey,
+                    OwnerUserId = view.OwnerUserId,
+
+                    NumberOfPages = view.Pages.Length,
+                    Orientation = view.Orientation,
+                    Height = view.Height.HasValue ? view.Height.Value : 0,
+                    Width = view.Width.HasValue ? view.Width.Value : 0,
+
+                    CheckCode = view.CheckCode,
+
+                    DataAccessRuleId = view.DataAccessRuleId,
+                    IsDraftMode = view.IsDraftMode
+                });
+            }
+
+            return formDigests.ToArray();
+        }
+
+        private static PageDigest[][] GeneratePageDigests(Template projectTemplateMetadata)
+        {
+            List<PageDigest[]> projectPageDigests = new List<PageDigest[]>();
             var viewIdToViewMap = new Dictionary<int, View>();
-            var pages = new Page[0];
             foreach (var view in projectTemplateMetadata.Project.Views)
             {
                 viewIdToViewMap[view.ViewId] = view;
+                var pages = new Page[0];
                 pages = pages.Union(view.Pages).ToArray();
+                int numberOfPages = pages.Length;
+                var pageDigests = new PageDigest[numberOfPages];
+                for (int i = 0; i < numberOfPages; ++i)
+                {
+                    var pageMetadata = pages[i];
+                    string pageName = pageMetadata.Name;
+                    int pageId = pageMetadata.PageId.Value;
+                    int position = pageMetadata.Position;
+                    int viewId = pageMetadata.ViewId;
+                    bool isRelatedView = viewIdToViewMap[viewId].IsRelatedView;
+                    string formId = viewIdToViewMap[viewId].FormId;
+                    string formName = viewIdToViewMap[viewId].Name;
+                    pageDigests[i] = new PageDigest(pageName, pageId, position, formId, formName, viewId, isRelatedView, pageMetadata.Fields);
+                }
+                projectPageDigests.Add(pageDigests);
             }
 
-            int numberOfPages = pages.Length;
-            var digest = new ProjectDigest[numberOfPages];
-            for (int i = 0; i < numberOfPages; ++i)
-            {
-                var pageMetadata = pages[i];
-                int viewId = pageMetadata.ViewId;
-                bool isRelatedView = viewIdToViewMap[viewId].IsRelatedView;
-                string formName = viewIdToViewMap[viewId].Name;
-                string formId = viewIdToViewMap[viewId].EWEFormId;
-                int pageId = pageMetadata.PageId.Value;
-                int position = pageMetadata.Position;
-                string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
-                digest[i] = new ProjectDigest(formName, formId, viewId, isRelatedView, pageId, position, fieldNames);
-            }
-            projectTemplateMetadata.Project.Digest = digest;
+            return projectPageDigests.ToArray();
         }
 
         private void PopulateRequiredPageLevelSourceTables(Template metadata)
@@ -146,8 +301,7 @@ namespace Epi.Cloud.MetadataServices
                     var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
                     foreach (var field in fieldsRequiringSourceTable)
                     {
-                        field.SourceTableItems = metadata
-                            .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
+                        field.SourceTableValues = metadata.SourceTables.Where(st => st.TableName == field.SourceTableName).First().Values;
                     }
                 }
             }

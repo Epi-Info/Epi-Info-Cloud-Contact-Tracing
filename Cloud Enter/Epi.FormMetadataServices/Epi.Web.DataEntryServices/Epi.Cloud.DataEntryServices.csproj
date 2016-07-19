@@ -7,8 +7,8 @@
     <ProjectGuid>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.Web.DataEntryServices</RootNamespace>
-    <AssemblyName>Epi.Web.DataEntryServices</AssemblyName>
+    <RootNamespace>Epi.Cloud.DataEntryServices</RootNamespace>
+    <AssemblyName>Epi.Cloud.DataEntryServices</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -77,10 +77,12 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -90,9 +92,25 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRUDSurveyResponse.cs" />
-    <Compile Include="DataAccessObjects\EntitySurveyResponseDao.cs" />
+    <Compile Include="DaoFactory.cs" />
+    <Compile Include="DAO\FormInfoDao.cs" />
+    <Compile Include="DAO\SurveyInfoDao.cs" />
+    <Compile Include="DAO\SurveyResponseDao.cs" />
     <Compile Include="DataEntryService.cs" />
     <Compile Include="DocumentDBServices.cs" />
+    <Compile Include="Extensions\DocumentDBExtensions.cs" />
+    <Compile Include="Extensions\FormDigestExtensions.cs" />
+    <Compile Include="Extensions\FormExtensions.cs" />
+    <Compile Include="Extensions\FormResponseDetailExtensions.cs" />
+    <Compile Include="Extensions\OrganizationBOExtensions.cs" />
+    <Compile Include="Extensions\OrganizationExtensions.cs" />
+    <Compile Include="Extensions\SurveyAnswerDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyInfoBOExtensions.cs" />
+    <Compile Include="Extensions\SurveyMetadataExtensions.cs" />
+    <Compile Include="Extensions\SurveyResponseBOExtensions.cs" />
+    <Compile Include="Extensions\SurveyResponseExtensions.cs" />
+    <Compile Include="Extensions\UserBOExtensions.cs" />
+    <Compile Include="Extensions\UserExtensions.cs" />
     <Compile Include="Facade\ISurveyDocumentDBFacade.cs" />
     <Compile Include="Model\SurveyInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -100,6 +118,7 @@
     <Compile Include="Model\SurveyTableEntity.cs" />
     <Compile Include="Helpers\Mapper.cs" />
     <Compile Include="Facade\SurveyDocumentDBFacade.cs" />
+    <Compile Include="SurveyResponseProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -111,6 +130,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\EIWS_BLL_Core\Epi.Web.BLL.csproj">
+      <Project>{d49b7a21-644b-49d7-9a5d-387bf31eafe5}</Project>
+      <Name>Epi.Web.BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
@@ -118,6 +141,10 @@
     <ProjectReference Include="..\..\Epi.DynamicForms.Core\Epi.Web.DynamicForms.Core.csproj">
       <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>
       <Name>Epi.Web.DynamicForms.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Web.Common\Epi.Web.Common.csproj">
+      <Project>{6e2f059b-c1cd-401f-8a63-dc2933cfb0d8}</Project>
+      <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
@@ -130,6 +157,10 @@
     <ProjectReference Include="..\..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
       <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
       <Name>Epi.Web.WCF.SurveyService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
+      <Project>{985A11FF-91AF-4379-83F8-27AECA8427AF}</Project>
+      <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

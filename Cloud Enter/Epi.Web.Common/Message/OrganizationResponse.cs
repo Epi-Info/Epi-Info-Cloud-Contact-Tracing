@@ -19,9 +19,6 @@ namespace Epi.Web.Enter.Common.Message
         /// <param name="correlationId"></param>
         public OrganizationResponse(string correlationId) : base(correlationId) { }
 
-        [DataMember]
-        public string Message;
-
         /// <summary>
         /// OrganizationInfo object.
         /// </summary>

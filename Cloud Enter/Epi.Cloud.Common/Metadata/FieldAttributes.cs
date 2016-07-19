@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Epi.Cloud.Common.Metadata.Interfaces;
 using Newtonsoft.Json;
 
 namespace Epi.Cloud.Common.Metadata
 {
-    public class FieldAttributes
+    public class FieldAttributes : IAbridgedFieldInfo
     {
         [JsonIgnore]
         int _tempInt;
@@ -23,8 +24,8 @@ namespace Epi.Cloud.Common.Metadata
         {
             RequiredMessage = "This field is required";
             UniqueId = fieldType.AttributeValue("UniqueId");
-            FieldTypeId = int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0;
-            Name = fieldType.AttributeValue("Name");
+            FieldType = (FieldType) (int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0);
+            FieldName = fieldType.AttributeValue("Name");
             TabIndex = int.TryParse(fieldType.AttributeValue("TabIndex"), out _tempInt) ? _tempInt : 0;
 
             PromptText = fieldType.AttributeValue("PromptText").Trim();
@@ -33,7 +34,7 @@ namespace Epi.Cloud.Common.Metadata
             PromptFontStyle = fieldType.AttributeValue("PromptFontStyle");
             PromptFontSize = double.TryParse(fieldType.AttributeValue("PromptFontSize"), out _tempDouble) ? _tempDouble : 0;
             PromptFontFamily = fieldType.AttributeValue("PromptFontFamily");
-            checkcode = fieldType.AttributeValue("checkcode");
+            Checkcode = fieldType.AttributeValue("checkcode");
             ControlTopPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlTopPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
             ControlLeftPositionPercentage = double.TryParse(fieldType.AttributeValue("ControlLeftPositionPercentage"), out _tempDouble) ? _tempDouble : 0;
             ControlWidthPercentage = double.TryParse(fieldType.AttributeValue("ControlWidthPercentage"), out _tempDouble) ? _tempDouble : 0;
@@ -49,12 +50,12 @@ namespace Epi.Cloud.Common.Metadata
 
             IsRequired = Helpers.GetRequiredControlState(requiredFieldsList, fieldType.AttributeValue("Name"), "RequiredFieldsList");
             Required = Helpers.GetRequiredControlState(requiredFieldsList, fieldType.AttributeValue("Name"), "RequiredFieldsList");
-            ReadOnly = bool.TryParse(fieldType.AttributeValue("IsReadOnly"), out _tempBool) ? _tempBool : false;
+            IsReadOnly = bool.TryParse(fieldType.AttributeValue("IsReadOnly"), out _tempBool) ? _tempBool : false;
             IsHidden = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HiddenFieldsList");
             IsHighlighted = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "HighlightedFieldsList");
             IsDisabled = Helpers.GetControlState(surveyAnswer, fieldType.AttributeValue("Name"), "DisabledFieldsList");
             ShowTextOnRight = fieldType.AttributeValue("ShowTextOnRight");
-            ChoicesList = fieldType.AttributeValue("List");
+            List = fieldType.AttributeValue("List");
             BackgroundColor = fieldType.AttributeValue("BackgroundColor");
             RelatedViewId = fieldType.AttributeValue("RelatedViewId");
         }
@@ -65,9 +66,9 @@ namespace Epi.Cloud.Common.Metadata
         public string PageName { get; set; }
 
         public string UniqueId { get; set; }
-        public int FieldTypeId { get; set; }
+        public FieldType FieldType { get; set; }
         public string RequiredMessage { get; set; }
-        public string Name { get; set; }
+        public string FieldName { get; set; }
         public int TabIndex { get; set; }
 
         public string PromptText { get; set; }
@@ -78,7 +79,7 @@ namespace Epi.Cloud.Common.Metadata
         public double ControlLeftPositionPercentage { get; set; }
         public double ControlWidthPercentage { get; set; }
         public double ControlHeightPercentage { get; set; }
-        public string checkcode { get; set; }
+        public string Checkcode { get; set; }
         public double PromptFontSize { get; set; }
         public string PromptFontStyle { get; set; }
         public string PromptFontFamily { get; set; }
@@ -94,26 +95,27 @@ namespace Epi.Cloud.Common.Metadata
 
         public bool IsRequired { get; set; }
         public bool Required { get; set; }
-        public bool ReadOnly { get; set; }
+        public bool IsReadOnly { get; set; }
         public bool IsHidden { get; set; }
         public bool IsHighlighted { get; set; }
         public bool IsDisabled { get; set; }
 
         public string ShowTextOnRight { get; set; }
-        public string ChoicesList { get; set; }
+        public string List { get; set; }
         public string BackgroundColor { get; set; }
-        public List<string> SourceTableValues { get; set; }
+        public string[] SourceTableValues { get; set; }
         public string RelatedViewId { get; set; }
 
 
-        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, SourceTable[] sourceTables, string Checkcode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, string formCheckcode)
         {
             var fields = page.Fields;
-            return MapFieldMetadataToFieldAttributes(fields, sourceTables, Checkcode);
+            return MapFieldMetadataToFieldAttributes(fields, formCheckcode);
         }
 
-        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, SourceTable[] sourceTables, string CheckCode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, string formCheckcode)
         {
+            var sourceTableFields = fields.Where(f => f.SourceTableValues != null).ToArray();
             var results = fields.Select(f => new FieldAttributes
             {
                 RequiredMessage = "This field is required",
@@ -122,10 +124,10 @@ namespace Epi.Cloud.Common.Metadata
                 PageId = f.PageId.ValueOrDefault(),
                 PageName = f.PageName,
                 PagePosition = f.PagePosition.ValueOrDefault(),
-                checkcode = CheckCode,
+                Checkcode = formCheckcode,
                 UniqueId = f.UniqueId.ToString("D"),
-                FieldTypeId = f.FieldTypeId,
-                Name = f.Name,
+                FieldType = (FieldType)f.FieldTypeId,
+                FieldName = f.Name,
                 TabIndex = (int)f.TabIndex,
 
                 PromptText = f.PromptText,
@@ -149,12 +151,12 @@ namespace Epi.Cloud.Common.Metadata
                 Upper = f.Upper,
                 IsRequired =  f.IsRequired?? false,
                 Required = f.IsRequired?? false,
-                ReadOnly = f.IsReadOnly ?? false,
+                IsReadOnly = f.IsReadOnly ?? false,
                 IsHidden = false,
                 IsHighlighted = false,
                 IsDisabled = false,
-                ChoicesList = f.List,
-                SourceTableValues = (!string.IsNullOrEmpty(f.SourceTableName) && sourceTables != null && sourceTables.Length > 0) ? sourceTables.Where(st => st.TableName == f.SourceTableName).Single().Items.ToList() : null,
+                List = f.List,
+                SourceTableValues = f.SourceTableValues,
                 RelatedViewId = f.RelatedViewId.ToString()
 
             });

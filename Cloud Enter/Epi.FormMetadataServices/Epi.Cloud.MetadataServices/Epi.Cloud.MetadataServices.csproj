@@ -59,7 +59,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MetadataService\Interface\IProjectMetadataProvider.cs" />
     <Compile Include="MetadataService\Interface\IProjectMetadataProxy.cs" />
     <Compile Include="MetadataService\ProjectMetadataServiceProxy.cs" />
     <Compile Include="ProjectMetadataProvider.cs" />
@@ -77,6 +76,10 @@
     <ProjectReference Include="..\..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
+      <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
+      <Name>Epi.Cloud.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>

@@ -34,11 +34,11 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public Dictionary<string, string> SqlData { get; set; }
         public int RecordSourceId { get; set; }
         public int CurrentOrgId { get; set; }
-        public long? TemplateXMLSize { get; set; }
-
-        public string XML { get; set; }
 
         public FormResponseDetail ResponseDetail { get; set; }
+
+        public long? TemplateXMLSize { get; set; }
+        public string XML { get; set; }
 
         public object Clone()
         {

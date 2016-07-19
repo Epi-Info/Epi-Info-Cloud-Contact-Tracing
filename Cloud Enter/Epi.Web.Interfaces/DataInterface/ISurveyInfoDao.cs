@@ -17,7 +17,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, int PageNumber = -1, int PageSize = -1);
+        List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, int gridPageNumber = -1, int gridPageSize = -1);
 
         List<SurveyInfoBO> GetSurveyInfoByOrgKeyAndPublishKey(string SurveyId, string pOrganizationKey, Guid publishKey);
 
@@ -26,24 +26,24 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <summary>
         /// Gets SurveyInfo Size data based on a list of ids
         /// </summary>
-        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
+        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
         /// <returns>PageInfoBO.</returns>
-        List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, int PageNumber = -1, int PageSize = -1, int ResponsesTotalsize = -1);
+        List<SurveyInfoBO> GetSurveySizeInfo(List<string> surveyInfoIdList, int gridPageNumber = -1, int gridPageSize = -1, int ResponsesTotalsize = -1);
 
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
         /// </summary>
-        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
+        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
         /// <returns>SurveyInfo.</returns>
-        List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int PageNumber = -1, int PageSize = -1);
+        List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int gridPageNumber = -1, int gridPageSize = -1);
 
         /// <summary>
         /// Gets SurveyInfo Size data based on a list of ids
         /// </summary>
-        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
+        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
         /// <returns>PageInfoBO.</returns>
-        List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int PageNumber = -1, int PageSize = -1, int ResponsesTotalsize = -1);
+        List<SurveyInfoBO> GetSurveySizeInfo(List<string> surveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int gridPageNumber = -1, int gridPageSize = -1, int ResponsesTotalsize = -1);
 
         /// <summary>
         /// Gets a sorted list of all SurveyInfos.
