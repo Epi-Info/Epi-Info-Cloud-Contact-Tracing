@@ -14,7 +14,7 @@ namespace Epi.Web.Enter.Common.DTO
         }
 
         [DataMember]
-        public string ResponseId { get; set; }                                                                  
+        public string ResponseId { get; set; }
         [DataMember]
         public string SurveyId { get; set; }
         [DataMember]
@@ -50,24 +50,15 @@ namespace Epi.Web.Enter.Common.DTO
 
         [DataMember]
         public int ViewId { get; set; }
+
         [DataMember]
-        public int FormOwnerId
-        {
-            get;
-            set;
-        }
+        public int FormOwnerId { get; set; }
+
         [DataMember]
-        public int LoggedInUserId
-        {
-            get;
-            set;
-        }
+        public int LoggedInUserId { get; set; }
+
         [DataMember]
-        public bool RecoverLastRecordVersion
-        {
-            get;
-            set;
-        }
+        public bool RecoverLastRecordVersion { get; set; }
 
         [DataMember]
         public string XML { get; set; }
@@ -75,6 +66,9 @@ namespace Epi.Web.Enter.Common.DTO
         /// <summary>
         /// Response Question/Answer from DocumentDB.
         /// </summary>
+        [DataMember]
+        public Dictionary<string, string> ResponseQA { get; set; }
+
         [DataMember]
         public FormResponseDetail ResponseDetail { get; set; }
     }

@@ -5,6 +5,8 @@ using Epi.Cloud.Common.Metadata;
 using System;
 using Epi.Cloud.CacheServices;
 using System.Collections.Generic;
+using System.Collections;
+using Epi.Cloud.Common;
 
 namespace Epi.Cloud.MetadataServices
 {
@@ -93,6 +95,45 @@ namespace Epi.Cloud.MetadataServices
             return projectDigest;
         }
 
+        public async Task<FieldDigest> GetFieldDigestAsync(string projectId, string formId, string fieldName)
+        {
+            var projectDigests = await GetProjectDigestAsync(projectId);
+            projectDigests = projectDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).ToArray();
+
+            foreach (var projectDigest in projectDigests)
+            {
+                if (projectDigest.FieldNames.Contains(fieldName, CaseInsensitiveEqualityComparer.Instance))
+                {
+                    return new FieldDigest(fieldName, projectDigest);
+                }
+            }
+            return null;
+        }
+
+        public async Task<FieldDigest[]> GetFieldDigestAsync(string projectId, string formId, IEnumerable<string> fieldNames)
+        {
+            List<string> fieldNameList = fieldNames.ToList();
+            List<string> remainingFieldNamesList = fieldNames.ToList();
+            List<FieldDigest> fieldDigests = new List<FieldDigest>();
+            int fieldNamesCount = fieldNames.Count();
+            var projectDigests = await GetProjectDigestAsync(projectId);
+            projectDigests = projectDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).ToArray();
+            foreach (var projectDigest in projectDigests)
+            {
+                fieldNameList = remainingFieldNamesList.ToList();
+                foreach (string fieldName in fieldNameList)
+                {
+                    if (projectDigest.FieldNames.Contains(fieldName, CaseInsensitiveEqualityComparer.Instance))
+                    {
+                        fieldDigests.Add(new FieldDigest(fieldName, projectDigest));
+                        remainingFieldNamesList.Remove(fieldName);
+                    }
+                }
+                if (remainingFieldNamesList.Count == 0) break;
+            }
+            return fieldDigests.ToArray();
+        }
+
         private async Task<Template> RefreshCache(string projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);
@@ -153,4 +194,4 @@ namespace Epi.Cloud.MetadataServices
             }
         }
     }
- }
+}

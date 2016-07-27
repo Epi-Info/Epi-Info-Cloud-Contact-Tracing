@@ -617,7 +617,7 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
             //IsSqlProject = IsEISQLProject(criteria.SurveyId);//Checks to see if current form is SqlProject
 
             DataAccessRuleId = this.GetDataAccessRule(criteria.SurveyId, criteria.UserId);
-#region IsSqlProject
+            #region IsSqlProject
             //if (IsSqlProject)
             //{
             //    //make a connection to datasource table to read the connection string.
@@ -692,7 +692,7 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
             //}
             //else
             //{
-#endregion //IsSqlProject
+            #endregion //IsSqlProject
 
             try
             {
@@ -762,14 +762,10 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
                     }
                     else
                     {
-                        List<string> DBParam = new List<string>();
+                        List<string> fieldNames = criteria.SurveyQAList.Select(n => n.Value.ToLower()).ToList();
+                        var fieldDigests = criteria.FieldDigestList;
 
-                        foreach (var Param in criteria.SurveyQAList)
-                        {
-                            DBParam.Add(Param.Value.ToLower());
-                        }
-
-                        var dbRespone = documentDB.ReadAllRecordsBySurveyID(criteria.FormName, criteria.SurveyId, DBParam, criteria.PageNumber.ToString());
+                        var dbRespone = documentDB.ReadAllRecordsBySurveyID(criteria.FormName, fieldDigests);
                         IEnumerable<SurveyResponse> _recordsinDocumentDB = (IEnumerable<SurveyResponse>)dbRespone;
                         if (_recordsinDocumentDB != null)
                         {
@@ -2004,19 +2000,19 @@ namespace Epi.Cloud.DataEntryServices.DataAccessObjects
         //TODO Implement for DocumentDB
         public void DeleteResponse(ResponseXmlBO ResponseXmlBO)
         {
-        //    Guid Id = new Guid(ResponseXmlBO.ResponseId);
+            //    Guid Id = new Guid(ResponseXmlBO.ResponseId);
 
-        //    using (var Context = DataObjectFactory.CreateContext())
-        //    {
+            //    using (var Context = DataObjectFactory.CreateContext())
+            //    {
 
-        //        ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
+            //        ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
 
-        //        if (Response != null)
-        //        {
-        //            Context.ResponseXmls.DeleteObject(Response);
-        //            Context.SaveChanges();
-        //        }
-        //    }
+            //        if (Response != null)
+            //        {
+            //            Context.ResponseXmls.DeleteObject(Response);
+            //            Context.SaveChanges();
+            //        }
+            //    }
         }
 
         public void UpdateRecordStatus(string ResponseId, int Status)

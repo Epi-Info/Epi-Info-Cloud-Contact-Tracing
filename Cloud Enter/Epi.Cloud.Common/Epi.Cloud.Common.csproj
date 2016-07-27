@@ -38,6 +38,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,11 +49,14 @@
   <ItemGroup>
     <Compile Include="BusinessObjects\ResponseBO.cs" />
     <Compile Include="BusinessObjects\SurveyResponseBO.cs" />
+    <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
+    <Compile Include="Configuration\DependencyHelper.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
     <Compile Include="EntityObjects\SurveyResponse.cs" />
     <Compile Include="EntityObjects\FormResponseDetail.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />
+    <Compile Include="Metadata\FieldDigest.cs" />
     <Compile Include="Metadata\Helpers.cs" />
     <Compile Include="Metadata\NullableExtensions.cs" />
     <Compile Include="Metadata\ProjectDigest.cs" />

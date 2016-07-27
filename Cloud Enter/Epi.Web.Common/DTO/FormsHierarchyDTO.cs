@@ -6,12 +6,20 @@ namespace Epi.Web.Enter.Common.DTO
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class FormsHierarchyDTO
     {
+        private string _rootFormId;
         private string _FormId;
         private List<SurveyAnswerDTO> _ResponseIds;
         private bool _IsRoot;
         private bool _IsSqlProject;
         private int _ViewId;
         private SurveyInfoDTO _SurveyInfo;
+
+        [DataMember]
+        public string RootFormId
+        {
+            get { return _rootFormId; }
+            set { _rootFormId = value; }
+        }
         [DataMember]
         public string FormId
         {

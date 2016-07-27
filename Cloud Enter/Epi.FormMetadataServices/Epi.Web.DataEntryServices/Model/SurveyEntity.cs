@@ -8,36 +8,47 @@ namespace Epi.Cloud.DataEntryServices.Model
     public class Survey
     {
         public SurveyProperties SurveyProperties { get; set; }
-        public SurveyQuestionandAnswer SurveyQuestionandAnswer { get; set; }
+        public FormQuestionandAnswer FormQuestionandAnswer { get; set; }
+        public FormParentProperties FormParentProperties { get; set; }
+        public FormChildProperties FormChildProperties { get; set; }
+        public bool IsChildForm { get; set; }
         public string SurveyName { get; set; }
         public int TotalNoofPages { get; set; }
+        public string DatabaseName { get; set; }
+        public string CollectionName { get; set; }
 
     }
     public class SurveyProperties : Resource
     {
-        public string SurveyID { get; set; }
-        public int RecStatus { get; set; }
+        public string FormId { get; set; }
+        public bool RecStatus { get; set; }
         public string GlobalRecordID { get; set; }
         public string FirstSaveLogonName { get; set; }
         public DateTime FirstSaveTime { get; set; }
         public string LastSaveLogonName { get; set; }
         public DateTime LastSaveTime { get; set; }
         public string UserId { get; set; }
-        public string PageId { get; set; }
     }
-    public class SurveyQuestionandAnswer : Resource
+    public class FormParentProperties : Resource
     {
-        public int RecStatus { get; set; }
-        public string SurveyID { get; set; }
+        public string FormId { get; set; }
+        public bool RecStatus { get; set; }
         public string GlobalRecordID { get; set; }
-        public int PageId { get; set; }
-        public List<Digest> Digest { get; set; }
-        public Dictionary<string, string> SurveyQAList { get; set; }
-        public ProjectDigest[] ProjectDigest { get; set; }
+        public string FirstSaveLogonName { get; set; }
+        public DateTime FirstSaveTime { get; set; }
+        public string LastSaveLogonName { get; set; }
+        public DateTime LastSaveTime { get; set; }
+        public string UserId { get; set; }
+        public bool IsRelatedView { get; set; }
     }
 
-    public class Digest : ProjectDigest
+    public class FormChildProperties : FormParentProperties
     {
-        public Dictionary<string, string> Fields { get; set; }
+        public string RelateParentId { get; set; }
+    }
+    public class FormQuestionandAnswer : Resource
+    {
+        public string GlobalRecordID { get; set; }
+        public Dictionary<string, string> SurveyQAList { get; set; }
     }
 }

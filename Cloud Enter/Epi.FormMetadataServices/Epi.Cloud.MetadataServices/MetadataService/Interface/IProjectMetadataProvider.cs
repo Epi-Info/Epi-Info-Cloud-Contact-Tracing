@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.MetadataServices
@@ -11,6 +12,8 @@ namespace Epi.Cloud.MetadataServices
         Task<Template> GetProjectMetadataWithPageByPageIdAsync(string projectId, int pageId);
         Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string projectId, string formId, int? pageNumber);
         Task<ProjectDigest[]> GetProjectDigestAsync(string projectId);
+        Task<FieldDigest> GetFieldDigestAsync(string projectId, string formId, string fieldName);
+        Task<FieldDigest[]> GetFieldDigestAsync(string projectId, string formId, IEnumerable<string> fieldNames);
     }
 
     public enum ProjectScope

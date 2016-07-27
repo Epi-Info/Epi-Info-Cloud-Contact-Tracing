@@ -18,18 +18,20 @@ using Epi.Web.MVC.Constants;
 using Epi.Web.MVC.Facade;
 using Epi.Cloud.DataEntryServices.Facade;
 using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.DataEntryServices.DataAccessObjects;
 using Epi.Web.Enter.Common.Criteria;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.MetadataServices;
 
 namespace Epi.Web.MVC.Controllers
 {
     [Authorize]
     public class HomeController : Controller
     {
-        private ISecurityFacade _isecurityFacade;
-        private ISurveyFacade _isurveyFacade;
-        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBFacade;
-        private Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
+        private readonly ISecurityFacade _isecurityFacade;
+        private readonly ISurveyFacade _isurveyFacade;
+        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+        private readonly IProjectMetadataProvider _projectMetadataProvider;
+        private readonly Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
         private int NumberOfPages = -1;
@@ -43,11 +45,16 @@ namespace Epi.Web.MVC.Controllers
         /// <param name="surveyFacade"></param>
         public HomeController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade,
                               Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade,
-                              Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices)
+                              Epi.Cloud.MetadataServices.IProjectMetadataProvider projectMetadataProvider,
+                              Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices,
+                              ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade,
+                              IProjectMetadataProvider iProjectMetadataProvider)
         {
             _isurveyFacade = isurveyFacade;
             _isecurityFacade = isecurityFacade;
+            _projectMetadataProvider = projectMetadataProvider;
             _iCacheServices = iCacheServices;
+            _isurveyDocumentDBStoreFacade = isurveyDocumentDBStoreFacade;
         }
 
         public ActionResult Default()
@@ -209,6 +216,19 @@ namespace Epi.Web.MVC.Controllers
             int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
 
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, false, "", false, CuurentOrgId);
+
+            var Projectdata = _projectMetadataProvider.GetProjectDigestAsync(surveyid);
+            ProjectDigest[] ProjectMetaData = Projectdata.Result;
+            ProjectDigest _projectDigest = new ProjectDigest();
+            foreach (var _project in ProjectMetaData)
+            {
+                if (AddNewFormId == _project.FormId)
+                {
+                    _projectDigest = _project;
+                    break;
+                }
+            }
+            var response = _isurveyDocumentDBStoreFacade.SaveFormParentPropertiesToDocumentDB(_projectDigest, false, 1410, ResponseID.ToString());
 
             // SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
             MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
@@ -549,6 +569,11 @@ namespace Epi.Web.MVC.Controllers
             return a.Key.CompareTo(b.Key);
         }
 
+        private int Compare(KeyValuePair<int, FieldDigest> a, KeyValuePair<int, FieldDigest> b)
+        {
+            return a.Key.CompareTo(b.Key);
+        }
+
         public FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, int PageNumber, string sort = "", string sortfield = "", int orgid = -1)
         {
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
@@ -570,9 +595,12 @@ namespace Epi.Web.MVC.Controllers
                 formSettingResponse.FormSetting.FormId = SurveyId;
                 Columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
                 Columns.Sort(Compare);
+                var columnDigests = formSettingResponse.FormSetting.ColumnDigestList.ToList();
+                columnDigests.Sort(Compare);
 
                 // Setting  Column Name  List
                 formResponseInfoModel.Columns = Columns;
+                formResponseInfoModel.ColumnDigests = columnDigests;
 
                 formResponseInfoModel.FormInfoModel.IsShared = formSettingResponse.FormInfo.IsShared;
                 formResponseInfoModel.FormInfoModel.IsShareable = formSettingResponse.FormInfo.IsShareable;
@@ -629,12 +657,8 @@ namespace Epi.Web.MVC.Controllers
                 {
                     formResponseReq.Criteria.Sortfield = sortfield;
                 }
-                formResponseReq.Criteria.SurveyQAList = new Dictionary<string, string>();
-                foreach (var sqlParam in Columns)
-                {
-                    formResponseReq.Criteria.SurveyQAList.Add(sqlParam.Key.ToString(), sqlParam.Value.ToString());
-                }
-
+                formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
+                formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
 
                 //Test
                 SurveyAnswerResponse formResponseList = _isurveyFacade.GetFormResponseList(formResponseReq);
@@ -646,6 +670,7 @@ namespace Epi.Web.MVC.Controllers
                 criteria.IsShareable = false;
                 criteria.PageSize = 20;
                 criteria.SurveyQAList = formResponseReq.Criteria.SurveyQAList;
+                criteria.FieldDigestList = formResponseReq.Criteria.FieldDigestList;
 
                 var entityDaoFactory = new EF.EntityDaoFactory();
 
@@ -665,9 +690,10 @@ namespace Epi.Web.MVC.Controllers
                         pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
                         surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
                     }
-                    pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
+                    pageResponseDetail.ResponseQA = (Dictionary<string, string>)item.ResponseQA;
                     formResponseList.SurveyResponseList.Add(surveyAnswer);
                 }
+
 
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List
@@ -782,7 +808,7 @@ namespace Epi.Web.MVC.Controllers
             //responseId = TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID].ToString();
             var SurveyAnswerResponse = _isurveyFacade.GetSurveyAnswerResponse(responseId, FormId, UserId);
             result = SurveyAnswerResponse.SurveyResponseList[0];
-            result.FormOwnerId = SurveyAnswerResponse.FormInfo.OwnerId;
+            result.FormOwnerId = 1014;
             return result;
 
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Models
 {
@@ -8,8 +9,8 @@ namespace Epi.Web.MVC.Models
         public FormInfoModel FormInfoModel;
         public UserModel UserModel;
         public List<ResponseModel> ResponsesList;
-        //public List<string> ColumnNames;
         public List<KeyValuePair<int, string>> Columns;
+        public List<KeyValuePair<int, FieldDigest>> ColumnDigests;
         public int NumberOfPages;
         public int CurrentPage;
         public int PageSize;
@@ -31,6 +32,7 @@ namespace Epi.Web.MVC.Models
             ResponsesList = new List<ResponseModel>();
             //ColumnNames = new List<string>();
             Columns = new List<KeyValuePair<int, string>>();
+            ColumnDigests = new List<KeyValuePair<int, FieldDigest>>();
         }
     }
 

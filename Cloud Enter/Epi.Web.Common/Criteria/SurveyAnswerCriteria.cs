@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.Enter.Common.Criteria
 {
@@ -117,7 +118,10 @@ namespace Epi.Web.Enter.Common.Criteria
             get;
             set;
         }
-        public IDictionary<string, string> SurveyQAList { get; set; }
 
+        public int? FormResponseCount { get; set; }
+
+        public IDictionary<string, string> SurveyQAList { get; set; }
+        public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
     }
 }

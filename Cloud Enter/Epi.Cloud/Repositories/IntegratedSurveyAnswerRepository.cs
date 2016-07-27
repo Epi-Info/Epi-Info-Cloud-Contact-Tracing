@@ -37,9 +37,9 @@ namespace Epi.Web.MVC.Repositories
             try
             {
                 //SurveyResponseResponse result = Client.GetSurveyResponse(pRequest);
-                SurveyAnswerResponse result = _iDataService.GetSurveyAnswer(pRequest);
-                //var result2 = _dataEntryService.GetSurveyAnswer(pRequest);
-                return result;
+                //SurveyAnswerResponse result = _iDataService.GetSurveyAnswer(pRequest);
+                var result2 = _dataEntryService.GetSurveyAnswer(pRequest);
+                return result2;
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -245,14 +245,9 @@ namespace Epi.Web.MVC.Repositories
         public SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest pRequest)
         {
             try
-            {
-                var Projectdata = _iProjectMetadataProvider.GetProjectDigestAsync(pRequest.SurveyAnswerList[0].SurveyId);
-                ProjectDigest[] ProjectMetaData = Projectdata.Result;
-
-                var results = _isurveyDocumentDBStoreFacade.SaveSurveyAnswerToDocumentDB(ProjectMetaData, 1, 1014, pRequest.SurveyAnswerList[0].ResponseId);
-
+            { 
                 SurveyAnswerResponse result = _iDataService.SetSurveyAnswer(pRequest);
-                //var result2 = _dataEntryService.SetSurveyAnswer(pRequest);
+                
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)

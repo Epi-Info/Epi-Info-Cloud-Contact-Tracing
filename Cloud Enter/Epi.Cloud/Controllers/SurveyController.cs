@@ -18,6 +18,7 @@ using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Constants;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.DataEntryServices.Facade;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -412,6 +413,7 @@ namespace Epi.Web.MVC.Controllers
 
                             SetRelateSession(responseId, PageNumber);
                             RequestedViewId = int.Parse(this.Request.Form["Requested_View_Id"]);
+                            SurveyAnswer.RelateParentId = responseId;
                             form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                             form = SetLists(form);
                             TempData["Width"] = form.Width + 5;
@@ -1350,8 +1352,22 @@ namespace Epi.Web.MVC.Controllers
             bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<FormsHierarchyDTO> FormsHierarchyDTOList = null
             )
         {
+            ProjectDigest _projectDigest = new ProjectDigest();
             if (responseId != null && FormValuesHasChanged == "True")
             {
+                foreach (var _project in form.SurveyInfo.ProjectTemplateMetadata.Project.Digest)
+                {
+                    if (_project.FormId == surveyInfoModel.SurveyId)
+                    {
+                        _projectDigest = _project;
+                        break;
+                    }
+                }
+
+                //Update Form Properties in DocumentDB
+                 var response = _isurveyDocumentDBStoreFacade.SaveFormParentPropertiesToDocumentDB(_projectDigest, false, 1410, responseId);
+
+                //Insert or Update FormQA in DocumentDB
                 _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
             }
 
@@ -1429,14 +1445,24 @@ namespace Epi.Web.MVC.Controllers
                 //Getting Resposes
                 var ResponseListDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).ResponseIds;
 
+                //Get Child Records by Child Form Id
+                List<string> DBParam = new List<string>();
+                foreach (var Param in FormResponseInfoModel.Columns)
+                {
+                    DBParam.Add(Param.Value.ToLower());
+                }
+
+                var ChilRecords = _isurveyDocumentDBStoreFacade.GetChildRecordByChildFormId(SurveyId, ResponseId, "Zika",DBParam);
+
+
                 //Setting Resposes List
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
-                foreach (var item in ResponseListDTO)
+                foreach (var item in ChilRecords.ResponseIds)
                 {
 
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, Columns));
+                        ResponseList.Add(ConvertRowToModel(item, DBParam));
                     }
                     else
                     {
@@ -1453,32 +1479,32 @@ namespace Epi.Web.MVC.Controllers
             return FormResponseInfoModel;
         }
 
-        private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
+        private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<string> Columns)
         {
             ResponseModel Response = new ResponseModel();
 
-            Response.Column0 = item.SqlData["GlobalRecordId"];
+            Response.Column0 = item.SqlData["ChildGlobalRecordID"];
             if (Columns.Count > 0)
             {
-                Response.Column1 = item.SqlData[Columns[0].Value];
+                Response.Column1 = item.SqlData[Columns[0]];
             }
 
             if (Columns.Count > 1)
             {
-                Response.Column2 = item.SqlData[Columns[1].Value];
+                Response.Column2 = item.SqlData[Columns[1]];
             }
 
             if (Columns.Count > 2)
             {
-                Response.Column3 = item.SqlData[Columns[2].Value];
+                Response.Column3 = item.SqlData[Columns[2]];
             }
             if (Columns.Count > 3)
             {
-                Response.Column4 = item.SqlData[Columns[3].Value];
+                Response.Column4 = item.SqlData[Columns[3]];
             }
             if (Columns.Count > 4)
             {
-                Response.Column5 = item.SqlData[Columns[4].Value];
+                Response.Column5 = item.SqlData[Columns[4]];
             }
 
 

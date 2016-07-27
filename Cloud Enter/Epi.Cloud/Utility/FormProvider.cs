@@ -143,15 +143,15 @@ namespace Epi.Web.MVC.Utility
                 //Generate page level Java script (After)
                 JavaScript.Append(GetPageLevelJS(pageNumber, form, PageName, "After"));
 
-                SurveyQuestionandAnswer surveyAnswerFromDocumentDB = null;
+                FormQuestionandAnswer surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB("Zika", form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
                 }
 
                 foreach (var fieldAttributes in metadata)
                 {
-                    //var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
+                    // var FieldValue = GetControlValue(xdocResponse, fieldAttributes.Name);
 
                     //StartNewcode
                     string FieldValue = string.Empty;
@@ -341,7 +341,7 @@ namespace Epi.Web.MVC.Utility
         /// <param name="ResponseId"></param>
         /// <param name="SurveyId"></param>
         /// <param name="PageNo"></param> 
-        public static SurveyQuestionandAnswer GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
+        public static FormQuestionandAnswer GetSurveyDataFromDocumentDB(string surveyName, string ResponseId, string SurveyId, string PageId)
         {
             //ResponseId = "7daa7fb4-d3df-4fae-9ca6-fb2584a52184"; 
             var response = _surveyDocumentDBStoreFacade.ReadSurveyAnswerByResponseID(surveyName, SurveyId, ResponseId, PageId);

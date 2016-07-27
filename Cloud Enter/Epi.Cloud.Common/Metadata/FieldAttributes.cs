@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Newtonsoft.Json;
 
 namespace Epi.Cloud.Common.Metadata
 {
     public class FieldAttributes
     {
+        [JsonIgnore]
         int _tempInt;
+        [JsonIgnore]
         double _tempDouble;
-        bool _tempBool;       
+        [JsonIgnore]
+        bool _tempBool;
 
         public FieldAttributes()
         {
@@ -143,8 +147,8 @@ namespace Epi.Cloud.Common.Metadata
                 Pattern = f.Pattern,
                 Lower = f.Lower,
                 Upper = f.Upper,
-                IsRequired =  f.IsRequired?? false,
-                Required = f.IsRequired?? false,
+                IsRequired = f.IsRequired ?? false,
+                Required = f.IsRequired ?? false,
                 ReadOnly = f.IsReadOnly ?? false,
                 IsHidden = false,
                 IsHighlighted = false,

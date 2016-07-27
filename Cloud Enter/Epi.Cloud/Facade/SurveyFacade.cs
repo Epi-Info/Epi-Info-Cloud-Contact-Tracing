@@ -6,6 +6,7 @@ using Epi.Web.MVC.Models;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.MetadataServices;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -33,6 +34,8 @@ namespace Epi.Web.MVC.Facade
 
         private FormInfoDTO _FormInfoDTO;
 
+        private readonly IProjectMetadataProvider _projectMetadataProvider;
+
         /// <summary>
         /// Injectinting ISurveyInfoRepository through Constructor
         /// </summary>
@@ -42,9 +45,10 @@ namespace Epi.Web.MVC.Facade
                             Epi.Web.Enter.Common.Message.SurveyInfoRequest surveyInfoRequest,
                             Epi.Web.Enter.Common.Message.SurveyAnswerRequest surveyResponseRequest,
                             Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-                            SurveyResponseHelper surveyResponseXML, 
-                            UserAuthenticationRequest surveyAuthenticationRequest, 
-                            FormInfoDTO FormInfoDTO)
+                            SurveyResponseHelper surveyResponseXML,
+                            UserAuthenticationRequest surveyAuthenticationRequest,
+                            FormInfoDTO FormInfoDTO,
+                            IProjectMetadataProvider projectMetadataProvider)
         {
             _iSurveyInfoRepository = iSurveyInfoRepository;
             _iSurveyAnswerRepository = iSurveyResponseRepository;
@@ -53,6 +57,7 @@ namespace Epi.Web.MVC.Facade
             _surveyAnswerDTO = surveyAnswerDTO;
             _surveyResponseHelper = surveyResponseXML;
             _FormInfoDTO = FormInfoDTO;
+            _projectMetadataProvider = projectMetadataProvider;
 
 
         }
@@ -72,7 +77,7 @@ namespace Epi.Web.MVC.Facade
             bool IsMobileDevice,
             List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
             List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null,
-			bool IsAndroid = false)
+            bool IsAndroid = false)
         {
             List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
 
@@ -132,13 +137,13 @@ namespace Epi.Web.MVC.Facade
             {
                 Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
                 Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO,IsAndroid );
+                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid);
             }
             else
             {
                 Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
                 Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO,IsAndroid );
+                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid);
             }
             return form;
         }
@@ -240,10 +245,14 @@ namespace Epi.Web.MVC.Facade
         }
         public FormSettingResponse GetFormSettings(FormSettingRequest pRequest)
         {
-            FormSettingResponse FormSettingResponse = _iSurveyAnswerRepository.GetFormSettings(pRequest);
+            var formId = pRequest.FormInfo.FormId;
+            FormSettingResponse formSettingResponse = _iSurveyAnswerRepository.GetFormSettings(pRequest);
+            var formSetting = formSettingResponse.FormSetting;
+            var fieldDigests = _projectMetadataProvider.GetFieldDigestAsync(formId, formId, formSetting.ColumnNameList.Values).Result;
+            var reverseDictionary = formSetting.ColumnNameList.Select(t => new { t.Key, t.Value }).ToDictionary(t => t.Value, t => t.Key);
+            formSetting.ColumnDigestList = fieldDigests.Select(t => new { Key = reverseDictionary[t.Name], Digest = t }).ToDictionary(t => t.Key, t => t.Digest);
 
-            return FormSettingResponse;
-
+            return formSettingResponse;
         }
 
 

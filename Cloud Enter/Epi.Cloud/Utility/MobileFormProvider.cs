@@ -155,7 +155,7 @@ namespace Epi.Web.MVC.Utility
                 Dictionary<string, string> surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(form.SurveyInfo.SurveyName, form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB("Zika", form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
                 }
 
                 foreach (var fieldAttributes in metadata)

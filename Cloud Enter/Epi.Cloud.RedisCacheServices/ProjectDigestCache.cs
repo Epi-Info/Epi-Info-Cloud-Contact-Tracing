@@ -26,7 +26,7 @@ namespace Epi.Cloud.CacheServices
 
         public bool SetProjectDigest(string projectId, ProjectDigest[] projectDigest)
         {
-            var json = JsonConvert.SerializeObject(projectDigest);
+            var json = JsonConvert.SerializeObject(projectDigest, DontSerializeNulls);
             foreach (var formId in projectDigest.Select(d => d.FormId).Distinct())
             {
                 SetSurveyIdProjectIdMap(formId, projectId);

@@ -54,7 +54,7 @@ namespace Epi.Web.BLL
                 SurveyAnswerCriteria.PageNumber = 1;
                 SurveyAnswerCriteria.IsSqlProject = Criteria.IsSqlProject;
                 result = this.SurveyResponseDao.GetFormResponseByFormId(SurveyAnswerCriteria);
-                if (result[0].SqlData != null)
+                if (result.Count!=0 && result[0].SqlData != null)
                 {
                     var DataList = result[0].SqlData.ToList();
                     DataList.RemoveAt(0);
@@ -82,7 +82,7 @@ namespace Epi.Web.BLL
                 result = this.SurveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
             }
             return result;
-        }
+       }
 
         public List<SurveyResponseBO> GetFormResponseListById(string FormId, int PageNumber, bool IsMobile)
         {

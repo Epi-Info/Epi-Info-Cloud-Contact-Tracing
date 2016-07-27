@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using Epi.Cloud.Common;
 using Epi.Cloud.Common.Configuration;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace Epi.Cloud.CacheServices
@@ -16,6 +17,7 @@ namespace Epi.Cloud.CacheServices
         private static readonly TimeSpan InitialTimeout = new TimeSpan(1, 0, 0); // 1 hour
         private static readonly TimeSpan RenewTimeout = new TimeSpan(1, 0, 0); // 1 hour
 
+        protected static JsonSerializerSettings DontSerializeNulls = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
         private static int _numberOfRetries = 3;
         private static TimeSpan _interval = TimeSpan.FromMilliseconds(100);

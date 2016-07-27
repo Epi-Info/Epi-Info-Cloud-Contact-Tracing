@@ -7,8 +7,8 @@
     <ProjectGuid>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.Web.DataEntryServices</RootNamespace>
-    <AssemblyName>Epi.Web.DataEntryServices</AssemblyName>
+    <RootNamespace>Epi.Cloud.DataEntryServices</RootNamespace>
+    <AssemblyName>Epi.Cloud.DataEntryServices</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -81,6 +81,7 @@
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />

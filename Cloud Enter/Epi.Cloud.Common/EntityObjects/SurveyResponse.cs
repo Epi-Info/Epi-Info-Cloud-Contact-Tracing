@@ -5,8 +5,14 @@ namespace Epi.Cloud.Common.EntityObjects
 {
     public class SurveyResponse
     {
+        public SurveyResponse()
+        {
+            ResponseQA = new Dictionary<string, string>();
+        }
+        public Guid Id { get; set; }
         public Guid ResponseId { get; set; }
         public Guid SurveyId { get; set; }
+        public int PageId { get; set; }
         public Guid ParentRecordId { get; set; }
         public Guid RelateParentId { get; set; }
         public DateTime DateCreated { get; set; }

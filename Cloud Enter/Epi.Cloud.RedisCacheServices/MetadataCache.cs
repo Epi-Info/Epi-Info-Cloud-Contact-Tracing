@@ -53,7 +53,7 @@ namespace Epi.Cloud.CacheServices
         public Template GetFullProjectTemplateMetadata(string projectId)
         {
             string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
-            
+
             Template metadata = null;
 
             if (!_weakProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata))
@@ -85,7 +85,7 @@ namespace Epi.Cloud.CacheServices
                 if (json != null)
                 {
                     metadata = JsonConvert.DeserializeObject<Template>(json);
-                    _weakProjectMetadataObjectCache. Add(projectMetadataWithOutPagesKey, metadata);
+                    _weakProjectMetadataObjectCache.Add(projectMetadataWithOutPagesKey, metadata);
                 }
             }
 
@@ -212,12 +212,12 @@ namespace Epi.Cloud.CacheServices
                         field.SourceTableItems = projectTemplateMetadataClone
                             .SourceTables.Where(st => st.TableName == field.SourceTableName).Single().Items;
                     }
-                    json = JsonConvert.SerializeObject(pageMetadata);
+                    json = JsonConvert.SerializeObject(pageMetadata, DontSerializeNulls);
                     var pageKey = ComposePageKey(projectId, pageId);
                     isSuccessful &= Set(MetadataPrefix, pageKey, json).Result;
                 }
 
-                json = JsonConvert.SerializeObject(projectTemplateMetadataClone);
+                json = JsonConvert.SerializeObject(projectTemplateMetadataClone, DontSerializeNulls);
                 isSuccessful &= Set(MetadataPrefix, projectId, json).Result;
             }
             return isSuccessful;
@@ -269,14 +269,14 @@ namespace Epi.Cloud.CacheServices
             }
             return fieldAttributesArray;
         }
- 
+
         public bool SetPageFieldAttributes(FieldAttributes[] fieldAttributes, string projectId, string formId, int pageNumber)
         {
             bool isSuccessful = false;
             string json;
             lock (_gate)
             {
-                json = JsonConvert.SerializeObject(fieldAttributes);
+                json = JsonConvert.SerializeObject(fieldAttributes, DontSerializeNulls);
                 var pageFieldAttributesKey = ComposePageFieldAttributesKey(projectId, formId, pageNumber);
                 isSuccessful = Set(MetadataPrefix, pageFieldAttributesKey, json).Result;
             }
