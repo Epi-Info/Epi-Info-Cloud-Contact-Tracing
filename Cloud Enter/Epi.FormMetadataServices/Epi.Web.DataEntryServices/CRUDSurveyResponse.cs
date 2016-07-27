@@ -11,10 +11,8 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
 using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Common;
-using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Cloud.DataEntryServices
 {

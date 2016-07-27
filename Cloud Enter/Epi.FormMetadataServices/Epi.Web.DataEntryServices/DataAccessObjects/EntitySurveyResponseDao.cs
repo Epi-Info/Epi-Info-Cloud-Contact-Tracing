@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Epi.Cloud.Common.BusinessObjects;
 //using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.DataEntryServices;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Cloud.DataEntryServices.Helpers;
 using Epi.Cloud.Interfaces.DataInterfaces;
