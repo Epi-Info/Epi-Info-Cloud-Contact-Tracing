@@ -20,13 +20,19 @@ using Epi.Cloud.DataEntryServices.Model;
 namespace Epi.Web.MVC.Controllers
 {
 	[Authorize]
-	public class FormResponseController : BaseSurveyController
+	public class FormResponseController : Controller
 	{
 		//
 		// GET: /FormResponse/
 
+		private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
+
 		private IEnumerable<XElement> PageFields;
 		private string RequiredList = "";
+		List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
+		private int NumberOfPages = -1;
+		private int NumberOfResponses = -1;
+		private bool IsEditMode;
 		private string Sort, SortField;
 		private bool IsNewRequest = true; //Added for retain search and sort
 		public FormResponseController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade)
@@ -409,7 +415,7 @@ namespace Epi.Web.MVC.Controllers
 				//ResponseList.Add(ConvertXMLToModel(item, Columns));
 				if (item.SqlData != null)
 				{
-					ResponseList.Add(ConvertRowToModel(item, Columns, "GlobalRecordId"));
+					ResponseList.Add(ConvertRowToModel(item, Columns));
 				}
 				else
 				{
@@ -598,42 +604,41 @@ namespace Epi.Web.MVC.Controllers
 			}
 
 		}
-		//private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
-		//{
-		//	ResponseModel Response = new ResponseModel();
+		private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
+		{
+			ResponseModel Response = new ResponseModel();
 
-		//	Response.Column0 = item.SqlData["GlobalRecordId"];
-		//	if (Columns.Count > 0)
-		//	{
-		//		Response.Column1 = item.SqlData[Columns[0].Value];
-		//	}
+			Response.Column0 = item.SqlData["GlobalRecordId"];
+			if (Columns.Count > 0)
+			{
+				Response.Column1 = item.SqlData[Columns[0].Value];
+			}
 
-		//	if (Columns.Count > 1)
-		//	{
-		//		Response.Column2 = item.SqlData[Columns[1].Value];
-		//	}
+			if (Columns.Count > 1)
+			{
+				Response.Column2 = item.SqlData[Columns[1].Value];
+			}
 
-		//	if (Columns.Count > 2)
-		//	{
-		//		Response.Column3 = item.SqlData[Columns[2].Value];
-		//	}
-		//	if (Columns.Count > 3)
-		//	{
-		//		Response.Column4 = item.SqlData[Columns[3].Value];
-		//	}
-		//	if (Columns.Count > 4)
-		//	{
-		//		Response.Column5 = item.SqlData[Columns[4].Value];
-		//	}
+			if (Columns.Count > 2)
+			{
+				Response.Column3 = item.SqlData[Columns[2].Value];
+			}
+			if (Columns.Count > 3)
+			{
+				Response.Column4 = item.SqlData[Columns[3].Value];
+			}
+			if (Columns.Count > 4)
+			{
+				Response.Column5 = item.SqlData[Columns[4].Value];
+			}
 
-		//	//Response.Column2 = item.SqlData[Columns[2].Value];
-		//	//Response.Column3 = item.SqlData[Columns[3].Value];
-		//	//Response.Column4 = item.SqlData[Columns[4].Value];
-		//	//Response.Column5 = item.SqlData[Columns[5].Value];
+			//Response.Column2 = item.SqlData[Columns[2].Value];
+			//Response.Column3 = item.SqlData[Columns[3].Value];
+			//Response.Column4 = item.SqlData[Columns[4].Value];
+			//Response.Column5 = item.SqlData[Columns[5].Value];
 
-		//	return Response;
-		//}
-
+			return Response;
+		}
 		//private string GetColumnValue(SurveyAnswerDTO item, string columnName)
 		//{
 		//    string ColumnValue = "";
@@ -654,7 +659,6 @@ namespace Epi.Web.MVC.Controllers
 		//    }
 		//    return ColumnValue;
 		//}
-
 		private string GetColumnValue(SurveyAnswerDTO item, string columnName)
 		{
 			string ColumnValue = "";
@@ -979,7 +983,7 @@ namespace Epi.Web.MVC.Controllers
 					//ResponseList.Add(SurveyResponseXML.ConvertXMLToModel(item, Columns));
 					if (item.SqlData != null)
 					{
-						ResponseList.Add(ConvertRowToModel(item, Columns, "GlobalRecordId"));
+						ResponseList.Add(ConvertRowToModel(item, Columns));
 					}
 					else
 					{

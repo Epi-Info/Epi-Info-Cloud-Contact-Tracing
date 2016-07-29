@@ -360,6 +360,7 @@
     <Compile Include="Constants\SessionKeys.cs" />
     <Compile Include="Controllers\AdminOrganizationController.cs" />
     <Compile Include="Controllers\AdminUserController.cs" />
+    <Compile Include="Controllers\BaseSurveyController.cs" />
     <Compile Include="Controllers\FinalController.cs" />
     <Compile Include="Controllers\FormResponseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

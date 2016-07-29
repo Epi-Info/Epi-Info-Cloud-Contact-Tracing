@@ -6,11 +6,16 @@ using System;
 using System.Threading.Tasks;
 using Epi.Web.Enter.Common.Message;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Helpers;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
     public class SurveyDocumentDBFacade : ISurveyStoreDocumentDBFacade
     {
+
+
+        CRUDSurveyResponse _crudSurveyResponse = new CRUDSurveyResponse();
+
         /// <summary>
         /// Insert survey question and answer to Document Db
         /// </summary>
@@ -20,18 +25,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeSurvey = new Survey();
-
             string Dbname = surveyInfoModel.SurveyName;
             //Get Collection Name
             _storeSurvey = GetDbAndCollectionName(form, Dbname);
-            if (_storeSurvey.IsChildForm)
-            {
-                _storeSurvey.FormQuestionandAnswer = ReadQuestionandAnswerFromChildPage(form, _storeSurvey, surveyInfoModel, surveyAnswerDTO.RelateParentId, responseId);
-            }
-            else
-            {
-                _storeSurvey.FormQuestionandAnswer = ReadQuestionandAnswerFromPage(form, _storeSurvey, surveyInfoModel, responseId);
-            }
+            _storeSurvey.FormQuestionandAnswer = ReadQuestionandAnswerFromPage(form, _storeSurvey, surveyInfoModel, responseId);
             bool response = await _surveyResponse.InsertToSurveyToDocumentDBAsync(_storeSurvey);
             return true;
         }
@@ -58,7 +55,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
         #region Read Question and Answer from all pages
         public FormQuestionandAnswer ReadQuestionandAnswerFromPage(Form form, Survey _surveyInfo, SurveyInfoModel surveyInfoModel, string responseId)
         {
-
             FormQuestionandAnswer _surveyQA = new FormQuestionandAnswer();
             _surveyQA.SurveyQAList = new Dictionary<string, string>();
             foreach (var field in form.InputFields)
@@ -71,48 +67,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _surveyQA.GlobalRecordID = responseId;
             return _surveyQA;
         }
-        #endregion
-
-        #region Read Question and Answer from child pages
-        public FormQuestionandAnswer ReadQuestionandAnswerFromChildPage(Form form, Survey _surveyInfo, SurveyInfoModel surveyInfoModel, string relateParentId, string responseId)
-        {
-
-            FormQuestionandAnswer _surveyQA = new FormQuestionandAnswer();
-
-            // _surveyQA.DigestQA = new List<Digest>();
-            //Digest _digest = new Digest();
-            //_digest.Fields = new Dictionary<string, string>();
-
-            //foreach (var item in form.SurveyInfo.ProjectTemplateMetadata.Project.Digest)
-            //{
-            //    if (item.PageId == Convert.ToInt32(form.PageId))
-            //    {
-            //        _digest.FormId = item.FormId;
-            //        _digest.FormName = item.FormName;
-            //        _digest.PageId = item.PageId;
-            //        _digest.Position = item.Position;
-            //        _digest.ViewId = item.ViewId;
-            //    }
-
-            //}
-            //foreach (var field in form.InputFields)
-            //{
-            //    if (!field.IsPlaceHolder)
-            //    {
-            //        _digest.Fields.Add(field.Key, field.Response);
-            //    }
-            //}
-            //_digest.ChildRecStatus = 1;
-            //_digest.ChildGlobalRecordID = responseId;
-
-            //_surveyQA.DigestQA.Add(_digest);
-            //_surveyQA.RelateParentId = relateParentId;
-
-
-            // _surveyQA.PageId = Convert.ToInt32(form.PageId);
-            return _surveyQA;
-        }
-        #endregion
+        #endregion 
 
         #region ReadSurveyInfromDocumentDb
         public FormQuestionandAnswer ReadSurveyInfromDocumentDocumentDB(string responseId, string PageNumber)
@@ -132,10 +87,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
         public FormQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId)
         {
             CRUDSurveyResponse crudSurveyResponse = new CRUDSurveyResponse();
-            FormQuestionandAnswer formResponse = crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName, responseId, pageId);
+            FormQuestionandAnswer formResponse = crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName,null, responseId, pageId);
             return formResponse;
-
-
         }
 
         #endregion
@@ -179,56 +132,53 @@ namespace Epi.Cloud.DataEntryServices.Facade
             return _formhierarchyDTO;
         }
 
-        public bool SaveFormParentPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId)
+        public bool SaveFormPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId, string relateParentId)
         {
 
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             Survey _storeForm = new Survey();
-            FormParentProperties _FormData = new FormParentProperties()
+            FormProperties _FormData = new FormProperties()
             {
                 //RecStatus = Status,
                 FormId = ProjectMetaData.FormId,
                 GlobalRecordID = ResponseId,
+                RelateParentId = relateParentId,
                 IsRelatedView = ProjectMetaData.IsRelatedView,
                 FirstSaveTime = DateTime.UtcNow,
                 LastSaveTime = DateTime.UtcNow,
                 UserId = UserId.ToString()
             };
 
-            _storeForm.FormParentProperties = new FormParentProperties();
-            _storeForm.FormParentProperties = _FormData;
-            _storeForm.DatabaseName = ProjectMetaData.FormName;
+            _storeForm.FormProperties = new FormProperties();
+            _storeForm.FormProperties = _FormData;
+            _storeForm.GlobalRecordID = ResponseId;
             _storeForm.CollectionName = ProjectMetaData.FormName;
             var DocumentDBResponse = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(_storeForm);
             return true;
         }
 
-        public bool SaveFormChildPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId)
-        {
-
-            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
-            Survey _storeSurvey = new Survey();
-            FormChildProperties _FormData = new FormChildProperties()
-            {
-                //RecStatus = Status,
-                FormId = ProjectMetaData.FormId,
-                GlobalRecordID = ResponseId,
-                RelateParentId = "GetFromParm",
-                IsRelatedView = ProjectMetaData.IsRelatedView,
-                FirstSaveTime = DateTime.UtcNow,
-                LastSaveTime = DateTime.UtcNow,
-                UserId = UserId.ToString()
-            };
-            _storeSurvey.FormChildProperties = new FormChildProperties();
-            _storeSurvey.FormChildProperties = _FormData;
-            var DocumentDBResponse = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(_storeSurvey);
-
-            //  bool response = DocumentDBResponse.Result;
-            return true;
-        }
-
         #endregion
 
+        #region Open the Record by FormId and GlobalRecordID
+        public SurveyAnswerResponse GetSurveyAnswerResponse(string surveyName,string responseId, string FormId, int UserId,string collectionName)
+        { 
+            SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
+            _surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
+            //Check GlobalRecordIs isDelete or Not
+            var Result = _crudSurveyResponse.ReadAllGlobalRecordIdBySurveyId(surveyName, FormId, responseId,"1");
+            List<SurveyAnswerDTO> SurveyResponseList = new List<SurveyAnswerDTO>();
+            SurveyAnswerDTO _surveyAnswerDTO = new SurveyAnswerDTO();
+            _surveyAnswerDTO.ResponseId = Result.FormProperties.GlobalRecordID;
+            _surveyAnswerDTO.SurveyId = FormId;
+            _surveyAnswerDTO.ResponseQA = Result.FormQuestionandAnswer.SurveyQAList;
+            _surveyAnswerDTO.DateCreated = Result.FormProperties.FirstSaveTime;
+            _surveyAnswerDTO.DateUpdated = Result.FormProperties.LastSaveTime;
+            _surveyAnswerDTO.RelateParentId = Result.FormProperties.RelateParentId;
+            SurveyResponseList.Add(_surveyAnswerDTO); 
+            _surveyAnswerResponse.SurveyResponseList = SurveyResponseList;
+            return _surveyAnswerResponse;
+        }
+        #endregion
     }
 }

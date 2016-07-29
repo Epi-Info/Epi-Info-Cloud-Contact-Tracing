@@ -17,9 +17,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
         SurveyAnswerResponse DeleteResponse(Survey SARequest);
 
         FormsHierarchyDTO GetChildRecordByChildFormId(string ChildFormId, string RelateParentId, string DbName, List<string> Params);
-        bool SaveFormParentPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId);
-        bool SaveFormChildPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId);
-
+        bool SaveFormPropertiesToDocumentDB(ProjectDigest ProjectMetaData, bool Status, int UserId, string ResponseId,string RelateParentId);
+        SurveyAnswerResponse GetSurveyAnswerResponse(string SurveyName,string responseId, string FormId, int UserId ,string PageId);
 
 
     }

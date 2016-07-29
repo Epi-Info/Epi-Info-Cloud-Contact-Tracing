@@ -23,10 +23,11 @@ using Epi.Cloud.Common.Metadata;
 namespace Epi.Web.MVC.Controllers
 {
     [Authorize]
-    public class SurveyController : BaseSurveyController
+    public class SurveyController : Controller
     {
         private readonly ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
         private readonly ISecurityFacade _isecurityFacade;
+        private readonly ISurveyFacade _isurveyFacade;
 
         private IEnumerable<XElement> PageFields;
         private string RequiredList = "";
@@ -35,6 +36,7 @@ namespace Epi.Web.MVC.Controllers
         private bool IsEditMode;
         private List<SurveyAnswerDTO> ListSurveyAnswerDTO = new List<SurveyAnswerDTO>();
         private int ReffererPageNum;
+        List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
 
         public SurveyController(ISurveyFacade isurveyFacade, 
                                 ISecurityFacade isecurityFacade,
@@ -1085,12 +1087,22 @@ namespace Epi.Web.MVC.Controllers
             // Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
             int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(SurveyId, ResponseID.ToString(), UserId, true, RelateResponseId, this.IsEditMode, CuurentOrgId);
+                  
+                        
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
+
+            //Save Child properties in DocumentDB
+
+            //Update Form Properties in DocumentDB
             ProjectDigest _projectDigest = new ProjectDigest();
             _projectDigest.FormId = SurveyId;
             _projectDigest.IsRelatedView = true;
             _projectDigest.FormName = surveyInfoModel.SurveyName; 
              var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(_projectDigest, false, 1410, ResponseID.ToString(), RelateResponseId);
+
+            //Insert or Update FormQA in DocumentDB
+            //_isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+
 
             // set the survey answer to be production or test 
             SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
@@ -1424,27 +1436,38 @@ namespace Epi.Web.MVC.Controllers
         }
         private FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, string ResponseId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
         {
-            FormResponseInfoModel formResponseInfoModel = null;
+            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
 
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper();
             if (!string.IsNullOrEmpty(SurveyId))
             {
-                int orgid = -1;
+                SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
+                FormSettingRequest FormSettingReq = new Enter.Common.Message.FormSettingRequest();
 
-                formResponseInfoModel = GetFormResponseInfoModel(SurveyId, orgid, userId);
-                var formSettingResponse = formResponseInfoModel.FormSettingResponse;
+                //Populating the request
+
+                FormSettingReq.FormInfo.FormId = SurveyId;
+                FormSettingReq.FormInfo.UserId = UserId;
+                //Getting Column Name  List
+                FormSettingResponse FormSettingResponse = _isurveyFacade.GetFormSettings(FormSettingReq);
+                Columns = FormSettingResponse.FormSetting.ColumnNameList.ToList();
+                Columns.Sort(Compare);
+
+                // Setting  Column Name  List
+                FormResponseInfoModel.Columns = Columns;
 
                 //Getting Resposes
                 var ResponseListDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).ResponseIds;
 
                 //Get Child Records by Child Form Id
                 List<string> DBParam = new List<string>();
-                foreach (var Param in formResponseInfoModel.Columns)
+                foreach (var Param in FormResponseInfoModel.Columns)
                 {
                     DBParam.Add(Param.Value.ToLower());
                 }
 
-                var ChilRecords = _isurveyDocumentDBStoreFacade.GetChildRecordByChildFormId(SurveyId, ResponseId, formSettingResponse.FormInfo.FormName,DBParam);
+                var ChilRecords = _isurveyDocumentDBStoreFacade.GetChildRecordByChildFormId(SurveyId, ResponseId,FormSettingResponse.FormInfo.FormName,DBParam);
 
 
                 //Setting Resposes List
@@ -1454,55 +1477,60 @@ namespace Epi.Web.MVC.Controllers
 
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, DBParam, "ChildGlobalRecordID"));
+                        ResponseList.Add(ConvertRowToModel(item, DBParam));
                     }
                     else
                     {
-                        var surveyResponseHelper = new SurveyResponseHelper();
                         ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
                     }
                 }
 
-                formResponseInfoModel.ResponsesList = ResponseList;
+                FormResponseInfoModel.ResponsesList = ResponseList;
 
-                formResponseInfoModel.PageSize = ReadPageSize();
+                FormResponseInfoModel.PageSize = ReadPageSize();
 
-                formResponseInfoModel.CurrentPage = 1;
+                FormResponseInfoModel.CurrentPage = 1;
             }
-            return formResponseInfoModel;
+            return FormResponseInfoModel;
         }
 
-        //private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<string> Columns)
-        //{
-        //    ResponseModel Response = new ResponseModel();
+        private ResponseModel ConvertRowToModel(SurveyAnswerDTO item, List<string> Columns)
+        {
+            ResponseModel Response = new ResponseModel();
 
-        //    Response.Column0 = item.SqlData["ChildGlobalRecordID"];
-        //    if (Columns.Count > 0)
-        //    {
-        //        Response.Column1 = item.SqlData[Columns[0]];
-        //    }
+            Response.Column0 = item.SqlData["ChildGlobalRecordID"];
+            if (Columns.Count > 0)
+            {
+                Response.Column1 = item.SqlData[Columns[0]];
+            }
 
-        //    if (Columns.Count > 1)
-        //    {
-        //        Response.Column2 = item.SqlData[Columns[1]];
-        //    }
+            if (Columns.Count > 1)
+            {
+                Response.Column2 = item.SqlData[Columns[1]];
+            }
 
-        //    if (Columns.Count > 2)
-        //    {
-        //        Response.Column3 = item.SqlData[Columns[2]];
-        //    }
-        //    if (Columns.Count > 3)
-        //    {
-        //        Response.Column4 = item.SqlData[Columns[3]];
-        //    }
-        //    if (Columns.Count > 4)
-        //    {
-        //        Response.Column5 = item.SqlData[Columns[4]];
-        //    }
+            if (Columns.Count > 2)
+            {
+                Response.Column3 = item.SqlData[Columns[2]];
+            }
+            if (Columns.Count > 3)
+            {
+                Response.Column4 = item.SqlData[Columns[3]];
+            }
+            if (Columns.Count > 4)
+            {
+                Response.Column5 = item.SqlData[Columns[4]];
+            }
 
-        //    return Response;
-        //}
 
+
+            return Response;
+        }
+
+        private int Compare(KeyValuePair<int, string> a, KeyValuePair<int, string> b)
+        {
+            return a.Key.CompareTo(b.Key);
+        }
         private int ReadPageSize()
         {
             return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"].ToString());

@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
+using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Models
 {
     public class FormResponseInfoModel
     {
+
+        public FormSettingResponse FormSettingResponse;
         public FormInfoModel FormInfoModel;
         public UserModel UserModel;
         public List<ResponseModel> ResponsesList;
