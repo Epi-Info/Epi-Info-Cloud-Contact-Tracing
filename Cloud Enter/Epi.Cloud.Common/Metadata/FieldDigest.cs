@@ -5,9 +5,10 @@
         public FieldDigest()
         {
         }
-        public FieldDigest(string fieldName, ProjectDigest projectDigest)
+
+        public FieldDigest(AbridgedFieldInfo field, ProjectDigest projectDigest)
         {
-            Name = fieldName;
+            Field = field;
             FormName = projectDigest.FormName;
             FormId = projectDigest.FormId;
             ViewId = projectDigest.ViewId;
@@ -16,12 +17,17 @@
             Position = projectDigest.Position;
         }
 
-        public string Name { get; set; }
+        public AbridgedFieldInfo Field { get; set; }
         public string FormName { get; set; }
         public string FormId { get; set; }
         public int ViewId { get; set; }
         public bool IsRelatedView { get; set; }
         public int PageId { get; set; }
         public int Position { get; set; }
+
+        public string Name { get { return Field.Name; } }
+        public int FieldType { get { return Field.FieldType; } }
+        public int DataType { get { return FieldTypeToDataType.GetDataType(FieldType); } }
+        public bool IsReadonly { get { return Field.IsReadonly; } }
     }
 }

@@ -116,7 +116,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
         /// <returns></returns>
 
 
-        public FormsHierarchyDTO GetChildRecordByChildFormId(string ChildFormId, string RelateParentId, string DbName, List<string> Params)
+        public FormsHierarchyDTO GetChildRecordByChildFormId(string ChildFormId, string RelateParentId, string DbName, Dictionary<int, FieldDigest> Params)
         {
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
             FormsHierarchyDTO _formhierarchyDTO = new FormsHierarchyDTO();
@@ -166,7 +166,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
             //Check GlobalRecordIs isDelete or Not
-            var Result = _crudSurveyResponse.ReadAllGlobalRecordIdBySurveyId(surveyName, FormId, responseId,"1");
+            var Result = _crudSurveyResponse.ReadFormInfoByGlobalRecordIdAndSurveyId(surveyName, FormId, responseId,"1");
             List<SurveyAnswerDTO> SurveyResponseList = new List<SurveyAnswerDTO>();
             SurveyAnswerDTO _surveyAnswerDTO = new SurveyAnswerDTO();
             _surveyAnswerDTO.ResponseId = Result.FormProperties.GlobalRecordID;

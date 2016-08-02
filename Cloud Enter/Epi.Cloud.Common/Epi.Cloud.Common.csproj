@@ -55,6 +55,9 @@
     <Compile Include="Constants\RecordStatus.cs" />
     <Compile Include="EntityObjects\SurveyResponse.cs" />
     <Compile Include="EntityObjects\FormResponseDetail.cs" />
+    <Compile Include="Metadata\AbridgedFieldInfo.cs" />
+    <Compile Include="Metadata\FieldDataType.cs" />
+    <Compile Include="Metadata\FieldType.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />
     <Compile Include="Metadata\FieldDigest.cs" />
     <Compile Include="Metadata\Helpers.cs" />

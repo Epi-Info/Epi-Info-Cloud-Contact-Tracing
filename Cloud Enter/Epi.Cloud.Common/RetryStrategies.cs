@@ -17,12 +17,12 @@ namespace Epi.Cloud.Common
             _interval = interval;
         }
 
-        public T ExecuteWithRetry<T>(Func<T> action)
+        public virtual T ExecuteWithRetry<T>(Func<T> action, Func<Exception, T> exceptionHandeler = null)
         {
-            return ExecuteWithRetry<T>(_numberOfRetries, _interval, action);
+            return ExecuteWithRetry<T>(_numberOfRetries, _interval, action, exceptionHandeler);
         }
 
-        public T ExecuteWithRetry<T>(int numberOfRetries, TimeSpan interval, Func<T> action)
+        public virtual T ExecuteWithRetry<T>(int numberOfRetries, TimeSpan interval, Func<T> action, Func<Exception, T> exceptionHandeler = null)
         {
             T result = default(T);
             while (true)
@@ -34,21 +34,27 @@ namespace Epi.Cloud.Common
                 }
                 catch (Exception ex)
                 {
+                    if (ex.GetType() == typeof(System.NullReferenceException)) throw;
+
                     numberOfRetries -= 1;
                     if (numberOfRetries > 0)
                         Thread.Sleep(interval);
                     else
-                        throw;
+                    {
+                        if (exceptionHandeler == null) throw;
+                        result = exceptionHandeler(ex);
+                        if (result == null) throw;
+                    }
                 }
             }
             return result;
         }
-        public void ExecuteWithRetry(Action action)
+        public virtual void ExecuteWithRetry(Action action, Func<Exception, bool> exceptionHandeler = null)
         {
-            ExecuteWithRetry(_numberOfRetries, _interval, action);
+            ExecuteWithRetry(_numberOfRetries, _interval, action, exceptionHandeler);
         }
 
-        public void ExecuteWithRetry(int numberOfRetries, TimeSpan interval, Action action)
+        public virtual void ExecuteWithRetry(int numberOfRetries, TimeSpan interval, Action action, Func<Exception, bool> exceptionHandeler = null)
         {
             while (true)
             {
@@ -62,7 +68,7 @@ namespace Epi.Cloud.Common
                     numberOfRetries -= 1;
                     if (numberOfRetries > 0)
                         Thread.Sleep(interval);
-                    else
+                    else if (exceptionHandeler == null || exceptionHandeler(ex) == false)
                         throw;
                 }
             }

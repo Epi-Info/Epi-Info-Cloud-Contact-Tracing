@@ -97,14 +97,16 @@ namespace Epi.Cloud.MetadataServices
 
         public async Task<FieldDigest> GetFieldDigestAsync(string projectId, string formId, string fieldName)
         {
+            fieldName = fieldName.ToLower();
             var projectDigests = await GetProjectDigestAsync(projectId);
             projectDigests = projectDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).ToArray();
 
             foreach (var projectDigest in projectDigests)
             {
-                if (projectDigest.FieldNames.Contains(fieldName, CaseInsensitiveEqualityComparer.Instance))
+                var field = projectDigest.Fields.Where(f => f.Name.ToLower() == fieldName).SingleOrDefault();
+                if (field != null)
                 {
-                    return new FieldDigest(fieldName, projectDigest);
+                    return new FieldDigest(field, projectDigest);
                 }
             }
             return null;
@@ -112,20 +114,22 @@ namespace Epi.Cloud.MetadataServices
 
         public async Task<FieldDigest[]> GetFieldDigestAsync(string projectId, string formId, IEnumerable<string> fieldNames)
         {
-            List<string> fieldNameList = fieldNames.ToList();
-            List<string> remainingFieldNamesList = fieldNames.ToList();
+            formId = formId.ToLower();
+            List<string> fieldNameList = fieldNames.Select(n => n.ToLower()).ToList();
+            List<string> remainingFieldNamesList = fieldNames.Select(n => n.ToLower()).ToList();
             List<FieldDigest> fieldDigests = new List<FieldDigest>();
             int fieldNamesCount = fieldNames.Count();
             var projectDigests = await GetProjectDigestAsync(projectId);
-            projectDigests = projectDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).ToArray();
+            projectDigests = projectDigests.Where(d => d.FormId.ToLower() == formId).ToArray();
             foreach (var projectDigest in projectDigests)
             {
                 fieldNameList = remainingFieldNamesList.ToList();
                 foreach (string fieldName in fieldNameList)
                 {
-                    if (projectDigest.FieldNames.Contains(fieldName, CaseInsensitiveEqualityComparer.Instance))
+                    AbridgedFieldInfo field = projectDigest.Fields.Where(f => f.Name.ToLower() == fieldName).SingleOrDefault();
+                    if (field != null)
                     {
-                        fieldDigests.Add(new FieldDigest(fieldName, projectDigest));
+                        fieldDigests.Add(new FieldDigest(field, projectDigest));
                         remainingFieldNamesList.Remove(fieldName);
                     }
                 }
@@ -169,8 +173,7 @@ namespace Epi.Cloud.MetadataServices
                 string formId = viewIdToViewMap[viewId].EWEFormId;
                 int pageId = pageMetadata.PageId.Value;
                 int position = pageMetadata.Position;
-                string[] fieldNames = pageMetadata.Fields.Select(f => f.Name).ToArray();
-                digest[i] = new ProjectDigest(formName, formId, viewId, isRelatedView, pageId, position, fieldNames);
+                digest[i] = new ProjectDigest(formName, formId, viewId, isRelatedView, pageId, position, pageMetadata.Fields);
             }
             projectTemplateMetadata.Project.Digest = digest;
         }
@@ -194,4 +197,4 @@ namespace Epi.Cloud.MetadataServices
             }
         }
     }
-}
+ }

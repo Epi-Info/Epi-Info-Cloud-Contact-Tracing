@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -10,8 +6,16 @@ namespace Epi.Cloud.Common.Metadata
     {
         public ProjectDigest()
         {
+            Fields = new AbridgedFieldInfo[0];
         }
-        public ProjectDigest(string formName, string formId, int viewId, bool isRelatedView, int pageId, int position, string[] fieldNames = null)
+
+        public ProjectDigest(string formName, string formId, int viewId, bool isRelatedView, int pageId, int position, Field[] fields) :
+            this(formName, formId, viewId, isRelatedView, pageId, position,
+                 fields != null ? fields.Select(f => new AbridgedFieldInfo(f)).ToArray() : new AbridgedFieldInfo[0])
+        {
+        }
+
+        public ProjectDigest(string formName, string formId, int viewId, bool isRelatedView, int pageId, int position, AbridgedFieldInfo[] fields)
         {
             FormName = formName;
             FormId = formId;
@@ -19,15 +23,20 @@ namespace Epi.Cloud.Common.Metadata
             IsRelatedView = isRelatedView;
             PageId = pageId;
             Position = position;
-            FieldNames = fieldNames;
+            Fields = fields != null ? fields.ToArray() : new AbridgedFieldInfo[0];
         }
+
         public string FormName { get; set; }
         public string FormId { get; set; }
         public int ViewId { get; set; }
         public bool IsRelatedView { get; set; }
         public int PageId { get; set; }
         public int Position { get; set; }
-        public string[] FieldNames { get; set; }
+        public AbridgedFieldInfo[] Fields { get; set; }
+        public bool IsReadonly { get { return Fields.Any(f => !FieldType.ReadonlyFieldTypes.Contains(f.FieldType)); } }
+        public string[] FieldNames
+        {
+            get { return Fields.Select(f => f.Name).ToArray(); }
+        }
     }
-
 }
