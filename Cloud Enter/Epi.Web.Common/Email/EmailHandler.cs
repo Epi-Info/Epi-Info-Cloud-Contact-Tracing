@@ -74,7 +74,15 @@ namespace Epi.Web.Enter.Common.Email
                 }
 
 
+                //smtp.EnableSsl = isUsingSSL;
+
                 smtp.EnableSsl = isUsingSSL;
+                smtp.UseDefaultCredentials = false;
+                smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
+                if (isAuthenticated)
+                {
+                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                }
 
 
                 smtp.Send(message);

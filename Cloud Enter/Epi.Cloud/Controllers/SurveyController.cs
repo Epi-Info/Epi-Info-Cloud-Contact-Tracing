@@ -19,6 +19,7 @@ using Epi.Web.MVC.Constants;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.DataEntryServices.Facade;
 using Epi.Cloud.Common.Metadata;
+using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -436,6 +437,8 @@ namespace Epi.Web.MVC.Controllers
                             int ViewId = int.Parse(Requested_View_Id);
 
                             string ChildResponseId = AddNewChild(RelateSurveyId.FormId, ViewId, responseId, FormValuesHasChanged, "1");
+
+                            //Save info to DocumentDB
                             SaveCurrentFormToDocumentDB(DocumentForm, surveyInfoModel, SurveyAnswer, ChildResponseId, UserId, IsSubmited, IsSaved, FormValuesHasChanged, 1, responseId);
 
                             return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseid = ChildResponseId, PageNumber = 1 });
@@ -507,6 +510,26 @@ namespace Epi.Web.MVC.Controllers
                                     }
                                 }
                                 this.UpdateStatus(form.ResponseId, form.SurveyInfo.SurveyId, 2);
+
+
+                                //Save info to DocumentDB
+                                SurveyAnswerRequest request = new SurveyAnswerRequest();
+                                request.SurveyAnswerList = new List<SurveyAnswerDTO>();
+                                SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
+                                request.Criteria = new SurveyAnswerCriteria();
+
+                                request.Criteria.SurveyId = surveyInfoModel.SurveyId;
+                                request.Criteria.FormName = surveyInfoModel.SurveyName;
+                                request.Criteria.UserId = UserId;
+                                _surveyAnswer.ResponseId = responseId;
+                                _surveyAnswer.Status = 2;
+                                request.SurveyAnswerList.Add(_surveyAnswer);
+
+
+                                //Update Form Properties in DocumentDB
+                                var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
+
+
 
                                 SurveyAnswerRequest SurveyAnswerRequest1 = new SurveyAnswerRequest();
                                 SurveyAnswerRequest1.Action = "DeleteResponseXml";
@@ -954,6 +977,8 @@ namespace Epi.Web.MVC.Controllers
             SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
             // TODO: GEL - Delete from DocumentDB
             SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
+            //Update Form Properties in DocumentDB
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(SARequest);
 
             return Json(Session[SessionKeys.RootFormId]);//string.Empty
             //return RedirectToAction("Index", "Home");
@@ -1102,7 +1127,20 @@ namespace Epi.Web.MVC.Controllers
             _projectDigest.FormId = SurveyId;
             _projectDigest.IsRelatedView = true;
             _projectDigest.FormName = surveyInfoModel.SurveyName;
-            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(_projectDigest, false, 1410, ResponseID.ToString(), RelateResponseId);
+
+            SurveyAnswerRequest request = new SurveyAnswerRequest();
+            request.SurveyAnswerList = new List<SurveyAnswerDTO>();
+            SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
+            request.Criteria = new SurveyAnswerCriteria();
+
+            request.Criteria.SurveyId = surveyInfoModel.SurveyId;
+            request.Criteria.FormName = surveyInfoModel.SurveyName;
+            _surveyAnswer.ResponseId = ResponseID.ToString();
+            _surveyAnswer.RelateParentId = RelateResponseId;
+            _surveyAnswer.Status = SurveyAnswer.Status;
+            request.SurveyAnswerList.Add(_surveyAnswer);
+
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
 
             // set the survey answer to be production or test 
             SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
@@ -1366,24 +1404,7 @@ namespace Epi.Web.MVC.Controllers
         private MvcDynamicForms.Form SaveCurrentForm(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
             bool IsMobileDevice, string FormValuesHasChanged, int PageNumber, List<FormsHierarchyDTO> FormsHierarchyDTOList = null, string relateParentId = null)
         {
-            //ProjectDigest _projectDigest = new ProjectDigest();
-            //if (responseId != null && FormValuesHasChanged == "True")
-            //{
-            //    foreach (var _project in form.SurveyInfo.ProjectTemplateMetadata.Project.Digest)
-            //    {
-            //        if (_project.FormId == surveyInfoModel.SurveyId)
-            //        {
-            //            _projectDigest = _project;
-            //            break;
-            //        }
-            //    }
 
-            //    //Update Form Properties in DocumentDB
-            //    var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(_projectDigest, false, 1410, responseId, relateParentId);
-
-            //    //Insert or Update FormQA in DocumentDB
-            //    _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
-            //}
 
             bool IsAndroid = false;
 
@@ -1417,31 +1438,31 @@ namespace Epi.Web.MVC.Controllers
         private void SaveCurrentFormToDocumentDB(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
              string FormValuesHasChanged, int PageNumber, string relateParentId = null)
         {
-            ProjectDigest _projectDigest = new ProjectDigest();
+
             if (responseId != null && FormValuesHasChanged == "True")
             {
-                foreach (var _project in form.SurveyInfo.ProjectTemplateMetadata.Project.Digest)
-                {
-                    if (_project.FormId == surveyInfoModel.SurveyId)
-                    {
-                        _projectDigest = _project;
-                        break;
-                    }
-                }
+
+                SurveyAnswerRequest request = new SurveyAnswerRequest();
+                request.SurveyAnswerList = new List<SurveyAnswerDTO>();
+                SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
+                request.Criteria = new SurveyAnswerCriteria();
+
+                request.Criteria.SurveyId = surveyInfoModel.SurveyId;
+                request.Criteria.FormName = surveyInfoModel.SurveyName;
+                request.Criteria.UserId = UserId;
+                _surveyAnswer.ResponseId = responseId;
+                _surveyAnswer.RelateParentId = relateParentId;
+                _surveyAnswer.Status = SurveyAnswer.Status;
+                request.SurveyAnswerList.Add(_surveyAnswer);
+
 
                 //Update Form Properties in DocumentDB
-                var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(_projectDigest, false, 1410, responseId, relateParentId);
+                var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
 
                 //Insert or Update FormQA in DocumentDB
                 _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
             }
-
-
-
         }
-
-
-
 
         private void SetGlobalVariable()
         {
@@ -1497,7 +1518,7 @@ namespace Epi.Web.MVC.Controllers
 
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, DBParam, "ChildGlobalRecordID"));
+                        ResponseList.Add(ConvertRowToModel(item, DBParam, "GlobalRecordID"));
                     }
                     else
                     {

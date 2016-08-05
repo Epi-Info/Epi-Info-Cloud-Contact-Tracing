@@ -77,6 +77,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Spatial, Version=5.6.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
@@ -112,6 +113,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\..\EIWS_BLL_Core\Epi.Web.BLL.csproj">
+      <Project>{d49b7a21-644b-49d7-9a5d-387bf31eafe5}</Project>
+      <Name>Epi.Web.BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>

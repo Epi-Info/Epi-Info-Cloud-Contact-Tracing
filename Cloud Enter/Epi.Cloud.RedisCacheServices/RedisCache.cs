@@ -250,7 +250,7 @@ namespace Epi.Cloud.CacheServices
             var cacheKey = (prefix + key).ToLowerInvariant();
             if (_transientCache.Count > 0)
             {
-                var value =  _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
+                var value = _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
                 return value;
             }
 

@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 namespace Epi.Cloud.DataEntryServices.Model
 {
-    public class Survey
-    {
-        public SurveyProperties SurveyProperties { get; set; }
+    public class FormDocumentDBEntity
+    { 
         public FormQuestionandAnswer FormQuestionandAnswer { get; set; }
         public FormProperties FormProperties { get; set; }
         public bool IsChildForm { get; set; }
@@ -18,21 +17,12 @@ namespace Epi.Cloud.DataEntryServices.Model
         public string GlobalRecordID { get; set; }
 
     }
-    public class SurveyProperties : Resource
-    {
-        public string FormId { get; set; }
-        public bool RecStatus { get; set; }
-        public string GlobalRecordID { get; set; }
-        public string FirstSaveLogonName { get; set; }
-        public DateTime FirstSaveTime { get; set; }
-        public string LastSaveLogonName { get; set; }
-        public DateTime LastSaveTime { get; set; }
-        public string UserId { get; set; }
-    }
+   
     public class FormProperties : Resource
     {
         public string FormId { get; set; }
-        public bool RecStatus { get; set; }
+        public string FormName { get; set; }
+        public int RecStatus { get; set; }
         public string GlobalRecordID { get; set; }
         public string RelateParentId { get; set; }
         public string FirstSaveLogonName { get; set; }

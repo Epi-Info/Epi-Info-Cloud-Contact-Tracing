@@ -222,13 +222,28 @@ namespace Epi.Web.MVC.Controllers
             ProjectDigest _projectDigest = new ProjectDigest();
             foreach (var _project in ProjectMetaData)
             {
-                if (AddNewFormId ==_project.FormId)
+                if (AddNewFormId == _project.FormId)
                 {
                     _projectDigest = _project;
                     break;
                 }
             }
-            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(_projectDigest, false, UserId, ResponseID.ToString(),null);
+
+            //Save Properties to Document DB
+
+            SurveyAnswerRequest request = new SurveyAnswerRequest();
+            request.SurveyAnswerList = new List<SurveyAnswerDTO>();
+            SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
+            request.Criteria = new SurveyAnswerCriteria();
+
+            request.Criteria.SurveyId = _projectDigest.FormId;
+            request.Criteria.FormName = _projectDigest.FormName;
+            request.Criteria.UserId = UserId;
+            _surveyAnswer.ResponseId = ResponseID.ToString();
+            _surveyAnswer.Status = SurveyAnswer.Status;
+            request.SurveyAnswerList.Add(_surveyAnswer);
+
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
 
             // SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
             MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
@@ -510,12 +525,9 @@ namespace Epi.Web.MVC.Controllers
             SARequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
             SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
 
-            //Survey surveyInfo = new Survey();
-            //surveyInfo.SurveyName = "TestFromSprint4";
-            //surveyInfo.SurveyProperties = new SurveyProperties();
-            //surveyInfo.SurveyProperties.SurveyID = "32c9277b-51d2-4d09-b556-a05a2ad9103d";
-            //surveyInfo.SurveyProperties.GlobalRecordID = "38dddc77-4d54-4d6e-a205-5bda223aa1ef";
-            //var check = _idocumentDBFacade.DeleteResponse(surveyInfo);
+
+            SARequest.Criteria.IsDeleteMode = true;
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(SARequest);
 
             return Json(string.Empty);
         }
@@ -675,7 +687,7 @@ namespace Epi.Web.MVC.Controllers
                         pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
                         surveyAnswer.ResponseDetail.PageResponseDetailList.Add(pageResponseDetail);
                     }
-                    pageResponseDetail.ResponseQA = (Dictionary<string,string>)item.ResponseQA;
+                    pageResponseDetail.ResponseQA = (Dictionary<string, string>)item.ResponseQA;
                     formResponseList.SurveyResponseList.Add(surveyAnswer);
                 }
 

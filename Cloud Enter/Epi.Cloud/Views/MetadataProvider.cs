@@ -51,7 +51,7 @@ namespace Epi.Cloud.FormMetadataServices
             if (fieldAttributesArray == null)
             {
                 var pagePosition = pageNumber - 1;
-                var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).Single();
+                var view = projectTemplateMetadata.Project.Views.Where(v => v.EWEFormId == formId).SingleOrDefault();
                 var checkcode = view.CheckCode;
                 var page = view.Pages
                 .Where(p => p.Position == pagePosition).Single();
