@@ -146,7 +146,7 @@ namespace Epi.Web.MVC.Utility
                 FormQuestionandAnswer surveyAnswerFromDocumentDB = null;
                 if (form.ResponseId != null)
                 {
-                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB("Zika", form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
+                    surveyAnswerFromDocumentDB = GetSurveyDataFromDocumentDB(surveyInfo.SurveyName, form.ResponseId, surveyInfo.SurveyId, Convert.ToString(form.PageId));
                 }
 
                 foreach (var fieldAttributes in metadata)

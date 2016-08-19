@@ -217,34 +217,6 @@ namespace Epi.Web.MVC.Controllers
 
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(AddNewFormId, ResponseID.ToString(), UserId, false, "", false, CuurentOrgId);
 
-            var Projectdata = _projectMetadataProvider.GetProjectDigestAsync(surveyid);
-            ProjectDigest[] ProjectMetaData = Projectdata.Result;
-            ProjectDigest _projectDigest = new ProjectDigest();
-            foreach (var _project in ProjectMetaData)
-            {
-                if (AddNewFormId == _project.FormId)
-                {
-                    _projectDigest = _project;
-                    break;
-                }
-            }
-
-            //Save Properties to Document DB
-
-            SurveyAnswerRequest request = new SurveyAnswerRequest();
-            request.SurveyAnswerList = new List<SurveyAnswerDTO>();
-            SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
-            request.Criteria = new SurveyAnswerCriteria();
-
-            request.Criteria.SurveyId = _projectDigest.FormId;
-            request.Criteria.FormName = _projectDigest.FormName;
-            request.Criteria.UserId = UserId;
-            _surveyAnswer.ResponseId = ResponseID.ToString();
-            _surveyAnswer.Status = SurveyAnswer.Status;
-            request.SurveyAnswerList.Add(_surveyAnswer);
-
-            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
-
             // SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
             MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
             SurveyInfoModel surveyInfoModel = Mapper.ToFormInfoModel(form.SurveyInfo);
@@ -269,6 +241,27 @@ namespace Epi.Web.MVC.Controllers
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
             EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
             SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper(PageFields, RequiredList);
+
+            //Save Properties to Document DB
+
+            SurveyAnswerRequest request = new SurveyAnswerRequest();
+            request.SurveyAnswerList = new List<SurveyAnswerDTO>();
+            SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
+            request.Criteria = new SurveyAnswerCriteria();
+
+            request.Criteria.SurveyId = form.SurveyInfo.SurveyId;
+            request.Criteria.FormName = form.SurveyInfo.SurveyName;
+            request.Criteria.UserId = UserId;
+            request.Criteria.IsDraftMode = surveyInfoModel.IsDraftMode;
+            _surveyAnswer.ResponseId = ResponseID.ToString();
+            _surveyAnswer.Status = SurveyAnswer.Status;
+            request.SurveyAnswerList.Add(_surveyAnswer);
+
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
+
+
+
+
             if (FunctionObject_B != null && !FunctionObject_B.IsNull())
             {
                 try
@@ -763,7 +756,7 @@ namespace Epi.Web.MVC.Controllers
             var SurveyInfo = _isurveyFacade.GetSurveyInfoModel(FormId);
             var SurveyAnswerResponse = _isurveyDocumentDBStoreFacade.GetSurveyAnswerResponse(SurveyInfo.SurveyName, responseId, FormId, 1014, "1");
             result = SurveyAnswerResponse.SurveyResponseList[0];
-            result.FormOwnerId = 1014;
+            result.FormOwnerId = result.LastActiveUserId;
             return result;
 
         }

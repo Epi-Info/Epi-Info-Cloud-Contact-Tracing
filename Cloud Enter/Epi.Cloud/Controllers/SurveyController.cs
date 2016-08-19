@@ -521,6 +521,7 @@ namespace Epi.Web.MVC.Controllers
                                 request.Criteria.SurveyId = surveyInfoModel.SurveyId;
                                 request.Criteria.FormName = surveyInfoModel.SurveyName;
                                 request.Criteria.UserId = UserId;
+                                request.Criteria.IsDraftMode = form.SurveyInfo.IsDraftMode;
                                 _surveyAnswer.ResponseId = responseId;
                                 _surveyAnswer.Status = 2;
                                 request.SurveyAnswerList.Add(_surveyAnswer);
@@ -996,6 +997,9 @@ namespace Epi.Web.MVC.Controllers
             SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
             SARequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
             SurveyAnswerResponse SAResponse = _isurveyFacade.DeleteResponse(SARequest);
+            //Update in DocumentDB
+            var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(SARequest);
+
 
             return Json(Session[SessionKeys.RootFormId]);//string.Empty
             //return RedirectToAction("Index", "Home");
@@ -1135,6 +1139,7 @@ namespace Epi.Web.MVC.Controllers
 
             request.Criteria.SurveyId = surveyInfoModel.SurveyId;
             request.Criteria.FormName = surveyInfoModel.SurveyName;
+            request.Criteria.IsDraftMode= surveyInfoModel.IsDraftMode;
             _surveyAnswer.ResponseId = ResponseID.ToString();
             _surveyAnswer.RelateParentId = RelateResponseId;
             _surveyAnswer.Status = SurveyAnswer.Status;
@@ -1435,7 +1440,7 @@ namespace Epi.Web.MVC.Controllers
         }
 
 
-        private void SaveCurrentFormToDocumentDB(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO SurveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
+        private void SaveCurrentFormToDocumentDB(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO surveyAnswer, string responseId, int UserId, bool IsSubmited, bool IsSaved,
              string FormValuesHasChanged, int PageNumber, string relateParentId = null)
         {
 
@@ -1450,9 +1455,10 @@ namespace Epi.Web.MVC.Controllers
                 request.Criteria.SurveyId = surveyInfoModel.SurveyId;
                 request.Criteria.FormName = surveyInfoModel.SurveyName;
                 request.Criteria.UserId = UserId;
+                request.Criteria.IsDraftMode = surveyAnswer.IsDraftMode;
                 _surveyAnswer.ResponseId = responseId;
                 _surveyAnswer.RelateParentId = relateParentId;
-                _surveyAnswer.Status = SurveyAnswer.Status;
+                _surveyAnswer.Status = surveyAnswer.Status;
                 request.SurveyAnswerList.Add(_surveyAnswer);
 
 
@@ -1460,7 +1466,7 @@ namespace Epi.Web.MVC.Controllers
                 var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
 
                 //Insert or Update FormQA in DocumentDB
-                _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                _isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, surveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
             }
         }
 

@@ -29,8 +29,21 @@ namespace Epi.Cloud.DataEntryServices.Model
         public DateTime FirstSaveTime { get; set; }
         public string LastSaveLogonName { get; set; }
         public DateTime LastSaveTime { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public bool IsRelatedView { get; set; }
+        public bool IsDraftMode { get; set; }
+        public override string Id
+        {
+            get
+            {
+                return base.Id;
+            }
+
+            set
+            {
+                base.Id = value;
+            }
+        }
     }
 
     

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Epi.Web.Enter.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Helpers;
+using Newtonsoft.Json;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -68,7 +69,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
             return _surveyQA;
         }
         #endregion 
-
         
 
         #region ReadSurveyAnswerByResponseID,PageId 
@@ -86,8 +86,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
         {
             SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
             CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
-            var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
-            var result = tasks.Result;
+            //var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
+            //var result = tasks.Result;
             return surveyAnsResponse;
         }
 
@@ -130,7 +130,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             if(request.Criteria.IsDeleteMode)
             {
                 request.SurveyAnswerList[0].Status = 0;
-            } 
+            }
             FormProperties _FormData = new FormProperties()
             {
                 RecStatus = request.SurveyAnswerList[0].Status,
@@ -141,13 +141,23 @@ namespace Epi.Cloud.DataEntryServices.Facade
                 //IsRelatedView = ProjectMetaData.IsRelatedView,
                 FirstSaveTime = DateTime.UtcNow,
                 LastSaveTime = DateTime.UtcNow,
-                UserId = request.Criteria.UserId.ToString()
+                UserId = request.Criteria.UserId,
+                IsDraftMode = request.Criteria.IsDraftMode
             };
 
             _storeForm.FormProperties = new FormProperties();
             _storeForm.FormProperties = _FormData;
             _storeForm.GlobalRecordID = request.RequestId; 
             var DocumentDBResponse = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(_storeForm);
+            if(_FormData.RecStatus==2)
+            {
+                string Query= "Select * from FormInfo where FormInfo.GlobalRecordID ='"+_FormData.GlobalRecordID +"' and FormInfo.RecStatus=2" ;
+                var FormInfo =(FormProperties)_surveyResponse.ReadDataFromCollection(_FormData.GlobalRecordID, "FormInfo", Query);
+                CURDServiceBus crudServicBus = new CURDServiceBus();
+
+                //send form info to ServiceBus
+               // crudServicBus.SendMessagesToQueue(FormInfo.Id, JsonConvert.SerializeObject(FormInfo));
+            }
             return true;
         }
 
@@ -160,7 +170,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
             //Check GlobalRecordIs isDelete or Not
-            var Result = _crudSurveyResponse.ReadFormInfoByGlobalRecordIdAndSurveyId(surveyName, FormId, responseId,"1");
+            var Result = _crudSurveyResponse.ReadFormInfoByGlobalRecordIdAndSurveyId(surveyName, FormId, responseId,"1").Result;
             List<SurveyAnswerDTO> SurveyResponseList = new List<SurveyAnswerDTO>();
             SurveyAnswerDTO _surveyAnswerDTO = new SurveyAnswerDTO();
             _surveyAnswerDTO.ResponseId = Result.FormProperties.GlobalRecordID;
@@ -169,11 +179,14 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _surveyAnswerDTO.DateCreated = Result.FormProperties.FirstSaveTime;
             _surveyAnswerDTO.DateUpdated = Result.FormProperties.LastSaveTime;
             _surveyAnswerDTO.RelateParentId = Result.FormProperties.RelateParentId;
-            _surveyAnswerDTO.Status = 2;// Result.FormProperties.RecStatus;
+            _surveyAnswerDTO.Status = Result.FormProperties.RecStatus;
+            _surveyAnswerDTO.LastActiveUserId =Result.FormProperties.UserId;
             SurveyResponseList.Add(_surveyAnswerDTO); 
             _surveyAnswerResponse.SurveyResponseList = SurveyResponseList;
             return _surveyAnswerResponse;
         }
         #endregion
+
+
     }
 }
