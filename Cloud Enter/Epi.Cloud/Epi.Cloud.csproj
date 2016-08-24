@@ -234,6 +234,10 @@
       <HintPath>..\packages\Microsoft.Web.RedisOutputCacheProvider.1.7.0\lib\net40\Microsoft.Web.RedisOutputCacheProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Web.RedisSessionStateProvider, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.RedisSessionStateProvider.2.2.2\lib\net40\Microsoft.Web.RedisSessionStateProvider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
       <Private>True</Private>
@@ -657,6 +661,8 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-1.6.min.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
+    <None Include="Properties\PublishProfiles\EICloudEnterQA - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICloudEnterQA - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.2.3.js" />
     <Content Include="Scripts\jquery-2.2.3.min.js" />
