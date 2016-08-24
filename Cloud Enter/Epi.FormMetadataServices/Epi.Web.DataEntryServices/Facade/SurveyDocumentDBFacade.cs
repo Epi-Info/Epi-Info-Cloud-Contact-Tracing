@@ -8,6 +8,7 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Helpers;
 using Newtonsoft.Json;
+using Epi.Cloud.ServiceBus;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -23,14 +24,13 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
         #region Insert Into Servey Response to DocumentDB
         public async Task<bool> InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId)
-        {
-            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+        { 
             FormDocumentDBEntity _storeSurvey = new FormDocumentDBEntity();
             string Dbname = surveyInfoModel.SurveyName;
             //Get Collection Name
             _storeSurvey = GetDbAndCollectionName(form, Dbname);
             _storeSurvey.FormQuestionandAnswer = ReadQuestionandAnswerFromPage(form, _storeSurvey, surveyInfoModel, responseId);
-            bool response = await _surveyResponse.InsertToSurveyToDocumentDBAsync(_storeSurvey);
+            bool response = await _crudSurveyResponse.InsertToSurveyToDocumentDBAsync(_storeSurvey);
             return true;
         }
         #endregion
@@ -68,14 +68,12 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _surveyQA.GlobalRecordID = responseId;
             return _surveyQA;
         }
-        #endregion 
-        
+        #endregion         
 
         #region ReadSurveyAnswerByResponseID,PageId 
         public FormQuestionandAnswer ReadSurveyAnswerByResponseID(string surveyName, string surveyId, string responseId, string pageId)
-        {
-            CRUDSurveyResponse crudSurveyResponse = new CRUDSurveyResponse();
-            FormQuestionandAnswer formResponse = crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName,null, responseId, pageId);
+        { 
+            FormQuestionandAnswer formResponse = _crudSurveyResponse.ReadSurveyFromDocumentDBByPageandRespondIdAsync(surveyName,null, responseId, pageId);
             return formResponse;
         }
 
@@ -105,10 +103,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 
         public FormsHierarchyDTO GetChildRecordByChildFormId(string ChildFormId, string RelateParentId, string DbName, Dictionary<int, FieldDigest> Params)
-        {
-            CRUDSurveyResponse _surveyResponse = new CRUDSurveyResponse();
+        { 
             FormsHierarchyDTO _formhierarchyDTO = new FormsHierarchyDTO();
-            var GetChildRecords = _surveyResponse.ReadAllRecordByChildFormIdandRelateParentId(ChildFormId, RelateParentId, DbName, Params);
+            var GetChildRecords = _crudSurveyResponse.ReadAllRecordByChildFormIdandRelateParentId(ChildFormId, RelateParentId, DbName, Params);
             _formhierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
             //SurveyAnswerDTO _surveyAnswer = new SurveyAnswerDTO();
             foreach (var item in GetChildRecords)
@@ -149,19 +146,23 @@ namespace Epi.Cloud.DataEntryServices.Facade
             _storeForm.FormProperties = _FormData;
             _storeForm.GlobalRecordID = request.RequestId; 
             var DocumentDBResponse = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(_storeForm);
-            if(_FormData.RecStatus==2)
-            {
-                string Query= "Select * from FormInfo where FormInfo.GlobalRecordID ='"+_FormData.GlobalRecordID +"' and FormInfo.RecStatus=2" ;
-                var FormInfo =(FormProperties)_surveyResponse.ReadDataFromCollection(_FormData.GlobalRecordID, "FormInfo", Query);
-                CURDServiceBus crudServicBus = new CURDServiceBus();
-
-                //send form info to ServiceBus
-               // crudServicBus.SendMessagesToQueue(FormInfo.Id, JsonConvert.SerializeObject(FormInfo));
-            }
+            //if(_FormData.RecStatus==2)
+            //{
+            //  //  var test = ReadFormInfo(_storeForm.GlobalRecordID);
+            //    string Query= "Select * from FormInfo where FormInfo.GlobalRecordID ='"+_FormData.GlobalRecordID +"' and FormInfo.RecStatus!=0" ;
+            //    var FormInfo =(FormProperties)_surveyResponse.ReadDataFromCollection(_FormData.GlobalRecordID, "FormInfo", Query);
+            //    CURDServiceBus crudServicBus = new CURDServiceBus();
+            //    if(FormInfo!=null)
+            //    {
+            //        //send form info to ServiceBus
+            //        crudServicBus.SendMessagesToTopic(FormInfo.Id, JsonConvert.SerializeObject(FormInfo));
+            //    }
+               
+            //}
             return true;
         }
 
-        #endregion
+        #endregion 
 
         #region Open the Record by FormId and GlobalRecordID
         public SurveyAnswerResponse GetSurveyAnswerResponse(string surveyName,string responseId, string FormId, int UserId,string collectionName)
@@ -169,7 +170,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
             SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
             _surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
-            //Check GlobalRecordIs isDelete or Not
+             
             var Result = _crudSurveyResponse.ReadFormInfoByGlobalRecordIdAndSurveyId(surveyName, FormId, responseId,"1").Result;
             List<SurveyAnswerDTO> SurveyResponseList = new List<SurveyAnswerDTO>();
             SurveyAnswerDTO _surveyAnswerDTO = new SurveyAnswerDTO();
@@ -184,6 +185,15 @@ namespace Epi.Cloud.DataEntryServices.Facade
             SurveyResponseList.Add(_surveyAnswerDTO); 
             _surveyAnswerResponse.SurveyResponseList = SurveyResponseList;
             return _surveyAnswerResponse;
+        }
+        #endregion
+
+
+        #region Read Forminfo for DataConsisitencyServiceAPI
+        public List<string> ReadFormInfo(string globalID)
+        { 
+            var responseToDCSApi = _crudSurveyResponse.ReadfullFormInfo(globalID);
+            return responseToDCSApi;
         }
         #endregion
 
