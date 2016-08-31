@@ -27,10 +27,7 @@ namespace Epi.Web.MVC.Controllers
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
             int OrgId = -1;
-            if (Session[SessionKeys.CurrentOrgId] != null)
-            {
-                OrgId = int.Parse(Session[SessionKeys.CurrentOrgId].ToString());
-            }
+           int.TryParse((Session[SessionKeys.CurrentOrgId]?? string.Empty).ToString(),out OrgId);           
             UserOrgModel UserOrgModel = GetUserInfoList(OrgId);
             UserOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             if (Session[SessionKeys.CurrentOrgId] == null)
@@ -49,7 +46,7 @@ namespace Epi.Web.MVC.Controllers
             ViewBag.Version = version;
             UserModel UserModel = new UserModel();
             UserRequest Request = new UserRequest();
-            orgid = int.Parse(Session[SessionKeys.CurrentOrgId].ToString());
+            int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(),out orgid);
             if (iseditmode)
             {
 
@@ -86,7 +83,7 @@ namespace Epi.Web.MVC.Controllers
 
                         Request.User = Mapper.ToUserDTO(UserModel);
 
-                        Request.CurrentOrg = int.Parse(Session[SessionKeys.CurrentOrgId].ToString());
+                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
 
                         Request.CurrentUser = UserId;
                         Response = _isurveyFacade.SetUserInfo(Request);
@@ -98,7 +95,7 @@ namespace Epi.Web.MVC.Controllers
                         Request.Action = "";
                         Request.User = Mapper.ToUserDTO(UserModel);
 
-                        Request.CurrentOrg = int.Parse(Session[SessionKeys.CurrentOrgId].ToString());
+                        int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
 
 
                         Request.CurrentUser = UserId;

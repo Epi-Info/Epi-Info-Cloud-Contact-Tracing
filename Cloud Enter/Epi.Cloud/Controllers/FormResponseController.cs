@@ -199,10 +199,9 @@ namespace Epi.Web.MVC.Controllers
 			   // List<FormsHierarchyDTO> FormsHierarchy1 = GetFormsHierarchy();
 			   // FormsHierarchy1.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == EditForm);
 				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(EditForm);
-				if (Session["RecoverLastRecordVersion"] != null)
-				{
-					surveyAnswerDTO.RecoverLastRecordVersion = bool.Parse(Session[SessionKeys.RecoverLastRecordVersion].ToString());
-				}
+                bool _recoverLastRecordVersion = false;
+                bool.TryParse((Session[SessionKeys.RecoverLastRecordVersion] ?? "False").ToString(), out _recoverLastRecordVersion);
+                surveyAnswerDTO.RecoverLastRecordVersion = _recoverLastRecordVersion;    
 				string ChildRecordId = GetChildRecordId(surveyAnswerDTO);
 				return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, Epi.Web.MVC.Constants.Constant.SURVEY_CONTROLLER, new { responseid = surveyAnswerDTO.ParentRecordId, PageNumber = 1, Edit = "Edit" });
 			}
@@ -329,19 +328,21 @@ namespace Epi.Web.MVC.Controllers
 			FormResponseReq.Criteria.IsSqlProject = FormSettingResponse.FormInfo.IsSQLProject;
 			FormResponseReq.Criteria.UserId = UserId;
 			Session[SessionKeys.IsSqlProject] = FormSettingResponse.FormInfo.IsSQLProject;
-			//if (Session[SessionKeys.SearchCriteria] != null)
-			//{
-			//    FormResponseInfoModel.SearchModel = (SeachBoxModel)Session[SessionKeys.SearchCriteria];
-			//}
-			//FormResponseReq.Criteria.SearchCriteria = CreateSearchCriteria(Request.QueryString, FormResponseInfoModel.SearchModel, FormResponseInfoModel);
+            string _sortOrder= (Session[SessionKeys.SortOrder] ?? string.Empty).ToString();
+            string _sortField = (Session[SessionKeys.SortField] ?? string.Empty).ToString();
+            string _searchCriteria = (Session[SessionKeys.SearchCriteria] ?? string.Empty).ToString();
+            //if (Session[SessionKeys.SearchCriteria] != null)
+            //{
+            //    FormResponseInfoModel.SearchModel = (SeachBoxModel)Session[SessionKeys.SearchCriteria];
+            //}
+            //FormResponseReq.Criteria.SearchCriteria = CreateSearchCriteria(Request.QueryString, FormResponseInfoModel.SearchModel, FormResponseInfoModel);
 
-			//Following code retains the search and sort criteria for already selected form. 
-			if (!IsNewRequest)
-			{
-				if (Session[SessionKeys.SortOrder] != null &&
-						!string.IsNullOrEmpty(Session[SessionKeys.SortOrder].ToString()) &&
-					string.IsNullOrEmpty(Request.QueryString["sort"]))
-				{
+            //Following code retains the search and sort criteria for already selected form. 
+            if (!IsNewRequest)
+			{                
+                if (!string.IsNullOrEmpty(_sortOrder) &&
+                    string.IsNullOrEmpty(Request.QueryString["sort"]))
+                {
 					Sort = Session[SessionKeys.SortOrder].ToString();
 				}
 				else
@@ -349,11 +350,10 @@ namespace Epi.Web.MVC.Controllers
 					Sort = Request.QueryString["sort"];
 					Session[SessionKeys.SortOrder] = Sort;
 				}
-
-				if (Session[SessionKeys.SortField] != null &&
-					   !string.IsNullOrEmpty(Session[SessionKeys.SortField].ToString()) &&
-				   string.IsNullOrEmpty(Request.QueryString["sortfield"]))
-				{
+              
+                if (!string.IsNullOrEmpty(_sortField) &&
+                   string.IsNullOrEmpty(Request.QueryString["sortfield"]))
+                {
 					SortField = Session[SessionKeys.SortField].ToString();
 				}
 				else
@@ -361,13 +361,13 @@ namespace Epi.Web.MVC.Controllers
 					SortField = Request.QueryString["sortfield"];
 					Session[SessionKeys.SortField] = SortField;
 				}
-			}
+			}          
 
-			if (!IsNewRequest &&
-					Session[SessionKeys.SearchCriteria] != null && !string.IsNullOrEmpty(Session[SessionKeys.SearchCriteria].ToString()) &&
-					(Request.QueryString["reset"] == null) && Request.QueryString["col1"] == null
+            if (!IsNewRequest &&
+                    !string.IsNullOrEmpty(_searchCriteria) &&
+                    (Request.QueryString["reset"] == null) && Request.QueryString["col1"] == null
 
-				)
+                )
 			//(Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined") &&
 			{
 				FormResponseReq.Criteria.SearchCriteria = Session[SessionKeys.SearchCriteria].ToString();

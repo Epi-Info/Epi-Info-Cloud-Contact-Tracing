@@ -173,10 +173,9 @@ namespace Epi.Web.MVC.Controllers
 
 
                 Session[SessionKeys.RequestedViewId] = surveyAnswerDTO.ViewId;
-                if (Session[SessionKeys.RecoverLastRecordVersion] != null)
-                {
-                    surveyAnswerDTO.RecoverLastRecordVersion = bool.Parse(Session[SessionKeys.RecoverLastRecordVersion].ToString());
-                }
+                bool _recoverLastRecordVersion;
+                bool.TryParse((Session[SessionKeys.RecoverLastRecordVersion] ?? "False").ToString(), out _recoverLastRecordVersion);
+                surveyAnswerDTO.RecoverLastRecordVersion = _recoverLastRecordVersion;                
                 string ChildRecordId = GetChildRecordId(surveyAnswerDTO);
                 Session[SessionKeys.RecoverLastRecordVersion] = false;
                 return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, Epi.Web.MVC.Constants.Constant.SURVEY_CONTROLLER, new { responseid = ChildRecordId, PageNumber = 1, surveyid = surveyAnswerDTO.SurveyId, Edit = "Edit" });
@@ -378,18 +377,19 @@ namespace Epi.Web.MVC.Controllers
                 _iCacheServices.ClearAllCache();
             }
             Session[SessionKeys.SelectedOrgId] = orgid;
-            if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootFormId].ToString() == formid)
-            {
-                if (Session[SessionKeys.SortOrder] != null &&
-                    !string.IsNullOrEmpty(Session[SessionKeys.SortOrder].ToString()) &&
-                    string.IsNullOrEmpty(sort))
+           string _rootFormId = (Session[SessionKeys.RootFormId] ?? string.Empty).ToString();
+           string _sortOrder = (Session[SessionKeys.SortOrder] ?? string.Empty).ToString();
+           string _sortField = (Session[SessionKeys.SortField] ?? string.Empty).ToString();            
+            if (_rootFormId == formid)
+            {              
+                if (!string.IsNullOrEmpty(_sortOrder) &&
+                   string.IsNullOrEmpty(sort))
                 {
                     sort = Session[SessionKeys.SortOrder].ToString();
                 }
-
-                if (Session[SessionKeys.SortField] != null &&
-                    !string.IsNullOrEmpty(Session[SessionKeys.SortField].ToString()) &&
-                    string.IsNullOrEmpty(sortfield))
+              
+                if (!string.IsNullOrEmpty(_sortField) &&
+                  string.IsNullOrEmpty(sortfield))
                 {
                     sortfield = Session[SessionKeys.SortField].ToString();
                 }
@@ -618,14 +618,14 @@ namespace Epi.Web.MVC.Controllers
                 formResponseReq.Criteria.UserOrganizationId = orgid;
                 Session[SessionKeys.IsSqlProject] = formSettingResponse.FormInfo.IsSQLProject;
                 Session[SessionKeys.IsOwner] = formSettingResponse.FormInfo.IsOwner;
+                string _searchCriteria = (Session[SessionKeys.SearchCriteria] ?? string.Empty).ToString();
                 //if (Session[SessionKeys.SearchCriteria] != null)
                 //{
                 //    formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchCriteria];
                 //}
-                // Following code retain search starts
-                if (Session[SessionKeys.SearchCriteria] != null &&
-                    !string.IsNullOrEmpty(Session[SessionKeys.SearchCriteria].ToString()) &&
-                    (Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined"))
+                // Following code retain search starts                
+                if (!string.IsNullOrEmpty(_searchCriteria) &&
+                  (Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined"))
                 {
                     formResponseReq.Criteria.SearchCriteria = Session[SessionKeys.SearchCriteria].ToString();
                     formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchModel];

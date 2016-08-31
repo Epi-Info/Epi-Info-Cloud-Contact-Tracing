@@ -65,20 +65,16 @@ namespace Epi.Web.MVC.Controllers
                 CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
                 bool IsAndroid = false;
                 SurveyModel SurveyModel = new SurveyModel();
-                if (Session[SessionKeys.RootResponseId] != null && Session[SessionKeys.RootResponseId].ToString() == responseId)
+                string _rootResponseId = (Session[SessionKeys.RootResponseId] ?? string.Empty).ToString();                
+                if (_rootResponseId == responseId)
                 {
                     Session[SessionKeys.RelateButtonPageId] = null;
                 }
                 if (this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     IsAndroid = true;
-                }
-                if (Session[SessionKeys.IsEditMode] != null)
-                {
-
-                    bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
-
-                }
+                }                             
+                bool.TryParse((Session[SessionKeys.IsEditMode] ?? "False").ToString(), out this.IsEditMode);
                 if (IsEditMode)
                 {
                     SurveyModel = GetIndex(responseId, PageNumber, "Edit", surveyid, IsAndroid);
@@ -126,11 +122,9 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.RequestedViewId] = FormsHierarchy.Where(x => x.FormId == SurveyId).Select(x => x.ViewId).First();
                 Session[SessionKeys.IsSqlProject] = FormsHierarchy.Where(x => x.FormId == SurveyId).Select(x => x.IsSqlProject).First();
             }
-            if (Session[SessionKeys.RequestedViewId] != null)
-            {
-                int RequestedViewId = int.Parse(Session[SessionKeys.RequestedViewId].ToString());
-                RelateSurveyId = FormsHierarchy.Single(x => x.ViewId == RequestedViewId).FormId;
-            }
+            int _requestedViewId;
+            int.TryParse((Session[SessionKeys.RequestedViewId] ?? 0).ToString(), out _requestedViewId);
+            RelateSurveyId = FormsHierarchy.Single(x => x.ViewId == _requestedViewId).FormId;            
 
             //Update Status
             //UpdateStatus(responseId, RelateSurveyId, 1);
@@ -216,11 +210,8 @@ namespace Epi.Web.MVC.Controllers
                         {
                             form.IsDraftModeStyleClass = "draft";
                         }
-                    }
-                    if (Session[SessionKeys.FormValuesHasChanged] != null)
-                    {
-                        form.FormValuesHasChanged = Session[SessionKeys.FormValuesHasChanged].ToString();
-                    }
+                    }                   
+                    form.FormValuesHasChanged = (Session[SessionKeys.FormValuesHasChanged] ?? string.Empty).ToString();
                     form.RequiredFieldsList = this.RequiredList;
                     //passCode end
                     SurveyModel SurveyModel = new SurveyModel();
@@ -274,14 +265,14 @@ namespace Epi.Web.MVC.Controllers
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             string responseId = surveyAnswerModel.ResponseId;
             Session[SessionKeys.FormValuesHasChanged] = Form_Has_Changed;
-
+            string _rootResponseId = (Session[SessionKeys.RootResponseId] ?? string.Empty).ToString();
             bool IsAndroid = false;
 
             if (this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 IsAndroid = true;
-            }
-            if (Session[SessionKeys.RootResponseId] != null && Session[SessionKeys.RootResponseId].ToString() == responseId)
+            }            
+            if (_rootResponseId == responseId)
             {
                 Session[SessionKeys.RelateButtonPageId] = null;
             }
@@ -1472,23 +1463,11 @@ namespace Epi.Web.MVC.Controllers
 
         private void SetGlobalVariable()
         {
-
-            if (Session[SessionKeys.RootFormId] != null)
-            {
-                this.RootFormId = Session[SessionKeys.RootFormId].ToString();
-
-            }
-            if (Session[SessionKeys.RootResponseId] != null)
-            {
-
-                this.RootResponseId = Session[SessionKeys.RootResponseId].ToString();
-            }
-            if (Session[SessionKeys.RequiredList] != null)
-            {
-                this.RequiredList = Session[SessionKeys.RequiredList].ToString();
-            }
-
-            bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
+           
+            this.RootFormId = (Session[SessionKeys.RootFormId] ?? string.Empty).ToString();
+            this.RootResponseId = (Session[SessionKeys.RootResponseId] ?? string.Empty).ToString();
+            this.RequiredList = (Session[SessionKeys.RequiredList] ?? string.Empty).ToString();
+            bool.TryParse((Session[SessionKeys.IsEditMode] ?? "False").ToString(), out this.IsEditMode);
 
         }
         private FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, string ResponseId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
