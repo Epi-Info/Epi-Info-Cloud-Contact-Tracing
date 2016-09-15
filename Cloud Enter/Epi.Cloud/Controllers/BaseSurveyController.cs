@@ -20,7 +20,7 @@ namespace Epi.Web.MVC.Controllers
         protected List<KeyValuePair<int, FieldDigest>> ColumnDigests = new List<KeyValuePair<int, FieldDigest>>();
 
         private MetadataAccessor _metadataAccessor;
-        protected MetadataAccessor MetadataAccessor { get { return _metadataAccessor ?? new MetadataAccessor(); } }
+        protected MetadataAccessor MetadataAccessor { get { return _metadataAccessor = _metadataAccessor ?? new MetadataAccessor(); } }
         protected int Compare(KeyValuePair<int, string> a, KeyValuePair<int, string> b)
         {
             return a.Key.CompareTo(b.Key);

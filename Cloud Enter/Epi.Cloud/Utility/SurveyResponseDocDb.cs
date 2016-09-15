@@ -17,7 +17,7 @@ namespace Epi.Web.MVC.Utility
         private IEnumerable<XElement> _pageFieldsXml;
         private string _requiredList = "";
 
-        private Dictionary<string, string> _responseDetailList = new Dictionary<string, string>();
+        private Dictionary<string, string> _responseQA = new Dictionary<string, string>();
 
         private MetadataAccessor _metadataAccessor;
         private MetadataAccessor MetadataAccessor
@@ -44,18 +44,18 @@ namespace Epi.Web.MVC.Utility
 
         public void Add(MvcDynamicForms.Form pForm)
         {
-            _responseDetailList.Clear();
+            _responseQA.Clear();
             foreach (var field in pForm.InputFields)
             {
                 if (!field.IsPlaceHolder)
                 {
-                    if (this._responseDetailList.ContainsKey(field.Title))
+                    if (this._responseQA.ContainsKey(field.Title))
                     {
-                        this._responseDetailList[field.Title] = field.Response;
+                        this._responseQA[field.Title] = field.Response;
                     }
                     else
                     {
-                        this._responseDetailList.Add(field.Title, field.Response);
+                        this._responseQA.Add(field.Title, field.Response);
                     }
                 }
             }
@@ -63,25 +63,25 @@ namespace Epi.Web.MVC.Utility
 
         public void Add(MvcDynamicForms.Fields.InputField pField)
         {
-            if (this._responseDetailList.ContainsKey(pField.Title))
+            if (this._responseQA.ContainsKey(pField.Title))
             {
-                this._responseDetailList[pField.Title] = pField.GetXML();
+                this._responseQA[pField.Title] = pField.GetXML();
             }
             else
             {
-                this._responseDetailList.Add(pField.Title, pField.GetXML());
+                this._responseQA.Add(pField.Title, pField.GetXML());
             }
         }
 
         public void SetValue(string pKey, string pXMLValue)
         {
-            if (this._responseDetailList.ContainsKey(pKey))
+            if (this._responseQA.ContainsKey(pKey))
             {
-                this._responseDetailList[pKey] = pXMLValue;
+                this._responseQA[pKey] = pXMLValue;
             }
             else
             {
-                this._responseDetailList.Add(pKey, pXMLValue);
+                this._responseQA.Add(pKey, pXMLValue);
             }
         }
 
@@ -90,15 +90,15 @@ namespace Epi.Web.MVC.Utility
         {
             string result = null;
 
-            if (this._responseDetailList.ContainsKey(pKey))
+            if (this._responseQA.ContainsKey(pKey))
             {
-                result = this._responseDetailList[pKey];
+                result = this._responseQA[pKey];
             }
 
             return result;
         }
 
-        public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId, out XmlDocument xml)
+        public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId)
         {
             var formName = MetadataAccessor.GetFormDigest(formId).FormName;
             var formResponseDetail = new FormResponseDetail
@@ -113,44 +113,9 @@ namespace Epi.Web.MVC.Utility
                 var pageResponseDetail = new PageResponseDetail();
                 pageResponseDetail.PageId = Convert.ToInt32(pageId);
                 pageResponseDetail.PageNumber = currentPage;
-                pageResponseDetail.ResponseQA = _responseDetailList;
+                pageResponseDetail.ResponseQA = _responseQA;
                 formResponseDetail.AddPageResponseDetail(pageResponseDetail);
             }
-
-            #region Generate XML
-            xml = new XmlDocument();
-            XmlElement root = xml.CreateElement("SurveyResponse");
-
-            if (currentPage == 0)
-            {
-                root.SetAttribute("SurveyId", formId);
-                root.SetAttribute("LastPageVisited", "1");
-                root.SetAttribute("HiddenFieldsList", "");
-                root.SetAttribute("HighlightedFieldsList", "");
-                root.SetAttribute("DisabledFieldsList", "");
-                root.SetAttribute("RequiredFieldsList", "");
-
-                xml.AppendChild(root);
-            }
-
-            XmlElement PageRoot = xml.CreateElement("Page");
-            if (currentPage != 0)
-            {
-                PageRoot.SetAttribute("PageNumber", currentPage.ToString());
-                //PageRoot.SetAttribute("PageId", Pageid);//Added PageId Attribute to the page node
-                PageRoot.SetAttribute("PageId", currentPage.ToString());//Added PageId Attribute to the page node
-                PageRoot.SetAttribute("MetaDataPageId", pageId.ToString());
-                xml.AppendChild(PageRoot);
-            }
-
-            foreach (KeyValuePair<string, string> pair in this._responseDetailList)
-            {
-                XmlElement child = xml.CreateElement(Epi.Web.MVC.Constants.Constant.RESPONSE_DETAILS);
-                child.SetAttribute("QuestionName", pair.Key);
-                child.InnerText = pair.Value;
-                PageRoot.AppendChild(child);
-            }
-            #endregion // Generate XML
 
             return formResponseDetail;
         }
@@ -163,47 +128,9 @@ namespace Epi.Web.MVC.Utility
             return _FieldsTypeIDs.Elements().Count();
         }
 
-        public FormResponseDetail CreateResponseDocument(PageDigest[] pageDigests, XDocument xmlMetadata, out string xmlResponse)
+        public FormResponseDetail CreateResponseDocument(PageDigest[] pageDigests)
         {
             int numberOfPages = pageDigests.Length;
-
-            #region XML
-            XDocument xmlResponseDoc = new XDocument();
-            int numberOfXmlPages = GetNumberOfPages(xmlMetadata);
-            for (int i = 0; numberOfXmlPages > i - 1; i++)
-            {
-                var fieldsTypeIDs = from _FieldTypeID in
-                                         xmlMetadata.Descendants("Field")
-                                     where _FieldTypeID.Attribute("Position").Value == (i - 1).ToString()
-                                     select _FieldTypeID;
-
-                this._pageFieldsXml = fieldsTypeIDs;
-                string pageId;
-                if (this._pageFieldsXml.Count() > 0)
-                {
-                    pageId = this._pageFieldsXml.First().Attribute("PageId").Value;
-                }
-                else
-                {
-                    pageId = "";
-                }
-
-
-                if (i == 0)
-                {
-                    xmlResponseDoc = ToXDocument(GetResponseXml("", true, i, pageId));
-
-                }
-                else
-                {
-                    XDocument currentPageXml = ToXDocument(GetResponseXml("", false, i, pageId));
-                    xmlResponseDoc = MergeXml(xmlResponseDoc, currentPageXml, i);
-                }
-            }
-
-            xmlResponse = xmlResponseDoc.ToString();
-
-            #endregion XML
 
             var firstPageDigest = pageDigests.First();
             var formId = firstPageDigest.FormId;
@@ -225,97 +152,6 @@ namespace Epi.Web.MVC.Utility
             return formResponseDetail;
         }
 
-        public XDocument ToXDocument(XmlDocument xmlDocument)
-        {
-            using (var nodeReader = new XmlNodeReader(xmlDocument))
-            {
-                nodeReader.MoveToContent();
-                return XDocument.Load(nodeReader);
-            }
-        }
-        public XDocument MergeXml(XDocument SavedXml, XDocument CurrentPageResponseXml, int Pagenumber)
-        {
-            XDocument xdoc = XDocument.Parse(SavedXml.ToString());
-            XElement oldXElement = xdoc.XPathSelectElement("SurveyResponse/Page[@PageNumber = '" + Pagenumber.ToString() + "']");
-
-            if (oldXElement == null)
-            {
-                SavedXml.Root.Add(CurrentPageResponseXml.Elements());
-                return SavedXml;
-            }
-
-            else
-            {
-                oldXElement.Remove();
-                xdoc.Root.Add(CurrentPageResponseXml.Elements());
-                return xdoc;
-            }
-        }
-        public XmlDocument GetResponseXml(string SurveyId, bool AddRoot, int CurrentPage, string Pageid)
-        {
-            XmlDocument xml = new XmlDocument();
-            XmlElement root = xml.CreateElement("SurveyResponse");
-
-            if (CurrentPage == 0)
-            {
-                root.SetAttribute("SurveyId", SurveyId);
-                root.SetAttribute("LastPageVisited", "1");
-                root.SetAttribute("HiddenFieldsList", "");
-                root.SetAttribute("HighlightedFieldsList", "");
-                root.SetAttribute("DisabledFieldsList", "");
-                root.SetAttribute("RequiredFieldsList", "");
-
-                xml.AppendChild(root);
-            }
-
-            XmlElement PageRoot = xml.CreateElement("Page");
-            if (CurrentPage != 0)
-            {
-                PageRoot.SetAttribute("PageNumber", CurrentPage.ToString());
-                PageRoot.SetAttribute("PageId", Pageid);//Added PageId Attribute to the page node
-                PageRoot.SetAttribute("MetaDataPageId", Pageid.ToString());
-                xml.AppendChild(PageRoot);
-            }
-
-            foreach (var field in this._pageFieldsXml)
-            {
-                XmlElement child = xml.CreateElement(Epi.Web.MVC.Constants.Constant.RESPONSE_DETAILS);
-                child.SetAttribute("QuestionName", field.Attribute("Name").Value);
-                child.InnerText = field.Value;
-                PageRoot.AppendChild(child);
-                //Start Adding required controls to the list
-                SetRequiredListXml(field);
-            }
-
-            return xml;
-        }
-        public FormResponseDetail GetResponse(string formId, string formName, bool AddRoot, int CurrentPage, int PageId)
-        {
-            var formResponseDetail = new FormResponseDetail { FormId = formId, FormName = formName };
-            if (CurrentPage == 0)
-            {
-                formResponseDetail.LastPageVisited = 1;
-            }
-            if (AddRoot)
-            {
-                if (CurrentPage != 0)
-                {
-                    var pageResponseDetail = new PageResponseDetail { PageId = PageId, PageNumber = CurrentPage };
-
-                    foreach (var field in _pageFields ?? new AbridgedFieldInfo[0])
-                    {
-                        pageResponseDetail.ResponseQA.Add(field.FieldName, field.Value);
-                        //Start Adding required controls to the list
-                        SetRequiredList(field, _requiredList);
-                    }
-
-                    formResponseDetail.AddPageResponseDetail(pageResponseDetail);
-                }
-            }
-
-            return formResponseDetail;
-        }
-
         public string SetRequiredList(AbridgedFieldInfo field, string requiredList)
         {
             requiredList = requiredList ?? string.Empty;
@@ -325,30 +161,6 @@ namespace Epi.Web.MVC.Utility
                 requiredList += (requiredList == "" ? "" : ",") + name; 
             }
             return requiredList;
-        }
-
-        public void SetRequiredListXml(XElement _Fields)
-        {
-            bool isRequired = false;
-            string value = _Fields.Attribute("IsRequired").Value;
-
-            if (bool.TryParse(value, out isRequired))
-            {
-                if (isRequired)
-                {
-                    if (!this._requiredList.Contains(_Fields.Attribute("Name").Value))
-                    {
-                        if (this._requiredList != "")
-                        {
-                            this._requiredList = this._requiredList + "," + _Fields.Attribute("Name").Value.ToLower();
-                        }
-                        else
-                        {
-                            this._requiredList = _Fields.Attribute("Name").Value.ToLower();
-                        }
-                    }
-                }
-            }
         }
 
         public Epi.Web.MVC.Models.ResponseModel ConvertResponseDetailToModel(SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)

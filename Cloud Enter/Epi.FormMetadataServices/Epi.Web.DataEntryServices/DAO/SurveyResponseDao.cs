@@ -2163,8 +2163,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public bool HasResponse(SurveyAnswerCriteria criteria)
         {
-            // TODO: DocumentDB implementation required
-            throw new NotImplementedException();
+            var responseId = criteria.SurveyAnswerIdList[0];
+            var responseExists = _surveyDocumentDBStoreFacade.DoesResponseExist(responseId);
+            return responseExists;
         }
 
         public void UpdatePassCode(UserAuthenticationRequestBO passcodeBO)

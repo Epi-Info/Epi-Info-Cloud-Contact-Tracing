@@ -265,7 +265,7 @@ namespace Epi.Web.MVC.Controllers
 			XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
 			string checkcodeFromXml = ViewElement.Attribute("CheckCode").Value.ToString();
 
-			string checkcode = metadataAccessor.GetCurrentFormDigest().CheckCode;
+			string checkcode = metadataAccessor.GetFormDigest(surveyId).CheckCode;
 			var formCheckCodeObjFromXml = form.GetCheckCodeObj(xdoc, xdocResponse, checkcodeFromXml);
 			form.FormCheckCodeObj = form.GetCheckCodeObj(metadataAccessor.CurrentFormFieldDigests, surveyAnswer.ResponseDetail, checkcode);
 
@@ -281,11 +281,8 @@ namespace Epi.Web.MVC.Controllers
 					PageDigest[] pageDigests = form.MetadataAccessor.GetCurrentFormPageDigests();
 					var responseDetail = surveyAnswer.ResponseDetail;
 
-					string responseXML;
-					responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests, xdoc, out responseXML);
-					surveyAnswer.XML = responseXML;
+					responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests);
 					Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
-					//SurveyAnswer.XML = Epi.Web.MVC.Utility.SurveyHelper.CreateResponseDocument(xdoc, SurveyAnswer.XML, RequiredList);
 					this._requiredList = surveyResponseDocDb.RequiredList;
 					form.RequiredFieldsList = this._requiredList;
 					FunctionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
@@ -324,9 +321,7 @@ namespace Epi.Web.MVC.Controllers
 			{
 				PageDigest[] pageDigestArray = metadataAccessor.GetPageDigests(surveyInfoModel.SurveyId);
 
-				string responseXML;
-				surveyAnswer.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigestArray, xdoc, out responseXML);
-				surveyAnswer.XML = responseXML;
+				surveyAnswer.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigestArray);
 
 				this._requiredList = surveyResponseDocDb.RequiredList;
 				Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;

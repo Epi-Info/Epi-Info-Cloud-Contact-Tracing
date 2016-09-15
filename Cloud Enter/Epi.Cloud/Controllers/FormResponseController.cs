@@ -235,12 +235,10 @@ namespace Epi.Web.MVC.Controllers
 
 			TempData["Width"] = form.Width + 100;
 
-			XDocument xdocResponse = XDocument.Parse(surveyAnswerDTO.XML);
             FormResponseDetail responseDetail = surveyAnswerDTO.ResponseDetail;
 
             XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
 			string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
-            form.FormCheckCodeObj = form.GetCheckCodeObj(xdoc, xdocResponse, checkcode);
 
             form.FormCheckCodeObj = form.GetCheckCodeObj(MetadataAccessor.CurrentFormFieldDigests, responseDetail, checkcode);
 
@@ -253,9 +251,7 @@ namespace Epi.Web.MVC.Controllers
 				try
 				{
                     PageDigest[] pageDigests = form.MetadataAccessor.GetCurrentFormPageDigests();
-                    string responseXML;
-                    responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests, xdoc, out responseXML);
-                    surveyAnswerDTO.XML = responseXML;
+                    responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests);
 
 					Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
 					this._requiredList = surveyResponseDocDb.RequiredList;

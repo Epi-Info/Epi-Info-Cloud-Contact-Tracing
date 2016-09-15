@@ -1131,9 +1131,7 @@ namespace Epi.Web.MVC.Controllers
 					PageDigest[] pageDigests = form.MetadataAccessor.GetCurrentFormPageDigests();
 					var responseDetail = SurveyAnswer.ResponseDetail;
 
-					string responseXML;
-					responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests, xdoc, out responseXML);
-					SurveyAnswer.XML = responseXML;
+					responseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigests);
 
 					Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
 					this._requiredList = surveyResponseDocDb.RequiredList;
@@ -1167,9 +1165,7 @@ namespace Epi.Web.MVC.Controllers
 			{
 				PageDigest[] pageDigestArray = form.MetadataAccessor.GetCurrentFormPageDigests();
 
-				string responseXML;
-				SurveyAnswer.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigestArray, xdoc, out responseXML);
-				SurveyAnswer.XML = responseXML;
+				SurveyAnswer.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigestArray);
 
 				this._requiredList = surveyResponseDocDb.RequiredList;
 				Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
@@ -1409,7 +1405,10 @@ namespace Epi.Web.MVC.Controllers
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
 
-			SurveyResponseDocDb surveyResponseHelper = new SurveyResponseDocDb();
+            var formHieratchyDTO = FormsHierarchyDTOList.FirstOrDefault(h => h.FormId == SurveyId);
+
+
+            SurveyResponseDocDb surveyResponseHelper = new SurveyResponseDocDb();
 			if (!string.IsNullOrEmpty(SurveyId))
 			{
 				SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();

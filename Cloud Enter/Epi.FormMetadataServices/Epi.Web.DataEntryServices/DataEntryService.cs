@@ -1080,17 +1080,12 @@ namespace Epi.Cloud.DataEntryServices
             var eweResponse = _eweDataService.HasResponse(surveyId, responseId);
             try
             {
-                throw new NotImplementedException();
-#if WebEnterCode
-            Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
-            Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
-
-            return Implementation.HasResponse(SurveyId, ResponseId);
-#endif //WebEnterCode
+                var hasResponse = _surveyResponseProvider.HasResponse(surveyId, responseId);
+                return hasResponse;
             }
             catch (Exception ex)
             {
-                return eweResponse;
+                throw;
             }
         }
 
