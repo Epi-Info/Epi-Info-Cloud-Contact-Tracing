@@ -2252,11 +2252,11 @@ namespace Epi.Web.EF
         }
 
 
-        public void DeleteResponse(ResponseBO ResponseXmlBO)
+        public void DeleteResponse(ResponseBO ResponseBO)
         {
 
 
-            Guid Id = new Guid(ResponseXmlBO.ResponseId);
+            Guid Id = new Guid(ResponseBO.ResponseId);
 
             using (var Context = DataObjectFactory.CreateContext())
             {

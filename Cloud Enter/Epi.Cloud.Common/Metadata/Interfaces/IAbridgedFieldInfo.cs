@@ -9,7 +9,7 @@ namespace Epi.Cloud.Common.Metadata.Interfaces
     public interface IAbridgedFieldInfo
     {
         string FieldName { get; }
-        FieldType FieldType { get; }
+        FieldTypes FieldType { get; }
         string List { get; }
         bool IsReadOnly { get; }
         bool IsRequired { get; }

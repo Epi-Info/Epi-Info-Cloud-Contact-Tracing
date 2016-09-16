@@ -49,7 +49,7 @@ namespace Epi.Cloud.DataEntryServices
                 surveyAnswerCriteria.SurveyId = criteria.SurveyId;
                 surveyAnswerCriteria.SurveyAnswerIdList.Add(criteria.SurveyAnswerIdList[0]);
                 surveyAnswerCriteria.GridPageSize = 1;
-                surveyAnswerCriteria.GridPageNumber = 1;
+                surveyAnswerCriteria.PageNumber = 1;
                 surveyAnswerCriteria.IsSqlProject = criteria.IsSqlProject;
                 result = _surveyResponseDao.GetFormResponseByFormId(surveyAnswerCriteria);
                 if (result.Count > 0 && result[0].SqlData != null)
@@ -426,13 +426,6 @@ namespace Epi.Cloud.DataEntryServices
         {
             var surveyResponseBO = _surveyResponseDao.GetSingleResponse(ResponseId);
             return surveyResponseBO;
-#if NotImplemented
-            SurveyResponseBO SurveyResponseBO = new SurveyResponseBO();
-
-            SurveyResponseBO = _eweSurveyResponseDao.GetResponseXml(ResponseId);
-
-            return SurveyResponseBO;
-#endif
         }
 
         public void DeleteResponse(ResponseBO ResponseXmlBO)
@@ -442,9 +435,9 @@ namespace Epi.Cloud.DataEntryServices
             _eweSurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
 #endif
         }
+
         public void UpdateRecordStatus(string ResponseId, int StatusId)
         {
-
             _surveyResponseDao.UpdateRecordStatus(ResponseId, StatusId);
         }
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)

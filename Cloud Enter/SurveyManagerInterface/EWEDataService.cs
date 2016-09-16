@@ -448,7 +448,7 @@ namespace Epi.Web.WCF.SurveyService
                             }
                         }
                     }
-                    else if (request.Action.Equals("DeleteResponseXml", StringComparison.OrdinalIgnoreCase))
+                    else if (request.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
                     {
 
                         foreach (var item in request.SurveyAnswerList)
@@ -796,7 +796,7 @@ namespace Epi.Web.WCF.SurveyService
 
                 IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormInfo FormInfoImplementation = new Epi.Web.BLL.FormInfo(FormInfoDao);
-                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetXml, pRequest.FormInfo.UserId);
+                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetMetadata, pRequest.FormInfo.UserId);
                 Response.FormInfo = Mapper.ToFormInfoDTO(FormInfoBO);
 
 

@@ -202,8 +202,8 @@ namespace Epi.Web.MVC
             routes.MapRoute
              (
                null,                                              // Route name
-               "Survey/UpdateResponseXml/{id}",                           // URL with parameters
-               new { controller = "Survey", action = "UpdateResponseXml", id = "" }
+               "Survey/UpdateResponse/{id}",                           // URL with parameters
+               new { controller = "Survey", action = "UpdateResponse", id = "" }
                );  // Parameter defaults
 
             routes.MapRoute(

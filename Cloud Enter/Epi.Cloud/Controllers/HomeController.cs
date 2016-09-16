@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
 using Epi.Web.MVC.Models;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using System.Linq;
 using Epi.Core.EnterInterpreter;
 using System.Collections.Generic;
@@ -22,7 +20,7 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
-using Epi.Web.Enter.Common.Extension;
+using Epi.Cloud.MVC.Extensions;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -35,7 +33,6 @@ namespace Epi.Web.MVC.Controllers
 		private readonly ISurveyResponseDao _surveyResponseDao;
 
 		private IEnumerable<AbridgedFieldInfo> _pageFields;
-		private IEnumerable<XElement> _pageFieldsXml;
 		private string _requiredList = "";
 
 		/// <summary>
@@ -252,28 +249,17 @@ namespace Epi.Web.MVC.Controllers
 
 			// set the survey answer to be production or test 
 			surveyAnswer.IsDraftMode = form.SurveyInfo.IsDraftMode;
-			XDocument xdoc = XDocument.Parse(form.SurveyInfo.XML);
-
-			//var _FieldsTypeIDs = from _FieldTypeID in
-			//                         xdoc.Descendants("Field")
-			//                     select _FieldTypeID;
 
 			TempData["Width"] = form.Width + 100;
 
-			XDocument xdocResponse = XDocument.Parse(surveyAnswer.XML);
-
-			XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-			string checkcodeFromXml = ViewElement.Attribute("CheckCode").Value.ToString();
-
 			string checkcode = metadataAccessor.GetFormDigest(surveyId).CheckCode;
-			var formCheckCodeObjFromXml = form.GetCheckCodeObj(xdoc, xdocResponse, checkcodeFromXml);
 			form.FormCheckCodeObj = form.GetCheckCodeObj(metadataAccessor.CurrentFormFieldDigests, surveyAnswer.ResponseDetail, checkcode);
 
 
 			///////////////////////////// Execute - Record Before - start//////////////////////
 			Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
 			EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList, _pageFieldsXml);
+			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList);
 			if (FunctionObject_B != null && !FunctionObject_B.IsNull())
 			{
 				try
@@ -644,7 +630,7 @@ namespace Epi.Web.MVC.Controllers
 
 				SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
 				formResponseReq.Criteria.SurveyId = surveyId.ToString();
-				formResponseReq.Criteria.GridPageNumber = pageNumber;
+				formResponseReq.Criteria.PageNumber = pageNumber;
 				formResponseReq.Criteria.UserId = userId;
 				formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
 				formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
@@ -689,7 +675,7 @@ namespace Epi.Web.MVC.Controllers
 				SurveyAnswerCriteria criteria = new SurveyAnswerCriteria();
 				criteria.SurveyId = surveyId;
 				criteria.UserId = userId;
-				criteria.GridPageNumber = 1;
+				criteria.PageNumber = 1;
 				criteria.IsShareable = false;
 				criteria.GridPageSize = 20;
 				criteria.SurveyQAList = formResponseReq.Criteria.SurveyQAList;
@@ -728,15 +714,10 @@ namespace Epi.Web.MVC.Controllers
 					}
 					else
 					{
-						ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
+						ResponseList.Add(item.ToResponseModel(Columns));
 					}
 
 				}
-
-				//foreach (var item in FormResponseList.SurveyResponseList)
-				//{
-				//    ResponseList.Add(SurveyResponseXML.ConvertXMLToModel(item, Columns));
-				//}
 
 				formResponseInfoModel.ResponsesList = ResponseList;
 				//Setting Form Info 
@@ -825,7 +806,7 @@ namespace Epi.Web.MVC.Controllers
 			List<SettingsInfoModel> ModelList = new List<SettingsInfoModel>();
 			foreach (var Item in FormsHierarchy)
 			{
-				FormSettingReq.GetXml = true;
+				FormSettingReq.GetMetadata = true;
 				FormSettingReq.FormInfo.FormId = new Guid(Item.FormId).ToString();
 				FormSettingReq.FormInfo.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 				FormSettingReq.CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
@@ -993,7 +974,7 @@ namespace Epi.Web.MVC.Controllers
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			foreach (var Form in FormList)
 			{
-				FormSettingReq.GetXml = true;
+				FormSettingReq.GetMetadata = true;
 				FormSettingReq.FormInfo.FormId = new Guid(formid).ToString();
 				FormSettingReq.FormInfo.UserId = UserId;
 				FormSettingDTO FormSetting = new FormSettingDTO();

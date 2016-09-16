@@ -24,7 +24,7 @@ namespace Epi.Cloud.Common.Metadata
         {
             RequiredMessage = "This field is required";
             UniqueId = fieldType.AttributeValue("UniqueId");
-            FieldType = (FieldType) (int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0);
+            FieldType = (FieldTypes) (int.TryParse(fieldType.AttributeValue("FieldTypeId"), out _tempInt) ? _tempInt : 0);
             FieldName = fieldType.AttributeValue("Name");
             TabIndex = int.TryParse(fieldType.AttributeValue("TabIndex"), out _tempInt) ? _tempInt : 0;
 
@@ -66,7 +66,7 @@ namespace Epi.Cloud.Common.Metadata
         public string PageName { get; set; }
 
         public string UniqueId { get; set; }
-        public FieldType FieldType { get; set; }
+        public FieldTypes FieldType { get; set; }
         public string RequiredMessage { get; set; }
         public string FieldName { get; set; }
         public int TabIndex { get; set; }
@@ -126,7 +126,7 @@ namespace Epi.Cloud.Common.Metadata
                 PagePosition = f.PagePosition.ValueOrDefault(),
                 Checkcode = formCheckcode,
                 UniqueId = f.UniqueId.ToString("D"),
-                FieldType = (FieldType)f.FieldTypeId,
+                FieldType = (FieldTypes)f.FieldTypeId,
                 FieldName = f.Name,
                 TabIndex = (int)f.TabIndex,
 

@@ -18,7 +18,7 @@ namespace Epi.Cloud.Common.Metadata
             if (fieldAttributes != null)
             {
                 FieldName = fieldAttributes.FieldName;
-                FieldType = (FieldType)fieldAttributes.FieldType;
+                FieldType = (FieldTypes)fieldAttributes.FieldType;
                 List = fieldAttributes.List;
                 IsReadOnly = FieldMetadata.ReadonlyFieldTypes.Contains((int)fieldAttributes.FieldType);
                 IsRequired = fieldAttributes.IsRequired;
@@ -30,7 +30,7 @@ namespace Epi.Cloud.Common.Metadata
             if (field != null)
             {
                 FieldName = field.Name;
-                FieldType = (FieldType)field.FieldTypeId;
+                FieldType = (FieldTypes)field.FieldTypeId;
                 List = field.List;
                 IsReadOnly = FieldMetadata.ReadonlyFieldTypes.Contains(field.FieldTypeId) || (field.IsReadOnly.HasValue ? field.IsReadOnly.Value : false);
                 IsRequired = field.IsRequired.HasValue ? field.IsRequired.Value : false;
@@ -40,7 +40,7 @@ namespace Epi.Cloud.Common.Metadata
         [JsonProperty]
         public string FieldName { get; protected set; }
         [JsonProperty]
-        public FieldType FieldType { get; protected set; }
+        public FieldTypes FieldType { get; protected set; }
         [JsonProperty]
         public string List { get; protected set; }
         [JsonProperty]

@@ -74,11 +74,11 @@ namespace Epi.Web.MVC.Facade
             int pageNumber,
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
             bool IsMobileDevice,
-            List<SurveyAnswerDTO> _SurveyAnswerDTOList = null,
+            List<SurveyAnswerDTO> surveyAnswerDTOList = null,
             List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null,
 			bool IsAndroid = false)
         {
-            List<SurveyInfoDTO> List = new List<SurveyInfoDTO>();
+            List<SurveyInfoDTO> surveyInfoDTOList = new List<SurveyInfoDTO>();
 
 
             //Get the SurveyInfoDTO
@@ -87,14 +87,14 @@ namespace Epi.Web.MVC.Facade
             {
                 surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
 
-                if (_SurveyAnswerDTOList != null)
+                if (surveyAnswerDTOList != null)
                 {
-                    foreach (var item in _SurveyAnswerDTOList)
+                    foreach (var item in surveyAnswerDTOList)
                     {
                         Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
                         request.Criteria.SurveyIdList.Add(item.SurveyId);
                         Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
-                        List.Add(_SurveyInfoDTO);
+                        surveyInfoDTOList.Add(_SurveyInfoDTO);
                     }
                 }
             }
@@ -104,45 +104,34 @@ namespace Epi.Web.MVC.Facade
                 var SurveyInfoDTO = FormsHierarchyDTOList.First(x => x.FormId == (surveyAnswerDTO != null ? surveyAnswerDTO.SurveyId : surveyId));
                 surveyInfoDTO = SurveyInfoDTO.SurveyInfo;
 
-                _SurveyAnswerDTOList = new List<SurveyAnswerDTO>();
-                _SurveyAnswerDTOList.Add(surveyAnswerDTO);
+                surveyAnswerDTOList = new List<SurveyAnswerDTO>();
+                surveyAnswerDTOList.Add(surveyAnswerDTO);
 
                 foreach (var item in FormsHierarchyDTOList)
                 {
                     if (item.ResponseIds.Count() > 0)
                     {
                         var DTO = item.ResponseIds.FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.RelateParentId);
-                        if (DTO != null && !_SurveyAnswerDTOList.Contains(DTO))
+                        if (DTO != null && !surveyAnswerDTOList.Contains(DTO))
 
-                            _SurveyAnswerDTOList.Add(DTO);
+                            surveyAnswerDTOList.Add(DTO);
 
                     }
                 }
 
-                foreach (var item in _SurveyAnswerDTOList)
+                foreach (var item in surveyAnswerDTOList)
                 {
                     if (item != null)
                     {
                         var _SurveyInfoDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == item.SurveyId);
-                        List.Add(_SurveyInfoDTO.SurveyInfo);
+                        surveyInfoDTOList.Add(_SurveyInfoDTO.SurveyInfo);
                     }
                 }
             }
 
-            MvcDynamicForms.Form form = null;
+            var formProvider = IsMobileDevice ? new MobileFormProvider() : new FormProvider();
+            MvcDynamicForms.Form form = formProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, surveyAnswerDTOList, surveyInfoDTOList, IsAndroid);
 
-            if (IsMobileDevice)
-            {
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.MobileFormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.MobileFormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid );
-            }
-            else
-            {
-                Epi.Web.MVC.Utility.FormProvider.SurveyInfoList = List;
-                Epi.Web.MVC.Utility.FormProvider.SurveyAnswerList = _SurveyAnswerDTOList;
-                form = Epi.Web.MVC.Utility.FormProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, IsAndroid );
-            }
             return form;
         }
 
@@ -352,7 +341,7 @@ namespace Epi.Web.MVC.Facade
 
         }
 
-        public void DeleteResponseXml(SurveyAnswerRequest FormResponseReq)
+        public void DeleteResponseNR(SurveyAnswerRequest FormResponseReq)
         {
 
             _iSurveyAnswerRepository.DeleteResponseXml(FormResponseReq);

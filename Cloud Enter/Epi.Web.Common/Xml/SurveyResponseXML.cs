@@ -59,11 +59,11 @@ namespace Epi.Web.Enter.Common.Xml
         //    {
         //    if (this.ResponseDetailList.ContainsKey(pField.Title))
         //        {
-        //        this.ResponseDetailList[pField.Title] = pField.GetXML();
+        //        this.ResponseDetailList[pField.Title] = pField.GetMetadata();
         //        }
         //    else
         //        {
-        //        this.ResponseDetailList.Add(pField.Title, pField.GetXML());
+        //        this.ResponseDetailList.Add(pField.Title, pField.GetMetadata());
         //        }
         //    }
 

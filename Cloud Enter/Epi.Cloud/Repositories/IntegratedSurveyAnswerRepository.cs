@@ -904,20 +904,32 @@ namespace Epi.Web.MVC.Repositories
 
         SurveyAnswerResponse ISurveyAnswerRepository.SaveSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest)
         {
-            SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
-
-            #region WebEnter Implementation
             try
             {
-                SurveyAnswerResponse webEnterResult = _iDataService.SetSurveyAnswer(surveyAnswerRequest);
+                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
+                return result;
+            }
+            catch (FaultException<CustomFaultException> cfe)
+            {
+                throw cfe;
+            }
+            catch (FaultException fe)
+            {
+                throw fe;
+            }
+            catch (CommunicationException ce)
+            {
+                throw ce;
+            }
+            catch (TimeoutException te)
+            {
+                throw te;
             }
             catch (Exception ex)
             {
-                throw;
-            }
-            #endregion  WebEnter Implementation
+                throw ex;
 
-            return result;
+            }
         }
     }
 }

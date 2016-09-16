@@ -21,10 +21,10 @@ namespace Epi.Web.BLL
             return result;
         }
 
-        public FormInfoBO GetFormInfoByFormId(string FormId, bool GetXml, int UserId)
+        public FormInfoBO GetFormInfoByFormId(string FormId, bool getMetadata, int UserId)
         {
             //Owner Forms
-            FormInfoBO result = this.FormInfoDao.GetFormByFormId(FormId, GetXml, UserId);
+            FormInfoBO result = this.FormInfoDao.GetFormByFormId(FormId, getMetadata, UserId);
 
             if (ConfigurationManager.AppSettings["IsEWAVLiteIntegrationEnabled"].ToUpper() == "TRUE" && result.IsSQLProject)
             {

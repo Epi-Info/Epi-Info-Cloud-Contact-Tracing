@@ -353,7 +353,7 @@ namespace Epi.Cloud.DataEntryServices
 
 
 		#region Get PageResponseProperties By ResponseId, FormId, and PageId
-		public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formId, string pageId)
+		public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formId, int pageId)
 		{
 			PageResponseProperties pageResponseProperties = null;
 			try

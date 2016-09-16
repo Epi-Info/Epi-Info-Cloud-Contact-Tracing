@@ -63,7 +63,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 
 		#region ReadSurveyAnswerByResponseID,PageId 
-		public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, string pageId)
+		public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
 		{
 			var formName = GetFormDigest(formId).FormName;
 			var pageResponseProperties = _surveyResponse.GetPageResponsePropertiesByResponseId(responseId, formId, pageId);
@@ -88,18 +88,18 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		public FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> fields)
 		{
-			FormsHierarchyDTO formhierarchyDTO = new FormsHierarchyDTO();
+			FormsHierarchyDTO formHierarchyDTO = new FormsHierarchyDTO();
 			var childRecords = _surveyResponse.GetAllResponsesWithFieldNames(fields, relateParentId);
-			formhierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
+			formHierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
 			foreach (var item in childRecords)
 			{
 				SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
 				surveyAnswer.ResponseId = item.ResponseId.ToString();
 				surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-				formhierarchyDTO.ResponseIds.Add(surveyAnswer);
+				formHierarchyDTO.ResponseIds.Add(surveyAnswer);
 			}
 		  
-			return formhierarchyDTO;
+			return formHierarchyDTO;
 		}
 
 		#region Save FormParentProperties to DocumentDB

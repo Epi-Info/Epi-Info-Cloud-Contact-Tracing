@@ -196,7 +196,7 @@ namespace Epi.Web.EF
             }
         }
 
-        public FormInfoBO GetFormByFormId(string FormId, bool GetXml, int UserId)
+        public FormInfoBO GetFormByFormId(string FormId, bool getMetadata, int UserId)
         {
 
 
@@ -247,7 +247,7 @@ namespace Epi.Web.EF
                     foreach (var item in items)
                     {
 
-                        FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, GetXml);
+                        FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, getMetadata);
                         FormInfoBO.IsShared = IsShared;
 
                         if (item.UserInfo.UserID == UserId)

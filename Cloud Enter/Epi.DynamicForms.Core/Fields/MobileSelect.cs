@@ -169,7 +169,7 @@ namespace MvcDynamicForms.Fields
 
             // LargestChoiseLength = LargestChoiseLength * _ControlFontSize;
 
-            Font stringFont = new Font(ControlFontStyle, _ControlFontSize);
+            Font stringFont = new Font(ControlFontStyle, (float)_ControlFontSize);
 
             SizeF size = new SizeF();
             using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))

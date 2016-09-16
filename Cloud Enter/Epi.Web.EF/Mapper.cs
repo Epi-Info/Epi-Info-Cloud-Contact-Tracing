@@ -97,7 +97,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A FormInfoBO business object.</returns>
-        public static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity, bool GetXml = false)
+        public static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity, bool getMetadata = false)
         {
             FormInfoBO result = new FormInfoBO();
             result.IsSQLProject = (entity.IsSQLProject == null) ? false : (bool)entity.IsSQLProject;
@@ -120,7 +120,7 @@ namespace Epi.Web.EF
             result.OwnerFName = UserEntity.FirstName;
             result.OwnerLName = UserEntity.LastName;
 
-            if (GetXml)
+            if (getMetadata)
             {
                 result.Xml = entity.TemplateXML;
             }

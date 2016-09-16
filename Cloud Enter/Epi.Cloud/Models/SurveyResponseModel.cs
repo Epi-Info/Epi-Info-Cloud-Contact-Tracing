@@ -1,4 +1,5 @@
 ﻿using System;
+using Epi.Cloud.Common.EntityObjects;
 
 namespace Epi.Web.MVC.Models
 {
@@ -16,5 +17,7 @@ namespace Epi.Web.MVC.Models
         public string XML { get; set; }
         public string ParentRecordId { get; set; }
         public string RelateParentId { get; set; }
+        public FormResponseDetail ResponseDetail { get; set; }
+
     }
 }

@@ -24,7 +24,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
         Task<bool> InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
          
-        PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, string pageId);
+        PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
         SurveyAnswerResponse DeleteResponse(FormDocumentDBEntity SARequest);
 

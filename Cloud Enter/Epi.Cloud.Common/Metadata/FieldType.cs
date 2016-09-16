@@ -1,6 +1,6 @@
 ﻿namespace Epi.Cloud.Common.Metadata
 {
-    public enum FieldType
+    public enum FieldTypes
     {
         Text = 1,
         Label = 2,

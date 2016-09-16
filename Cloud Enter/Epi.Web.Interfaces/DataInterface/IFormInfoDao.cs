@@ -5,10 +5,10 @@ namespace Epi.Web.Enter.Interfaces.DataInterface
 {
     public interface IFormInfoDao
     {
-        List<FormInfoBO> GetFormInfo(int UserId, int CurrentOrgId);
-        FormInfoBO GetFormByFormId(string FormId, bool GetXml, int UserId);
-        FormInfoBO GetFormByFormId(string FormId);
-        bool GetEwavLiteToggleSwitch(string FormId, int UserId);
-        bool HasDraftRecords(string FormId);
+        List<FormInfoBO> GetFormInfo(int userId, int currentOrgId);
+        FormInfoBO GetFormByFormId(string formId, bool getMetadata, int userId);
+        FormInfoBO GetFormByFormId(string formId);
+        bool GetEwavLiteToggleSwitch(string formId, int userId);
+        bool HasDraftRecords(string formId);
     }
 }

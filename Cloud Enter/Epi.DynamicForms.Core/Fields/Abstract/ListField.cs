@@ -45,6 +45,7 @@ namespace MvcDynamicForms.Fields
             }
         }
         public int SelectType { get; set; }
+
         public float ControlFontSize
         {
             get

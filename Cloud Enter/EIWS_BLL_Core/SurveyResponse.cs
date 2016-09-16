@@ -304,11 +304,11 @@ namespace Epi.Web.BLL
             //  }
             return result;
         }
-        public List<SurveyResponseBO> UpdateSurveyResponse(List<SurveyResponseBO> pValue, int Status)
+        public List<SurveyResponseBO> UpdateSurveyResponse(List<SurveyResponseBO> surveyResponseBOs, int Status)
         {
-            List<SurveyResponseBO> result = pValue;
-            //Check if this respose has prent
-            foreach (var Obj in pValue.ToList())
+            List<SurveyResponseBO> result = surveyResponseBOs;
+            //Check if this respose has parent
+            foreach (var surveyResponseBO in surveyResponseBOs)
             {
                 //string ParentId = SurveyResponseDao.GetResponseParentId(Obj.ResponseId);
                 //if (!string.IsNullOrEmpty(ParentId) && ParentId != Guid.Empty.ToString() && Status == 2)
@@ -331,54 +331,54 @@ namespace Epi.Web.BLL
                 //}
                 //else
                 //{
-                Obj.Status = Status;
-                _surveyResponseDao.UpdateSurveyResponse(Obj);
+                surveyResponseBO.Status = Status;
+                _surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
                 // }
             }
             return result;
         }
-        public void UpdateFormResponse(SurveyResponseBO pValue)
+        public void UpdateFormResponse(SurveyResponseBO surveyResponseBO)
         {
 
-            _surveyResponseDao.UpdateSurveyResponse(pValue);
+            _surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
         }
-        public bool DeleteSurveyResponse(SurveyResponseBO pValue)
+        public bool DeleteSurveyResponse(SurveyResponseBO surveyResponseBO)
         {
             bool result = false;
 
-            _surveyResponseDao.DeleteSurveyResponse(pValue);
+            _surveyResponseDao.DeleteSurveyResponse(surveyResponseBO);
             result = true;
 
             return result;
         }
-        public bool DeleteSurveyResponseInEditMode(SurveyResponseBO pValue, int Status = -1)
+        public bool DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponseBO, int Status = -1)
         {
             bool result = false;
-            List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(pValue.ResponseId);
+            List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(surveyResponseBO.ResponseId);
 
             foreach (var child in Children)
             {
-                //Get the original copy of the xml
-                SurveyResponseBO ResponseXml = _surveyResponseDao.GetResponse(child.ResponseId);
-                if (!ResponseXml.IsNewRecord)
+                //Get the original copy of the response
+                SurveyResponseBO response = _surveyResponseDao.GetResponse(child.ResponseId);
+                if (!response.IsNewRecord)
                 {
-                    child.XML = ResponseXml.XML;
+                    child.XML = response.XML;
                     _surveyResponseDao.UpdateSurveyResponse(child);
                 }
                 else
                 {
-                    child.UserId = pValue.UserId;
+                    child.UserId = surveyResponseBO.UserId;
                     _surveyResponseDao.DeleteSurveyResponse(child);
 
                 }
                 // delete record from ResponseXml Table
 
-                ResponseBO ResponseXmlBO = new ResponseBO();
-                ResponseXmlBO.ResponseId = child.ResponseId;
-                _surveyResponseDao.DeleteResponse(ResponseXmlBO);
+                ResponseBO ResponseBO = new ResponseBO();
+                ResponseBO.ResponseId = child.ResponseId;
+                _surveyResponseDao.DeleteResponse(ResponseBO);
                 if (Status > -1)
                 {
-                    _surveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
+                    _surveyResponseDao.UpdateRecordStatus(ResponseBO.ResponseId, Status);
                 }
             }
 
@@ -386,11 +386,11 @@ namespace Epi.Web.BLL
 
             return result;
         }
-        public bool DeleteSingleSurveyResponse(SurveyResponseBO pValue)
+        public bool DeleteSingleSurveyResponse(SurveyResponseBO surveyResponseBO)
         {
             bool result = false;
 
-            _surveyResponseDao.DeleteSingleSurveyResponse(pValue);
+            _surveyResponseDao.DeleteSingleSurveyResponse(surveyResponseBO);
             result = true;
 
             return result;

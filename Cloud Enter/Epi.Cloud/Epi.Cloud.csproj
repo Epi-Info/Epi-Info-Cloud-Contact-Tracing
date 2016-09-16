@@ -374,6 +374,7 @@
     <Compile Include="Controllers\SurveyController.cs" />
     <Compile Include="Controllers\EIWSTController.cs" />
     <Compile Include="Controllers\ViewSwitcherController.cs" />
+    <Compile Include="Extensions\SurveryAnswerExtensions.cs" />
     <Compile Include="Facade\ISecurityFacade.cs" />
     <Compile Include="Facade\ISurveyFacade.cs" />
     <Compile Include="Facade\CloudSecurityFacade.cs" />

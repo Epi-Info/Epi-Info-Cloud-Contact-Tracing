@@ -82,6 +82,13 @@ namespace Epi.Cloud.Common.Metadata
             }
         }
 
+        public int PageIdFromPageNumber(string formId, int pageNumber)
+        {
+            PageDigest pageDigest = GetPageDigestByPageNumber(formId, pageNumber);
+            var pageId = pageDigest.PageId;
+            return pageId;
+        }
+
         public FieldDigest[] GetFieldDigests(string formId)
         {
             FieldDigest[] fieldDigests = null;
@@ -236,7 +243,7 @@ namespace Epi.Cloud.Common.Metadata
         public FieldAttributes GetFieldAttributesByPageId(string formId, int pageId, string fieldName)
         {
             fieldName = fieldName.ToLower();
-            var pageFieldAttributes = GetCurrentFormPageFieldAttributesByPageId(pageId);
+            var pageFieldAttributes = GetPageFieldAttributesByPageId(formId, pageId);
             var fieldAttributes = pageFieldAttributes.SingleOrDefault(a => a.FieldName.ToLower() == fieldName);
             return fieldAttributes;
         }

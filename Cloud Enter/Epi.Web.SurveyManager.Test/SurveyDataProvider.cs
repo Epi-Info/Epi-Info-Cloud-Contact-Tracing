@@ -19,7 +19,7 @@ namespace Epi.Web.SurveyManager.Test
            private string    OrganizationName = "OrganizationName1";
            private string     SurveyName = "Survey Name";
            private string   SurveyNumber = "ABC";
-           private string TemplateXML =  GetXML();
+           private string TemplateXML =  GetMetadata();
            private int SurveyType = 1;
            
            private string _DepartmentName = "";
@@ -77,7 +77,7 @@ namespace Epi.Web.SurveyManager.Test
             pRequestMessage.SurveyType = SurveyType;
             return pRequestMessage;
         }
-        private static string GetXML()
+        private static string GetMetadata()
         {
              XDocument xdoc = XDocument.Load("../../MetaDataXML.xml");
             

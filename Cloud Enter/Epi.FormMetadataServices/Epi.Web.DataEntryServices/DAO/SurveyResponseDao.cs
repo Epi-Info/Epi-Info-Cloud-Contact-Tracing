@@ -22,7 +22,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
     /// </summary> 
     public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
     {
-        private readonly Epi.Web.EF.EntitySurveyResponseDao _eweEntitySurveyResponseDao;
         Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
 
         public SurveyResponseDao(IProjectMetadataProvider projectMetadataProvider,
@@ -30,8 +29,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             ProjectMetadataProvider = projectMetadataProvider;
             _surveyDocumentDBStoreFacade = surveyDocumentDBStoreFacade;
-
-            _eweEntitySurveyResponseDao = new Epi.Web.EF.EntitySurveyResponseDao();
         }
 
         private int _dataAccessRuleId;
@@ -647,8 +644,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria)
         {
-            var eweResponse = _eweEntitySurveyResponseDao.GetFormResponseByFormId(criteria);
-
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
             _dataAccessRuleId = GetDataAccessRule(criteria.SurveyId, criteria.UserId);
@@ -727,7 +722,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     var surveyResponses = _surveyDocumentDBStoreFacade.GetAllResponsesContainingFields(gridFields);
                     if (surveyResponses != null)
                     {
-                        var responseList = surveyResponses.Skip((criteria.GridPageNumber - 1) * criteria.GridPageSize).Take(criteria.GridPageSize);
+                        var responseList = surveyResponses.Skip((criteria.PageNumber - 1) * criteria.GridPageSize).Take(criteria.GridPageSize);
                         result = responseList.Select(r => r.ToSurveyResponseBO()).ToList();
                     }
                 }
@@ -2151,7 +2146,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public int GetFormResponseCount(string formId)
         {
             // TODO: DocumentDb implementation required
-            return _eweEntitySurveyResponseDao.GetFormResponseCount(formId);
             throw new NotImplementedException();
         }
 

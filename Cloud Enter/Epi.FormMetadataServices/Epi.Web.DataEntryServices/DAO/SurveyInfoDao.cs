@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
-using Epi.Cloud.Common.Configuration;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Web.EF;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
+using Epi.Cloud.MetadataServices.Extensions;
+
 using Epi.Cloud.DataEntryServices.Facade;
 
 namespace Epi.Cloud.DataEntryServices.DAO

@@ -28,7 +28,7 @@ namespace Epi.Cloud.Common.Metadata
         public int Position { get; set; }
 
         public string FieldName { get { return Field.FieldName; } }
-        public FieldType FieldType { get { return Field.FieldType; } }
+        public FieldTypes FieldType { get { return Field.FieldType; } }
         public string List { get { return Field.List; } }
         public bool IsReadOnly { get { return Field.IsReadOnly; } }
         public bool IsRequired { get { return Field.IsRequired; } }

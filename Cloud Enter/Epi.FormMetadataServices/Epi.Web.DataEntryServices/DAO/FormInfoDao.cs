@@ -169,7 +169,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             }
         }
 
-        public FormInfoBO GetFormByFormId(string formId, bool getXml, int userId)
+        public FormInfoBO GetFormByFormId(string formId, bool getMetadata, int userId)
         {
             FormInfoBO formInfoBO = new FormInfoBO();
 
@@ -209,7 +209,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     foreach (var item in items)
                     {
 
-                        formInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, getXml);
+                        formInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, getMetadata);
                         formInfoBO.IsShared = isShared;
 
                         if (item.UserInfo.UserID == userId)

@@ -7,8 +7,6 @@ using System.Threading;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
@@ -22,6 +20,7 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.MVC.Extensions;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -32,7 +31,6 @@ namespace Epi.Web.MVC.Controllers
 		private readonly ISecurityFacade _isecurityFacade;
 
 		private IEnumerable<AbridgedFieldInfo> _pageFields;
-		private IEnumerable<XElement> _pageFieldsXml;
 		private string _requiredList = "";
 		private string RootFormId = "";
 		private string RootResponseId = "";
@@ -84,14 +82,9 @@ namespace Epi.Web.MVC.Controllers
 					bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
 
 				}
-				if (IsEditMode)
-				{
-					SurveyModel = GetIndex(responseId, PageNumber, "Edit", surveyid, IsAndroid);
-				}
-				else
-				{
-					SurveyModel = GetIndex(responseId, PageNumber, "",surveyid,IsAndroid);
-				}
+
+				SurveyModel = GetIndex(responseId, PageNumber, IsEditMode, surveyid, IsAndroid);
+
 				string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
 				DateFormat = DateFormat.Remove(DateFormat.IndexOf("y"), 2);
 				SurveyModel.CurrentCultureDateFormat = DateFormat;
@@ -110,11 +103,11 @@ namespace Epi.Web.MVC.Controllers
 			}
 		}
 
-		private SurveyModel GetIndex(string responseId, int PageNumber, string Edit, string SurveyId, bool IsAndroid = false)
+		private SurveyModel GetIndex(string responseId, int PageNumber, bool isEditMode, string SurveyId, bool IsAndroid = false)
 		{
 			SetGlobalVariable();
 			ViewBag.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			ViewBag.Edit = Edit;
+			ViewBag.Edit = IsEditMode ? "Edit" : string.Empty;
 
 
 			var forms = MetadataAccessor.FormDigests;
@@ -150,7 +143,7 @@ namespace Epi.Web.MVC.Controllers
 			List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
 			SurveyAnswerDTO surveyAnswerDTO = (SurveyAnswerDTO)FormsHierarchy.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
 
-			if (!string.IsNullOrEmpty(Edit))
+			if (isEditMode)
 			{
 				if (IsMobileDevice == false)
 				{
@@ -166,7 +159,7 @@ namespace Epi.Web.MVC.Controllers
 			}
 			else
 			{
-				ValidationTest = PreValidateResponse(Mapper.ToSurveyAnswerModel(surveyAnswerDTO));
+				ValidationTest = PreValidateResponse(surveyAnswerDTO.ToSurveyAnswerModel());
 			}
 
 			string formId = SurveyId;
@@ -195,7 +188,7 @@ namespace Epi.Web.MVC.Controllers
 					//    surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
 
 					//    }
-					if (string.IsNullOrEmpty(Edit))
+					if (!isEditMode)
 					{
 						this.SetCurrentPage(surveyAnswerDTO, PageNumber);
 					}
@@ -205,7 +198,7 @@ namespace Epi.Web.MVC.Controllers
 						form = SetFormPassCode(form, responseId);
 					}
 					form.StatusId = surveyAnswerDTO.Status;
-					if (!string.IsNullOrEmpty(Edit))
+					if (isEditMode)
 					{
 						if (surveyAnswerDTO.IsDraftMode)
 						{
@@ -500,14 +493,14 @@ namespace Epi.Web.MVC.Controllers
 								this.UpdateStatus(form.ResponseId, form.SurveyInfo.SurveyId, 2);
 
 								SurveyAnswerRequest SurveyAnswerRequest1 = new SurveyAnswerRequest();
-								SurveyAnswerRequest1.Action = "DeleteResponseXml";
+								SurveyAnswerRequest1.Action = "DeleteResponse";
 							  
 								var List = FormsHierarchy.SelectMany(x => x.ResponseIds).OrderByDescending(x => x.DateCreated);
 								SurveyAnswerRequest1.SurveyAnswerList = List.ToList();
 
 								if (this.IsEditMode)
 								{
-									_isurveyFacade.DeleteResponseXml(SurveyAnswerRequest1);
+									_isurveyFacade.DeleteResponseNR(SurveyAnswerRequest1);
 								}
 
 								if (!string.IsNullOrEmpty(CloseButton))
@@ -591,7 +584,6 @@ namespace Epi.Web.MVC.Controllers
 						else
 						{
 							//Invalid Data - stay on same page
-							//int CurrentPageNum = GetSurveyPageNumber(SurveyAnswer.XML.ToString());
 							int CurrentPageNum = SurveyAnswer.CurrentPageNumber;
 
 
@@ -647,15 +639,20 @@ namespace Epi.Web.MVC.Controllers
 
 		private List<FormsHierarchyDTO> GetFormsHierarchy()
 		{
-			FormsHierarchyResponse FormsHierarchyResponse = new FormsHierarchyResponse();
-			FormsHierarchyRequest FormsHierarchyRequest = new FormsHierarchyRequest();
-			if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootResponseId] != null)
+			FormsHierarchyResponse formsHierarchyResponse = new FormsHierarchyResponse();
+			FormsHierarchyRequest formsHierarchyRequest = new FormsHierarchyRequest();
+
+            var rootFormId = Session[SessionKeys.RootFormId];
+            var rootResponseId = Session[SessionKeys.RootResponseId];
+
+			if (rootFormId != null && rootResponseId != null)
 			{
-				FormsHierarchyRequest.SurveyInfo.FormId = Session[SessionKeys.RootFormId].ToString();
-				FormsHierarchyRequest.SurveyResponseInfo.ResponseId = Session[SessionKeys.RootResponseId].ToString();
-				FormsHierarchyResponse = _isurveyFacade.GetFormsHierarchy(FormsHierarchyRequest);
+				formsHierarchyRequest.SurveyInfo.FormId = rootFormId.ToString();
+				formsHierarchyRequest.SurveyResponseInfo.ResponseId = rootResponseId.ToString();
+				formsHierarchyResponse = _isurveyFacade.GetFormsHierarchy(formsHierarchyRequest);
 			}
-			return FormsHierarchyResponse.FormsHierarchy;
+
+			return formsHierarchyResponse.FormsHierarchy;
 		}
 
 
@@ -674,15 +671,6 @@ namespace Epi.Web.MVC.Controllers
 
 		private void SetCurrentPage(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, int PageNumber)
 		{
-
-			//XDocument Xdoc = XDocument.Parse(surveyAnswerDTO.XML);
-			//if (PageNumber != 0)
-			//{
-			//    Xdoc.Root.Attribute("LastPageVisited").Value = PageNumber.ToString();
-			//}
-
-			//surveyAnswerDTO.XML = Xdoc.ToString();
-
 			//surveyAnswerDTO.ResponseDetail.LastPageVisited = PageNumber;
 
 			Epi.Web.Enter.Common.Message.SurveyAnswerRequest sar = new Enter.Common.Message.SurveyAnswerRequest();
@@ -691,7 +679,6 @@ namespace Epi.Web.MVC.Controllers
 			sar.SurveyAnswerList.Add(surveyAnswerDTO);
 
 			this._isurveyFacade.GetSurveyAnswerRepository().SaveSurveyAnswer(sar);
-
 		}
 
 
@@ -737,62 +724,14 @@ namespace Epi.Web.MVC.Controllers
 
 		private int GetSurveyPageNumber(FormResponseDetail responseDetail)
 		{
-			int PageNumber = responseDetail != null ? (responseDetail.LastPageVisited != 0 ? responseDetail.LastPageVisited : 1) : 1;
-			return PageNumber;
+			int pageNumber = responseDetail != null ? (responseDetail.LastPageVisited != 0 ? responseDetail.LastPageVisited : 1) : 1;
+			return pageNumber;
 		}
 
-		private int GetSurveyPageNumber(string ResponseXml)
-		{
 
-			XDocument xdoc = XDocument.Parse(ResponseXml);
-
-			int PageNumber = 0;
-
-			if ((string)xdoc.Root.Attribute("LastPageVisited") != null)
-			{
-				PageNumber = int.Parse(xdoc.Root.Attribute("LastPageVisited").Value);
-			}
-			else
-			{
-				PageNumber = 1;
-			}
-
-			return PageNumber;
-
-		}
-
-		public static string GetResponseFormState(string Xml, string ListName)
-		{
-
-			string List = "";
-
-			if (!string.IsNullOrEmpty(Xml))
-			{
-				XDocument xdoc = XDocument.Parse(Xml);
-
-				if (!string.IsNullOrEmpty(xdoc.Root.Attribute(ListName).Value.ToString()))
-				{
-					List = xdoc.Root.Attribute(ListName).Value;
-
-
-				}
-
-			}
-
-			return List;
-		}
-
-		public static string GetRequiredList(string Xml)
-		{
-			XDocument Xdoc = XDocument.Parse(Xml);
-			string list = Xdoc.Root.Attribute("RequiredFieldsList").Value;
-
-
-			return list;
-		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public JsonResult UpdateResponseXml(string NameList, string Value, string responseId)
+		public JsonResult UpdateResponse(string NameList, string Value, string responseId)
 		{
 			bool IsAndroid = false;
 
@@ -815,10 +754,8 @@ namespace Epi.Web.MVC.Controllers
 					IsMobileDevice = this.Request.Browser.IsMobileDevice;
 					Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
 				  
-					//  SurveyInfoModel surveyInfoModel = _isurveyFacade.GetSurveyInfoModel(SurveyAnswer.SurveyId);
 					SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
 
-					//int NumberOfPages = Epi.Web.MVC.Utility.SurveyHelper.GetNumberOfPages(SurveyAnswer.XML);
 					int numberOfPages = surveyInfoModel.GetCurrentFormDigest().NumberOfPages;
 
 					foreach (string Name in nameList)
@@ -874,7 +811,9 @@ namespace Epi.Web.MVC.Controllers
 				var IsSaved = false;
 				form.IsSaved = true;
 				SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId, SurveyAnswer.SurveyId).SurveyResponseList[0];
-				form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, GetSurveyPageNumber(SurveyAnswer.XML.ToString()) == 0 ? 1 : GetSurveyPageNumber(SurveyAnswer.XML.ToString()), SurveyAnswer, IsMobileDevice,null,null,IsAndroid );
+
+                var pageNumber = GetSurveyPageNumber(SurveyAnswer.ResponseDetail);
+                form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, pageNumber == 0 ? 1 : pageNumber, SurveyAnswer, IsMobileDevice ,null ,null ,IsAndroid );
 				//Update the model
 				UpdateModel(form);
 				//Save the child form
@@ -1102,27 +1041,18 @@ namespace Epi.Web.MVC.Controllers
 
 			// set the survey answer to be production or test 
 			SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
-			XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
 
 			MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice,null,null,IsAndroid);
 
-			var _FieldsTypeIDs = from _FieldTypeID in
-									 xdoc.Descendants("Field")
-								 select _FieldTypeID;
-
 			TempData["Width"] = form.Width + 100;
 
-			XDocument xdocResponse = XDocument.Parse(SurveyAnswer.XML);
+            string checkcode = MetadataAccessor.GetFormDigest(SurveyId).CheckCode;
+            form.FormCheckCodeObj = form.GetCheckCodeObj(MetadataAccessor.CurrentFormFieldDigests, SurveyAnswer.ResponseDetail, checkcode);
 
-			XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-			string checkcode = ViewElement.Attribute("CheckCode").Value.ToString();
-
-			form.FormCheckCodeObj = form.GetCheckCodeObj(xdoc, xdocResponse, checkcode);
-
-			///////////////////////////// Execute - Record Before - start//////////////////////
-			Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
+            ///////////////////////////// Execute - Record Before - start//////////////////////
+            Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
 			EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList, _pageFieldsXml);
+			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList);
 			if (FunctionObject_B != null && !FunctionObject_B.IsNull())
 			{
 				try
@@ -1237,37 +1167,20 @@ namespace Epi.Web.MVC.Controllers
 			}
 			if (int.TryParse(stringNumber, out referrerPageNum))
 			{
+                var formProvider = IsMobileDevice ? new MobileFormProvider() : new FormProvider();
+
 				if (referrerPageNum != currentPageNumber)
 				{
 					form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, referrerPageNum, surveyAnswer, IsMobileDevice, null,   formsHierarchy,isAndroid);
 					form.FormValuesHasChanged = formValuesHasChanged;
-					if (IsMobileDevice)
-					{
-						Epi.Web.MVC.Utility.MobileFormProvider.UpdateHiddenFields(referrerPageNum, form, surveyInfoModel, XDocument.Parse(surveyInfoModel.XML), XDocument.Parse(surveyAnswer.XML), this.ControllerContext.RequestContext.HttpContext.Request.Form);
-					}
-					else
-					{
-						//Epi.Web.MVC.Utility.FormProvider.UpdateHiddenFields(referrerPageNum, form, surveyInfoModel, XDocument.Parse(surveyInfoModel.XML), XDocument.Parse(SurveyAnswer.XML), this.ControllerContext.RequestContext.HttpContext.Request.Form);
-						Epi.Web.MVC.Utility.FormProvider.UpdateHiddenFields(referrerPageNum, form, surveyInfoModel, null, null, this.ControllerContext.RequestContext.HttpContext.Request.Form);
-					}
+					formProvider.UpdateHiddenFields(referrerPageNum, form, surveyInfoModel, this.ControllerContext.RequestContext.HttpContext.Request.Form);
 				}
 				else
 				{
 					form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, currentPageNumber, surveyAnswer, IsMobileDevice, null,   formsHierarchy,isAndroid );
 					form.FormValuesHasChanged = formValuesHasChanged;
-					if (IsMobileDevice)
-					{
-						Epi.Web.MVC.Utility.MobileFormProvider.UpdateHiddenFields(currentPageNumber, form, surveyInfoModel, XDocument.Parse(surveyInfoModel.XML), XDocument.Parse(surveyAnswer.XML), this.ControllerContext.RequestContext.HttpContext.Request.Form);
-					}
-					else
-					{
-						Epi.Web.MVC.Utility.FormProvider.UpdateHiddenFields(currentPageNumber, form, surveyInfoModel,
-							surveyInfoModel.XML != null ? XDocument.Parse(surveyInfoModel.XML) : null,
-							surveyAnswer.XML != null ? XDocument.Parse(surveyAnswer.XML) : null,
-							this.ControllerContext.RequestContext.HttpContext.Request.Form);
-					}
+					formProvider.UpdateHiddenFields(currentPageNumber, form, surveyInfoModel, this.ControllerContext.RequestContext.HttpContext.Request.Form);
 				}
-
 
 				if (!isSaveAndClose)
 				{
@@ -1277,7 +1190,7 @@ namespace Epi.Web.MVC.Controllers
 			else
 			{
 				//get the survey form
-				form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, GetSurveyPageNumber(surveyAnswer.XML.ToString()), surveyAnswer, IsMobileDevice, null, formsHierarchy,isAndroid);
+				form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, GetSurveyPageNumber(surveyAnswer.ResponseDetail), surveyAnswer, IsMobileDevice, null, formsHierarchy,isAndroid);
 				form.FormValuesHasChanged = formValuesHasChanged;
 				form.ClearAllErrors();
 				if (referrerPageNum == 0)
@@ -1340,7 +1253,7 @@ namespace Epi.Web.MVC.Controllers
 
 					for (int i = 1; i < form.NumberOfPages + 1; i++)
 					{
-						form = Epi.Web.MVC.Utility.FormProvider.GetForm(form.SurveyInfo, i, surveyAnswer);
+						form = new FormProvider().GetForm(form.SurveyInfo, i, surveyAnswer);
 						if (!form.Validate(form.RequiredFieldsList))
 						{
 							TempData["isredirect"] = "true";
@@ -1377,7 +1290,8 @@ namespace Epi.Web.MVC.Controllers
 
 			surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
 
-			form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, GetSurveyPageNumber(surveyAnswerDTO.XML.ToString()) == 0 ? 1 : GetSurveyPageNumber(surveyAnswerDTO.XML.ToString()), surveyAnswerDTO, isMobileDevice, null, formsHierarchyDTOList,IsAndroid );
+            var lastPageNumber = GetSurveyPageNumber(surveyAnswerDTO.ResponseDetail);
+			form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, lastPageNumber == 0 ? 1 : lastPageNumber, surveyAnswerDTO, isMobileDevice, null, formsHierarchyDTOList,IsAndroid );
 			form.FormValuesHasChanged = formValuesHasChanged;
 
 			UpdateModel(form);
@@ -1440,7 +1354,7 @@ namespace Epi.Web.MVC.Controllers
 					}
 					else
 					{
-						ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
+						ResponseList.Add(item.ToResponseModel(Columns));
 					}
 				}
 

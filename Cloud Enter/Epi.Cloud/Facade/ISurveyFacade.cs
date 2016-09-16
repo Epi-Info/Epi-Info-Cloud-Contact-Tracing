@@ -24,7 +24,6 @@ namespace Epi.Web.MVC.Facade
         ISurveyAnswerRepository GetSurveyAnswerRepository();
         SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest FormResponseReq);
         FormSettingResponse GetFormSettings(FormSettingRequest FormSettingRequest);
-        SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest);
         SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest SurveyAnswerRequest);
         FormSettingResponse SaveSettings(FormSettingRequest FormSettingReq);
         SurveyInfoResponse GetChildFormInfo(SurveyInfoRequest SurveyInfoRequest);
@@ -32,7 +31,8 @@ namespace Epi.Web.MVC.Facade
         SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest pRequest);
         SurveyAnswerResponse GetAncestorResponses(SurveyAnswerRequest pRequest);
         SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest FormResponseReq);
-        void DeleteResponseXml(SurveyAnswerRequest FormResponseReq);
+        SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest);
+        void DeleteResponseNR(SurveyAnswerRequest FormResponseReq);
         OrganizationResponse GetOrganizationsByUserId(OrganizationRequest Request);
         OrganizationResponse GetUserOrganizations(OrganizationRequest Request);
         OrganizationResponse GetAdminOrganizations(OrganizationRequest Request);

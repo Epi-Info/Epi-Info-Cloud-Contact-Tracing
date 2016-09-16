@@ -111,36 +111,27 @@ namespace Epi.Cloud.MVC.Repositories
             throw new NotImplementedException();
         }
 
-
         public FormsInfoResponse GetFormsInfoList(FormsInfoRequest pRequestId)
         {
-
             FormsInfoResponse result = (FormsInfoResponse)_iDataService.GetFormsInfo(pRequestId);
             return result;
         }
-
 
         public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
         {
             return _iDataService.DeleteResponse(SARequest);
         }
 
-
         public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest SurveyInfoRequest)
         {
-
-
             return _iDataService.GetFormChildInfo(SurveyInfoRequest);
-
         }
+
         public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
         {
-
             return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
-
-
-
         }
+
         public SurveyAnswerResponse GetResponseAncestor(SurveyAnswerRequest SARequest)
         {
 

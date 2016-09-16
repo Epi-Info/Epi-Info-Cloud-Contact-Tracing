@@ -30,7 +30,7 @@ namespace Epi.Cloud.DataEntryServices
             _surveyResponse = surveyResponse;
             _eweDataService = eweDataService;
         }
-		
+
         /// <summary>
         /// 
         /// </summary>
@@ -253,7 +253,7 @@ namespace Epi.Cloud.DataEntryServices
             //        }
             //    }
             //}
-            //else if (surveyAnswerRequest.Action.Equals("DeleteResponseXml", StringComparison.OrdinalIgnoreCase))
+            //else if (surveyAnswerRequest.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
             //{
 
             //    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
@@ -426,7 +426,7 @@ namespace Epi.Cloud.DataEntryServices
                             }
                         }
                     }
-                    else if (request.Action.Equals("DeleteResponseXml", StringComparison.OrdinalIgnoreCase))
+                    else if (request.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
                     {
 
                         foreach (var item in request.SurveyAnswerList)
@@ -522,7 +522,7 @@ namespace Epi.Cloud.DataEntryServices
 
             return result;
         }
-		
+
         public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
         {
             //_eweDataService.UpdateResponseStatus(surveyAnswerRequest);
@@ -571,7 +571,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)
         {
-            var eweResponse = _eweDataService.DeleteResponse(surveyAnswerRequest);
             try
             {
                 throw new NotImplementedException();
@@ -642,13 +641,11 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                return eweResponse;
             }
-       }
+        }
 
         public SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest surveyAnswerRequest)
         {
-            var eweResponse = _eweDataService.GetAncestorResponseIdsByChildId(surveyAnswerRequest);
             try
             {
                 throw new NotImplementedException();
@@ -665,13 +662,11 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                return eweResponse;
             }
         }
 
         public SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest surveyInfoRequest)
         {
-            var eweResponse = _eweDataService.GetFormChildInfo(surveyInfoRequest);
             try
             {
                 throw new NotImplementedException();
@@ -707,13 +702,11 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                return eweResponse;
             }
         }
 
         public FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest formResponseInfoRequest)
         {
-            var eweResponse = _eweDataService.GetFormResponseInfo(formResponseInfoRequest);
             try
             {
                 throw new NotImplementedException();
@@ -724,13 +717,11 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                return eweResponse;
             }
         }
 
         public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest)
         {
-            //var eweResponse = _eweDataService.GetFormResponseList(surveyAnswerRequest);
             try
             {
                 SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
@@ -741,14 +732,10 @@ namespace Epi.Cloud.DataEntryServices
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
                 SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
-                //result.SurveyResponseList = Epi.Web.Enter.Common.ObjectMapping.Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.PageNumber, surveyAnswerRequest.Criteria.IsMobile));
                 result.SurveyResponseList = Epi.Web.Enter.Common.ObjectMapping.Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(criteria));
                 surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
+
                 //Query The number of records
-
-                //result.NumberOfPages = Implementation.GetNumberOfPages(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.IsMobile);
-                //result.NumberOfResponses = Implementation.GetNumberOfResponses(surveyAnswerRequest.Criteria.SurveyId);
-
                 result.NumberOfPages = Implementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
                 result.NumberOfResponses = Implementation.GetNumberOfResponses(surveyAnswerRequest.Criteria);
 
@@ -766,8 +753,6 @@ namespace Epi.Cloud.DataEntryServices
                 customFaultException.Source = ex.Source;
                 customFaultException.StackTrace = ex.StackTrace;
                 customFaultException.HelpLink = ex.HelpLink;
-                //return eweResponse;
-                //throw new FaultException<CustomFaultException>(customFaultException);
                 return null;
             }
 #if WebEnterCode
@@ -813,7 +798,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest)
         {
-            var eweResponse = _eweDataService.GetFormSettings(formSettingRequest);
             try
             {
                 throw new NotImplementedException();
@@ -825,7 +809,7 @@ namespace Epi.Cloud.DataEntryServices
 
                 IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormInfo FormInfoImplementation = new Epi.Web.BLL.FormInfo(FormInfoDao);
-                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetXml, pRequest.FormInfo.UserId);
+                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetMetadata, pRequest.FormInfo.UserId);
                 Response.FormInfo = Mapper.ToFormInfoDTO(FormInfoBO);
 
 
@@ -860,7 +844,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest)
         {
-            var eweResponse = _eweDataService.GetFormsHierarchy(formsHierarchyRequest);
             try
             {
                 throw new NotImplementedException();
@@ -904,7 +887,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public FormsInfoResponse GetFormsInfo(FormsInfoRequest formsInfoRequest)
         {
-            var eweResponse = _eweDataService.GetFormsInfo(formsInfoRequest);
             try
             {
                 throw new NotImplementedException();
@@ -941,7 +923,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest surveyAnswerRequest)
         {
-            var eweResponse = _eweDataService.GetResponsesByRelatedFormId(surveyAnswerRequest);
             try
             {
                 throw new NotImplementedException();
@@ -975,7 +956,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest surveyAnswerRequest)
         {
-            var eweResponse = _eweDataService.GetSurveyAnswerHierarchy(surveyAnswerRequest);
             try
             {
                 throw new NotImplementedException();
@@ -998,7 +978,6 @@ namespace Epi.Cloud.DataEntryServices
 
         public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest surveyInfoRequest)
         {
-            var eweResponse = _eweDataService.GetSurveyInfo(surveyInfoRequest);
             try
             {
                 throw new NotImplementedException();
@@ -1086,229 +1065,94 @@ namespace Epi.Cloud.DataEntryServices
             }
         }
 
-#region Security Related
+        #region Security Related
         public UserAuthenticationResponse PassCodeLogin(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.PassCodeLogin(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public FormSettingResponse SaveSettings(FormSettingRequest formSettingRequest)
         {
             var eweResponse = _eweDataService.SaveSettings(formSettingRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public OrganizationResponse SetOrganization(OrganizationRequest organizationRequestrequest)
         {
             var eweResponse = _eweDataService.SetOrganization(organizationRequestrequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public UserAuthenticationResponse SetPassCode(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.SetPassCode(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public UserAuthenticationResponse GetUser(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.GetUser(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public UserResponse GetUserInfo(UserRequest userRequest)
         {
             var eweResponse = _eweDataService.GetUserInfo(userRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public UserResponse SetUserInfo(UserRequest userRequest)
         {
             var eweResponse = _eweDataService.SetUserInfo(userRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public OrganizationResponse GetUserOrganizations(OrganizationRequest organizationRequest)
         {
             var eweResponse = _eweDataService.GetUserOrganizations(organizationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public bool UpdateUser(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.UpdateUser(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public UserAuthenticationResponse UserLogin(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.UserLogin(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
         public OrganizationResponse GetAdminOrganizations(OrganizationRequest organizationRequest)
         {
             var eweResponse = _eweDataService.GetAdminOrganizations(organizationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public OrganizationResponse GetOrganizationInfo(OrganizationRequest organizationRequest)
         {
             var eweResponse = _eweDataService.GetOrganizationInfo(organizationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public OrganizationResponse GetOrganizationsByUserId(OrganizationRequest organizationRequest)
         {
             var eweResponse = _eweDataService.GetOrganizationsByUserId(organizationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
 
         public OrganizationResponse GetOrganizationUsers(OrganizationRequest organizationRequest)
         {
             var eweResponse = _eweDataService.GetOrganizationUsers(organizationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
         public UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest userAuthenticationRequest)
         {
             var eweResponse = _eweDataService.GetAuthenticationResponse(userAuthenticationRequest);
-            try
-            {
-                throw new NotImplementedException();
-#if WebEnterCode
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-                return eweResponse;
-            }
+            return eweResponse;
         }
-#endregion Security Related
+        #endregion Security Related
     }
 }
