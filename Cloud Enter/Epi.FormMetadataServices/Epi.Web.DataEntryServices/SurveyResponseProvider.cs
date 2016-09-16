@@ -49,7 +49,7 @@ namespace Epi.Cloud.DataEntryServices
                 surveyAnswerCriteria.SurveyId = criteria.SurveyId;
                 surveyAnswerCriteria.SurveyAnswerIdList.Add(criteria.SurveyAnswerIdList[0]);
                 surveyAnswerCriteria.GridPageSize = 1;
-                surveyAnswerCriteria.GridPageNumber = 1;
+                surveyAnswerCriteria.PageNumber = 1;
                 surveyAnswerCriteria.IsSqlProject = criteria.IsSqlProject;
                 result = _surveyResponseDao.GetFormResponseByFormId(surveyAnswerCriteria);
                 if (result.Count > 0 && result[0].SqlData != null)

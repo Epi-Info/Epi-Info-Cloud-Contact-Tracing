@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\FormDigestExtensions.cs" />
     <Compile Include="MetadataService\Interface\IProjectMetadataProxy.cs" />
     <Compile Include="MetadataService\ProjectMetadataServiceProxy.cs" />
     <Compile Include="ProjectMetadataProvider.cs" />

@@ -102,22 +102,22 @@ namespace Epi.Web.BLL
         public SurveyInfoBO InsertSurveyInfo(SurveyInfoBO pValue)
         {
             SurveyInfoBO result = pValue;
-            this.SurveyInfoDao.InsertSurveyInfo(pValue);
+            SurveyInfoDao.InsertSurveyInfo(pValue);
             return result;
         }
 
-        public SurveyInfoBO UpdateSurveyInfo(SurveyInfoBO pRequestMessage)
+        public SurveyInfoBO UpdateSurveyInfo(SurveyInfoBO surveyInfoBO)
         {
-            SurveyInfoBO result = pRequestMessage;
-            if (ValidateSurveyFields(pRequestMessage))
+            SurveyInfoBO result = surveyInfoBO;
+            if (ValidateSurveyFields(surveyInfoBO))
             {
-                if (this.IsRelatedForm(MetadataAccessor.GetFormDigest(pRequestMessage.SurveyId)))
+                if (IsRelatedForm(MetadataAccessor.GetFormDigest(surveyInfoBO.SurveyId)))
                 {
-                    List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(pRequestMessage.SurveyId.ToString());
+                    List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(surveyInfoBO.SurveyId.ToString());
 
                     // 1- breck down the xml to n views
                     List<string> XmlList = new List<string>();
-                    XmlList = XmlChunking(pRequestMessage.XML);
+                    XmlList = XmlChunking(surveyInfoBO.XML);
 
                     // 2- call publish() with each of the views
                     foreach (string Xml in XmlList)
@@ -130,7 +130,7 @@ namespace Epi.Web.BLL
 
                         GetRelateViewIds(ViewElement, ViewId);
 
-                        SurveyInfoBO = pRequestMessage;
+                        SurveyInfoBO = surveyInfoBO;
                         SurveyInfoBO.XML = Xml;
                         SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
                         SurveyInfoBO.ViewId = ViewId;
@@ -139,45 +139,41 @@ namespace Epi.Web.BLL
                         SurveyInfoBO.SurveyId = pBO.SurveyId;
                         SurveyInfoBO.ParentId = pBO.ParentId;
                         SurveyInfoBO.UserPublishKey = pBO.UserPublishKey;
-                        SurveyInfoBO.OwnerId = pRequestMessage.OwnerId;
+                        SurveyInfoBO.OwnerId = surveyInfoBO.OwnerId;
 
                         this.SurveyInfoDao.UpdateSurveyInfo(SurveyInfoBO);
-
-
                     }
                 }
                 else
                 {
-
-                    this.SurveyInfoDao.UpdateSurveyInfo(pRequestMessage);
+                    this.SurveyInfoDao.UpdateSurveyInfo(surveyInfoBO);
                 }
                 result.StatusText = "Successfully updated survey information.";
             }
             else
             {
                 result.StatusText = "One or more survey required fields are missing values.";
-
             }
 
             return result;
         }
 
-        public bool DeleteSurveyInfo(SurveyInfoBO pValue)
+        public bool DeleteSurveyInfo(SurveyInfoBO surveyInfoBO)
         {
             bool result = false;
 
-            this.SurveyInfoDao.DeleteSurveyInfo(pValue);
+            this.SurveyInfoDao.DeleteSurveyInfo(surveyInfoBO);
             result = true;
 
             return result;
         }
-        private static bool ValidateSurveyFields(SurveyInfoBO pRequestMessage)
+        private static bool ValidateSurveyFields(SurveyInfoBO surveyInfoBO)
         {
 
             bool isValid = true;
 
 
-            if (pRequestMessage.ClosingDate == null)
+            if (surveyInfoBO.ClosingDate == null)
             {
 
                 isValid = false;
@@ -185,7 +181,7 @@ namespace Epi.Web.BLL
             }
 
 
-            else if (string.IsNullOrEmpty(pRequestMessage.SurveyName))
+            else if (string.IsNullOrEmpty(surveyInfoBO.SurveyName))
             {
 
                 isValid = false;
@@ -198,15 +194,16 @@ namespace Epi.Web.BLL
         }
 
 
-        public List<SurveyInfoBO> GetChildInfoByParentId(Dictionary<string, int> ParentIdList)
+        public List<SurveyInfoBO> GetChildInfoByParentId(Dictionary<string, int> parentIdList)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-            foreach (KeyValuePair<string, int> item in ParentIdList)
+            foreach (KeyValuePair<string, int> item in parentIdList)
             {
                 result = this.SurveyInfoDao.GetChildInfoByParentId(item.Key, item.Value);
             }
             return result;
         }
+
         public SurveyInfoBO GetParentInfoByChildId(string ChildId)
         {
             SurveyInfoBO result = new SurveyInfoBO();
@@ -215,20 +212,21 @@ namespace Epi.Web.BLL
 
             return result;
         }
-        public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string RootId)
+
+        public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId)
         {
             List<SurveyInfoBO> SurveyInfoBOList = new List<SurveyInfoBO>();
             List<FormsHierarchyBO> result = new List<FormsHierarchyBO>();
 
-            SurveyInfoBOList = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
+            SurveyInfoBOList = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(rootId);
             foreach (var item in SurveyInfoBOList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
-                FormsHierarchyBO.RootFormId = RootId;
+                FormsHierarchyBO.RootFormId = rootId;
                 FormsHierarchyBO.FormId = item.SurveyId;
                 FormsHierarchyBO.ViewId = item.ViewId;
                 FormsHierarchyBO.SurveyInfo = item;
-                if (item.SurveyId == RootId)
+                if (item.SurveyId == rootId)
                 {
                     FormsHierarchyBO.IsRoot = true;
                 }
@@ -238,6 +236,7 @@ namespace Epi.Web.BLL
             return result;
 
         }
+
         private List<SurveyInfoBO> GetFormsHierarchyIds(string RootId)
         {
             List<SurveyInfoBO> FormsHierarchyIds = new List<SurveyInfoBO>();

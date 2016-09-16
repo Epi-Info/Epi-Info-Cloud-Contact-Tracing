@@ -10,11 +10,9 @@ using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
 {
-    //public class surveyResponseXML
     public class SurveyResponseDocDb
     {
         private IEnumerable<AbridgedFieldInfo> _pageFields;
-        private IEnumerable<XElement> _pageFieldsXml;
         private string _requiredList = "";
 
         private Dictionary<string, string> _responseQA = new Dictionary<string, string>();
@@ -31,11 +29,10 @@ namespace Epi.Web.MVC.Utility
             set { _requiredList = value; }
         }
 
-        public SurveyResponseDocDb(IEnumerable<AbridgedFieldInfo> pageFields, string requiredList, IEnumerable<XElement> pageFieldsXml)
+        public SurveyResponseDocDb(IEnumerable<AbridgedFieldInfo> pageFields, string requiredList)
         {
             _pageFields = pageFields;
             _requiredList = requiredList;
-            _pageFieldsXml = pageFieldsXml;
         }
         public SurveyResponseDocDb()
         {
@@ -161,98 +158,6 @@ namespace Epi.Web.MVC.Utility
                 requiredList += (requiredList == "" ? "" : ",") + name; 
             }
             return requiredList;
-        }
-
-        public Epi.Web.MVC.Models.ResponseModel ConvertResponseDetailToModel(SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
-        {
-            Epi.Web.MVC.Models.ResponseModel ResponseModel = new Models.ResponseModel();
-
-
-            var MetaDataColumns = Epi.Web.MVC.Constants.Constant.MetaDaTaColumnNames();
-
-            try
-            {
-                ResponseModel.Column0 = item.ResponseId;
-                ResponseModel.IsLocked = item.IsLocked;
-
-                var responseQA = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-                string value;
-                var columnsCount = Columns.Count;
-                for (int i = 0; i < 5; ++i)
-                {
-                    if (i >= columnsCount)
-                    {
-                        // set value to empty string for unspecified columns
-                        value = string.Empty;
-                    }
-                    else if (MetaDataColumns.Contains(Columns[i].Value))
-                    {
-                        // set value to value of special column
-                        value = GetColumnValue(item, Columns[i].Value);
-                    }
-                    else
-                    {
-                        // set value to value in the response
-                        value = responseQA.TryGetValue(Columns[i].Value.ToLower(), out value) ? (value ?? string.Empty) : string.Empty;
-                    }
-
-                    // set the associated ResponseModel column
-                    switch (i)
-                    {
-                        case 0:
-                            ResponseModel.Column1 = value;
-                            break;
-                        case 1:
-                            ResponseModel.Column2 = value;
-                            break;
-                        case 2:
-                            ResponseModel.Column3 = value;
-                            break;
-                        case 3:
-                            ResponseModel.Column4 = value;
-                            break;
-                        case 4:
-                            ResponseModel.Column5 = value;
-                            break;
-                    }
-                }
-
-                return ResponseModel;
-            }
-            catch (Exception Ex)
-            {
-
-                throw new Exception(Ex.Message);
-            }
-        }
-        private string GetColumnValue(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO item, string columnName)
-        {
-            string ColumnValue = "";
-            switch (columnName)
-            {
-                case "_UserEmail":
-                    ColumnValue = item.UserEmail;
-                    break;
-                case "_DateUpdated":
-                    ColumnValue = item.DateUpdated.ToString();
-                    break;
-                case "_DateCreated":
-                    ColumnValue = item.DateCreated.ToString();
-                    break;
-                case "IsDraftMode":
-                case "_Mode":
-                    if (item.IsDraftMode.ToString().ToUpper() == "TRUE")
-                    {
-                        ColumnValue = "Staging";
-                    }
-                    else
-                    {
-                        ColumnValue = "Production";
-
-                    }
-                    break;
-            }
-            return ColumnValue;
         }
     }
 }

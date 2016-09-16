@@ -7,6 +7,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Cloud.MetadataServices.Extensions;
 
 namespace Epi.Web.EF
 {
@@ -495,18 +496,7 @@ namespace Epi.Web.EF
 
             var metadatAccessor = new Cloud.Common.Metadata.MetadataAccessor(RootId);
             var formDigests = metadatAccessor.FormDigests;
-            result = formDigests
-                .Select(d => new SurveyInfoBO
-                {
-                    SurveyId = d.FormId,
-                    SurveyName = d.FormName,
-                    ParentId = d.ParentFormId,
-                    ViewId = d.ViewId,
-                    OwnerId = d.OwnerUserId,
-                    OrganizationName = d.OrganizationName,
-                    DataAccessRuleId = d.DataAccessRuleId,
-                    IsDraftMode = d.IsDraftMode
-                }).ToList();
+            result = formDigests.ToSurveyInfoBOList();
 
             return result;
         }

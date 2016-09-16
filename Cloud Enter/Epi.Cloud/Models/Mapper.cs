@@ -92,16 +92,17 @@ namespace Epi.Web.MVC.Models
         }
 
 
-        public static SurveyAnswerModel ToSurveyAnswerModel(this Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswerDTO)
+        public static SurveyAnswerModel ToSurveyAnswerModel(this Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO)
         {
             return new SurveyAnswerModel
             {
-                ResponseId = SurveyAnswerDTO.ResponseId,
-                SurveyId = SurveyAnswerDTO.SurveyId,
-                DateUpdated = SurveyAnswerDTO.DateUpdated,
-                DateCompleted = SurveyAnswerDTO.DateCompleted,
-                Status = SurveyAnswerDTO.Status,
-                XML = SurveyAnswerDTO.XML
+                ResponseId = surveyAnswerDTO.ResponseId,
+                SurveyId = surveyAnswerDTO.SurveyId,
+                DateUpdated = surveyAnswerDTO.DateUpdated,
+                DateCompleted = surveyAnswerDTO.DateCompleted,
+                Status = surveyAnswerDTO.Status,
+                ResponseDetail = surveyAnswerDTO.ResponseDetail,
+                XML = surveyAnswerDTO.XML
             };
         }
 

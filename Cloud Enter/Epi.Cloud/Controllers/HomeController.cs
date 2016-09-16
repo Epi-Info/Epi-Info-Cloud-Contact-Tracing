@@ -23,6 +23,7 @@ using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
 using Epi.Web.Enter.Common.Extension;
+using Epi.Cloud.MVC.Extensions;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -273,7 +274,7 @@ namespace Epi.Web.MVC.Controllers
 			///////////////////////////// Execute - Record Before - start//////////////////////
 			Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
 			EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList, _pageFieldsXml);
+			SurveyResponseDocDb surveyResponseDocDb = new SurveyResponseDocDb(_pageFields, _requiredList);
 			if (FunctionObject_B != null && !FunctionObject_B.IsNull())
 			{
 				try
@@ -644,7 +645,7 @@ namespace Epi.Web.MVC.Controllers
 
 				SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
 				formResponseReq.Criteria.SurveyId = surveyId.ToString();
-				formResponseReq.Criteria.GridPageNumber = pageNumber;
+				formResponseReq.Criteria.PageNumber = pageNumber;
 				formResponseReq.Criteria.UserId = userId;
 				formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
 				formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
@@ -689,7 +690,7 @@ namespace Epi.Web.MVC.Controllers
 				SurveyAnswerCriteria criteria = new SurveyAnswerCriteria();
 				criteria.SurveyId = surveyId;
 				criteria.UserId = userId;
-				criteria.GridPageNumber = 1;
+				criteria.PageNumber = 1;
 				criteria.IsShareable = false;
 				criteria.GridPageSize = 20;
 				criteria.SurveyQAList = formResponseReq.Criteria.SurveyQAList;
@@ -728,7 +729,7 @@ namespace Epi.Web.MVC.Controllers
 					}
 					else
 					{
-						ResponseList.Add(surveyResponseHelper.ConvertResponseDetailToModel(item, Columns));
+						ResponseList.Add(item.ToResponseModel(Columns));
 					}
 
 				}

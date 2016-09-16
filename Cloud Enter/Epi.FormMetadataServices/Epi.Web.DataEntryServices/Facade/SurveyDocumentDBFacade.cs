@@ -88,18 +88,18 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		public FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> fields)
 		{
-			FormsHierarchyDTO formhierarchyDTO = new FormsHierarchyDTO();
+			FormsHierarchyDTO formHierarchyDTO = new FormsHierarchyDTO();
 			var childRecords = _surveyResponse.GetAllResponsesWithFieldNames(fields, relateParentId);
-			formhierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
+			formHierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
 			foreach (var item in childRecords)
 			{
 				SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
 				surveyAnswer.ResponseId = item.ResponseId.ToString();
 				surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-				formhierarchyDTO.ResponseIds.Add(surveyAnswer);
+				formHierarchyDTO.ResponseIds.Add(surveyAnswer);
 			}
 		  
-			return formhierarchyDTO;
+			return formHierarchyDTO;
 		}
 
 		#region Save FormParentProperties to DocumentDB

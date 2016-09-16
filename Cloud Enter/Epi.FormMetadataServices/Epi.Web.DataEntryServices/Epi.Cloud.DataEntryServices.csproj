@@ -102,7 +102,6 @@
     <Compile Include="DataEntryService.cs" />
     <Compile Include="DocumentDBServices.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
-    <Compile Include="Extensions\FormDigestExtensions.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\FormResponseDetailExtensions.cs" />
     <Compile Include="Extensions\OrganizationBOExtensions.cs" />

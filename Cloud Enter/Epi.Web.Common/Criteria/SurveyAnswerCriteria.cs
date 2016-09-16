@@ -24,7 +24,7 @@ namespace Epi.Web.Enter.Common.Criteria
         /// Which page to retrieve
         /// </summary>
         [DataMember]
-        public int GridPageNumber { get; set; }
+        public int PageNumber { get; set; }
 
         /// <summary>
         /// Number of Records per page

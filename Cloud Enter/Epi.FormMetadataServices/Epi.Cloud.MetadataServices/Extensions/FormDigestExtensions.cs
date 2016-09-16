@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Epi.Web.Enter.Common.BusinessObject;
 
-namespace Epi.Cloud.DataEntryServices.Extensions
+namespace Epi.Cloud.MetadataServices.Extensions
 {
     public static class FormDigestExtensions
     {
@@ -18,12 +17,12 @@ namespace Epi.Cloud.DataEntryServices.Extensions
         {
             surveyInfoBO.SurveyId = formDigest.FormId;
             surveyInfoBO.SurveyName = formDigest.FormName;
-            //surveyInfoBO.OrganizationKey = new Guid(Epi.Web.Enter.Common.Security.Cryptography.Decrypt(formDigest.OrganizationKey));
             surveyInfoBO.OrganizationName = formDigest.OrganizationName;
             surveyInfoBO.OwnerId = formDigest.OwnerUserId;
             surveyInfoBO.ParentId = formDigest.ParentFormId;
             surveyInfoBO.ViewId = formDigest.ViewId;
-
+            surveyInfoBO.DataAccessRuleId = formDigest.DataAccessRuleId;
+            surveyInfoBO.IsDraftMode = formDigest.IsDraftMode;
             return surveyInfoBO;
         }
         public static List<SurveyInfoBO> ToSurveyInfoBOList(this FormDigest[] formDigests)
