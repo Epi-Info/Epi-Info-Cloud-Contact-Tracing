@@ -14,7 +14,7 @@ namespace Epi.Web.Enter.Common.Xml
     {
 
         Dictionary<string, string> ResponseDetailList = new Dictionary<string, string>();
-        Dictionary<string, string> SurveyFileds = new Dictionary<string, string>();
+        Dictionary<string, string> SurveyFields = new Dictionary<string, string>();
         IEnumerable<XElement> PageFields;
         private string RequiredList = "";
 
@@ -31,7 +31,7 @@ namespace Epi.Web.Enter.Common.Xml
             foreach (var _FieldTypeID in _FieldsTypeIDs)
             {
 
-                SurveyFileds.Add(_FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("FieldTypeId").Value);
+                SurveyFields.Add(_FieldTypeID.Attribute("Name").Value, _FieldTypeID.Attribute("FieldTypeId").Value);
 
             }
         }
@@ -352,14 +352,14 @@ namespace Epi.Web.Enter.Common.Xml
                 }
             }
         }
-        public Dictionary<string, string> ValidateResponseFileds()
+        public Dictionary<string, string> ValidateResponseFields()
         {
 
             Dictionary<string, string> ErrorList = new Dictionary<string, string>();
             foreach (var Item in ResponseDetailList)
             {
 
-                if (!SurveyFileds.ContainsKey(Item.Key))
+                if (!SurveyFields.ContainsKey(Item.Key))
                 {
 
                     ErrorList.Add(Item.Key, "Field Name Not Found");
@@ -379,7 +379,7 @@ namespace Epi.Web.Enter.Common.Xml
 
 
                 string FieldType;
-                SurveyFileds.TryGetValue(Item.Key, out FieldType);
+                SurveyFields.TryGetValue(Item.Key, out FieldType);
                 if (!MatchValueAndType(Item.Value, FieldType))
                 {
 

@@ -2100,35 +2100,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
             try
             {
                 _surveyDocumentDBStoreFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status);
-
-                // TODO: DocumentDB implementation required
-                //List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-                //Guid Id = new Guid(surveyResponse.ResponseId);
-
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    IQueryable<SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).OrderBy(x => x.DateCreated).Traverse(x => x.SurveyResponse1).AsQueryable();
-                //    result = Mapper.Map(Query);
-                //    if (result.Count() > 0)
-                //    {
-                //        foreach (var Obj in result)
-                //        {
-                //            if (!string.IsNullOrEmpty(Obj.ResponseId))
-                //            {
-                //                Guid NewId = new Guid(Obj.ResponseId);
-
-                //                Obj.Status = SurveyResponse.Status;
-                //                UpdateSurveyResponse(Obj);
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        Context.usp_soft_delete_Epi7_record(new Guid(SurveyResponse.ResponseId), new Guid(SurveyResponse.SurveyId), false);
-                //        Context.SaveChanges();
-                //    }
-
-                //}
             }
             catch (Exception ex)
             {
@@ -2145,8 +2116,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public int GetFormResponseCount(string formId)
         {
-            // TODO: DocumentDb implementation required
-            throw new NotImplementedException();
+            return _surveyDocumentDBStoreFacade.GetFormResponseCount(formId);
         }
 
         public bool DoesResponseExist(Guid responseId)

@@ -4,7 +4,6 @@ using System.Text;
 using System.Data;
 using com.calitha.goldparser;
 using System.Linq;
-using System.Xml.Linq;
 
 /*
 using Epi.Collections;
@@ -583,124 +582,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             return new cSymbolTable(pName, pParent);
         }
 
-
-        public void LoadTemplate(XDocument pTemplateDoc, XDocument pSurveyResponseDoc)
-        {
-            string PageNumber = "";
-
-            // todo for each page in 
-            var _FieldsTypeIDs = from _FieldTypeID in pTemplateDoc.Descendants("Field")
-                                 select _FieldTypeID;
-
-            foreach (var _FieldTypeID in _FieldsTypeIDs)
-            {
-
-                PluginVariable var = new PluginVariable();
-                var.Name = _FieldTypeID.Attribute("Name").Value;
-                var.VariableScope = VariableScope.DataSource;
-                var.PageNumber = PageNumber;
-
-                if (pSurveyResponseDoc != null)
-                {
-                    var.Expression = GetControlValue(pSurveyResponseDoc, var.Name);
-                }
-
-
-                switch (_FieldTypeID.Attribute("FieldTypeId").Value)
-                {
-                    case "1": // textbox
-                        var.DataType = DataType.Text;
-                        var.ControlType = "textbox";
-                        break;
-
-                    case "2"://Label/Title
-                        var.DataType = DataType.Text;
-                        var.ControlType = "label";
-                        break;
-
-                    case "3"://Label
-                        var.DataType = DataType.Text;
-                        var.ControlType = "label";
-                        continue;
-
-                    case "4"://MultiLineTextBox
-                        var.DataType = DataType.Text;
-                        var.ControlType = "multiline";
-                        break;
-
-                    case "5"://NumericTextBox
-                        var.DataType = DataType.Number;
-                        var.ControlType = "numeric";
-                        break;
-
-                    case "7":// 7 DatePicker
-                        var.DataType = DataType.Date;
-                        var.ControlType = "datepicker";
-                        break;
-
-                    case "8": //TimePicker
-                        var.DataType = DataType.Time;
-                        var.ControlType = "timepicker";
-                        break;
-
-                    case "10"://CheckBox
-                        var.DataType = DataType.Boolean;
-                        var.ControlType = "checkbox";
-                        break;
-
-                    case "11"://DropDown Yes/No
-                        var.DataType = DataType.Boolean;
-                        var.ControlType = "yesno";
-                        break;
-
-                    case "12"://RadioButton
-                        var.DataType = DataType.Number;
-                        var.ControlType = "radiobutton";
-                        break;
-
-                    case "17"://DropDown LegalValues
-                        var.DataType = DataType.Text;
-                        var.ControlType = "legalvalues";
-                        break;
-
-                    case "18"://DropDown Codes
-                        var.DataType = DataType.Text;
-                        var.ControlType = "codes";
-                        break;
-
-                    case "19"://DropDown CommentLegal
-                        var.DataType = DataType.Text;
-                        var.ControlType = "commentlegal";
-                        break;
-
-                    case "21"://GroupBox
-                        var.DataType = DataType.Unknown;
-                        var.ControlType = "groupbox";
-                        var.Expression = _FieldTypeID.Attribute("List").Value;
-                        string[] IdentifierList = var.Expression.Split(',');
-                        string Identifier = _FieldTypeID.Attribute("Name").Value;
-                        if (this.GroupVariableList.ContainsKey(Identifier))
-                        {
-                            this.GroupVariableList[Identifier].Clear();
-                        }
-                        else
-                        {
-                            this.GroupVariableList.Add(Identifier, new List<string>());
-                        }
-
-                        foreach (string s in IdentifierList)
-                        {
-                            this.GroupVariableList[Identifier].Add(s);
-                            this.GroupVariableList[Identifier].Add(Identifier);
-                        }
-
-                        break;
-                }
-                this.DefineVariable(var);
-
-            }
-        }
-
         public void LoadTemplate(IEnumerable<IAbridgedFieldInfo> fields, Dictionary<string, string> responseQA)
         {
             string pageNumber = "";
@@ -812,23 +693,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
             }
         }
 
-        public static string GetControlValue(XDocument xdoc, string ControlName)
-        {
-            string ControlValue = "";
-
-            var _ControlValues = from _ControlValue in
-                                        xdoc.Descendants("ResponseDetail")
-                                 where _ControlValue.Attribute("QuestionName").Value == ControlName.ToString()
-                                 select _ControlValue;
-
-            foreach (var _ControlValue in _ControlValues)
-            {
-                ControlValue = _ControlValue.Value;
-            }
-
-            return ControlValue;
-        }
-
         public static string GetControlValue(Dictionary<string, string> qaResponse, string controlName)
         {
             string controlValue = null;
@@ -866,7 +730,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
 
                 switch (var.ControlType)
                 {
-
                     case "checkbox":
                     case "yesno":
                         pJavaScriptBuilder.AppendLine(string.Format(defineFormat, var.Name, var.ControlType, DataSource, var.PageNumber, var.Expression));
@@ -889,7 +752,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                     default:
                         pJavaScriptBuilder.AppendLine(string.Format(defineFormat, var.Name, var.ControlType, DataSource, var.PageNumber, var.Expression));
                         break;
-
                 }
 
             }
@@ -915,17 +777,14 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                 }
             }
 
-
             if (pIsExceptionList)
             {
                 List<string> List2 = new List<string>();
-
 
                 foreach (DataColumn C in List)
                 {
                     List2.Add(C.ColumnName.ToUpper());
                 }
-
 
                 foreach (string s in pIdentifierList)
                 {
@@ -978,7 +837,6 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                     }
                 }
             }
-
         }
 
         public void GetSubroutineJavaScript(StringBuilder pJavaScriptBuilder)

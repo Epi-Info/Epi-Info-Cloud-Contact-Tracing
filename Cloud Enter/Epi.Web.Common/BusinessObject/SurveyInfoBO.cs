@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
@@ -13,7 +12,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private string _IntroductionText;
         private string _DepartmentName;
         private string _OrganizationName;
-        private string _XML;
         private string _ExitText;
         private long _TemplateXMLSize;
         private Guid _UserPublishKey;
@@ -94,15 +92,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _ExitText = value; }
         }
 
-        /// <summary>
-        /// Metadata XML
-        /// </summary>
-        public string XML
-        {
-            get { return _XML; }
-            set { _XML = value; }
-        }
-
         public DateTime ClosingDate
         {
             get { return _ClosingDate; }
@@ -119,12 +108,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         {
             get { return _OrganizationKey; }
             set { _OrganizationKey = value; }
-        }
-
-        public long TemplateXMLSize
-        {
-            get { return _TemplateXMLSize; }
-            set { _TemplateXMLSize = value; }
         }
 
         public DateTime DateCreated

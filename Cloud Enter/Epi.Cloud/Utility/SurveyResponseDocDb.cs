@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
 using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Metadata;
-using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -34,10 +30,10 @@ namespace Epi.Web.MVC.Utility
             _pageFields = pageFields;
             _requiredList = requiredList;
         }
+
         public SurveyResponseDocDb()
         {
         }
-
 
         public void Add(MvcDynamicForms.Form pForm)
         {
@@ -46,52 +42,25 @@ namespace Epi.Web.MVC.Utility
             {
                 if (!field.IsPlaceHolder)
                 {
-                    if (this._responseQA.ContainsKey(field.Title))
-                    {
-                        this._responseQA[field.Title] = field.Response;
-                    }
-                    else
-                    {
-                        this._responseQA.Add(field.Title, field.Response);
-                    }
+                    this._responseQA[field.Title] = field.Response;
                 }
             }
         }
 
         public void Add(MvcDynamicForms.Fields.InputField pField)
         {
-            if (this._responseQA.ContainsKey(pField.Title))
-            {
-                this._responseQA[pField.Title] = pField.GetMetadata();
-            }
-            else
-            {
-                this._responseQA.Add(pField.Title, pField.GetMetadata());
-            }
+            this._responseQA[pField.Title] = pField.GetMetadata();
         }
 
-        public void SetValue(string pKey, string pXMLValue)
+        public void SetValue(string key, string value)
         {
-            if (this._responseQA.ContainsKey(pKey))
-            {
-                this._responseQA[pKey] = pXMLValue;
-            }
-            else
-            {
-                this._responseQA.Add(pKey, pXMLValue);
-            }
+            this._responseQA[key] = value;
         }
 
-
-        public string GetValue(string pKey)
+        public string GetValue(string key)
         {
             string result = null;
-
-            if (this._responseQA.ContainsKey(pKey))
-            {
-                result = this._responseQA[pKey];
-            }
-
+            this._responseQA.TryGetValue(key, out result);
             return result;
         }
 
@@ -116,14 +85,6 @@ namespace Epi.Web.MVC.Utility
 
             return formResponseDetail;
         }
-        public int GetNumberOfPages(XDocument Xml)
-        {
-            var _FieldsTypeIDs = from _FieldTypeID in
-                                     Xml.Descendants("View")
-                                 select _FieldTypeID;
-
-            return _FieldsTypeIDs.Elements().Count();
-        }
 
         public FormResponseDetail CreateResponseDocument(PageDigest[] pageDigests)
         {
@@ -147,17 +108,6 @@ namespace Epi.Web.MVC.Utility
                 formResponseDetail.AddPageResponseDetail(pageResponseDetail);
             }
             return formResponseDetail;
-        }
-
-        public string SetRequiredList(AbridgedFieldInfo field, string requiredList)
-        {
-            requiredList = requiredList ?? string.Empty;
-            var name = field.FieldName.ToLower();
-            if (field.IsRequired && !requiredList.Contains(name))
-            {
-                requiredList += (requiredList == "" ? "" : ",") + name; 
-            }
-            return requiredList;
         }
     }
 }

@@ -108,54 +108,56 @@ namespace Epi.Web.BLL
 
         public SurveyInfoBO UpdateSurveyInfo(SurveyInfoBO surveyInfoBO)
         {
-            SurveyInfoBO result = surveyInfoBO;
-            if (ValidateSurveyFields(surveyInfoBO))
-            {
-                if (IsRelatedForm(MetadataAccessor.GetFormDigest(surveyInfoBO.SurveyId)))
-                {
-                    List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(surveyInfoBO.SurveyId.ToString());
+            throw new NotImplementedException("UpdateSurveyInfo");
 
-                    // 1- breck down the xml to n views
-                    List<string> XmlList = new List<string>();
-                    XmlList = XmlChunking(surveyInfoBO.XML);
+            //SurveyInfoBO result = surveyInfoBO;
+            //if (ValidateSurveyFields(surveyInfoBO))
+            //{
+            //    if (IsRelatedForm(MetadataAccessor.GetFormDigest(surveyInfoBO.SurveyId)))
+            //    {
+            //        List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(surveyInfoBO.SurveyId.ToString());
 
-                    // 2- call publish() with each of the views
-                    foreach (string Xml in XmlList)
-                    {
-                        XDocument xdoc = XDocument.Parse(Xml);
-                        SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
-                        XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                        int ViewId;
-                        int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
+            //        // 1- breck down the xml to n views
+            //        List<string> XmlList = new List<string>();
+            //        XmlList = XmlChunking(surveyInfoBO.XML);
 
-                        GetRelateViewIds(ViewElement, ViewId);
+            //        // 2- call publish() with each of the views
+            //        foreach (string Xml in XmlList)
+            //        {
+            //            XDocument xdoc = XDocument.Parse(Xml);
+            //            SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
+            //            XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
+            //            int ViewId;
+            //            int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
 
-                        SurveyInfoBO = surveyInfoBO;
-                        SurveyInfoBO.XML = Xml;
-                        SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
-                        SurveyInfoBO.ViewId = ViewId;
+            //            GetRelateViewIds(ViewElement, ViewId);
 
-                        SurveyInfoBO pBO = FormsHierarchyIds.Single(x => x.ViewId == ViewId);
-                        SurveyInfoBO.SurveyId = pBO.SurveyId;
-                        SurveyInfoBO.ParentId = pBO.ParentId;
-                        SurveyInfoBO.UserPublishKey = pBO.UserPublishKey;
-                        SurveyInfoBO.OwnerId = surveyInfoBO.OwnerId;
+            //            SurveyInfoBO = surveyInfoBO;
+            //            SurveyInfoBO.XML = Xml;
+            //            SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
+            //            SurveyInfoBO.ViewId = ViewId;
 
-                        this.SurveyInfoDao.UpdateSurveyInfo(SurveyInfoBO);
-                    }
-                }
-                else
-                {
-                    this.SurveyInfoDao.UpdateSurveyInfo(surveyInfoBO);
-                }
-                result.StatusText = "Successfully updated survey information.";
-            }
-            else
-            {
-                result.StatusText = "One or more survey required fields are missing values.";
-            }
+            //            SurveyInfoBO pBO = FormsHierarchyIds.Single(x => x.ViewId == ViewId);
+            //            SurveyInfoBO.SurveyId = pBO.SurveyId;
+            //            SurveyInfoBO.ParentId = pBO.ParentId;
+            //            SurveyInfoBO.UserPublishKey = pBO.UserPublishKey;
+            //            SurveyInfoBO.OwnerId = surveyInfoBO.OwnerId;
 
-            return result;
+            //            this.SurveyInfoDao.UpdateSurveyInfo(SurveyInfoBO);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        this.SurveyInfoDao.UpdateSurveyInfo(surveyInfoBO);
+            //    }
+            //    result.StatusText = "Successfully updated survey information.";
+            //}
+            //else
+            //{
+            //    result.StatusText = "One or more survey required fields are missing values.";
+            //}
+
+            //return result;
         }
 
         public bool DeleteSurveyInfo(SurveyInfoBO surveyInfoBO)

@@ -23,13 +23,11 @@ namespace Epi.Web.EF
             result.SurveyId = entity.SurveyId.ToString();
             result.SurveyName = entity.SurveyName;
             result.SurveyNumber = entity.SurveyNumber;
-            result.XML = entity.TemplateXML;
             result.IntroductionText = entity.IntroductionText;
             result.ExitText = entity.ExitText;
             result.OrganizationName = entity.OrganizationName;
             result.DepartmentName = entity.DepartmentName;
             result.ClosingDate = entity.ClosingDate;
-            result.TemplateXMLSize = (long)entity.TemplateXMLSize;
             result.DateCreated = entity.DateCreated;
             result.IsDraftMode = entity.IsDraftMode;
             result.StartDate = entity.StartDate;
@@ -151,7 +149,6 @@ namespace Epi.Web.EF
             SurveyMetaData.SurveyId = new Guid(businessobject.SurveyId);
             SurveyMetaData.SurveyName = businessobject.SurveyName;
             SurveyMetaData.SurveyNumber = businessobject.SurveyNumber;
-            SurveyMetaData.TemplateXML = businessobject.XML;
             SurveyMetaData.IntroductionText = businessobject.IntroductionText;
             SurveyMetaData.ExitText = businessobject.ExitText;
             SurveyMetaData.OrganizationName = businessobject.OrganizationName;
@@ -159,7 +156,6 @@ namespace Epi.Web.EF
             SurveyMetaData.ClosingDate = businessobject.ClosingDate;
             SurveyMetaData.UserPublishKey = businessobject.UserPublishKey;
             SurveyMetaData.SurveyTypeId = businessobject.SurveyType;
-            SurveyMetaData.TemplateXMLSize = businessobject.TemplateXMLSize;
             SurveyMetaData.DateCreated = businessobject.DateCreated;
             SurveyMetaData.IsDraftMode = businessobject.IsDraftMode;
             SurveyMetaData.StartDate = businessobject.StartDate;
@@ -372,7 +368,6 @@ namespace Epi.Web.EF
             SurveyMetaData DataRow = new SurveyMetaData();
             DataRow.SurveyName = SurveyInfo.SurveyName;
             DataRow.SurveyNumber = SurveyInfo.SurveyNumber;
-            DataRow.TemplateXML = SurveyInfo.XML;
             DataRow.IntroductionText = SurveyInfo.IntroductionText;
             DataRow.ExitText = SurveyInfo.ExitText;
             DataRow.OrganizationName = SurveyInfo.OrganizationName;
@@ -380,7 +375,6 @@ namespace Epi.Web.EF
             DataRow.ClosingDate = SurveyInfo.ClosingDate;
             DataRow.SurveyTypeId = SurveyInfo.SurveyType;
             DataRow.UserPublishKey = SurveyInfo.UserPublishKey;
-            DataRow.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
             DataRow.IsDraftMode = SurveyInfo.IsDraftMode;
             DataRow.StartDate = SurveyInfo.StartDate;
             return DataRow;

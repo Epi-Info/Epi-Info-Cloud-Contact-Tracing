@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
 using Epi.Web.MVC.Models;
-using System.Xml.Linq;
 using System.Collections.Generic;
 using System.Configuration;
 using Epi.Web.Enter.Common.Security;
@@ -12,7 +11,6 @@ namespace Epi.Web.MVC.Controllers
     {
        //declare  SurveyFacade
         private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
-        private IEnumerable<XElement> PageFields;
         private  string RequiredList ="";
         private Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
         /// <summary>
@@ -28,10 +26,12 @@ namespace Epi.Web.MVC.Controllers
             Success,
             Error
             }
+
         //public ActionResult Index()
         //{
         //    return View();
         //}
+
         [HttpGet]
         public ActionResult Index(string surveyid)
             {

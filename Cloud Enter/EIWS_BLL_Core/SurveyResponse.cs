@@ -227,19 +227,20 @@ namespace Epi.Web.BLL
         }
         public List<SurveyResponseBO> InsertSurveyResponse(List<SurveyResponseBO> pValue, int UserId, bool IsNewRecord = false)
         {
+            throw new NotImplementedException("InsertSurveyResponse");
 
-            foreach (var item in pValue)
-            {
-                ResponseBO ResponseXmlBO = new ResponseBO();
-                ResponseXmlBO.User = UserId;
-                ResponseXmlBO.ResponseId = item.ResponseId;
-                ResponseXmlBO.Xml = item.XML;
-                ResponseXmlBO.IsNewRecord = IsNewRecord;
-                _surveyResponseDao.InsertResponse(ResponseXmlBO);
+            //foreach (var item in pValue)
+            //{
+            //    ResponseBO ResponseXmlBO = new ResponseBO();
+            //    ResponseXmlBO.User = UserId;
+            //    ResponseXmlBO.ResponseId = item.ResponseId;
+            //    ResponseXmlBO.Xml = item.XML;
+            //    ResponseXmlBO.IsNewRecord = IsNewRecord;
+            //    _surveyResponseDao.InsertResponse(ResponseXmlBO);
 
-            }
+            //}
 
-            return pValue;
+            //return pValue;
         }
 
 
@@ -516,71 +517,72 @@ namespace Epi.Web.BLL
         }
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
         {
-            string SurveyId = request.AnswerInfo.SurveyId.ToString();
-            string ResponseId = request.AnswerInfo.ResponseId.ToString();
-            Guid ParentRecordId = request.AnswerInfo.ParentRecordId;
-            Dictionary<string, string> ErrorMessageList = new Dictionary<string, string>();
-            PreFilledAnswerResponse response;
+            throw new NotImplementedException("SetSurveyAnswer");
 
-            SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
-            UserAuthenticationRequestBO UserAuthenticationRequestBO = new UserAuthenticationRequestBO();
-            //Get Survey Info (MetaData)
-            List<SurveyInfoBO> SurveyBOList = GetSurveyInfo(request);
-            //Build Survey Response Xml
+            //string SurveyId = request.AnswerInfo.SurveyId.ToString();
+            //string ResponseId = request.AnswerInfo.ResponseId.ToString();
+            //Guid ParentRecordId = request.AnswerInfo.ParentRecordId;
+            //Dictionary<string, string> ErrorMessageList = new Dictionary<string, string>();
+            //PreFilledAnswerResponse response;
 
-            string xmlResponse;
-            FormResponseDetail formResponseDetail = CreateResponseXml(request, SurveyBOList, out xmlResponse);
-            //Validate Response values
+            //SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
+            //UserAuthenticationRequestBO UserAuthenticationRequestBO = new UserAuthenticationRequestBO();
+            ////Get Survey Info (MetaData)
+            //List<SurveyInfoBO> SurveyBOList = GetSurveyInfo(request);
+            ////Build Survey Response Xml
 
-            ErrorMessageList = ValidateResponse(SurveyBOList, request);
+            //string xmlResponse;
+            //FormResponseDetail formResponseDetail = CreateResponseXml(request, SurveyBOList, out xmlResponse);
+            ////Validate Response values
 
-            if (ErrorMessageList.Count() > 0)
-            {
-                response = new PreFilledAnswerResponse();
-                response.ErrorMessageList = ErrorMessageList;
-                response.Status = ((Message)1).ToString();
-            }
-            else
-            {
-                //Insert Survey Response
-                surveyResponseBO = _surveyResponseDao.GetSingleResponse(request.AnswerInfo.ResponseId.ToString());
-                if (surveyResponseBO.SurveyId == null)
-                {
-                    surveyResponseBO = InsertSurveyResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
-                    response = new PreFilledAnswerResponse();
-                    response.Status = ((Message)2).ToString();
-                }
-                else
-                {
-                    UpdateFormResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
-                    response = new PreFilledAnswerResponse();
-                    response.Status = ((Message)2).ToString();
-                }
-            }
+            //ErrorMessageList = ValidateResponse(SurveyBOList, request);
+
+            //if (ErrorMessageList.Count() > 0)
+            //{
+            //    response = new PreFilledAnswerResponse();
+            //    response.ErrorMessageList = ErrorMessageList;
+            //    response.Status = ((Message)1).ToString();
+            //}
+            //else
+            //{
+            //    //Insert Survey Response
+            //    surveyResponseBO = _surveyResponseDao.GetSingleResponse(request.AnswerInfo.ResponseId.ToString());
+            //    if (surveyResponseBO.SurveyId == null)
+            //    {
+            //        surveyResponseBO = InsertSurveyResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
+            //        response = new PreFilledAnswerResponse();
+            //        response.Status = ((Message)2).ToString();
+            //    }
+            //    else
+            //    {
+            //        UpdateFormResponse(Mapper.ToBusinessObject(request.AnswerInfo.SurveyId.ToString(), request.AnswerInfo.ParentRecordId.ToString(), request.AnswerInfo.ResponseId.ToString(), request.AnswerInfo.UserId, formResponseDetail, xmlResponse));
+            //        response = new PreFilledAnswerResponse();
+            //        response.Status = ((Message)2).ToString();
+            //    }
+            //}
 
 
-            return response;
+            //return response;
         }
 
         private Dictionary<string, string> ValidateResponse(List<SurveyInfoBO> SurveyBOList, PreFilledAnswerRequest request)
         {
+            throw new NotImplementedException("ValidateResponse");
 
-            XDocument SurveyXml = new XDocument(); 
-            foreach (var item in SurveyBOList)
-            {
-                SurveyXml = XDocument.Parse(item.XML);
-            }
-            Dictionary<string, string> MessageList = new Dictionary<string, string>();
-            Dictionary<string, string> FieldNotFoundList = new Dictionary<string, string>();
-            Dictionary<string, string> WrongFieldTypeList = new Dictionary<string, string>();
-            SurveyResponseXML Implementation = new SurveyResponseXML(request, SurveyXml);
-            FieldNotFoundList = Implementation.ValidateResponseFileds();
-            //WrongFieldTypeList = Implementation.ValidateResponseFiledTypes();
-            MessageList = MessageList.Union(FieldNotFoundList).Union(WrongFieldTypeList).ToDictionary(k => k.Key, v => v.Value);
-            return MessageList;
-
-
+            //XDocument SurveyXml = new XDocument(); 
+            //foreach (var item in SurveyBOList)
+            //{
+            //    SurveyXml = XDocument.Parse(item.XML);
+            //}
+            //Dictionary<string, string> MessageList = new Dictionary<string, string>();
+            //Dictionary<string, string> FieldNotFoundList = new Dictionary<string, string>();
+            //Dictionary<string, string> WrongFieldTypeList = new Dictionary<string, string>();
+            //SurveyResponseXML Implementation = new SurveyResponseXML(request, SurveyXml);
+            //FieldNotFoundList = Implementation.ValidateResponseFields();
+            //MessageList = MessageList.Union(FieldNotFoundList).Union(WrongFieldTypeList).ToDictionary(k => k.Key, v => v.Value);
+            //return MessageList;
         }
+
         private List<SurveyInfoBO> GetSurveyInfo(PreFilledAnswerRequest request)
         {
 
@@ -589,8 +591,6 @@ namespace Epi.Web.BLL
             string OrganizationId = request.AnswerInfo.OrganizationKey.ToString();
             //Guid UserPublishKey = request.AnswerInfo.UserPublishKey;
             List<SurveyInfoBO> SurveyBOList = new List<SurveyInfoBO>();
-
-
 
             SurveyIdList.Add(SurveyId);
 
@@ -604,26 +604,7 @@ namespace Epi.Web.BLL
             SurveyBOList = implementation.GetSurveyInfo(SurveyIdList, criteria.ClosingDate, OrganizationId, criteria.SurveyType, criteria.PageNumber, criteria.PageSize);//Default 
 
             return SurveyBOList;
-
         }
-        private FormResponseDetail CreateResponseXml(Epi.Web.Enter.Common.Message.PreFilledAnswerRequest request, List<SurveyInfoBO> SurveyBOList, out string responseXml)
-        {
-            var formId = request.AnswerInfo.SurveyId.ToString();
-            var metadataAccessor = new MetadataAccessor(formId);
-
-            XDocument SurveyXml = new XDocument();
-
-            foreach (var item in SurveyBOList)
-            {
-                SurveyXml = XDocument.Parse(item.XML);
-            }
-            SurveyResponseXML Implementation = new SurveyResponseXML(request, SurveyXml);
-            var pageDigests = metadataAccessor.GetPageDigests(formId);
-            var formResponseDetail = Implementation.CreateResponseDocument(pageDigests, SurveyXml, out responseXml);
-
-            return formResponseDetail;
-        }
-
 
         public bool HasResponse(string SurveyId, string ResponseId)
         {

@@ -61,7 +61,6 @@ namespace Epi.Web.MVC.Models
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
                 FormOwnerId = SurveyInfoDTO.OwnerId,
-                XML = SurveyInfoDTO.XML
             };
         }
 
@@ -87,7 +86,6 @@ namespace Epi.Web.MVC.Models
                 UserPublishKey = SurveyInfoModel.UserPublishKey,
                 IsDraftMode = SurveyInfoModel.IsDraftMode,
                 StartDate = SurveyInfoModel.StartDate,
-                XML = SurveyInfoModel.XML
             };
         }
 
@@ -304,7 +302,6 @@ namespace Epi.Web.MVC.Models
                 StartDate = SurveyInfoDTO.StartDate,
                 IsSqlProject = SurveyInfoDTO.IsSqlProject,
                 FormOwnerId = SurveyInfoDTO.OwnerId,
-                XML = SurveyInfoDTO.XML
             };
         }
     }

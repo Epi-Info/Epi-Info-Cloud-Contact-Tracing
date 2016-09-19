@@ -27,7 +27,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyId = pDTO.SurveyId,
                 SurveyName = pDTO.SurveyName,
                 SurveyNumber = pDTO.SurveyNumber,
-                XML = pDTO.XML,
                 IntroductionText = pDTO.IntroductionText,
                 ExitText = pDTO.ExitText,
                 OrganizationName = pDTO.OrganizationName,
@@ -44,9 +43,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 ViewId = pDTO.ViewId,
                 IsShareable = pDTO.IsShareable,
                 DataAccessRuleId = pDTO.DataAccessRuleId,
-
-
-
             };
         }
 
@@ -151,7 +147,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyId = pBO.SurveyId,
                 SurveyName = pBO.SurveyName,
                 SurveyNumber = pBO.SurveyNumber,
-                XML = pBO.XML,
                 IntroductionText = pBO.IntroductionText,
                 ExitText = pBO.ExitText,
                 OrganizationName = pBO.OrganizationName,
@@ -432,7 +427,6 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 DepartmentName = SurveyInfoModel.DepartmentName,
                 IntroductionText = SurveyInfoModel.IntroductionText,
                 ExitText = SurveyInfoModel.ExitText,
-                XML = SurveyInfoModel.XML,
                 IsShareable = SurveyInfoModel.IsShareable,
                 IsShared = SurveyInfoModel.IsShared,
                 IsSqlProject = SurveyInfoModel.IsSqlProject,

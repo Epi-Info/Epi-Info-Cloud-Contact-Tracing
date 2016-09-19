@@ -5,13 +5,8 @@ using Epi.Web.Enter.Common.BusinessObject;
 using System.Configuration;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.ObjectMapping;
-using System.Xml.Linq;
-using Epi.Web.Enter.Common.Xml;
 
 using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
-using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -539,24 +534,6 @@ namespace Epi.Cloud.DataEntryServices
             return SurveyBOList;
 #endif
         }
-        private FormResponseDetail CreateResponseXml(Epi.Web.Enter.Common.Message.PreFilledAnswerRequest request, List<SurveyInfoBO> SurveyBOList, out string responseXml)
-        {
-            string formId = request.AnswerInfo.SurveyId.ToString();
-            var metadataAccessor = new MetadataAccessor(formId);
-
-            XDocument SurveyXml = new XDocument();
-
-            foreach (var item in SurveyBOList)
-            {
-                SurveyXml = XDocument.Parse(item.XML);
-            }
-            SurveyResponseXML Implementation = new SurveyResponseXML(request, SurveyXml);
-            var pageDigests = metadataAccessor.GetPageDigests(formId);
-            FormResponseDetail formResponseDetail = Implementation.CreateResponseDocument(pageDigests, SurveyXml, out responseXml);
-
-            return formResponseDetail;
-        }
-
 
         public bool HasResponse(string SurveyId, string ResponseId)
         {

@@ -13,7 +13,6 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyMetaData.SurveyId = new Guid(surveyInfoBO.SurveyId);
             surveyMetaData.SurveyName = surveyInfoBO.SurveyName;
             surveyMetaData.SurveyNumber = surveyInfoBO.SurveyNumber;
-            surveyMetaData.TemplateXML = surveyInfoBO.XML;
             surveyMetaData.IntroductionText = surveyInfoBO.IntroductionText;
             surveyMetaData.ExitText = surveyInfoBO.ExitText;
             surveyMetaData.OrganizationName = surveyInfoBO.OrganizationName;
@@ -21,7 +20,6 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyMetaData.ClosingDate = surveyInfoBO.ClosingDate;
             surveyMetaData.UserPublishKey = surveyInfoBO.UserPublishKey;
             surveyMetaData.SurveyTypeId = surveyInfoBO.SurveyType;
-            surveyMetaData.TemplateXMLSize = surveyInfoBO.TemplateXMLSize;
             surveyMetaData.DateCreated = surveyInfoBO.DateCreated;
             surveyMetaData.IsDraftMode = surveyInfoBO.IsDraftMode;
             surveyMetaData.StartDate = surveyInfoBO.StartDate;
@@ -43,7 +41,6 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             SurveyMetaData surveyMetadata = new SurveyMetaData();
             surveyMetadata.SurveyName = surveyInfoBO.SurveyName;
             surveyMetadata.SurveyNumber = surveyInfoBO.SurveyNumber;
-            surveyMetadata.TemplateXML = surveyInfoBO.XML;
             surveyMetadata.IntroductionText = surveyInfoBO.IntroductionText;
             surveyMetadata.ExitText = surveyInfoBO.ExitText;
             surveyMetadata.OrganizationName = surveyInfoBO.OrganizationName;

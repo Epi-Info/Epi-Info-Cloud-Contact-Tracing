@@ -12,13 +12,11 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyInfoBO.SurveyId = surveyMetadata.SurveyId.ToString();
             surveyInfoBO.SurveyName = surveyMetadata.SurveyName;
             surveyInfoBO.SurveyNumber = surveyMetadata.SurveyNumber;
-            surveyInfoBO.XML = surveyMetadata.TemplateXML;
             surveyInfoBO.IntroductionText = surveyMetadata.IntroductionText;
             surveyInfoBO.ExitText = surveyMetadata.ExitText;
             surveyInfoBO.OrganizationName = surveyMetadata.OrganizationName;
             surveyInfoBO.DepartmentName = surveyMetadata.DepartmentName;
             surveyInfoBO.ClosingDate = surveyMetadata.ClosingDate;
-            surveyInfoBO.TemplateXMLSize = (long)surveyMetadata.TemplateXMLSize;
             surveyInfoBO.DateCreated = surveyMetadata.DateCreated;
             surveyInfoBO.IsDraftMode = surveyMetadata.IsDraftMode;
             surveyInfoBO.StartDate = surveyMetadata.StartDate;

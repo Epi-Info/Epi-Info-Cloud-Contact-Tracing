@@ -73,9 +73,10 @@ namespace Epi.Web.BLL
             if (resultRows.Count > 0)
             {
                 NumberOfRows = resultRows.Count;
-                ResponsesTotalsize = (int)resultRows.Select(x => x.TemplateXMLSize).Sum();
 
-                AvgResponseSize = (int)resultRows.Select(x => x.TemplateXMLSize).Average();
+                //ResponsesTotalsize = (int)resultRows.Select(x => x.TemplateXMLSize).Sum();
+
+                //AvgResponseSize = (int)resultRows.Select(x => x.TemplateXMLSize).Average();
                 // NumberOfResponsPerPage = (int)Math.Ceiling((ResponseMaxSize * (BandwidthUsageFactor / 100)) / AvgResponseSize);
 
                 NumberOfResponsPerPage = (int)Math.Ceiling((int)(ResponseMaxSize * (BandwidthUsageFactor * 0.01)) / AvgResponseSize);

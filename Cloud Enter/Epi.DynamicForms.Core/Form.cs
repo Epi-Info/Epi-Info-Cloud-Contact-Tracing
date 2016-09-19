@@ -378,16 +378,6 @@ namespace MvcDynamicForms
 
             return result;
         }
-
-        public Epi.Core.EnterInterpreter.Rule_Context GetCheckCodeObj(System.Xml.Linq.XDocument xdoc, System.Xml.Linq.XDocument xdocResponse, string FormCheckCode)
-        {
-            Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
-            Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
-            result.LoadTemplate(xdoc, xdocResponse);
-            EIP.Execute(FormCheckCode);
-
-            return result;
-        }
         public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> Obj, string formCheckCode)
         {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());

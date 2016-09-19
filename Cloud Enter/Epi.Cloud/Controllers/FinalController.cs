@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
-using System.Xml.Linq;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
@@ -25,7 +24,6 @@ namespace Epi.Web.MVC.Controllers
         [HttpGet]
         public ActionResult Index(string surveyId, string final)
         {
-
             try
             {
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -76,36 +74,31 @@ namespace Epi.Web.MVC.Controllers
                 Guid responseId = Guid.NewGuid();
                 Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyId, responseId.ToString(), 0);
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
-                XDocument xdoc = XDocument.Parse(surveyInfoModel.XML);
 
                 MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(SurveyAnswer.SurveyId, 1, SurveyAnswer, IsMobileDevice);
 
-                var _FieldsTypeIDs = from _FieldTypeID in
-                                     xdoc.Descendants("Field")
-                                     select _FieldTypeID;
+                List<string> requiredFields = null;
 
-                foreach (var _FieldTypeID in _FieldsTypeIDs)
+                foreach (var field in surveyInfoModel.CurrentFormFieldDigests) 
                 {
-                    bool isRequired;
-                    string attributeValue = _FieldTypeID.Attribute("IsRequired").Value;
+                    bool isRequired = field.IsRequired;
 
-                    if (bool.TryParse(attributeValue, out isRequired))
+                    if (isRequired)
                     {
-                        if (isRequired)
+                        // if this is the first new required field then split the existing required CSV into a true list.
+                        requiredFields = requiredFields ?? new List<string>(form.RequiredFieldsList.Split(','));
+
+                        if (!requiredFields.Contains(field.FieldName))
                         {
-                            if (!form.RequiredFieldsList.Contains(_FieldTypeID.Attribute("Name").Value))
-                            {
-                                if (form.RequiredFieldsList != "")
-                                {
-                                    form.RequiredFieldsList = form.RequiredFieldsList + "," + _FieldTypeID.Attribute("Name").Value.ToLower();
-                                }
-                                else
-                                {
-                                    form.RequiredFieldsList = _FieldTypeID.Attribute("Name").Value.ToLower();
-                                }
-                            }
+                            requiredFields.Add(field.FieldName.ToLower());
                         }
                     }
+                }
+
+                // if we processed at least 1 reqired field then join the required field list into a CSV list
+                if (requiredFields != null)
+                {
+                    form.RequiredFieldsList = string.Join(",", requiredFields);
                 }
 
                 _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 1, 0);

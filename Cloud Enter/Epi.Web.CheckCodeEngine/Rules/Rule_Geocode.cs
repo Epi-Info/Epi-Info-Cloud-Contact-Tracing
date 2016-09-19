@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Xml;
-using System.Net;
-using com.calitha.goldparser;
+﻿using com.calitha.goldparser;
 
 namespace Epi.Core.EnterInterpreter.Rules
 {

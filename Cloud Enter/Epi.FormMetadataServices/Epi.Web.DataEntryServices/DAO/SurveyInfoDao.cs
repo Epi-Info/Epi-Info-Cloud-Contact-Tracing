@@ -321,38 +321,40 @@ namespace Epi.Cloud.DataEntryServices.DAO
         /// <param name="SurveyInfo">SurveyInfo.</param>
         public void InsertSurveyInfo(SurveyInfoBO SurveyInfo)
         {
-            int OrganizationId = 0;
-            try
-            {
-                using (var Context = DataObjectFactory.CreateContext())
-                {
+            throw new NotImplementedException("InsertSurveyInfo is not implemented");
 
-                    //retrieve OrganizationId based on OrganizationKey
-                    using (var ContextOrg = DataObjectFactory.CreateContext())
-                    {
-                        string OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
-                        OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
-                    }
+            //int OrganizationId = 0;
+            //try
+            //{
+            //    using (var Context = DataObjectFactory.CreateContext())
+            //    {
 
-                    SurveyInfo.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
-                    SurveyInfo.DateCreated = DateTime.Now;
+            //        //retrieve OrganizationId based on OrganizationKey
+            //        using (var ContextOrg = DataObjectFactory.CreateContext())
+            //        {
+            //            string OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
+            //            OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
+            //        }
+
+            //        SurveyInfo.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
+            //        SurveyInfo.DateCreated = DateTime.Now;
 
 
 
-                    var SurveyMetaDataEntity = Mapper.Map(SurveyInfo);
-                    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyInfo.OwnerId);
-                    SurveyMetaDataEntity.Users.Add(User);
+            //        var SurveyMetaDataEntity = Mapper.Map(SurveyInfo);
+            //        User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyInfo.OwnerId);
+            //        SurveyMetaDataEntity.Users.Add(User);
 
-                    SurveyMetaDataEntity.OrganizationId = OrganizationId;
-                    Context.AddToSurveyMetaDatas(SurveyMetaDataEntity);
+            //        SurveyMetaDataEntity.OrganizationId = OrganizationId;
+            //        Context.AddToSurveyMetaDatas(SurveyMetaDataEntity);
 
-                    Context.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
+            //        Context.SaveChanges();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw (ex);
+            //}
         }
 
         /// <summary>
@@ -377,7 +379,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
                     SurveyMetaData Row = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
                     Row.IsSQLProject = SurveyInfo.IsSqlProject;
-                    Row.TemplateXML = SurveyInfo.XML;
                     Row.IsDraftMode = SurveyInfo.IsDraftMode;
                     Row.IsShareable = SurveyInfo.IsShareable;
                     Row.DataAccessRuleId = SurveyInfo.DataAccessRuleId;
