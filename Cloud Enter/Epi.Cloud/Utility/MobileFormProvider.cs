@@ -12,7 +12,7 @@ namespace Epi.Web.MVC.Utility
             form.IsMobile = true;
         }
 
-        protected override void OptionallyAddGroupBox(Form form, FieldAttributes fieldAttributes, double _Width, double _Height)
+        protected override void AddRadioButtonGroupBox(Form form, FieldAttributes fieldAttributes, double _Width, double _Height)
         {
             // Don't add a group box around radio buttons for mobile devices
         }
@@ -100,6 +100,7 @@ namespace Epi.Web.MVC.Utility
         {
             var RelateButton = new MobileRelateButton(fieldAttributes, formWidth, formHeight)
             {
+                // Don't set the control's value for mobile devices
                 // Value = controlValue
             };
 
@@ -131,6 +132,7 @@ namespace Epi.Web.MVC.Utility
         {
             var groupbox = new MobileGroupBox(fieldAttributes, formWidth, formHeight)
             {
+                // Don't set the control's value for mobile devices
                 //  Value = controlValue
             };
 

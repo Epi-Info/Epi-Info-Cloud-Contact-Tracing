@@ -171,7 +171,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
 			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
-			var formDocumentDbEntity = _surveyResponse.GetFormPageResponsesByResponseId(responseId);
+			var formDocumentDbEntity = _surveyResponse.GetAllPageResponsesByResponseId(responseId);
 			List<SurveyAnswerDTO> surveyResponseList = new List<SurveyAnswerDTO>();
 			SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
 			surveyAnswerDTO.ResponseId = responseId;
@@ -206,7 +206,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		public FormResponseDetail GetFormResponseByResponseId(string responseId)
 		{
-			var response = _surveyResponse.GetFormPageResponsesByResponseId(responseId);
+			var response = _surveyResponse.GetAllPageResponsesByResponseId(responseId);
 			var formResponseDetail = response.ToFormResponseDetail();
 			return formResponseDetail;
 		}

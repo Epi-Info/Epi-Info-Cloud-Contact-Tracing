@@ -10,6 +10,7 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Interfaces.DataInterface;
+
 namespace Epi.Web.WCF.SurveyService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
@@ -825,52 +826,50 @@ namespace Epi.Web.WCF.SurveyService
         }
 
 
-        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest pRequest)
+        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)
         {
-
             try
             {
-                SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
-
+                SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-                Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
-                foreach (var response in pRequest.SurveyAnswerList)
+                Epi.Web.BLL.SurveyResponse surveyResponseDao = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
+                foreach (var response in surveyAnswerRequest.SurveyAnswerList)
                 {
-                    if (pRequest.Criteria.IsSqlProject)
+                    if (surveyAnswerRequest.Criteria.IsSqlProject)
                     {
-                        if (pRequest.Criteria.IsEditMode)
+                        if (surveyAnswerRequest.Criteria.IsEditMode)
                         {
-                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId), 2);
+                            surveyResponseDao.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), 2);
                         }
                         else
                         {
-                            if (pRequest.Criteria.IsDeleteMode)
+                            if (surveyAnswerRequest.Criteria.IsDeleteMode)
                             {
-                                Implementation.DeleteSurveyResponse(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId));
+                                surveyResponseDao.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
                             }
                             else
                             {
                                 //do status Update
-                                var obj = Mapper.ToBusinessObject(response, pRequest.Criteria.UserId);
-                                obj.SurveyId = pRequest.Criteria.SurveyId;
+                                var obj = Mapper.ToSurveyResponseBO(response, surveyAnswerRequest.Criteria.UserId);
+                                obj.SurveyId = surveyAnswerRequest.Criteria.SurveyId;
                                 obj.Status = 0;
-                                Implementation.UpdateRecordStatus(obj);
+                                surveyResponseDao.UpdateRecordStatus(obj);
                             }
 
                         }
                     }
                     else
                     {
-                        if (pRequest.Criteria.IsEditMode)
+                        if (surveyAnswerRequest.Criteria.IsEditMode)
                         {
-                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId), 2);
+                            surveyResponseDao.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), 2);
                         }
                         else
                         {
 
-                            Implementation.DeleteSurveyResponse(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId));
+                            surveyResponseDao.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
                         }
 
 
@@ -1018,7 +1017,6 @@ namespace Epi.Web.WCF.SurveyService
                 AllResponsesIDsList = null;
             }
             //3 Combining the lists.
-            // TODO: Temporary until DocumentDB is fully implemented
             AllResponsesIDsList[0].SurveyId = RelatedFormIDsList[0].FormId;
             FormsHierarchyResponse.FormsHierarchy = Mapper.ToFormHierarchyDTO(CombineLists(RelatedFormIDsList, AllResponsesIDsList));
 

@@ -33,12 +33,12 @@ namespace Epi.Web.BLL
         public List<SurveyResponseBO> GetSurveyResponseById(SurveyAnswerCriteria Criteria, List<SurveyInfoBO> SurveyBOList = null)
         {
             Guid Id = new Guid(Criteria.SurveyAnswerIdList[0]);
-            bool ResponseExists = this._surveyResponseDao.DoesResponseExist(Id);
-            List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-            if (ResponseExists)
-            {
-                result = _surveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
-            }
+            //bool ResponseExists = this._surveyResponseDao.DoesResponseExist(Id);
+            //List<SurveyResponseBO> result;
+            //if (ResponseExists)
+            //{
+            List<SurveyResponseBO> result = _surveyResponseDao.GetSurveyResponse(Criteria.SurveyAnswerIdList, Criteria.UserPublishKey);
+            //}
             //else
             //{
 

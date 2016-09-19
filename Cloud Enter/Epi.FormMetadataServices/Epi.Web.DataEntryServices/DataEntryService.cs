@@ -553,15 +553,9 @@ namespace Epi.Cloud.DataEntryServices
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao = entityDaoFactory.SurveyResponseDao;
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(surveyResponseDao);
 
-                //SurveyAnswerResponse response = new SurveyAnswerResponse(request.RequestId);
                 SurveyResponseBO SurveyResponse = Epi.Web.Enter.Common.ObjectMapping.Mapper.ToBusinessObject(surveyAnswerRequest.SurveyAnswerList, surveyAnswerRequest.Criteria.UserId)[0];
 
-                //SurveyResponse.UserId = request.Criteria.UserId;
-                //Implementation.UpdateSurveyResponse(SurveyResponse);
-                //response.SurveyResponseList.Add(Mapper.ToDataTransferObject(SurveyResponse));
-
                 Epi.Web.BLL.SurveyResponse Implementation1 = new Epi.Web.BLL.SurveyResponse(surveyResponseDao);
-                //List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetResponsesHierarchyIdsByRootId(request.SurveyAnswerList[0].ResponseId);
 
                 List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetSurveyResponseById(surveyAnswerRequest.Criteria);
 

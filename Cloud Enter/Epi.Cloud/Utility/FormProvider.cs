@@ -1,34 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
-using System.Xml.XPath;
+using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
 using Epi.Core.EnterInterpreter;
 using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using System.Data;
-using Epi.Cloud.DataEntryServices.Facade;
-using System.Web.Mvc;
-using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Web.MVC.Utility
 {
     public class FormProvider
     {
-        static FormProvider()
-        {
-            var dependencyResolver = DependencyResolver.Current;
-            _surveyDocumentDBStoreFacade = dependencyResolver.GetService<ISurveyStoreDocumentDBFacade>();
-        }
-
-        protected static ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
-
         [ThreadStatic]
         public static List<SurveyAnswerDTO> SurveyAnswerList = null;
 
@@ -193,7 +178,7 @@ namespace Epi.Web.MVC.Utility
                         break;
 
                     case FieldTypes.Option: //RadioList
-                        OptionallyAddGroupBox(form, fieldAttributes, _Width, _Height);
+                        AddRadioButtonGroupBox(form, fieldAttributes, _Width, _Height);
                         var selectedRadioListValue = fieldValue;
                         var radioListValues = fieldAttributes.List;
                         form.AddFields(GetRadioList(fieldAttributes, _Width, _Height, selectedRadioListValue));
@@ -231,7 +216,7 @@ namespace Epi.Web.MVC.Utility
             }
         }
 
-        protected virtual void OptionallyAddGroupBox(Form form, FieldAttributes fieldAttributes, double _Width, double _Height)
+        protected virtual void AddRadioButtonGroupBox(Form form, FieldAttributes fieldAttributes, double _Width, double _Height)
         {
             var radioGroupBoxValue = string.Empty;
             form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, radioGroupBoxValue));

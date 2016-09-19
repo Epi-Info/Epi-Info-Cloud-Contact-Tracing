@@ -994,7 +994,7 @@ namespace Epi.Web.WCF.SurveyService
 
             foreach (var response in SurveyAnswerList)
             {
-                var obj = Mapper.ToBusinessObject(Mapper.ToDataTransferObject(response), pRequest.Criteria.UserId);
+                var obj = Mapper.ToSurveyResponseBO(Mapper.ToDataTransferObject(response), pRequest.Criteria.UserId);
                 obj.Status = pRequest.Criteria.StatusId;
                 Implementation.UpdateRecordStatus(obj);
 
@@ -1011,7 +1011,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
                 foreach (SurveyAnswerDTO DTO in pRequestMessage.SurveyAnswerList)
                 {
-                    Implementation.UpdateRecordStatus(Mapper.ToBusinessObject(DTO));
+                    Implementation.UpdateRecordStatus(Mapper.ToSurveyResponseBO(DTO));
                 }
 
             }

@@ -541,8 +541,8 @@ namespace Epi.Cloud.DataEntryServices
 		}
         #endregion Get FormInfo By ResponseId
 
-        #region Get FormInfo By ResponseId
-        public FormDocumentDBEntity GetFormPageResponsesByResponseId(string responseId)
+        #region Get all form responses by ResponseId
+        public FormDocumentDBEntity GetAllPageResponsesByResponseId(string responseId)
         {
             Uri docUri = CreateFormInfoDocumentCollectionUri();
             FormDocumentDBEntity formDocumentDbEntity = new FormDocumentDBEntity { GlobalRecordID = responseId };

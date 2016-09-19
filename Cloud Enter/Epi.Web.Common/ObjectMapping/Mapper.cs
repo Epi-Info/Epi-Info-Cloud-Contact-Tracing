@@ -228,7 +228,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
         /// </summary>
         /// <param name="SurveyInfo">A SurveyResponseDTO business object.</param>
         /// /// <returns>A SurveyResponseBO.</returns>
-        public static SurveyResponseBO ToBusinessObject(SurveyAnswerDTO pDTO, int UserId = 0)
+        public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO pDTO, int UserId = 0)
         {
             return new SurveyResponseBO
             {
@@ -253,7 +253,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             foreach (SurveyAnswerDTO surveyAnswer in pSurveyAnswerList)
             {
-                result.Add(ToBusinessObject(surveyAnswer));
+                result.Add(ToSurveyResponseBO(surveyAnswer));
             };
 
             return result;
