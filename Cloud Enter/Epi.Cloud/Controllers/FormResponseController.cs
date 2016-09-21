@@ -660,14 +660,16 @@ namespace Epi.Web.MVC.Controllers
 
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult CheckForConcurrency(String ResponseId)
+		public ActionResult CheckForConcurrency(String responseId)
 		{
-			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(ResponseId, Session[SessionKeys.RootFormId].ToString());
-			surveyAnswerDTO.LoggedInUserId = UserId;
-			Session[SessionKeys.EditForm] = ResponseId;
-			//Session[""]
-			return Json(surveyAnswerDTO);
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            var surveyAnswerStateDTO = GetSurveyAnswerState(responseId, Session[SessionKeys.RootFormId].ToString());
+            surveyAnswerStateDTO.LoggedInUserId = userId;
+            Session[SessionKeys.EditForm] = responseId;
+
+            // Minimize the amount of Json data by serializing only pertinent state information
+            var json = Json(surveyAnswerStateDTO.ToSurveyAnswerDTO());
+            return json;
 		}
 
 		[HttpPost]

@@ -14,7 +14,7 @@ namespace Epi.Cloud.Common.EntityObjects
         public string LastSaveLogonName { get; set; }
         public DateTime FirstSaveTime { get; set; }
         public DateTime LastSaveTime { get; set; }
-        public int UserId { get; set; }
+        public int LastActiveUserId { get; set; }
         public bool IsRelatedView { get; set; }
         public bool IsDraftMode { get; set; }
         public List<int> PageIds { get; set; }

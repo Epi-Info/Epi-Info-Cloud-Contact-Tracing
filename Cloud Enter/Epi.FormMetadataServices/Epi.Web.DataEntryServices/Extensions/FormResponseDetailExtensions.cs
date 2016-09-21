@@ -14,11 +14,10 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 DateCreated = formResponseDetail.FirstSaveTime,
                 DateUpdated = formResponseDetail.LastSaveTime,
                 IsDraftMode = formResponseDetail.IsDraftMode,
-                LastActiveUserId = formResponseDetail.UserId,
+                LastActiveUserId = formResponseDetail.LastActiveUserId,
                 RelateParentId = formResponseDetail.RelateParentId,
                 Status = formResponseDetail.RecStatus,
                 ResponseDetail = formResponseDetail,
-                UserId = formResponseDetail.UserId,
                 ViewId = new Common.Metadata.MetadataAccessor().GetFormDigest(formResponseDetail.FormId).ViewId
             };
             return surveyResponseBO;

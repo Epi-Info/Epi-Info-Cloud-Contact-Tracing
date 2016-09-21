@@ -721,31 +721,15 @@ namespace Epi.Web.MVC.Controllers
 			return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"].ToString());
 		}
 
-		private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetSurveyAnswer(string responseId, string FormId)
-		{
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
-			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-			var SurveyAnswerResponse = _isurveyFacade.GetSurveyAnswerResponse(responseId, FormId, UserId);
-			result = SurveyAnswerResponse.SurveyResponseList[0];
-			result.FormOwnerId = SurveyAnswerResponse.FormInfo.OwnerId;
-			return result;
-
-		}
-		private Epi.Web.Enter.Common.DTO.SurveyAnswerStateDTO GetSurveyAnswerState(string responseId)
-		{
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
-			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-			//responseId = TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID].ToString();
-			var surveyAnswerState = _isurveyFacade.GetSurveyAnswerState(responseId);
-			//Ananth
-			//var SurveyInfo = _isurveyFacade.GetSurveyInfoModel(FormId);
-			//var SurveyAnswerResponse = _isurveyDocumentDBStoreFacade.GetSurveyAnswerResponse(SurveyInfo.SurveyName, responseId, FormId, 1014, "1");
-			//End Ananth
-			result = surveyAnswerState.SurveyResponseList[0];
-			//result.FormOwnerId = surveyAnswerState.FormInfo.OwnerId;
-			return result;
-
-		}
+        private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetSurveyAnswer(string responseId, string formId)
+        {
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            var SurveyAnswerResponse = _isurveyFacade.GetSurveyAnswerResponse(responseId, formId, userId);
+            result = SurveyAnswerResponse.SurveyResponseList[0];
+            result.FormOwnerId = SurveyAnswerResponse.FormInfo.OwnerId;
+            return result;
+        }
 
 		[HttpGet]
 		public ActionResult LogOut()
@@ -864,12 +848,12 @@ namespace Epi.Web.MVC.Controllers
 		}
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult CheckForConcurrency(String ResponseId)
+		public ActionResult CheckForConcurrency(String responseId)
 		{
-			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-			var surveyAnswerStateDTO = GetSurveyAnswerState(ResponseId);
-			surveyAnswerStateDTO.LoggedInUserId = UserId;
-			Session[SessionKeys.EditForm] = ResponseId;
+			int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+			var surveyAnswerStateDTO = GetSurveyAnswerState(responseId);
+			surveyAnswerStateDTO.LoggedInUserId = userId;
+			Session[SessionKeys.EditForm] = responseId;
 
 			// Minimize the amount of Json data by serializing only pertinent state information
 			var json = Json(surveyAnswerStateDTO.ToSurveyAnswerDTO());

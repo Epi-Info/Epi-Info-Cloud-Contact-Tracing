@@ -36,7 +36,7 @@ namespace Epi.Web.MVC.Controllers
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
             var surveyResponseHelper = new SurveyResponseDocDb();
-            FormSettingRequest formSettingReq = new Enter.Common.Message.FormSettingRequest{ ProjectId = Session[SessionKeys.ProjectId] as string };
+            FormSettingRequest formSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
             //Populating the request
 
@@ -93,6 +93,15 @@ namespace Epi.Web.MVC.Controllers
             }
 
             return responseModel;
+        }
+
+        protected Epi.Web.Enter.Common.DTO.SurveyAnswerStateDTO GetSurveyAnswerState(string responseId, string rootFormId = "", int userId = 0)
+        {
+            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            var surveyAnswerState = _isurveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
+            result = surveyAnswerState.SurveyResponseList[0];
+            return result;
         }
     }
 }

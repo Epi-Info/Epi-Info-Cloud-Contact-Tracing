@@ -61,7 +61,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 FirstSaveTime = formResponseProperties.FirstSaveTime,
                 LastSaveTime = formResponseProperties.LastSaveTime,
 
-                UserId = formResponseProperties.UserId,
+                LastActiveUserId = formResponseProperties.UserId,
                 IsRelatedView = formResponseProperties.IsRelatedView,
                 IsDraftMode = formResponseProperties.IsDraftMode,
                 PageIds = formResponseProperties.PageIds

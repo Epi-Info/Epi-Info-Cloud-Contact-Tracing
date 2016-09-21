@@ -11,13 +11,27 @@ namespace Epi.Cloud.DataEntryServices.Extensions
         public static SurveyAnswerDTO ToSurveyAnswerDTO(this SurveyResponseBO businessobject)
         {
             SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
-            surveyAnswerDTO.SurveyId = businessobject.SurveyId;
             surveyAnswerDTO.ResponseId = businessobject.ResponseId;
-            surveyAnswerDTO.XML = businessobject.XML;
-            surveyAnswerDTO.Status = businessobject.Status;
-            surveyAnswerDTO.UserPublishKey = businessobject.UserPublishKey;
+            surveyAnswerDTO.SurveyId = businessobject.SurveyId;
             surveyAnswerDTO.DateUpdated = businessobject.DateUpdated;
             surveyAnswerDTO.DateCompleted = businessobject.DateCompleted;
+            surveyAnswerDTO.DateCreated = businessobject.DateCreated;
+            surveyAnswerDTO.Status = businessobject.Status;
+            surveyAnswerDTO.UserPublishKey = businessobject.UserPublishKey;
+            surveyAnswerDTO.IsDraftMode = businessobject.IsDraftMode;
+            surveyAnswerDTO.IsLocked = businessobject.IsLocked;
+            surveyAnswerDTO.ParentRecordId = businessobject.ParentRecordId;
+            surveyAnswerDTO.UserEmail = businessobject.UserEmail;
+            surveyAnswerDTO.LastActiveUserId = businessobject.LastActiveUserId;
+            surveyAnswerDTO.RelateParentId = businessobject.RelateParentId;
+            surveyAnswerDTO.RecordSourceId = businessobject.RecordSourceId;
+            surveyAnswerDTO.ViewId = businessobject.ViewId;
+            surveyAnswerDTO.FormOwnerId = 0; // TODO: Add FormOwnerId
+            surveyAnswerDTO.LoggedInUserId = 0; // TODO: Do we need to populate loggedInUserId
+            surveyAnswerDTO.RecoverLastRecordVersion = false; // TODO: Do we have to populate RecoverLastRecordVersion
+            surveyAnswerDTO.RequestedViewId = string.Empty;
+            surveyAnswerDTO.CurrentPageNumber = 0;
+
             surveyAnswerDTO.ResponseDetail = businessobject.ResponseDetail;
 
             return surveyAnswerDTO;

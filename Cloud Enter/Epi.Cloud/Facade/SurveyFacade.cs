@@ -214,10 +214,12 @@ namespace Epi.Web.MVC.Facade
             return surveyAnswerResponse;
         }
 
-        public SurveyAnswerResponse GetSurveyAnswerState(string responseId)
+        public SurveyAnswerResponse GetSurveyAnswerState(string responseId, string formId = "", int userId = 0)
         {
             _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Clear();
             _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
+            _surveyAnswerRequest.Criteria.SurveyId = formId;
+            _surveyAnswerRequest.Criteria.UserId = userId;
             SurveyAnswerResponse surveyAnswerResponse = _iSurveyAnswerRepository.GetSurveyAnswerState(_surveyAnswerRequest);
             return surveyAnswerResponse;
         }
