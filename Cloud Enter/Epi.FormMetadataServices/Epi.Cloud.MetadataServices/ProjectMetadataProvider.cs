@@ -6,12 +6,13 @@ using Epi.Cloud.CacheServices;
 using System.Collections.Generic;
 using Epi.Cloud.Common;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using System;
 
 namespace Epi.Cloud.MetadataServices
 {
     public class ProjectMetadataProvider : IProjectMetadataProvider
     {
-        private static string _projectId;
+        private static Guid _projectId;
         private readonly IEpiCloudCache _epiCloudCache;
         public ProjectMetadataProvider(IEpiCloudCache epiCloudCache)
         {
@@ -20,7 +21,7 @@ namespace Epi.Cloud.MetadataServices
 
         public IEpiCloudCache Cache { get { return _epiCloudCache; } }
 
-        public string ProjectId { get { return _projectId; } }
+        public string ProjectId { get { return _projectId.ToString("N"); } }
 
         //Pass the project id and call the DBAccess API and get the project metadata.
 
@@ -37,15 +38,15 @@ namespace Epi.Cloud.MetadataServices
             }
             else if (scope == ProjectScope.TemplateWithNoPages)
             {
-                metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, null, null) : null;
+                metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, Guid.Empty, null) : null;
                 if (metadata == null)
                 {
                     Template fullMetadata = _projectId != null ? _epiCloudCache.GetFullProjectTemplateMetadata(_projectId) : null;
                     if (fullMetadata == null)
                     {
                         fullMetadata = await RefreshCache(_projectId);
-                        _projectId = fullMetadata.Project.Id;
-                        metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, null, null);
+                        _projectId = new Guid(fullMetadata.Project.Id);
+                        metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, Guid.Empty, null);
                         if (metadata == null)
                         {
                             metadata = fullMetadata;
@@ -58,11 +59,11 @@ namespace Epi.Cloud.MetadataServices
 
         public async Task<Template> GetProjectMetadataWithPageByPageIdAsync(string formId, int pageId)
         {
-            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, formId, pageId) : null;
+            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadata(_projectId, new Guid(formId), pageId) : null;
             if (metadata == null)
             {
                 var fullMetadata = await RefreshCache(_projectId);
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, formId, pageId);
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, new Guid(formId), pageId);
             }
             return metadata;
         }
@@ -78,24 +79,22 @@ namespace Epi.Cloud.MetadataServices
 
         public async Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string formId, int? pageNumber)
         {
-            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadataByPageNumber(_projectId, formId, pageNumber) : null;
+            var metadata = _projectId != null ? _epiCloudCache.GetProjectTemplateMetadataByPageNumber(_projectId, new Guid(formId), pageNumber) : null;
             if (metadata == null)
             {
                 var fullMetadata = await RefreshCache(_projectId);
-                var trueProjectId = metadata.Project.FormDigests.FirstOrDefault().FormId;
-
-                metadata = _epiCloudCache.GetProjectTemplateMetadata(trueProjectId, formId, pageNumber);
+                metadata = _epiCloudCache.GetProjectTemplateMetadata(_projectId, new Guid(formId), pageNumber);
             }
             return metadata;
         }
 
         public async Task<Page> GetPageMetadataAsync(string formId, int pageId)
         {
-            var metadata = _epiCloudCache.GetPageMetadata(_projectId, formId, pageId);
+            var metadata = _epiCloudCache.GetPageMetadata(_projectId, new Guid(formId), pageId);
             if (metadata == null)
             {
                 var fullMetadata = await RefreshCache(_projectId);
-                metadata = _epiCloudCache.GetPageMetadata(_projectId, formId, pageId);
+                metadata = _epiCloudCache.GetPageMetadata(_projectId, new Guid(formId), pageId);
             }
             return metadata;
         }
@@ -138,7 +137,7 @@ namespace Epi.Cloud.MetadataServices
 
         public async Task<PageDigest[]> GetPageDigestsAsync(string formId)
         {
-            var pageDigests = _epiCloudCache.GetPageDigests(_projectId, formId);
+            var pageDigests = _epiCloudCache.GetPageDigests(_projectId, new Guid(formId));
             if (pageDigests == null)
             {
                 var projectPageDigests = GetProjectPageDigestsAsync().Result;
@@ -206,7 +205,7 @@ namespace Epi.Cloud.MetadataServices
             return fieldDigests.ToArray();
         }
 
-        private async Task<Template> RefreshCache(string projectId)
+        private async Task<Template> RefreshCache(Guid projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);
             PopulateRequiredPageLevelSourceTables(metadata);
@@ -215,11 +214,11 @@ namespace Epi.Cloud.MetadataServices
             return metadata;
         }
 
-        private static async Task<Template> RetrieveProjectMetadata(string projectId)
+        private static async Task<Template> RetrieveProjectMetadata(Guid projectId)
         {
             ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
-            var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId);
-            _projectId = templateMetadata != null ? templateMetadata.Project.Id : null;
+            var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId.ToString("N"));
+            _projectId = templateMetadata != null ? new Guid(templateMetadata.Project.Id) : Guid.Empty;
             return templateMetadata;
         }
 

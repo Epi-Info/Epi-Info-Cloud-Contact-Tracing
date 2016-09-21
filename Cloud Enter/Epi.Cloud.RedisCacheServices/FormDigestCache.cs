@@ -8,15 +8,15 @@ namespace Epi.Cloud.CacheServices
     {
         private const string FormDigestsKey = "FormDigests";
 
-        public bool FormDigestsExists(string projectId)
+        public bool FormDigestsExists(Guid projectId)
         {
-            return KeyExists(new Guid(projectId), FormDigestsKey, NoTimeout).Result;
+            return KeyExists(projectId, FormDigestsKey, NoTimeout).Result;
         }
 
-        public FormDigest[] GetFormDigests(string projectId)
+        public FormDigest[] GetFormDigests(Guid projectId)
         {
             FormDigest[] formDigests = null;
-            var json = Get(new Guid(projectId), FormDigestsKey, NoTimeout).Result;
+            var json = Get(projectId, FormDigestsKey, NoTimeout).Result;
             if (json != null)
             {
                 formDigests = JsonConvert.DeserializeObject<FormDigest[]>(json);
@@ -24,14 +24,15 @@ namespace Epi.Cloud.CacheServices
             return formDigests;
         }
 
-        public bool SetFormDigests(string projectId, FormDigest[] formDigests)
+        public bool SetFormDigests(Guid projectId, FormDigest[] formDigests)
         {
             var json = JsonConvert.SerializeObject(formDigests, DontSerializeNulls);
-            return Set(new Guid(projectId), FormDigestsKey, json).Result;
+            return Set(projectId, FormDigestsKey, json).Result;
         }
-        public void ClearFormDigests(string projectId)
+
+        public void ClearFormDigests(Guid projectId)
         {
-            Delete(new Guid(projectId), FormDigestsKey);
+            Delete(projectId, FormDigestsKey);
         }
     }
 }

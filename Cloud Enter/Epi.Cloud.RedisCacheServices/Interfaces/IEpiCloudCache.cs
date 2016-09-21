@@ -1,7 +1,9 @@
-﻿namespace Epi.Cloud.CacheServices
+﻿using System;
+
+namespace Epi.Cloud.CacheServices
 {
-    public interface IEpiCloudCache : IMetadataCache, IFormDigestCache, IPageDigestCache
+    public interface IEpiCloudCache : IMetadataCache, IFormDigestCache, IPageDigestCache, IFormSettingCache
     {
-        void ClearAllCache(string projectId);
+        void ClearAllCache(Guid projectId);
     }
 }

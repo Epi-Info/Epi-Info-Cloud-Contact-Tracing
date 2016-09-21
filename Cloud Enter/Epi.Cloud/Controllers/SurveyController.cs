@@ -1397,32 +1397,28 @@ namespace Epi.Web.MVC.Controllers
 
 				SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
 
-				if (RelateSurveyId.ResponseIds.Count > 0)
-				{
+                if (RelateSurveyId.ResponseIds.Count > 0)
+                {
 
 
-					surveyAnswerDTO = FormsHierarchy.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == RelateSurveyId.ResponseIds[0].ResponseId);
-					SurveyModel.Form = _isurveyFacade.GetSurveyFormData(RelateSurveyId.ResponseIds[0].SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null, FormsHierarchy,IsAndroid);
-				}
-				else
-				{
+                    surveyAnswerDTO = FormsHierarchy.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == RelateSurveyId.ResponseIds[0].ResponseId);
+                    SurveyModel.Form = _isurveyFacade.GetSurveyFormData(RelateSurveyId.ResponseIds[0].SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null, FormsHierarchy, IsAndroid);
+                }
+                else
+                {
+                    if (SurveyModel.FormResponseInfoModel.NumberOfResponses > 0)
+                    {
+                        surveyAnswerDTO = GetSurveyAnswer(SurveyModel.FormResponseInfoModel.ResponsesList[0].Column0, RelateSurveyId.FormId);
+                    }
+                    SurveyModel.Form = _isurveyFacade.GetSurveyFormData(surveyAnswerDTO.SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null, FormsHierarchy, IsAndroid);
+                }
 
-					surveyAnswerDTO = GetSurveyAnswer(SurveyModel.FormResponseInfoModel.ResponsesList[0].Column0, RelateSurveyId.FormId);
-					SurveyModel.Form = _isurveyFacade.GetSurveyFormData(surveyAnswerDTO.SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null, FormsHierarchy,IsAndroid );
-				}
-
-
-
-				return PartialView("ListResponses", SurveyModel);
+                return PartialView("ListResponses", SurveyModel);
 			}
 			else
 			{
-
 				return RedirectToAction("Index", "RelatedResponse", new { SurveyId = SurveyId, ViewId = ViewId, ResponseId = ResponseId, CurrentPage = CurrentPage });
-
 			}
-
-
 		}
 
 		public void SetRelateSession(string ResponseId, int CurrentPage)

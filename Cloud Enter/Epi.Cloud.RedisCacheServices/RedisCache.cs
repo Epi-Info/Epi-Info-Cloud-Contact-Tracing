@@ -14,8 +14,8 @@ namespace Epi.Cloud.CacheServices
     public abstract class RedisCache
     {
         protected static readonly TimeSpan NoTimeout = TimeSpan.Zero;
-        private static readonly TimeSpan InitialTimeout = new TimeSpan(1, 0, 0); // 1 hour
-        private static readonly TimeSpan RenewTimeout = new TimeSpan(1, 0, 0); // 1 hour
+        private static readonly TimeSpan InitialTimeout = new TimeSpan(4, 0, 0); // 4 hours
+        private static readonly TimeSpan RenewTimeout = new TimeSpan(4, 0, 0); // 4 hours
 
         protected static JsonSerializerSettings DontSerializeNulls = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 

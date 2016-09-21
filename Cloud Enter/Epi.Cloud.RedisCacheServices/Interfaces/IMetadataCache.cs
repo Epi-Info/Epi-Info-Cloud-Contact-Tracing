@@ -1,16 +1,17 @@
-﻿using Epi.Cloud.Common.Metadata;
+﻿using System;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.CacheServices
 {
     public interface IMetadataCache
     {
-        bool FullProjectTemplateMetadataExists(string projectId);
-        Template GetFullProjectTemplateMetadata(string projectId);
-        Template GetProjectTemplateMetadata(string projectId, string formId, int? pageId);
-        Template GetProjectTemplateMetadataByPageNumber(string projectId, string formId, int? pageNumber);
-        bool PageMetadataExists(string projectId, string formId, int pageId);
-        Page GetPageMetadata(string projectId, string formId, int pageId);
+        bool FullProjectTemplateMetadataExists(Guid projectId);
+        Template GetFullProjectTemplateMetadata(Guid projectId);
+        Template GetProjectTemplateMetadata(Guid projectId, Guid formId, int? pageId);
+        Template GetProjectTemplateMetadataByPageNumber(Guid projectId, Guid formId, int? pageNumber);
+        bool PageMetadataExists(Guid projectId, Guid formId, int pageId);
+        Page GetPageMetadata(Guid projectId, Guid Guid, int pageId);
         bool SetProjectTemplateMetadata(Template projectTemplateMetadata);
-        void ClearProjectTemplateMetadataFromCache(string projectId);
+        void ClearProjectTemplateMetadataFromCache(Guid projectId);
     }
 }

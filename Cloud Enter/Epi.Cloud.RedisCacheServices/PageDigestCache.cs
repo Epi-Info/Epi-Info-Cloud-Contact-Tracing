@@ -9,20 +9,20 @@ namespace Epi.Cloud.CacheServices
         private const string ProjectPageDigestsKey = "ProjectPageDigests";
         private const string FormPageDigestsKey = "FormPageDigests";
 
-        private string ComposeFormPageDigestsKey(string formId)
+        private string ComposeFormPageDigestsKey(Guid formId)
         {
-            return FormPageDigestsKey + FormSubKey + formId;
+            return FormPageDigestsKey + FormSubKey + formId.ToString("N");
         }
 
-        public bool ProjectPageDigestsExists(string projectId)
+        public bool ProjectPageDigestsExists(Guid projectId)
         {
-            return KeyExists(new Guid(projectId), ProjectPageDigestsKey, NoTimeout).Result;
+            return KeyExists(projectId, ProjectPageDigestsKey, NoTimeout).Result;
         }
 
-        public PageDigest[][] GetProjectPageDigests(string projectId)
+        public PageDigest[][] GetProjectPageDigests(Guid projectId)
         {
             PageDigest[][] projectPageDigest = null;
-            var json = Get(new Guid(projectId), ProjectPageDigestsKey, NoTimeout).Result;
+            var json = Get(projectId, ProjectPageDigestsKey, NoTimeout).Result;
             if (json != null)
             {
                 projectPageDigest = JsonConvert.DeserializeObject<PageDigest[][]>(json);
@@ -30,28 +30,28 @@ namespace Epi.Cloud.CacheServices
             return projectPageDigest;
         }
 
-        public bool SetProjectPageDigests(string projectId, PageDigest[][] projectPageDigests)
+        public bool SetProjectPageDigests(Guid projectId, PageDigest[][] projectPageDigests)
         {
             var json = JsonConvert.SerializeObject(projectPageDigests, DontSerializeNulls);
-            var result = Set(new Guid(projectId), ProjectPageDigestsKey, json).Result;
+            var result = Set(projectId, ProjectPageDigestsKey, json).Result;
 
             foreach (var formPageDigests in projectPageDigests)
             {
-                var formId = formPageDigests[0].FormId;
+                var formId = new Guid(formPageDigests[0].FormId);
                 result = result & SetPageDigests(projectId, formId, formPageDigests);
             }
             return result;
         }
 
-        public bool PageDigestsExists(string projectId, string formId)
+        public bool PageDigestsExists(Guid projectId, Guid formId)
         {
-            return KeyExists(new Guid(projectId), ComposeFormPageDigestsKey(formId), NoTimeout).Result;
+            return KeyExists(projectId, ComposeFormPageDigestsKey(formId), NoTimeout).Result;
         }
 
-        public PageDigest[] GetPageDigests(string projectId, string formId)
+        public PageDigest[] GetPageDigests(Guid projectId, Guid formId)
         {
             PageDigest[] pageDigest = null;
-            var json = Get(new Guid(projectId), ComposeFormPageDigestsKey(formId), NoTimeout).Result;
+            var json = Get(projectId, ComposeFormPageDigestsKey(formId), NoTimeout).Result;
             if (json != null)
             {
                 pageDigest = JsonConvert.DeserializeObject<PageDigest[]>(json);
@@ -59,15 +59,15 @@ namespace Epi.Cloud.CacheServices
             return pageDigest;
         }
 
-        public bool SetPageDigests(string projectId, string formId, PageDigest[] formPageDigests)
+        public bool SetPageDigests(Guid projectId, Guid formId, PageDigest[] formPageDigests)
         {
             var json = JsonConvert.SerializeObject(formPageDigests, DontSerializeNulls);
-            return Set(new Guid(projectId), ComposeFormPageDigestsKey(formId), json).Result;
+            return Set(projectId, ComposeFormPageDigestsKey(formId), json).Result;
         }
 
-        public void ClearAllFormPageDigests(string projectId)
+        public void ClearAllFormPageDigests(Guid projectId)
         {
-            Delete(new Guid(projectId), FormPageDigestsKey);
+            Delete(projectId, FormPageDigestsKey);
         }
     }
 }

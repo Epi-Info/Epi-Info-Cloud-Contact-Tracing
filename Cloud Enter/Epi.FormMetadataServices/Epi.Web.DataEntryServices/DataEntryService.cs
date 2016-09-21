@@ -19,17 +19,20 @@ namespace Epi.Cloud.DataEntryServices
         private readonly Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao _surveyInfoDao;
         private readonly Epi.Cloud.DataEntryServices.SurveyResponseProvider _surveyResponseProvider;
         private readonly Epi.Web.WCF.SurveyService.IEWEDataService _eweDataService;
+        private readonly Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory _entityDaoFactory;
         private string _accessToken;
         private string _userName;
 
         public DataEntryService(
             Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao surveyInfoDao,
             Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider,
-            Epi.Web.WCF.SurveyService.IEWEDataService eweDataService)
+            Epi.Web.WCF.SurveyService.IEWEDataService eweDataService,
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory)
         {
             _surveyInfoDao = surveyInfoDao;
             _surveyResponseProvider = surveyResponseProvider;
             _eweDataService = eweDataService;
+            _entityDaoFactory = entityDaoFactory;
         }
 		
         /// <summary>
@@ -549,8 +552,7 @@ namespace Epi.Cloud.DataEntryServices
         {
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new DaoFactory();
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao = entityDaoFactory.SurveyResponseDao;
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao = _entityDaoFactory.SurveyResponseDao;
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(surveyResponseDao);
 
                 SurveyResponseBO SurveyResponse = Epi.Web.Enter.Common.ObjectMapping.Mapper.ToBusinessObject(surveyAnswerRequest.SurveyAnswerList, surveyAnswerRequest.Criteria.UserId)[0];
@@ -730,10 +732,8 @@ namespace Epi.Cloud.DataEntryServices
             {
                 SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
-
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new DaoFactory();
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-                Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao = _entityDaoFactory.SurveyResponseDao;
+                Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(surveyResponseDao);
 
                 SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
                 //result.SurveyResponseList = Epi.Web.Enter.Common.ObjectMapping.Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.PageNumber, surveyAnswerRequest.Criteria.IsMobile));

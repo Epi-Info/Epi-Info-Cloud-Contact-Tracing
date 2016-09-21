@@ -1,6 +1,5 @@
 ﻿using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Interfaces.DataInterface;
-using Epi.Cloud.DataEntryServices.DAO;
 using Epi.Web.EF;
 
 namespace Epi.Cloud.DataEntryServices
@@ -13,6 +12,16 @@ namespace Epi.Cloud.DataEntryServices
     /// </remarks>
     public class DaoFactory : IDaoFactory
     {
+        private readonly IFormInfoDao _formInfoDao;
+        private readonly ISurveyResponseDao _surveyResponseDao;
+
+        public DaoFactory(IFormInfoDao formInfoDao,
+                          ISurveyResponseDao surveyResponseDao)
+        {
+            _formInfoDao = formInfoDao;
+            _surveyResponseDao = surveyResponseDao;
+        }
+
         /// <summary>
         /// Gets an Entity Framework specific Sur data access object.
         /// </summary>
@@ -23,12 +32,12 @@ namespace Epi.Cloud.DataEntryServices
 
         public IFormInfoDao FormInfoDao
         {
-            get { return Cloud.Common.Configuration.DependencyHelper.GetService<IFormInfoDao>() ?? new EntityFormInfoDao(); }
+            get { return _formInfoDao; } //EntityFormInfoDao(); }
         }
 
         public ISurveyResponseDao SurveyResponseDao
         {
-            get { return Cloud.Common.Configuration.DependencyHelper.GetService<ISurveyResponseDao>(); }
+            get { return _surveyResponseDao; }
         }
 
         public IOrganizationDao OrganizationDao

@@ -5,10 +5,10 @@ namespace Epi.Cloud.CacheServices
 {
     public interface IFormDigestCache
     {
-        bool FormDigestsExists(string projectId);
-        FormDigest[] GetFormDigests(string projectId);
-        bool SetFormDigests(string projectId, FormDigest[] formDigests);
-        void ClearFormDigests(string projectId);
+        bool FormDigestsExists(Guid projectId);
+        FormDigest[] GetFormDigests(Guid projectId);
+        bool SetFormDigests(Guid projectId, FormDigest[] formDigests);
+        void ClearFormDigests(Guid projectId);
 
     }
 }

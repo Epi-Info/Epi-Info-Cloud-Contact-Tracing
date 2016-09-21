@@ -4,9 +4,9 @@ namespace Epi.Cloud.CacheServices
 {
     public partial class EpiCloudCache : RedisCache, IEpiCloudCache
     {
-        public void ClearAllCache(string projectId)
+        public void ClearAllCache(Guid projectId)
         {
-            DeleteAllKeys(new Guid(projectId), null);
+            DeleteAllKeys(projectId, null);
         }
     }
 }

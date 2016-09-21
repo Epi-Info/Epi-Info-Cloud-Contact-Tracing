@@ -38,16 +38,19 @@ namespace Epi.Cloud.DataEntryServices
 		public string serviceEndpoint;
 		public string authKey;
 		public string DatabaseName = "EpiInfo7";
-		public string FormInfoCollectionName = "FormInfo";
+		public const string FormInfoCollectionName = "FormInfo";
 
-		public CRUDSurveyResponse()
+        Microsoft.Azure.Documents.Database _database;
+        Dictionary<string, DocumentCollection> _documentCollections = new Dictionary<string, DocumentCollection>();
+
+        public CRUDSurveyResponse()
 		{
 			ParseConnectionString();
 
 			//Getting reference to Database 
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
+				_database = GetOrCreateDatabaseAsync(client, DatabaseName);
 			}
 		}
 
@@ -79,13 +82,117 @@ namespace Epi.Cloud.DataEntryServices
 			{
 				throw new ConfigurationException("SurveyResponse ConnectionString is invalid. Service Endpoint and AuthKey must be specified.");
 			}
-
 		}
 
-		private Uri CreateFormInfoDocumentCollectionUri()
-		{
-			return UriFactory.CreateDocumentCollectionUri(DatabaseName, FormInfoCollectionName);
-		}
+        #region GetOrCreateDabase
+        /// <summary>
+        ///If DB is not avaliable in Document Db create DB
+        /// </summary>
+        private Microsoft.Azure.Documents.Database GetOrCreateDatabaseAsync(DocumentClient client, string databaseName)
+        {
+            if (_database == null)
+            {
+                _database = client.CreateDatabaseQuery().Where(d => d.Id == databaseName).AsEnumerable().FirstOrDefault();
+                if (_database == null)
+                {
+                    _database = client.CreateDatabaseAsync(new Microsoft.Azure.Documents.Database { Id = databaseName }, null).Result;
+                }
+            }
+            return _database;
+        }
+
+        #endregion
+
+
+        #region GetOrCreateCollection 
+        /// <summary>
+        /// Get or Create Collection in Document DB
+        /// </summary>
+        private DocumentCollection GetOrCreateCollection(DocumentClient client, string databaseLink, string collectionId)
+        {
+            DocumentCollection documentCollection;
+            if (!_documentCollections.TryGetValue(collectionId, out documentCollection))
+            {
+                documentCollection = client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
+                if (documentCollection == null)
+                {
+                    var collectionSpec = new DocumentCollection { Id = collectionId };
+                    switch (collectionId)
+                    {
+                        case FormInfoCollectionName:
+                            // TODO: Add FormInfo collection indexing here.
+
+                            //IndexingPolicy indexingPolicy = new IndexingPolicy { Automatic = false };
+                            //indexingPolicy.IndexingMode = IndexingMode.Consistent;
+
+                            //indexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
+                            //indexingPolicy.IncludedPaths.Add(new IncludedPath
+                            //{
+                            //    Path = "/GlobalRecordID/?",
+                            //    Indexes = new Collection<Index>()
+                            //    {
+                            //        new HashIndex(DataType.String) { Precision = 3 }
+                            //    }
+                            //});
+                            //indexingPolicy.IncludedPaths.Add(new IncludedPath
+                            //{
+                            //    Path = "/RecStatus/?",
+                            //    Indexes = new Collection<Index>()
+                            //    {
+                            //        new RangeIndex(DataType.Number) { Precision = -1 }
+                            //    }
+                            //});
+                            //indexingPolicy.IncludedPaths.Add(new IncludedPath
+                            //{
+                            //    Path = "/RelateParentId/?",
+                            //    Indexes = new Collection<Index>()
+                            //    {
+                            //        new HashIndex(DataType.String) { Precision = -1 }
+                            //    }
+                            //});
+
+                            //indexingPolicy.IncludedPaths.Add(new IncludedPath
+                            //{
+                            //    Path = "/_ts/?",
+                            //    Indexes = new Collection<Index>()
+                            //    {
+                            //        new RangeIndex(DataType.Number) { Precision = -1 }
+                            //    }
+                            //});
+
+                            //collectionSpec.IndexingPolicy = indexingPolicy;
+                            break;
+
+                        default:
+                            // TODO: Add Page collection indexing here.
+                            break;
+                    }
+
+                    documentCollection = client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
+                    _documentCollections[collectionId] = documentCollection;
+                }
+            }
+            return documentCollection;
+        }
+        #endregion
+
+        private DocumentCollection GetCollectionReference(DocumentClient client, string collectionId)
+        {
+            //Get a reference to the DocumentDB Database 
+            var database = GetOrCreateDatabaseAsync(client, DatabaseName);
+
+            //Get a reference to the DocumentDB Collection
+            var collection = GetOrCreateCollection(client, database.SelfLink, collectionId);
+            return collection;
+        }
+
+        private Uri GetCollectionUri(DocumentClient client, string collectionId)
+        {
+            GetCollectionReference(client, collectionId);
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
+            return collectionUri;
+        }
+
 
 		public bool UpdateResponseStatus(string responseId, int responseStatus)
 		{
@@ -94,24 +201,21 @@ namespace Epi.Cloud.DataEntryServices
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
 				try
-				{
-					//Getting reference to Database 
-					Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
-					//Create Survey Properties 
-					DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
+                {
+                    Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
-					var formResponseProperties = ReadFormInfoByResponseId(responseId, client, collection);
-					if (formResponseProperties != null)
-					{
-						if (formResponseProperties.RecStatus != responseStatus)
-						{
-							formResponseProperties.RecStatus = responseStatus;
-							var response = client.UpsertDocumentAsync(collection.SelfLink, formResponseProperties);
-							isSuccessful = true;
-						}
-					}
-				}
-				catch (Exception ex)
+                    var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
+                    if (formResponseProperties != null)
+                    {
+                        if (formResponseProperties.RecStatus != responseStatus)
+                        {
+                            formResponseProperties.RecStatus = responseStatus;
+                            var response = client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+                            isSuccessful = true;
+                        }
+                    }
+                }
+                catch (Exception ex)
 				{
 					Console.WriteLine(ex.ToString());
 				}
@@ -119,12 +223,12 @@ namespace Epi.Cloud.DataEntryServices
 			return isSuccessful;
 		}
 
-		#region InsertToSruveyToDocumentDB
-			/// <summary>
-			/// Created instance of DocumentClient and Getting reference to database and Document collections
-			/// </summary>
-			///
-		public async Task<bool> InsertToSurveyToDocumentDBAsync(FormDocumentDBEntity formData, int userId)
+        #region InsertToSruveyToDocumentDB
+        /// <summary>
+        /// Created instance of DocumentClient and Getting reference to database and Document collections
+        /// </summary>
+        ///
+        public async Task<bool> InsertToSurveyToDocumentDBAsync(FormDocumentDBEntity formData, int userId)
 		{
 			try
 			{
@@ -133,20 +237,15 @@ namespace Epi.Cloud.DataEntryServices
 				//Instance of DocumentClient"
 				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 				{
-					//Getting reference to Database 
-					Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
+                   Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
-                    DocumentCollection formInfoCollection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
-
-                    var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollection);
+                    var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
 
                     //Create Survey Properties 
-                    DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, formData.CollectionName).Result;
-
-					Uri docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, formData.CollectionName);
+					Uri pageCollectionUri = GetCollectionUri(client, formData.CollectionName);
 				   
 					//Read Surveyinfo from document db
-					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(formData.GlobalRecordID, client, docUri);
+					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(formData.GlobalRecordID, client, pageCollectionUri);
 					if (pageResponseProperties == null)
 					{
                         pageResponseProperties = formData.PageResponsePropertiesList[0];
@@ -180,8 +279,8 @@ namespace Epi.Cloud.DataEntryServices
                         formResponseProperties.PageIds.Add(pageId);
                     }
 
-                    var pageResponse = await client.UpsertDocumentAsync(collection.SelfLink, pageResponseProperties);
-                    var formResponse = await client.UpsertDocumentAsync(formInfoCollection.SelfLink, formResponseProperties);
+                    var pageResponse = await client.UpsertDocumentAsync(pageCollectionUri, pageResponseProperties);
+                    var formResponse = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
                 }
             }
 			catch (Exception ex)
@@ -208,21 +307,15 @@ namespace Epi.Cloud.DataEntryServices
 				//Instance of DocumentClient"
 				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 				{
-					//Getting reference to Database 
-					Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
-
-					//Create Survey Properties 
-					DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
-
                     FormResponseProperties formResponseProperties = formData.FormResponseProperties;
+					var formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
 					//Verify Response Id is exist or Not
-					var responseFormInfo = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, client, collection);
+					var responseFormInfo = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, client, formInfoCollectionUri);
 					if (responseFormInfo == null)
 					{
 						formResponseProperties.Id = formResponseProperties.GlobalRecordID;
-						var documentCollectionUri = CreateFormInfoDocumentCollectionUri();
-						var response = await client.UpsertDocumentAsync(documentCollectionUri, formResponseProperties);
+						var response = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
 					}
 					else
 					{
@@ -237,11 +330,8 @@ namespace Epi.Cloud.DataEntryServices
 							formResponseProperties.PageIds.Add(pageId);
 						}
 
-						var response = await client.UpsertDocumentAsync(collection.SelfLink, formResponseProperties, null);
-
+						var response = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties, null);
 					}
-
-
 				}
 			}
 			catch (Exception ex)
@@ -264,94 +354,7 @@ namespace Epi.Cloud.DataEntryServices
 		}
 		#endregion
 
-		#region ReadOrCreateDabase
-		/// <summary>
-		///If DB is not avaliable in Document Db create DB
-		/// </summary>
-		private async Task<Microsoft.Azure.Documents.Database> GetOrCreateDatabaseAsync(DocumentClient client, string databaseName)
-		{
-			var database = client.CreateDatabaseQuery().Where(d => d.Id == databaseName).AsEnumerable().FirstOrDefault();
-			if (database == null)
-			{
-				database = await client.CreateDatabaseAsync(new Microsoft.Azure.Documents.Database { Id = databaseName }, null);
-			}
-			return database;
-		}
-
-
-		#endregion
-
-
-		#region ReadCollection 
-		/// <summary>
-		/// Read or CreateCollection in Document DB
-		/// </summary>
-		private async Task<DocumentCollection> ReadCollectionAsync(DocumentClient client, string databaseLink, string collectionId)
-		{
-			var documentCollection = client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
-			if (documentCollection == null)
-			{
-				var collectionSpec = new DocumentCollection { Id = collectionId };
-				//IndexingPolicy indexingPolicy = new IndexingPolicy { Automatic = false };
-				//indexingPolicy.IndexingMode = IndexingMode.Consistent;
-
-				//indexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
-				//indexingPolicy.IncludedPaths.Add(new IncludedPath
-				//{
-				//    Path = "/GlobalRecordID/?",
-				//    Indexes = new Collection<Index>()
-				//    {
-				//        new HashIndex(DataType.String) { Precision = 3 }
-				//    }
-				//});
-				//indexingPolicy.IncludedPaths.Add(new IncludedPath
-				//{
-				//    Path = "/RecStatus/?",
-				//    Indexes = new Collection<Index>()
-				//    {
-				//        new RangeIndex(DataType.Number) { Precision = -1 }
-				//    }
-				//});
-				//indexingPolicy.IncludedPaths.Add(new IncludedPath
-				//{
-				//    Path = "/RelateParentId/?",
-				//    Indexes = new Collection<Index>()
-				//    {
-				//        new HashIndex(DataType.String) { Precision = -1 }
-				//    }
-				//});
-
-				//indexingPolicy.IncludedPaths.Add(new IncludedPath
-				//{
-				//    Path = "/_ts/?",
-				//    Indexes = new Collection<Index>()
-				//    {
-				//        new RangeIndex(DataType.Number) { Precision = -1 }
-				//    }
-				//});
-
-				//collectionSpec.IndexingPolicy = indexingPolicy;
-				documentCollection = client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
-				//documentCollection = CreateCollectionAsync(client, databaseLink, collectionId).Result;
-
-			}
-			return documentCollection;
-		}
-		#endregion 
-
-		#region ReadOrCreateCollection
-		/// <summary>
-		/// Read or CreateCollection in Document DB
-		/// </summary>
-		private async Task<ResourceResponse<DocumentCollection>> CreateCollectionAsync(DocumentClient client, string databaseLink, string collectionId)
-		{
-			// Use UriFactory to build the DocumentLink 
-			var collectionResponse = client.CreateDocumentCollectionAsync(databaseLink, new DocumentCollection { Id = collectionId }, null);
-			return collectionResponse.Result;
-		}
-		#endregion
-
-
+        
 		#region Get PageResponseProperties By ResponseId, FormId, and PageId
 		public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formId, int pageId)
 		{
@@ -376,14 +379,14 @@ namespace Epi.Cloud.DataEntryServices
 			return null;
 		}
 
-		private PageResponseProperties ReadPageResponsePropertiesByResponseId(string responseId, DocumentClient client, Uri DocUri, string collectionAlias = "c")
+		private PageResponseProperties ReadPageResponsePropertiesByResponseId(string responseId, DocumentClient client, Uri pageCollectionUri, string collectionAlias = "c")
 		{
 			PageResponseProperties pageResponseProperties = null;
 			// Set some common query options
 			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 			try
 			{
-				var query = client.CreateDocumentQuery(DocUri,
+				var query = client.CreateDocumentQuery(pageCollectionUri,
 					SELECT + AssembleSelect(collectionAlias, "*")
 					+ FROM + collectionAlias
 					+ WHERE + AssembleWhere(collectionAlias, Expression("GlobalRecordID", EQ, responseId))
@@ -455,8 +458,8 @@ namespace Epi.Cloud.DataEntryServices
                     var columnList = AssembleSelect(collectionName, pageGroup.Select(g => "ResponseQA." + g.FieldName.ToLower()).ToArray())
                         + ","
                         + AssembleSelect(collectionName, "GlobalRecordID", "_ts");
-                    Uri docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                    var pageQuery = client.CreateDocumentQuery(docUri,
+                    Uri pageCollectionUri = GetCollectionUri(client, collectionName);
+                    var pageQuery = client.CreateDocumentQuery(pageCollectionUri,
                         SELECT + columnList
                         + FROM + collectionName
                         + WHERE + collectionName + ".GlobalRecordID in (" + parentGlobalRecordIds + ")", queryOptions);
@@ -529,12 +532,13 @@ namespace Epi.Cloud.DataEntryServices
         #region Get FormInfo By ResponseId
         public FormDocumentDBEntity GetFormInfoByResponseId(string responseId)
 		{
-			Uri docUri = CreateFormInfoDocumentCollectionUri();
 			FormDocumentDBEntity formDocumentDbResponse = new FormDocumentDBEntity { GlobalRecordID = responseId };
+
 			//Read all global record Id
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				var formResponseProperties = ReadFormPropertiesByResponseId(client, docUri, responseId);
+			    Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+				var formResponseProperties = ReadFormPropertiesByResponseId(client, formInfoCollectionUri, responseId);
 				formDocumentDbResponse.FormResponseProperties = formResponseProperties;
 			}
 			return formDocumentDbResponse;
@@ -544,22 +548,25 @@ namespace Epi.Cloud.DataEntryServices
         #region Get all form responses by ResponseId
         public FormDocumentDBEntity GetAllPageResponsesByResponseId(string responseId)
         {
-            Uri docUri = CreateFormInfoDocumentCollectionUri();
             FormDocumentDBEntity formDocumentDbEntity = new FormDocumentDBEntity { GlobalRecordID = responseId };
             //Read all global record Id
             using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
             {
-                var formResponseProperties = ReadFormPropertiesByResponseId(client, docUri, responseId);
+                Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+                var formResponseProperties = ReadFormPropertiesByResponseId(client, formInfoCollectionUri, responseId);
                 formDocumentDbEntity.FormResponseProperties = formResponseProperties;
 
                 if (formResponseProperties != null)
                 {
                     foreach (var pageId in formResponseProperties.PageIds)
                     {
-                        string collectionName = formResponseProperties.FormName + pageId;
-                        docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                        var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, client, docUri);
-                        formDocumentDbEntity.PageResponsePropertiesList.Add(pageResponseProperties);
+                        if (pageId != 0)
+                        {
+                            string collectionName = formResponseProperties.FormName + pageId;
+                            var pageCollectionUri = GetCollectionUri(client, collectionName);
+                            var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, client, pageCollectionUri);
+                            formDocumentDbEntity.PageResponsePropertiesList.Add(pageResponseProperties);
+                        }
                     }
                 }
             }
@@ -613,7 +620,7 @@ namespace Epi.Cloud.DataEntryServices
 			return expression;
 		}
 
-		private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(DocumentClient client, string FormId, string relateParentId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
+		private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(DocumentClient client, string formId, string relateParentId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
 		{
 			// Set some common query options
 			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
@@ -623,7 +630,7 @@ namespace Epi.Cloud.DataEntryServices
 				// One SurveyResponse per GlobalRecordId
 				Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
 
-				List<FormResponseProperties> _ChildGlobalIdList = ReadAllGlobalRecordIdByRelateParentID(client, relateParentId, FormId);
+				List<FormResponseProperties> _ChildGlobalIdList = ReadAllGlobalRecordIdByRelateParentID(client, relateParentId, formId);
 				string ChildGlobalRecordIds = string.Empty;
 
 				foreach (var id in _ChildGlobalIdList)
@@ -709,19 +716,19 @@ namespace Epi.Cloud.DataEntryServices
 		}
 
 #region Read all GlobalRecord By Related Parent ID
-		public FormResponseProperties ReadAllGlobalRecordIDByParentID(DocumentClient client, DocumentCollection collection, string SurveyName, string relateParentID)
+		public FormResponseProperties ReadAllGlobalRecordIDByParentID(DocumentClient client, Uri formInfoCollectionUri, string formName, string relateParentID)
 		{
 			try
 			{
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-				var query = client.CreateDocumentQuery(collection.SelfLink,
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT
-					+ AssembleSelect(SurveyName, "DateCreated", "_self", "RelateParentId", "id")
-					+ FROM + SurveyName
+					+ AssembleSelect(formName, "DateCreated", "_self", "RelateParentId", "id")
+					+ FROM + formName
 					+ WHERE 
-					+ AssembleWhere(SurveyName, Expression("GlobalRecordID", EQ, relateParentID),
+					+ AssembleWhere(formName, Expression("GlobalRecordID", EQ, relateParentID),
 												And_Expression("RecStatus", NE, RecordStatus.Deleted))
 					, queryOptions);
 
@@ -740,22 +747,15 @@ namespace Epi.Cloud.DataEntryServices
 		#region ResponseId Is exist or Not in Document DB
 	public bool DoesResponseIdExist(string responseId)
 	{
-
-		using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
-		{
-			//Getting reference to Database 
-			Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
-
-			//Create Survey Properties 
-			DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
-
-			//Verify Response Id is exist or Not
-			var responseFormInfo = ReadFormInfoByResponseId(responseId, client, collection);
-			return responseFormInfo != null;
-		}
+        using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
+        {
+            Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+            var responseFormInfo = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
+            return responseFormInfo != null;
+        }
 	}
 
-	private FormResponseProperties ReadFormInfoByResponseId(string responseId, DocumentClient client, DocumentCollection collection)
+	private FormResponseProperties ReadFormInfoByResponseId(string responseId, DocumentClient client, Uri formInfoCollectionUri)
 		{
 			var collectionAlias = FormInfoCollectionName;
 
@@ -764,7 +764,7 @@ namespace Epi.Cloud.DataEntryServices
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-				var query = client.CreateDocumentQuery(collection.SelfLink,
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT 
 					+ AssembleSelect(collectionAlias, "*")
 					+ FROM + collectionAlias
@@ -789,26 +789,20 @@ namespace Epi.Cloud.DataEntryServices
 
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				//Getting reference to Database 
-				Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
-
-				//Create Survey Properties 
-				DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
-
-				//Verify Response Id is exist or Not
-				var formResponseCount = GetFormResonseCount(client, collection, formId);
+                Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+				var formResponseCount = GetFormResonseCount(client, formInfoCollectionUri, formId);
 				return formResponseCount;
 			}
 		}
 
-		private int GetFormResonseCount(DocumentClient client, DocumentCollection collection, string formId)
+		private int GetFormResonseCount(DocumentClient client, Uri formInfoCollectionUri, string formId)
 		{
 			try
 			{
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-				var query = client.CreateDocumentQuery(collection.SelfLink,
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT
 					+ AssembleSelect(FormInfoCollectionName, "GlobalRecordID")
 					+ FROM + FormInfoCollectionName
@@ -829,29 +823,22 @@ namespace Epi.Cloud.DataEntryServices
 
 		public FormResponseProperties GetFormResponseState(string responseId)
 		{
-
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				//Getting reference to Database 
-				Microsoft.Azure.Documents.Database database = GetOrCreateDatabaseAsync(client, DatabaseName).Result;
-
-				//Create Survey Properties 
-				DocumentCollection collection = ReadCollectionAsync(client, database.SelfLink, FormInfoCollectionName).Result;
-
-				//Verify Response Id is exist or Not
-				var formResponseProperties = ReadFormResponseState(responseId, client, collection);
+				var formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+				var formResponseProperties = ReadFormResponseState(responseId, client, formInfoCollectionUri);
 				return formResponseProperties;
 			}
 		}
 
-		private FormResponseProperties ReadFormResponseState(string responseId, DocumentClient client, DocumentCollection collection)
+		private FormResponseProperties ReadFormResponseState(string responseId, DocumentClient client, Uri formInfoCollectionUri)
 		{
 			try
 			{
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-				var query = client.CreateDocumentQuery(collection.SelfLink,
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT
 					+ AssembleSelect(FormInfoCollectionName, "*")
 					+ FROM + FormInfoCollectionName
@@ -870,55 +857,25 @@ namespace Epi.Cloud.DataEntryServices
 			return null;
 		}
 
-#region Read SurveyInfo from DocumentDB by RelateParentID
-		private PageResponseProperties ReadSurveyInfoByRelateParentID(DocumentClient client, Uri DocUri, string SurveyName, string RelateParentID)
-		{
-			try
-			{
-				// Set some common query options
-				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-				var query = client.CreateDocumentQuery(DocUri,
-					SELECT 
-					+ AssembleSelect(SurveyName, "id", "ProjectDigest", "GlobalRecordID", "RelateParentId", "FormId", "_self", "Digest")
-					+ FROM + SurveyName
-					+ WHERE
-					+ AssembleWhere(SurveyName, Expression("GlobalRecordID", EQ, RelateParentID))
-					, queryOptions);
 
-				var surveyDataItems = query.AsEnumerable();
-				var pageResponseProperties = (PageResponseProperties)surveyDataItems.FirstOrDefault();
-				return pageResponseProperties;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-
-			return null;
-		}
-#endregion
-
-#region Read GlobalRecordId By Relate Parent Id
+        #region Read GlobalRecordId By Relate Parent Id
 		private List<FormResponseProperties> ReadAllGlobalRecordIdByRelateParentID(DocumentClient client, string relateParentId, string formId)
 		{
-			Uri docUri = CreateFormInfoDocumentCollectionUri();
 			try
 			{
 				List<FormResponseProperties> globalRecordIdList = new List<FormResponseProperties>();
 
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-				IEnumerable<dynamic> surveyDatadFromDocumentDdfB;
 				IQueryable<dynamic> query;
+
+			    Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
 				if (relateParentId != null)
 				{
-					query = client.CreateDocumentQuery(docUri,
+					query = client.CreateDocumentQuery(formInfoCollectionUri,
 						SELECT 
-						+ AssembleSelect(FormInfoCollectionName, "GlobalRecordID", "FormId", "FormName", "RecStatus", 
-																"FirstSaveLogonName", "FirstSaveTime", "LastSaveLogonName", 
-																"LastSaveTime", "UserId", "IsRelatedView", "IsDraftMode", 
-																"id", "_ts")
+						+ AssembleSelect(FormInfoCollectionName, "*")
 						+ FROM + FormInfoCollectionName
 						+ WHERE
 						+ AssembleWhere(FormInfoCollectionName, Expression("RelateParentId", EQ, relateParentId),
@@ -928,12 +885,9 @@ namespace Epi.Cloud.DataEntryServices
 				}
 				else
 				{
-					query = client.CreateDocumentQuery(docUri,
+					query = client.CreateDocumentQuery(formInfoCollectionUri,
 					   SELECT 
-					   + AssembleSelect(FormInfoCollectionName, "GlobalRecordID", "FormId", "FormName", "RecStatus",
-															   "FirstSaveLogonName", "FirstSaveTime", "LastSaveLogonName",
-															   "LastSaveTime", "UserId", "IsRelatedView", "IsDraftMode",
-															   "id", "_ts")
+					   + AssembleSelect(FormInfoCollectionName, "*")
 					   + FROM + FormInfoCollectionName
 					   + WHERE
 					   + AssembleWhere(FormInfoCollectionName, Expression("FormId", EQ, formId), 
@@ -941,8 +895,7 @@ namespace Epi.Cloud.DataEntryServices
 					   , queryOptions);
 				}
 
-				surveyDatadFromDocumentDdfB = query.AsEnumerable<dynamic>();
-				globalRecordIdList = surveyDatadFromDocumentDdfB.Select(x => (FormResponseProperties)x).ToList();
+				globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
 
 				return globalRecordIdList;
 			}
@@ -957,7 +910,7 @@ namespace Epi.Cloud.DataEntryServices
 #endregion
 
 #region Read List of all GlobalRecordId by FormId, RecStatus
-		private FormResponseProperties ReadFormPropertiesByResponseId(DocumentClient client, Uri docUri, string responseId)
+		private FormResponseProperties ReadFormPropertiesByResponseId(DocumentClient client, Uri formInfoCollectionUri, string responseId)
 		{
 			// tell server we only want 25 record
 			FeedOptions options = new FeedOptions { MaxItemCount = 25, EnableCrossPartitionQuery = true };
@@ -966,7 +919,7 @@ namespace Epi.Cloud.DataEntryServices
 				// Set some common query options
 				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-				var query = client.CreateDocumentQuery(docUri,
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT
 					+ AssembleSelect(FormInfoCollectionName, "*")
 					+ FROM + FormInfoCollectionName
@@ -985,77 +938,10 @@ namespace Epi.Cloud.DataEntryServices
 
 			return null;
 		}
-		#endregion 
+        #endregion
 
-
-		#region ReadFormResponseProperties by ResponseId ,RecStatus != Deleted
-		private FormResponseProperties ReadFormResponseProperties(DocumentClient client, Uri docUri, string responseId)
-		{
-			// tell server we only want 25 record
-			//FeedOptions options = new FeedOptions { MaxItemCount = 25, EnableCrossPartitionQuery = true };
-			try
-			{
-				// Set some common query options
-				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true };
-				var query = client.CreateDocumentQuery(docUri,
-					SELECT
-					+ "*"
-					+ WHERE
-					+ AssembleWhere(FormInfoCollectionName, Expression("GlobalRecordID", EQ, responseId),
-															And_Expression("RecStatus", NE, RecordStatus.Deleted))
-					, queryOptions);
-
-				var formInfoResponse = query.AsEnumerable().FirstOrDefault();
-
-				FormResponseProperties formResponseProperties = new FormResponseProperties();
-				formResponseProperties.GlobalRecordID = formInfoResponse.GlobalRecordID;
-				formResponseProperties.FormId = formInfoResponse.FormId;
-				formResponseProperties.FormName = formInfoResponse.FormName;
-				formResponseProperties.RecStatus = Convert.ToInt32(formInfoResponse.RecStatus);
-				formResponseProperties.RelateParentId = formInfoResponse.RelateParentId;
-				formResponseProperties.FirstSaveLogonName = formInfoResponse.FirstSaveLogonName;
-				formResponseProperties.FirstSaveTime = formInfoResponse.FirstSaveTime;
-				formResponseProperties.LastSaveLogonName = formInfoResponse.LastSaveLogonName;
-				formResponseProperties.LastSaveTime = formInfoResponse.LastSaveTime;
-				formResponseProperties.UserId = Convert.ToInt32(formInfoResponse.UserId);
-				formResponseProperties.IsRelatedView = Convert.ToBoolean(formInfoResponse.IsRelatedView);
-				formResponseProperties.IsDraftMode = Convert.ToBoolean(formInfoResponse.IsDraftMode);
-				return formResponseProperties;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-
-			return null;
-		}
-#endregion
-
-#region ReadDataFromColleciton
-		public object ReadDataFromCollection(string globalRecordId, string collectionName, string documnetQuery)
-		{
-
-			Uri docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-			try
-			{
-				//Instance of DocumentClient"
-				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
-				{
-					var query = client.CreateDocumentQuery(docUri, documnetQuery);
-					var surveyDataFromDocumentDB = (FormResponseProperties)query.AsEnumerable().FirstOrDefault();
-					return surveyDataFromDocumentDB;
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return "True";
-		}
-#endregion
-
-#region Readfull Form Info 
-		public List<string> ReadfullFormInfo(string responseId)
+        #region Readfull Form Info for DataConsisitencyServiceAPI
+        public List<string> ReadfullFormInfo(string responseId)
 		{
 			List<string> surveyNames = new List<string>();
 			surveyNames.Add("Zika1");
@@ -1094,24 +980,5 @@ namespace Epi.Cloud.DataEntryServices
 			return fullFormInfo;
 		}
 		#endregion
-#if false
-		public async Task<FormDocumentDBEntity> ReadAllGlobalRecordIdByResponseId(string responseId)
-		{
-			Uri docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, FormInfoColectionName);
-			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
-			{
-				FormPropertiesResource _formProperties = ReadFormProperties(client, docUri, FormInfoColectionName, responseId);
-				string formName = _formProperties.FormName;
-				if (_formProperties != null)
-				{
-					docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, formName + pageId);
-					var FormQuestionAndAnswer = ReadSurveyInfoByResponseIdAndSurveyId(client, docUri, formName, _formProperties.GlobalRecordID);
-					surveyDocumentDbResponse.FormProperties = _formProperties;
-					surveyDocumentDbResponse.PageResponseDetail = FormQuestionAndAnswer;
-				}
-			}
-			return surveyDocumentDbResponse;
-		}
-#endif
 	}
 }

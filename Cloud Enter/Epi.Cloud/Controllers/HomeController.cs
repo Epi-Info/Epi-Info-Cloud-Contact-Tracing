@@ -350,7 +350,13 @@ namespace Epi.Web.MVC.Controllers
 			{
 				Session[SessionKeys.SortOrder] = "";
 				Session[SessionKeys.SortField] = "";
-				_iCacheServices.ClearAllCache(Session[SessionKeys.ProjectId] as string);
+
+                // TODO: Temporary clear cache
+                var sessionProjectId = Session[SessionKeys.ProjectId] as string;
+                if (!string.IsNullOrWhiteSpace(sessionProjectId))
+                {
+                    _iCacheServices.ClearAllCache(new Guid(sessionProjectId));
+                }
 			}
 
 			Session[SessionKeys.SelectedOrgId] = orgId;
@@ -981,7 +987,7 @@ namespace Epi.Web.MVC.Controllers
 
 
 
-		public Dictionary<int, string> GetDictionary(string List)
+		private Dictionary<int, string> GetDictionary(string List)
 		{
 			Dictionary<int, string> Dictionary = new Dictionary<int, string>();
 			if (!string.IsNullOrEmpty(List))
@@ -990,7 +996,7 @@ namespace Epi.Web.MVC.Controllers
 			}
 			return Dictionary;
 		}
-		public bool GetBoolValue(string value)
+		private bool GetBoolValue(string value)
 		{
 			bool BoolValue = false;
 			if (!string.IsNullOrEmpty(value))
