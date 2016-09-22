@@ -96,13 +96,13 @@ namespace Epi.Web.MVC.Utility
             javaScript.Append(GetPageLevelJS(pageNumber, form, pageName, "Before"));
             //Generate page level Java script (After)
             javaScript.Append(GetPageLevelJS(pageNumber, form, pageName, "After"));
-            form.FormJavaScript = VariableDefinitions.ToString() + "\n" + javaScript.ToString();
 
             SetProviderSpecificProperties(form, _Height, _Width);
 
             var responseQA = pageResponseDetail != null ? pageResponseDetail.ResponseQA : new Dictionary<string, string>(); 
             AddFormFields(surveyInfo, pageId, responseQA, form, _Width, _Height, checkcode, javaScript);
 
+            form.FormJavaScript = VariableDefinitions.ToString() + "\n" + javaScript.ToString();
 
             return form;
         }
@@ -470,7 +470,6 @@ namespace Epi.Web.MVC.Utility
 
         protected virtual string GetFormJavaScript(string CheckCode, Form form, string controlName)
         {// controlName
-            return string.Empty;
             StringBuilder B_JavaScript = new StringBuilder();
             EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=field&event=before&identifier=" + controlName);
             if (FunctionObject_B != null && !FunctionObject_B.IsNull())
