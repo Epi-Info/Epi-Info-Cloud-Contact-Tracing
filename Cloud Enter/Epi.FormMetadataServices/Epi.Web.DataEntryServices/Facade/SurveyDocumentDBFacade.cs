@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
-using Epi.Web.Enter.Common.DTO;
-using MvcDynamicForms;
-using Epi.Cloud.DataEntryServices.Model;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Epi.Web.Enter.Common.Message;
-using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Common.EntityObjects;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Extensions;
+using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Web.Enter.Common.DTO;
+using Epi.Web.Enter.Common.Message;
+using MvcDynamicForms;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -45,7 +45,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		public bool UpdateResponseStatus(string responseId, int responseStatus)
 		{
-            return _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
+			return _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
 		}
 
 		#region Insert Into Servey Response to DocumentDB
@@ -167,7 +167,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		#region Get the Record by GlobalRecordID
 		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
-        { 
+		{ 
 			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
 			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 

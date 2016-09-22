@@ -43,14 +43,16 @@ namespace Epi.Web.MVC
 
             var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
+            var surveyDocumentDBFacade = new Epi.Cloud.DataEntryServices.Facade.SurveyDocumentDBFacade(projectMetadataProvider);
+
+            container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
+            container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
+            container.RegisterInstance<Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade>(surveyDocumentDBFacade);
 
             container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
             container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();
             container.RegisterType<Epi.Web.MVC.Facade.ISurveyFacade, Epi.Web.MVC.Facade.SurveyFacade>();
             container.RegisterType<Epi.Web.MVC.Facade.ISecurityFacade, Epi.Web.MVC.Facade.SecurityFacade>();
-            container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
-            container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterType<Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade, Epi.Cloud.DataEntryServices.Facade.SurveyDocumentDBFacade>();
             container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
             container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao>();
             container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
