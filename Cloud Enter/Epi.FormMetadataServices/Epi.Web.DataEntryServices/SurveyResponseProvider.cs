@@ -30,9 +30,9 @@ namespace Epi.Cloud.DataEntryServices
         {
             //Check if this Response exists in DocumentDB
             Guid responseId = new Guid(criteria.SurveyAnswerIdList[0]);
-            bool responseExists = _surveyResponseDao.DoesResponseExist(responseId);
+            bool childrenExists = _surveyResponseDao.DoChildrenExistForResponseId(responseId);
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-            if (responseExists)
+            if (childrenExists)
             {
                 result = _surveyResponseDao.GetSurveyResponse(criteria.SurveyAnswerIdList, criteria.UserPublishKey);
             }
@@ -227,6 +227,10 @@ namespace Epi.Cloud.DataEntryServices
             SurveyResponseBO result = surveyResponseBO;
             surveyResponseBO.ParentId = parentSurveyInfoBO.ParentId;
             surveyResponseBO.RelateParentId = relateParentId;
+
+            var responseDetail = surveyResponseBO.ResponseDetail;
+            responseDetail.RelateParentResponseId = relateParentId;
+            responseDetail.GlobalRecordID = surveyResponseBO.ResponseId;
 
             _surveyResponseDao.InsertChildSurveyResponse(surveyResponseBO);
             return result;

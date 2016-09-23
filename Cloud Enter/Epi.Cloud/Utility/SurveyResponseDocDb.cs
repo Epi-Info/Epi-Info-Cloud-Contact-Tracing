@@ -74,8 +74,8 @@ namespace Epi.Web.MVC.Utility
                 LastPageVisited = currentPage == 0 ? 1 : 0
             };
 
-            if (currentPage != 0)
-            {
+            if (!String.IsNullOrWhiteSpace(pageId))
+                {
                 var pageResponseDetail = new PageResponseDetail();
                 pageResponseDetail.PageId = Convert.ToInt32(pageId);
                 pageResponseDetail.PageNumber = currentPage;

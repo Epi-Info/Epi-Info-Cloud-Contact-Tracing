@@ -5,6 +5,20 @@ using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.DataEntryServices.Model
 {
+    public class FormHierarchicalResponseProperties
+    {
+        public FormHierarchicalResponseProperties()
+        {
+            ChildResponseList = new List<FormHierarchicalResponseProperties>();
+            PageResponsePropertiesList = new List<PageResponseProperties>();
+        }
+
+        public FormHierarchicalResponseProperties ParentResponse { get; set; }
+        public List<FormHierarchicalResponseProperties> ChildResponseList { get; set; }
+        public FormResponseProperties FormResponseProperties { get; set; }
+        public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
+    }
+
     public class FormDocumentDBEntity
     {
         public FormDocumentDBEntity()

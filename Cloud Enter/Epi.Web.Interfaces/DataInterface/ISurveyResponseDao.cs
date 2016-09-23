@@ -107,7 +107,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         SurveyResponseBO GetResponse(string responseId);
         void DeleteResponse(ResponseBO responseBO);
         void InsertResponse(ResponseBO item);
-        bool DoesResponseExist(Guid responseId);
+        bool DoChildrenExistForResponseId(Guid responseId);
         //bool DoesResponseExist(SurveyAnswerCriteria Criteria);
 
         bool HasResponse(SurveyAnswerCriteria criteria);

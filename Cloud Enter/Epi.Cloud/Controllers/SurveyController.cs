@@ -1260,7 +1260,7 @@ namespace Epi.Web.MVC.Controllers
 
 			if (responseId != null && formValuesHasChanged == "True")
 			{
-				_isurveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(surveyInfoModel, responseId, form, surveyAnswerDTO, isSubmited, isSaved, pageNumber, userId);
+				_isurveyDocumentDBStoreFacade.InsertResponseAsync(surveyInfoModel, responseId, form, surveyAnswerDTO, isSubmited, isSaved, pageNumber, userId);
 			}
 
 			bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -1323,8 +1323,20 @@ namespace Epi.Web.MVC.Controllers
 				//Getting Resposes
 				var ResponseListDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).ResponseIds;
 
-				//Setting Resposes List
-				List<ResponseModel> ResponseList = new List<ResponseModel>();
+                // If we don't have any data for this child form yet then create a response 
+                //if (ResponseListDTO.Count == 0)
+                //{
+                //    var surveyAnswerDTO = new SurveyAnswerDTO();
+                //    surveyAnswerDTO.CurrentPageNumber = 1;
+                //    surveyAnswerDTO.DateUpdated = DateTime.UtcNow;
+                //    surveyAnswerDTO.RelateParentId = ResponseId;
+                //    surveyAnswerDTO.ResponseId = Guid.NewGuid().ToString();
+                //    surveyAnswerDTO.ResponseDetail = new FormResponseDetail();
+                //    ResponseListDTO.Add(surveyAnswerDTO);
+                //}
+
+                //Setting Resposes List
+                List<ResponseModel> ResponseList = new List<ResponseModel>();
 				foreach (var item in ResponseListDTO)
 				{
 

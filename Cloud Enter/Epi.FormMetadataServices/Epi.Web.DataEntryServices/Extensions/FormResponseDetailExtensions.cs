@@ -15,7 +15,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 DateUpdated = formResponseDetail.LastSaveTime,
                 IsDraftMode = formResponseDetail.IsDraftMode,
                 LastActiveUserId = formResponseDetail.LastActiveUserId,
-                RelateParentId = formResponseDetail.RelateParentId,
+                RelateParentId = formResponseDetail.RelateParentResponseId,
                 Status = formResponseDetail.RecStatus,
                 ResponseDetail = formResponseDetail,
                 ViewId = new Common.Metadata.MetadataAccessor().GetFormDigest(formResponseDetail.FormId).ViewId

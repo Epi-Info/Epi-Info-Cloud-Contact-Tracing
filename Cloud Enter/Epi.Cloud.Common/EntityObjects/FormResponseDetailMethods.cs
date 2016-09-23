@@ -40,7 +40,7 @@ namespace Epi.Cloud.Common.EntityObjects
         {
             var existingItem = ChildFormResponseDetailList.SingleOrDefault(f => f.FormId == childFormResponseDetail.FormId);
             if (existingItem != null) ChildFormResponseDetailList.Remove(childFormResponseDetail);
-            childFormResponseDetail.RelateParentId = FormId;
+            childFormResponseDetail.ParentFormId = FormId;
             ChildFormResponseDetailList.Add(childFormResponseDetail);
         }
 

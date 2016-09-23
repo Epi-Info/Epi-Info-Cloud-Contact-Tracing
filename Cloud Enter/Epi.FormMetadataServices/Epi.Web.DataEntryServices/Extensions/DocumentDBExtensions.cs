@@ -55,7 +55,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 FormId = formResponseProperties.FormId,
                 FormName = formResponseProperties.FormName,
                 RecStatus = formResponseProperties.RecStatus,
-                RelateParentId = formResponseProperties.RelateParentId,
+                RelateParentResponseId = formResponseProperties.RelateParentId,
                 FirstSaveLogonName = formResponseProperties.FirstSaveLogonName,
                 LastSaveLogonName = formResponseProperties.LastSaveLogonName,
                 FirstSaveTime = formResponseProperties.FirstSaveTime,

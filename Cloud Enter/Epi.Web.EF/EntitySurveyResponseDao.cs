@@ -1697,7 +1697,7 @@ namespace Epi.Web.EF
 
             return ConnectionString.Substring(ConnectionString.LastIndexOf('=') + 1);
         }
-        public bool DoesResponseExist(Guid ResponseId)
+        public bool DoChildrenExistForResponseId(Guid ResponseId)
         {
             bool Exists = false;
 

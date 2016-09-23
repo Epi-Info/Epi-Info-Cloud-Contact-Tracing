@@ -161,6 +161,7 @@ namespace Epi.Cloud.DataEntryServices
                 //    return response;
                 //}
             }
+
             if (surveyAnswerRequest.Action.Equals("Create", StringComparison.OrdinalIgnoreCase))
             {
                 _surveyResponseProvider.InsertSurveyResponse(surveyResponseBO);
@@ -220,42 +221,38 @@ namespace Epi.Cloud.DataEntryServices
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
             }
 
-            //else if (surveyAnswerRequest.Action.Equals("CreateChild", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Epi.Web.BLL.SurveyInfo Implementation1 = new Epi.Web.BLL.SurveyInfo(_surveyInfoDao);
-            //    SurveyInfoBO SurveyInfoBO = Implementation1.GetParentInfoByChildId(SurveyResponse.SurveyId);
+            else if (surveyAnswerRequest.Action.Equals("CreateChild", StringComparison.OrdinalIgnoreCase))
+            {
+                Epi.Web.BLL.SurveyInfo surveyInfoImplementation = new Epi.Web.BLL.SurveyInfo(_surveyInfoDao);
+                SurveyInfoBO surveyInfoBO = surveyInfoImplementation.GetParentInfoByChildId(surveyResponseBO.SurveyId);
 
-            //    Implementation.InsertChildSurveyResponse(SurveyResponse, SurveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].RelateParentId);
-            //    response.SurveyResponseList.Add(Mapper.ToDataTransferObject(SurveyResponse));
+                _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].RelateParentId);
+                response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
 
-            //    List<SurveyResponseBO> List = new List<SurveyResponseBO>();
-            //    List.Add(SurveyResponse);
-            //    Implementation.InsertSurveyResponse(List, surveyAnswerRequest.Criteria.UserId, true);
+                List<SurveyResponseBO> List = new List<SurveyResponseBO>();
+                List.Add(surveyResponseBO);
+                _surveyResponseProvider.InsertSurveyResponse(List, surveyAnswerRequest.Criteria.UserId, true);
+            }
+            else if (surveyAnswerRequest.Action.Equals("UpdateMulti", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotImplementedException("UpdateMulti");
+                //    Implementation.UpdateSurveyResponse(SurveyResponse);
+                //    response.SurveyResponseList.Add(Mapper.ToDataTransferObject(SurveyResponse));
 
-            //}
-            //else if (surveyAnswerRequest.Action.Equals("Update", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Implementation.UpdateSurveyResponse(SurveyResponse);
-            //    response.SurveyResponseList.Add(Mapper.ToDataTransferObject(SurveyResponse));
-            //}
-            //else if (surveyAnswerRequest.Action.Equals("UpdateMulti", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Implementation.UpdateSurveyResponse(SurveyResponse);
-            //    response.SurveyResponseList.Add(Mapper.ToDataTransferObject(SurveyResponse));
-
-            //    Epi.Web.BLL.SurveyResponse Implementation1 = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
-            //    List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ResponseId);
+                //    Epi.Web.BLL.SurveyResponse Implementation1 = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
+                //    List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ResponseId);
 
 
-            //    List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status);
-            //    foreach (var Obj in ResultList)
-            //    {
+                //    List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status);
+                //    foreach (var Obj in ResultList)
+                //    {
 
-            //        response.SurveyResponseList.Add(Mapper.ToDataTransferObject(Obj));
-            //    }
-            //}
-            //else if (surveyAnswerRequest.Action.Equals("Delete", StringComparison.OrdinalIgnoreCase))
-            //{
+                //        response.SurveyResponseList.Add(Mapper.ToDataTransferObject(Obj));
+                //    }
+            }
+            else if (surveyAnswerRequest.Action.Equals("Delete", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotImplementedException("Delete");
             //    var criteria = surveyAnswerRequest.Criteria as SurveyAnswerCriteria;
             //    criteria.SurveyAnswerIdList = new List<string> { SurveyResponse.SurveyId };
             //    criteria.UserPublishKey = SurveyResponse.UserPublishKey;
@@ -278,28 +275,36 @@ namespace Epi.Cloud.DataEntryServices
             //            //response.RowsAffected = 0;
             //        }
             //    }
-            //}
-            //else if (surveyAnswerRequest.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
-            //{
+            }
+            else if (surveyAnswerRequest.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    throw new NotImplementedException("DeleteResponse");
+                    //    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
+                    //    {
+                    //        try
+                    //        {
+                    //            ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+                    //            ResponseXmlBO.ResponseId = item.ResponseId;
+                    //            Implementation.DeleteResponseXml(ResponseXmlBO);
+                    //            Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
 
-            //    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
-            //    {
-            //        try
-            //        {
-            //            ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
-            //            ResponseXmlBO.ResponseId = item.ResponseId;
-            //            Implementation.DeleteResponseXml(ResponseXmlBO);
-            //            Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
+                    //        }
+                    //        catch
+                    //        {
 
-            //        }
-            //        catch
-            //        {
-
-            //        }
-            //    }
-            //}
+                    //        }
+                    //    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("DeleteResponse: " + ex.ToString());
+                }
+            }
 
             return response;
+            }
 #if WebEnterCode
             try
             {
@@ -484,7 +489,6 @@ namespace Epi.Cloud.DataEntryServices
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
 #endif //WebEnterCode
-        }
 
         /// <summary>
         /// Validation options enum. Used in validation of messages.

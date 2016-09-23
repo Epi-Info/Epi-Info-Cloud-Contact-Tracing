@@ -16,9 +16,9 @@ namespace Epi.Web.BLL
 
         MetadataAccessor _metadataAcessor;
 
-        public SurveyInfo(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao pSurveyInfoDao)
+        public SurveyInfo(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao)
         {
-            this.SurveyInfoDao = pSurveyInfoDao;
+            this.SurveyInfoDao = surveyInfoDao;
         }
 
         public MetadataAccessor MetadataAccessor
@@ -269,26 +269,6 @@ namespace Epi.Web.BLL
             //}
 
 
-        }
-
-        private List<string> XmlChunking(string Xml)
-        {
-            List<string> XmlList = new List<string>();
-            XDocument xdoc = XDocument.Parse(Xml);
-            XDocument xdoc1 = XDocument.Parse(Xml);
-
-            xdoc.Descendants("View").Remove();
-
-            foreach (XElement Xelement in xdoc1.Descendants("Project").Elements("View"))
-            {
-
-                //xdoc.Element("Project").Add(Xelement);
-                xdoc.Root.Element("Project").Add(Xelement);
-                XmlList.Add(xdoc.ToString());
-                xdoc.Descendants("View").Remove();
-            }
-
-            return XmlList;
         }
     }
 }

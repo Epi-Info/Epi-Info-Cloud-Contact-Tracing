@@ -7,6 +7,7 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using MvcDynamicForms;
@@ -27,9 +28,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		/// Insert survey question and answer to Document Db
 		/// </summary>
 
-		public bool DoesResponseExist(string responseId)
+		public bool DoChildrenExistForResponseId(string responseId)
 		{
-			return _surveyResponse.DoesResponseIdExist(responseId);
+			return _surveyResponse.DoChildrenExistForResponseId(responseId);
 		}
 
 		public int GetFormResponseCount(string formId)
@@ -48,22 +49,28 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
 		}
 
-		#region Insert Into Servey Response to DocumentDB
-		public async Task<bool> InsertSurveyResponseToDocumentDBStoreAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
+		#region Insert Survey Response
+		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
 		{
 			FormDocumentDBEntity storeSurvey;
 			string Dbname = surveyInfoModel.SurveyName;
 			storeSurvey = GetDbAndCollectionName(form, Dbname);
 			storeSurvey.GlobalRecordID = responseId;
 			storeSurvey.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
-			bool response = await _surveyResponse.InsertToSurveyToDocumentDBAsync(storeSurvey, userId);
+			bool response = await _surveyResponse.InsertResponseAsync(storeSurvey, userId);
 			return true;
 		}
-		#endregion
+        #endregion
 
+        #region Insert Child Survey Response
+        public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
-		#region ReadSurveyAnswerByResponseID,PageId 
-		public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
+        #region ReadSurveyAnswerByResponseID,PageId 
+        public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
 		{
 			var formName = GetFormDigest(formId).FormName;
 			var pageResponseProperties = _surveyResponse.GetPageResponsePropertiesByResponseId(responseId, formId, pageId);
@@ -102,7 +109,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return formHierarchyDTO;
 		}
 
-		#region Save FormParentProperties to DocumentDB
+		#region Save FormParentProperties
 		/// <summary>
 		/// First time store ResonseId,RecStatus, and SurveyId in DocumentDB
 		/// </summary>
@@ -111,7 +118,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		/// <param name="UserId"></param>
 		/// <param name="ResponseId"></param>
 		/// <returns></returns>
-		public bool SaveFormPropertiesToDocumentDB(SurveyAnswerRequest request)
+		public bool SaveFormProperties(SurveyAnswerRequest request)
 		{
 
 			FormDocumentDBEntity storeForm = new FormDocumentDBEntity(); 
@@ -226,6 +233,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			survey.DatabaseName = DbName;
 			return survey;
 		}
-		#endregion
-	}
+        #endregion
+    }
 }

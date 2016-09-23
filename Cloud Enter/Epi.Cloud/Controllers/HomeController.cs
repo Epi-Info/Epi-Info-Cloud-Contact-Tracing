@@ -499,7 +499,7 @@ namespace Epi.Web.MVC.Controllers
 			SurveyAnswerResponse surveyAnswerResponse = _isurveyFacade.DeleteResponse(surveyAnswerRequest);
 			// Ananth
 			surveyAnswerRequest.Criteria.IsDeleteMode = true;
-			var response = _isurveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(surveyAnswerRequest);
+			var response = _isurveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
 			// End Ananth
 			
 			//Survey surveyInfo = new Survey();

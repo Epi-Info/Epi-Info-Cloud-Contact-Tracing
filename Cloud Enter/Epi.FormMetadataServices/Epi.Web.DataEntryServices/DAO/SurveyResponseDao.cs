@@ -59,8 +59,11 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 foreach (string responseId in surveyResponseIdList.Distinct())
                 {
                     var formResponseDetail = _surveyDocumentDBStoreFacade.GetFormResponseByResponseId(responseId);
-                    var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
-                    result.Add(surveyResponseBO);
+                    if (formResponseDetail != null)
+                    {
+                        var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
+                        result.Add(surveyResponseBO);
+                    }
                 }
             }
             else
@@ -282,7 +285,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 surveyAnswer.Status = surveyResponseBO.Status;
                 request.SurveyAnswerList.Add(surveyAnswer);
 
-                var response = _surveyDocumentDBStoreFacade.SaveFormPropertiesToDocumentDB(request);
+                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(request);
 
 
                 #region Web Enter Implementation
@@ -320,12 +323,14 @@ namespace Epi.Cloud.DataEntryServices.DAO
         /// <remarks>
         /// Following insert, SurveyResponse object will contain the new identifier.
         /// </remarks>  
-        /// <param name="SurveyResponse">SurveyResponse.</param>
-        public void InsertChildSurveyResponse(SurveyResponseBO SurveyResponse)
+        /// <param name="surveyResponseBO">SurveyResponse.</param>
+        public void InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO)
         {
             try
             {
                 //TODO Implement for DocumentDB
+                var response = _surveyDocumentDBStoreFacade.InsertChildResponseAsync(surveyResponseBO);
+
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
                 //    SurveyResponse SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
@@ -2119,16 +2124,16 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return _surveyDocumentDBStoreFacade.GetFormResponseCount(formId);
         }
 
-        public bool DoesResponseExist(Guid responseId)
+        public bool DoChildrenExistForResponseId(Guid responseId)
         {
-            var responseExists = _surveyDocumentDBStoreFacade.DoesResponseExist(responseId.ToString());
+            var responseExists = _surveyDocumentDBStoreFacade.DoChildrenExistForResponseId(responseId.ToString());
             return responseExists;
         }
 
         public bool HasResponse(SurveyAnswerCriteria criteria)
         {
             var responseId = criteria.SurveyAnswerIdList[0];
-            var responseExists = _surveyDocumentDBStoreFacade.DoesResponseExist(responseId);
+            var responseExists = _surveyDocumentDBStoreFacade.DoChildrenExistForResponseId(responseId);
             return responseExists;
         }
 
