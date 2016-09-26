@@ -5,6 +5,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using System.Configuration;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.DataEntryServices.Extensions;
 
 using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
 
@@ -222,18 +223,12 @@ namespace Epi.Cloud.DataEntryServices
             return surveyResponseBOs;
         }
 
-        public SurveyResponseBO InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO, SurveyInfoBO parentSurveyInfoBO, string relateParentId)
+        public bool InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO, SurveyInfoBO parentSurveyInfoBO, string relateParentId)
         {
-            SurveyResponseBO result = surveyResponseBO;
-            surveyResponseBO.ParentId = parentSurveyInfoBO.ParentId;
-            surveyResponseBO.RelateParentId = relateParentId;
-
-            var responseDetail = surveyResponseBO.ResponseDetail;
-            responseDetail.RelateParentResponseId = relateParentId;
-            responseDetail.GlobalRecordID = surveyResponseBO.ResponseId;
-
+            surveyResponseBO = surveyResponseBO.MergeIntoSurveyResponseBO(parentSurveyInfoBO, relateParentId);
             _surveyResponseDao.InsertChildSurveyResponse(surveyResponseBO);
-            return result;
+            
+            return true;
         }
 
         public SurveyResponseBO UpdateSurveyResponse(SurveyResponseBO surveyResponseBO)

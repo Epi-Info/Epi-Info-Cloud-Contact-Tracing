@@ -25,17 +25,17 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return pageResponseDetail;
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this FormDocumentDBEntity formDocumentDBEntity)
+        public static FormResponseDetail ToFormResponseDetail(this DocumentResponseProperties documentResponseProperties)
         {
             FormResponseDetail formResponseDetail = null;
 
-            var formResponseProperties = formDocumentDBEntity.FormResponseProperties;
+            var formResponseProperties = documentResponseProperties.FormResponseProperties;
             if (formResponseProperties != null)
             {
                 formResponseDetail = formResponseProperties.ToFormResponseDetail();
-                if (formDocumentDBEntity.PageResponsePropertiesList != null)
+                if (documentResponseProperties.PageResponsePropertiesList != null)
                 {
-                    foreach (var pageResponseProperties in formDocumentDBEntity.PageResponsePropertiesList)
+                    foreach (var pageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
                         var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail);
                         formResponseDetail.AddPageResponseDetail(pageResponseDetail);

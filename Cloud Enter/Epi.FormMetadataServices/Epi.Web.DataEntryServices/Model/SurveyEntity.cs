@@ -1,27 +1,27 @@
-﻿using Microsoft.Azure.Documents;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common.Constants;
+using Microsoft.Azure.Documents;
 
 namespace Epi.Cloud.DataEntryServices.Model
 {
-    public class FormHierarchicalResponseProperties
+    public class HierarchicalDocumentResponseProperties
     {
-        public FormHierarchicalResponseProperties()
+        public HierarchicalDocumentResponseProperties()
         {
-            ChildResponseList = new List<FormHierarchicalResponseProperties>();
+            ChildResponseList = new List<HierarchicalDocumentResponseProperties>();
             PageResponsePropertiesList = new List<PageResponseProperties>();
         }
 
-        public FormHierarchicalResponseProperties ParentResponse { get; set; }
-        public List<FormHierarchicalResponseProperties> ChildResponseList { get; set; }
+        public HierarchicalDocumentResponseProperties ParentResponse { get; set; }
+        public List<HierarchicalDocumentResponseProperties> ChildResponseList { get; set; }
         public FormResponseProperties FormResponseProperties { get; set; }
         public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
     }
 
-    public class FormDocumentDBEntity
+    public class DocumentResponseProperties
     {
-        public FormDocumentDBEntity()
+        public DocumentResponseProperties()
         {
             PageResponsePropertiesList = new List<Model.PageResponseProperties>();
         }
@@ -31,8 +31,6 @@ namespace Epi.Cloud.DataEntryServices.Model
         public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
         public bool IsChildForm { get; set; }
         public string FormName { get; set; }
-        public int TotalNumberOfPages { get; set; }
-        public string DatabaseName { get; set; }
         public string CollectionName { get; set; }
 
         public int UserId { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,82 +102,144 @@ namespace Epi.Cloud.DataEntryServices
 			return _database;
 		}
 
-		#endregion
+        #endregion
 
 
-		#region GetOrCreateCollection 
-		/// <summary>
-		/// Get or Create Collection in Document DB
-		/// </summary>
-		private DocumentCollection GetOrCreateCollection(DocumentClient client, string databaseLink, string collectionId)
-		{
-			DocumentCollection documentCollection;
-			if (!_documentCollections.TryGetValue(collectionId, out documentCollection))
-			{
-				documentCollection = client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
-				if (documentCollection == null)
-				{
-					var collectionSpec = new DocumentCollection { Id = collectionId };
-					switch (collectionId)
-					{
-						case FormInfoCollectionName:
-							// TODO: Add FormInfo collection indexing here.
 
-							//IndexingPolicy indexingPolicy = new IndexingPolicy { Automatic = false };
-							//indexingPolicy.IndexingMode = IndexingMode.Consistent;
+        #region GetOrCreateCollection 
+        /// <summary>
+        /// Get or Create Collection in Document DB
+        /// </summary>
+        private DocumentCollection GetOrCreateCollection(DocumentClient client, string databaseLink, string collectionId)
+        {
+            DocumentCollection documentCollection;
+            if (!_documentCollections.TryGetValue(collectionId, out documentCollection))
+            {
+                documentCollection = client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
+                if (documentCollection == null)
+                {
+#if ConfigureIndexing
+                    IndexingPolicy indexingPolicy = new IndexingPolicy();
+                    indexingPolicy.Automatic = true;
+                    indexingPolicy.IndexingMode = IndexingMode.Consistent;
+                    indexingPolicy.ExcludedPaths = new Collection<ExcludedPath>
+                        {
+                             new ExcludedPath
+                             {
+                                 Path="/*"
+                             }
+                        };
+                    switch (collectionId)
+                    {
+                        case FormInfoCollectionName:
+                            // FormInfo collection indexing here.                           
+                            indexingPolicy.IncludedPaths = new Collection<IncludedPath>
+                       {
+                              new IncludedPath
+                               {
+                                   Path="/_ts/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                              new IncludedPath
+                               {
+                                   Path="/GlobalRecordID/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                               new IncludedPath
+                               {
+                                   Path="/FormId/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                              new IncludedPath
+                               {
+                                   Path="/FormName/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                              new IncludedPath
+                               {
+                                   Path="/RecStatus/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                               new IncludedPath
+                               {
+                                   Path="/RelateParentId/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                               new IncludedPath
+                               {
+                                   Path="/IsRelatedView/?",
+                                   Indexes=GetIndexInfo()
+                               },
+                               new IncludedPath
+                               {
+                                   Path="/IsDraftMode/?",
+                                   Indexes=GetIndexInfo()
+                               },
 
-							//indexingPolicy.IncludedPaths.Add(new IncludedPath { Path = "/*" });
-							//indexingPolicy.IncludedPaths.Add(new IncludedPath
-							//{
-							//    Path = "/GlobalRecordID/?",
-							//    Indexes = new Collection<Index>()
-							//    {
-							//        new HashIndex(DataType.String) { Precision = 3 }
-							//    }
-							//});
-							//indexingPolicy.IncludedPaths.Add(new IncludedPath
-							//{
-							//    Path = "/RecStatus/?",
-							//    Indexes = new Collection<Index>()
-							//    {
-							//        new RangeIndex(DataType.Number) { Precision = -1 }
-							//    }
-							//});
-							//indexingPolicy.IncludedPaths.Add(new IncludedPath
-							//{
-							//    Path = "/RelateParentId/?",
-							//    Indexes = new Collection<Index>()
-							//    {
-							//        new HashIndex(DataType.String) { Precision = -1 }
-							//    }
-							//});
+                           //Every property (also the Title)gets a hash index on strings, 
+                       };
 
-							//indexingPolicy.IncludedPaths.Add(new IncludedPath
-							//{
-							//    Path = "/_ts/?",
-							//    Indexes = new Collection<Index>()
-							//    {
-							//        new RangeIndex(DataType.Number) { Precision = -1 }
-							//    }
-							//});
 
-							//collectionSpec.IndexingPolicy = indexingPolicy;
-							break;
+                            //collectionSpec.IndexingPolicy = indexingPolicy;
+                            break;
 
-						default:
-							// TODO: Add Page collection indexing here.
-							break;
-					}
+                        default:
+                            indexingPolicy.IncludedPaths = new Collection<IncludedPath>
+                                                                {
+                                                                    new IncludedPath
+                                                                    {
+                                                                        Path="/_ts/?",
+                                                                        Indexes=GetIndexInfo()
+                                                                    },
+                                                                    new IncludedPath
+                                                                    {
+                                                                        Path="/GlobalRecordID/?",
+                                                                        Indexes=GetIndexInfo()
+                                                                    },
+                                                                    new IncludedPath
+                                                                    {
+                                                                        Path="/PageId/?",
+                                                                        Indexes=new Collection<Index>
+                                                                        {
+                                                                            new RangeIndex(DataType.Number)
+                                                                        }
+                                                                } 
+                           //Every property (also the Title)gets a hash index on strings, 
+                       };
+                            break;
+                    }
 
-					documentCollection = client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
-				}
-				_documentCollections[collectionId] = documentCollection;
-			}
-			return documentCollection;
-		}
-		#endregion
+                    var collectionSpec = new DocumentCollection
+                    {
+                        Id = collectionId,
+                        IndexingPolicy = indexingPolicy
+                    };
+#else
+                    var collectionSpec = new DocumentCollection
+                    {
+                        Id = collectionId,
+                    };
+#endif //ConfigureIndexing
 
-		private DocumentCollection GetCollectionReference(DocumentClient client, string collectionId)
+                    documentCollection = client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
+                    _documentCollections[collectionId] = documentCollection;
+                }
+            }
+            return documentCollection;
+        }
+#endregion
+
+        private Collection<Index> GetIndexInfo()
+        {
+            Collection<Index> Indexes = new Collection<Index>
+                                   {
+                                       new RangeIndex(DataType.Number),
+                                       new HashIndex(DataType.String)
+                                   };
+            return Indexes;
+        }
+
+        private DocumentCollection GetCollectionReference(DocumentClient client, string collectionId)
 		{
 			//Get a reference to the DocumentDB Database 
 			var database = GetOrCreateDatabaseAsync(client, DatabaseName);
@@ -223,16 +286,16 @@ namespace Epi.Cloud.DataEntryServices
 			return isSuccessful;
 		}
 
-		#region InsertToSruveyToDocumentDB
+#region InsertToSruveyToDocumentDB
 		/// <summary>
 		/// Created instance of DocumentClient and Getting reference to database and Document collections
 		/// </summary>
 		///
-		public async Task<bool> InsertResponseAsync(FormDocumentDBEntity formData, int userId)
+		public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties, int userId)
 		{
 			try
 			{
-				var responseId = formData.GlobalRecordID;
+				var responseId = documentResponseProperties.GlobalRecordID;
 
 				//Instance of DocumentClient"
 				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
@@ -242,22 +305,22 @@ namespace Epi.Cloud.DataEntryServices
 					var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
 
 					//Create Survey Properties 
-					Uri pageCollectionUri = GetCollectionUri(client, formData.CollectionName);
+					Uri pageCollectionUri = GetCollectionUri(client, documentResponseProperties.CollectionName);
 				   
 					//Read Surveyinfo from document db
-					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(formData.GlobalRecordID, client, pageCollectionUri);
+					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(documentResponseProperties.GlobalRecordID, client, pageCollectionUri);
 					if (pageResponseProperties == null)
 					{
-						pageResponseProperties = formData.PageResponsePropertiesList[0];
+						pageResponseProperties = documentResponseProperties.PageResponsePropertiesList[0];
 					}
 					else
 					{
-						pageResponseProperties.ResponseQA = formData.PageResponsePropertiesList[0].ResponseQA;
+						pageResponseProperties.ResponseQA = documentResponseProperties.PageResponsePropertiesList[0].ResponseQA;
 					}
 
 					if (formResponseProperties == null)
 					{
-						var formName = formData.FormName;
+						var formName = documentResponseProperties.FormName;
 						var formDigest = GetFormDigestByFormName(formName);
 						var formId = formDigest.FormId;
 
@@ -290,24 +353,27 @@ namespace Epi.Cloud.DataEntryServices
 
 			return true;
 		}
-		#endregion
+#endregion
 
-		#region SaveQuestionInDocumentDB
+        //public async Task<bool> InsertChildResponseAsync(FormDocumentDBEntity documentResponseProperties, int userId)
 
-		/// <summary>
-		/// This method help to save form properties 
-		/// and also used for delete operation.Ex:RecStatus=0
-		/// </summary>
-		/// <param name="formData"></param>
-		/// <returns></returns>
-		public async Task<bool> SaveSurveyQuestionInDocumentDBAsync(FormDocumentDBEntity formData)
+
+#region SaveQuestionInDocumentDB
+
+        /// <summary>
+        /// This method help to save form properties 
+        /// and also used for delete operation.Ex:RecStatus=0
+        /// </summary>
+        /// <param name="documentResponseProperties"></param>
+        /// <returns></returns>
+        public async Task<bool> SaveResponseAsync(DocumentResponseProperties documentResponseProperties)
 		{
 			try
 			{
 				//Instance of DocumentClient"
 				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 				{
-					FormResponseProperties formResponseProperties = formData.FormResponseProperties;
+					FormResponseProperties formResponseProperties = documentResponseProperties.FormResponseProperties;
 					var formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
 					//Verify Response Id is exist or Not
@@ -319,8 +385,8 @@ namespace Epi.Cloud.DataEntryServices
 					}
 					else
 					{
-						formData.FormResponseProperties.Id = responseFormInfo.Id;
-						formData.FormResponseProperties.RelateParentId = responseFormInfo.RelateParentId;
+						documentResponseProperties.FormResponseProperties.Id = responseFormInfo.Id;
+						documentResponseProperties.FormResponseProperties.RelateParentId = responseFormInfo.RelateParentId;
 						
 						var pageId = formResponseProperties.PageIds[0];
 						formResponseProperties.PageIds = new List<int>();
@@ -341,9 +407,9 @@ namespace Epi.Cloud.DataEntryServices
 
 			return true;
 		}
-		#endregion
+#endregion
 
-		#region MapPageResponseProperties
+#region MapPageResponseProperties
 		public PageResponseProperties MapPageResponseProperties(PageResponseProperties sourcePageResponseProperties, Dictionary<string, string> responseQA)
 		{
 			PageResponseProperties pageResponseProperties = new PageResponseProperties();
@@ -352,10 +418,10 @@ namespace Epi.Cloud.DataEntryServices
 			pageResponseProperties.Id = sourcePageResponseProperties.Id;
 			return pageResponseProperties;
 		}
-		#endregion
+#endregion
 
 		
-		#region Get PageResponseProperties By ResponseId, FormId, and PageId
+#region Get PageResponseProperties By ResponseId, FormId, and PageId
 		public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formId, int pageId)
 		{
 			PageResponseProperties pageResponseProperties = null;
@@ -403,10 +469,10 @@ namespace Epi.Cloud.DataEntryServices
 			return null;
 
 		}
-		#endregion Get PageResponseProperties By ResponseId, FormId, and PageId
+#endregion Get PageResponseProperties By ResponseId, FormId, and PageId
 
 
-		#region Get All Responses With FieldNames 
+#region Get All Responses With FieldNames 
 		public List<SurveyResponse> GetAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fields, string relateParentId = null)
 		{
 			 
@@ -527,44 +593,44 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			return surveyList;
 		}
-		#endregion Get All Responses With FieldNames
+#endregion Get All Responses With FieldNames
 
-		public FormHierarchicalResponseProperties GetHierarchicalResponses(string responseId, string parentResponseId = null)
+		public HierarchicalDocumentResponseProperties GetHierarchicalResponses(string responseId, string parentResponseId = null)
 		{
-			var hierarchicalResult = new FormHierarchicalResponseProperties();
-			var formDocumentDBEntity = GetAllPageResponsesByResponseId(responseId);
-			hierarchicalResult.FormResponseProperties = formDocumentDBEntity.FormResponseProperties;
-			hierarchicalResult.PageResponsePropertiesList = formDocumentDBEntity.PageResponsePropertiesList;
+			var hierarchicalResult = new HierarchicalDocumentResponseProperties();
+			var documentResponseProperties = GetAllPageResponsesByResponseId(responseId);
+			hierarchicalResult.FormResponseProperties = documentResponseProperties.FormResponseProperties;
+			hierarchicalResult.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
 
 			return hierarchicalResult;
 		}
 
-		#region Get FormInfo By ResponseId
-		public FormDocumentDBEntity GetFormInfoByResponseId(string responseId)
+#region Get form response properties by ResponseId
+        public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
 		{
-			FormDocumentDBEntity formDocumentDbResponse = new FormDocumentDBEntity { GlobalRecordID = responseId };
+			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
 
 			//Read all global record Id
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
 				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 				var formResponseProperties = ReadFormPropertiesByResponseId(client, formInfoCollectionUri, responseId);
-				formDocumentDbResponse.FormResponseProperties = formResponseProperties;
+				documentResponseProperties.FormResponseProperties = formResponseProperties;
 			}
-			return formDocumentDbResponse;
+			return documentResponseProperties;
 		}
-		#endregion Get FormInfo By ResponseId
+#endregion Get form response properties by ResponseId
 
-		#region Get all form responses by ResponseId
-		public FormDocumentDBEntity GetAllPageResponsesByResponseId(string responseId)
+#region Get all page responses by ResponseId
+        public DocumentResponseProperties GetAllPageResponsesByResponseId(string responseId)
 		{
-			FormDocumentDBEntity formDocumentDbEntity = new FormDocumentDBEntity { GlobalRecordID = responseId };
+			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
 			//Read all global record Id
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
 				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 				var formResponseProperties = ReadFormPropertiesByResponseId(client, formInfoCollectionUri, responseId);
-				formDocumentDbEntity.FormResponseProperties = formResponseProperties;
+				documentResponseProperties.FormResponseProperties = formResponseProperties;
 
 				if (formResponseProperties != null)
 				{
@@ -575,18 +641,18 @@ namespace Epi.Cloud.DataEntryServices
 							string collectionName = formResponseProperties.FormName + pageId;
 							var pageCollectionUri = GetCollectionUri(client, collectionName);
 							var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, client, pageCollectionUri);
-							formDocumentDbEntity.PageResponsePropertiesList.Add(pageResponseProperties);
+							documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
 						}
 					}
 				}
 			}
-			return formDocumentDbEntity;
+			return documentResponseProperties;
 		}
-		#endregion Get FormInfo By ResponseId
+#endregion Get all page responses by ResponseId
 
 
 
-		private string AssembleSelect(string collectionName, params string[] columnNames)
+        private string AssembleSelect(string collectionName, params string[] columnNames)
 		{
 			string columnList;
 			if (columnNames.Length == 1 && columnNames[0] == "*")
@@ -746,9 +812,9 @@ namespace Epi.Cloud.DataEntryServices
 
 			return null;
 		}
-        #endregion
+#endregion
 
-        #region Do children exist for responseId
+#region Do children exist for responseId
         public bool DoChildrenExistForResponseId(string responseId)
 	    {
 		    using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
@@ -890,7 +956,7 @@ namespace Epi.Cloud.DataEntryServices
 		}
 
 
-		#region Read All Responses By RelateParentResponseId
+#region Read All Responses By RelateParentResponseId
 		private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(DocumentClient client, string relateParentId, string formId)
 		{
 			try
@@ -970,9 +1036,9 @@ namespace Epi.Cloud.DataEntryServices
 
 			return null;
 		}
-		#endregion
+#endregion
 
-		#region Readfull Form Info for DataConsisitencyServiceAPI
+#region Readfull Form Info for DataConsisitencyServiceAPI
 		public List<string> ReadfullFormInfo(string responseId)
 		{
 			List<string> surveyNames = new List<string>();
@@ -1011,6 +1077,6 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			return fullFormInfo;
 		}
-		#endregion
+#endregion
 	}
 }

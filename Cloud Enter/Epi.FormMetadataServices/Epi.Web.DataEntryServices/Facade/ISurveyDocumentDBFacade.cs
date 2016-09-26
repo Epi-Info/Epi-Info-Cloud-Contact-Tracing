@@ -28,7 +28,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
         Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO);
         PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
-        SurveyAnswerResponse DeleteResponse(FormDocumentDBEntity SARequest);
+        SurveyAnswerResponse DeleteResponse(DocumentResponseProperties SARequest);
 
         bool SaveFormProperties(SurveyAnswerRequest request);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);

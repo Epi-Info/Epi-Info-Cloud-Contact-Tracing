@@ -64,8 +64,6 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyResponse.IsDraftMode = surveyResponseBO.IsDraftMode;
             surveyResponse.RecordSourceId = surveyResponseBO.RecordSourceId;
             surveyResponse.ResponseDetail = surveyResponseBO.ResponseDetail;
-            surveyResponse.ResponseXML = surveyResponseBO.XML;
-            surveyResponse.ResponseXMLSize = surveyResponseBO.TemplateXMLSize;
             if (!string.IsNullOrEmpty(surveyResponseBO.RelateParentId) && relateParentId != Guid.Empty)
             {
                 surveyResponse.RelateParentId = new Guid(surveyResponseBO.RelateParentId);
@@ -79,6 +77,23 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 surveyResponse.OrganizationId = orgId;
             }
             return surveyResponse;
+        }
+
+        public static SurveyResponseBO MergeIntoSurveyResponseBO(this SurveyResponseBO surveyResponseBO, SurveyInfoBO parentSurveyInfoBO, string relateParentId)
+        {
+            surveyResponseBO.ParentId = parentSurveyInfoBO.ParentId;
+            surveyResponseBO.RelateParentId = relateParentId;
+            surveyResponseBO.IsDraftMode = parentSurveyInfoBO.IsDraftMode;
+
+            var responseDetail = surveyResponseBO.ResponseDetail;
+            responseDetail.ParentFormId = parentSurveyInfoBO.ParentId;
+            responseDetail.RelateParentResponseId = relateParentId;
+            responseDetail.IsRelatedView = surveyResponseBO.ParentId != null;
+            responseDetail.IsDraftMode = parentSurveyInfoBO.IsDraftMode;
+            responseDetail.RecStatus = surveyResponseBO.Status;
+            responseDetail.GlobalRecordID = surveyResponseBO.ResponseId;
+
+            return surveyResponseBO;
         }
     }
 }

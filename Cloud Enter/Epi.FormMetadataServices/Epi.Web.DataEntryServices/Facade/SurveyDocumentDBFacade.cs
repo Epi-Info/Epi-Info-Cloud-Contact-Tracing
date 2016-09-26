@@ -52,20 +52,22 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#region Insert Survey Response
 		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
 		{
-			FormDocumentDBEntity storeSurvey;
-			string Dbname = surveyInfoModel.SurveyName;
-			storeSurvey = GetDbAndCollectionName(form, Dbname);
-			storeSurvey.GlobalRecordID = responseId;
-			storeSurvey.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
-			bool response = await _surveyResponse.InsertResponseAsync(storeSurvey, userId);
-			return true;
+            var formId = form.SurveyInfo.SurveyId;
+            var pageId = Convert.ToInt32(form.PageId);
+
+            DocumentResponseProperties documentResponseProperties = CreateResonseDocumentInfo(formId, pageId);
+			documentResponseProperties.GlobalRecordID = responseId;
+			documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
+
+			bool isSuccessful = await _surveyResponse.InsertResponseAsync(documentResponseProperties, userId);
+			return isSuccessful;
 		}
         #endregion
 
         #region Insert Child Survey Response
         public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(true);
         }
         #endregion
 
@@ -83,7 +85,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#endregion
 
 		#region DeleteSurveyByResponseId
-		public SurveyAnswerResponse DeleteResponse(FormDocumentDBEntity SARequest)
+		public SurveyAnswerResponse DeleteResponse(DocumentResponseProperties SARequest)
 		{
 			SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
 			//var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
@@ -121,7 +123,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		public bool SaveFormProperties(SurveyAnswerRequest request)
 		{
 
-			FormDocumentDBEntity storeForm = new FormDocumentDBEntity(); 
+			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties(); 
 			if(request.Criteria.IsDeleteMode)
 			{
 				request.SurveyAnswerList[0].Status = RecordStatus.Deleted;
@@ -142,10 +144,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
 				IsDraftMode = request.Criteria.IsDraftMode
 			};
 
-			storeForm.FormResponseProperties = new FormResponseProperties();
-			storeForm.FormResponseProperties = formData;
-			storeForm.GlobalRecordID = request.RequestId; 
-			var saveTask = _surveyResponse.SaveSurveyQuestionInDocumentDBAsync(storeForm);
+			documentResponseProperties.FormResponseProperties = new FormResponseProperties();
+			documentResponseProperties.FormResponseProperties = formData;
+			documentResponseProperties.GlobalRecordID = request.RequestId; 
+			var saveTask = _surveyResponse.SaveResponseAsync(documentResponseProperties);
 			
 			//if(_FormData.RecStatus==2)
 			//{
@@ -217,20 +219,17 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			var formResponseDetail = response.ToFormResponseDetail();
 			return formResponseDetail;
 		}
-		#endregion
+        #endregion
 
-		#region GetCollectionName
-		private FormDocumentDBEntity GetDbAndCollectionName(Form form, string DbName)
+        #region Create Resonse Document Info
+        private DocumentResponseProperties CreateResonseDocumentInfo(string formId, int pageId)
 		{
-			var formId = form.SurveyInfo.SurveyId;
-			var pageId = Convert.ToInt32(form.PageId);
 			var pageDigest = GetPageDigestByPageId(formId, pageId);
 
-			FormDocumentDBEntity survey = new FormDocumentDBEntity();
+			DocumentResponseProperties survey = new DocumentResponseProperties();
 			survey.FormName = pageDigest.FormName;
 			survey.IsChildForm = pageDigest.IsRelatedView;
-			survey.CollectionName = DbName + pageDigest.PageId;
-			survey.DatabaseName = DbName;
+			survey.CollectionName = pageDigest.FormName + pageDigest.PageId;
 			return survey;
 		}
         #endregion
