@@ -212,14 +212,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		}
 		#endregion
 
-		#region Get Forminfo for DataConsisitencyServiceAPI
-		public List<string> GetFormInfo(string responseId)
-		{ 
-			var responseToDCSApi = _surveyResponse.ReadfullFormInfo(responseId);
-			return responseToDCSApi;
-		}
-		#endregion
-
 		#region Read All Records By SurveyID
 		public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields)
 		{
@@ -233,6 +225,17 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return formResponseDetail;
 		}
 		#endregion
+
+
+		#region Get Forminfo for DataConsisitencyServiceAPI
+		public FormResponseDetail GetHierarchialResponsesByResponseId(string responseId)
+		{
+			var hierarchicalDocumentResponseProperties = _surveyResponse.GetHierarchialResponsesByResponseId(responseId);
+			var hierarchialFormResponseDetail = hierarchicalDocumentResponseProperties.ToFormResponseDetail();
+			return hierarchialFormResponseDetail;
+		}
+		#endregion
+
 
 		#region Create Resonse Document Info
 		private DocumentResponseProperties CreateResonseDocumentInfo(string formId, int pageId)

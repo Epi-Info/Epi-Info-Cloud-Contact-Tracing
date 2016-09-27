@@ -95,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CRUDSurveyResponse.cs" />
+    <Compile Include="CRUDSurveyResponse.Indexing.cs" />
+    <Compile Include="CRUDSurveyResponse.QueryHelpers.cs" />
     <Compile Include="DaoFactory.cs" />
     <Compile Include="DAO\FormInfoDao.cs" />
     <Compile Include="DAO\SurveyInfoDao.cs" />

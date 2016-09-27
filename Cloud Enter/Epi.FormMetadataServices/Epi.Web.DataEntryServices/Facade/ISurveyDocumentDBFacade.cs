@@ -35,5 +35,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
         FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
-    }
+
+		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId);
+
+	}
 }
