@@ -31,7 +31,7 @@ namespace Epi.Cloud.DataEntryServices
         /// </summary>
         public ISurveyInfoDao SurveyInfoDao
         {
-            get { return new EntitySurveyInfoDao(); }
+            get { return _surveyInfoDao; }
         }
 
         public IFormInfoDao FormInfoDao
