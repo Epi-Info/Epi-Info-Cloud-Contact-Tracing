@@ -14,12 +14,16 @@ namespace Epi.Cloud.DataEntryServices
     {
         private readonly IFormInfoDao _formInfoDao;
         private readonly ISurveyResponseDao _surveyResponseDao;
+		private readonly ISurveyInfoDao _surveyInfoDao;
 
-        public DaoFactory(IFormInfoDao formInfoDao,
-                          ISurveyResponseDao surveyResponseDao)
+
+		public DaoFactory(IFormInfoDao formInfoDao,
+                          ISurveyResponseDao surveyResponseDao,
+						  ISurveyInfoDao surveyInfoDao)
         {
             _formInfoDao = formInfoDao;
             _surveyResponseDao = surveyResponseDao;
+			_surveyInfoDao = surveyInfoDao;
         }
 
         /// <summary>

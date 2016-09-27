@@ -595,17 +595,23 @@ namespace Epi.Cloud.DataEntryServices
 		}
 #endregion Get All Responses With FieldNames
 
-		public HierarchicalDocumentResponseProperties GetHierarchicalResponses(string responseId, string parentResponseId = null)
+		public HierarchicalDocumentResponseProperties GetHierarchicalResponses(string responseId)
 		{
 			var hierarchicalResult = new HierarchicalDocumentResponseProperties();
 			var documentResponseProperties = GetAllPageResponsesByResponseId(responseId);
 			hierarchicalResult.FormResponseProperties = documentResponseProperties.FormResponseProperties;
 			hierarchicalResult.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
+			var childHierarchicalResponses = GetChildHierarchicalResponses(hierarchicalResult);
 
 			return hierarchicalResult;
 		}
 
-#region Get form response properties by ResponseId
+		public HierarchicalDocumentResponseProperties GetChildHierarchicalResponses(HierarchicalDocumentResponseProperties parentResponseProperties)
+		{
+			return null;
+		}
+
+		#region Get form response properties by ResponseId
 		public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
 		{
 			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
@@ -648,8 +654,62 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			return documentResponseProperties;
 		}
-#endregion Get all page responses by ResponseId
+		#endregion Get all page responses by ResponseId
 
+		#region Get all full responses by ParentResponseId
+		public List<DocumentResponseProperties> GetAllFullResponsesByParentResponseId(string parentResponseId)
+		{
+			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
+			{
+				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+				var childDocumentResponsePropertiesList = ReadAllResponsesByParentResponseId(parentResponseId, client, formInfoCollectionUri);
+				return childDocumentResponsePropertiesList;
+			}
+		}
+
+		public List<DocumentResponseProperties> ReadAllResponsesByParentResponseId(string parentResponseId, DocumentClient client, Uri formInfoCollectionUri)
+		{
+			var documentResponsePropertiesList = new List<DocumentResponseProperties>();
+			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+			try
+			{
+				var collectionAlias = "FormInfo";
+				var query = client.CreateDocumentQuery(formInfoCollectionUri,
+					SELECT + AssembleSelect(collectionAlias, "*")
+					+ FROM + collectionAlias
+					+ WHERE + AssembleWhere(collectionAlias, Expression("RelateParentId", EQ, parentResponseId))
+					, queryOptions);
+
+				documentResponsePropertiesList = query.AsEnumerable()
+					.Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi,  })
+					.ToList();
+				foreach (var documentResponseProperties in documentResponsePropertiesList)
+				{
+					var formResponseProperties = documentResponseProperties.FormResponseProperties;
+					if (formResponseProperties != null)
+					{
+						var responseId = formResponseProperties.GlobalRecordID;
+						foreach (var pageId in formResponseProperties.PageIds)
+						{
+							if (pageId != 0)
+							{
+								string collectionName = formResponseProperties.FormName + pageId;
+								var pageCollectionUri = GetCollectionUri(client, collectionName);
+								var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, client, pageCollectionUri);
+								documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
+							}
+						}
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.ToString());
+			}
+
+			return documentResponsePropertiesList;
+		}
+		#endregion Get all page responses by ParentResponseId
 
 
 		private string AssembleSelect(string collectionName, params string[] columnNames)
@@ -679,20 +739,22 @@ namespace Epi.Cloud.DataEntryServices
 
 			if (right is int)
 				expression = string.Format("?.{0} {1} {2}", left, relational_operator, right.ToString());
-			else
+			else if (right != null)
 				expression = string.Format("?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
+			else
+				expression = string.Format("?.{0} {1} null", left, relational_operator);
 			return expression;
 		}
 
-		private static string And_Expression(string left, string relational_operator, object right)
+		private static string And_Expression(string left, string relational_operator, object right, bool skip = false)
 		{
-			var expression = string.Format("AND ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
+			var expression = skip ? string.Empty : string.Format("AND ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
 			return expression;
 		}
 
-		private static string Or_Expression(string left, string relational_operator, object right)
+		private static string Or_Expression(string left, string relational_operator, object right, bool skip = false)
 		{
-			var expression = string.Format("OR ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
+			var expression = skip ? string.Empty : string.Format("OR ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
 			return expression;
 		}
 
@@ -968,7 +1030,7 @@ namespace Epi.Cloud.DataEntryServices
 				IQueryable<dynamic> query;
 
 				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
-
+				bool skipAnd = formId == null;
 				if (relateParentId != null)
 				{
 					query = client.CreateDocumentQuery(formInfoCollectionUri,
@@ -977,8 +1039,8 @@ namespace Epi.Cloud.DataEntryServices
 						+ FROM + FormInfoCollectionName
 						+ WHERE
 						+ AssembleWhere(FormInfoCollectionName, Expression("RelateParentId", EQ, relateParentId),
-															   And_Expression("FormId", EQ, formId),
-															   And_Expression("RecStatus", NE, RecordStatus.Deleted))
+															   And_Expression("RecStatus", NE, RecordStatus.Deleted),
+															   And_Expression("FormId", EQ, formId, skipAnd))
 						, queryOptions);
 				}
 				else
@@ -988,8 +1050,8 @@ namespace Epi.Cloud.DataEntryServices
 					   + AssembleSelect(FormInfoCollectionName, "*")
 					   + FROM + FormInfoCollectionName
 					   + WHERE
-					   + AssembleWhere(FormInfoCollectionName, Expression("FormId", EQ, formId), 
-															  And_Expression("RecStatus", NE, 0))
+					   + AssembleWhere(FormInfoCollectionName, Expression("RecStatus", NE, 0),
+															And_Expression("FormId", EQ, formId, skipAnd))
 					   , queryOptions);
 				}
 

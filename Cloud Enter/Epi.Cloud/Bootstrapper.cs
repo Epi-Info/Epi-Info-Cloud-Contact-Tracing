@@ -57,7 +57,8 @@ namespace Epi.Web.MVC
             container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao>();
             container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
             container.RegisterType<Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao, Epi.Cloud.DataEntryServices.DAO.FormInfoDao>();
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory, Epi.Cloud.DataEntryServices.DaoFactory>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory, Epi.Cloud.DataEntryServices.DaoFactory>();
             container.RegisterControllers();
 
             return container;

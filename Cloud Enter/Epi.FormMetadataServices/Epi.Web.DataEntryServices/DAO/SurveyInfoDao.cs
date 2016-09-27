@@ -440,23 +440,25 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId)
         {
-            List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-            try
-            {
+			var surveyInfoBOs = FormDigests.Where(d => d.ParentFormId == ParentFormId && d.ViewId == ViewId).Select(d => d.ToSurveyInfoBO()).ToList();
+			
+            //List<SurveyInfoBO> result = new List<SurveyInfoBO>();
+            //try
+            //{
 
-                Guid Id = new Guid(ParentFormId);
+            //    Guid Id = new Guid(ParentFormId);
 
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    result.Add(Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.ParentId == Id && x.ViewId == ViewId)));
-                }
+            //    using (var Context = DataObjectFactory.CreateContext())
+            //    {
+            //        result.Add(Mapper.Map(Context.SurveyMetaDatas.FirstOrDefault(x => x.ParentId == Id && x.ViewId == ViewId)));
+            //    }
 
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-            return result;
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw (ex);
+            //}
+            return surveyInfoBOs;
         }
 
         public SurveyInfoBO GetParentInfoByChildId(string ChildId)

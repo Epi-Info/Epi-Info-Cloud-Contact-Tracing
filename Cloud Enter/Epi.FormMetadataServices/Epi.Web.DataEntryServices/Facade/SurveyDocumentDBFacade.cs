@@ -68,9 +68,12 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#region Insert Child Survey Response
 		public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
 		{
-			var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.Single();
+			var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.SingleOrDefault();
 			var formId = surveyResponseBO.SurveyId;
 			var pageId = pageResponseDetail.PageId;
+
+			var parentRecordId = surveyResponseBO.ParentRecordId;
+			var relateParentId = surveyResponseBO.RelateParentId;
 
 			DocumentResponseProperties documentResponseProperties = CreateResonseDocumentInfo(formId, pageId);
 			documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
