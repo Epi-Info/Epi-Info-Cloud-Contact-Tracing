@@ -498,8 +498,8 @@ namespace Epi.Web.MVC.Controllers
 			surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
 			SurveyAnswerResponse surveyAnswerResponse = _isurveyFacade.DeleteResponse(surveyAnswerRequest);
 			// Ananth
-			surveyAnswerRequest.Criteria.IsDeleteMode = true;
-			var response = _isurveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
+			//surveyAnswerRequest.Criteria.IsDeleteMode = true;
+			//var response = _isurveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
 			// End Ananth
 			
 			//Survey surveyInfo = new Survey();

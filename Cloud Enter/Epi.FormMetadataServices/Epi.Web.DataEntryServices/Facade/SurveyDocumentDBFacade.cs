@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.EntityObjects;
@@ -52,27 +53,34 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#region Insert Survey Response
 		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
 		{
-            var formId = form.SurveyInfo.SurveyId;
-            var pageId = Convert.ToInt32(form.PageId);
+			var formId = form.SurveyInfo.SurveyId;
+			var pageId = Convert.ToInt32(form.PageId);
 
-            DocumentResponseProperties documentResponseProperties = CreateResonseDocumentInfo(formId, pageId);
+			DocumentResponseProperties documentResponseProperties = CreateResonseDocumentInfo(formId, pageId);
 			documentResponseProperties.GlobalRecordID = responseId;
 			documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
 
 			bool isSuccessful = await _surveyResponse.InsertResponseAsync(documentResponseProperties, userId);
 			return isSuccessful;
 		}
-        #endregion
+		#endregion
 
-        #region Insert Child Survey Response
-        public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
-        {
-            return Task.FromResult(true);
-        }
-        #endregion
+		#region Insert Child Survey Response
+		public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
+		{
+			var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.Single();
+			var formId = surveyResponseBO.SurveyId;
+			var pageId = pageResponseDetail.PageId;
 
-        #region ReadSurveyAnswerByResponseID,PageId 
-        public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
+			DocumentResponseProperties documentResponseProperties = CreateResonseDocumentInfo(formId, pageId);
+			documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
+			documentResponseProperties.PageResponsePropertiesList.Add(pageResponseDetail.ToPageResponseProperties());
+			return Task.FromResult(true);
+		}
+		#endregion
+
+		#region ReadSurveyAnswerByResponseID,PageId 
+		public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
 		{
 			var formName = GetFormDigest(formId).FormName;
 			var pageResponseProperties = _surveyResponse.GetPageResponsePropertiesByResponseId(responseId, formId, pageId);
@@ -82,12 +90,14 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return pageResponseDetail;
 		}
 
-		#endregion
+        #endregion
 
-		#region DeleteSurveyByResponseId
-		public SurveyAnswerResponse DeleteResponse(DocumentResponseProperties SARequest)
+        #region DeleteSurveyByResponseId
+        public SurveyAnswerResponse DeleteResponse(string responseId, int userId)
 		{
-			SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
+            _surveyResponse.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId);
+
+            SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
 			//var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
 			//var result = tasks.Result;
 			return surveyAnsResponse;
@@ -174,7 +184,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		}
 		#endregion
 
-		#region Get the Record by GlobalRecordID
+		#region Get Survey Answer Response
 		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
 		{ 
 			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
@@ -219,10 +229,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			var formResponseDetail = response.ToFormResponseDetail();
 			return formResponseDetail;
 		}
-        #endregion
+		#endregion
 
-        #region Create Resonse Document Info
-        private DocumentResponseProperties CreateResonseDocumentInfo(string formId, int pageId)
+		#region Create Resonse Document Info
+		private DocumentResponseProperties CreateResonseDocumentInfo(string formId, int pageId)
 		{
 			var pageDigest = GetPageDigestByPageId(formId, pageId);
 
@@ -232,6 +242,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			survey.CollectionName = pageDigest.FormName + pageDigest.PageId;
 			return survey;
 		}
-        #endregion
-    }
+		#endregion
+	}
 }

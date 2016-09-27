@@ -53,7 +53,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
 
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-            var lastActiveUserId = -1;
             if (surveyResponseIdList.Count > 0)
             {
                 foreach (string responseId in surveyResponseIdList.Distinct())
@@ -69,6 +68,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             else
             {
                 //TODO Implement for DocumentDB
+                throw new NotImplementedException("GetSurveyResponse - return all responses");
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
 
@@ -258,6 +258,36 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return resultRows;
         }
 
+        public void InsertResponse(ResponseBO responseBO)
+        {
+            // TODO: DocumentDB implementation required
+            try
+            {
+                Guid Id = new Guid(responseBO.ResponseId);
+
+                //using (var Context = DataObjectFactory.CreateContext())
+                //{
+                //    ResponseXml ResponseXml = Mapper.ToEF(ResponseXmlBO);
+                //    Context.AddToResponseXmls(ResponseXml);
+
+                //    //Update Status
+                //    var Query = from response in Context.SurveyResponses
+                //                where response.ResponseId == Id
+                //                select response;
+
+                //    var DataRow = Query.Single();
+                //    DataRow.StatusId = 1;
+                //    Context.SaveChanges();
+                //}
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+
+
+
         /// <summary>
         /// Inserts a new SurveyResponse. 
         /// </summary>
@@ -273,19 +303,20 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
                 //Save Properties to Document DB
 
-                SurveyAnswerRequest request = new SurveyAnswerRequest();
-                request.SurveyAnswerList = new List<SurveyAnswerDTO>();
-                SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-                request.Criteria = new SurveyAnswerCriteria();
+                var surveyAnswerRequest = new SurveyAnswerRequest();
 
-                request.Criteria.SurveyId = formDigest.FormId;
-                request.Criteria.UserId = surveyResponseBO.UserId;
-                surveyAnswer.DateCreated = DateTime.UtcNow;
-                surveyAnswer.ResponseId = surveyResponseBO.ResponseId;
-                surveyAnswer.Status = surveyResponseBO.Status;
-                request.SurveyAnswerList.Add(surveyAnswer);
+                surveyAnswerRequest.Criteria = new SurveyAnswerCriteria();
+                surveyAnswerRequest.Criteria.SurveyId = formDigest.FormId;
+                surveyAnswerRequest.Criteria.UserId = surveyResponseBO.UserId;
 
-                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(request);
+                var surveyAnswerDTO = new SurveyAnswerDTO();
+                surveyAnswerDTO.DateCreated = DateTime.UtcNow;
+                surveyAnswerDTO.ResponseId = surveyResponseBO.ResponseId;
+                surveyAnswerDTO.Status = surveyResponseBO.Status;
+
+                surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
+
+                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
 
 
                 #region Web Enter Implementation
@@ -470,12 +501,12 @@ namespace Epi.Cloud.DataEntryServices.DAO
         /// Deletes a SurveyResponse
         /// </summary>
         /// <param name="SurveyResponse">SurveyResponse.</param>
-        public void DeleteSurveyResponse(SurveyResponseBO SurveyResponse)
+        public void DeleteSurveyResponse(SurveyResponseBO surveyResponseBO)
         {
             try
             {
                 List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-                Guid Id = new Guid(SurveyResponse.ResponseId);
+                Guid Id = new Guid(surveyResponseBO.ResponseId);
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -517,14 +548,14 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         }
 
-        public void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse)
+        public void DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponseBO)
         {
             string parentRecordId;
 
             try
             {
                 List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-                Guid Id = new Guid(SurveyResponse.ResponseId);
+                Guid Id = new Guid(surveyResponseBO.ResponseId);
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -583,7 +614,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse)
         {
 
-
+            var responseId = SurveyResponse.ResponseId;
+            var userId = SurveyResponse.UserId;
+            _surveyDocumentDBStoreFacade.DeleteResponse(responseId, userId);
             try
             {
                 Guid Id = new Guid(SurveyResponse.ResponseId);
@@ -616,6 +649,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public List<SurveyResponseBO> GetFormResponseByFormId(string FormId, int gridPageNumber, int gridPageSize)
         {
+            throw new NotImplementedException("GetFormResponseByFormId");
+
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
             try
             {
@@ -1991,34 +2026,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
             //}
         }
 
-
-        public void InsertResponse(ResponseBO responseBO)
-        {
-            // TODO: DocumentDB implementation required
-            try
-            {
-                Guid Id = new Guid(responseBO.ResponseId);
-
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    ResponseXml ResponseXml = Mapper.ToEF(ResponseXmlBO);
-                //    Context.AddToResponseXmls(ResponseXml);
-
-                //    //Update Status
-                //    var Query = from response in Context.SurveyResponses
-                //                where response.ResponseId == Id
-                //                select response;
-
-                //    var DataRow = Query.Single();
-                //    DataRow.StatusId = 1;
-                //    Context.SaveChanges();
-                //}
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-        }
 
 
 

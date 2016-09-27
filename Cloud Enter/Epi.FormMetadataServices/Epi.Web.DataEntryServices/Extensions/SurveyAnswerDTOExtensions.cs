@@ -8,7 +8,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class SurveyAnswerDTOExtensions
     {
-        public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO surveyAnswerDTO)
+        public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO surveyAnswerDTO, int userId = 0)
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             surveyResponseBO.SurveyId = surveyAnswerDTO.SurveyId;
@@ -19,7 +19,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
-            return surveyResponseBO;
+            return surveyResponseBO;    
         }
 
         public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<SurveyAnswerDTO> surveyAnswerDTOList)

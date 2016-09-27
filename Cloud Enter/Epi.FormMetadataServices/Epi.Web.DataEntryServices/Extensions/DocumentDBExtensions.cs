@@ -7,22 +7,42 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class DocumentDBExtensions
     {
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseDetailResource, FormResponseDetail formResponseDetail)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail)
         {
-            return pageResponseDetailResource.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName);
+            return pageResponseProperties.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName);
         }
 
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseDetailResource, string formId, string formName)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, string formId, string formName)
         {
             var pageResponseDetail = new PageResponseDetail
             {
-                GlobalRecordID = pageResponseDetailResource.GlobalRecordID,
+                GlobalRecordID = pageResponseProperties.GlobalRecordID,
                 FormId = formId,
                 FormName = formName,
-                PageId = pageResponseDetailResource.PageId,
-                ResponseQA = pageResponseDetailResource.ResponseQA
+                PageId = pageResponseProperties.PageId,
+                ResponseQA = pageResponseProperties.ResponseQA
             };
             return pageResponseDetail;
+        }
+
+        public static FormResponseDetail ToFormResponseDetail(this HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
+        {
+            var formResponseProperties = hierarchicalDocumentResponseProperties.FormResponseProperties;
+            var pageResponsePropertiesList = hierarchicalDocumentResponseProperties.PageResponsePropertiesList;
+
+            var formResponseDetail = formResponseProperties.ToFormResponseDetail(pageResponsePropertiesList);
+            formResponseDetail.AddFormResponseDetailChildren(hierarchicalDocumentResponseProperties);
+
+            return formResponseDetail;
+        }
+
+        private static void AddFormResponseDetailChildren(this FormResponseDetail formResponseDetail, HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
+        {
+            foreach (var childHierarchicalDocumentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
+            {
+                var childFormResponseDetail = childHierarchicalDocumentResponseProperties.ToFormResponseDetail();
+                formResponseDetail.AddChildFormResponseDetail(childFormResponseDetail);
+            }
         }
 
         public static FormResponseDetail ToFormResponseDetail(this DocumentResponseProperties documentResponseProperties)
@@ -46,7 +66,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return formResponseDetail;
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties)
+        public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties, List<PageResponseProperties> pageResponsePropertiesList = null)
         {
             var formResponseDetail = new FormResponseDetail
             {
@@ -67,7 +87,49 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 PageIds = formResponseProperties.PageIds
             };
 
+            if (pageResponsePropertiesList != null && pageResponsePropertiesList.Count > 0)
+            {
+                foreach (var pageResponseProperties in pageResponsePropertiesList)
+                {
+                    formResponseDetail.AddPageResponseDetail(pageResponseProperties.ToPageResponseDetail(formResponseDetail));
+                }
+            }
+
             return formResponseDetail;
         }
+
+		public static FormResponseProperties ToFormResponseProperties(FormResponseDetail formResponseDetail)
+		{
+			var formResponseProperties = new FormResponseProperties
+			{
+				GlobalRecordID = formResponseDetail.GlobalRecordID,
+
+				FormId = formResponseDetail.FormId,
+				FormName = formResponseDetail.FormName,
+				RecStatus = formResponseDetail.RecStatus,
+				RelateParentId = formResponseDetail.RelateParentResponseId,
+				FirstSaveLogonName = formResponseDetail.FirstSaveLogonName,
+				LastSaveLogonName = formResponseDetail.LastSaveLogonName,
+				FirstSaveTime = formResponseDetail.FirstSaveTime,
+				LastSaveTime = formResponseDetail.LastSaveTime,
+
+				UserId = formResponseDetail.LastActiveUserId,
+				IsRelatedView = formResponseDetail.IsRelatedView,
+				IsDraftMode = formResponseDetail.IsDraftMode,
+				PageIds = formResponseDetail.PageIds
+			};
+			return formResponseProperties;
+		}
+
+		public static PageResponseProperties ToPageResponseProperties(this PageResponseDetail pageResponseDetail)
+		{
+			var pageResponseProperties = new PageResponseProperties
+			{
+				GlobalRecordID = pageResponseDetail.GlobalRecordID,
+				PageId = pageResponseDetail.PageId,
+				ResponseQA = pageResponseDetail.ResponseQA
+			};
+			return pageResponseProperties;
+		}
     }
 }

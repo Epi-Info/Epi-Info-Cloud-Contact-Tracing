@@ -13,7 +13,6 @@ namespace Epi.Cloud.DataEntryServices.Model
             PageResponsePropertiesList = new List<PageResponseProperties>();
         }
 
-        public HierarchicalDocumentResponseProperties ParentResponse { get; set; }
         public List<HierarchicalDocumentResponseProperties> ChildResponseList { get; set; }
         public FormResponseProperties FormResponseProperties { get; set; }
         public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
