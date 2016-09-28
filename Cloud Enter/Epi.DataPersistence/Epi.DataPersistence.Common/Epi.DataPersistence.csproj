@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31FB19A9-9591-4202-8619-E6EC618FCA73}</ProjectGuid>
+    <ProjectGuid>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.Cloud.Common</RootNamespace>
-    <AssemblyName>Epi.Cloud.Common</AssemblyName>
+    <RootNamespace>Epi.DataPersistence.Common</RootNamespace>
+    <AssemblyName>Epi.DataPersistence.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,15 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -47,38 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CaseInsesitiveEqualityComparer.cs" />
-    <Compile Include="Configuration\ConfigurationHelper.cs" />
-    <Compile Include="Configuration\DependencyHelper.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
-    <Compile Include="EntityObjects\FormResponseDetailMethods.cs" />
-    <Compile Include="EntityObjects\PageResponseDetail.cs" />
-    <Compile Include="EntityObjects\SurveyResponse.cs" />
-    <Compile Include="EntityObjects\FormResponseDetail.cs" />
-    <Compile Include="Metadata\AbridgedFieldInfo.cs" />
-    <Compile Include="Metadata\FieldAttributes.cs" />
-    <Compile Include="Metadata\FieldDataType.cs" />
-    <Compile Include="Metadata\FieldDigest.cs" />
-    <Compile Include="Metadata\FieldMetadata.cs" />
-    <Compile Include="Metadata\FieldType.cs" />
-    <Compile Include="Metadata\FormDigest.cs" />
-    <Compile Include="Metadata\Interfaces\IAbridgedFieldInfo.cs" />
-    <Compile Include="Metadata\Interfaces\IProjectMetadataProvider.cs" />
-    <Compile Include="Metadata\MetadataAccessor.cs" />
-    <Compile Include="Metadata\NullableExtensions.cs" />
-    <Compile Include="Metadata\PageDigest.cs" />
-    <Compile Include="Metadata\ProjectExtensions.cs" />
-    <Compile Include="Metadata\ProjectTemplateMetadata.cs" />
-    <Compile Include="Metadata\XmlAttributeExtensions.cs" />
+    <Compile Include="DataStructures\FormResponseDetail.cs" />
+    <Compile Include="DataStructures\FormResponseDetailMethods.cs" />
+    <Compile Include="DataStructures\PageResponseDetail.cs" />
+    <Compile Include="DataStructures\SurveyResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RetryStrategies.cs" />
-    <Compile Include="Utilities\StringCompressor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <ProjectReference Include="..\..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+      <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
+      <Name>Epi.FormMetadata</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
