@@ -43,11 +43,11 @@ namespace Epi.Web.MVC
 
             var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
-            var surveyDocumentDBFacade = new Epi.Cloud.DataEntryServices.Facade.SurveyDocumentDBFacade(projectMetadataProvider);
+            var surveyDocumentDBFacade = new Epi.Cloud.DataEntryServices.Facade.DocumentDBSurveyPersistenceFacade(projectMetadataProvider);
 
             container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterInstance<Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade>(surveyDocumentDBFacade);
+            container.RegisterInstance<Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade>(surveyDocumentDBFacade);
 
             container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
             container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();

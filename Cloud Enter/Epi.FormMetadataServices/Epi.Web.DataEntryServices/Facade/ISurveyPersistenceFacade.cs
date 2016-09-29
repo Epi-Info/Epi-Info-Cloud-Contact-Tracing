@@ -9,7 +9,7 @@ using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
-	public interface ISurveyStoreDocumentDBFacade
+	public interface ISurveyPersistenceFacade
     {
         //Insert new record  survey response data in to table storage.
 
@@ -34,7 +34,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
-        FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
+        //FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
 
 		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId);
 

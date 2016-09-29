@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="DataStructures.cs" />
     <Compile Include="DocumentDBServices.cs" />
+    <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="SurveyResponseCRUD.cs" />
     <Compile Include="SurveyResponseCRUD.Indexing.cs" />
     <Compile Include="SurveyResponseCRUD.QueryHelpers.cs" />

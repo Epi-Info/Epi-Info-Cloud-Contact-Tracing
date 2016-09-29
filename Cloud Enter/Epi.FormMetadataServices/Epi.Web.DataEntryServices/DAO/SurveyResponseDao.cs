@@ -23,10 +23,10 @@ namespace Epi.Cloud.DataEntryServices.DAO
     /// </summary> 
     public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
     {
-        Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade _surveyDocumentDBStoreFacade;
+        Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade _surveyDocumentDBStoreFacade;
 
         public SurveyResponseDao(IProjectMetadataProvider projectMetadataProvider,
-                                 Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade surveyDocumentDBStoreFacade)
+                                 Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade surveyDocumentDBStoreFacade)
         {
             ProjectMetadataProvider = projectMetadataProvider;
             _surveyDocumentDBStoreFacade = surveyDocumentDBStoreFacade;

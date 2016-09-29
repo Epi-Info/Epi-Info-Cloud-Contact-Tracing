@@ -28,7 +28,7 @@ namespace Epi.Web.MVC.Controllers
 	[Authorize]
 	public class SurveyController : BaseSurveyController
 	{
-		private readonly ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+		private readonly ISurveyPersistenceFacade _isurveyDocumentDBStoreFacade;
 		private readonly ISecurityFacade _isecurityFacade;
 
 		private IEnumerable<AbridgedFieldInfo> _pageFields;
@@ -42,7 +42,7 @@ namespace Epi.Web.MVC.Controllers
 		public SurveyController(ISurveyFacade isurveyFacade, 
 								ISecurityFacade isecurityFacade,
 								IProjectMetadataProvider projectMetadataProvider,
-								ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade)
+								ISurveyPersistenceFacade isurveyDocumentDBStoreFacade)
 		{
 			_isurveyFacade = isurveyFacade;
 			_isecurityFacade = isecurityFacade;

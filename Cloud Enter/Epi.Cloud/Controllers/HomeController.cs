@@ -30,7 +30,7 @@ namespace Epi.Web.MVC.Controllers
 	{
 		private readonly ISecurityFacade _isecurityFacade;
 		private readonly Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
-		private readonly Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+		private readonly Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade _isurveyDocumentDBStoreFacade;
 		private readonly ISurveyResponseDao _surveyResponseDao;
 
 		private IEnumerable<AbridgedFieldInfo> _pageFields;
@@ -44,7 +44,7 @@ namespace Epi.Web.MVC.Controllers
 							  Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade,
 							  Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider projectMetadataProvider,
 							  Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices,
-							  Epi.Cloud.DataEntryServices.Facade.ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade,
+							  Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade isurveyDocumentDBStoreFacade,
 							  ISurveyResponseDao surveyResponseDao)
 		{
 			_isurveyFacade = isurveyFacade;

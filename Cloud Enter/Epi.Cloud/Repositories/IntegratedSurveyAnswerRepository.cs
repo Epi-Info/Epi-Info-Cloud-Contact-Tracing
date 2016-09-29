@@ -17,10 +17,10 @@ namespace Epi.Web.MVC.Repositories
     {
         private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
         private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
-        private ISurveyStoreDocumentDBFacade _isurveyDocumentDBStoreFacade;
+        private ISurveyPersistenceFacade _isurveyDocumentDBStoreFacade;
         public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService,
                                                 Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService,
-                                                ISurveyStoreDocumentDBFacade isurveyDocumentDBStoreFacade)
+                                                ISurveyPersistenceFacade isurveyDocumentDBStoreFacade)
         {
             _iDataService = iDataService;
             _dataEntryService = dataEntryService;

@@ -19,9 +19,9 @@ using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
-	public class SurveyDocumentDBFacade : MetadataAccessor, ISurveyStoreDocumentDBFacade
+	public class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
 	{
-		public SurveyDocumentDBFacade(IProjectMetadataProvider projectMetadataProvider)
+		public DocumentDBSurveyPersistenceFacade(IProjectMetadataProvider projectMetadataProvider)
 		{
 			ProjectMetadataProvider = projectMetadataProvider;
 		}
@@ -117,21 +117,21 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		#endregion
 
-		public FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> fields)
-		{
-			FormsHierarchyDTO formHierarchyDTO = new FormsHierarchyDTO();
-			var childRecords = _surveyResponse.GetAllResponsesWithFieldNames(fields, relateParentId);
-			formHierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
-			foreach (var item in childRecords)
-			{
-				SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-				surveyAnswer.ResponseId = item.ResponseId.ToString();
-				surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-				formHierarchyDTO.ResponseIds.Add(surveyAnswer);
-			}
+		//public FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> fields)
+		//{
+		//	FormsHierarchyDTO formHierarchyDTO = new FormsHierarchyDTO();
+		//	var childRecords = _surveyResponse.GetAllResponsesWithFieldNames(fields, relateParentId);
+		//	formHierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
+		//	foreach (var item in childRecords)
+		//	{
+		//		SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
+		//		surveyAnswer.ResponseId = item.ResponseId.ToString();
+		//		surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
+		//		formHierarchyDTO.ResponseIds.Add(surveyAnswer);
+		//	}
 		  
-			return formHierarchyDTO;
-		}
+		//	return formHierarchyDTO;
+		//}
 
 		#region Save FormParentProperties
 		/// <summary>

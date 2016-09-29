@@ -19,9 +19,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
     /// </summary>
     public class SurveyInfoDao : MetadataAccessor, ISurveyInfoDao
     {
-        private readonly ISurveyStoreDocumentDBFacade _surveyStoreDocumentDBFacade;
+        private readonly ISurveyPersistenceFacade _surveyStoreDocumentDBFacade;
 
-        public SurveyInfoDao(ISurveyStoreDocumentDBFacade surveyStoreDocumentDBFacade)
+        public SurveyInfoDao(ISurveyPersistenceFacade surveyStoreDocumentDBFacade)
         {
             _surveyStoreDocumentDBFacade = surveyStoreDocumentDBFacade;
         }
