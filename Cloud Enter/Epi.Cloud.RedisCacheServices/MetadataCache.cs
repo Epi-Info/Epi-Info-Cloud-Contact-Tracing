@@ -4,6 +4,7 @@ using Epi.Cloud.Common.Metadata;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.CacheServices
 {

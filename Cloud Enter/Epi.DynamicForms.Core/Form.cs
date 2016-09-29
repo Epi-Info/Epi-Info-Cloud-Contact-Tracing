@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
-using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.Common.Metadata.Interfaces;
+using Epi.DataPersistence.DataStructures;
+using Epi.FormMetadata.DataStructures.Interfaces;
 using MvcDynamicForms.Fields;
 using MvcDynamicForms.Utilities;
 
 namespace MvcDynamicForms
 {
-    /// <summary>
-    /// Represents an html input form that can be dynamically rendered at runtime.
-    /// </summary>
-    [Serializable]
+	/// <summary>
+	/// Represents an html input form that can be dynamically rendered at runtime.
+	/// </summary>
+	[Serializable]
     [ModelBinder(typeof(DynamicFormModelBinder))]
     public class Form
     {

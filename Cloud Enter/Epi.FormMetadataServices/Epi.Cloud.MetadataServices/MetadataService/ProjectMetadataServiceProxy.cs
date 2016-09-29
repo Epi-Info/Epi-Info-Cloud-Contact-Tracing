@@ -1,7 +1,7 @@
 ﻿using Epi.Cloud.MetadataServices.ProxiesService.Interface;
 using System.Threading.Tasks;
 using static Epi.Cloud.MetadataServices.DataTypes.Constants;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.MetadataServices.ProxiesService
 {

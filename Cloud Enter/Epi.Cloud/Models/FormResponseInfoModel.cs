@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Models

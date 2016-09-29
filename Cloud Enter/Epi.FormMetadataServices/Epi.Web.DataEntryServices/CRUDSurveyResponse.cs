@@ -8,6 +8,7 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;

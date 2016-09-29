@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.EF;
-
+using Epi.DataPersistence.DataStructures;
 using SurveyResponseBO = Epi.Web.Enter.Common.BusinessObject.SurveyResponseBO;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class SurveyResponseExtensions
     {
-        public static SurveyResponseBO ToSurveyResponseBO(this Epi.Cloud.Common.EntityObjects.SurveyResponse surveyResponse, User user = null, int lastActiveUseerId = -1)
+        public static SurveyResponseBO ToSurveyResponseBO(this SurveyResponse surveyResponse, Web.EF.User user = null, int lastActiveUseerId = -1)
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             if (surveyResponseBO != null)
@@ -44,7 +43,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return surveyResponseBO;
         }
 
-        public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<Epi.Cloud.Common.EntityObjects.SurveyResponse> surveyResponses)
+        public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<SurveyResponse> surveyResponses)
         {
             List<SurveyResponseBO> surveyResponseBOList = surveyResponses.Select(surveyResponse => surveyResponse.ToSurveyResponseBO()).ToList();
             return surveyResponseBOList;

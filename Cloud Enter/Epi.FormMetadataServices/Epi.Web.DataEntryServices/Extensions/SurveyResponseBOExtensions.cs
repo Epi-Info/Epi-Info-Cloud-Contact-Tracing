@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {
@@ -42,9 +43,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return surveyResponseBOList.Select(bo => bo.ToSurveyAnswerDTO()).ToList();
         }
 
-        public static Epi.Web.EF.SurveyResponse ToSurveyResponse(this SurveyResponseBO surveyResponseBO, int orgId = -1)
+        public static SurveyResponse ToSurveyResponse(this SurveyResponseBO surveyResponseBO, int orgId = -1)
         {
-            var surveyResponse = new Epi.Web.EF.SurveyResponse();
+            var surveyResponse = new SurveyResponse();
             Guid relateParentId = Guid.Empty;
             if (!string.IsNullOrEmpty(surveyResponseBO.RelateParentId))
             {

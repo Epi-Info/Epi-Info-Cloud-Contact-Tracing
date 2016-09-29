@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.Cloud.Common.Metadata.Interfaces;
+using Epi.FormMetadata.Constants;
+using Epi.FormMetadata.DataStructures;
+using Epi.FormMetadata.DataStructures.Interfaces;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -63,7 +65,7 @@ namespace Epi.Cloud.Common.Metadata
             return MapFieldMetadataToFieldAttributes(fields, formCheckcode);
         }
 
-        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Common.Metadata.Field[] fields, string formCheckcode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Field[] fields, string formCheckcode)
         {
             var sourceTableFields = fields.Where(f => f.SourceTableValues != null).ToArray();
             var results = fields.Select(f => new FieldAttributes

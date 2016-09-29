@@ -5,6 +5,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.BLL
 {

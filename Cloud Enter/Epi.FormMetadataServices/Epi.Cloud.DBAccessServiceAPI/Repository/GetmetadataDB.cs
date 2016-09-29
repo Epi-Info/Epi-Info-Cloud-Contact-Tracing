@@ -1,8 +1,7 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
-using System.Web.Configuration;
 using Epi.Cloud.SqlServer;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.DBAccessService.Repository
 {

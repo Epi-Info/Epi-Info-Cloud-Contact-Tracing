@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.Interfaces.MetadataInterfaces
 {

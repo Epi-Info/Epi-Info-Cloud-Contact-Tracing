@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using Epi.Cloud.DataEntryServices.Model;
+﻿using System.Collections.Generic;
 using Epi.DataPersistence.DataStructures;
+using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
-namespace Epi.Cloud.DataEntryServices.Extensions
+namespace Epi.DataPersistence.Extensions
 {
     public static class DocumentDBExtensions
     {
-        public static PageResponseDetail ToPageResponseDetail(this Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail)
         {
             return pageResponseProperties.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName);
         }
 
-        public static PageResponseDetail ToPageResponseDetail(this Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties pageResponseProperties, string formId, string formName)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, string formId, string formName)
         {
             var pageResponseDetail = new PageResponseDetail
             {
@@ -25,7 +24,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return pageResponseDetail;
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this Epi.PersistenceServices.DocumentDB.DataStructures.HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
+        public static FormResponseDetail ToFormResponseDetail(this HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
             var formResponseProperties = hierarchicalDocumentResponseProperties.FormResponseProperties;
             var pageResponsePropertiesList = hierarchicalDocumentResponseProperties.PageResponsePropertiesList;
@@ -36,7 +35,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return formResponseDetail;
         }
 
-        private static void AddFormResponseDetailChildren(this FormResponseDetail formResponseDetail, Epi.PersistenceServices.DocumentDB.DataStructures.HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
+        private static void AddFormResponseDetailChildren(this FormResponseDetail formResponseDetail, HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
             foreach (var childHierarchicalDocumentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
             {
@@ -45,7 +44,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             }
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this Epi.PersistenceServices.DocumentDB.DataStructures.DocumentResponseProperties documentResponseProperties)
+        public static FormResponseDetail ToFormResponseDetail(this DocumentResponseProperties documentResponseProperties)
         {
             FormResponseDetail formResponseDetail = null;
 
@@ -66,7 +65,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return formResponseDetail;
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this Epi.PersistenceServices.DocumentDB.DataStructures.FormResponseProperties formResponseProperties, List<Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties> pageResponsePropertiesList = null)
+        public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties, List<PageResponseProperties> pageResponsePropertiesList = null)
         {
             var formResponseDetail = new FormResponseDetail
             {
@@ -101,9 +100,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             return formResponseDetail;
         }
 
-		public static Epi.PersistenceServices.DocumentDB.DataStructures.FormResponseProperties ToFormResponseProperties(FormResponseDetail formResponseDetail)
+		public static FormResponseProperties ToFormResponseProperties(FormResponseDetail formResponseDetail)
 		{
-			var formResponseProperties = new Epi.PersistenceServices.DocumentDB.DataStructures.FormResponseProperties
+			var formResponseProperties = new FormResponseProperties
 			{
 				GlobalRecordID = formResponseDetail.GlobalRecordID,
 
@@ -124,9 +123,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 			return formResponseProperties;
 		}
 
-		public static Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties ToPageResponseProperties(this PageResponseDetail pageResponseDetail)
+		public static PageResponseProperties ToPageResponseProperties(this PageResponseDetail pageResponseDetail)
 		{
-			var pageResponseProperties = new Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties
+			var pageResponseProperties = new PageResponseProperties
 			{
 				GlobalRecordID = pageResponseDetail.GlobalRecordID,
 				PageId = pageResponseDetail.PageId,

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Web.Security;
 using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.MVC.Utility
 {

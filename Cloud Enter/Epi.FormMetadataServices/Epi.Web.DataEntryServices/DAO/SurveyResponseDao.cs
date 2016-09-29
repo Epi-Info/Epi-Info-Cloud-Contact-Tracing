@@ -6,14 +6,15 @@ using Epi.Cloud.DataEntryServices.Helpers;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Cloud.DataEntryServices.Extensions;
-using Epi.Cloud.DataEntryServices.Extensions;
 
 
-using SurveyResponse = Epi.Cloud.Common.EntityObjects.SurveyResponse;
+//using SurveyResponse = Epi.Cloud.Common.EntityObjects.SurveyResponse;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Metadata;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.DTO;
+using Epi.FormMetadata.DataStructures;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -361,7 +362,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 //TODO Implement for DocumentDB
                 var response = _surveyDocumentDBStoreFacade.InsertChildResponseAsync(surveyResponseBO);
-
+				var result = response.Result;
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
                 //    SurveyResponse SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);

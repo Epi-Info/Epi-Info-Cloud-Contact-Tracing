@@ -7,9 +7,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class FormExtensions
     {
-        public static PageResponseProperties ToPageResponseProperties(this Form form, string responseId)
+        public static Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties ToPageResponseProperties(this Form form, string responseId)
         {
-            PageResponseProperties pageResponseProperties = new PageResponseProperties
+			Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties pageResponseProperties = new Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties
             {
                 GlobalRecordID = responseId,
                 PageId = Convert.ToInt32(form.PageId)

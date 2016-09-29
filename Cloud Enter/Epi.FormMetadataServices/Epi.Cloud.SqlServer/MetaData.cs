@@ -2,11 +2,11 @@
 using System.Linq;
 using Epi.Data.EF;
 using System.Data;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
-using Epi.Cloud.Common.Configuration;
+using Epi.Common.Configuration;
 
 namespace Epi.Cloud.SqlServer
 {
@@ -35,9 +35,9 @@ namespace Epi.Cloud.SqlServer
             }
         }
 
-        public Common.Metadata.Template GetProjectTemplateMetadata(string projectId)
+        public Epi.FormMetadata.DataStructures.Template GetProjectTemplateMetadata(string projectId)
         {
-            var template = new Common.Metadata.Template();
+            var template = new Epi.FormMetadata.DataStructures.Template();
 
             using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
             {
@@ -55,7 +55,7 @@ namespace Epi.Cloud.SqlServer
 
                     foreach (var projElement in dbInfoResult)
                     {
-                        var projMetaDataInfo = new Common.Metadata.Project();
+                        var projMetaDataInfo = new Epi.FormMetadata.DataStructures.Project();
                         projMetaDataInfo.Id = projElement.ProjectId.ToString();
                         projMetaDataInfo.Name = projElement.ProjectName;
                         projMetaDataInfo.Location = projElement.ProjectLocation;
@@ -154,7 +154,7 @@ namespace Epi.Cloud.SqlServer
                                      };
 
 
-                        var lstViewMetadata = new List<Common.Metadata.View>();
+                        var lstViewMetadata = new List<Epi.FormMetadata.DataStructures.View>();
 
                         var lstGetViews = result.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToArray();
 
@@ -175,7 +175,7 @@ namespace Epi.Cloud.SqlServer
 
                         foreach (var viewProp in viewProperties)
                         {
-                            var view = new Common.Metadata.View();
+                            var view = new Epi.FormMetadata.DataStructures.View();
                             view.ViewId = viewProp.ViewId;
                             view.Name = viewProp.ViewName;
                             view.IsRelatedView = viewProp.IsRelatedView;
@@ -213,10 +213,10 @@ namespace Epi.Cloud.SqlServer
                         var lstGetPages = result.GroupBy(u => new { u.ViewId, u.PageId }).Select(group => group.ToList()).ToList();
 
                         var sourceTableNames = new List<SourceTableInfo>();
-                        var lstPageMetadata = new List<Common.Metadata.Page>();
+                        var lstPageMetadata = new List<Epi.FormMetadata.DataStructures.Page>();
                         foreach (var element in lstGetPages)
                         {
-                            var metapage = new Common.Metadata.Page();
+                            var metapage = new Epi.FormMetadata.DataStructures.Page();
                             foreach (var pageEle in element)
                             {
                                 metapage.PageId = pageEle.PageId;

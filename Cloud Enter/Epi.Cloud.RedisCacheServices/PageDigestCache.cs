@@ -1,5 +1,5 @@
 ﻿using System;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 using Newtonsoft.Json;
 
 namespace Epi.Cloud.CacheServices

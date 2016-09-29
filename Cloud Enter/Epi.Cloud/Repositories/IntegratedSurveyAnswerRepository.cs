@@ -8,6 +8,8 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Facade;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.FormMetadata.DataStructures;
+using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.Web.MVC.Repositories
 {

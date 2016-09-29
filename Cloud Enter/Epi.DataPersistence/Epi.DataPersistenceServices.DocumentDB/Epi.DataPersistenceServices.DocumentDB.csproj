@@ -60,8 +60,8 @@
       <HintPath>..\..\packages\WindowsAzure.Storage.7.2.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -80,15 +80,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStructures.cs" />
+    <Compile Include="DocumentDBServices.cs" />
     <Compile Include="SurveyResponseCRUD.cs" />
     <Compile Include="SurveyResponseCRUD.Indexing.cs" />
     <Compile Include="SurveyResponseCRUD.QueryHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31FB19A9-9591-4202-8619-E6EC618FCA73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.Common\Epi.Common.csproj">
       <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
       <Name>Epi.Common</Name>
@@ -97,9 +105,9 @@
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.DataPersistence.Common\Epi.DataPersistence.csproj">
-      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
-      <Name>Epi.DataPersistence</Name>
+    <ProjectReference Include="..\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

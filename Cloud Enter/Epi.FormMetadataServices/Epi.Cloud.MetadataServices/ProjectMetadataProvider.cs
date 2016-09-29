@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using System.Linq;
 using Epi.Cloud.MetadataServices.ProxiesService;
-using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.CacheServices;
 using System.Collections.Generic;
 using Epi.Cloud.Common;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using System;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.MetadataServices
 {

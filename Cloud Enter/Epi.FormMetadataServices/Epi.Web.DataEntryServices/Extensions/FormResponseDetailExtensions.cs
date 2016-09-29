@@ -1,4 +1,4 @@
-﻿using Epi.Cloud.Common.EntityObjects;
+﻿using Epi.DataPersistence.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
 
 namespace Epi.Cloud.DataEntryServices.Extensions

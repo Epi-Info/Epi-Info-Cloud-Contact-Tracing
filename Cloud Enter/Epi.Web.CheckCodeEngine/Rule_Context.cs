@@ -3,19 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using com.calitha.goldparser;
-using System.Linq;
-
-/*
-using Epi.Collections;
-using Epi.Data;
-using Epi.Data.Services;
-using Epi.Fields;
-using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;*/
 using Epi.Core.EnterInterpreter.Rules;
 using EpiInfo.Plugin;
-using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Common.Metadata.Interfaces;
+using Epi.FormMetadata.DataStructures.Interfaces;
 
 namespace Epi.Core.EnterInterpreter
 {

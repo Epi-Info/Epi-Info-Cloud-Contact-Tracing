@@ -1,4 +1,5 @@
 ﻿using System;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.Common.EntityObjects
 {

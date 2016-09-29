@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -204,7 +205,7 @@ namespace Epi.Cloud.Common.Metadata
         public PageDigest GetPageDigestByPageId(string formId, int pageId)
         {
             var pageDigests = PageDigests.Single(d => d[0].FormId == formId);
-            var pageDigest = pageDigests.Single(d => d.PageId == pageId);
+            var pageDigest = pageId > 0 ? pageDigests.Single(d => d.PageId == pageId) : pageDigests.FirstOrDefault();
             return pageDigest;
         }
 

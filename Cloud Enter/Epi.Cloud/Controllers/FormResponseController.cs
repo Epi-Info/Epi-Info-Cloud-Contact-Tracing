@@ -13,10 +13,11 @@ using System.Text;
 using Epi.Web.MVC.Constants;
 using System.Reflection;
 using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.Common.EntityObjects;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MVC.Extensions;
+using Epi.FormMetadata.DataStructures;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.MVC.Controllers
 {

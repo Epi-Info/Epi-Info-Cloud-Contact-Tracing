@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.Enter.Common.DTO
 {

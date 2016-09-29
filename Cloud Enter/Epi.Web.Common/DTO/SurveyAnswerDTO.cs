@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Epi.Cloud.Common.EntityObjects;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.Enter.Common.DTO
 {

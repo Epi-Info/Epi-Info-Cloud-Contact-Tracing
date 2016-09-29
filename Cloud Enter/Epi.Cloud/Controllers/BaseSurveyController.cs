@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Constants;

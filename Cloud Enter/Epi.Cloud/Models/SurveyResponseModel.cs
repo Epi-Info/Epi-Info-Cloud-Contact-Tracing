@@ -1,5 +1,5 @@
 ﻿using System;
-using Epi.Cloud.Common.EntityObjects;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.MVC.Models
 {

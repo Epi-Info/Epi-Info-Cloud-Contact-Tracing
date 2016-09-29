@@ -78,11 +78,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.Interfaces", "Epi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.FormMetadata", "Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj", "{8AD159A9-1A48-4593-91E0-23AE415B0BB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistence", "Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.csproj", "{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistence.Common", "Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj", "{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistenceServices.DocumentDB", "Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj", "{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Common", "Epi.Common\Epi.Common.csproj", "{F4C81667-C307-4DB4-A727-FD42342799CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistence", "Epi.DataPersistence\Epi.DataPersistence\Epi.DataPersistence.csproj", "{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -809,6 +811,36 @@ Global
 		{F4C81667-C307-4DB4-A727-FD42342799CF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F4C81667-C307-4DB4-A727-FD42342799CF}.Release|x86.ActiveCfg = Release|Any CPU
 		{F4C81667-C307-4DB4-A727-FD42342799CF}.Release|x86.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|x86.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Linux|x86.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{42B79D8B-0388-4134-AA9B-3DC2C1CD23DF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

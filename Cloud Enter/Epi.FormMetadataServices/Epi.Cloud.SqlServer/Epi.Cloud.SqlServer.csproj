@@ -155,8 +155,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -271,9 +271,17 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Common\Epi.Common.csproj">
+      <Project>{F4C81667-C307-4DB4-A727-FD42342799CF}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.Compatibility\Epi.Core\Epi.Core.csproj">
       <Project>{ebd2b961-a952-4670-96ca-50baa12c7f29}</Project>
       <Name>Epi.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+      <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
+      <Name>Epi.FormMetadata</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.EF\Epi.Cloud.EF.csproj">
       <Project>{7801686b-f77f-48b7-b36b-cfefcc2ad796}</Project>

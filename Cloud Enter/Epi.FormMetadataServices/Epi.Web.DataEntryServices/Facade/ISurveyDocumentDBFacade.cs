@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.DataPersistence.DataStructures;
+using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
-    public interface ISurveyStoreDocumentDBFacade
+	public interface ISurveyStoreDocumentDBFacade
     {
         //Insert new record  survey response data in to table storage.
 

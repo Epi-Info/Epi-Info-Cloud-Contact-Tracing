@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Epi.Cloud.Common.EntityObjects;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {

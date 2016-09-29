@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using Epi.Web.Enter.Common.Message;
 using System.Xml.XPath;
-using Epi.Cloud.Common.EntityObjects;
-using Epi.Cloud.Common.Metadata;
+using Epi.DataPersistence.DataStructures;
+using Epi.FormMetadata.DataStructures;
+using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.Enter.Common.Xml
 {
-    public class SurveyResponseXML
+	public class SurveyResponseXML
     {
 
         Dictionary<string, string> ResponseDetailList = new Dictionary<string, string>();

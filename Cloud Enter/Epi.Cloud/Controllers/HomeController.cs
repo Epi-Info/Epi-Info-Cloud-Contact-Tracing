@@ -21,6 +21,7 @@ using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MVC.Extensions;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -631,38 +632,23 @@ namespace Epi.Web.MVC.Controllers
 				formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
 				formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
 
-				//Test
 				SurveyAnswerResponse formResponseList = _isurveyFacade.GetFormResponseList(formResponseReq);
-				SurveyAnswerCriteria criteria = new SurveyAnswerCriteria();
-				criteria.SurveyId = surveyId;
-				criteria.UserId = userId;
-				criteria.PageNumber = 1;
-				criteria.IsShareable = false;
-				criteria.GridPageSize = 20;
-				criteria.SurveyQAList = formResponseReq.Criteria.SurveyQAList;
-				criteria.FieldDigestList = formResponseReq.Criteria.FieldDigestList;
 
-				var entityDaoFactory = new EF.EntityDaoFactory();
-
-				var formResponseListFromDdb = _surveyResponseDao.GetFormResponseByFormId(criteria);
-
-
-				formResponseList.SurveyResponseList = new List<SurveyAnswerDTO>();
-				foreach (var item in formResponseListFromDdb)
-				{
-					SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-					surveyAnswer.IsLocked = false;
-					surveyAnswer.ResponseId = item.ResponseId;
-					//var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
-					//if (pageResponseDetail == null)
-					//{
-					//    pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
-					//    surveyAnswer.ResponseDetail.AddPageResponseDetail(pageResponseDetail);
-					//}
-					//pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
-					surveyAnswer.ResponseDetail = item.ResponseDetail;
-					formResponseList.SurveyResponseList.Add(surveyAnswer);
-				}
+				//foreach (var item in formResponseList.SurveyResponseList)
+				//{
+				//	SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
+				//	surveyAnswer.IsLocked = false;
+				//	surveyAnswer.ResponseId = item.ResponseId;
+				//	//var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
+				//	//if (pageResponseDetail == null)
+				//	//{
+				//	//    pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
+				//	//    surveyAnswer.ResponseDetail.AddPageResponseDetail(pageResponseDetail);
+				//	//}
+				//	//pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
+				//	surveyAnswer.ResponseDetail = item.ResponseDetail;
+				//	formResponseList.SurveyResponseList.Add(surveyAnswer);
+				//}
 
 				//var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
 				//Setting Resposes List

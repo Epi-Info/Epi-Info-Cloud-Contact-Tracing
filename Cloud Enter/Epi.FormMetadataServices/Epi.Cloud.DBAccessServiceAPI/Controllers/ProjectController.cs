@@ -2,7 +2,7 @@
 using Epi.Cloud.DBAccessService.Proxy.Interfaces;
 using Epi.Cloud.DBAccessService.Handlers;
 using Epi.Cloud.DBAccessService.Services;
-using Epi.Cloud.Common.Metadata;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.DBAccessService.Controllers
 {
