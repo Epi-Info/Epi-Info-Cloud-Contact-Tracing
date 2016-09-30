@@ -17,7 +17,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
         bool UpdateResponseStatus(string responseId, int recordStatus);
 
-        int GetFormResponseCount(string formId);
+		int GetFormResponseCount(string formId, bool includeDeletedRecords = false);
 
         FormResponseDetail GetFormResponseState(string responseId);
 
@@ -34,9 +34,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
-        //FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
+		//FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
 
-		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId);
-
+		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
 	}
 }

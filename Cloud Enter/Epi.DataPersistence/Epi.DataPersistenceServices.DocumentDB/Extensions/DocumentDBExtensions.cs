@@ -56,8 +56,11 @@ namespace Epi.DataPersistence.Extensions
                 {
                     foreach (var pageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
-                        var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail);
-                        formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+						if (pageResponseProperties != null)
+						{
+							var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail);
+							formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+						}
                     }
                 }
             }

@@ -50,15 +50,15 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return expression;
 		}
 
-		private static string And_Expression(string left, string relational_operator, object right, bool skip = false)
+		private static string And_Expression(string left, string relational_operator, object right, bool excludeExpression = false)
 		{
-			var expression = skip ? string.Empty : string.Format("AND ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
+			var expression = excludeExpression ? string.Empty : string.Format("AND ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
 			return expression;
 		}
 
-		private static string Or_Expression(string left, string relational_operator, object right, bool skip = false)
+		private static string Or_Expression(string left, string relational_operator, object right, bool excludeExpression = false)
 		{
-			var expression = skip ? string.Empty : string.Format("OR ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
+			var expression = excludeExpression ? string.Empty : string.Format("OR ?.{0} {1} {2}", left, relational_operator, "'" + right.ToString() + "'");
 			return expression;
 		}
 	}

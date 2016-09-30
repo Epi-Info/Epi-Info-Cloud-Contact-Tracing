@@ -388,7 +388,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 Guid Id = new Guid(surveyResponseBO.ResponseId);
 
-                FormDigest formDigest = GetFormDigest(surveyResponseBO.ResponseDetail.FormId);
+                FormDigest formDigest = GetFormDigest(surveyResponseBO.SurveyId);
 
                 //Save Properties to Document DB
 
@@ -1749,16 +1749,13 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string rootResponseId)
         {
-            // TODO: DocumentDB implementation required
-            List<SurveyResponseBO> result = new List<SurveyResponseBO>();
+            List<SurveyResponseBO> result = null;
 
             List<string> list = new List<string>();
             try
             {
-                // TODO: temporary until the DocumentDB implementation is complete.
-                var formResponseDetail = _surveyDocumentDBStoreFacade.GetFormResponseByResponseId(rootResponseId);
-                var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
-                result.Add(surveyResponseBO);
+                var formResponseDetail = _surveyDocumentDBStoreFacade.GetHierarchialResponsesByResponseId(rootResponseId);
+                result = formResponseDetail.FlattenHierarchy().Select(d => d.ToSurveyResponseBO()).ToList();
 
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{

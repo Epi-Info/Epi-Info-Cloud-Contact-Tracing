@@ -164,6 +164,7 @@ namespace Epi.Web.MVC.Models
                 SurveyAnswerModel.DateUpdated = Obj.DateUpdated;
                 SurveyAnswerModel.DateCompleted = Obj.DateCompleted;
                 SurveyAnswerModel.Status = Obj.Status;
+				SurveyAnswerModel.ResponseDetail = Obj.ResponseDetail;
                 SurveyAnswerModel.XML = Obj.XML;
                 SurveyAnswerModel.ParentRecordId = Obj.ParentRecordId;
                 SurveyAnswerModel.RelateParentId = Obj.RelateParentId;

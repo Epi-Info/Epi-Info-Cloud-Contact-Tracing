@@ -57,7 +57,7 @@ namespace Epi.Web.MVC.Controllers
 		/// <returns></returns>
 
 		[HttpGet]
-		public ActionResult Index(string responseId, int pageNumber = 1, string edit = "", string formValuesHasChanged = "", string surveyId = "")
+		public ActionResult Index(string responseId, int PageNumber = 1, string EDIT = "", string FormValuesHasChanged = "", string surveyId = "")
 		{
 			try
 			{
@@ -72,7 +72,7 @@ namespace Epi.Web.MVC.Controllers
 					bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
 				}
 
-				var surveyModel = GetIndex(responseId, pageNumber, IsEditMode, surveyId, isAndroid);
+				var surveyModel = GetIndex(responseId, PageNumber, IsEditMode, surveyId, isAndroid);
 
 				string DateFormat = currentCulture.DateTimeFormat.ShortDatePattern;
 				DateFormat = DateFormat.Remove(DateFormat.IndexOf("y"), 2);

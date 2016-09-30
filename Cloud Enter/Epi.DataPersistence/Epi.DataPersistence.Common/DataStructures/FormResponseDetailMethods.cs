@@ -44,6 +44,27 @@ namespace Epi.DataPersistence.DataStructures
 			ChildFormResponseDetailList.Add(childFormResponseDetail);
 		}
 
+		public List<FormResponseDetail> FlattenHierarchy()
+		{
+			var flattenedHierarchy = new List<FormResponseDetail>();
+			flattenedHierarchy.Add(this);
+			foreach (var child in ChildFormResponseDetailList)
+			{
+				FlattenChildHierarchy(child, flattenedHierarchy);
+			}
+			return flattenedHierarchy;
+		}
+
+		private List<FormResponseDetail> FlattenChildHierarchy(FormResponseDetail childFormResponseDetail, List<FormResponseDetail> flattenedHierarchy)
+		{
+			flattenedHierarchy.Add(childFormResponseDetail);
+			foreach (var child in childFormResponseDetail.ChildFormResponseDetailList)
+			{
+				FlattenChildHierarchy(child, flattenedHierarchy);
+			}
+			return flattenedHierarchy;
+		}
+
 		public Dictionary<string, string> FlattenedResponseQA(Func<string, string> keyModifier = null)
 		{
 			var flattenedResponseQA = new Dictionary<string, string>();

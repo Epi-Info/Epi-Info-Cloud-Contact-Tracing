@@ -38,9 +38,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return _surveyResponse.DoChildrenExistForResponseId(responseId);
 		}
 
-		public int GetFormResponseCount(string formId)
+		public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
 		{
-			return _surveyResponse.GetFormResponseCount(formId);
+			return _surveyResponse.GetFormResponseCount(formId, includeDeletedRecords);
 		}
 
 		public FormResponseDetail GetFormResponseState(string responseId)
@@ -237,9 +237,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 
 		#region Get Forminfo for DataConsisitencyServiceAPI
-		public FormResponseDetail GetHierarchialResponsesByResponseId(string responseId)
+		public FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false)
 		{
-			var hierarchicalDocumentResponseProperties = _surveyResponse.GetHierarchialResponsesByResponseId(responseId);
+			var hierarchicalDocumentResponseProperties = _surveyResponse.GetHierarchialResponsesByResponseId(responseId, includeDeletedRecords);
 			var hierarchialFormResponseDetail = hierarchicalDocumentResponseProperties.ToFormResponseDetail();
 			return hierarchialFormResponseDetail;
 		}

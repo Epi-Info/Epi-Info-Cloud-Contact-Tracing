@@ -502,24 +502,27 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// </summary>
 		/// <param name="responseId"></param>
 		/// <returns></returns>
-		public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId)
+		public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false)
 		{
 			HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
 				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
-				var documentResponseProperties = ReadAllResponsesByExpression(Expression("GlobalRecordID", EQ, responseId), client, formInfoCollectionUri).SingleOrDefault();
-				hierarchicalDocumentResponseProperties.FormResponseProperties = documentResponseProperties.FormResponseProperties;
-				hierarchicalDocumentResponseProperties.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
-				hierarchicalDocumentResponseProperties.ChildResponseList = GetChildResponses(responseId, client, formInfoCollectionUri);
+				var documentResponseProperties = ReadAllResponsesByExpression(Expression("GlobalRecordID", EQ, responseId), client, formInfoCollectionUri, includeDeletedRecords).SingleOrDefault();
+				if (documentResponseProperties != null)
+				{
+					hierarchicalDocumentResponseProperties.FormResponseProperties = documentResponseProperties.FormResponseProperties;
+					hierarchicalDocumentResponseProperties.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
+					hierarchicalDocumentResponseProperties.ChildResponseList = GetChildResponses(responseId, client, formInfoCollectionUri);
+				}
 				return hierarchicalDocumentResponseProperties;
 			}
 		}
 
-		private List<HierarchicalDocumentResponseProperties> GetChildResponses(string parentResponseId, DocumentClient client, Uri formInfoCollectionUri)
+		private List<HierarchicalDocumentResponseProperties> GetChildResponses(string parentResponseId, DocumentClient client, Uri formInfoCollectionUri, bool includeDeletedRecords = false)
 		{
 			var childResponseList = new List<HierarchicalDocumentResponseProperties>();
-			var documentResponsePropertiesList = ReadAllResponsesByExpression(Expression("RelateParentId", EQ, parentResponseId), client, formInfoCollectionUri);
+			var documentResponsePropertiesList = ReadAllResponsesByExpression(Expression("RelateParentId", EQ, parentResponseId), client, formInfoCollectionUri, includeDeletedRecords);
 			foreach (var documentResponseProperties in documentResponsePropertiesList)
 			{
 				var childResponse = new HierarchicalDocumentResponseProperties();
@@ -527,12 +530,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
 				childResponse.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
 				childResponseList.Add(childResponse);
 
-				childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.GlobalRecordID, client, formInfoCollectionUri);
+				childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.GlobalRecordID, client, formInfoCollectionUri, includeDeletedRecords);
 			}
 			return childResponseList;
 		}
 
-		private List<DocumentResponseProperties> ReadAllResponsesByExpression(string expression, DocumentClient client, Uri formInfoCollectionUri, string collectionAlias = "c")
+		private List<DocumentResponseProperties> ReadAllResponsesByExpression(string expression, DocumentClient client, Uri formInfoCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
 		{
 			var documentResponsePropertiesList = new List<DocumentResponseProperties>();
 			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
@@ -541,11 +544,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
 				var query = client.CreateDocumentQuery(formInfoCollectionUri,
 					SELECT + AssembleSelect(collectionAlias, "*")
 					+ FROM + collectionAlias
-					+ WHERE + AssembleWhere(collectionAlias, expression)
+					+ WHERE + AssembleWhere(collectionAlias, expression, And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
 					, queryOptions);
 
 				documentResponsePropertiesList = query.AsEnumerable()
-					.Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi,  })
+					.Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi })
 					.ToList();
 
 				// Iterate through the list of form responses to get the associated page responses.
@@ -577,6 +580,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					string collectionName = formResponseProperties.FormName + pageId;
 					var pageCollectionUri = GetCollectionUri(client, collectionName);
 					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, client, pageCollectionUri);
+					if (pageResponseProperties != null)
+					{
+						pageResponsePropertiesList.Add(pageResponseProperties);
+					}
 				}
 			}
 
@@ -772,18 +779,18 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return null;
 		}
 
-		public int GetFormResponseCount(string formId)
+		public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
 		{
 
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
 				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
-				var formResponseCount = GetFormResponseCount(client, formInfoCollectionUri, formId);
+				var formResponseCount = GetFormResponseCount(client, formInfoCollectionUri, formId, includeDeletedRecords);
 				return formResponseCount;
 			}
 		}
 
-		private int GetFormResponseCount(DocumentClient client, Uri formInfoCollectionUri, string formId)
+		private int GetFormResponseCount(DocumentClient client, Uri formInfoCollectionUri, string formId, bool includeDeletedRecords)
 		{
 			try
 			{
@@ -796,7 +803,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					+ FROM + FormInfoCollectionName
 					+ WHERE
 					+ AssembleWhere(FormInfoCollectionName, Expression("FormId", EQ, formId),
-												And_Expression("RecStatus", NE, RecordStatus.Deleted))
+												And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
 					, queryOptions);
 				var formResponseCount = query.AsEnumerable().Count();
 				return formResponseCount;
