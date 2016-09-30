@@ -7,14 +7,14 @@ using Microsoft.ServiceBus;
 
 namespace Epi.Cloud.ServiceBus
 {
-    public class CURDServiceBus
+    public class ServiceBusCRUD
     {
 
         public TopicClient topicClient;
-        public string TopicName = "FormInfoTopic";
+        public string TopicName = "ResponseInfoTopic";
         const Int16 maxTrials = 4;
 
-        public CURDServiceBus()
+        public ServiceBusCRUD()
         {
             if (!VerifyConfiguration())
             {
@@ -56,10 +56,10 @@ namespace Epi.Cloud.ServiceBus
                 throw;
             }
         }
-        #endregion
+		#endregion
 
-        #region Send message to Topic
-        public bool SendMessagesToTopic(string id, string formProperties)
+		#region Send message to Topic
+		public bool SendMessagesToTopic(string id, string responseProperties)
         {
             var connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
 
@@ -67,7 +67,7 @@ namespace Epi.Cloud.ServiceBus
             CreateTopic();
 
             //Send message
-            SendMessages(id, formProperties);
+            SendMessages(id, responseProperties);
 
             return false;
 

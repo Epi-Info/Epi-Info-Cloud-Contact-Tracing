@@ -7,12 +7,6 @@ using Epi.Common.Configuration;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
-//using Epi.Cloud.Common.Configuration;
-//using Epi.Cloud.Common.Constants;
-//using Epi.Cloud.Common.EntityObjects;
-//using Epi.Cloud.Common.Metadata;
-//using Epi.Cloud.DataEntryServices.Model;
-//using Epi.PersistenceServices.CommonStructures;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -165,6 +159,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 							formResponseProperties.RecStatus = responseStatus;
 							formResponseProperties.UserId = userId;
 							var response = client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+							//var result = response.Result;
 							isSuccessful = true;
 						}
 					}
@@ -501,8 +496,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// GetHierarchialResponsesByResponseId
 		/// </summary>
 		/// <param name="responseId"></param>
+		/// <param name="includeDeletedRecords"></param>
 		/// <returns></returns>
-		public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false)
+		public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
 		{
 			HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))

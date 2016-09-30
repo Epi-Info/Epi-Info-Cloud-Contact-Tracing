@@ -1,5 +1,6 @@
 ﻿using System;
 using Epi.Cloud.Interfaces.DataInterface;
+using Epi.Cloud.Common.Constants;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
 using System.Collections.Generic;
@@ -280,22 +281,17 @@ namespace Epi.Cloud.DataEntryServices
 			{
 				try
 				{
-					throw new NotImplementedException("DeleteResponse");
-					//    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
-					//    {
-					//        try
-					//        {
-					//            ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
-					//            ResponseXmlBO.ResponseId = item.ResponseId;
-					//            Implementation.DeleteResponseXml(ResponseXmlBO);
-					//            Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
+					foreach (var item in surveyAnswerRequest.SurveyAnswerList)
+					{
+						try
+						{
+							_surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved);
+						}
+						catch
+						{
 
-					//        }
-					//        catch
-					//        {
-
-					//        }
-					//    }
+						}
+					}
 				}
 				catch (Exception ex)
 				{

@@ -16,6 +16,8 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using MvcDynamicForms;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
+using Epi.Cloud.ServiceBus;
+using Newtonsoft.Json;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -51,7 +53,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		public bool UpdateResponseStatus(string responseId, int responseStatus)
 		{
-			return _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
+			var result = _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
+			NotifyConsistencyService(responseId, responseStatus);
+			return result;
 		}
 
 		#region Insert Survey Response
@@ -152,37 +156,25 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			}
 
 			var formName = GetFormDigest(request.Criteria.SurveyId).FormName;
-			FormResponseProperties formData = new FormResponseProperties()
+			var now = DateTime.UtcNow;
+			FormResponseProperties formResponseProperties = new FormResponseProperties
 			{
 				RecStatus = request.SurveyAnswerList[0].Status,
 				FormId = request.Criteria.SurveyId,
 				FormName = formName,
 				GlobalRecordID = request.SurveyAnswerList[0].ResponseId,
 				RelateParentId = request.SurveyAnswerList[0].RelateParentId,
-				//IsRelatedView = ProjectMetaData.IsRelatedView,
-				FirstSaveTime = DateTime.UtcNow,
-				LastSaveTime = DateTime.UtcNow,
+				IsRelatedView = request.SurveyAnswerList[0].RelateParentId != null,
+				FirstSaveTime = now,
+				LastSaveTime = now,
 				UserId = request.Criteria.UserId,
 				IsDraftMode = request.Criteria.IsDraftMode
 			};
 
 			documentResponseProperties.FormResponseProperties = new FormResponseProperties();
-			documentResponseProperties.FormResponseProperties = formData;
+			documentResponseProperties.FormResponseProperties = formResponseProperties;
 			documentResponseProperties.GlobalRecordID = request.RequestId; 
 			var saveTask = _surveyResponse.SaveResponseAsync(documentResponseProperties);
-			
-			//if(_FormData.RecStatus==2)
-			//{
-			//  //  var test = ReadFormInfo(_storeForm.GlobalRecordID);
-			//    string Query= "Select * from FormInfo where FormInfo.GlobalRecordID ='"+_FormData.GlobalRecordID +"' and FormInfo.RecStatus!=0" ;
-			//    var FormInfo =(FormProperties)_surveyResponse.ReadDataFromCollection(_FormData.GlobalRecordID, "FormInfo", Query);
-			//    CURDServiceBus crudServicBus = new CURDServiceBus();
-			//    if(FormInfo!=null)
-			//    {
-			//        //send form info to ServiceBus
-			//        crudServicBus.SendMessagesToTopic(FormInfo.Id, JsonConvert.SerializeObject(FormInfo));
-			//    }
-			//}
 			return true;
 		}
 
@@ -258,5 +250,25 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return survey;
 		}
 		#endregion
+
+		#region Notify Consistency Service
+		public void NotifyConsistencyService(string responseId, int responseStatus)
+		{
+			if (responseStatus == RecordStatus.Deleted || responseStatus == RecordStatus.Saved)
+			{
+				try
+				{
+					var serviceBusCRUD = new ServiceBusCRUD();
+					//send notification to ServiceBus
+					serviceBusCRUD.SendMessagesToTopic(responseId, responseId);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine(ex.ToString());
+				}
+			}
+		}
+		#endregion NotifyConsistencyService
+
 	}
 }

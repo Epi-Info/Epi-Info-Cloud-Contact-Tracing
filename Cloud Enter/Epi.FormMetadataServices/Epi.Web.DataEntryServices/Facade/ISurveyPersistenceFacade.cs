@@ -37,5 +37,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		//FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
 
 		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
+
+		void NotifyConsistencyService(string responseId, int responseStatus);
 	}
 }

@@ -37,7 +37,7 @@
       <HintPath>..\..\Epi.Cloud.Common\bin\Debug\Epi.Cloud.Common.dll</HintPath>
     </Reference>
     <Reference Include="Epi.Cloud.ServiceBus">
-      <HintPath>..\..\Epi.Cloud.ServiceBus\bin\Debug\Epi.Cloud.ServiceBus.dll</HintPath>
+      <HintPath>..\..\Epi.Cloud.DataConsistencyServicesAPI\bin\Epi.Cloud.ServiceBus.dll</HintPath>
     </Reference>
     <Reference Include="Epi.Web.Enter.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

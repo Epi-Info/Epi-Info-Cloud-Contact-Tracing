@@ -7,10 +7,10 @@ namespace Epi.Cloud.DataConsistencyServicesAPI.Facade
 {
     public class ServiceBusFacade
     {
-        bool ReadFormdetailsFromServiceBus()
+        bool ReadFormDetailsFromServiceBus()
         {
-            CURDServiceBus crudServiceBus = new CURDServiceBus();
-            crudServiceBus.ReceiveMessages();
+            ServiceBusCRUD serviceBusCRUD = new ServiceBusCRUD();
+            serviceBusCRUD.ReceiveMessages();
 
             return true;
         }

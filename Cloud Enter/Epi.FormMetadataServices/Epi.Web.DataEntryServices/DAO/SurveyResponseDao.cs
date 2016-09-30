@@ -1755,13 +1755,11 @@ namespace Epi.Cloud.DataEntryServices.DAO
             try
             {
                 var formResponseDetail = _surveyDocumentDBStoreFacade.GetHierarchialResponsesByResponseId(rootResponseId);
-                result = formResponseDetail.FlattenHierarchy().Select(d => d.ToSurveyResponseBO()).ToList();
 
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    IQueryable<Epi.Web.EF.SurveyResponse> Query = Context.SurveyResponses.Where(x => x.ResponseId == Id).Epi.Web.Enter.Common.Extension.Traverse(x => x.SurveyResponse1).AsQueryable();
-                //    var result2 = Epi.Web.EF.Mapper.Map(Query);
-                //}
+				//var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
+				//var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);
+
+				result = formResponseDetail.FlattenHierarchy().Select(d => d.ToSurveyResponseBO()).ToList();
             }
             catch (Exception ex)
             {
@@ -2007,22 +2005,21 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public void UpdateRecordStatus(string responseId, int status)
         {
-            // TODO: DocumentDB implementation required
-            Guid Id = new Guid(responseId);
+			_surveyDocumentDBStoreFacade.UpdateResponseStatus(responseId, status);
 
-            //using (var Context = DataObjectFactory.CreateContext())
-            //{
-            //    var Query = from response in Context.SurveyResponses
-            //                where response.ResponseId == Id
-            //                select response;
-            //    if (Query.Count() > 0)
-            //    {
-            //        var DataRow = Query.Single();
-            //        DataRow.StatusId = Status;
-            //        Context.SaveChanges();
-            //    }
-            //}
-        }
+			//using (var Context = DataObjectFactory.CreateContext())
+			//{
+			//    var Query = from response in Context.SurveyResponses
+			//                where response.ResponseId == Id
+			//                select response;
+			//    if (Query.Count() > 0)
+			//    {
+			//        var DataRow = Query.Single();
+			//        DataRow.StatusId = Status;
+			//        Context.SaveChanges();
+			//    }
+			//}
+		}
 
 
 
