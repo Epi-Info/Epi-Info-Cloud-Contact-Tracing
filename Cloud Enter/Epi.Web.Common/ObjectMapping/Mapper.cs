@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Constants;
@@ -449,7 +450,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 SurveyId = SurveyId,
                 ResponseId = ResponseId,
                 DateCreated = DateTime.Now,
-                Status = 2,
+                Status = RecordStatus.Saved,
                 IsDraftMode = false,
                 ParentId = ParentRecordId,
                 RelateParentId = ParentRecordId,

@@ -4,6 +4,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using System.Configuration;
 using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.BLL
 {
@@ -569,9 +570,9 @@ namespace Epi.Web.BLL
 
         public void UpdateRecordStatus(SurveyResponseBO SurveyResponseBO)
         {
-            if (SurveyResponseBO.Status == 1)
+            if (SurveyResponseBO.Status == RecordStatus.InProcess)
             {
-                SurveyResponseBO.Status = 2;
+                SurveyResponseBO.Status = RecordStatus.Saved;
             }
 
             _surveyResponseDao.UpdateRecordStatus(SurveyResponseBO);

@@ -118,7 +118,7 @@ namespace Epi.Web.MVC.Controllers
             }
 
 			//Update Status
-			UpdateStatus(responseId, relateSurveyId, RecordStatus.InProcess);
+			UpdateStatus(responseId, relateSurveyId, RecordStatus.InProcess, RecordStatusChangeReason.OpenForEdit);
 
 			//Mobile Section
 			bool IsMobileDevice = false;
@@ -207,20 +207,21 @@ namespace Epi.Web.MVC.Controllers
 			}
 		}
 
-		private void UpdateStatus(string ResponseId, string SurveyId, int StatusId)
+		private void UpdateStatus(string ResponseId, string SurveyId, int StatusId, RecordStatusChangeReason statusChangeReason)
 		{
 			SurveyAnswerRequest SurveyAnswerRequest = new SurveyAnswerRequest();
 			SurveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(ResponseId);
 
 			SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = ResponseId });
 			SurveyAnswerRequest.Criteria.StatusId = StatusId;
+			SurveyAnswerRequest.Criteria.StatusChangeReason = statusChangeReason;
+
 			SurveyAnswerRequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			if (!string.IsNullOrEmpty(SurveyId))
 			{
 				SurveyAnswerRequest.Criteria.SurveyId = SurveyId;
 			}
 
-			// TODO: update for DocumentDB
 			_isurveyFacade.UpdateResponseStatus(SurveyAnswerRequest);
 		}
 
@@ -421,7 +422,7 @@ namespace Epi.Web.MVC.Controllers
 							{
 								SetRelateSession(responseId, PageNumber);
 
-								this.UpdateStatus(surveyAnswerModel.ResponseId, surveyAnswerModel.SurveyId, 2);
+								this.UpdateStatus(surveyAnswerModel.ResponseId, surveyAnswerModel.SurveyId, RecordStatus.Saved, RecordStatusChangeReason.ReadResponse);
 
 								int RequestedViewId = int.Parse(this.Request.Form["Requested_View_Id"]);
 								// return RedirectToRoute(new { Controller = "RelatedResponse", Action = "Index", SurveyId = form.SurveyInfo.SurveyId, ViewId = RequestedViewId, ResponseId = responseId, CurrentPage = 1 });
@@ -481,7 +482,7 @@ namespace Epi.Web.MVC.Controllers
 											return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseid = ValidateValues.Key, PageNumber = ValidateValues.Value.ToString() });
 										}
 									}
-									this.UpdateStatus(form.ResponseId, form.SurveyInfo.SurveyId, 2);
+									this.UpdateStatus(form.ResponseId, form.SurveyInfo.SurveyId, RecordStatus.Saved, RecordStatusChangeReason.SubmitOrClose);
 
 									SurveyAnswerRequest SurveyAnswerRequest1 = new SurveyAnswerRequest();
 									SurveyAnswerRequest1.Action = "DeleteResponse";
@@ -910,12 +911,10 @@ namespace Epi.Web.MVC.Controllers
 		[HttpGet]
 		public ActionResult LogOut()
 		{
-			this.UpdateStatus(Session[SessionKeys.RootResponseId].ToString(), null, 1);
+			this.UpdateStatus(Session[SessionKeys.RootResponseId].ToString(), null, RecordStatus.InProcess, RecordStatusChangeReason.Logout);
 			FormsAuthentication.SignOut();
 			this.Session.Clear();
 			return RedirectToAction("Index", "Login");
-
-
 		}
 
 		[HttpPost]
@@ -952,7 +951,7 @@ namespace Epi.Web.MVC.Controllers
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
 			string ChildResponseId = CreateResponse(SurveyId, ResponseId);
-			this.UpdateStatus(ResponseId, SurveyId, 2);
+			this.UpdateStatus(ResponseId, SurveyId, RecordStatus.Saved, RecordStatusChangeReason.NewChild);
 
 			return ChildResponseId;
 		}

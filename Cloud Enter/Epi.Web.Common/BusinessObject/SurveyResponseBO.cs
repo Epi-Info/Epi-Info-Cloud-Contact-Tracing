@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Web.Enter.Common.BusinessObject
@@ -10,7 +11,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public SurveyResponseBO()
         {
             this.DateUpdated = DateTime.Now;
-            this.Status = 1;
+            this.Status = RecordStatus.InProcess;
         }
 
         public string ResponseId { get; set; }

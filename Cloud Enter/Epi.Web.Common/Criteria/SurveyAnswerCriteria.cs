@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
 
@@ -120,5 +121,6 @@ namespace Epi.Web.Enter.Common.Criteria
 
         public IDictionary<string, string> SurveyQAList { get; set; }
         public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
-    }
+		public RecordStatusChangeReason StatusChangeReason { get; set; }
+	}
 }
