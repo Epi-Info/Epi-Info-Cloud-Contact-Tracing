@@ -2282,7 +2282,7 @@ namespace Epi.Web.EF
 
         }
 
-        public void UpdateRecordStatus(string ResponseId, int Status)
+        public void UpdateRecordStatus(string ResponseId, int Status, RecordStatusChangeReason reasonForStatusChange)
         {
 
             Guid Id = new Guid(ResponseId);

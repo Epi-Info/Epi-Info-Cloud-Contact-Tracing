@@ -285,7 +285,7 @@ namespace Epi.Cloud.DataEntryServices
 					{
 						try
 						{
-							_surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved);
+							_surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
 						}
 						catch
 						{

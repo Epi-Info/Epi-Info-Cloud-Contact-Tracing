@@ -51,10 +51,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			return formResponseProperties != null ? formResponseProperties.ToFormResponseDetail() : null;
 		}
 
-		public bool UpdateResponseStatus(string responseId, int responseStatus)
+		public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
 		{
 			var result = _surveyResponse.UpdateResponseStatus(responseId, responseStatus);
-			NotifyConsistencyService(responseId, responseStatus);
+			NotifyConsistencyService(responseId, responseStatus, reasonForStatusChange);
 			return result;
 		}
 
@@ -252,7 +252,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#endregion
 
 		#region Notify Consistency Service
-		public void NotifyConsistencyService(string responseId, int responseStatus)
+		public void NotifyConsistencyService(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
 		{
 			if (responseStatus == RecordStatus.Deleted || responseStatus == RecordStatus.Saved)
 			{
@@ -268,6 +268,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 				}
 			}
 		}
+
 		#endregion NotifyConsistencyService
 
 	}

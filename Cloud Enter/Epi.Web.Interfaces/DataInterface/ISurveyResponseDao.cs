@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Epi.Cloud.Common.Constants;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
 
@@ -112,7 +113,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
 
         bool HasResponse(SurveyAnswerCriteria criteria);
         void UpdateRecordStatus(SurveyResponseBO surveyResponseBO);
-        void UpdateRecordStatus(string responseId, int status);
+        void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange);
         int GetDataAccessRule(string formId, int userId);
     }
 }

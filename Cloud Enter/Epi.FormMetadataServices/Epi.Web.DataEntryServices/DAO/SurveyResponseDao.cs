@@ -15,6 +15,7 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.DTO;
 using Epi.FormMetadata.DataStructures;
 using Epi.DataPersistence.DataStructures;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -2003,9 +2004,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
             //}
         }
 
-        public void UpdateRecordStatus(string responseId, int status)
+        public void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange)
         {
-			_surveyDocumentDBStoreFacade.UpdateResponseStatus(responseId, status);
+			_surveyDocumentDBStoreFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
 
 			//using (var Context = DataObjectFactory.CreateContext())
 			//{
@@ -2106,7 +2107,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                _surveyDocumentDBStoreFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status);
+                _surveyDocumentDBStoreFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, RecordStatusChangeReason.Unknown);
             }
             catch (Exception ex)
             {

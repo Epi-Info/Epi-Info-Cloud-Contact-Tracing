@@ -3,6 +3,8 @@
 	public enum RecordStatusChangeReason
 	{
 		Unknown = 0,
+		DeleteResponse,
+		DeleteInEditMode,
 		OpenForEdit,
 		SubmitOrClose,
 		ReadResponse,

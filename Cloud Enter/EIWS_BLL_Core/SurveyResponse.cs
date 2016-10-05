@@ -330,7 +330,7 @@ namespace Epi.Web.BLL
                 _surveyResponseDao.DeleteResponse(ResponseBO);
                 if (Status > -1)
                 {
-                    _surveyResponseDao.UpdateRecordStatus(ResponseBO.ResponseId, Status);
+                    _surveyResponseDao.UpdateRecordStatus(ResponseBO.ResponseId, Status, RecordStatusChangeReason.DeleteInEditMode);
                 }
             }
 
@@ -462,10 +462,10 @@ namespace Epi.Web.BLL
 
             _surveyResponseDao.DeleteResponse(ResponseXmlBO);
         }
-        public void UpdateRecordStatus(string ResponseId, int StatusId)
+        public void UpdateRecordStatus(string ResponseId, int StatusId, RecordStatusChangeReason reasonForStatusChange)
         {
 
-            _surveyResponseDao.UpdateRecordStatus(ResponseId, StatusId);
+            _surveyResponseDao.UpdateRecordStatus(ResponseId, StatusId, reasonForStatusChange);
         }
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
         {

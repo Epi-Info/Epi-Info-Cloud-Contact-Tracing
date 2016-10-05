@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Epi.Cloud.Common.Constants;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
@@ -15,7 +16,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
         bool DoChildrenExistForResponseId(string responseId);
 
-        bool UpdateResponseStatus(string responseId, int recordStatus);
+        bool UpdateResponseStatus(string responseId, int recordStatus, RecordStatusChangeReason reasonForStatusChange);
 
 		int GetFormResponseCount(string formId, bool includeDeletedRecords = false);
 
@@ -38,6 +39,6 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
 
-		void NotifyConsistencyService(string responseId, int responseStatus);
+		void NotifyConsistencyService(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange);
 	}
 }

@@ -10,6 +10,7 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Interfaces.DataInterface;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.WCF.SurveyService
 {
@@ -368,7 +369,7 @@ namespace Epi.Web.WCF.SurveyService
                                     //  1) Delete the record from ResponseXml table.
                                     //  2) Update Record status in the SurveyResponse table which fires database triggers.
                                     Implementation.DeleteResponseXml(ResponseXmlBO);
-                                    Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
+                                    Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), RecordStatus.Saved, RecordStatusChangeReason.DeleteInEditMode);
 
                                     //This will handle the status update and the swapping of the Xml
                                     // but for this scenario I will keep the status unchanged 
@@ -459,7 +460,7 @@ namespace Epi.Web.WCF.SurveyService
                                 ResponseBO ResponseXmlBO = new ResponseBO();
                                 ResponseXmlBO.ResponseId = item.ResponseId;
                                 Implementation.DeleteResponseXml(ResponseXmlBO);
-                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2);
+                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
 
                             }
                             catch

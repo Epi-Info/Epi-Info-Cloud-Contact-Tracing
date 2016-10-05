@@ -8,6 +8,7 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Cloud.DataEntryServices.Extensions;
 
 using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -430,9 +431,9 @@ namespace Epi.Cloud.DataEntryServices
 #endif
         }
 
-        public void UpdateRecordStatus(string ResponseId, int StatusId)
+        public void UpdateRecordStatus(string responseId, int statusId, RecordStatusChangeReason reasonForStatusChange)
         {
-            _surveyResponseDao.UpdateRecordStatus(ResponseId, StatusId);
+            _surveyResponseDao.UpdateRecordStatus(responseId, statusId, reasonForStatusChange);
         }
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
         {
