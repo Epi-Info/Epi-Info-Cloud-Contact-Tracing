@@ -301,25 +301,14 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                FormDigest formDigest = GetFormDigest(surveyResponseBO.ResponseDetail.FormId);
+                //FormDigest formDigest = GetFormDigest(surveyResponseBO.ResponseDetail.FormId);
 
                 //Save Properties to Document DB
 
                 var surveyAnswerRequest = new SurveyAnswerRequest();
-
-                surveyAnswerRequest.Criteria = new SurveyAnswerCriteria();
-                surveyAnswerRequest.Criteria.SurveyId = formDigest.FormId;
-                surveyAnswerRequest.Criteria.UserId = surveyResponseBO.UserId;
-
-                var surveyAnswerDTO = new SurveyAnswerDTO();
-                surveyAnswerDTO.DateCreated = DateTime.UtcNow;
-                surveyAnswerDTO.ResponseId = surveyResponseBO.ResponseId;
-                surveyAnswerDTO.Status = surveyResponseBO.Status;
-
-                surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
-
-                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
-
+                surveyResponseBO.DateCreated = DateTime.UtcNow;
+                surveyResponseBO.DateUpdated = DateTime.UtcNow;
+                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(surveyResponseBO); 
 
                 #region Web Enter Implementation
                 //using (var Context = DataObjectFactory.CreateContext())
