@@ -101,7 +101,33 @@ namespace Epi.Web.MVC.Utility
 
             SetProviderSpecificProperties(form, _Height, _Width);
 
-            var responseQA = pageResponseDetail != null ? pageResponseDetail.ResponseQA : new Dictionary<string, string>(); 
+            var responseQA = pageResponseDetail != null ? pageResponseDetail.ResponseQA : new Dictionary<string, string>();
+
+            if (responseQA.Count == 0)
+            {
+                foreach (var page in surveyInfo.PageDigests)
+                {
+                    foreach (var field in page)
+                    {
+                        if (field.PageId == pageId)
+                        {
+                            responseQA = new Dictionary<string, string>();
+
+                            foreach (var fi in field.Fields)
+                            {
+                                if (fi.Value != null)
+                                {
+                                    responseQA.Add(fi.FieldName, fi.Value);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+
+
             AddFormFields(surveyInfo, pageId, responseQA, form, _Width, _Height, checkcode, javaScript);
 
             form.FormJavaScript = VariableDefinitions.ToString() + "\n" + javaScript.ToString();
@@ -123,7 +149,7 @@ namespace Epi.Web.MVC.Utility
             {
                 string fieldValue = null;
 
-                fieldValue = (responseQA.TryGetValue(fieldAttributes.FieldName.ToLower(), out fieldValue) ? fieldValue : string.Empty);
+                fieldValue = (responseQA.TryGetValue(fieldAttributes.FieldName, out fieldValue) ? fieldValue : string.Empty);
 
                 javaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.FieldName));
 

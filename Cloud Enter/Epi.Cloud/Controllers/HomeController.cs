@@ -30,7 +30,7 @@ namespace Epi.Web.MVC.Controllers
 	{
 		private readonly ISecurityFacade _isecurityFacade;
 		private readonly Epi.Cloud.CacheServices.IEpiCloudCache _iCacheServices;
-		private readonly Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade _isurveyDocumentDBStoreFacade;
+	 
 		private readonly ISurveyResponseDao _surveyResponseDao;
 
 		private IEnumerable<AbridgedFieldInfo> _pageFields;
@@ -44,14 +44,12 @@ namespace Epi.Web.MVC.Controllers
 							  Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade,
 							  Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider projectMetadataProvider,
 							  Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices,
-							  Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade isurveyDocumentDBStoreFacade,
 							  ISurveyResponseDao surveyResponseDao)
 		{
 			_isurveyFacade = isurveyFacade;
 			_isecurityFacade = isecurityFacade;
 			_projectMetadataProvider = projectMetadataProvider;
-			_iCacheServices = iCacheServices;
-			_isurveyDocumentDBStoreFacade = isurveyDocumentDBStoreFacade;
+			_iCacheServices = iCacheServices; 
 			_surveyResponseDao = surveyResponseDao;
 		}
 
@@ -499,8 +497,7 @@ namespace Epi.Web.MVC.Controllers
 			surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
 			SurveyAnswerResponse surveyAnswerResponse = _isurveyFacade.DeleteResponse(surveyAnswerRequest);
 			// Ananth
-			//surveyAnswerRequest.Criteria.IsDeleteMode = true;
-			//var response = _isurveyDocumentDBStoreFacade.SaveFormProperties(surveyAnswerRequest);
+			//surveyAnswerRequest.Criteria.IsDeleteMode = true; 
 			// End Ananth
 			
 			//Survey surveyInfo = new Survey();

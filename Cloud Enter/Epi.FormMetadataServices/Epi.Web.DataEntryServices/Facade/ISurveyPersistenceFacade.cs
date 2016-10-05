@@ -30,7 +30,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
         SurveyAnswerResponse DeleteResponse(string responseId, int userId);
 
-        bool SaveFormProperties(SurveyAnswerRequest request);
+        bool SaveFormProperties(SurveyResponseBO request);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);

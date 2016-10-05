@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}"
 	ProjectSection(SolutionItems) = preProject
@@ -91,9 +91,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.ServiceBus", "Epi.Cloud.ServiceBus\Epi.Cloud.ServiceBus.csproj", "{247F0154-3F6B-409B-BEBA-1BF9302D3B9E}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
 		Debug (Exclude EpiMap)|Mixed Platforms = Debug (Exclude EpiMap)|Mixed Platforms

@@ -139,6 +139,38 @@ namespace Epi.Web.MVC.Utility
             {
                 updatedFromResponseDetail.RequiredFieldsList = form.RequiredFieldsList;
             }
+
+            //  AssignList 
+            List<KeyValuePair<string, String>> FieldsList = new List<KeyValuePair<string, string>>();
+
+            FieldsList = GetHiddenFieldsList(form);
+            // form.AssignList = FieldsList;
+            if (FieldsList.Count > 0)
+            {
+                var pageList = form.SurveyInfo.PageDigests;
+                for (var i = 0; i < pageList.Length; i++)
+                {
+                    for (var j = 0; j < pageList[i].Length; j++)
+                    {
+                        var fields = pageList[i][j].Fields;
+                        foreach (var fieldx in fields)
+                        {
+
+                            foreach (var k in FieldsList)
+                            {
+                                if (fieldx.FieldName == k.Key)
+                                {
+                                    if (k.Value != null)
+                                        fieldx.Value = k.Value;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+
         }
 
         /// <summary>
@@ -149,8 +181,8 @@ namespace Epi.Web.MVC.Utility
         /// <param name="SurveyId"></param>
         /// <returns></returns>
         public static Epi.Web.Enter.Common.DTO.SurveyInfoDTO GetSurveyInfoDTO(SurveyInfoRequest surveyInfoRequest,
-                                                  ISurveyInfoRepository iSurveyInfoRepository,
-                                                  string SurveyId)
+                                                      ISurveyInfoRepository iSurveyInfoRepository,
+                                                      string SurveyId)
         {
             surveyInfoRequest.Criteria.SurveyIdList.Add(SurveyId);
             return iSurveyInfoRepository.GetSurveyInfo(surveyInfoRequest).SurveyInfoList[0];
