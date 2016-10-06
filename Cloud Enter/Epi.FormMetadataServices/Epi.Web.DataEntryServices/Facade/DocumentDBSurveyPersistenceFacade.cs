@@ -133,7 +133,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		//		surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
 		//		formHierarchyDTO.ResponseIds.Add(surveyAnswer);
 		//	}
-		  
+
 		//	return formHierarchyDTO;
 		//}
 
@@ -141,39 +141,37 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		/// <summary>
 		/// First time store ResonseId,RecStatus, and SurveyId in DocumentDB
 		/// </summary>
-		/// <param name="ProjectMetaData"></param>
-		/// <param name="Status"></param>
-		/// <param name="UserId"></param>
-		/// <param name="ResponseId"></param>
+		/// <param name="request"></param>
 		/// <returns></returns>
-		public bool SaveFormProperties(SurveyAnswerRequest request)
+		public bool SaveFormProperties(SurveyResponseBO request)
 		{
 
-			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties(); 
-			if(request.Criteria.IsDeleteMode)
-			{
-				request.SurveyAnswerList[0].Status = RecordStatus.Deleted;
-			}
+			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties();
+			//if(request.IsDeleteMode)
+			//{
+			//     request.SurveyAnswerList[0].Status = RecordStatus.Deleted;
+			//}
 
-			var formName = GetFormDigest(request.Criteria.SurveyId).FormName;
+			//var formName = GetFormDigest(request.Criteria.SurveyId).FormName;
+			var formName = GetFormDigest(request.SurveyId).FormName;
 			var now = DateTime.UtcNow;
 			FormResponseProperties formResponseProperties = new FormResponseProperties
 			{
-				RecStatus = request.SurveyAnswerList[0].Status,
-				FormId = request.Criteria.SurveyId,
+				RecStatus = request.Status,
+				FormId = request.SurveyId,
 				FormName = formName,
-				GlobalRecordID = request.SurveyAnswerList[0].ResponseId,
-				RelateParentId = request.SurveyAnswerList[0].RelateParentId,
-				IsRelatedView = request.SurveyAnswerList[0].RelateParentId != null,
+				GlobalRecordID = request.ResponseId,
+				RelateParentId = request.RelateParentId,
+				IsRelatedView = request.RelateParentId != null,
 				FirstSaveTime = now,
 				LastSaveTime = now,
-				UserId = request.Criteria.UserId,
-				IsDraftMode = request.Criteria.IsDraftMode
+				UserId = request.UserId,
+				IsDraftMode = request.IsDraftMode
 			};
 
 			documentResponseProperties.FormResponseProperties = new FormResponseProperties();
 			documentResponseProperties.FormResponseProperties = formResponseProperties;
-			documentResponseProperties.GlobalRecordID = request.RequestId; 
+			documentResponseProperties.GlobalRecordID = request.ResponseId;
 			var saveTask = _surveyResponse.SaveResponseAsync(documentResponseProperties);
 			return true;
 		}
