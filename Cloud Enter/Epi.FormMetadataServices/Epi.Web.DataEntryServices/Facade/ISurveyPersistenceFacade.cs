@@ -23,8 +23,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
         FormResponseDetail GetFormResponseState(string responseId);
 
         FormResponseDetail GetFormResponseByResponseId(string responseId);
-
+        Task<bool> InsertResponseAsync(MvcDynamicForms.Form form, SurveyResponseBO surveyResponseBO);
+#if false // Garry
         Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
+#endif
 
         Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO);
         PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);

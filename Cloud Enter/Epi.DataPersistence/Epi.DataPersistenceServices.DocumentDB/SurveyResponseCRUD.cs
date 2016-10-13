@@ -179,7 +179,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// Created instance of DocumentClient and Getting reference to database and Document collections
 		/// </summary>
 		///
-		public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties, FormDigest formDigest, int userId)
+		public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties, FormDigest formDigest)
 		{
 			try
 			{
@@ -200,6 +200,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					if (pageResponseProperties == null)
 					{
 						pageResponseProperties = documentResponseProperties.PageResponsePropertiesList[0];
+						pageResponseProperties.Id = responseId;
 					}
 					else
 					{
@@ -221,7 +222,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					}
 
 					var pageId = pageResponseProperties.PageId;
-					formResponseProperties.UserId = userId;
+					formResponseProperties.UserId = documentResponseProperties.UserId;
 					formResponseProperties.RecStatus = RecordStatus.InProcess;
 					if (!formResponseProperties.PageIds.Contains(pageResponseProperties.PageId))
 					{

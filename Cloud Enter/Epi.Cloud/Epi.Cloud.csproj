@@ -656,6 +656,10 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-1.6.min.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
+    <None Include="Properties\PublishProfiles\EICDCDev - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCDev - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCQA - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCQA - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICloudEnterDev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\EICloudEnterDev - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.2.3.intellisense.js" />

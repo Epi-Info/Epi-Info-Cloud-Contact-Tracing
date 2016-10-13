@@ -20,6 +20,7 @@ namespace Epi.FormMetadata.DataStructures
             if (fieldAttributes != null)
             {
                 FieldName = fieldAttributes.FieldName;
+				TrueCaseFieldName = fieldAttributes.TrueCaseFieldName;
                 FieldType = (FieldTypes)fieldAttributes.FieldType;
                 List = fieldAttributes.List;
                 IsReadOnly = FieldMetadata.ReadonlyFieldTypes.Contains((int)fieldAttributes.FieldType);
@@ -31,8 +32,9 @@ namespace Epi.FormMetadata.DataStructures
         {
             if (field != null)
             {
-                FieldName = field.Name;
-                FieldType = (FieldTypes)field.FieldTypeId;
+                FieldName = field.Name.ToLower();
+				TrueCaseFieldName = field.Name;
+				FieldType = (FieldTypes)field.FieldTypeId;
                 List = field.List;
                 IsReadOnly = FieldMetadata.ReadonlyFieldTypes.Contains(field.FieldTypeId) || (field.IsReadOnly.HasValue ? field.IsReadOnly.Value : false);
                 IsRequired = field.IsRequired.HasValue ? field.IsRequired.Value : false;
@@ -41,7 +43,9 @@ namespace Epi.FormMetadata.DataStructures
 
         [JsonProperty]
         public string FieldName { get; protected set; }
-        [JsonProperty]
+		[JsonProperty]
+		public string TrueCaseFieldName { get; protected set; }
+		[JsonProperty]
         public FieldTypes FieldType { get; protected set; }
         [JsonProperty]
         public string List { get; protected set; }

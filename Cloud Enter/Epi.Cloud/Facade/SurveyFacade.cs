@@ -271,7 +271,7 @@ namespace Epi.Web.MVC.Facade
             var formSetting = formSettingResponse.FormSetting;
             var fieldDigests = _projectMetadataProvider.GetFieldDigestsAsync(formId, formSetting.ColumnNameList.Values).Result;
             var reverseDictionary = formSetting.ColumnNameList.Select(t => new { t.Key, t.Value }).ToDictionary(t => t.Value, t => t.Key);
-            formSetting.ColumnDigestList = fieldDigests.Select(t => new { Key = reverseDictionary[t.FieldName], Digest = t }).ToDictionary(t => t.Key, t => t.Digest);
+            formSetting.ColumnDigestList = fieldDigests.Select(t => new { Key = reverseDictionary[t.TrueCaseFieldName], Digest = t }).ToDictionary(t => t.Key, t => t.Digest);
 
             return formSettingResponse;
 

@@ -20,25 +20,27 @@ namespace Epi.Cloud.DataConsistencyServicesAPI.Controllers
             return new ServiceResult<string>(_responseInfoServiceBus.GetResponseInfoMessageFromServiceBus(), this);
         }
 
-        //// GET: api/FormServiceBus/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+		//// GET: api/FormServiceBus/{responseId}
+		//public string Get(string id)
+		//{
+		//	var responseInfoService = new ResponseInfoService();
+		//	var formResponseDetailJson = responseInfoService.GetResponseInfoData(id);
+		//	return formResponseDetailJson;
+		//}
 
-        //// POST: api/FormServiceBus
-        //public void Post([FromBody]string value)
-        //{
-        //}
+		//// POST: api/FormServiceBus
+		//public void Post([FromBody]string value)
+		//{
+		//}
 
-        //// PUT: api/FormServiceBus/5
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
+		//// PUT: api/FormServiceBus/5
+		//public void Put(int id, [FromBody]string value)
+		//{
+		//}
 
-        //// DELETE: api/FormServiceBus/5
-        //public void Delete(int id)
-        //{
-        //}
-    }
+		//// DELETE: api/FormServiceBus/5
+		//public void Delete(int id)
+		//{
+		//}
+	}
 }

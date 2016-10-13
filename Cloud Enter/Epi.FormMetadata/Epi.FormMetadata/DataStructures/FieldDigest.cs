@@ -30,7 +30,9 @@ namespace Epi.FormMetadata.DataStructures
         public int Position { get; set; }
 
         public string FieldName { get { return Field.FieldName; } }
-        public FieldTypes FieldType { get { return Field.FieldType; } }
+		public string TrueCaseFieldName { get { return Field.TrueCaseFieldName; } }
+
+		public FieldTypes FieldType { get { return Field.FieldType; } }
         public string List { get { return Field.List; } }
         public bool IsReadOnly { get { return Field.IsReadOnly; } }
         public bool IsRequired { get { return Field.IsRequired; } }

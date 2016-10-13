@@ -59,6 +59,23 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		}
 
 		#region Insert Survey Response
+		public async Task<bool> InsertResponseAsync(Form form, SurveyResponseBO surveyResponseBO)
+		{
+			var formId = form.SurveyInfo.SurveyId;
+			var pageId = Convert.ToInt32(form.PageId);
+			var formDigest = GetFormDigest(formId);
+
+			DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
+			documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
+			documentResponseProperties.UserId = surveyResponseBO.UserId;
+			documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(surveyResponseBO.ResponseId));
+			bool isSuccessful = await _surveyResponse.InsertResponseAsync(documentResponseProperties, formDigest);
+			return isSuccessful;
+		}
+		#endregion
+
+		#region Insert Survey Response // Garry
+#if false
 		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
 		{
 			var formId = form.SurveyInfo.SurveyId;
@@ -67,11 +84,13 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 			DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
 			documentResponseProperties.GlobalRecordID = responseId;
+            documentResponseProperties.UserId = surveyResponseBO.UserId;
 			documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
 
 			bool isSuccessful = await _surveyResponse.InsertResponseAsync(documentResponseProperties, formDigest, userId);
 			return isSuccessful;
 		}
+#endif
 		#endregion
 
 		#region Insert Child Survey Response
@@ -188,7 +207,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		#region Get Survey Answer Response
 		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
-		{ 
+		{
 			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
 			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
@@ -205,7 +224,9 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			surveyAnswerDTO.RelateParentId = formDocumentDbEntity.FormResponseProperties.RelateParentId;
 			surveyAnswerDTO.LastActiveUserId = formDocumentDbEntity.FormResponseProperties.UserId;
 			surveyAnswerDTO.Status = RecordStatus.Saved;
-			surveyResponseList.Add(surveyAnswerDTO); 
+			surveyAnswerDTO.ReasonForStatusChange = RecordStatusChangeReason.Unknown;
+
+			surveyResponseList.Add(surveyAnswerDTO);
 			_surveyAnswerResponse.SurveyResponseList = surveyResponseList;
 			return _surveyAnswerResponse;
 		}
@@ -256,18 +277,23 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			{
 				try
 				{
-					var serviceBusCRUD = new ServiceBusCRUD();
-					//send notification to ServiceBus
-					serviceBusCRUD.SendMessagesToTopic(responseId, responseId);
+					switch (reasonForStatusChange)
+					{
+						case RecordStatusChangeReason.SubmitOrClose:
+
+							var serviceBusCRUD = new ServiceBusCRUD();
+							//send notification to ServiceBus
+							serviceBusCRUD.SendMessagesToTopic(responseId, responseId);
+							break;
+					}
 				}
 				catch (Exception ex)
 				{
 					Console.WriteLine(ex.ToString());
 				}
+
 			}
 		}
-
 		#endregion NotifyConsistencyService
-
 	}
 }

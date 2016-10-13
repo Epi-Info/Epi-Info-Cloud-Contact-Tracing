@@ -1,0 +1,48 @@
+﻿@model  IEnumerable < Epi.Web.MVC.Models.UserModel >
+  <table class="sortable">
+
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        @foreach (var user in Model){
+            <tr>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.Email</td>
+                <td>@user.IsActive</td>
+                <td>@user.Role</td>
+                <td>
+                <span >
+                    @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] == null)
+                    {
+                    @Html.ActionLink("Edit", "UserInfo", "AdminUser", new { userid = user.UserId, iseditmode = true , orgid = ViewBag.SelectedOrg }, null)	
+                    }
+                    @if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+                    {
+                        if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "FALSE")
+                        {
+                            @Html.ActionLink("Edit", "UserInfo", "AdminUser", new { userid = user.UserId, iseditmode = true, orgid = ViewBag.SelectedOrg }, null)
+                        }
+                        else if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+                        {
+                            // @Html.ActionLink("Edit", "UserInfo", "AdminUser", new { onclick = "javascript:return false;" })
+                            @Html.ActionLink("Edit", "UserInfo", "AdminUser", new { userid = user.UserId, iseditmode = true, orgid = ViewBag.SelectedOrg }, new { Class = "action", title = "Modify or change an existing user's information and organisation details." })
+                        }
+                    }
+                </span>
+                </td> 
+
+              
+            </tr>
+            }
+        </tbody>
+    </table>

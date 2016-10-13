@@ -227,8 +227,10 @@ namespace Epi.Cloud.DataEntryServices
         public bool InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO, SurveyInfoBO parentSurveyInfoBO, string relateParentId)
         {
             surveyResponseBO = surveyResponseBO.MergeIntoSurveyResponseBO(parentSurveyInfoBO, relateParentId);
-            _surveyResponseDao.InsertChildSurveyResponse(surveyResponseBO);
-            
+            //_surveyResponseDao.InsertChildSurveyResponse(surveyResponseBO);
+#region Ananth
+            _surveyResponseDao.InsertSurveyResponse(surveyResponseBO);
+#endregion Ananth
             return true;
         }
 

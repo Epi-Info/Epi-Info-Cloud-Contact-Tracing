@@ -7,6 +7,7 @@ using System.Web.Security;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.DataStructures;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -92,9 +93,8 @@ namespace Epi.Web.MVC.Utility
 
             var savedResponseDetail = surveyAnswerDTO.ResponseDetail;
 
-            if (!IsSubmited)
+			if (!IsSubmited)
             {
-
                 // 2 a. update the current survey answer request
                 surveyAnswerRequest.SurveyAnswerList = surveyAnswerResponse.SurveyResponseList;
 
@@ -103,7 +103,7 @@ namespace Epi.Web.MVC.Utility
 
                 FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, addRoot, form.CurrentPage, form.PageId);
 
-                surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
+				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
                 // 2 b. save the current survey response
                 surveyAnswerRequest.Action = Epi.Web.MVC.Constants.Constant.UPDATE;
 
@@ -112,7 +112,7 @@ namespace Epi.Web.MVC.Utility
                 PageResponseDetail currentPageResponseDetail = currentFormResponseDetail.GetPageResponseDetailByPageNumber(currentPageNumber);
                 if (addRoot == false)
                 {
-                    surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail, currentPageNumber);
+					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail, currentPageNumber);
                 }
             }
 
@@ -170,17 +170,31 @@ namespace Epi.Web.MVC.Utility
                 }
             }
 
+#region Ananth
+#if false 
+			if (IsSaved)
+			{
+				surveyAnswerRequest.SurveyAnswerList[0].Status = RecordStatus.Saved;
+				surveyAnswerRequest.SurveyAnswerList[0].ReasonForStatusChange = RecordStatusChangeReason.Update;
+			}
 
-        }
+			/////Update Survey Mode ////////////////////
+			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
+			surveyAnswerRequest.Criteria.UserId = UserId;
+			iSurveyAnswerRepository.SaveSurveyAnswer(surveyAnswerRequest);
+#endif
+#endregion Ananth
+		}
 
-        /// <summary>
-        /// Returns a SurveyInfoDTO object
-        /// </summary>
-        /// <param name="surveyInfoRequest"></param>
-        /// <param name="iSurveyInfoRepository"></param>
-        /// <param name="SurveyId"></param>
-        /// <returns></returns>
-        public static Epi.Web.Enter.Common.DTO.SurveyInfoDTO GetSurveyInfoDTO(SurveyInfoRequest surveyInfoRequest,
+
+		/// <summary>
+		/// Returns a SurveyInfoDTO object
+		/// </summary>
+		/// <param name="surveyInfoRequest"></param>
+		/// <param name="iSurveyInfoRepository"></param>
+		/// <param name="SurveyId"></param>
+		/// <returns></returns>
+		public static Epi.Web.Enter.Common.DTO.SurveyInfoDTO GetSurveyInfoDTO(SurveyInfoRequest surveyInfoRequest,
                                                       ISurveyInfoRepository iSurveyInfoRepository,
                                                       string SurveyId)
         {

@@ -212,7 +212,7 @@ namespace Epi.Cloud.Common.Metadata
         public FieldDigest[] GetCurrentFormFieldDigests(IEnumerable<string> fieldNames)
         {
             fieldNames = fieldNames.Select(n => n.ToLower());
-            return CurrentFormFieldDigests.Where(d => fieldNames.Contains(d.FieldName.ToLower())).ToArray();
+            return CurrentFormFieldDigests.Where(d => fieldNames.Contains(d.FieldName)).ToArray();
         }
 
         public FieldDigest[] GetCurrentFormFieldDigestsWithPageNumber(int pageNumber)

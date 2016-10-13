@@ -21,7 +21,8 @@ namespace Epi.Cloud.Common.Metadata
         public FieldTypes FieldType { get; set; }
         public string RequiredMessage { get; set; }
         public string FieldName { get; set; }
-        public int TabIndex { get; set; }
+		public string TrueCaseFieldName { get; set; }
+		public int TabIndex { get; set; }
 
         public string PromptText { get; set; }
         public double PromptTopPositionPercentage { get; set; }
@@ -68,19 +69,20 @@ namespace Epi.Cloud.Common.Metadata
         public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Field[] fields, string formCheckcode)
         {
             var sourceTableFields = fields.Where(f => f.SourceTableValues != null).ToArray();
-            var results = fields.Select(f => new FieldAttributes
-            {
-                RequiredMessage = "This field is required",
+			var results = fields.Select(f => new FieldAttributes
+			{
+				RequiredMessage = "This field is required",
 
-                ViewId = f.ViewId,
-                PageId = f.PageId.ValueOrDefault(),
-                PageName = f.PageName,
-                PagePosition = f.PagePosition.ValueOrDefault(),
-                Checkcode = formCheckcode,
-                UniqueId = f.UniqueId.ToString("D"),
-                FieldType = (FieldTypes)f.FieldTypeId,
-                FieldName = f.Name,
-                TabIndex = (int)f.TabIndex,
+				ViewId = f.ViewId,
+				PageId = f.PageId.ValueOrDefault(),
+				PageName = f.PageName,
+				PagePosition = f.PagePosition.ValueOrDefault(),
+				Checkcode = formCheckcode,
+				UniqueId = f.UniqueId.ToString("D"),
+				FieldType = (FieldTypes)f.FieldTypeId,
+				TrueCaseFieldName = f.Name,
+				FieldName = f.Name.ToLower(),
+				TabIndex = (int)f.TabIndex,
 
                 PromptText = f.PromptText,
                 PromptTopPositionPercentage = f.PromptTopPositionPercentage.ValueOrDefault(),

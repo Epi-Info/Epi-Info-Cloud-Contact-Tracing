@@ -5,6 +5,7 @@ namespace Epi.FormMetadata.DataStructures.Interfaces
     public interface IAbridgedFieldInfo
     {
         string FieldName { get; }
+		string TrueCaseFieldName { get; }
         FieldTypes FieldType { get; }
         string List { get; }
         bool IsReadOnly { get; }
