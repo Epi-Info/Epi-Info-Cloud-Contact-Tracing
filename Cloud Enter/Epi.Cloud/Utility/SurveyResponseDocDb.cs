@@ -68,11 +68,12 @@ namespace Epi.Web.MVC.Utility
         public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId)
         {
             var formName = MetadataAccessor.GetFormDigest(formId).FormName;
-            var formResponseDetail = new FormResponseDetail
-            {
+			var formResponseDetail = new FormResponseDetail
+			{
+				RecStatus = Cloud.Common.Constants.RecordStatus.InProcess,
                 FormId = formId,
                 FormName = formName,
-                LastPageVisited = currentPage == 0 ? 1 : 0
+                LastPageVisited = currentPage == 0 ? 1 : currentPage
             };
 
             if (!String.IsNullOrWhiteSpace(pageId))

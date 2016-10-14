@@ -393,7 +393,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 				surveyAnswer.ReasonForStatusChange = surveyResponseBO.ReasonForStatusChange;
 
 				request.SurveyAnswerList.Add(surveyAnswer);
-                UpdateRecordStatus(surveyResponseBO);
+                InsertSurveyResponse(surveyResponseBO);
                 //var response = _surveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(request);
 
                 //TODO Implement for DocumentDB

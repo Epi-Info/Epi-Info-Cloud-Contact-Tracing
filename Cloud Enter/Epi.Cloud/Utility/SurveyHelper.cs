@@ -357,6 +357,7 @@ namespace Epi.Web.MVC.Utility
         public static FormResponseDetail MergeResponseDetail(FormResponseDetail savedResponseDetail, PageResponseDetail currentPageResponseDetail, int pageNumber)
         {
             savedResponseDetail = savedResponseDetail ?? new FormResponseDetail { FormId = currentPageResponseDetail.FormId, FormName = currentPageResponseDetail.FormName };
+			savedResponseDetail.LastPageVisited = pageNumber;
             var savedPageResponseDetail = savedResponseDetail.GetPageResponseDetailByPageNumber(pageNumber);
             if (savedPageResponseDetail != null)
             {

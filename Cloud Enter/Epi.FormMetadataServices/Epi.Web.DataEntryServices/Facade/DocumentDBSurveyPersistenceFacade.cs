@@ -181,13 +181,14 @@ namespace Epi.Cloud.DataEntryServices.Facade
 				GlobalRecordID = request.ResponseId,
 				RelateParentId = request.RelateParentId,
 				IsRelatedView = request.RelateParentId != null,
-				FirstSaveTime = now,
+				FirstSaveTime = request.ResponseDetail.FirstSaveTime,
 				LastSaveTime = now,
+				FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
 				UserId = request.UserId,
-				IsDraftMode = request.IsDraftMode
+				IsDraftMode = request.IsDraftMode,
+				PageIds = request.ResponseDetail.PageIds.ToList()
 			};
 
-			documentResponseProperties.FormResponseProperties = new FormResponseProperties();
 			documentResponseProperties.FormResponseProperties = formResponseProperties;
 			documentResponseProperties.GlobalRecordID = request.ResponseId;
 			var saveTask = _surveyResponse.SaveResponseAsync(documentResponseProperties);

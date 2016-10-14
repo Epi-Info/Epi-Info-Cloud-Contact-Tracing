@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.DataStructures;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
@@ -6,19 +7,21 @@ namespace Epi.DataPersistence.Extensions
 {
     public static class DocumentDBExtensions
     {
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail, MetadataAccessor metadataAccessor = null)
         {
-            return pageResponseProperties.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName);
+            return pageResponseProperties.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName, metadataAccessor);
         }
 
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, string formId, string formName)
+        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, string formId, string formName, MetadataAccessor metadataAccessor = null)
         {
-            var pageResponseDetail = new PageResponseDetail
-            {
-                GlobalRecordID = pageResponseProperties.GlobalRecordID,
-                FormId = formId,
-                FormName = formName,
-                PageId = pageResponseProperties.PageId,
+			metadataAccessor = metadataAccessor ?? new MetadataAccessor();
+			var pageResponseDetail = new PageResponseDetail
+			{
+				GlobalRecordID = pageResponseProperties.GlobalRecordID,
+				FormId = formId,
+				FormName = formName,
+				PageId = pageResponseProperties.PageId,
+				PageNumber = metadataAccessor.GetPageDigestByPageId(formId, pageResponseProperties.PageId).PageNumber,
                 ResponseQA = pageResponseProperties.ResponseQA
             };
             return pageResponseDetail;
@@ -52,13 +55,14 @@ namespace Epi.DataPersistence.Extensions
             if (formResponseProperties != null)
             {
                 formResponseDetail = formResponseProperties.ToFormResponseDetail();
-                if (documentResponseProperties.PageResponsePropertiesList != null)
+                if (documentResponseProperties.PageResponsePropertiesList != null && documentResponseProperties.PageResponsePropertiesList.Count > 0)
                 {
+					MetadataAccessor metadataAccessor = new MetadataAccessor();
                     foreach (var pageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
 						if (pageResponseProperties != null)
 						{
-							var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail);
+							var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail, metadataAccessor);
 							formResponseDetail.AddPageResponseDetail(pageResponseDetail);
 						}
                     }
