@@ -1,31 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Interfaces;
+using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Repositories.Core;
-using Epi.Cloud.Common.Metadata;
-using Epi.Cloud.DataEntryServices.Facade;
-using Epi.Cloud.DataEntryServices.Model;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
-using Epi.FormMetadata.DataStructures;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.Web.MVC.Repositories
 {
-    public class IntegratedSurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
+	public class IntegratedSurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
     {
-        private Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
+        private Epi.Web.WCF.SurveyService.IEWEDataService _dataService;
         private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
-        private ISurveyPersistenceFacade _isurveyDocumentDBStoreFacade;
-        public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService,
-                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService,
-                                                ISurveyPersistenceFacade isurveyDocumentDBStoreFacade)
-        {
-            _iDataService = iDataService;
-            _dataEntryService = dataEntryService;
-            _isurveyDocumentDBStoreFacade = isurveyDocumentDBStoreFacade;
+        private ISurveyPersistenceFacade _surveyPersistenceFacade;
 
+        public IntegratedSurveyAnswerRepository(Epi.Web.WCF.SurveyService.IEWEDataService dataService,
+                                                Epi.Cloud.Interfaces.DataInterface.IDataEntryService dataEntryService,
+                                                ISurveyPersistenceFacade surveyPersistenceFacade)
+        {
+            _dataService = dataService;
+            _dataEntryService = dataEntryService;
+            _surveyPersistenceFacade = surveyPersistenceFacade;
         }
 
         /// <summary>
@@ -131,7 +129,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                FormSettingResponse result = _iDataService.GetFormSettings(pRequest);
+                FormSettingResponse result = _dataService.GetFormSettings(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -161,7 +159,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                UserAuthenticationResponse result = _iDataService.SetPassCode(AuthenticationRequest);
+                UserAuthenticationResponse result = _dataService.SetPassCode(AuthenticationRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -192,7 +190,7 @@ namespace Epi.Web.MVC.Repositories
             {
 
                 //UserAuthenticationResponse result = _iDataService.PassCodeLogin(pRequest);
-                UserAuthenticationResponse result = _iDataService.UserLogin(pRequest);
+                UserAuthenticationResponse result = _dataService.UserLogin(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -223,7 +221,7 @@ namespace Epi.Web.MVC.Repositories
             {
 
                 //UserAuthenticationResponse result = _iDataService.PassCodeLogin(pRequest);
-                return _iDataService.UpdateUser(pRequest);
+                return _dataService.UpdateUser(pRequest);
             }
             catch (FaultException<CustomFaultException> cfe)
             {
@@ -251,7 +249,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                UserAuthenticationResponse result = _iDataService.GetAuthenticationResponse(pRequest);
+                UserAuthenticationResponse result = _dataService.GetAuthenticationResponse(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -343,7 +341,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                UserAuthenticationResponse result = _iDataService.GetUser(pRequest);
+                UserAuthenticationResponse result = _dataService.GetUser(pRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -457,7 +455,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                FormSettingResponse result = _iDataService.SaveSettings(FormSettingReq);
+                FormSettingResponse result = _dataService.SaveSettings(FormSettingReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -584,7 +582,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.GetOrganizationsByUserId(OrgReq);
+                OrganizationResponse result = _dataService.GetOrganizationsByUserId(OrgReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -617,7 +615,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.GetUserOrganizations(OrgReq);
+                OrganizationResponse result = _dataService.GetUserOrganizations(OrgReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -650,7 +648,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.GetAdminOrganizations(OrgReq);
+                OrganizationResponse result = _dataService.GetAdminOrganizations(OrgReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -685,7 +683,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.GetOrganizationInfo(OrgRequest);
+                OrganizationResponse result = _dataService.GetOrganizationInfo(OrgRequest);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -721,7 +719,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.SetOrganization(Request);
+                OrganizationResponse result = _dataService.SetOrganization(Request);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -752,7 +750,7 @@ namespace Epi.Web.MVC.Repositories
             try
             {
 
-                OrganizationResponse result = _iDataService.GetOrganizationUsers(OrgReq);
+                OrganizationResponse result = _dataService.GetOrganizationUsers(OrgReq);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -783,7 +781,7 @@ namespace Epi.Web.MVC.Repositories
 
             try
             {
-                UserResponse result = _iDataService.GetUserInfo(Request);
+                UserResponse result = _dataService.GetUserInfo(Request);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)
@@ -813,7 +811,7 @@ namespace Epi.Web.MVC.Repositories
         {
             try
             {
-                UserResponse result = _iDataService.SetUserInfo(Request);
+                UserResponse result = _dataService.SetUserInfo(Request);
                 return result;
             }
             catch (FaultException<CustomFaultException> cfe)

@@ -2,8 +2,8 @@
 
 namespace Epi.Cloud.DataConsistencyServices.Common
 {
-    public interface IResponseServices
+	public interface IResponseServices
 	{
-		FormResponseDetail GetResponse(string responseId);
-    }
+		FormResponseDetail GetHierarchialResponse(string responseId);
+	}
 }

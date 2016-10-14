@@ -110,8 +110,8 @@
     <Compile Include="Extensions\SurveyResponseExtensions.cs" />
     <Compile Include="Extensions\UserBOExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
-    <Compile Include="Facade\ISurveyPersistenceFacade.cs" />
     <Compile Include="Facade\DocumentDBSurveyPersistenceFacade.cs" />
+    <Compile Include="Interfaces\ISurveyPersistenceFacade.cs" />
     <Compile Include="Model\SurveyInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\Mapper.cs" />

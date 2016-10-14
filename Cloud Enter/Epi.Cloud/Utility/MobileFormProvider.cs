@@ -6,7 +6,15 @@ namespace Epi.Web.MVC.Utility
 {
     public class MobileFormProvider : FormProvider
     {
-        protected override void SetProviderSpecificProperties(Form form, double height, double width)
+		public MobileFormProvider()
+		{
+		}
+
+		public MobileFormProvider(string formId) : base(formId)
+		{
+		}
+
+		protected override void SetProviderSpecificProperties(Form form, double height, double width)
         {
             form.FormWrapperClass = "MvcDynamicMobileForm";
             form.IsMobile = true;

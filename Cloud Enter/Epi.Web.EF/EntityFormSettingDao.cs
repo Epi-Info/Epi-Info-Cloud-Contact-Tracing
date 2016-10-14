@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Extension;
+using Epi.Cloud.Common.Constants;
+
 namespace Epi.Web.EF
 {
     public class EntityFormSettingDao : IFormSettingDao
@@ -353,7 +355,7 @@ namespace Epi.Web.EF
                     {
                         int OrgId = int.Parse(org.Value);
 
-                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == OrgId && x.RoleId == 2 && x.Active == true).ToList();
+                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == OrgId && x.RoleId == Roles.OrgAdministrator && x.Active == true).ToList();
 
                         foreach (var item in AdminList)
                         {
@@ -394,7 +396,7 @@ namespace Epi.Web.EF
                     foreach (var Org in Orgs)
                     {
 
-                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == Org.OrganizationId && x.RoleId == 2 && x.Active == true);
+                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == Org.OrganizationId && x.RoleId == Roles.OrgAdministrator && x.Active == true);
                         foreach (var Admin in AdminList)
                         {
                             UserBO UserBO = new UserBO();

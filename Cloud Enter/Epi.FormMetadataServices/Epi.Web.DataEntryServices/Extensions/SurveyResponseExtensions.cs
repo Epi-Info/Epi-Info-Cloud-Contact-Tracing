@@ -24,7 +24,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 surveyResponseBO.LastActiveUserId = lastActiveUseerId;
 
                 var metadataAccessor = new Epi.Cloud.Common.Metadata.MetadataAccessor(surveyId);
-                surveyResponseBO.ViewId = metadataAccessor.GetCurrentFormDigest().ViewId;
+                surveyResponseBO.ViewId = metadataAccessor.GetFormDigest(surveyId).ViewId;
 
                 if (surveyResponse.ParentRecordId != null)
                 {

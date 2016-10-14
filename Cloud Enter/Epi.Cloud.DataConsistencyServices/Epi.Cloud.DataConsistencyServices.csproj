@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ResponseServices.cs" />
+    <Compile Include="FormResponseServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +51,10 @@
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Web.DataEntryServices\Epi.Cloud.DataEntryServices.csproj">
+      <Project>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</Project>
+      <Name>Epi.Cloud.DataEntryServices</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

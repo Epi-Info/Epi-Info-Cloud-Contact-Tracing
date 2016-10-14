@@ -5,6 +5,8 @@ using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using System.Data.SqlClient;
 using System.Data;
+using Epi.Cloud.Common.Constants;
+
 namespace Epi.Web.EF
 {
     public class EntityFormInfoDao : IFormInfoDao
@@ -24,7 +26,7 @@ namespace Epi.Web.EF
                     User CurrentUser = Context.Users.Single(x => x.UserID == Id);
 
 
-                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == 2);
+                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator);
 
                     List<string> Assigned = GetAssignedForms(Context, CurrentUser);
 
@@ -231,7 +233,7 @@ namespace Epi.Web.EF
                     {
 
 
-                        var UserInfo = Context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == UserId && x.RoleId == 2);
+                        var UserInfo = Context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == UserId && x.RoleId == Roles.OrgAdministrator);
                         if (UserInfo.Count() > 0)
                         {
                             IsShared = true;

@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using Epi.Cloud.Common.Constants;
+using Epi.Web.EF;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Interfaces.DataInterface;
-using System.Data.SqlClient;
-using System.Data;
-using Epi.Web.EF;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
-    public class FormInfoDao : IFormInfoDao
+	public class FormInfoDao : IFormInfoDao
     {
         public List<FormInfoBO> GetFormInfo(int userId, int currentOrgId)
         {
@@ -22,7 +23,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 {
                     User CurrentUser = context.Users.Single(x => x.UserID == userId);
 
-                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == 2);
+                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator);
 
                     List<string> Assigned = GetAssignedForms(context, CurrentUser);
 
@@ -196,7 +197,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     {
 
 
-                        var userInfo = context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == 2);
+                        var userInfo = context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == Roles.OrgAdministrator);
                         if (userInfo.Count() > 0)
                         {
                             isShared = true;

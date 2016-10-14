@@ -14,7 +14,7 @@ using MvcDynamicForms.Fields;
 
 namespace Epi.Web.MVC.Utility
 {
-    public class FormProvider
+    public class FormProvider : MetadataAccessor
     {
         [ThreadStatic]
         public static List<SurveyAnswerDTO> SurveyAnswerList = null;
@@ -22,7 +22,16 @@ namespace Epi.Web.MVC.Utility
         [ThreadStatic]
         public static List<SurveyInfoDTO> SurveyInfoList = new List<SurveyInfoDTO>();
 
-        public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
+		public FormProvider()
+		{
+		}
+
+		public FormProvider(string formId)
+		{
+			CurrentFormId = formId;
+		}
+
+		public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
         {
             return GetForm(surveyInfo, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
@@ -32,8 +41,10 @@ namespace Epi.Web.MVC.Utility
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
 
-            FormDigest currentFormDigest = surveyInfo.GetCurrentFormDigest();
-            PageDigest currentPageDigest = surveyInfo.GetCurrentFormPageDigestByPageNumber(pageNumber);
+			var surveyId = CurrentFormId = surveyInfo.SurveyId;
+
+            FormDigest currentFormDigest = GetFormDigest(surveyId);
+            PageDigest currentPageDigest = GetPageDigestByPageNumber(surveyId, pageNumber);
 
             var pageId = currentPageDigest.PageId;
 
@@ -82,7 +93,7 @@ namespace Epi.Web.MVC.Utility
             }
             else
             {
-                form.FormCheckCodeObj = form.GetCheckCodeObj(surveyInfo.CurrentFormFieldDigests, formResponseDetail, checkcode);
+                form.FormCheckCodeObj = form.GetCheckCodeObj(surveyInfo.GetFieldDigests(surveyId), formResponseDetail, checkcode);
             }
 
             form.HiddenFieldsList = formResponseDetail.HiddenFieldsList;
@@ -105,22 +116,21 @@ namespace Epi.Web.MVC.Utility
 
             if (responseQA.Count == 0)
             {
-                foreach (var page in surveyInfo.PageDigests)
+                foreach (var pageDigests in PageDigests)
                 {
-                    foreach (var field in page)
+                    foreach (var pageDigest in pageDigests)
                     {
-                        if (field.PageId == pageId)
+                        if (pageDigest.PageId == pageId)
                         {
                             responseQA = new Dictionary<string, string>();
 
-                            foreach (var fi in field.Fields)
+                            foreach (var fi in pageDigest.Fields)
                             {
                                 if (fi.Value != null)
                                 {
                                     responseQA.Add(fi.FieldName.ToLower(), fi.Value);
                                 }
                             }
-
                         }
                     }
                 }
@@ -250,14 +260,15 @@ namespace Epi.Web.MVC.Utility
             form.AddFields(GetGroupBox(fieldAttributes, _Width + 12, _Height, radioGroupBoxValue));
         }
 
-        public virtual void UpdateHiddenFields(int pageNumber, Form form, MetadataAccessor metadataAccessor, System.Collections.Specialized.NameValueCollection postedForm)
-        {
+        public virtual void UpdateHiddenFields(int pageNumber, Form form, System.Collections.Specialized.NameValueCollection postedForm)
+		{
             double _Width, _Height;
             _Width = 1024;
             _Height = 768;
 
-            var currentFieldDigests = metadataAccessor.GetCurrentFormFieldDigestsWithPageNumber(pageNumber);
-            var otherPageFieldDigests = metadataAccessor.GetCurrentFormFieldDigestsNotWithPageNumber(pageNumber);
+            var currentFieldDigests = GetFieldDigestsWithPageNumber(CurrentFormId, pageNumber);
+            var otherPageFieldDigests = GetFieldDigestsNotWithPageNumber(CurrentFormId, pageNumber);
+
             foreach (var fieldDigest in otherPageFieldDigests)
             {
                 bool IsFound = false;
@@ -277,7 +288,7 @@ namespace Epi.Web.MVC.Utility
 
                 if (IsFound)
                 {
-                    var fieldAttributes = metadataAccessor.GetFieldAttributes(fieldDigest);
+                    var fieldAttributes = GetFieldAttributes(fieldDigest);
 
                     MvcDynamicForms.Fields.Field field = null;
                     
@@ -590,7 +601,7 @@ namespace Epi.Web.MVC.Utility
                 Epi.Web.Enter.Common.Helper.RelatedFormsObj RelatedFormsObj = new Epi.Web.Enter.Common.Helper.RelatedFormsObj();
 
                 MetadataAccessor metadataAccessor = surveyInfoList[i] as MetadataAccessor;
-                RelatedFormsObj.FieldDigests = metadataAccessor.CurrentFormFieldDigests;
+                RelatedFormsObj.FieldDigests = metadataAccessor.GetFieldDigests(metadataAccessor.CurrentFormId);
                 RelatedFormsObj.ResponseDetail = surveyAnswerList[i].ResponseDetail ?? new FormResponseDetail();
 
                 List.Add(RelatedFormsObj);

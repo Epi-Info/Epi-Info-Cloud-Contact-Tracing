@@ -50,6 +50,7 @@
     <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Configuration\DependencyHelper.cs" />
+    <Compile Include="Constants\Roles.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
     <Compile Include="Constants\RecordStatusChangeReason.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />

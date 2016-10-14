@@ -1,86 +1,72 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-
-using Epi.Web.Enter.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Extension;
-using Epi.Web.EF;
+using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
+using Epi.Cloud.DataEntryServices.Interfaces;
 using Epi.Cloud.MetadataServices.Extensions;
-
-using Epi.Cloud.DataEntryServices.Facade;
+using Epi.Web.EF;
+using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.Extension;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
-    /// <summary>
-    /// Entity Framework implementation of the ISurveyInfoDao interface.
-    /// </summary>
-    public class SurveyInfoDao : MetadataAccessor, ISurveyInfoDao
+	/// <summary>
+	/// Implementation of the ISurveyInfoDao interface.
+	/// </summary>
+	public class SurveyInfoDao : MetadataAccessor, ISurveyInfoDao
     {
-        private readonly ISurveyPersistenceFacade _surveyStoreDocumentDBFacade;
+        private readonly ISurveyPersistenceFacade _surveyPersistenceFacade;
 
-        public SurveyInfoDao(ISurveyPersistenceFacade surveyStoreDocumentDBFacade)
+        public SurveyInfoDao(ISurveyPersistenceFacade surveyPersistenceFacade)
         {
-            _surveyStoreDocumentDBFacade = surveyStoreDocumentDBFacade;
+            _surveyPersistenceFacade = surveyPersistenceFacade;
         }
 
-        /// <summary>
-        /// Gets SurveyInfo based on a list of ids
-        /// </summary>
-        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
-        /// <returns>SurveyInfo.</returns>
-        public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, int displayPageNumber = -1, int displayPageSize = -1)
-        {
-            List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-            if (SurveyInfoIdList.Count > 0)
-            {
-                try
-                {
-                    foreach (string surveyInfoId in SurveyInfoIdList.Distinct())
-                    {
-                        var formDigest = GetFormDigest(surveyInfoId);
-                        var surveyInfoBO = formDigest.ToSurveyInfoBO();
-                        result.Add(surveyInfoBO);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw (ex);
-                }
-            }
-            else
-            {
-                try
-                {
-                    result = FormDigests.ToSurveyInfoBOList();
-                    _surveyStoreDocumentDBFacade.GetFormResponseState("");
-                }
-                catch (Exception ex)
-                {
-                    throw (ex);
-                }
-            }
+		/// <summary>
+		/// Gets SurveyInfo based on a list of ids
+		/// </summary>
+		/// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
+		/// <returns>SurveyInfo.</returns>
+		public List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, int displayPageNumber = -1, int displayPageSize = -1)
+		{
+			List<SurveyInfoBO> result = new List<SurveyInfoBO>();
+			if (surveyInfoIdList.Count > 0)
+			{
+				try
+				{
+					foreach (string surveyInfoId in surveyInfoIdList.Distinct())
+					{
+						var formDigest = GetFormDigest(surveyInfoId);
+						var surveyInfoBO = formDigest.ToSurveyInfoBO();
+						result.Add(surveyInfoBO);
+					}
+				}
+				catch (Exception ex)
+				{
+					throw (ex);
+				}
 
-            // remove the items to skip
-            // remove the items after the page size
-            if (displayPageNumber > 0 && displayPageSize > 0)
-            {
-                result.Sort(CompareByDateCreated);
-                // remove the items to skip
-                if (displayPageNumber * displayPageSize - displayPageSize > 0)
-                {
-                    result.RemoveRange(0, displayPageSize);
-                }
+				// remove the items to skip
+				// remove the items after the page size
+				if (displayPageNumber > 0 && displayPageSize > 0)
+				{
+					result.Sort(CompareByDateCreated);
+					// remove the items to skip
+					if (displayPageNumber * displayPageSize - displayPageSize > 0)
+					{
+						result.RemoveRange(0, displayPageSize);
+					}
 
-                if (displayPageNumber * displayPageSize < result.Count)
-                {
-                    result.RemoveRange(displayPageNumber * displayPageSize, result.Count - displayPageNumber * displayPageSize);
-                }
-            }
+					if (displayPageNumber * displayPageSize < result.Count)
+					{
+						result.RemoveRange(displayPageNumber * displayPageSize, result.Count - displayPageNumber * displayPageSize);
+					}
+				}
+			}
 
-            return result;
+			return result;
         }
 
         public SurveyInfoBO GetSurveyInfoState(string surveyInfoId)

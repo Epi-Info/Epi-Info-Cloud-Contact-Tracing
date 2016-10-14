@@ -6,6 +6,7 @@ using System.Collections.Generic;
 //using System.Linq.Dynamic;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF
 {
@@ -431,7 +432,7 @@ namespace Epi.Web.EF
 
                                     where UserOrganizationTable.OrganizationID == OrganizationTable.OrganizationId &&
                                     UserOrganizationTable.UserID == UserId &&
-                                    UserOrganizationTable.RoleId == 2 &&
+                                    UserOrganizationTable.RoleId == Roles.OrgAdministrator &&
                                     UserOrganizationTable.Active == true &&
                                     OrganizationTable.IsEnabled == true
                                     select OrganizationTable;

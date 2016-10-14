@@ -8,7 +8,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 
-namespace Epi.Cloud.DataEntryServices.Facade
+namespace Epi.Cloud.DataEntryServices.Interfaces
 {
 	public interface ISurveyPersistenceFacade
     {

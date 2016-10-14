@@ -1,36 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.Enter.Common.Criteria;
-using Epi.Cloud.DataEntryServices.Helpers;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Cloud.DataEntryServices.Extensions;
-
-
-//using SurveyResponse = Epi.Cloud.Common.EntityObjects.SurveyResponse;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
-using Epi.Cloud.Common.Metadata;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.DTO;
-using Epi.FormMetadata.DataStructures;
-using Epi.DataPersistence.DataStructures;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.DataEntryServices.Extensions;
+using Epi.Cloud.DataEntryServices.Helpers;
+using Epi.Cloud.DataEntryServices.Interfaces;
+using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.DataPersistence.DataStructures;
+using Epi.FormMetadata.DataStructures;
+using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.Criteria;
+using Epi.Web.Enter.Common.DTO;
+using Epi.Web.Enter.Common.Message;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
-    /// <summary>
-    /// Entity Framework implementation of the ISurveyResponseDao interface.
-    /// </summary> 
-    public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
+	/// <summary>
+	/// Entity Framework implementation of the ISurveyResponseDao interface.
+	/// </summary> 
+	public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
     {
-        Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade _surveyDocumentDBStoreFacade;
+        ISurveyPersistenceFacade _surveyPersistenceFacade;
 
         public SurveyResponseDao(IProjectMetadataProvider projectMetadataProvider,
-                                 Epi.Cloud.DataEntryServices.Facade.ISurveyPersistenceFacade surveyDocumentDBStoreFacade)
+                                 ISurveyPersistenceFacade surveyPersistenceFacade)
         {
             ProjectMetadataProvider = projectMetadataProvider;
-            _surveyDocumentDBStoreFacade = surveyDocumentDBStoreFacade;
+            _surveyPersistenceFacade = surveyPersistenceFacade;
         }
 
         private int _dataAccessRuleId;
@@ -59,7 +57,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 foreach (string responseId in surveyResponseIdList.Distinct())
                 {
-                    var formResponseDetail = _surveyDocumentDBStoreFacade.GetFormResponseByResponseId(responseId);
+                    var formResponseDetail = _surveyPersistenceFacade.GetFormResponseByResponseId(responseId);
                     if (formResponseDetail != null)
                     {
                         var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
@@ -152,7 +150,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public SurveyResponseBO GetSurveyResponseState(string responseId)
         {
-            var formResponseDetail =_surveyDocumentDBStoreFacade.GetFormResponseState(responseId);
+            var formResponseDetail =_surveyPersistenceFacade.GetFormResponseState(responseId);
             return formResponseDetail != null ? formResponseDetail.ToSurveyResponseBO() : null;
         }
 
@@ -308,7 +306,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 var surveyAnswerRequest = new SurveyAnswerRequest();
                 surveyResponseBO.DateCreated = DateTime.UtcNow;
                 surveyResponseBO.DateUpdated = DateTime.UtcNow;
-                var response = _surveyDocumentDBStoreFacade.SaveFormProperties(surveyResponseBO); 
+                var response = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO); 
 
                 #region Web Enter Implementation
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -351,7 +349,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             try
             {
                 //TODO Implement for DocumentDB
-                var response = _surveyDocumentDBStoreFacade.InsertChildResponseAsync(surveyResponseBO);
+                var response = _surveyPersistenceFacade.InsertChildResponseAsync(surveyResponseBO);
 				var result = response.Result;
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
@@ -609,7 +607,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
             var responseId = SurveyResponse.ResponseId;
             var userId = SurveyResponse.UserId;
-            _surveyDocumentDBStoreFacade.DeleteResponse(responseId, userId);
+            _surveyPersistenceFacade.DeleteResponse(responseId, userId);
             try
             {
                 Guid Id = new Guid(SurveyResponse.ResponseId);
@@ -752,7 +750,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 {
                     var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
                     
-                    var surveyResponses = _surveyDocumentDBStoreFacade.GetAllResponsesContainingFields(gridFields);
+                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields);
                     if (surveyResponses != null)
                     {
                         var responseList = surveyResponses.Skip((criteria.PageNumber - 1) * criteria.GridPageSize).Take(criteria.GridPageSize);
@@ -1716,7 +1714,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public SurveyResponseBO GetSingleResponse(string responseId)
         {
             // TODO: DocumentDB implementation required
-            var formResponseDetail = _surveyDocumentDBStoreFacade.GetFormResponseByResponseId(responseId);
+            var formResponseDetail = _surveyPersistenceFacade.GetFormResponseByResponseId(responseId);
             var result = formResponseDetail.ToSurveyResponseBO();
 
             //    try
@@ -1746,7 +1744,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             List<string> list = new List<string>();
             try
             {
-                var formResponseDetail = _surveyDocumentDBStoreFacade.GetHierarchialResponsesByResponseId(rootResponseId);
+                var formResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(rootResponseId);
 
 				//var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
 				//var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);
@@ -1997,7 +1995,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange)
         {
-			_surveyDocumentDBStoreFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
+			_surveyPersistenceFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
 
 			//using (var Context = DataObjectFactory.CreateContext())
 			//{
@@ -2098,7 +2096,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                _surveyDocumentDBStoreFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, RecordStatusChangeReason.Unknown);
+                _surveyPersistenceFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, RecordStatusChangeReason.Unknown);
             }
             catch (Exception ex)
             {
@@ -2115,19 +2113,19 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public int GetFormResponseCount(string formId)
         {
-            return _surveyDocumentDBStoreFacade.GetFormResponseCount(formId);
+            return _surveyPersistenceFacade.GetFormResponseCount(formId);
         }
 
         public bool DoChildrenExistForResponseId(Guid responseId)
         {
-            var responseExists = _surveyDocumentDBStoreFacade.DoChildrenExistForResponseId(responseId.ToString());
+            var responseExists = _surveyPersistenceFacade.DoChildrenExistForResponseId(responseId.ToString());
             return responseExists;
         }
 
         public bool HasResponse(SurveyAnswerCriteria criteria)
         {
             var responseId = criteria.SurveyAnswerIdList[0];
-            var responseExists = _surveyDocumentDBStoreFacade.DoChildrenExistForResponseId(responseId);
+            var responseExists = _surveyPersistenceFacade.DoChildrenExistForResponseId(responseId);
             return responseExists;
         }
 

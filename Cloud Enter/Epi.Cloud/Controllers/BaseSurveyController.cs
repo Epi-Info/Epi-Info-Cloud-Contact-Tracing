@@ -14,7 +14,7 @@ namespace Epi.Web.MVC.Controllers
 {
     public abstract class BaseSurveyController : Controller
     {
-        protected ISurveyFacade _isurveyFacade;
+        protected ISurveyFacade _surveyFacade;
         protected Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider _projectMetadataProvider;
 
         protected List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
@@ -45,7 +45,7 @@ namespace Epi.Web.MVC.Controllers
             formSettingReq.FormInfo.UserId = userId;
             //Getting Column Name  List
             formSettingReq.CurrentOrgId = orgid;
-            var formSettingResponse = formResponseInfoModel.FormSettingResponse = _isurveyFacade.GetFormSettings(formSettingReq);
+            var formSettingResponse = formResponseInfoModel.FormSettingResponse = _surveyFacade.GetFormSettings(formSettingReq);
             formSettingResponse.FormSetting.FormId = SurveyId;
             Columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
             Columns.Sort(Compare);
@@ -100,7 +100,7 @@ namespace Epi.Web.MVC.Controllers
         {
             Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            var surveyAnswerState = _isurveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
+            var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
             result = surveyAnswerState.SurveyResponseList[0];
             return result;
         }

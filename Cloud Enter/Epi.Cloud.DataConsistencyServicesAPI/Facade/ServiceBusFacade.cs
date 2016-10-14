@@ -1,7 +1,4 @@
-﻿
-
-
-using Epi.Cloud.ServiceBus;
+﻿using Epi.Cloud.ServiceBus;
 
 namespace Epi.Cloud.DataConsistencyServicesAPI.Facade
 {

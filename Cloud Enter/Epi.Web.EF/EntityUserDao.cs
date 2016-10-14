@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.Constants;
+
 namespace Epi.Web.EF
 {
     public class EntityUserDao : IUserDao
@@ -335,7 +337,7 @@ namespace Epi.Web.EF
                 {
                     int OrgId = int.Parse(item.Value);
 
-                    var users = Context.UserOrganizations.Where(x => x.RoleId == 2 && x.OrganizationID == OrgId && x.Active == true);
+                    var users = Context.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator && x.OrganizationID == OrgId && x.Active == true);
 
                     foreach (var user in users)
                     {
@@ -346,6 +348,5 @@ namespace Epi.Web.EF
             }
             return AdminList;
         }
-
     }
 }

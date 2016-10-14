@@ -75,14 +75,6 @@ namespace Epi.Cloud.Common.Metadata
             }
         }
 
-        public FieldDigest[] CurrentFormFieldDigests
-        {
-            get
-            {
-                return GetFieldDigests(_formId);
-            }
-        }
-
         public int PageIdFromPageNumber(string formId, int pageNumber)
         {
             PageDigest pageDigest = GetPageDigestByPageNumber(formId, pageNumber);
@@ -96,11 +88,6 @@ namespace Epi.Cloud.Common.Metadata
             if (!StaticCache._fieldDigests.TryGetValue(formId, out fieldDigests))
                 StaticCache._fieldDigests[formId] = fieldDigests = ProjectMetadataProvider.GetFieldDigestsAsync(formId).Result;
             return fieldDigests;
-        }
-
-        public Page GetCurrentFormPageMetadataByPageId(string pageId)
-        {
-            return GetCurrentFormPageMetadataByPageId(Convert.ToInt32(pageId));
         }
 
         public Page GetCurrentFormPageMetadataByPageId(int pageId)
@@ -123,11 +110,6 @@ namespace Epi.Cloud.Common.Metadata
             }
 
             return pageMetadata;
-        }
-
-        public IEnumerable<FieldAttributes> GetCurrentFormPageFieldAttributesByPageId(string pageId)
-        {
-            return GetCurrentFormPageFieldAttributesByPageId(Convert.ToInt32(pageId));
         }
 
         public IEnumerable<FieldAttributes> GetCurrentFormPageFieldAttributesByPageId(int pageId)
@@ -153,11 +135,6 @@ namespace Epi.Cloud.Common.Metadata
             return pageFieldAttributes;
         }
 
-        public FormDigest GetCurrentFormDigest()
-        {
-            return FormDigests.SingleOrDefault(f => f.FormId == _formId);
-        }
-
         public FormDigest GetFormDigest(string formId)
         {
             return FormDigests.SingleOrDefault(f => f.FormId == formId);
@@ -180,26 +157,11 @@ namespace Epi.Cloud.Common.Metadata
             return pageDigests;
         }
 
-        public PageDigest GetCurrentFormPageDigestByPageNumber(int pageNumber)
-        {
-            return GetPageDigestByPageNumber(_formId, pageNumber);
-        }
-
         public PageDigest GetPageDigestByPageNumber(string formId, int pageNumber)
         {
             var pageDigests = PageDigests.Single(d => d[0].FormId == formId);
             var pageDigest = pageDigests.Single(d => d.PageNumber == pageNumber);
             return pageDigest;
-        }
-
-        public PageDigest GetCurrentFormPageDigestByPageId(string pageId)
-        {
-            return GetCurrentFormPageDigestByPageId(Convert.ToInt32(pageId));
-        }
-
-        public PageDigest GetCurrentFormPageDigestByPageId(int pageId)
-        {
-            return GetPageDigestByPageId(_formId, pageId);
         }
 
         public PageDigest GetPageDigestByPageId(string formId, int pageId)
@@ -209,22 +171,16 @@ namespace Epi.Cloud.Common.Metadata
             return pageDigest;
         }
 
-        public FieldDigest[] GetCurrentFormFieldDigests(IEnumerable<string> fieldNames)
-        {
-            fieldNames = fieldNames.Select(n => n.ToLower());
-            return CurrentFormFieldDigests.Where(d => fieldNames.Contains(d.FieldName)).ToArray();
-        }
-
-        public FieldDigest[] GetCurrentFormFieldDigestsWithPageNumber(int pageNumber)
+        public FieldDigest[] GetFieldDigestsWithPageNumber(string formId, int pageNumber)
         {
             var pagePosition = pageNumber - 1;
-            return CurrentFormFieldDigests.Where(d => d.Position == pagePosition).ToArray();
+            return GetFieldDigests(formId).Where(d => d.Position == pagePosition).ToArray();
         }
 
-        public FieldDigest[] GetCurrentFormFieldDigestsNotWithPageNumber(int pageNumber)
+        public FieldDigest[] GetFieldDigestsNotWithPageNumber(string formId, int pageNumber)
         {
             var pagePosition = pageNumber - 1;
-            return CurrentFormFieldDigests.Where(d => d.Position != pagePosition).ToArray();
+            return GetFieldDigests(formId).Where(d => d.Position != pagePosition).ToArray();
         }
 
         public FieldAttributes GetFieldAttributes(FieldDigest fieldDigest)

@@ -129,7 +129,7 @@ namespace Epi.Web.MVC.Facade
                 }
             }
 
-            var formProvider = IsMobileDevice ? new MobileFormProvider() : new FormProvider();
+            var formProvider = IsMobileDevice ? new MobileFormProvider(surveyId) : new FormProvider(surveyId);
             MvcDynamicForms.Form form = formProvider.GetForm(surveyInfoDTO, pageNumber, surveyAnswerDTO, surveyAnswerDTOList, surveyInfoDTOList, IsAndroid);
 
             return form;

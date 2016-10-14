@@ -79,7 +79,7 @@ namespace Epi.Web.MVC.Controllers
 
                 List<string> requiredFields = null;
 
-                foreach (var field in surveyInfoModel.CurrentFormFieldDigests) 
+                foreach (var field in surveyInfoModel.GetFieldDigests(surveyId))
                 {
                     bool isRequired = field.IsRequired;
 

@@ -1,24 +1,24 @@
-﻿using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
+﻿using System.Web.Http;
+using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
 using Epi.Cloud.DataConsistencyServicesAPI.Services.ServiceBusService;
 using Epi.Cloud.DBAccessService.Handlers;
-using System.Web.Http;
 
 namespace Epi.Cloud.DataConsistencyServicesAPI.Controllers
 {
-    public class ResponseServiceBusController : ApiController
-    {
-        public IResponseInfoServiceBus _responseInfoServiceBus;
+	public class ResponseServiceBusController : ApiController
+	{
+		public IResponseInfoServiceBus _responseInfoServiceBus;
 
-        public ResponseServiceBusController()
-        {
-            _responseInfoServiceBus = new ResponseInfoServiceBus();
-        }
+		public ResponseServiceBusController()
+		{
+			_responseInfoServiceBus = new ResponseInfoServiceBus();
+		}
 
-        // GET: api/ResponseServiceBus
-        public IHttpActionResult Get()
-        {
-            return new ServiceResult<string>(_responseInfoServiceBus.GetResponseInfoMessageFromServiceBus(), this);
-        }
+		// GET: api/ResponseServiceBus
+		public IHttpActionResult Get()
+		{
+			return new ServiceResult<string>(_responseInfoServiceBus.GetResponseInfoMessageFromServiceBus(), this);
+		}
 
 		//// GET: api/FormServiceBus/{responseId}
 		//public string Get(string id)

@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
-using Epi.Cloud.DataEntryServices.Model;
+using Epi.Cloud.DataEntryServices.Interfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
-using Epi.DataPersistence.Extensions;
+using Epi.Cloud.ServiceBus;
 using Epi.DataPersistence.DataStructures;
+using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
@@ -16,8 +17,6 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using MvcDynamicForms;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
-using Epi.Cloud.ServiceBus;
-using Newtonsoft.Json;
 
 namespace Epi.Cloud.DataEntryServices.Facade
 {
@@ -258,11 +257,11 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 
 		#region Create Resonse Document Info
-		private Epi.PersistenceServices.DocumentDB.DataStructures.DocumentResponseProperties CreateResponseDocumentInfo(string formId, int pageId)
+		private DocumentResponseProperties CreateResponseDocumentInfo(string formId, int pageId)
 		{
 			var pageDigest = GetPageDigestByPageId(formId, pageId);
 
-			Epi.PersistenceServices.DocumentDB.DataStructures.DocumentResponseProperties survey = new Epi.PersistenceServices.DocumentDB.DataStructures.DocumentResponseProperties();
+			DocumentResponseProperties survey = new DocumentResponseProperties();
 			survey.FormName = pageDigest.FormName;
 			survey.IsChildForm = pageDigest.IsRelatedView;
 			survey.CollectionName = pageDigest.FormName + pageDigest.PageId;
