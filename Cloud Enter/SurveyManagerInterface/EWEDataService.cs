@@ -1018,7 +1018,7 @@ namespace Epi.Web.WCF.SurveyService
                 AllResponsesIDsList = null;
             }
             //3 Combining the lists.
-            AllResponsesIDsList[0].SurveyId = RelatedFormIDsList[0].FormId;
+            // AllResponsesIDsList[0].SurveyId = RelatedFormIDsList[0].FormId;//Suma-Settings Page error fix
             FormsHierarchyResponse.FormsHierarchy = Mapper.ToFormHierarchyDTO(CombineLists(RelatedFormIDsList, AllResponsesIDsList));
 
             return FormsHierarchyResponse;
