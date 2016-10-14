@@ -540,10 +540,10 @@ namespace Epi.Web.MVC.Controllers
 									//This is a Navigation to a url
 
 									//////////////////////UpDate Survey Mode//////////////////////////
-                                    //form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
 
 #region Ananth
-                                    if (responseId != null )
+#if false
+									if (responseId != null )
                                     {                 //Survey Info
                                         SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
                                         surveyResponseBO.ResponseId = responseId;
@@ -551,6 +551,7 @@ namespace Epi.Web.MVC.Controllers
                                         surveyResponseBO.UserId = UserId;
                                         _isurveyDocumentDBStoreFacade.InsertResponseAsync(form, surveyResponseBO);
                                     }
+#endif
 #endregion Ananth
 									form = _isurveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, PageNumber, SurveyAnswer, IsMobileDevice, null, FormsHierarchy, IsAndroid);
 									form.FormValuesHasChanged = FormValuesHasChanged;

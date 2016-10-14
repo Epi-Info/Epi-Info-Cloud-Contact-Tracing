@@ -497,17 +497,6 @@ namespace Epi.Web.MVC.Controllers
 			surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
 			surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
 			SurveyAnswerResponse surveyAnswerResponse = _isurveyFacade.DeleteResponse(surveyAnswerRequest);
-			// Ananth
-			//surveyAnswerRequest.Criteria.IsDeleteMode = true; 
-			// End Ananth
-			
-			//Survey surveyInfo = new Survey();
-			//surveyInfo.SurveyName = "TestFromSprint4";
-			//surveyInfo.SurveyProperties = new SurveyProperties();
-			//surveyInfo.SurveyProperties.SurveyID = "32c9277b-51d2-4d09-b556-a05a2ad9103d";
-			//surveyInfo.SurveyProperties.GlobalRecordID = "38dddc77-4d54-4d6e-a205-5bda223aa1ef";
-			//var check = _idocumentDBFacade.DeleteResponse(surveyInfo);
-
 			return Json(string.Empty);
 		}
 

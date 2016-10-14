@@ -170,8 +170,6 @@ namespace Epi.Web.MVC.Utility
                 }
             }
 
-#region Ananth
-#if false 
 			if (IsSaved)
 			{
 				surveyAnswerRequest.SurveyAnswerList[0].Status = RecordStatus.Saved;
@@ -182,8 +180,6 @@ namespace Epi.Web.MVC.Utility
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
 			surveyAnswerRequest.Criteria.UserId = UserId;
 			iSurveyAnswerRepository.SaveSurveyAnswer(surveyAnswerRequest);
-#endif
-#endregion Ananth
 		}
 
 
