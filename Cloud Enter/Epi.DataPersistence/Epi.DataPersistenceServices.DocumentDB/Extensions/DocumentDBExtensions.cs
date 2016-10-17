@@ -90,7 +90,13 @@ namespace Epi.DataPersistence.Extensions
                 LastActiveUserId = formResponseProperties.UserId,
                 IsRelatedView = formResponseProperties.IsRelatedView,
                 IsDraftMode = formResponseProperties.IsDraftMode,
-                PageIds = formResponseProperties.PageIds
+                PageIds = formResponseProperties.PageIds,
+                RequiredFieldsList = formResponseProperties.RequiredFieldsList,
+                HiddenFieldsList = formResponseProperties.HiddenFieldsList,
+                HighlightedFieldsList = formResponseProperties.HiddenFieldsList,
+                DisabledFieldsList = formResponseProperties.DisabledFieldsList
+
+
             };
 
             if (pageResponsePropertiesList != null && pageResponsePropertiesList.Count > 0)
