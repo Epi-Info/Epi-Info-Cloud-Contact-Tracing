@@ -12,37 +12,27 @@ namespace Epi.Cloud.DataEntryServices
     /// </remarks>
     public class DaoFactory : IDaoFactory
     {
-        private readonly IFormInfoDao _formInfoDao;
-        private readonly ISurveyResponseDao _surveyResponseDao;
-		private readonly ISurveyInfoDao _surveyInfoDao;
-
-
-		public DaoFactory(IFormInfoDao formInfoDao,
-                          ISurveyResponseDao surveyResponseDao,
-						  ISurveyInfoDao surveyInfoDao)
-        {
-            _formInfoDao = formInfoDao;
-            _surveyResponseDao = surveyResponseDao;
-			_surveyInfoDao = surveyInfoDao;
-        }
+        private IFormInfoDao _formInfoDao;
+        private ISurveyResponseDao _surveyResponseDao;
+		private ISurveyInfoDao _surveyInfoDao;
 
         /// <summary>
-        /// Gets an Entity Framework specific Sur data access object.
+        /// Gets an Entity Framework specific data access object.
         /// </summary>
         public ISurveyInfoDao SurveyInfoDao
         {
-            get { return _surveyInfoDao; }
-        }
+			get { return _surveyInfoDao ?? (_surveyInfoDao = Cloud.Common.Configuration.DependencyHelper.GetService<ISurveyInfoDao>()); }
+		}
 
-        public IFormInfoDao FormInfoDao
+		public IFormInfoDao FormInfoDao
         {
-            get { return _formInfoDao; } //EntityFormInfoDao(); }
-        }
+			get { return _formInfoDao ?? (_formInfoDao = Cloud.Common.Configuration.DependencyHelper.GetService<IFormInfoDao>()); }
+		}
 
-        public ISurveyResponseDao SurveyResponseDao
-        {
-            get { return _surveyResponseDao; }
-        }
+		public ISurveyResponseDao SurveyResponseDao
+		{
+			get { return _surveyResponseDao ?? (_surveyResponseDao = Cloud.Common.Configuration.DependencyHelper.GetService<ISurveyResponseDao>()); }
+		}
 
         public IOrganizationDao OrganizationDao
         {

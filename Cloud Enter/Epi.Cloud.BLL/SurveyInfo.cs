@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Web.BLL
+namespace Epi.Cloud.BLL
 {
 
     public class SurveyInfo

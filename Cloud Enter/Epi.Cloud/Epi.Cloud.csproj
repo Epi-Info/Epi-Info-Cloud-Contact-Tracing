@@ -377,7 +377,6 @@
     <Compile Include="Extensions\SurveryAnswerExtensions.cs" />
     <Compile Include="Facade\ISecurityFacade.cs" />
     <Compile Include="Facade\ISurveyFacade.cs" />
-    <Compile Include="Facade\CloudSecurityFacade.cs" />
     <Compile Include="Facade\SecurityFacade.cs" />
     <Compile Include="Facade\SurveyFacade.cs" />
     <Compile Include="Global.asax.cs">
