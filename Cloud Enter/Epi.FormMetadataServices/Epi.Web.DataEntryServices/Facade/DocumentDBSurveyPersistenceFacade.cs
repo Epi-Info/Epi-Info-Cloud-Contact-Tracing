@@ -186,8 +186,14 @@ namespace Epi.Cloud.DataEntryServices.Facade
 				FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
 				UserId = request.UserId,
 				IsDraftMode = request.IsDraftMode,
-				PageIds = request.ResponseDetail.PageIds.ToList()
-			};
+				PageIds = request.ResponseDetail.PageIds.ToList(),
+                RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
+                HiddenFieldsList = request.ResponseDetail.HiddenFieldsList,
+                HighlightedFieldsList = request.ResponseDetail.HiddenFieldsList,
+                DisabledFieldsList = request.ResponseDetail.DisabledFieldsList
+
+
+            };
 
 			documentResponseProperties.FormResponseProperties = formResponseProperties;
 			documentResponseProperties.GlobalRecordID = request.ResponseId;
