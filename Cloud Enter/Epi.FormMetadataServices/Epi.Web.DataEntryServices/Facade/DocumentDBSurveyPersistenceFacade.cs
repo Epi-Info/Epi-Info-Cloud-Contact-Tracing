@@ -284,6 +284,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 							var serviceBusCRUD = new ServiceBusCRUD();
 							//send notification to ServiceBus
 							serviceBusCRUD.SendMessagesToTopic(responseId, responseId);
+							ConsistencyHack(responseId);
 							break;
 					}
 				}
@@ -295,5 +296,13 @@ namespace Epi.Cloud.DataEntryServices.Facade
 			}
 		}
 		#endregion NotifyConsistencyService
+
+		private void ConsistencyHack(string responseId)
+		{
+			var formResponseDetail = GetHierarchialResponsesByResponseId(responseId);
+			var hack = new DataPersistence.ConsistencyServiceHack();
+			hack.PersistToSqlServer(formResponseDetail);
+		}
+
 	}
 }
