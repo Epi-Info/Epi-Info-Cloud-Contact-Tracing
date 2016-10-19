@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.BusinessObject;
-using System.Xml.Linq;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
 
@@ -10,14 +9,14 @@ namespace Epi.Cloud.BLL
 
     public class SurveyInfo
     {
-        private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
-        Dictionary<int, int> ViewIds = new Dictionary<int, int>();
+        private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao _surveyInfoDao;
+        Dictionary<int, int> _viewIds = new Dictionary<int, int>();
 
         MetadataAccessor _metadataAcessor;
 
         public SurveyInfo(Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao)
         {
-            this.SurveyInfoDao = surveyInfoDao;
+            this._surveyInfoDao = surveyInfoDao;
         }
 
         public MetadataAccessor MetadataAccessor
@@ -32,7 +31,7 @@ namespace Epi.Cloud.BLL
             {
                 IdList.Add(pId);
             }
-            List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfo(IdList);
+            List<SurveyInfoBO> result = this._surveyInfoDao.GetSurveyInfo(IdList);
 
             return result.Count > 0 ? result[0] : null;
         }
@@ -44,13 +43,13 @@ namespace Epi.Cloud.BLL
         /// <returns>SurveyInfo.</returns>
         public List<SurveyInfoBO> GetSurveyInfoById(List<string> pIdList)
         {
-            List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfo(pIdList);
+            List<SurveyInfoBO> result = this._surveyInfoDao.GetSurveyInfo(pIdList);
             return result;
         }
 
         public PageInfoBO GetSurveySizeInfo(List<string> pIdList, int BandwidthUsageFactor, int pResponseMaxSize = -1)
         {
-            List<SurveyInfoBO> SurveyInfoBOList = this.SurveyInfoDao.GetSurveySizeInfo(pIdList, -1, -1, pResponseMaxSize);
+            List<SurveyInfoBO> SurveyInfoBOList = this._surveyInfoDao.GetSurveySizeInfo(pIdList, -1, -1, pResponseMaxSize);
 
             PageInfoBO result = new PageInfoBO();
 
@@ -61,7 +60,7 @@ namespace Epi.Cloud.BLL
         public bool IsSurveyInfoValidByOrgKeyAndPublishKey(string SurveyId, string Okey, Guid publishKey)
         {
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
-            List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfoByOrgKeyAndPublishKey(SurveyId, EncryptedKey, publishKey);
+            List<SurveyInfoBO> result = this._surveyInfoDao.GetSurveyInfoByOrgKeyAndPublishKey(SurveyId, EncryptedKey, publishKey);
 
             return result != null && result.Count > 0;
         }
@@ -69,7 +68,7 @@ namespace Epi.Cloud.BLL
         public bool IsSurveyInfoValidByOrgKey(string SurveyId, string pOrganizationKey)
         {
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(pOrganizationKey);
-            List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfoByOrgKey(SurveyId, EncryptedKey);
+            List<SurveyInfoBO> result = this._surveyInfoDao.GetSurveyInfoByOrgKey(SurveyId, EncryptedKey);
 
             return result != null && result.Count > 0;
         }
@@ -82,7 +81,7 @@ namespace Epi.Cloud.BLL
         public List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int pPageNumber = -1, int pPageSize = -1)
         {
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
-            List<SurveyInfoBO> result = this.SurveyInfoDao.GetSurveyInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize);
+            List<SurveyInfoBO> result = this._surveyInfoDao.GetSurveyInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize);
             return result;
         }
 
@@ -90,7 +89,7 @@ namespace Epi.Cloud.BLL
         {
             string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Okey);
 
-            List<SurveyInfoBO> SurveyInfoBOList = this.SurveyInfoDao.GetSurveySizeInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize, pResponseMaxSize);
+            List<SurveyInfoBO> SurveyInfoBOList = this._surveyInfoDao.GetSurveySizeInfo(SurveyInfoIdList, pClosingDate, EncryptedKey, pSurveyType, pPageNumber, pPageSize, pResponseMaxSize);
 
             PageInfoBO result = new PageInfoBO();
 
@@ -101,7 +100,7 @@ namespace Epi.Cloud.BLL
         public SurveyInfoBO InsertSurveyInfo(SurveyInfoBO pValue)
         {
             SurveyInfoBO result = pValue;
-            SurveyInfoDao.InsertSurveyInfo(pValue);
+            _surveyInfoDao.InsertSurveyInfo(pValue);
             return result;
         }
 
@@ -163,7 +162,7 @@ namespace Epi.Cloud.BLL
         {
             bool result = false;
 
-            this.SurveyInfoDao.DeleteSurveyInfo(surveyInfoBO);
+            this._surveyInfoDao.DeleteSurveyInfo(surveyInfoBO);
             result = true;
 
             return result;
@@ -200,7 +199,7 @@ namespace Epi.Cloud.BLL
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
             foreach (KeyValuePair<string, int> item in parentIdList)
             {
-                result = this.SurveyInfoDao.GetChildInfoByParentId(item.Key, item.Value);
+                result = this._surveyInfoDao.GetChildInfoByParentId(item.Key, item.Value);
             }
             return result;
         }
@@ -209,17 +208,17 @@ namespace Epi.Cloud.BLL
         {
             SurveyInfoBO result = new SurveyInfoBO();
 
-            result = this.SurveyInfoDao.GetParentInfoByChildId(ChildId);
+            result = this._surveyInfoDao.GetParentInfoByChildId(ChildId);
 
             return result;
         }
 
-        public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId)
+        public List<Web.Common.DTO.FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId)
         {
             List<SurveyInfoBO> SurveyInfoBOList = new List<SurveyInfoBO>();
             List<FormsHierarchyBO> result = new List<FormsHierarchyBO>();
 
-            SurveyInfoBOList = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(rootId);
+            SurveyInfoBOList = this._surveyInfoDao.GetFormsHierarchyIdsByRootId(rootId);
             foreach (var item in SurveyInfoBOList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
@@ -241,33 +240,13 @@ namespace Epi.Cloud.BLL
         private List<SurveyInfoBO> GetFormsHierarchyIds(string RootId)
         {
             List<SurveyInfoBO> FormsHierarchyIds = new List<SurveyInfoBO>();
-            FormsHierarchyIds = this.SurveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
+            FormsHierarchyIds = this._surveyInfoDao.GetFormsHierarchyIdsByRootId(RootId);
             return FormsHierarchyIds;
         }
 
         private bool IsRelatedForm(FormDigest formDigest)
         {
             return formDigest.ParentFormId != null;
-        }
-
-        private void GetRelateViewIds(XElement ViewElement, int ViewId)
-        {
-
-            //var _RelateFields = from _Field in
-            //                        ViewElement.Descendants("Field")
-            //                    where _Field.Attribute("FieldTypeId").Value == ((int)FieldType.Relate).ToString();
-            //                    select _Field;
-
-            //foreach (var Item in _RelateFields)
-            //{
-
-            //    int RelateViewId = 0;
-            //    int.TryParse(Item.Attribute("RelatedViewId").Value, out RelateViewId);
-
-            //    this.ViewIds.Add(RelateViewId, ViewId);
-            //}
-
-
         }
     }
 }

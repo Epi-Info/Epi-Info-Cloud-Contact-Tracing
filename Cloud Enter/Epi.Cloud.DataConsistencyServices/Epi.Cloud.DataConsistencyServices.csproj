@@ -48,13 +48,13 @@
       <Project>{f21cb3e0-4697-4b3b-8d1c-7af9484400a6}</Project>
       <Name>Epi.Cloud.DataConsistencyServices.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.DataEntryServices\Epi.Cloud.DataEntryServices.csproj">
+      <Project>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</Project>
+      <Name>Epi.Cloud.DataEntryServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Web.DataEntryServices\Epi.Cloud.DataEntryServices.csproj">
-      <Project>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</Project>
-      <Name>Epi.Cloud.DataEntryServices</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

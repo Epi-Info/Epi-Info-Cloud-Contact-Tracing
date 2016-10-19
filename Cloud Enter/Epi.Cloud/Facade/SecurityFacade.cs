@@ -1,4 +1,5 @@
-﻿using Epi.Web.Enter.Common.DTO;
+﻿using Epi.Cloud.Common.DTO;
+using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Repositories.Core;
@@ -11,13 +12,13 @@ namespace Epi.Web.MVC.Facade
         //declare UserAuthenticationRequest
         private Epi.Web.Enter.Common.Message.UserAuthenticationRequest _surveyAuthenticationRequest;
         //declare PassCodeDTO
-        private Epi.Web.Enter.Common.DTO.PassCodeDTO _PassCodeDTO;
+        private Epi.Cloud.Common.DTO.PassCodeDTO _PassCodeDTO;
         // declare ISurveyResponseRepository which inherits IRepository of SurveyResponseResponse object
         private ISurveyAnswerRepository _iSurveyAnswerRepository;
 
         public SecurityFacade(UserAuthenticationRequest surveyAuthenticationRequest
                             , ISurveyAnswerRepository iSurveyResponseRepository
-                            , Epi.Web.Enter.Common.DTO.PassCodeDTO PassCodeDTO)
+                            , Epi.Cloud.Common.DTO.PassCodeDTO PassCodeDTO)
         {
             _surveyAuthenticationRequest = surveyAuthenticationRequest;
             _iSurveyAnswerRepository = iSurveyResponseRepository;
@@ -55,7 +56,7 @@ namespace Epi.Web.MVC.Facade
         }
         public UserAuthenticationResponse GetUserInfo(int UserId)
         {
-            UserDTO User = new UserDTO();
+			Enter.Common.DTO.UserDTO User = new Enter.Common.DTO.UserDTO();
             User.UserId = UserId;
             _surveyAuthenticationRequest.User = User;
 
@@ -65,7 +66,7 @@ namespace Epi.Web.MVC.Facade
         }
 
 
-        public bool UpdateUser(UserDTO User)
+        public bool UpdateUser(Enter.Common.DTO.UserDTO User)
         {
             UserAuthenticationRequest request = new UserAuthenticationRequest();
             request.User = User;

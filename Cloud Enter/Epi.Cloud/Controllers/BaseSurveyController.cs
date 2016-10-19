@@ -3,12 +3,13 @@ using System.Linq;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Constants;
 using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -96,9 +97,9 @@ namespace Epi.Web.MVC.Controllers
             return responseModel;
         }
 
-        protected Epi.Web.Enter.Common.DTO.SurveyAnswerStateDTO GetSurveyAnswerState(string responseId, string rootFormId = "", int userId = 0)
+        protected SurveyAnswerStateDTO GetSurveyAnswerState(string responseId, string rootFormId = "", int userId = 0)
         {
-            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+            SurveyAnswerDTO result = null;
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
             result = surveyAnswerState.SurveyResponseList[0];

@@ -93,6 +93,10 @@
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
+      <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
+      <Name>Epi.Cloud.MetadataServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
@@ -100,10 +104,6 @@
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadataServices\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
-      <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
-      <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>

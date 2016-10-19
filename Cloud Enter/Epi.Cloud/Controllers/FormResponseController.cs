@@ -7,17 +7,18 @@ using System.Collections.Generic;
 using System.Web.Security;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using System.Web.Configuration;
 using System.Text;
 using Epi.Web.MVC.Constants;
 using System.Reflection;
-using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MVC.Extensions;
 using Epi.FormMetadata.DataStructures;
 using Epi.DataPersistence.DataStructures;
+using Epi.Cloud.DataEntryServices.Model;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -113,7 +114,7 @@ namespace Epi.Web.MVC.Controllers
 				if (RelateSurveyId.ResponseIds.Count() > 0)
 				{
 
-					Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(RelateSurveyId.ResponseIds[0].ResponseId);
+					SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(RelateSurveyId.ResponseIds[0].ResponseId);
 					var form = _surveyFacade.GetSurveyFormData(RelateSurveyId.ResponseIds[0].SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null,null,IsAndroid);
 					SurveyModel.Form = form;
 					if (string.IsNullOrEmpty(responseid))
@@ -134,7 +135,7 @@ namespace Epi.Web.MVC.Controllers
 					FormResponseInfoModel ResponseInfoModel = new FormResponseInfoModel();
 					if (SurveyModel.FormResponseInfoModel.ResponsesList.Count() > 0)
 					{
-						Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(SurveyModel.FormResponseInfoModel.ResponsesList[0].Column0, RelateSurveyId.FormId);
+						SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(SurveyModel.FormResponseInfoModel.ResponsesList[0].Column0, RelateSurveyId.FormId);
 						ResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, responseid);
 						SurveyModel.Form = _surveyFacade.GetSurveyFormData(surveyAnswerDTO.SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null,null,IsAndroid );
 						ResponseInfoModel.FormInfoModel.FormName = SurveyModel.Form.SurveyInfo.SurveyName.ToString();
@@ -201,7 +202,7 @@ namespace Epi.Web.MVC.Controllers
 				}
 				Session[SessionKeys.IsEditMode] = true;
 				isEditMode = true;
-				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId);
+				SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId);
 				if (Session["RecoverLastRecordVersion"] != null)
 				{
 					surveyAnswer.RecoverLastRecordVersion = bool.Parse(Session[SessionKeys.RecoverLastRecordVersion].ToString());
@@ -219,7 +220,7 @@ namespace Epi.Web.MVC.Controllers
 			TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID] = responseID.ToString();
 
 			// create the first survey response
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = _surveyFacade.CreateSurveyAnswer(AddNewFormId, responseID.ToString(), userId, true, this.Request.Form["Parent_Response_Id"].ToString(), isEditMode);
+			SurveyAnswerDTO surveyAnswerDTO = _surveyFacade.CreateSurveyAnswer(AddNewFormId, responseID.ToString(), userId, true, this.Request.Form["Parent_Response_Id"].ToString(), isEditMode);
 			List<FormsHierarchyDTO> formsHierarchy = GetFormsHierarchy();
 			SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswerDTO.SurveyId, formsHierarchy);
             MetadataAccessor metadataAccessor = surveyInfoModel as MetadataAccessor;
@@ -481,7 +482,7 @@ namespace Epi.Web.MVC.Controllers
 			PopulateDropDownlist(out formResponseInfoModel.SearchColumns5, formResponseInfoModel.SearchModel.SearchCol5, list);
 		}
 
-		public SurveyInfoModel GetSurveyInfo(string surveyId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> formsHierarchyDTOList = null)
+		public SurveyInfoModel GetSurveyInfo(string surveyId, List<FormsHierarchyDTO> formsHierarchyDTOList = null)
 		{
 			SurveyInfoModel surveyInfoModel = new SurveyInfoModel();
 			if (formsHierarchyDTOList != null)
@@ -517,9 +518,9 @@ namespace Epi.Web.MVC.Controllers
 			return result;
 		}
 
-		private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetSurveyAnswer(string responseId, string formid = "")
+		private SurveyAnswerDTO GetSurveyAnswer(string responseId, string formid = "")
 		{
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+			SurveyAnswerDTO result = null;
 
 			string FormId = Session[SessionKeys.RootFormId].ToString();
 			string Id = Session[SessionKeys.UserId].ToString();

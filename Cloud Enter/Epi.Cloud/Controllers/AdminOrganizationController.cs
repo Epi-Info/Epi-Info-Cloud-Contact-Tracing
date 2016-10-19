@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using System.Web.Configuration;
 using Epi.Web.MVC.Models;
 using System.Text.RegularExpressions;
@@ -99,7 +99,7 @@ namespace Epi.Web.MVC.Controllers
                 OrganizationRequest Request = new OrganizationRequest();
 
 
-                UserDTO AdminInfo = new UserDTO();
+				Enter.Common.DTO.UserDTO AdminInfo = new Enter.Common.DTO.UserDTO();
 
                 AdminInfo.FirstName = "";
                 AdminInfo.LastName = "";
@@ -179,7 +179,7 @@ namespace Epi.Web.MVC.Controllers
                     OrganizationRequest Request = new OrganizationRequest();
                     Request.Organization.Organization = OrgAdminInfoModel.OrgName;
                     Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
-                    UserDTO AdminInfo = new UserDTO();
+					Enter.Common.DTO.UserDTO AdminInfo = new Enter.Common.DTO.UserDTO();
 
                     AdminInfo.FirstName = OrgAdminInfoModel.AdminFirstName;
                     AdminInfo.LastName = OrgAdminInfoModel.AdminLastName;

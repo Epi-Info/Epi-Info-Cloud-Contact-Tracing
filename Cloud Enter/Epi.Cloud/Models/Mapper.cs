@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Epi.Cloud.DataEntryServices.Model;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Models
 {
@@ -13,7 +14,7 @@ namespace Epi.Web.MVC.Models
         /// </summary>
         /// <param name="FormInfoDTO"></param>
         /// <returns></returns>
-        public static FormInfoModel ToFormInfoModel(this Epi.Web.Enter.Common.DTO.FormInfoDTO FormInfoDTO)
+        public static FormInfoModel ToFormInfoModel(this FormInfoDTO FormInfoDTO)
         {
             return new FormInfoModel
             {
@@ -40,9 +41,7 @@ namespace Epi.Web.MVC.Models
         /// </summary>
         /// <param name="customer"></param>
         /// <returns></returns>
-
-
-        public static SurveyInfoModel ToSurveyInfoModel(this Epi.Web.Enter.Common.DTO.SurveyInfoDTO SurveyInfoDTO)
+        public static SurveyInfoModel ToSurveyInfoModel(this SurveyInfoDTO SurveyInfoDTO)
         {
             return new SurveyInfoModel
             {
@@ -70,9 +69,9 @@ namespace Epi.Web.MVC.Models
         /// <param name="customer"></param>
         /// <returns></returns>
 
-        public static Epi.Web.Enter.Common.DTO.SurveyInfoDTO ToSurveyInfoDTO(SurveyInfoModel SurveyInfoModel)
+        public static SurveyInfoDTO ToSurveyInfoDTO(SurveyInfoModel SurveyInfoModel)
         {
-            return new Epi.Web.Enter.Common.DTO.SurveyInfoDTO
+            return new SurveyInfoDTO
             {
                 SurveyId = SurveyInfoModel.SurveyId,
                 SurveyNumber = SurveyInfoModel.SurveyNumber,
@@ -90,7 +89,7 @@ namespace Epi.Web.MVC.Models
         }
 
 
-        public static SurveyAnswerModel ToSurveyAnswerModel(this Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO)
+        public static SurveyAnswerModel ToSurveyAnswerModel(this SurveyAnswerDTO surveyAnswerDTO)
         {
             return new SurveyAnswerModel
             {
@@ -111,9 +110,9 @@ namespace Epi.Web.MVC.Models
         /// <param name="customer"></param>
         /// <returns></returns>
 
-        public static Epi.Web.Enter.Common.DTO.SurveyAnswerDTO ToSurveyAnswerDTO(SurveyAnswerModel SurveyAnswerModel)
+        public static SurveyAnswerDTO ToSurveyAnswerDTO(SurveyAnswerModel SurveyAnswerModel)
         {
-			return new Epi.Web.Enter.Common.DTO.SurveyAnswerDTO
+			return new SurveyAnswerDTO
 			{
 				ResponseId = SurveyAnswerModel.ResponseId,
 				SurveyId = SurveyAnswerModel.SurveyId,
@@ -125,7 +124,7 @@ namespace Epi.Web.MVC.Models
             };
         }
 
-        public static Epi.Web.Enter.Common.Message.UserAuthenticationRequest ToUserAuthenticationObj(Epi.Web.Enter.Common.DTO.PassCodeDTO pDTO)
+        public static Epi.Web.Enter.Common.Message.UserAuthenticationRequest ToUserAuthenticationObj(Epi.Cloud.Common.DTO.PassCodeDTO pDTO)
         {
             return new Epi.Web.Enter.Common.Message.UserAuthenticationRequest
             {

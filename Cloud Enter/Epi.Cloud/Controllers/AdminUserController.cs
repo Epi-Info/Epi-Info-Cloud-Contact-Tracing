@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using System.Web.Configuration;
 using Epi.Web.MVC.Models;
 using System.Reflection;
@@ -51,10 +51,10 @@ namespace Epi.Web.MVC.Controllers
             {
 
 
-                Request.Organization = new OrganizationDTO();
+                Request.Organization = new Enter.Common.DTO.OrganizationDTO();
                 Request.Organization.OrganizationId = orgid;
 
-                Request.User = new UserDTO();
+                Request.User = new Enter.Common.DTO.UserDTO();
                 Request.User.UserId = userid;
 
                 UserResponse Response = _isurveyFacade.GetUserInfo(Request);

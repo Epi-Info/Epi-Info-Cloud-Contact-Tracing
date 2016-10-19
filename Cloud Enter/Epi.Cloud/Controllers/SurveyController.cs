@@ -17,12 +17,13 @@ using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Constants;
 using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -690,7 +691,7 @@ namespace Epi.Web.MVC.Controllers
 			return CurrentPage;
 		}
 
-		private void SetCurrentPage(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, int viewPageNumber)
+		private void SetCurrentPage(SurveyAnswerDTO surveyAnswerDTO, int viewPageNumber)
 		{
 			//surveyAnswerDTO.ResponseDetail.LastPageVisited = viewPageNumber;
 
@@ -702,9 +703,9 @@ namespace Epi.Web.MVC.Controllers
 			this._surveyFacade.GetSurveyAnswerRepository().SaveSurveyAnswer(sar);
 		}
 
-		private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetSurveyAnswer(string responseId, string currentFormId = "")
+		private SurveyAnswerDTO GetSurveyAnswer(string responseId, string currentFormId = "")
 		{
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+			SurveyAnswerDTO result = null;
 
 			//responseId = TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID].ToString();
 			result = _surveyFacade.GetSurveyAnswerResponse(responseId, currentFormId, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString())).SurveyResponseList[0];
@@ -770,7 +771,7 @@ namespace Epi.Web.MVC.Controllers
 					bool IsMobileDevice = false;
 
 					IsMobileDevice = this.Request.Browser.IsMobileDevice;
-					Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _surveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
+					SurveyAnswerDTO SurveyAnswer = _surveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
 
 					var surveyId = SurveyAnswer.SurveyId;
 					SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyId);
@@ -812,7 +813,7 @@ namespace Epi.Web.MVC.Controllers
 				IsMobileDevice = this.Request.Browser.IsMobileDevice;
 
 
-				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _surveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
+				SurveyAnswerDTO SurveyAnswer = _surveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
 				bool IsAndroid = false;
 
 				if (this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0)
@@ -852,7 +853,7 @@ namespace Epi.Web.MVC.Controllers
 
 
 		//[OutputCache(Duration = int.MaxValue, VaryByParam = "SurveyId", Location = OutputCacheLocation.Server)]
-		public SurveyInfoModel GetSurveyInfo(string SurveyId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
+		public SurveyInfoModel GetSurveyInfo(string SurveyId, List<FormsHierarchyDTO> FormsHierarchyDTOList = null)
 		{
 
 			/* var CacheObj = HttpRuntime.Cache.Get(SurveyId);
@@ -1029,7 +1030,7 @@ namespace Epi.Web.MVC.Controllers
 			bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
 			//if (!string.IsNullOrEmpty(EditForm))
 			//    {
-			//    Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(EditForm);
+			//    Epi.Cloud.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(EditForm);
 			//    string ChildRecordId = GetChildRecordId(surveyAnswerDTO);
 
 			//    }
@@ -1051,9 +1052,9 @@ namespace Epi.Web.MVC.Controllers
 			TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID] = ResponseID.ToString();
 
 			// create the first survey response
-			// Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
+			// SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
 			int CuurentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _surveyFacade.CreateSurveyAnswer(surveyId, ResponseID.ToString(), UserId, true, relateResponseId, this.IsEditMode, CuurentOrgId);
+			SurveyAnswerDTO SurveyAnswer = _surveyFacade.CreateSurveyAnswer(surveyId, ResponseID.ToString(), UserId, true, relateResponseId, this.IsEditMode, CuurentOrgId);
 			SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId);
 
 			// set the survey answer to be production or test 
@@ -1382,7 +1383,7 @@ namespace Epi.Web.MVC.Controllers
 			this._requiredList = (Session[SessionKeys.RequiredList] ?? string.Empty).ToString();
 			bool.TryParse((Session[SessionKeys.IsEditMode] ?? "False").ToString(), out this.IsEditMode);
 		}
-		private FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, string ResponseId, List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null)
+		private FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, string ResponseId, List<FormsHierarchyDTO> FormsHierarchyDTOList = null)
 		{
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();

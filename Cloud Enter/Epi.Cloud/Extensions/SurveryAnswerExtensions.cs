@@ -131,7 +131,7 @@ namespace Epi.Cloud.MVC.Extensions
             }
         }
 
-        private static string GetColumnValue(Epi.Web.Enter.Common.DTO.SurveyAnswerDTO item, string columnName)
+        private static string GetColumnValue(SurveyAnswerDTO item, string columnName)
         {
             string ColumnValue = "";
             switch (columnName)

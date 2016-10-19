@@ -1,4 +1,4 @@
-﻿using Epi.Web.Enter.Common.DTO;
+﻿using Epi.Cloud.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.MVC.Facade
@@ -9,6 +9,6 @@ namespace Epi.Web.MVC.Facade
         void UpdatePassCode(string responseId, string passcode);
         UserAuthenticationResponse GetAuthenticationResponse(string responseId);
         UserAuthenticationResponse GetUserInfo(int UserId);
-        bool UpdateUser(UserDTO User);
+        bool UpdateUser(Enter.Common.DTO.UserDTO User);
     }
 }

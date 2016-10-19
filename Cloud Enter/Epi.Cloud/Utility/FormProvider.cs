@@ -8,9 +8,10 @@ using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.Constants;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -31,11 +32,11 @@ namespace Epi.Web.MVC.Utility
 			CurrentFormId = formId;
 		}
 
-		public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
+		public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, SurveyAnswerDTO surveyAnswer, bool isAndroid = false)
         {
             return GetForm(surveyInfo, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
-        public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid)
+        public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid)
         {
             // Save last values for subsequent calls from ValidateAll in SurveyController
             SurveyAnswerList = surveyAnswerList;

@@ -82,7 +82,6 @@
     <Compile Include="BusinessRule\ValidateRequired.cs" />
     <Compile Include="BusinessRule\ValidationDataType.cs" />
     <Compile Include="BusinessRule\ValidationOperator.cs" />
-    <Compile Include="Constants\Constant.cs" />
     <Compile Include="Criteria\FormInfoCriteria.cs" />
     <Compile Include="Criteria\OrganizationCriteria.cs" />
     <Compile Include="Criteria\SurveyAnswerCriteria.cs" />
@@ -95,15 +94,12 @@
     <Compile Include="DTO\FormResponseInfoDTO.cs" />
     <Compile Include="DTO\FormSettingDTO.cs" />
     <Compile Include="DTO\FormsHierarchyDTO.cs" />
-    <Compile Include="DTO\OrganizationDTO.cs" />
     <Compile Include="DTO\PageInfoDTO.cs" />
     <Compile Include="DTO\PassCodeDTO.cs" />
     <Compile Include="DTO\PreFilledAnswerDTO.cs" />
     <Compile Include="DTO\ResponseDTO.cs" />
-    <Compile Include="DTO\SurveyAnswerDTO.cs" />
-    <Compile Include="DTO\SurveyAnswerStateDTO.cs" />
     <Compile Include="DTO\SurveyControlDTO.cs" />
-    <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="DTO\SurveyInfoDTO.cs" />
     <Compile Include="Email\Email.cs" />
     <Compile Include="Exception\CustomFaultException.cs" />
     <Compile Include="Extension\LinqExtensions.cs" />
@@ -137,7 +133,6 @@
     <Compile Include="Message\SurveyInfoResponse.cs" />
     <Compile Include="Message\SurveyRequest.cs" />
     <Compile Include="DTO\PublishInfoDTO.cs" />
-    <Compile Include="DTO\SurveyInfoDTO.cs" />
     <Compile Include="Message\TokenRequest.cs" />
     <Compile Include="Message\TokenResponse.cs" />
     <Compile Include="Message\UserAuthenticationResponse.cs" />
@@ -156,6 +151,10 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Compatibility\Epi.Core\Epi.Core.csproj">
+      <Project>{EBD2B961-A952-4670-96CA-50BAA12C7F29}</Project>
+      <Name>Epi.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
@@ -167,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Constants\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

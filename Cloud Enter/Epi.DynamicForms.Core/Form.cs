@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures.Interfaces;
+using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms.Fields;
 using MvcDynamicForms.Utilities;
 
@@ -22,7 +23,7 @@ namespace MvcDynamicForms
         private string _formWrapperClass = "MvcDynamicForm";
         private string _fieldPrefix = "MvcDynamicField_";
         private FieldList _fields;
-        private Epi.Web.Enter.Common.DTO.SurveyInfoDTO _surveyInfo;
+        private SurveyInfoDTO _surveyInfo;
         public double Width { get; set; }
         public double Height { get; set; }
         public bool IsMobile { get; set; }
@@ -340,7 +341,7 @@ namespace MvcDynamicForms
             return ErrorList.ToString();
 
         }
-        public Epi.Web.Enter.Common.DTO.SurveyInfoDTO SurveyInfo
+        public SurveyInfoDTO SurveyInfo
         {
             get { return this._surveyInfo; }
             set { this._surveyInfo = value; }

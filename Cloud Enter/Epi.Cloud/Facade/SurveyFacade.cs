@@ -4,9 +4,12 @@ using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
 using Epi.Web.MVC.Models;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Web.Enter.Common.DTO;
+using MvcDynamicForms;
+using System;
 
 namespace Epi.Web.MVC.Facade
 {
@@ -72,17 +75,17 @@ namespace Epi.Web.MVC.Facade
         public MvcDynamicForms.Form GetSurveyFormData(
             string surveyId,
             int pageNumber,
-            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
+            SurveyAnswerDTO surveyAnswerDTO,
             bool IsMobileDevice,
             List<SurveyAnswerDTO> surveyAnswerDTOList = null,
-            List<Epi.Web.Enter.Common.DTO.FormsHierarchyDTO> FormsHierarchyDTOList = null,
+            List<FormsHierarchyDTO> FormsHierarchyDTOList = null,
 			bool IsAndroid = false)
         {
             List<SurveyInfoDTO> surveyInfoDTOList = new List<SurveyInfoDTO>();
 
 
             //Get the SurveyInfoDTO
-            Epi.Web.Enter.Common.DTO.SurveyInfoDTO surveyInfoDTO;
+            SurveyInfoDTO surveyInfoDTO;
             if (FormsHierarchyDTOList == null)
             {
                 surveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(_surveyInfoRequest, _iSurveyInfoRepository, surveyId);
@@ -93,7 +96,7 @@ namespace Epi.Web.MVC.Facade
                     {
                         Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
                         request.Criteria.SurveyIdList.Add(item.SurveyId);
-                        Epi.Web.Enter.Common.DTO.SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
+                        SurveyInfoDTO _SurveyInfoDTO = SurveyHelper.GetSurveyInfoDTO(request, _iSurveyInfoRepository, item.SurveyId);
                         surveyInfoDTOList.Add(_SurveyInfoDTO);
                     }
                 }
@@ -140,7 +143,7 @@ namespace Epi.Web.MVC.Facade
         /// </summary>
         /// <param name="SurveyId"></param>
         /// <returns></returns>
-        public Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
+        public SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
                                                                            string responseId, 
                                                                            int UserId, 
                                                                            bool IsChild = false, 
@@ -157,7 +160,7 @@ namespace Epi.Web.MVC.Facade
         public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, 
                                          string responseId, 
                                          MvcDynamicForms.Form form, 
-                                         Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, 
+                                         SurveyAnswerDTO surveyAnswerDTO, 
                                          bool IsSubmited, 
                                          bool IsSaved, 
                                          int PageNumber, 
@@ -429,5 +432,10 @@ namespace Epi.Web.MVC.Facade
 
             return _iSurveyAnswerRepository.HasResponse(SurveyId, ResponseId);
         }
-    }
+
+		SurveyAnswerDTO ISurveyFacade.CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild, string RelateResponseId, bool IsEditMode, int CurrentOrgId)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

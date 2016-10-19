@@ -9,7 +9,7 @@ using System.Configuration;
 using System.Reflection;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using System.Web.Configuration;
 using System.Text;
 using Epi.Web.MVC.Constants;
@@ -22,6 +22,7 @@ using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MVC.Extensions;
 using Epi.FormMetadata.DataStructures;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -165,7 +166,7 @@ namespace Epi.Web.MVC.Controllers
 				Session[SessionKeys.RootResponseId] = editForm;
 
 				Session[SessionKeys.IsEditMode] = true;
-				Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(editForm, Session[SessionKeys.RootFormId].ToString());
+				SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(editForm, Session[SessionKeys.RootFormId].ToString());
 
 
 				Session[SessionKeys.RequestedViewId] = surveyAnswerDTO.ViewId;
@@ -205,13 +206,13 @@ namespace Epi.Web.MVC.Controllers
 			TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID] = responseId.ToString();
 
 			// create the first survey response
-			// Epi.Web.Enter.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
+			// Epi.Cloud.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
 			Session[SessionKeys.RootFormId] = addNewFormId;
 			Session[SessionKeys.RootResponseId] = responseId;
 
 			int currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
 
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswer = _surveyFacade.CreateSurveyAnswer(addNewFormId, responseId.ToString(), userId, false, "", false, currentOrgId);
+			SurveyAnswerDTO surveyAnswer = _surveyFacade.CreateSurveyAnswer(addNewFormId, responseId.ToString(), userId, false, "", false, currentOrgId);
 			surveyId = surveyId ?? surveyAnswer.SurveyId;
 
 			// Initialize the Metadata Accessor
@@ -501,9 +502,9 @@ namespace Epi.Web.MVC.Controllers
 		}
 
 
-		private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetCurrentSurveyAnswer()
+		private SurveyAnswerDTO GetCurrentSurveyAnswer()
 		{
-			Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+			SurveyAnswerDTO result = null;
 
 			if (TempData.ContainsKey(Epi.Web.MVC.Constants.Constant.RESPONSE_ID)
 				&& TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID] != null
@@ -694,9 +695,9 @@ namespace Epi.Web.MVC.Controllers
 			return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"].ToString());
 		}
 
-        private Epi.Web.Enter.Common.DTO.SurveyAnswerDTO GetSurveyAnswer(string responseId, string formId)
+        private SurveyAnswerDTO GetSurveyAnswer(string responseId, string formId)
         {
-            Epi.Web.Enter.Common.DTO.SurveyAnswerDTO result = null;
+            SurveyAnswerDTO result = null;
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             var SurveyAnswerResponse = _surveyFacade.GetSurveyAnswerResponse(responseId, formId, userId);
             result = SurveyAnswerResponse.SurveyResponseList[0];

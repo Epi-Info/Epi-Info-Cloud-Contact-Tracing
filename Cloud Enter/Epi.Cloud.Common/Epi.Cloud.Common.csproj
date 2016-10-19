@@ -47,12 +47,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessObjects\FormInfoBO.cs" />
+    <Compile Include="BusinessObjects\PageInfoBO.cs" />
+    <Compile Include="BusinessObjects\ResponseBO.cs" />
+    <Compile Include="BusinessObjects\SurveyInfoBO.cs" />
+    <Compile Include="BusinessObjects\SurveyRequestBO.cs" />
     <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
     <Compile Include="Configuration\DependencyHelper.cs" />
+    <Compile Include="Constants\Constant.cs" />
+    <Compile Include="Constants\EmailCombinationEnum.cs" />
+    <Compile Include="Constants\OperationMode.cs" />
     <Compile Include="Constants\Roles.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
     <Compile Include="Constants\RecordStatusChangeReason.cs" />
+    <Compile Include="DTO.WebEnter\SurveyAnswerDTO.cs" />
+    <Compile Include="DTO.WebEnter\SurveyAnswerStateDTO.cs" />
+    <Compile Include="DTO\FormResponseInfoDTO.cs" />
+    <Compile Include="DTO.WebEnter\OrganizationDTO.cs" />
+    <Compile Include="DTO\PassCodeDTO.cs" />
+    <Compile Include="DTO\ResponseDTO.cs" />
+    <Compile Include="DTO.WebEnter\UserDTO.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />
     <Compile Include="Metadata\Interfaces\IProjectMetadataProvider.cs" />
     <Compile Include="Metadata\MetadataAccessor.cs" />
@@ -64,7 +79,6 @@
     <Compile Include="Utilities\StringCompressor.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="EntityObjects\" />
     <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>

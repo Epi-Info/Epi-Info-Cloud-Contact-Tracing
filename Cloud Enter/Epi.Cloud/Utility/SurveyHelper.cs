@@ -7,6 +7,7 @@ using System.Web.Security;
 using Epi.Cloud.DataEntryServices.Model;
 using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.DataStructures;
+using Epi.Cloud.Common.DTO;
 using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
@@ -22,7 +23,7 @@ namespace Epi.Web.MVC.Utility
         /// <param name="surveyAnswerDTO"></param>
         /// <param name="surveyResponseHelper"></param>
         /// <param name="iSurveyAnswerRepository"></param>
-        public static Epi.Web.Enter.Common.DTO.SurveyAnswerDTO CreateSurveyResponse(string surveyId, string responseId, SurveyAnswerRequest surveyAnswerRequest1,
+        public static SurveyAnswerDTO CreateSurveyResponse(string surveyId, string responseId, SurveyAnswerRequest surveyAnswerRequest1,
                                           Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
                                           SurveyResponseDocDb surveyResponseHelper, ISurveyAnswerRepository iSurveyAnswerRepository, int UserId, bool IsChild = false, string RelateResponseId = "", bool IsEditMode = false, int CurrentOrgId = -1)
         {
@@ -81,7 +82,7 @@ namespace Epi.Web.MVC.Utility
                                                 ISurveyAnswerRepository iSurveyAnswerRepository,
                                                 SurveyAnswerResponse surveyAnswerResponse,
                                                 string responseId,
-                                                Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
+                                                SurveyAnswerDTO surveyAnswerDTO,
                                                 bool IsSubmited,
                                                 bool IsSaved,
                                                 int PageNumber,
@@ -190,7 +191,7 @@ namespace Epi.Web.MVC.Utility
 		/// <param name="iSurveyInfoRepository"></param>
 		/// <param name="SurveyId"></param>
 		/// <returns></returns>
-		public static Epi.Web.Enter.Common.DTO.SurveyInfoDTO GetSurveyInfoDTO(SurveyInfoRequest surveyInfoRequest,
+		public static SurveyInfoDTO GetSurveyInfoDTO(SurveyInfoRequest surveyInfoRequest,
                                                       ISurveyInfoRepository iSurveyInfoRepository,
                                                       string SurveyId)
         {

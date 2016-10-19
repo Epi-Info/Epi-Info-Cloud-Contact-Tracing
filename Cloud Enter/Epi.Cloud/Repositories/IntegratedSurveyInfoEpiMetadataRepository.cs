@@ -6,6 +6,7 @@ using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
 using Epi.Cloud.CacheServices;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Cloud.MVC.Repositories
 {
@@ -59,12 +60,12 @@ namespace Epi.Cloud.MVC.Repositories
         }
 
         #region stubcode
-        public List<Epi.Web.Enter.Common.DTO.SurveyInfoDTO> GetList(Criterion criterion = null)
+        public List<SurveyInfoDTO> GetList(Criterion criterion = null)
         {
             throw new NotImplementedException();
         }
 
-        public Epi.Web.Enter.Common.DTO.SurveyInfoDTO Get(int id)
+        public SurveyInfoDTO Get(int id)
         {
             throw new NotImplementedException();
         }
@@ -74,12 +75,12 @@ namespace Epi.Cloud.MVC.Repositories
             throw new NotImplementedException();
         }
 
-        public void Insert(Epi.Web.Enter.Common.DTO.SurveyInfoDTO t)
+        public void Insert(SurveyInfoDTO t)
         {
             throw new NotImplementedException();
         }
 
-        public void Update(Epi.Web.Enter.Common.DTO.SurveyInfoDTO t)
+        public void Update(SurveyInfoDTO t)
         {
             throw new NotImplementedException();
         }
@@ -127,7 +128,7 @@ namespace Epi.Cloud.MVC.Repositories
             return _iDataService.GetFormChildInfo(SurveyInfoRequest);
         }
 
-        public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
+        public Epi.Web.Enter.Common.Message.FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
         {
             return _iDataService.GetFormsHierarchy(FormsHierarchyRequest);
         }

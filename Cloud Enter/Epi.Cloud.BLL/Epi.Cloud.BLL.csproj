@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="FormInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurveyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EIWS_BLL_Core\Epi.Web.BLL.csproj">

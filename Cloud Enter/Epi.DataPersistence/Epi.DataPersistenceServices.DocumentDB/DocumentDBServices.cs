@@ -2,7 +2,7 @@
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 
-namespace Epi.Cloud.DataEntryServices
+namespace Epi.PersistenceServices.DocumentDB
 {
     public class TableStorageInfo
     {
