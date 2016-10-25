@@ -268,7 +268,9 @@ namespace MvcDynamicForms.Fields
                     foreach (var choice in _choices)
                     {
                         var opt = new TagBuilder("option");
-                        opt.Attributes.Add("value", choice.Key);
+                        int firstHyphenIndex = choice.Key.Contains("-") ? choice.Key.IndexOf('-') : choice.Key.Length;
+                        string comment = choice.Key.Substring(0, (choice.Key.Length - (choice.Key.Length - firstHyphenIndex)));
+                        opt.Attributes.Add("value", comment);
                         if (choice.Key == SelectedValue) opt.Attributes.Add("selected", "selected");
                         opt.SetInnerText(choice.Key);
 
