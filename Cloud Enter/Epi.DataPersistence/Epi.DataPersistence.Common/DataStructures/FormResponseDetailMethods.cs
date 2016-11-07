@@ -16,6 +16,7 @@ namespace Epi.DataPersistence.DataStructures
 			DisabledFieldsList = string.Empty;
 			PageResponseDetailList = new List<PageResponseDetail>();
 			ChildFormResponseDetailList = new List<FormResponseDetail>();
+			PageIds = new List<int>();
 		}
 
 		public void AddPageResponseDetail(PageResponseDetail pageResponseDetail)
@@ -85,6 +86,80 @@ namespace Epi.DataPersistence.DataStructures
 		{
 			var pageResponseDetail = PageResponseDetailList.SingleOrDefault(p => p.PageNumber == pageNumber);
 			return pageResponseDetail;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pageNumber"></param>
+		/// <returns>
+		/// If found return the index of the entry. 
+		/// If not found then return the one's complement of the insertion index.
+		/// </returns>
+		public int GetPageResponseDetailIndexByPageNumber(int pageNumber)
+		{
+			int result = int.MinValue;
+			for (int index = 0; index < PageResponseDetailList.Count; ++index)
+			{
+				if (PageResponseDetailList[index].PageNumber == pageNumber) return index;
+				if (result == int.MinValue && PageResponseDetailList[index].PageNumber > pageNumber) result = ~index;
+			}
+			return result;
+		}
+
+		public bool MergePageResponseDetail(PageResponseDetail pageResponseDetail)
+		{
+			// Assume that the page has been updated
+			var hasBeenUpdated = true;
+
+			if (PageResponseDetailList.Count > 0)
+			{
+				// Check if the page already exists in the PageResponseDetail.
+				// Either the index to the existing page response detail will be returned
+				// or a negative number which is the one's complement of the insertion point will be returned. 
+				int index = GetPageResponseDetailIndexByPageNumber(pageResponseDetail.PageNumber);
+				if (index >= 0)
+				{
+					// Check to see if the page has been updated
+					hasBeenUpdated = !(PageResponseDetailList[index].Equals(pageResponseDetail));
+					if (hasBeenUpdated)
+					{
+						pageResponseDetail.HasBeenUpdated = hasBeenUpdated;
+						PageResponseDetailList[index] = pageResponseDetail;
+					}
+				}
+				else
+				{
+					hasBeenUpdated = true;
+					pageResponseDetail.HasBeenUpdated = hasBeenUpdated;
+
+					// The one's complement is the insertion index
+					index = ~index;
+
+					if (index >= PageResponseDetailList.Count)
+					{
+						PageResponseDetailList.Add(pageResponseDetail);
+					}
+					else
+					{
+						PageResponseDetailList.Insert(index, pageResponseDetail);
+					}
+				}
+			}
+			else
+			{
+				hasBeenUpdated = true;
+				pageResponseDetail.HasBeenUpdated = hasBeenUpdated;
+				PageResponseDetailList.Add(pageResponseDetail);
+			}
+
+			if (!PageIds.Contains(pageResponseDetail.PageId))
+			{
+				PageIds.Add(pageResponseDetail.PageId);
+				PageIds.Sort();
+			}
+
+			return hasBeenUpdated;
 		}
 	}
 }

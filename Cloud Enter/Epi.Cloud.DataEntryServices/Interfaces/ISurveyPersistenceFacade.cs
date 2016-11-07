@@ -23,7 +23,9 @@ namespace Epi.Cloud.DataEntryServices.Interfaces
         FormResponseDetail GetFormResponseState(string responseId);
 
         FormResponseDetail GetFormResponseByResponseId(string responseId);
-        Task<bool> InsertResponseAsync(MvcDynamicForms.Form form, SurveyResponseBO surveyResponseBO);
+		Task<bool> InsertResponse(SurveyResponseBO surveyResponseBO);
+		//bool InsertResponse(SurveyResponseBO surveyResponseBO);
+		bool InsertResponse(MvcDynamicForms.Form form, SurveyResponseBO surveyResponseBO);
 #if false // Garry
         Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
 #endif
@@ -33,7 +35,7 @@ namespace Epi.Cloud.DataEntryServices.Interfaces
 
         SurveyAnswerResponse DeleteResponse(string responseId, int userId);
 
-        bool SaveFormProperties(SurveyResponseBO request);
+        Task<bool> SaveFormProperties(SurveyResponseBO request);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);

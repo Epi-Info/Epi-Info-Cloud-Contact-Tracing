@@ -105,7 +105,7 @@
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>

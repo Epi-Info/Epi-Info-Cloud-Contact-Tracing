@@ -82,6 +82,15 @@ namespace Epi.Cloud.Common.Metadata
             return pageId;
         }
 
+		public FieldDigest GetFieldDigestByFieldName(string formId, string fieldName)
+		{
+			fieldName = fieldName.ToLower();
+			var fieldDigests = GetFieldDigests(formId);
+			FieldDigest fieldDigest;
+			fieldDigest = fieldDigests.Where(fd => fd.FieldName == fieldName).SingleOrDefault();
+			return fieldDigest;
+		}
+
         public FieldDigest[] GetFieldDigests(string formId)
         {
             FieldDigest[] fieldDigests = null;

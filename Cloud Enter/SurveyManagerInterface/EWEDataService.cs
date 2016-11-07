@@ -418,7 +418,7 @@ namespace Epi.Web.WCF.SurveyService
                         List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetResponsesHierarchyIdsByRootId(request.SurveyAnswerList[0].ResponseId);
 
 
-                        List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status);
+                        List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status, RecordStatusChangeReason.Update);
                         foreach (var Obj in ResultList)
                         {
 
@@ -1480,7 +1480,7 @@ namespace Epi.Web.WCF.SurveyService
 
                 List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetSurveyResponseById(request.Criteria);
 
-                List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, request.Criteria.StatusId);
+                List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, request.Criteria.StatusId, request.Criteria.StatusChangeReason);
 
             }
             catch (Exception ex)

@@ -253,36 +253,15 @@ namespace Epi.Web.BLL
             return result;
         }
 
-        public List<SurveyResponseBO> UpdateSurveyResponse(List<SurveyResponseBO> surveyResponseBOs, int Status)
+        public List<SurveyResponseBO> UpdateSurveyResponse(List<SurveyResponseBO> surveyResponseBOs, int status, RecordStatusChangeReason reasonForStatusChange)
         {
             List<SurveyResponseBO> result = surveyResponseBOs;
             //Check if this respose has parent
             foreach (var surveyResponseBO in surveyResponseBOs)
             {
-                //string ParentId = SurveyResponseDao.GetResponseParentId(Obj.ResponseId);
-                //if (!string.IsNullOrEmpty(ParentId) && ParentId != Guid.Empty.ToString() && Status == 2)
-                //{
-                //    //read the child 
-
-                //    SurveyResponseBO Child = SurveyResponseDao.GetSingleResponse(Obj.ResponseId);
-                //    // read the parent
-                //    SurveyResponseBO Parent = SurveyResponseDao.GetSingleResponse(ParentId);
-                //    //copy and update
-                //    Parent.XML = Child.XML;
-                //    Parent.Status = Status;
-                //    SurveyResponseDao.UpdateSurveyResponse(Parent);
-                //    result.Add(Parent);
-                //    // Set  child recod UserId
-                //    Child.UserId = Obj.UserId;
-                //    // delete the child
-                //    DeleteSurveyResponse(Child);
-
-                //}
-                //else
-                //{
-                surveyResponseBO.Status = Status;
+                surveyResponseBO.Status = status;
+				surveyResponseBO.ReasonForStatusChange = reasonForStatusChange;
                 _surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
-                // }
             }
             return result;
         }

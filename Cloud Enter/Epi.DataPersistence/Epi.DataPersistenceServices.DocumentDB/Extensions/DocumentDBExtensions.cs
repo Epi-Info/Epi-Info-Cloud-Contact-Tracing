@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.DataStructures;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
@@ -43,6 +44,7 @@ namespace Epi.DataPersistence.Extensions
             foreach (var childHierarchicalDocumentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
             {
                 var childFormResponseDetail = childHierarchicalDocumentResponseProperties.ToFormResponseDetail();
+				childFormResponseDetail.ParentFormId = formResponseDetail.FormId;
                 formResponseDetail.AddChildFormResponseDetail(childFormResponseDetail);
             }
         }
@@ -95,8 +97,6 @@ namespace Epi.DataPersistence.Extensions
                 HiddenFieldsList = formResponseProperties.HiddenFieldsList,
                 HighlightedFieldsList = formResponseProperties.HiddenFieldsList,
                 DisabledFieldsList = formResponseProperties.DisabledFieldsList
-
-
             };
 
             if (pageResponsePropertiesList != null && pageResponsePropertiesList.Count > 0)
@@ -113,10 +113,11 @@ namespace Epi.DataPersistence.Extensions
             return formResponseDetail;
         }
 
-		public static FormResponseProperties ToFormResponseProperties(FormResponseDetail formResponseDetail)
+		public static FormResponseProperties ToFormResponseProperties(this FormResponseDetail formResponseDetail)
 		{
 			var formResponseProperties = new FormResponseProperties
 			{
+				Id = formResponseDetail.GlobalRecordID,
 				GlobalRecordID = formResponseDetail.GlobalRecordID,
 
 				FormId = formResponseDetail.FormId,
@@ -133,6 +134,11 @@ namespace Epi.DataPersistence.Extensions
 				IsDraftMode = formResponseDetail.IsDraftMode,
 				PageIds = formResponseDetail.PageIds
 			};
+
+
+			formResponseProperties.PageIds.AddRange(formResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
+			formResponseProperties.PageIds = formResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
+
 			return formResponseProperties;
 		}
 
@@ -140,6 +146,7 @@ namespace Epi.DataPersistence.Extensions
 		{
 			var pageResponseProperties = new PageResponseProperties
 			{
+				Id = pageResponseDetail.GlobalRecordID,
 				GlobalRecordID = pageResponseDetail.GlobalRecordID,
 				PageId = pageResponseDetail.PageId,
 				ResponseQA = pageResponseDetail.ResponseQA

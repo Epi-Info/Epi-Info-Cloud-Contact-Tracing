@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Epi.Web.MVC.Repositories.Core;
 using Epi.Web.Enter.Common.Message;
 using System.Collections.Generic;
@@ -113,7 +114,12 @@ namespace Epi.Web.MVC.Utility
                 PageResponseDetail currentPageResponseDetail = currentFormResponseDetail.GetPageResponseDetailByPageNumber(currentPageNumber);
                 if (addRoot == false)
                 {
-					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail, currentPageNumber);
+					var mergedResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail);
+					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageIds = mergedResponseDetail.PageIds;
+					// keep only the pages that have updates
+					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.Where(p => p.HasBeenUpdated).ToList();
+					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
+					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.AddRange(updatedPageResponseDetailList);
                 }
             }
 
@@ -156,7 +162,6 @@ namespace Epi.Web.MVC.Utility
                         var fields = pageList[i][j].Fields;
                         foreach (var fieldx in fields)
                         {
-
                             foreach (var k in FieldsList)
                             {
                                 if (fieldx.FieldName == k.Key)
@@ -165,7 +170,6 @@ namespace Epi.Web.MVC.Utility
                                         fieldx.Value = k.Value;
                                 }
                             }
-
                         }
                     }
                 }
@@ -355,19 +359,13 @@ namespace Epi.Web.MVC.Utility
 
         }
 
-        public static FormResponseDetail MergeResponseDetail(FormResponseDetail savedResponseDetail, PageResponseDetail currentPageResponseDetail, int pageNumber)
-        {
-            savedResponseDetail = savedResponseDetail ?? new FormResponseDetail { FormId = currentPageResponseDetail.FormId, FormName = currentPageResponseDetail.FormName };
-			savedResponseDetail.LastPageVisited = pageNumber;
-            var savedPageResponseDetail = savedResponseDetail.GetPageResponseDetailByPageNumber(pageNumber);
-            if (savedPageResponseDetail != null)
-            {
-                savedResponseDetail.PageResponseDetailList.Remove(savedPageResponseDetail);
-            }
-
-            savedResponseDetail.AddPageResponseDetail(currentPageResponseDetail);
-
-            return savedResponseDetail;
+        public static FormResponseDetail MergeResponseDetail(FormResponseDetail savedResponseDetail, PageResponseDetail currentPageResponseDetail)
+		{
+            savedResponseDetail = savedResponseDetail ?? new FormResponseDetail { FormId = currentPageResponseDetail.FormId,
+																				  FormName = currentPageResponseDetail.FormName };
+			savedResponseDetail.LastPageVisited = currentPageResponseDetail.PageNumber;
+			savedResponseDetail.MergePageResponseDetail(currentPageResponseDetail);
+			return savedResponseDetail;
         }
 
         public static int GetDecryptUserId(string Id)

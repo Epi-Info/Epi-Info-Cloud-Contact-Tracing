@@ -20,9 +20,10 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
 
-            surveyResponseBO.XML = surveyAnswerDTO.XML;
+			surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
+			surveyResponseBO.ResponseDetail.PageIds = surveyResponseBO.ResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
 
-            return surveyResponseBO;    
+			return surveyResponseBO;    
         }
 
         public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<SurveyAnswerDTO> surveyAnswerDTOList)

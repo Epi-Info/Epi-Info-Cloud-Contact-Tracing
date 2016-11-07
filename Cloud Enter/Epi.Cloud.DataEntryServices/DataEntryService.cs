@@ -561,8 +561,13 @@ namespace Epi.Cloud.DataEntryServices
 				Epi.Web.BLL.SurveyResponse Implementation1 = new Epi.Web.BLL.SurveyResponse(surveyResponseDao);
 
 				List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetSurveyResponseById(surveyAnswerRequest.Criteria);
+				foreach (var surveyResponseBO in SurveyResponseBOList)
+				{
+					surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+					surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+				}
 
-				List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId);
+				List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
 
 			}
 			catch (Exception ex)

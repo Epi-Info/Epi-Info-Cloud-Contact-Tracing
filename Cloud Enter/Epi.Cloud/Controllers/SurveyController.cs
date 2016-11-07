@@ -1308,8 +1308,7 @@ namespace Epi.Web.MVC.Controllers
                 surveyResponseBO.ResponseId = responseId;
                 surveyResponseBO.IsDraftMode = surveyInfoModel.IsDraftMode;
                 surveyResponseBO.UserId = userId;
-                _surveyPersistenceFacade.InsertResponseAsync(form, surveyResponseBO);              
-
+               // var isSuccesful = _surveyPersistenceFacade.InsertResponse(form, surveyResponseBO);              
             }
 
 			bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
-using Epi.Common.Configuration;
+using Epi.Cloud.Common.Configuration;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
@@ -19,7 +19,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
 {
 	public partial class SurveyResponseCRUD
 	{
-		// public DocumentClient client;
 		public string serviceEndpoint;
 		public string authKey;
 		public string DatabaseName = "EpiInfo7";
@@ -35,7 +34,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			//Getting reference to Database 
 			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				_database = GetOrCreateDatabaseAsync(client, DatabaseName);
+				_database = GetOrCreateDatabase(client, DatabaseName);
 			}
 		}
 
@@ -73,14 +72,15 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// <summary>
 		///If DB is not avaliable in Document Db create DB
 		/// </summary>
-		private Microsoft.Azure.Documents.Database GetOrCreateDatabaseAsync(DocumentClient client, string databaseName)
+		private Microsoft.Azure.Documents.Database GetOrCreateDatabase(DocumentClient client, string databaseName)
 		{
 			if (_database == null)
 			{
 				_database = client.CreateDatabaseQuery().Where(d => d.Id == databaseName).AsEnumerable().FirstOrDefault();
 				if (_database == null)
 				{
-					_database = client.CreateDatabaseAsync(new Microsoft.Azure.Documents.Database { Id = databaseName }, null).Result;
+					client.CreateDatabaseAsync(new Microsoft.Azure.Documents.Database { Id = databaseName }, null)
+						.ContinueWith(t => _database = t.Result); ;
 				}
 			}
 			return _database;
@@ -111,8 +111,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					};
 #endif //ConfigureIndexing
 
-					documentCollection = client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
-					_documentCollections[collectionId] = documentCollection;
+					client.CreateDocumentCollectionAsync(databaseLink, collectionSpec)
+						.ContinueWith(t =>
+						{
+							documentCollection = t.Result;
+							_documentCollections[collectionId] = documentCollection;
+						});
 				}
 			}
 			return documentCollection;
@@ -122,7 +126,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		private DocumentCollection GetCollectionReference(DocumentClient client, string collectionId)
 		{
 			//Get a reference to the DocumentDB Database 
-			var database = GetOrCreateDatabaseAsync(client, DatabaseName);
+			var database = GetOrCreateDatabase(client, DatabaseName);
 
 			//Get a reference to the DocumentDB Collection
 			var collection = GetOrCreateCollection(client, database.SelfLink, collectionId);
@@ -160,9 +164,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
 						{
 							formResponseProperties.RecStatus = responseStatus;
 							formResponseProperties.UserId = userId;
-							var response = client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
-							//var result = response.Result;
-							isSuccessful = true;
+							client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties)
+								.ContinueWith<bool>(t => isSuccessful = t.Result != null);
 						}
 					}
 				}
@@ -179,67 +182,85 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// Created instance of DocumentClient and Getting reference to database and Document collections
 		/// </summary>
 		///
-		public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties, FormDigest formDigest)
+		public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties)
 		{
-			try
+			bool tasksRanToCompletion = false;
+
+			var now = DateTime.UtcNow;
+
+			List<Task<ResourceResponse<Document>>> pendingTasks = new List<Task<ResourceResponse<Document>>>();
+			var newFormResponseProperties = documentResponseProperties.FormResponseProperties;
+			var formId = newFormResponseProperties.FormId;
+			var formName = newFormResponseProperties.FormName;
+
+			var userId = documentResponseProperties.UserId;
+			var userName = documentResponseProperties.UserName;
+
+			var isRelatedView = newFormResponseProperties.IsRelatedView;
+			var isDraftMode = newFormResponseProperties.IsDraftMode;
+
+			var responseId = documentResponseProperties.GlobalRecordID;
+
+			using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 			{
-				var responseId = documentResponseProperties.GlobalRecordID;
+				Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
-				//Instance of DocumentClient"
-				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
+				var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
+
+				if (formResponseProperties == null)
 				{
-				   Uri formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
+					formResponseProperties = new FormResponseProperties();
+					formResponseProperties.Id = responseId;
+					formResponseProperties.GlobalRecordID = responseId;
+					formResponseProperties.FormId = formId;
+					formResponseProperties.FormName = formName;
+					formResponseProperties.FirstSaveTime = now;
+					formResponseProperties.FirstSaveLogonName = userName;
+					formResponseProperties.UserId = userId;
+					formResponseProperties.IsRelatedView = isRelatedView;
+				}
 
-					var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
+				formResponseProperties.RecStatus = newFormResponseProperties.RecStatus;
 
-					//Create Survey Properties 
-					Uri pageCollectionUri = GetCollectionUri(client, documentResponseProperties.CollectionName);
-				   
-					//Read Surveyinfo from document db
-					var pageResponseProperties = ReadPageResponsePropertiesByResponseId(documentResponseProperties.GlobalRecordID, client, pageCollectionUri);
-					if (pageResponseProperties == null)
-					{
-						pageResponseProperties = documentResponseProperties.PageResponsePropertiesList[0];
-						pageResponseProperties.Id = responseId;
-					}
-					else
-					{
-						pageResponseProperties.ResponseQA = documentResponseProperties.PageResponsePropertiesList[0].ResponseQA;
-					}
+				formResponseProperties.IsDraftMode = isDraftMode;
+				formResponseProperties.LastSaveTime = now;
+				formResponseProperties.LastSaveLogonName = userName;
 
-					if (formResponseProperties == null)
-					{
-						var formName = documentResponseProperties.FormName;
+				formResponseProperties.RequiredFieldsList = newFormResponseProperties.RequiredFieldsList;
+				formResponseProperties.DisabledFieldsList = newFormResponseProperties.DisabledFieldsList;
+				formResponseProperties.HiddenFieldsList = newFormResponseProperties.HiddenFieldsList;
+				formResponseProperties.HighlightedFieldsList = newFormResponseProperties.HighlightedFieldsList;
 
-						formResponseProperties = new FormResponseProperties();
-
-						formResponseProperties.GlobalRecordID = responseId;
-						formResponseProperties.FormId = formDigest.FormId;
-						formResponseProperties.FormName = formName;
-						formResponseProperties.FirstSaveTime = DateTime.UtcNow;
-						formResponseProperties.IsDraftMode = formDigest.IsDraftMode;
-						formResponseProperties.IsRelatedView = formDigest.ParentFormId != null;
-					}
-
-					var pageId = pageResponseProperties.PageId;
-					formResponseProperties.UserId = documentResponseProperties.UserId;
-					formResponseProperties.RecStatus = RecordStatus.InProcess;
-					if (!formResponseProperties.PageIds.Contains(pageResponseProperties.PageId))
+				foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
+				{
+					var pageId = newPageResponseProperties.PageId;
+					Uri pageCollectionUri = GetCollectionUri(client, newPageResponseProperties.ToColectionName(formName));
+                    var pageResponse = await client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
+					
+					if (!formResponseProperties.PageIds.Contains(pageId))
 					{
 						formResponseProperties.PageIds.Add(pageId);
 					}
-
-					var pageResponse = await client.UpsertDocumentAsync(pageCollectionUri, pageResponseProperties);
-					var formResponse = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
 				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
 
-			return true;
+				formResponseProperties.PageIds.Sort();
+
+				var formResponse = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties); //UpsertDocumentAsync(client, formInfoCollectionUri, formResponseProperties);
+				tasksRanToCompletion = true;
+			}
+			return tasksRanToCompletion;
 		}
+
+		private Task<ResourceResponse<Document>> UpsertDocumentAsync(DocumentClient client, Uri formInfoCollectionUri, FormResponseProperties formResponseProperties)
+		{
+			return client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+		}
+
+		private Task<ResourceResponse<Document>> UpsertDocumentAsync(DocumentClient client, PageResponseProperties newPageResponseProperties, Uri pageCollectionUri)
+		{
+			return client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
+		}
+
 		#endregion
 
 		#region SaveQuestionInDocumentDB
@@ -248,39 +269,54 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// This method help to save form properties 
 		/// and also used for delete operation.Ex:RecStatus=0
 		/// </summary>
-		/// <param name="documentResponseProperties"></param>
+		/// <param name="formResponseProperties"></param>
 		/// <returns></returns>
-		public async Task<bool> SaveResponseAsync(DocumentResponseProperties documentResponseProperties)
+		public async Task<bool> UpsertFormResponseProperties(FormResponseProperties formResponseProperties)
 		{
+			bool isSuccessful = false;
 			try
 			{
 				//Instance of DocumentClient"
 				using (var client = new DocumentClient(new Uri(serviceEndpoint), authKey))
 				{
-					FormResponseProperties formResponseProperties = documentResponseProperties.FormResponseProperties;
 					var formInfoCollectionUri = GetCollectionUri(client, FormInfoCollectionName);
 
 					//Verify Response Id is exist or Not
-					var responseFormInfo = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, client, formInfoCollectionUri);
-					if (responseFormInfo == null)
+					var existingFormResponseProperties = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, client, formInfoCollectionUri);
+					if (existingFormResponseProperties == null)
 					{
 						formResponseProperties.Id = formResponseProperties.GlobalRecordID;
-						var response = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+						formResponseProperties.PageIds = formResponseProperties.PageIds ?? new List<int>();
+						var result = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties); 
 					}
 					else
 					{
-						documentResponseProperties.FormResponseProperties.Id = responseFormInfo.Id;
-						documentResponseProperties.FormResponseProperties.RelateParentId = responseFormInfo.RelateParentId;
-						
-						var pageId = formResponseProperties.PageIds[0];
-						formResponseProperties.PageIds = new List<int>();
-						formResponseProperties.PageIds = responseFormInfo.PageIds;
-						if (!responseFormInfo.PageIds.Contains(pageId))
+						var pageIdsUpdated = false;
+						formResponseProperties.RelateParentId = existingFormResponseProperties.RelateParentId;
+						if (formResponseProperties.PageIds != null && formResponseProperties.PageIds.Count > 0)
 						{
-							formResponseProperties.PageIds.Add(pageId);
+							var newPageIds = formResponseProperties.PageIds.ToList();
+							formResponseProperties.PageIds = existingFormResponseProperties.PageIds;
+							foreach (var pageId in newPageIds)
+							{
+								if (!existingFormResponseProperties.PageIds.Contains(pageId))
+								{
+									formResponseProperties.PageIds.Add(pageId);
+									pageIdsUpdated = true;
+								}
+							}
+							formResponseProperties.PageIds.Sort();
 						}
 
-						var response = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties, null);
+						if ( pageIdsUpdated
+							|| existingFormResponseProperties.RecStatus != formResponseProperties.RecStatus
+							|| existingFormResponseProperties.HiddenFieldsList != formResponseProperties.HiddenFieldsList
+							|| existingFormResponseProperties.DisabledFieldsList != formResponseProperties.DisabledFieldsList
+							|| existingFormResponseProperties.HighlightedFieldsList != formResponseProperties.HighlightedFieldsList
+							|| existingFormResponseProperties.RequiredFieldsList != formResponseProperties.RequiredFieldsList)
+						{
+                        	var result = await client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties, null);
+						}
 					}
 				}
 			}
@@ -289,7 +325,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 				Console.WriteLine(ex.ToString());
 			}
 
-			return true;
+			return isSuccessful;
 		}
 		#endregion
 

@@ -59,7 +59,7 @@
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>

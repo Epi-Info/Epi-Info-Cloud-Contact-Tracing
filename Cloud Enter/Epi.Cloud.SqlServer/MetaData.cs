@@ -6,7 +6,7 @@ using Epi.FormMetadata.DataStructures;
 using System;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
-using Epi.Common.Configuration;
+using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Cloud.SqlServer
 {

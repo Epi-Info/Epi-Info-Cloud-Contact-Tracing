@@ -48,14 +48,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+    <ProjectReference Include="..\..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

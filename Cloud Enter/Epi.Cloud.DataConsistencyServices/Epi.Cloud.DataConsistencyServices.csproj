@@ -49,7 +49,7 @@
       <Name>Epi.Cloud.DataConsistencyServices.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.DataEntryServices\Epi.Cloud.DataEntryServices.csproj">
-      <Project>{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}</Project>
+      <Project>{aa7bfd2a-ab8f-41af-8f37-f4207627563f}</Project>
       <Name>Epi.Cloud.DataEntryServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">

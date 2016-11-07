@@ -147,16 +147,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -206,6 +206,7 @@
     <Compile Include="IDataSource.cs" />
     <Compile Include="MetaData.cs" />
     <Compile Include="Model\DataCDTFieldAttribute.cs" />
+    <Compile Include="PersistToSqlServer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -237,13 +238,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -271,15 +270,15 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
-      <Project>{F4C81667-C307-4DB4-A727-FD42342799CF}</Project>
-      <Name>Epi.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Epi.Compatibility\Epi.Core\Epi.Core.csproj">
       <Project>{ebd2b961-a952-4670-96ca-50baa12c7f29}</Project>
       <Name>Epi.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>

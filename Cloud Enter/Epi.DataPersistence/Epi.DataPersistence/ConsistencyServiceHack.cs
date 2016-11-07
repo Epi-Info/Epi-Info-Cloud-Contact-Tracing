@@ -1,5 +1,4 @@
-﻿using System;
-using Epi.DataPersistence.DataStructures;
+﻿using Epi.DataPersistence.DataStructures;
 
 namespace Epi.DataPersistence
 {
@@ -7,7 +6,8 @@ namespace Epi.DataPersistence
 	{
 		public void PersistToSqlServer(FormResponseDetail formResponseDetail)
 		{
-			// TODO: Hardik - Hack your code in here.
+			Epi.Cloud.SqlServer.PersistToSqlServer objPersistResponse = new Cloud.SqlServer.PersistToSqlServer();
+			objPersistResponse.PersistToSQLServerDB(formResponseDetail);
 		}
 	}
 }

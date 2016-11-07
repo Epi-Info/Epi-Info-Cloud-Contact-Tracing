@@ -32,7 +32,6 @@ namespace Epi.PersistenceServices.DocumentDB
             public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
             public bool IsChildForm { get; set; }
             public string FormName { get; set; }
-            public string CollectionName { get; set; }
 
             public int UserId { get; set; }
             public string UserName { get; set; }
@@ -70,6 +69,11 @@ namespace Epi.PersistenceServices.DocumentDB
             public string GlobalRecordID { get; set; }
             public int PageId { get; set; }
             public Dictionary<string, string> ResponseQA { get; set; }
+
+			public string ToColectionName(string formName)
+			{
+				return formName + PageId;
+			}
         }
     }
 }

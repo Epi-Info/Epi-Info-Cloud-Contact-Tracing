@@ -433,9 +433,9 @@ namespace Epi.Web.MVC.Facade
             return _iSurveyAnswerRepository.HasResponse(SurveyId, ResponseId);
         }
 
-		SurveyAnswerDTO ISurveyFacade.CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild, string RelateResponseId, bool IsEditMode, int CurrentOrgId)
-		{
-			throw new NotImplementedException();
-		}
+		//SurveyAnswerDTO ISurveyFacade.CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild, string RelateResponseId, bool IsEditMode, int CurrentOrgId)
+		//{
+		//	return 
+		//}
 	}
 }

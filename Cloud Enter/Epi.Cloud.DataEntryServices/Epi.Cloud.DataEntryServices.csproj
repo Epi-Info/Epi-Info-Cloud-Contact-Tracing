@@ -97,7 +97,7 @@
       <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj">
-      <Project>{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}</Project>
+      <Project>{3e9b6f53-60c7-4671-9138-a1a7edf413c4}</Project>
       <Name>Epi.DataPersistenceServices.DocumentDB</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence\Epi.DataPersistence.csproj">
@@ -108,7 +108,7 @@
       <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>
       <Name>Epi.Web.DynamicForms.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata\Epi.FormMetadata.csproj">
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>

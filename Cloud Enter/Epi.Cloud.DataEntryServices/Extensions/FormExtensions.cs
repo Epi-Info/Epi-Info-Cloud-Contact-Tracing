@@ -11,6 +11,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
         {
 			Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties pageResponseProperties = new Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties
             {
+				Id = responseId,
                 GlobalRecordID = responseId,
                 PageId = Convert.ToInt32(form.PageId)
             };

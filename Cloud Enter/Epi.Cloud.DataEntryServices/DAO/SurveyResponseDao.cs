@@ -299,37 +299,34 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                //FormDigest formDigest = GetFormDigest(surveyResponseBO.ResponseDetail.FormId);
-
                 //Save Properties to Document DB
-
-                var surveyAnswerRequest = new SurveyAnswerRequest();
                 surveyResponseBO.DateCreated = DateTime.UtcNow;
                 surveyResponseBO.DateUpdated = DateTime.UtcNow;
-                var response = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO); 
 
-                #region Web Enter Implementation
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
-                //    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
-                //    if (SurveyResponse.CurrentOrgId > 0)
-                //    {
-                //        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
-                //    }
-                //    else
-                //    {
-                //        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
-                //    }
-                //    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
-                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-                //    SurveyResponseEntity.Users.Add(User);
-                //    Context.AddToSurveyResponses(SurveyResponseEntity);
+				var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
+				var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO);
+				#region Web Enter Implementation
+				//using (var Context = DataObjectFactory.CreateContext())
+				//{
+				//    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
+				//    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
+				//    if (SurveyResponse.CurrentOrgId > 0)
+				//    {
+				//        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
+				//    }
+				//    else
+				//    {
+				//        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
+				//    }
+				//    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
+				//    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
+				//    SurveyResponseEntity.Users.Add(User);
+				//    Context.AddToSurveyResponses(SurveyResponseEntity);
 
-                //    Context.SaveChanges();
-                //}
-                #endregion Web Enter Implementation
-            }
+				//    Context.SaveChanges();
+				//}
+				#endregion Web Enter Implementation
+			}
             catch (Exception ex)
             {
                 throw (ex);
@@ -374,27 +371,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                Guid Id = new Guid(surveyResponseBO.ResponseId);
-
-                FormDigest formDigest = GetFormDigest(surveyResponseBO.SurveyId);
-
                 //Save Properties to Document DB
-
-                SurveyAnswerRequest request = new SurveyAnswerRequest();
-                request.SurveyAnswerList = new List<SurveyAnswerDTO>();
-                SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-                request.Criteria = new SurveyAnswerCriteria();
-
-                request.Criteria.SurveyId = formDigest.FormId;
-                request.Criteria.UserId = surveyResponseBO.UserId;
-                surveyAnswer.DateCreated = DateTime.UtcNow;
-                surveyAnswer.ResponseId = surveyResponseBO.ResponseId;
-                surveyAnswer.Status = surveyResponseBO.Status;
-				surveyAnswer.ReasonForStatusChange = surveyResponseBO.ReasonForStatusChange;
-
-				request.SurveyAnswerList.Add(surveyAnswer);
                 InsertSurveyResponse(surveyResponseBO);
-                //var response = _surveyDocumentDBStoreFacade.InsertSurveyResponseToDocumentDBStoreAsync(request);
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
