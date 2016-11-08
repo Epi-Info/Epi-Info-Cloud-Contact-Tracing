@@ -4,6 +4,7 @@ using System.Linq;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.FormMetadata.DataStructures;
+using Epi.FormMetadata.Constants;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -192,7 +193,21 @@ namespace Epi.Cloud.Common.Metadata
             return GetFieldDigests(formId).Where(d => d.Position != pagePosition).ToArray();
         }
 
-        public FieldAttributes GetFieldAttributes(FieldDigest fieldDigest)
+		public AbridgedFieldInfo GetFieldInfoByFieldName(string formId, int pageId, string fieldName)
+		{
+			fieldName = fieldName.ToLower();
+			var fieldDigest = GetPageDigestByPageId(formId, pageId);
+			var fieldInfo = fieldDigest.Fields.Where(f => f.FieldName == fieldName).SingleOrDefault();
+			return fieldInfo;
+		}
+
+		public FieldDataType GetFieldDataTypeByFieldName(string formId, int pageId, string fieldName)
+		{
+			var fieldInfo = GetFieldInfoByFieldName(formId, pageId, fieldName);
+			return fieldInfo != null ? fieldInfo.DataType : FieldDataType.Undefined;
+		}
+
+		public FieldAttributes GetFieldAttributes(FieldDigest fieldDigest)
         {
             var formId = fieldDigest.FormId;
             var pageId = fieldDigest.PageId;

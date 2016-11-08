@@ -224,16 +224,17 @@ namespace Epi.Web.Enter.Common.ObjectMapping
         /// </summary>
         /// <param name="SurveyInfo">A SurveyResponseDTO business object.</param>
         /// /// <returns>A SurveyResponseBO.</returns>
-        public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO pDTO, int UserId = 0)
+        public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO pDTO, int UserId = 0, RecordStatusChangeReason statusChangeReason = RecordStatusChangeReason.Unknown)
         {
-            return new SurveyResponseBO
-            {
-                SurveyId = pDTO.SurveyId,
-                ResponseId = pDTO.ResponseId,
-                DateUpdated = pDTO.DateUpdated,
-                DateCompleted = pDTO.DateCompleted,
-                DateCreated = pDTO.DateCreated,
-                Status = pDTO.Status,
+			return new SurveyResponseBO
+			{
+				SurveyId = pDTO.SurveyId,
+				ResponseId = pDTO.ResponseId,
+				DateUpdated = pDTO.DateUpdated,
+				DateCompleted = pDTO.DateCompleted,
+				DateCreated = pDTO.DateCreated,
+				Status = pDTO.Status,
+				ReasonForStatusChange = statusChangeReason,
                 IsDraftMode = pDTO.IsDraftMode,
                 UserId = UserId,
                 ParentRecordId = pDTO.ParentRecordId,

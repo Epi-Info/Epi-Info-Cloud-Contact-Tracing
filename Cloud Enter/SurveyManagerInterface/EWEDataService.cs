@@ -856,7 +856,7 @@ namespace Epi.Web.WCF.SurveyService
                             else
                             {
                                 //do status Update
-                                var obj = Mapper.ToSurveyResponseBO(response, surveyAnswerRequest.Criteria.UserId);
+                                var obj = Mapper.ToSurveyResponseBO(response, surveyAnswerRequest.Criteria.UserId, surveyAnswerRequest.Criteria.StatusChangeReason);
                                 obj.SurveyId = surveyAnswerRequest.Criteria.SurveyId;
                                 obj.Status = 0;
                                 surveyResponseDao.UpdateRecordStatus(obj);

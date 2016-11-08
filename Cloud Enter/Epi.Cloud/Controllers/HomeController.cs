@@ -497,6 +497,7 @@ namespace Epi.Web.MVC.Controllers
 			surveyAnswerRequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Id);
 			surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
 			surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
+			surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
 			SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
 			return Json(string.Empty);
 		}
