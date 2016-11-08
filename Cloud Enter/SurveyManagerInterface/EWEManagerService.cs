@@ -957,7 +957,9 @@ namespace Epi.Web.WCF.SurveyService
 
         public PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest request)
         {
-            try
+			throw new NotImplementedException("EWEManagerService.SetSurveyAnswer");
+#if false
+			try
             {
                 PreFilledAnswerResponse response;
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
@@ -976,6 +978,7 @@ namespace Epi.Web.WCF.SurveyService
                 response.Status = ((Epi.Web.BLL.SurveyResponse.Message)1).ToString();
                 return response;
             }
+#endif
         }
         public bool PingManagerService()
         {
@@ -1005,7 +1008,9 @@ namespace Epi.Web.WCF.SurveyService
 
         public void UpdateRecordStatus(SurveyAnswerRequest pRequestMessage)
         {
-            try
+			throw new NotImplementedException("EWEManagerService.UpdateRecordStatus");
+#if false
+			try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -1022,6 +1027,7 @@ namespace Epi.Web.WCF.SurveyService
 
 
             }
+#endif
         }
 
 

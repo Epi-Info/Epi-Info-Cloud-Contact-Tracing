@@ -299,7 +299,9 @@ namespace Epi.Web.WCF.SurveyService
         /// <returns>SurveyResponse response message.</returns>
         public SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest request)
         {
-            try
+			throw new NotImplementedException("EWEDataService.SetSurveyAnswer");
+#if false
+			try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -482,6 +484,7 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
+#endif
         }
 
         /// <summary>
@@ -1462,7 +1465,9 @@ namespace Epi.Web.WCF.SurveyService
 
         public void UpdateResponseStatus(SurveyAnswerRequest request)
         {
-            try
+			throw new NotImplementedException("EWEDataService.UpdateResponseStatus");
+#if false
+			try
             {
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -1492,15 +1497,18 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
+#endif
         }
 
         public bool HasResponse(string SurveyId, string ResponseId)
         {
-            Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
+			throw new NotImplementedException("EWEDataService.HasResponse");
+#if false
+			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
 
             return Implementation.HasResponse(SurveyId, ResponseId);
-
+#endif
         }
     }
 }

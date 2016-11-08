@@ -373,6 +373,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 //Save Properties to Document DB
                 InsertSurveyResponse(surveyResponseBO);
+				UpdateRecordStatus(surveyResponseBO);
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -1974,23 +1975,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange)
         {
 			_surveyPersistenceFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
-
-			//using (var Context = DataObjectFactory.CreateContext())
-			//{
-			//    var Query = from response in Context.SurveyResponses
-			//                where response.ResponseId == Id
-			//                select response;
-			//    if (Query.Count() > 0)
-			//    {
-			//        var DataRow = Query.Single();
-			//        DataRow.StatusId = Status;
-			//        Context.SaveChanges();
-			//    }
-			//}
 		}
-
-
-
 
         public int GetFormResponseCount(SurveyAnswerCriteria criteria)
         {
@@ -2074,7 +2059,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                _surveyPersistenceFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, RecordStatusChangeReason.Unknown);
+                _surveyPersistenceFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, surveyResponse.ReasonForStatusChange);
             }
             catch (Exception ex)
             {

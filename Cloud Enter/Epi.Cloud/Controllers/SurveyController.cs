@@ -499,7 +499,7 @@ namespace Epi.Web.MVC.Controllers
 
 									if (this.IsEditMode)
 									{
-										_surveyFacade.DeleteResponseNR(SurveyAnswerRequest1);
+										//_surveyFacade.DeleteResponseNR(SurveyAnswerRequest1);
 									}
 
 									if (!string.IsNullOrEmpty(CloseButton))
@@ -912,6 +912,7 @@ namespace Epi.Web.MVC.Controllers
 			SARequest.Criteria.IsEditMode = this.IsEditMode;
 			SARequest.Criteria.IsDeleteMode = true;
 			SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
+			SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteInEditMode;
 			// TODO: GEL - Delete from DocumentDB
 			SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
 
@@ -930,6 +931,7 @@ namespace Epi.Web.MVC.Controllers
 			SARequest.Criteria.IsDeleteMode = true;
 			SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
 			SARequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
+			SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
 			SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
 
 			return Json(Session[SessionKeys.RootFormId]);//string.Empty

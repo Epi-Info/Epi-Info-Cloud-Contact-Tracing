@@ -16,6 +16,7 @@ using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using MvcDynamicForms;
+using Newtonsoft.Json;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices.Facade
@@ -339,8 +340,10 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 							var serviceBusCRUD = new ServiceBusCRUD();
 							//send notification to ServiceBus
-							serviceBusCRUD.SendMessagesToTopic(responseId, responseId);
-							ConsistencyHack(responseId);
+							var hierarchialResponse = GetHierarchialResponsesByResponseId(responseId, true);
+							var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
+							serviceBusCRUD.SendMessagesToTopic(responseId, hierarchialResponseJson);
+							ConsistencyHack(hierarchialResponse);
 							break;
 					}
 				}
@@ -353,9 +356,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		}
 		#endregion NotifyConsistencyService
 
-		private void ConsistencyHack(string responseId)
+		private void ConsistencyHack(FormResponseDetail formResponseDetail)
 		{
-			var formResponseDetail = GetHierarchialResponsesByResponseId(responseId);
 			var hack = new DataPersistence.ConsistencyServiceHack();
 			hack.PersistToSqlServer(formResponseDetail);
 		}

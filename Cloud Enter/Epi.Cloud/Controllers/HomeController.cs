@@ -826,6 +826,7 @@ namespace Epi.Web.MVC.Controllers
 		{
 			int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			var surveyAnswerStateDTO = GetSurveyAnswerState(responseId);
+			if (surveyAnswerStateDTO.DateCreated == DateTime.MinValue) surveyAnswerStateDTO.DateCreated = surveyAnswerStateDTO.DateUpdated;
 			surveyAnswerStateDTO.LoggedInUserId = userId;
 			Session[SessionKeys.EditForm] = responseId;
 
