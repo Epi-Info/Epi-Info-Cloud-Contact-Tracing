@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\FieldDataType.cs" />
+    <Compile Include="Extensions\ProjectTemplateMetadataExtensions.cs" />
     <Compile Include="Utilities\FieldMetadata.cs" />
     <Compile Include="DataStructures\AbridgedFieldInfo.cs" />
     <Compile Include="DataStructures\FieldDigest.cs" />

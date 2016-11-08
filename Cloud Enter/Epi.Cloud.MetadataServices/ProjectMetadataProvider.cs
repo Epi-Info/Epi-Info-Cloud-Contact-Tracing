@@ -7,6 +7,7 @@ using Epi.Cloud.Common;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using System;
 using Epi.FormMetadata.DataStructures;
+using Epi.FormMetadata.Extensions;
 
 namespace Epi.Cloud.MetadataServices
 {
@@ -224,69 +225,10 @@ namespace Epi.Cloud.MetadataServices
 
         private void GenerateDigests(Template projectTemplateMetadata)
         {
-            projectTemplateMetadata.Project.FormDigests = GenerateFormDigests(projectTemplateMetadata);
-            projectTemplateMetadata.Project.FormPageDigests = GeneratePageDigests(projectTemplateMetadata);
+            projectTemplateMetadata.Project.FormDigests = projectTemplateMetadata.ToFormDigests();
+            projectTemplateMetadata.Project.FormPageDigests = projectTemplateMetadata.ToPageDigests();
         }
 
-        private static FormDigest[] GenerateFormDigests(Template projectTemplateMetadata)
-        {
-            var formDigests = new List<FormDigest>();
-            foreach (var view in projectTemplateMetadata.Project.Views)
-            {
-                formDigests.Add(new FormDigest
-                {
-                    ViewId = view.ViewId,
-                    FormId = view.FormId,
-                    FormName = view.Name,
-                    ParentFormId = view.ParentFormId,
-                    OrganizationId = view.OrganizationId,
-                    OrganizationName = view.OrganizationName,
-                    OrganizationKey = view.OrganizationKey,
-                    OwnerUserId = view.OwnerUserId,
-
-                    NumberOfPages = view.Pages.Length,
-                    Orientation = view.Orientation,
-                    Height = view.Height.HasValue ? view.Height.Value : 0,
-                    Width = view.Width.HasValue ? view.Width.Value : 0,
-
-                    CheckCode = view.CheckCode,
-
-                    DataAccessRuleId = view.DataAccessRuleId,
-                    IsDraftMode = view.IsDraftMode
-                });
-            }
-
-            return formDigests.ToArray();
-        }
-
-        private static PageDigest[][] GeneratePageDigests(Template projectTemplateMetadata)
-        {
-            List<PageDigest[]> projectPageDigests = new List<PageDigest[]>();
-            var viewIdToViewMap = new Dictionary<int, View>();
-            foreach (var view in projectTemplateMetadata.Project.Views)
-            {
-                viewIdToViewMap[view.ViewId] = view;
-                var pages = new Page[0];
-                pages = pages.Union(view.Pages).ToArray();
-                int numberOfPages = pages.Length;
-                var pageDigests = new PageDigest[numberOfPages];
-                for (int i = 0; i < numberOfPages; ++i)
-                {
-                    var pageMetadata = pages[i];
-                    string pageName = pageMetadata.Name;
-                    int pageId = pageMetadata.PageId.Value;
-                    int position = pageMetadata.Position;
-                    int viewId = pageMetadata.ViewId;
-                    bool isRelatedView = viewIdToViewMap[viewId].IsRelatedView;
-                    string formId = viewIdToViewMap[viewId].FormId;
-                    string formName = viewIdToViewMap[viewId].Name;
-                    pageDigests[i] = new PageDigest(pageName, pageId, position, formId, formName, viewId, isRelatedView, pageMetadata.Fields);
-                }
-                projectPageDigests.Add(pageDigests);
-            }
-
-            return projectPageDigests.ToArray();
-        }
 
         private void PopulateRequiredPageLevelSourceTables(Template metadata)
         {
