@@ -42,12 +42,15 @@ namespace Epi.Cloud.ServiceBus
                 // Delete if exists
                 if (namespaceManager.TopicExists(TopicName))
                 {
-                    namespaceManager.DeleteTopic(TopicName);
+                    return true;
                 }
-
-                TopicDescription myTopic = namespaceManager.CreateTopic(TopicName);
-                SubscriptionDescription subscription = namespaceManager.CreateSubscription(myTopic.Path, "ReadFormInfoSubscription");
-                return true;
+                else
+                {
+                    TopicDescription myTopic = namespaceManager.CreateTopic(TopicName);
+                    SubscriptionDescription subscription = namespaceManager.CreateSubscription(myTopic.Path, "ReadFormInfoSubscription");
+                    return true;
+                }
+              
             }
             catch (Exception e)
             {
