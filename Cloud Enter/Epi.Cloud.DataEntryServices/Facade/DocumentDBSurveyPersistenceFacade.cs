@@ -343,7 +343,7 @@ namespace Epi.Cloud.DataEntryServices.Facade
 							var hierarchialResponse = GetHierarchialResponsesByResponseId(responseId, true);
 							var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
 							serviceBusCRUD.SendMessagesToTopic(responseId, hierarchialResponseJson);
-							ConsistencyHack(hierarchialResponse);
+							//ConsistencyHack(hierarchialResponse);
 							break;
 					}
 				}
