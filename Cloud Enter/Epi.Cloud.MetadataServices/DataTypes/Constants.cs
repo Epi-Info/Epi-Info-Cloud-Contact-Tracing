@@ -6,6 +6,7 @@
         {
             public const string Register = "api/user/Register";
             public const string Project = "api/Project/";
+            public const string PageDigest = "api/PageDigest/";
         }
 
         public struct ConfigEntry

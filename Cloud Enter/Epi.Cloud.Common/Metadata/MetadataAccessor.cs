@@ -4,6 +4,7 @@ using System.Linq;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.FormMetadata.DataStructures;
+using Epi.FormMetadata.Constants;
 
 namespace Epi.Cloud.Common.Metadata
 {
@@ -13,7 +14,7 @@ namespace Epi.Cloud.Common.Metadata
         {
             // Form Digests [FormId]
             public static FormDigest[] _formDigests = null;
-            
+
             // PageDigests[FormId][PageId]
             public static PageDigest[][] _pageDigests = null;
 
@@ -82,14 +83,14 @@ namespace Epi.Cloud.Common.Metadata
             return pageId;
         }
 
-		public FieldDigest GetFieldDigestByFieldName(string formId, string fieldName)
-		{
-			fieldName = fieldName.ToLower();
-			var fieldDigests = GetFieldDigests(formId);
-			FieldDigest fieldDigest;
-			fieldDigest = fieldDigests.Where(fd => fd.FieldName == fieldName).SingleOrDefault();
-			return fieldDigest;
-		}
+        public FieldDigest GetFieldDigestByFieldName(string formId, string fieldName)
+        {
+            fieldName = fieldName.ToLower();
+            var fieldDigests = GetFieldDigests(formId);
+            FieldDigest fieldDigest;
+            fieldDigest = fieldDigests.Where(fd => fd.FieldName == fieldName).SingleOrDefault();
+            return fieldDigest;
+        }
 
         public FieldDigest[] GetFieldDigests(string formId)
         {
@@ -190,6 +191,20 @@ namespace Epi.Cloud.Common.Metadata
         {
             var pagePosition = pageNumber - 1;
             return GetFieldDigests(formId).Where(d => d.Position != pagePosition).ToArray();
+        }
+
+        public AbridgedFieldInfo GetFieldInfoByFieldName(string formId, int pageId, string fieldName)
+        {
+            fieldName = fieldName.ToLower();
+            var fieldDigest = GetPageDigestByPageId(formId, pageId);
+            var fieldInfo = fieldDigest.Fields.Where(f => f.FieldName == fieldName).SingleOrDefault();
+            return fieldInfo;
+        }
+
+        public FieldDataType GetFieldDataTypeByFieldName(string formId, int pageId, string fieldName)
+        {
+            var fieldInfo = GetFieldInfoByFieldName(formId, pageId, fieldName);
+            return fieldInfo != null ? fieldInfo.DataType : FieldDataType.Undefined;
         }
 
         public FieldAttributes GetFieldAttributes(FieldDigest fieldDigest)

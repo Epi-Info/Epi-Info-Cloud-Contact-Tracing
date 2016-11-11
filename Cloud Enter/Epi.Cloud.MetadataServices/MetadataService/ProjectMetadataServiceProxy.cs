@@ -19,5 +19,20 @@ namespace Epi.Cloud.MetadataServices.ProxiesService
             }
             return await Task.FromResult(projectResponse);
         }
+
+        //Forming url to call the  API for pageDigest
+        public async Task<PageDigest[][]> GetPageDigestMetadataAsync()
+        {
+            PageDigest[][] pageResponse = null;
+            string url = string.Format("{0}", ApiEndPoints.PageDigest);
+            if (url != null)
+            {
+                pageResponse = GetData<PageDigest[][]>(url);
+            }
+            return await Task.FromResult(pageResponse);
+        }
+
+
+
     }
 }

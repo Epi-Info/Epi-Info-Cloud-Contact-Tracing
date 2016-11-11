@@ -23,6 +23,6 @@ namespace Epi.Cloud.DBAccessService.Repository
             lstMetaDataFieldsAtr = metaDt.GetProjectTemplateMetadata(projectId);         
 
             return await Task.FromResult(lstMetaDataFieldsAtr);
-        } 
+        }
     }
 }
