@@ -144,10 +144,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		/// UpdateResponseStatus
 		/// </summary>
 		/// <param name="responseId"></param>
-		/// <param name="responseStatus"></param>
+		/// <param name="newResponseStatus"></param>
 		/// <param name="userId"></param>
 		/// <returns></returns>
-		public bool UpdateResponseStatus(string responseId, int responseStatus, int userId = 0)
+		public bool UpdateResponseStatus(string responseId, int newResponseStatus, int userId = 0)
 		{
 			bool isSuccessful = false;
 
@@ -160,9 +160,17 @@ namespace Epi.DataPersistenceServices.DocumentDB
 					var formResponseProperties = ReadFormInfoByResponseId(responseId, client, formInfoCollectionUri);
 					if (formResponseProperties != null)
 					{
-						if (formResponseProperties.RecStatus != responseStatus)
+						if (newResponseStatus != formResponseProperties.RecStatus)
 						{
-							formResponseProperties.RecStatus = responseStatus;
+							switch (newResponseStatus)
+							{
+								case RecordStatus.InProcess:
+
+									break;
+								default:
+									break;
+							}
+							formResponseProperties.RecStatus = newResponseStatus;
 							formResponseProperties.UserId = userId;
 							client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties)
 								.ContinueWith<bool>(t => isSuccessful = t.Result != null);

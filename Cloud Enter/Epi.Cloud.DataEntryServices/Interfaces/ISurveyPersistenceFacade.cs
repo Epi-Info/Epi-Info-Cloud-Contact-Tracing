@@ -12,8 +12,6 @@ namespace Epi.Cloud.DataEntryServices.Interfaces
 {
 	public interface ISurveyPersistenceFacade
     {
-        //Insert new record  survey response data in to table storage.
-
         bool DoChildrenExistForResponseId(string responseId);
 
         bool UpdateResponseStatus(string responseId, int recordStatus, RecordStatusChangeReason reasonForStatusChange);
@@ -23,23 +21,24 @@ namespace Epi.Cloud.DataEntryServices.Interfaces
         FormResponseDetail GetFormResponseState(string responseId);
 
         FormResponseDetail GetFormResponseByResponseId(string responseId);
+
 		Task<bool> InsertResponse(SurveyResponseBO surveyResponseBO);
-		//bool InsertResponse(SurveyResponseBO surveyResponseBO);
+
 		bool InsertResponse(MvcDynamicForms.Form form, SurveyResponseBO surveyResponseBO);
-#if false // Garry
-        Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int UserId);
-#endif
 
         Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO);
+
         PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
         SurveyAnswerResponse DeleteResponse(string responseId, int userId);
 
         Task<bool> SaveFormProperties(SurveyResponseBO request);
+
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
+
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
+
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
-		//FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> gridFields);
 
 		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
 
