@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}"
 	ProjectSection(SolutionItems) = preProject
@@ -84,6 +84,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.MetadataServices", "Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj", "{985A11FF-91AF-4379-83F8-27AECA8427AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.DataEntryServices", "Epi.Cloud.DataEntryServices\Epi.Cloud.DataEntryServices.csproj", "{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.WebJobs", "Epi.Cloud.WebJobs\Epi.Cloud.WebJobs.csproj", "{50C15718-F196-40E1-BACC-4C53C04F4CB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -901,6 +903,36 @@ Global
 		{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}.Release|x86.ActiveCfg = Release|Any CPU
 		{AA7BFD2A-AB8F-41AF-8F37-F4207627563F}.Release|x86.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Debug|x86.Build.0 = Debug|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|x86.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Linux|x86.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|x86.ActiveCfg = Release|Any CPU
+		{50C15718-F196-40E1-BACC-4C53C04F4CB7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

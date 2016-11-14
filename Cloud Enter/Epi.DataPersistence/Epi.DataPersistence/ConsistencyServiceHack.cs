@@ -7,7 +7,7 @@ namespace Epi.DataPersistence
 		public void PersistToSqlServer(FormResponseDetail formResponseDetail)
 		{
 			Epi.Cloud.SqlServer.PersistToSqlServer objPersistResponse = new Cloud.SqlServer.PersistToSqlServer();
-			objPersistResponse.PersistToSQLServerDB(formResponseDetail);
+			//objPersistResponse.PersistToSQLServerDB(formResponseDetail);
 		}
 	}
 }

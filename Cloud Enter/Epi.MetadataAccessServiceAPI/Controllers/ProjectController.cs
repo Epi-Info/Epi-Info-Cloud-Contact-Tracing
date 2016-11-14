@@ -26,7 +26,7 @@ namespace Epi.Cloud.DBAccessService.Controllers
         {
 
             return new ServiceResult<Template>(_projectService.GetProjectMetaData(ID), this);
-        }
+        }      
 
     }
 }
