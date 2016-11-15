@@ -1,27 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using Epi.Web.MVC.Repositories.Core;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Exception;
 using System.ServiceModel;
-using Epi.Cloud.CacheServices;
-using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Web.Enter.Common.DTO;
+using Epi.Web.Enter.Common.Exception;
+using Epi.Web.Enter.Common.Message;
+using Epi.Web.MVC.Repositories.Core;
 
 namespace Epi.Cloud.MVC.Repositories
 {
-    public class IntegratedSurveyInfoEpiMetadataRepository : RepositoryBase, ISurveyInfoRepository
+	public class IntegratedSurveyInfoRepository : ISurveyInfoRepository
     {
-        private readonly IEpiCloudCache _epiCloudCache;
-        private readonly Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider _projectMetadataProvider;
         private readonly Epi.Web.WCF.SurveyService.IEWEDataService _iDataService;
 
-        public IntegratedSurveyInfoEpiMetadataRepository(IEpiCloudCache epiCloudCache,
-                                     IProjectMetadataProvider projectMetadataProvider,
-                                     Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
+        public IntegratedSurveyInfoRepository(Epi.Web.WCF.SurveyService.IEWEDataService iDataService)
         {
-            _epiCloudCache = epiCloudCache;
-            _projectMetadataProvider = projectMetadataProvider;
             _iDataService = iDataService;
         }
 

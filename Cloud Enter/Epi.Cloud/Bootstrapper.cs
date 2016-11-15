@@ -32,8 +32,7 @@ namespace Epi.Web.MVC
                 .Configure<InjectedMembers>()
                 .ConfigureInjectionFor<SurveyResponseDocDb>(new InjectionConstructor());
 
-            //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
-            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();
+            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoRepository>();
 
             container.RegisterType<Epi.Web.Enter.Common.Message.SurveyAnswerRequest, Epi.Web.Enter.Common.Message.SurveyAnswerRequest>();
 

@@ -32,7 +32,6 @@ namespace Epi.Web.MVC.Facade
         SurveyAnswerResponse GetAncestorResponses(SurveyAnswerRequest pRequest);
         SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest FormResponseReq);
         SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest);
-        void DeleteResponseNR(SurveyAnswerRequest FormResponseReq);
         OrganizationResponse GetOrganizationsByUserId(OrganizationRequest Request);
         OrganizationResponse GetUserOrganizations(OrganizationRequest Request);
         OrganizationResponse GetAdminOrganizations(OrganizationRequest Request);

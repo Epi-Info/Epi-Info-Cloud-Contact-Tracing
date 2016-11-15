@@ -19,9 +19,7 @@ namespace Epi.Web.WCF.SurveyService
 
         // Session state variables 
         private string _accessToken;
-        //private ShoppingCart _shoppingCart;
         private string _userName;
-
 
         /// <summary>
         /// 
@@ -33,8 +31,6 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
-                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
-                //Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
@@ -54,26 +50,7 @@ namespace Epi.Web.WCF.SurveyService
                     SurveyIdList.Add(id.ToUpper());
                 }
 
-
-                //if (request.LoadOptions.Contains("SurveyInfos"))
-                //{
-                //    IEnumerable<SurveyInfoDTO> SurveyInfos;
-                //    if (!criteria.IncludeOrderStatistics)
-                //    {
-                //        SurveyInfos = Implementation.GetSurveyInfos(sort);
-                //    }
-                //    else
-                //    {
-                //        SurveyInfos = Implementation.GetSurveyInfosWithOrderStatistics(sort);
-                //    }
-
-                //    response.SurveyInfos = SurveyInfos.Select(c => Mapper.ToDataTransferObject(c)).ToList();
-                //}
-
-                //if (pRequest.LoadOptions.Contains("SurveyInfo"))
-                //{
                 result.SurveyInfoList = Mapper.ToDataTransferObject(implementation.GetSurveyInfoById(SurveyIdList));
-                //}
 
                 return result;
             }
@@ -102,14 +79,11 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(pRequest.Criteria.UserId, pRequest.Criteria.CurrentOrgId);
-                //  result.SurveyInfoList = FormInfoBOList;
 
                 foreach (FormInfoBO item in FormInfoBOList)
                 {
                     result.FormInfoList.Add(Mapper.ToFormInfoDTO(item));
                 }
-
-
             }
             catch (Exception ex)
             {

@@ -11,7 +11,7 @@ using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.Web.MVC.Repositories
 {
-	public class IntegratedSurveyAnswerRepository : RepositoryBase, ISurveyAnswerRepository
+	public class IntegratedSurveyAnswerRepository : ISurveyAnswerRepository
     {
         private Epi.Web.WCF.SurveyService.IEWEDataService _dataService;
         private Epi.Cloud.Interfaces.DataInterface.IDataEntryService _dataEntryService;
