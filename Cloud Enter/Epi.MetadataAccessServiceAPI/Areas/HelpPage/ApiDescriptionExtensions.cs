@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

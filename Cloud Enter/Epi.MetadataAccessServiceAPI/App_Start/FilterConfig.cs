@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace Epi.Cloud.DBAccessServiceAPI
+namespace Epi.MetadataAccessServiceAPI
 {
     public class FilterConfig
     {

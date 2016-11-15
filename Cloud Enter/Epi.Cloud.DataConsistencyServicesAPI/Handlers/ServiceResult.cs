@@ -1,12 +1,12 @@
 ﻿
-using Epi.Cloud.DataConsistencyServicesAPI.DataTypes;
+using Epi.Cloud.DataConsistencyServices.DataTypes;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace Epi.Cloud.DBAccessService.Handlers
+namespace Epi.MetadataAccessService.Handlers
 {
     public class ServiceResult<T> : IHttpActionResult
     {
@@ -29,11 +29,6 @@ namespace Epi.Cloud.DBAccessService.Handlers
             _data = data;
             _controller = controller;
         }
-
-        //public Task<HttpResponseMessage>ExecuteAsync(CancellationToken cancellationToken)
-        //{
-        //    return Task.FormResult(Execute()); 
-        //}
 
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {

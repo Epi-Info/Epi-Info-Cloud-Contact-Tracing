@@ -8,10 +8,10 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using Epi.Cloud.DataConsistencyServicesAPI.Providers;
-using Epi.Cloud.DataConsistencyServicesAPI.Models;
+using Epi.Cloud.DataConsistencyServices.Providers;
+using Epi.Cloud.DataConsistencyServices.Models;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI
+namespace Epi.Cloud.DataConsistencyServices
 {
     public partial class Startup
     {

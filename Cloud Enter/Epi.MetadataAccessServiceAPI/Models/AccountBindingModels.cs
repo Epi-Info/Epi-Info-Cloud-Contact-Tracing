@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Models
+namespace Epi.MetadataAccessServiceAPI.Models
 {
     // Models used as parameters to AccountController actions.
 

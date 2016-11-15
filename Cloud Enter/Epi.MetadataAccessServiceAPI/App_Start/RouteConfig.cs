@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Epi.Cloud.DBAccessServiceAPI
+namespace Epi.MetadataAccessServiceAPI
 {
     public class RouteConfig
     {

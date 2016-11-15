@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.DTO;
+using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
-using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.ObjectMapping;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Interfaces.DataInterface;
-using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.WCF.SurveyService
 {
-    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
     public class EWEDataService : IEWEDataService
     {
 

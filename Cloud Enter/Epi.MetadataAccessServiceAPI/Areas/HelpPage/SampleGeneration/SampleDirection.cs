@@ -1,4 +1,4 @@
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage
 {
     /// <summary>
     /// Indicates whether the sample is used for request or response

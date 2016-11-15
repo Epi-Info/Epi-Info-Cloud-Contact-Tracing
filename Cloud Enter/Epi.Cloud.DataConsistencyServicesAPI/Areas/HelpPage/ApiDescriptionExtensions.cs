@@ -3,7 +3,7 @@ using System.Text;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage
 {
     public static class ApiDescriptionExtensions
     {

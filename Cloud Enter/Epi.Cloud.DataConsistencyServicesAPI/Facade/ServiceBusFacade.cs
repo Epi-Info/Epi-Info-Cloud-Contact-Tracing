@@ -1,6 +1,6 @@
 ﻿using Epi.Cloud.ServiceBus;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Facade
+namespace Epi.Cloud.DataConsistencyServices.Facade
 {
     public class ServiceBusFacade
     {

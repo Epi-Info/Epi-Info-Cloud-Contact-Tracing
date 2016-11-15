@@ -1,9 +1,9 @@
 ﻿using System.Web.Http;
-using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
-using Epi.Cloud.DataConsistencyServicesAPI.Services.ServiceBusService;
-using Epi.Cloud.DBAccessService.Handlers;
+using Epi.Cloud.DataConsistencyServices.Proxy;
+using Epi.Cloud.DataConsistencyServices.Services.ServiceBusService;
+using Epi.MetadataAccessService.Handlers;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Controllers
+namespace Epi.Cloud.DataConsistencyServices.Controllers
 {
 	public class ResponseServiceBusController : ApiController
 	{

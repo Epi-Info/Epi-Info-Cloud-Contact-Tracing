@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(Epi.Cloud.DataConsistencyServicesAPI.Startup))]
+[assembly: OwinStartup(typeof(Epi.Cloud.DataConsistencyServices.Startup))]
 
-namespace Epi.Cloud.DataConsistencyServicesAPI
+namespace Epi.Cloud.DataConsistencyServices
 {
-    public partial class Startup
+	public partial class Startup
     {
         public void Configuration(IAppBuilder app)
         {

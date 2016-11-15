@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Models
+namespace Epi.Cloud.DataConsistencyServices.Models
 {
     // Models used as parameters to AccountController actions.
 

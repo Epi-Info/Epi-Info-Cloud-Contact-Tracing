@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Models
+namespace Epi.MetadataAccessServiceAPI.Models
 {
     // Models returned by AccountController actions.
 

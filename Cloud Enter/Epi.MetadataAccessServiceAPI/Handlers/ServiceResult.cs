@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace Epi.Cloud.DBAccessService.Handlers
+namespace Epi.MetadataAccessService.Handlers
 {
     public class ServiceResult<T> : IHttpActionResult
     {

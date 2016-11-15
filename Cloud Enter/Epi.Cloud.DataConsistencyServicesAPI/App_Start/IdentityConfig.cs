@@ -3,9 +3,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using Epi.Cloud.DataConsistencyServicesAPI.Models;
+using Epi.Cloud.DataConsistencyServices.Models;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI
+namespace Epi.Cloud.DataConsistencyServices
 {
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
 

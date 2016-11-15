@@ -1,4 +1,4 @@
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage
 {
     /// <summary>
     /// Indicates whether the sample is used for request or response

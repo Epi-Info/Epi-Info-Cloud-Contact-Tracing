@@ -12,7 +12,7 @@ namespace Epi.Cloud.MetadataServices
         private string _apiUrl;
         public MetadataProxy()
         {
-            var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey("DBAccessServiceAPI", "Environment.API");
+            var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey("MetadataAccessServiceAPI", "Environment.API");
             _apiUrl = ConfigurationManager.AppSettings[apiUrlKey];
         }
 

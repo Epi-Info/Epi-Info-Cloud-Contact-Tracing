@@ -6,7 +6,7 @@ using System.Web.Http;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI
+namespace Epi.Cloud.DataConsistencyServices
 {
     public static class WebApiConfig
     {

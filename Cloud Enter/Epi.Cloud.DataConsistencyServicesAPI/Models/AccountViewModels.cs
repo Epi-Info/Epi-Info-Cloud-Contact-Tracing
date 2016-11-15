@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Models
+namespace Epi.Cloud.DataConsistencyServices.Models
 {
     // Models returned by AccountController actions.
 

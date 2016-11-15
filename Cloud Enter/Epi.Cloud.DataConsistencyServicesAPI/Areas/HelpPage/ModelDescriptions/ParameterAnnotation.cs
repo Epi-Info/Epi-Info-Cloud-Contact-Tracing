@@ -1,6 +1,6 @@
 using System;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions
 {
     public class ParameterAnnotation
     {

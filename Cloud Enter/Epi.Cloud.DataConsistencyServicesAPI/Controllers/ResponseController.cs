@@ -1,12 +1,12 @@
-﻿using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
-using Epi.Cloud.DataConsistencyServicesAPI.Services;
-using Epi.Cloud.DBAccessService.Handlers;
+﻿using Epi.Cloud.DataConsistencyServices.Proxy;
+using Epi.Cloud.DataConsistencyServices.Services;
+using Epi.MetadataAccessService.Handlers;
 using Newtonsoft.Json;
 using System.Web.Http;
 using System;
 using Epi.DataPersistence.DataStructures;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Controllers
+namespace Epi.Cloud.DataConsistencyServices.Controllers
 {
     public class ResponseController : ApiController
     {
@@ -30,7 +30,7 @@ namespace Epi.Cloud.DataConsistencyServicesAPI.Controllers
 			{
 				var formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(formResponseDetailJson);
 
-				//TODO: Call Epi.Cloud.DBAccessServiceAPI  Response/Put      formResponseDetailJson
+				//TODO: Call Epi.MetadataAccessServiceAPI  Response/Put      formResponseDetailJson
 			}
 			catch (Exception ex)
 			{

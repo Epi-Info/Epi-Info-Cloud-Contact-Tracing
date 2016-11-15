@@ -11,10 +11,10 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.Models;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.Models;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {

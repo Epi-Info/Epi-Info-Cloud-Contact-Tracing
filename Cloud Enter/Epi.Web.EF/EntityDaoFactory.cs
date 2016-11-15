@@ -1,5 +1,5 @@
-﻿using Epi.Web.Enter.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Interfaces.DataInterface;
+﻿using Epi.Web.Enter.Interfaces.DataInterface;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Web.EF
 {

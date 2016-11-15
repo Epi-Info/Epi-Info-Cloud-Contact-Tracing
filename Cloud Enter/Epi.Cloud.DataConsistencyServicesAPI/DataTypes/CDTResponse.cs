@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using static Epi.Cloud.DataConsistencyServicesAPI.DataTypes.Constants;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.DataTypes
+namespace Epi.Cloud.DataConsistencyServices.DataTypes
 {
     public class CDTResponse
     {
-        public ResponseType Type { get; set; }
+        public Constants.ResponseType Type { get; set; }
         public IDictionary<string, string> Messages { get; set; }
     }
 }

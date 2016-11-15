@@ -4,9 +4,9 @@ using System.Linq;
 using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartup(typeof(Epi.Cloud.DBAccessServiceAPI.Startup))]
+[assembly: OwinStartup(typeof(Epi.MetadataAccessServiceAPI.Startup))]
 
-namespace Epi.Cloud.DBAccessServiceAPI
+namespace Epi.MetadataAccessServiceAPI
 {
     public partial class Startup
     {

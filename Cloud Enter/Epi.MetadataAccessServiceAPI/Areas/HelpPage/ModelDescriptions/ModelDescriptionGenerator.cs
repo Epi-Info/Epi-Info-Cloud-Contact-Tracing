@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage.ModelDescriptions
 {
     /// <summary>
     /// Generates model descriptions for given types.

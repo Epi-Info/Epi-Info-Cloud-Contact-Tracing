@@ -1,7 +1,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage
 {
     public class HelpPageAreaRegistration : AreaRegistration
     {

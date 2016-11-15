@@ -1,4 +1,4 @@
-﻿namespace Epi.Cloud.DataConsistencyServicesAPI.DataTypes
+﻿namespace Epi.Cloud.DataConsistencyServices.DataTypes
 {
     public class Constants
     {

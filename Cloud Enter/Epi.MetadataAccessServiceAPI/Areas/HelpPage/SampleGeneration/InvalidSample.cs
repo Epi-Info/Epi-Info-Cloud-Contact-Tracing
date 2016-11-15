@@ -1,6 +1,6 @@
 using System;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage
 {
     /// <summary>
     /// This represents an invalid sample on the help page. There's a display template named InvalidSample associated with this class.

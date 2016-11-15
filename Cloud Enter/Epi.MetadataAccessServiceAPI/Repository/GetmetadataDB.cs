@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Epi.Cloud.SqlServer;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Cloud.DBAccessService.Repository
+namespace Epi.MetadataAccessService.Repository
 {
     public class GetmetadataDB
     {

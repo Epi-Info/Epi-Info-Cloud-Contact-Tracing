@@ -1,10 +1,10 @@
 ﻿using System.Web.Http;
-using Epi.Cloud.DBAccessService.Proxy.Interfaces;
-using Epi.Cloud.DBAccessService.Handlers;
-using Epi.Cloud.DBAccessService.Services;
+using Epi.MetadataAccessService.Proxy.Interfaces;
+using Epi.MetadataAccessService.Handlers;
+using Epi.MetadataAccessService.Services;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Cloud.DBAccessService.Controllers
+namespace Epi.MetadataAccessService.Controllers
 {
     public class ProjectController : ApiController
     {

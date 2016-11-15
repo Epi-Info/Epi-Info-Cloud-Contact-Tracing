@@ -1,1 +1,1 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Epi.Cloud.DBAccessServiceAPI.WebApiApplication" Language="C#" %>
+﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Epi.MetadataAccessServiceAPI.WebApiApplication" Language="C#" %>

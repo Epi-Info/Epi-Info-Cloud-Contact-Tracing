@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage.ModelDescriptions
 {
     public class ComplexTypeModelDescription : ModelDescription
     {

@@ -1,7 +1,7 @@
 using System.Web.Http;
 using System.Web.Mvc;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage
 {
     public class HelpPageAreaRegistration : AreaRegistration
     {

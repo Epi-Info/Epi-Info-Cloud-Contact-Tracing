@@ -1,4 +1,4 @@
-﻿namespace Epi.Cloud.DataConsistencyServicesAPI.Proxy
+﻿namespace Epi.Cloud.DataConsistencyServices.Proxy
 {
     public interface IResponseInfoServiceBus
     {

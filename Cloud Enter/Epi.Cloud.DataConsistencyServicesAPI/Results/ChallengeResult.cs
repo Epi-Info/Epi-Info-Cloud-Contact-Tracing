@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Results
+namespace Epi.Cloud.DataConsistencyServices.Results
 {
     public class ChallengeResult : IHttpActionResult
     {

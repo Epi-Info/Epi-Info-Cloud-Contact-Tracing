@@ -1,10 +1,10 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.Models;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.Models;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.Controllers
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

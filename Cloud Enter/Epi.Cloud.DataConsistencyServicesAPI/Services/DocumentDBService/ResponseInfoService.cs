@@ -1,9 +1,9 @@
-﻿using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
+﻿using Epi.Cloud.DataConsistencyServices.Proxy;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Newtonsoft.Json;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Services
+namespace Epi.Cloud.DataConsistencyServices.Services
 {
 	public class ResponseInfoService : IResponseInfoProxyService
 	{

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.Models
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage.Models
 {
     /// <summary>
     /// The model that represents an API displayed on the help page.

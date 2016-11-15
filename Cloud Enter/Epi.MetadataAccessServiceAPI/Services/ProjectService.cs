@@ -1,9 +1,9 @@
-﻿using Epi.Cloud.DBAccessService.Proxy.Interfaces;
-using Epi.Cloud.DBAccessService.Repository;
+﻿using Epi.MetadataAccessService.Proxy.Interfaces;
+using Epi.MetadataAccessService.Repository;
 using Epi.FormMetadata.DataStructures;
 using Epi.FormMetadata.Extensions;
 
-namespace Epi.Cloud.DBAccessService.Services
+namespace Epi.MetadataAccessService.Services
 {
     public class ProjectService : IProjectProxyService
     {

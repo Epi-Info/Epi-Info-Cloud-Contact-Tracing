@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage.ModelDescriptions
 {
     internal static class ModelNameHelper
     {

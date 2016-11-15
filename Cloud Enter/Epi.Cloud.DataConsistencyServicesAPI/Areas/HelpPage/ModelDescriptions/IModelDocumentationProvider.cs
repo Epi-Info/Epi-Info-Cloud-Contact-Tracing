@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions
 {
     public interface IModelDocumentationProvider
     {

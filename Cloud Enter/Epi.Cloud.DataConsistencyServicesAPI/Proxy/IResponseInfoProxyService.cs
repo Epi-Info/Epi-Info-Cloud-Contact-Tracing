@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Proxy
+namespace Epi.Cloud.DataConsistencyServices.Proxy
 {
     public interface IResponseInfoProxyService
     {

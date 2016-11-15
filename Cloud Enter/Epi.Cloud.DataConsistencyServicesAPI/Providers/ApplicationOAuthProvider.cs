@@ -9,9 +9,9 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using Epi.Cloud.DataConsistencyServicesAPI.Models;
+using Epi.Cloud.DataConsistencyServices.Models;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Providers
+namespace Epi.Cloud.DataConsistencyServices.Providers
 {
     public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {

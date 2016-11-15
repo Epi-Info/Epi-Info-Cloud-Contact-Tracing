@@ -1,4 +1,4 @@
-namespace Epi.Cloud.DBAccessServiceAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.MetadataAccessServiceAPI.Areas.HelpPage.ModelDescriptions
 {
     public class EnumValueDescription
     {

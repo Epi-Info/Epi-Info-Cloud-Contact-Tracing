@@ -5,9 +5,9 @@ using System.Reflection;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
 using System.Xml.XPath;
-using Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions;
+using Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage
 {
     /// <summary>
     /// A custom <see cref="IDocumentationProvider"/> that reads the API documentation from an XML documentation file.

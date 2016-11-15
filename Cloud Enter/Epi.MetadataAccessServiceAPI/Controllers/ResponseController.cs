@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Epi.DataPersistence.DataStructures;
 using System;
 
-namespace Epi.Cloud.DBAccessServiceAPI.Controllers
+namespace Epi.MetadataAccessServiceAPI.Controllers
 {
     [Authorize]
     public class ResponseController : ApiController

@@ -1,9 +1,9 @@
 ﻿
 using System;
-using Microsoft.ServiceBus.Messaging;
 using System.Configuration;
 using System.Threading;
 using Microsoft.ServiceBus;
+using Microsoft.ServiceBus.Messaging;
 
 namespace Epi.Cloud.ServiceBus
 {
@@ -98,7 +98,7 @@ namespace Epi.Cloud.ServiceBus
                 }
                 else
                 {
-                    return "null";
+                    return null;
                 }
             }
             catch (MessagingException e)

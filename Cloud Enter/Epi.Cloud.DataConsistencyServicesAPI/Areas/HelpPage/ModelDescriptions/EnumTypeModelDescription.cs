@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Areas.HelpPage.ModelDescriptions
+namespace Epi.Cloud.DataConsistencyServices.Areas.HelpPage.ModelDescriptions
 {
     public class EnumTypeModelDescription : ModelDescription
     {

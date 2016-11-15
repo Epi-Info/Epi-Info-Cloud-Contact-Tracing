@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
-namespace Epi.Cloud.DataConsistencyServicesAPI
+namespace Epi.Cloud.DataConsistencyServices
 {
     public class WebApiApplication : System.Web.HttpApplication
     {

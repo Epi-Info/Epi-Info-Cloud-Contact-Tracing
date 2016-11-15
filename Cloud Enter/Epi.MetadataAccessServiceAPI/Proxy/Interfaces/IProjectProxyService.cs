@@ -1,7 +1,7 @@
 ﻿using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Cloud.DBAccessService.Proxy.Interfaces
+namespace Epi.MetadataAccessService.Proxy.Interfaces
 {
     public interface IProjectProxyService
     {

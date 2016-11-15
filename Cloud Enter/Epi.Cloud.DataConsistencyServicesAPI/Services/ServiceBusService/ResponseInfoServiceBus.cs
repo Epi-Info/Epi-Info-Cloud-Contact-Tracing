@@ -1,8 +1,8 @@
-﻿using Epi.Cloud.DataConsistencyServicesAPI.Proxy;
+﻿using Epi.Cloud.DataConsistencyServices.Proxy;
 using Epi.Cloud.ServiceBus;
 
 
-namespace Epi.Cloud.DataConsistencyServicesAPI.Services.ServiceBusService
+namespace Epi.Cloud.DataConsistencyServices.Services.ServiceBusService
 {
     public class ResponseInfoServiceBus : IResponseInfoServiceBus
     {
