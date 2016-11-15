@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Epi.Cloud.DataEntryServices.Model;
 using MvcDynamicForms;
 
 namespace Epi.Cloud.DataEntryServices.Extensions

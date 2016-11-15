@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>9.0.30729</ProductVersion>
@@ -33,7 +33,7 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -75,6 +75,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <CodeAnalysisRuleSet>Migrated rules for Epi.Core (2).ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\build\release\</OutputPath>
@@ -98,6 +99,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Linux|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -114,6 +116,7 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Migrated rules for Epi.Core (2).ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug %28Exclude EpiMap%29|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -130,6 +133,7 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Migrated rules for Epi.Core (2).ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Epi.Enter.ServiceApplication|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,26 +152,32 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Migrated rules for Epi.Core (2).ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Debug\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>..\build\Release\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Linux|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Linux\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug %28Exclude EpiMap%29|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Debug %28Exclude EpiMap%29\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Epi.Enter.ServiceApplication|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\x86\Epi.Enter.ServiceApplication\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CalithaLib, Version=1.10.1954.23795, Culture=neutral, PublicKeyToken=6fe80ec331a66ec8">
@@ -272,18 +282,42 @@
     <Compile Include="Data\AnalysisOutput.cs" />
     <Compile Include="Data\DbColumnType.cs" />
     <Compile Include="Data\DbDriverBase.cs" />
+    <Compile Include="Data\DbDriverFactoryCreator.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\DbDriverInfo.cs" />
     <Compile Include="Data\DBReadExecute.cs" />
     <Compile Include="Data\GenericDbType.cs" />
     <Compile Include="Data\IConnectionStringGui.cs" />
+    <Compile Include="Data\IDbDriver.cs" />
     <Compile Include="Data\IDbDriverFactory.cs" />
     <Compile Include="Data\IQuery.cs" />
+    <Compile Include="Data\ITable.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\ITableColumn.cs" />
     <Compile Include="Data\OptionNameProvider.cs" />
+    <Compile Include="Data\Query.cs" />
+    <Compile Include="Data\QueryParameter.cs" />
+    <Compile Include="Data\Services\AppData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\Services\CollectedDataProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\Services\EntityDataReader.cs" />
-    <Compile Include="Data\Services\MetadataDataSet.cs" />
     <Compile Include="Data\Services\IMetadataProvider.cs" />
+    <Compile Include="Data\Services\MetadataDataSet.cs" />
+    <Compile Include="Data\Services\MetadataDbProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\Services\MetadataXmlProvider.cs" />
+    <Compile Include="Data\Services\PHINVSProvider.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Data\Table.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Data\TableColumn.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Exceptions\ViewNotFoundException.cs" />
@@ -293,18 +327,6 @@
     <Compile Include="Exceptions\ValidationFailedException.cs" />
     <Compile Include="ExecutionEnvironment.cs" />
     <Compile Include="ProjectPermissions.cs" />
-    <Compile Include="Service References\EWEManagerService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\SurveyManagerService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="ServiceClient\EWEServiceClient.cs" />
-    <Compile Include="ServiceClient\ServiceClient.cs" />
     <Compile Include="Services\Fields\YesNoColumn.cs" />
     <Compile Include="Services\Fields\Grid Columns\CheckBoxColumn.cs" />
     <Compile Include="Services\Fields\Grid Columns\TimeColumn.cs" />
@@ -326,9 +348,6 @@
     <Compile Include="IControlFactory.cs" />
     <Compile Include="Services\Fields\UniqueIdentifierField.cs" />
     <Compile Include="ICommandProcessor.cs" />
-    <Compile Include="Data\Services\AppData.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ApplicationIdentity.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -386,27 +405,6 @@
     <Compile Include="Constants\VariableType.cs" />
     <Compile Include="DataSets\AppDataSet.cs">
       <DependentUpon>AppDataSet.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Data\Services\CollectedDataProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\IDbDriver.cs" />
-    <Compile Include="Data\QueryParameter.cs" />
-    <Compile Include="Data\DbDriverFactoryCreator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\Query.cs" />
-    <Compile Include="Data\ITable.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\Services\MetadataDbProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\Services\PHINVSProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\Table.cs">
-      <SubType>Code</SubType>
     </Compile>
     <Compile Include="Defaults.cs">
       <SubType>Code</SubType>
@@ -656,76 +654,8 @@
     </Compile>
     <Compile Include="Web\SessionHistory.cs" />
     <Compile Include="WordBuilder.cs" />
+    <None Include="Data\Services\AppData.cd" />
     <None Include="packages.config" />
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.OrganizationResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.PreFilledAnswerResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.PublishResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.SurveyAnswerResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.SurveyInfoResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\Epi.EWEManagerService.UserAuthenticationResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\EWEManagerService\configuration91.svcinfo" />
-    <None Include="Service References\EWEManagerService\configuration.svcinfo" />
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV2.wsdl" />
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV21.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV22.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV23.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV24.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV25.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\EWEManagerService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\SurveyManagerService\configuration91.svcinfo" />
-    <None Include="Service References\SurveyManagerService\configuration.svcinfo" />
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.OrganizationResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.PreFilledAnswerResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.PublishResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.SurveyAnswerResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.SurveyControlsResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\Epi.SurveyManagerService.SurveyInfoResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\SurveyManagerService\ManagerServiceV31.wsdl" />
-    <None Include="Service References\SurveyManagerService\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\EWEManagerService\EWEManagerServiceV2.disco" />
     <Content Include="Templates\Fields\debug - one of each field with different widths.xml" />
     <Content Include="Templates\Fields\debug - one of each field.xml" />
     <Content Include="Templates\Fields\States.xml">
@@ -847,7 +777,6 @@
     <None Include="DataSets\MapMetadata.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>MapMetadata.Designer.cs</LastGenOutput>
     </None>
     <None Include="DataSets\MapMetadata.xss">
       <DependentUpon>MapMetadata.xsd</DependentUpon>
@@ -904,25 +833,9 @@
       <DependentUpon>TabOrder.xsd</DependentUpon>
     </None>
     <None Include="DataSources.cd" />
-    <None Include="Data\Services\AppData.cd" />
     <EmbeddedResource Include="Resources\EpiInfo.Enter.Grammar.cgt" />
     <EmbeddedResource Include="Resources\EpiInfoGrammar.cgt" />
     <None Include="Migrated rules for Epi.Core %282%29.ruleset" />
-    <None Include="Service References\SurveyManagerService\SurveyManagerServiceV35.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SurveyManagerService\SurveyManagerServiceV36.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SurveyManagerService\SurveyManagerServiceV37.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SurveyManagerService\SurveyManagerServiceV38.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\SurveyManagerService\SurveyManagerServiceV39.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Services\Fields\Fields.cd" />
     <None Include="ProjectView.cd" />
     <None Include="Properties\Settings.settings">
@@ -1124,10 +1037,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\Content\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\EWEManagerService\" />
-    <WCFMetadataStorage Include="Service References\SurveyManagerService\" />
+    <Folder Include="ServiceClient\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

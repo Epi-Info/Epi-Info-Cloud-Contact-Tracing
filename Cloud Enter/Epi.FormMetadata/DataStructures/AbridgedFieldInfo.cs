@@ -51,11 +51,17 @@ namespace Epi.FormMetadata.DataStructures
         public string List { get; protected set; }
         [JsonProperty]
         public bool IsReadOnly { get; protected set; }
+        [JsonIgnore]
         public bool IsRequired { get { return _mutableAttributes.IsRequired; } set { _mutableAttributes.IsRequired = value; } }
+        [JsonIgnore]
         public bool IsHidden { get { return _mutableAttributes.IsHidden; } set { _mutableAttributes.IsHidden = value; } }
+        [JsonIgnore]
         public bool IsDisabled { get { return _mutableAttributes.IsDisabled; } set { _mutableAttributes.IsDisabled = value; } }
+        [JsonIgnore]
         public bool IsHighlighted { get { return _mutableAttributes.IsHighlighted; } set { _mutableAttributes.IsHighlighted = value; } }
+        [JsonIgnore]
         public string Value { get { return _mutableAttributes.Value; } set { _mutableAttributes.Value = value; } }
+        [JsonIgnore]
         public FieldDataType DataType { get { return FieldMetadata.GetDataType(FieldType); } }
 
         [JsonProperty]
@@ -79,10 +85,15 @@ namespace Epi.FormMetadata.DataStructures
     
     public class MutableAttributes
     {
+        [JsonProperty]
         public bool IsRequired { get; set; }
+        [JsonProperty]
         public bool IsHidden { get; set; }
+        [JsonProperty]
         public bool IsDisabled { get; set; }
+        [JsonProperty]
         public bool IsHighlighted { get; set; }
+        [JsonProperty]
         public string Value { get; set; }
 
         public MutableAttributes Clone()
@@ -91,6 +102,4 @@ namespace Epi.FormMetadata.DataStructures
             return clone;
         }
     }
-
-
 }

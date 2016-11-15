@@ -7,7 +7,9 @@ using Epi.Cloud.Common.DTO;
 using System.Web.Configuration;
 using Epi.Web.MVC.Models;
 using System.Reflection;
-using Epi.Web.MVC.Constants;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Extensions;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -15,12 +17,16 @@ namespace Epi.Web.MVC.Controllers
     {
         //
         // GET: /Organization/
-        private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
+        private readonly ISurveyFacade _surveyFacade;
+        private readonly ISecurityFacade _securityFacade;
 
-        public AdminUserController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade)
+        public AdminUserController(ISurveyFacade surveyFacade,
+                                   ISecurityFacade securityFacade)
         {
-            _isurveyFacade = isurveyFacade;
+            _surveyFacade = surveyFacade;
+            _securityFacade = securityFacade;
         }
+
         [HttpGet]
         public ActionResult UserList()
         {
@@ -37,7 +43,6 @@ namespace Epi.Web.MVC.Controllers
             
             return View("UserList", UserOrgModel);
         }
-
 
         [HttpGet]
         public ActionResult UserInfo(int userid, bool iseditmode, int orgid)
@@ -57,8 +62,8 @@ namespace Epi.Web.MVC.Controllers
                 Request.User = new Enter.Common.DTO.UserDTO();
                 Request.User.UserId = userid;
 
-                UserResponse Response = _isurveyFacade.GetUserInfo(Request);
-                UserModel = Mapper.ToUserModelR(Response.User[0]);
+                UserResponse Response = _securityFacade.GetUserInfo(Request);
+                UserModel = Response.User[0].ToUserModelR();
                 UserModel.IsEditMode = true;
                 return View("UserInfo", UserModel);
             }
@@ -81,25 +86,25 @@ namespace Epi.Web.MVC.Controllers
                     {
                         Request.Action = "UpDate";
 
-                        Request.User = Mapper.ToUserDTO(UserModel);
+                        Request.User = UserModel.ToUserDTO();
 
                          int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
 
                         Request.CurrentUser = UserId;
-                        Response = _isurveyFacade.SetUserInfo(Request);
+                        Response = _securityFacade.SetUserInfo(Request);
                         UserOrgModel = GetUserInfoList(Request.CurrentOrg);
                         UserOrgModel.Message = "User information for " + UserModel.FirstName + " " + UserModel.LastName + " has been updated. ";
                     }
                     else
                     {
                         Request.Action = "";
-                        Request.User = Mapper.ToUserDTO(UserModel);
+                        Request.User = UserModel.ToUserDTO();
 
                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
 
 
                         Request.CurrentUser = UserId;
-                        Response = _isurveyFacade.SetUserInfo(Request);
+                        Response = _securityFacade.SetUserInfo(Request);
 
                         if (Response.Message.ToUpper() == "EXISTS" )
                         {
@@ -110,8 +115,6 @@ namespace Epi.Web.MVC.Controllers
                         UserOrgModel = GetUserInfoList(Request.CurrentOrg);
                         UserOrgModel.Message = "User " + UserModel.FirstName + " " + UserModel.LastName + " has been added. ";
                     }
-
-
                 }
                 else
                 {
@@ -125,36 +128,33 @@ namespace Epi.Web.MVC.Controllers
             UserOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             return View("UserList", UserOrgModel);
         }
+
         [HttpGet]
         public ActionResult GetUserList(int orgid)
         {
-
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
             OrganizationRequest Request = new OrganizationRequest();
             Request.Organization.OrganizationId = orgid;
-            OrganizationResponse OrganizationUsers = _isurveyFacade.GetOrganizationUsers(Request);
-            List<UserModel> UserModel = Mapper.ToUserModelList(OrganizationUsers.OrganizationUsersList);
+            OrganizationResponse OrganizationUsers = _securityFacade.GetOrganizationUsers(Request);
+            List<UserModel> UserModel = OrganizationUsers.OrganizationUsersList.ToUserModelList();
             ViewBag.SelectedOrg = orgid;
             Session[SessionKeys.CurrentOrgId] = orgid;
 
             return PartialView("PartialUserList", UserModel);
-
-
         }
+
         private UserOrgModel GetUserInfoList(int OrgId = -1)
         {
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             UserOrgModel UserOrgModel = new UserOrgModel();
             try
             {
-
-
                 OrganizationRequest Request = new OrganizationRequest();
                 Request.UserId = UserId;
                 Request.UserRole = Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString());
-                OrganizationResponse Organizations = _isurveyFacade.GetAdminOrganizations(Request);
-                List<OrganizationModel> OrgListModel = Mapper.ToOrganizationModelList(Organizations.OrganizationList);
+                OrganizationResponse Organizations = _securityFacade.GetAdminOrganizations(Request);
+                List<OrganizationModel> OrgListModel = Organizations.OrganizationList.ToOrganizationModelList();
                 UserOrgModel.OrgList = OrgListModel;
                 if (OrgId != -1)
                 {
@@ -166,8 +166,8 @@ namespace Epi.Web.MVC.Controllers
                     Request.Organization.OrganizationId = Organizations.OrganizationList[0].OrganizationId;
                     ViewBag.SelectedOrg = Organizations.OrganizationList[0].OrganizationId;
                 }
-                OrganizationResponse OrganizationUsers = _isurveyFacade.GetOrganizationUsers(Request);
-                List<UserModel> UserModel = Mapper.ToUserModelList(OrganizationUsers.OrganizationUsersList);
+                OrganizationResponse OrganizationUsers = _securityFacade.GetOrganizationUsers(Request);
+                List<UserModel> UserModel = OrganizationUsers.OrganizationUsersList.ToUserModelList();
 
                 UserOrgModel.UserList = UserModel;
 

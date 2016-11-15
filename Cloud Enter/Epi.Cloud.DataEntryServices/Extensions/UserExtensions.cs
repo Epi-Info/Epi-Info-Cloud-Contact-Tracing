@@ -5,7 +5,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class UserExtensions
     {
-        public static UserBO ToUserBO(this Epi.Web.EF.User user, int Role = 0)
+        public static UserBO ToUserBO(this Epi.Web.EF.User user, int role = 0)
         {
             UserBO userBO = new UserBO();
             userBO.UserId = user.UserID;
@@ -15,7 +15,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             userBO.LastName = user.LastName;
             userBO.PhoneNumber = user.PhoneNumber;
             userBO.ResetPassword = user.ResetPassword;
-            userBO.Role = Role;
+            userBO.Role = role;
             if (!string.IsNullOrEmpty(user.UGuid.ToString()))
             {
                 userBO.UGuid = Guid.Parse(user.UGuid.ToString());

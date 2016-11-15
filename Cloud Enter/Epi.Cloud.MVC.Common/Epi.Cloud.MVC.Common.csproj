@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{119075A5-6225-4879-82E0-B55BAFF13E49}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Epi.Cloud.MVC</RootNamespace>
+    <AssemblyName>Epi.Cloud.MVC.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EpiInfo.Plugin, Version=7.1.1.5, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Epi.Cloud\bin\EpiInfo.Plugin.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\FormInfoBOExtensions.cs" />
+    <Compile Include="Extensions\FormInfoDTOExtensions.cs" />
+    <Compile Include="Extensions\FormsHierarchyBOExtensions.cs" />
+    <Compile Include="Extensions\FormsHierarchyDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyInfoDTOExtensions.cs" />
+    <Compile Include="Extensions\OrganizationResponseExtensions.cs" />
+    <Compile Include="Extensions\PassCodeDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyAnswerDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyAnswerModelExtensions.cs" />
+    <Compile Include="Extensions\SurveyInfoModelExtensions.cs" />
+    <Compile Include="Extensions\UserDTOExtensions.cs" />
+    <Compile Include="Extensions\UserModelExtensions.cs" />
+    <Compile Include="Models\EIWSTModel.cs" />
+    <Compile Include="Models\ExceptionModel.cs" />
+    <Compile Include="Models\FormInfoModel.cs" />
+    <Compile Include="Models\FormModel.cs" />
+    <Compile Include="Models\FormResponseInfoModel.cs" />
+    <Compile Include="Extensions\OrganizationDTOExtensions.cs" />
+    <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\Omniture.cs" />
+    <Compile Include="Models\OrgAdminInfoModel.cs" />
+    <Compile Include="Models\OrganizationModel.cs" />
+    <Compile Include="Models\OrgListModel.cs" />
+    <Compile Include="Models\PassCodeModel.cs" />
+    <Compile Include="Models\SurveyInfoModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Models\RelateModel.cs" />
+    <Compile Include="Models\ResponseInfoModel.cs" />
+    <Compile Include="Models\ResponseModel.cs" />
+    <Compile Include="Models\SeachBoxModel.cs" />
+    <Compile Include="Models\SettingsInfoModel.cs" />
+    <Compile Include="Models\SurveyModel.cs" />
+    <Compile Include="Models\SurveyResponseModel.cs" />
+    <Compile Include="Models\UserForgotPasswordModel.cs" />
+    <Compile Include="Models\UserLoginModel.cs" />
+    <Compile Include="Models\UserModel.cs" />
+    <Compile Include="Models\UserOrgModel.cs" />
+    <Compile Include="Models\UserResetPasswordModel.cs" />
+    <Compile Include="Utilities\ExceptionMessage.cs" />
+    <Compile Include="Utilities\FormProvider.cs" />
+    <Compile Include="Utilities\MobileFormProvider.cs" />
+    <Compile Include="Utilities\OmnitureHelper.cs" />
+    <Compile Include="Utilities\SurveyHelper.cs" />
+    <Compile Include="Utilities\SurveyResponseHelper.cs" />
+    <Compile Include="Utilities\ValidateResponse.cs" />
+    <Compile Include="Utilities\WindowsAuthentication.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.FormInfoServices\Epi.Cloud.SurveyInfoServices.csproj">
+      <Project>{3725080e-4c8a-4dd2-8435-d42bcaee5e6f}</Project>
+      <Name>Epi.Cloud.SurveyInfoServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
+      <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
+      <Name>Epi.Cloud.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DynamicForms.Core\Epi.Web.DynamicForms.Core.csproj">
+      <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>
+      <Name>Epi.Web.DynamicForms.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
+      <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
+      <Name>Epi.FormMetadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.CheckCodeEngine\Epi.Web.CheckCodeEngine.csproj">
+      <Project>{6b084882-ef4f-4cf0-85b1-1e8c357ae822}</Project>
+      <Name>Epi.Web.CheckCodeEngine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
+      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
+      <Name>Epi.Web.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

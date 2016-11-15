@@ -1,26 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
-using Epi.Cloud.DataEntryServices.Helpers;
-using Epi.Cloud.DataEntryServices.Interfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
+using Epi.Web.Common.Interfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
-	/// <summary>
-	/// Entity Framework implementation of the ISurveyResponseDao interface.
-	/// </summary> 
-	public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
+    /// <summary>
+    /// Entity Framework implementation of the ISurveyResponseDao interface.
+    /// </summary> 
+    public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
     {
         ISurveyPersistenceFacade _surveyPersistenceFacade;
 
@@ -219,7 +216,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
             if (gridgridPageSize != -1 && gridgridPageNumber != -1)
             {
-                result = Mapper.Map(responseList);
+                result = responseList.ToSurveyResponseBOList();
 
                 foreach (SurveyResponseBO item in result)
                 {
@@ -239,7 +236,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             }
             else
             {
-                finalresult = Mapper.Map(responseList);
+                finalresult = responseList.ToSurveyResponseBOList();
                 foreach (SurveyResponseBO item in finalresult)
                 {
                     List<SurveyResponseBO> ResponsesHierarchy = this.GetResponsesHierarchyIdsByRootId(item.ResponseId.ToString());
@@ -333,6 +330,24 @@ namespace Epi.Cloud.DataEntryServices.DAO
             }
         }
 
+        ///If your user Click save button call the SaveSurveyResponse()
+        public void SaveSurveyResponse(SurveyResponseBO surveyResponseBO)
+        {
+            try
+            {
+                //Save Properties to Document DB
+                surveyResponseBO.DateCreated = DateTime.UtcNow;
+                surveyResponseBO.DateUpdated = DateTime.UtcNow;
+
+                var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
+                var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO); 
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+        }
+
         /// <summary>
         /// Inserts a new SurveyResponse. 
         /// </summary>
@@ -372,7 +387,10 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 //Save Properties to Document DB
                 InsertSurveyResponse(surveyResponseBO);
-				UpdateRecordStatus(surveyResponseBO);
+                if(surveyResponseBO.Status==RecordStatus.Saved)
+                {
+                    UpdateRecordStatus(surveyResponseBO);
+                }
 
                 //TODO Implement for DocumentDB
                 //using (var Context = DataObjectFactory.CreateContext())
@@ -664,6 +682,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 if (criteria.IsShareable)
                 {
 #if ImplementSharableRules
+                    // TODO: Implement Sharable Rules
+
                     //Shareable
                     using (var Context = Epi.Web.EF.DataObjectFactory.CreateContext())
                     {
@@ -2084,10 +2104,17 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return responseExists;
         }
 
+        public bool DoesResponseExist(string childFormId, Guid parentResponseId)
+        {
+            var responseExists = _surveyPersistenceFacade.DoesResponseExist(childFormId, parentResponseId.ToString());
+            return responseExists;
+        }
+
         public bool HasResponse(SurveyAnswerCriteria criteria)
         {
-            var responseId = criteria.SurveyAnswerIdList[0];
-            var responseExists = _surveyPersistenceFacade.DoChildrenExistForResponseId(responseId);
+            var childFormId = criteria.SurveyId;
+            var parentReponseId = criteria.SurveyAnswerIdList[0];
+            var responseExists = _surveyPersistenceFacade.DoesResponseExist(childFormId, parentReponseId);
             return responseExists;
         }
 

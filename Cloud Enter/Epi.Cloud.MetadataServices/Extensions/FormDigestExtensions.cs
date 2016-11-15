@@ -2,6 +2,7 @@
 using System.Linq;
 using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Cloud.MetadataServices.Extensions
 {
@@ -11,6 +12,12 @@ namespace Epi.Cloud.MetadataServices.Extensions
         {
             var surveyInfoBO = new SurveyInfoBO();
             return formDigest.MergeIntoSurveyInfoBO(surveyInfoBO);
+        }
+
+        public static List<SurveyInfoBO> ToSurveyInfoBOList(this FormDigest[] formDigests)
+        {
+            List<SurveyInfoBO> surveyInfoBOs = formDigests.Select(d => d.ToSurveyInfoBO()).ToList();
+            return surveyInfoBOs;
         }
 
         public static SurveyInfoBO MergeIntoSurveyInfoBO(this FormDigest formDigest, SurveyInfoBO surveyInfoBO)
@@ -25,10 +32,48 @@ namespace Epi.Cloud.MetadataServices.Extensions
             surveyInfoBO.IsDraftMode = formDigest.IsDraftMode;
             return surveyInfoBO;
         }
-        public static List<SurveyInfoBO> ToSurveyInfoBOList(this FormDigest[] formDigests)
+
+        public static FormsHierarchyBO ToFormsHierarchyBO(this FormDigest formDigest, SurveyInfoBO surveyInfoBO)
         {
-            List<SurveyInfoBO> surveyInfoBOs = formDigests.Select(d => d.ToSurveyInfoBO()).ToList();
-            return surveyInfoBOs;
+            var formsHierarchyBO = new FormsHierarchyBO { SurveyInfo = surveyInfoBO, IsSqlProject = true };
+            return formDigest.MergeIntoFormsHierarchyBO(formsHierarchyBO);
+        }
+
+        public static List<FormsHierarchyBO> ToFormsHierarchyBOList(this FormDigest[] formDigests, SurveyInfoBO surveyInfoBO)
+        {
+            List<FormsHierarchyBO> formsHierarchyBOs = formDigests.Select(d => d.ToFormsHierarchyBO(surveyInfoBO)).ToList();
+            return formsHierarchyBOs;
+        }
+
+        public static FormsHierarchyBO MergeIntoFormsHierarchyBO(this FormDigest formDigest, FormsHierarchyBO formsHierarchyBO)
+        {
+            formsHierarchyBO.FormId = formDigest.FormId;
+            formsHierarchyBO.ViewId = formDigest.ViewId;
+            formsHierarchyBO.RootFormId = formDigest.RootFormId;
+            formsHierarchyBO.IsRoot = formDigest.FormId == formDigest.RootFormId;
+            return formsHierarchyBO;
+        }
+
+        public static FormsHierarchyDTO ToFormsHierarchyDTO(this FormDigest formDigest, SurveyInfoDTO surveyInfoDTO)
+        {
+            var formsHierarchyDTO = new FormsHierarchyDTO { SurveyInfo = surveyInfoDTO, IsSqlProject = true };
+            return formDigest.MergeIntoFormsHierarchyDTO(formsHierarchyDTO);
+        }
+
+        public static List<FormsHierarchyDTO> ToFormsHierarchyDTOList(this FormDigest[] formDigests, SurveyInfoDTO surveyInfoDTO)
+        {
+            List<FormsHierarchyDTO> formsHierarchyDTOs = formDigests.Select(d => d.ToFormsHierarchyDTO(surveyInfoDTO)).ToList();
+            return formsHierarchyDTOs;
+        }
+
+        public static FormsHierarchyDTO MergeIntoFormsHierarchyDTO(this FormDigest formDigest, FormsHierarchyDTO formsHierarchyDTO, SurveyInfoDTO surveyInfoDTO = null)
+        {
+            formsHierarchyDTO.FormId = formDigest.FormId;
+            formsHierarchyDTO.ViewId = formDigest.ViewId;
+            formsHierarchyDTO.RootFormId = formDigest.RootFormId;
+            formsHierarchyDTO.IsRoot = formDigest.FormId == formDigest.RootFormId;
+            if (surveyInfoDTO != null) formsHierarchyDTO.SurveyInfo = surveyInfoDTO;
+            return formsHierarchyDTO;
         }
     }
 }

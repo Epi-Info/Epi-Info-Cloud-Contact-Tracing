@@ -2,18 +2,17 @@
 using System.Linq;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Facades.Interfaces;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.DTO;
+using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
-using Epi.Web.MVC.Constants;
-using Epi.Web.MVC.Facade;
+using Epi.Cloud.Common.Constants;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
-using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
-    public abstract class BaseSurveyController : Controller
+	public abstract class BaseSurveyController : Controller
     {
         protected ISurveyFacade _surveyFacade;
         protected Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider _projectMetadataProvider;
@@ -37,7 +36,7 @@ namespace Epi.Web.MVC.Controllers
         {
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
-            var surveyResponseHelper = new SurveyResponseDocDb();
+            var surveyResponseHelper = new SurveyResponseHelper();
             FormSettingRequest formSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
             //Populating the request

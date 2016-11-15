@@ -73,7 +73,7 @@ namespace Epi.Cloud.MVC.Extensions
         {
             ResponseModel ResponseModel = new ResponseModel();
 
-            var MetaDataColumns = Epi.Web.MVC.Constants.Constant.MetaDaTaColumnNames();
+            var MetaDataColumns = Epi.Cloud.Common.Constants.Constant.MetaDaTaColumnNames();
 
             try
             {

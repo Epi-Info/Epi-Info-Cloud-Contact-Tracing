@@ -15,7 +15,5 @@ namespace Epi.Web.Enter.Common.DTO
         public Dictionary<string, string> SqlData { get; set; }
 
         public FormResponseDetail ResponseDetail { get; set; }
-
-        public string XML { get; set; }
     }
 }

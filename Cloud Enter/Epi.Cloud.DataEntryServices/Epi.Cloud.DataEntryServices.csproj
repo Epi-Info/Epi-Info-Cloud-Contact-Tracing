@@ -32,28 +32,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="DaoFactory.cs" />
-    <Compile Include="DAO\FormInfoDao.cs" />
-    <Compile Include="DAO\SurveyInfoDao.cs" />
     <Compile Include="DAO\SurveyResponseDao.cs" />
-    <Compile Include="DataEntryService.cs" />
+    <Compile Include="DataEntry\DataEntryService.cs" />
+    <Compile Include="FormSettings\FormSetting.cs" />
+    <Compile Include="FormSettings\FormSettingsService.cs" />
+    <Compile Include="Security\Organization.cs" />
+    <Compile Include="Security\SecurityDataService.cs" />
     <Compile Include="Extensions\FormExtensions.cs" />
     <Compile Include="Extensions\FormResponseDetailExtensions.cs" />
     <Compile Include="Extensions\OrganizationBOExtensions.cs" />
     <Compile Include="Extensions\OrganizationExtensions.cs" />
-    <Compile Include="Extensions\SurveyAnswerDTOExtensions.cs" />
-    <Compile Include="Extensions\SurveyInfoBOExtensions.cs" />
-    <Compile Include="Extensions\SurveyMetadataExtensions.cs" />
-    <Compile Include="Extensions\SurveyResponseBOExtensions.cs" />
     <Compile Include="Extensions\SurveyResponseExtensions.cs" />
     <Compile Include="Extensions\UserBOExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
-    <Compile Include="Facade\DocumentDBSurveyPersistenceFacade.cs" />
-    <Compile Include="Interfaces\ISurveyPersistenceFacade.cs" />
-    <Compile Include="Model\SurveyInfoModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\Mapper.cs" />
-    <Compile Include="SurveyResponseProvider.cs" />
+    <Compile Include="DataEntry\SurveyResponseProvider.cs" />
+    <Compile Include="Security\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -64,13 +58,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EIWS_BLL_Core\Epi.Web.BLL.csproj">
-      <Project>{d49b7a21-644b-49d7-9a5d-387bf31eafe5}</Project>
-      <Name>Epi.Web.BLL</Name>
+    <ProjectReference Include="..\Epi.Cloud.BLL\Epi.Cloud.BLL.csproj">
+      <Project>{dfb453a2-9bcc-418f-a7da-ebfd74c08a87}</Project>
+      <Name>Epi.Cloud.BLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.FormInfoServices\Epi.Cloud.SurveyInfoServices.csproj">
+      <Project>{3725080E-4C8A-4DD2-8435-D42BCAEE5E6F}</Project>
+      <Name>Epi.Cloud.SurveyInfoServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
@@ -79,6 +77,10 @@
     <ProjectReference Include="..\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
       <Name>Epi.Cloud.MetadataServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.MVC.Common\Epi.Cloud.MVC.Common.csproj">
+      <Project>{119075a5-6225-4879-82e0-b55baff13e49}</Project>
+      <Name>Epi.Cloud.MVC.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423EA0-9F83-4E77-AD33-7483C36062EE}</Project>
@@ -124,10 +126,6 @@
       <Project>{b8af69bd-3ce1-4aa5-875d-3fb87c7fce44}</Project>
       <Name>Epi.Web.Interfaces</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
-      <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
-      <Name>Epi.Web.WCF.SurveyService</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Azure.Documents.Client">
@@ -147,6 +145,7 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets')" />
   <Import Project="..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets')" />

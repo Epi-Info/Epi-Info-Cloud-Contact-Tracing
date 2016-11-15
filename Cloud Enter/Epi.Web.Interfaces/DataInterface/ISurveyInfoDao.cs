@@ -12,6 +12,13 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
     /// </remarks>
     public interface ISurveyInfoDao
     {
+		/// <summary>
+		/// Gets SurveyInfo
+		/// </summary>
+		/// <param name="surveyId"></param>
+		/// <returns></returns>
+		SurveyInfoBO GetSurveyInfo(string surveyId);
+
         /// <summary>
         /// Gets SurveyInfo based on a list of ids
         /// </summary>
@@ -19,7 +26,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <returns>SurveyInfo.</returns>
         List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, int gridPageNumber = -1, int gridPageSize = -1);
 
-        List<SurveyInfoBO> GetSurveyInfoByOrgKeyAndPublishKey(string SurveyId, string pOrganizationKey, Guid publishKey);
+		List<SurveyInfoBO> GetSurveyInfoByOrgKeyAndPublishKey(string SurveyId, string pOrganizationKey, Guid publishKey);
 
         List<SurveyInfoBO> GetSurveyInfoByOrgKey(string SurveyId, string pOrganizationKey);
 
@@ -93,9 +100,8 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </summary>
         /// <param name="SurveyInfo">SurveyInfo.</param>
         List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId);
-        SurveyInfoBO GetParentInfoByChildId(string ChildId);
         List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId);
-        void InsertFormdefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList);
+        void InsertFormDefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList);
         void UpdateParentId(string SurveyId, int ViewId, string ParentId);
         void InsertConnectionString(DbConnectionStringBO ConnectionString);
         void UpdateConnectionString(DbConnectionStringBO ConnectionString);

@@ -74,13 +74,5 @@ namespace MvcDynamicForms.Fields
             ClearError();
             return true;
         }
-        public override string GetMetadata()
-        {
-
-            string XML = "<ResponseDetail QuestionId='" + _key + "'>" + Response + "<ResponseDetail>";
-            return XML;
-        }
-
-
     }
 }

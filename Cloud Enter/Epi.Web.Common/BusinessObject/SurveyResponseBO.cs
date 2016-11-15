@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.DataStructures;
+using Epi.DataPersistence.Constants;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
@@ -19,6 +19,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public string SurveyId { get; set; }
         public DateTime DateUpdated { get; set; }
         public DateTime? DateCompleted { get; set; }
+        public bool IsNewRecord { get; set; }
         public int Status { get; set; }
 		public RecordStatusChangeReason ReasonForStatusChange { get; set; }
         public DateTime DateCreated { get; set; }
@@ -29,7 +30,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public string UserEmail { get; set; }
         public string ParentId { get; set; }
         public string RelateParentId { get; set; }
-        public bool IsNewRecord { get; set; }
         public List<SurveyResponseBO> ResponseHierarchyIds { get; set; }
         public int ViewId { get; set; }
         public int LastActiveUserId { get; set; }
@@ -38,9 +38,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public int CurrentOrgId { get; set; }
 
         public FormResponseDetail ResponseDetail { get; set; }
-
-        public long? TemplateXMLSize { get; set; }
-        public string XML { get; set; }
 
         public object Clone()
         {

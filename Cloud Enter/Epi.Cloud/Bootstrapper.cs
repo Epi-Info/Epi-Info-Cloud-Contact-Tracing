@@ -8,7 +8,7 @@ namespace Epi.Web.MVC
 {
     public static class Bootstrapper
     {
-        public static void Initialise()
+        public static void Initialize()
         {
             IUnityContainer container = BuildUnityContainer();
 
@@ -26,43 +26,48 @@ namespace Epi.Web.MVC
             //InjectionConstructor: creates an instance of Microsoft.Practices.Unity.InjectionConstructor that looks for a constructor with the given set of parameters
             // e.g. container.RegisterType<ITestService, TestService>();            
 
-            container.RegisterType<Epi.Web.Enter.Common.Message.SurveyInfoRequest, Epi.Web.Enter.Common.Message.SurveyInfoRequest>();
-            container.RegisterType<Epi.Web.WCF.SurveyService.IEWEDataService, Epi.Web.WCF.SurveyService.EWEDataService>();
-            container.RegisterType<SurveyResponseDocDb, SurveyResponseDocDb>()
+
+			container.RegisterType<SurveyResponseHelper, SurveyResponseHelper>()
                 .Configure<InjectedMembers>()
-                .ConfigureInjectionFor<SurveyResponseDocDb>(new InjectionConstructor());
+                .ConfigureInjectionFor<SurveyResponseHelper>(new InjectionConstructor());
 
-            //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Web.MVC.Repositories.IntegratedSurveyInfoRepository>();
-            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyInfoRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyInfoEpiMetadataRepository>();
+			// Logger
+			container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
 
+            container.RegisterType<Epi.Web.Enter.Common.Message.SurveyInfoRequest, Epi.Web.Enter.Common.Message.SurveyInfoRequest>();
             container.RegisterType<Epi.Web.Enter.Common.Message.SurveyAnswerRequest, Epi.Web.Enter.Common.Message.SurveyAnswerRequest>();
 
-            container.RegisterType<Epi.Cloud.Interfaces.DataInterface.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
-            //container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Cloud.MVC.Repositories.IntegratedSurveyAnswerDocumentDBRepository>();
-            container.RegisterType<Epi.Web.MVC.Repositories.Core.ISurveyAnswerRepository, Epi.Web.MVC.Repositories.IntegratedSurveyAnswerRepository>();
+            container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();
+			container.RegisterType<Epi.Cloud.Common.DTO.PassCodeDTO, Epi.Cloud.Common.DTO.PassCodeDTO>();
 
-            var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
+			container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
+
+			// DAOs
+            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.SurveyInfoServices.DAO.SurveyInfoDao>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
+            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IFormInfoDao, Epi.Cloud.SurveyInfoServices.DAO.FormInfoDao>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IFormSettingDao, Epi.Web.EF.EntityFormSettingDao>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IUserDao, Epi.Web.EF.EntityUserDao>();
+			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao, Epi.Web.EF.EntityOrganizationDao>();
+
+			// Facades
+			container.RegisterType<Epi.Cloud.Facades.Interfaces.ISurveyFacade, Epi.Cloud.Facades.SurveyFacade>();
+			container.RegisterType<Epi.Cloud.Facades.Interfaces.ISecurityFacade, Epi.Cloud.Facades.SecurityFacade>();
+
+			// Data Service Interfaces
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoService, Epi.Cloud.SurveyInfoServices.SurveyInfoService>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISecurityDataService, Epi.Cloud.DataEntryServices.SecurityDataService>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormSettingsService, Epi.Cloud.DataEntryServices.FormSettingsService>();
+
+			// Registered Instances
+			var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
-            var surveyDocumentDBFacade = new Epi.Cloud.DataEntryServices.Facade.DocumentDBSurveyPersistenceFacade(projectMetadataProvider);
-			var daoFactory = new Epi.Cloud.DataEntryServices.DaoFactory();
+            var surveyDocumentDBFacade = new Epi.PersistenceServices.DocumentDB.DocumentDBSurveyPersistenceFacade();
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterInstance<Epi.Cloud.DataEntryServices.Interfaces.ISurveyPersistenceFacade>(surveyDocumentDBFacade);
-
-            container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
-            container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();
-            container.RegisterType<Epi.Web.MVC.Facade.ISurveyFacade, Epi.Web.MVC.Facade.SurveyFacade>();
-            container.RegisterType<Epi.Web.MVC.Facade.ISecurityFacade, Epi.Web.MVC.Facade.SecurityFacade>();
-            container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
-
-			// DAO Factory
-			container.RegisterInstance<Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory>(daoFactory);
-
-			// DAOs loaded by DaoFactory
-			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.DataEntryServices.DAO.SurveyInfoDao>();
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao, Epi.Cloud.DataEntryServices.DAO.FormInfoDao>();
+            container.RegisterInstance<Epi.Web.Common.Interfaces.ISurveyPersistenceFacade>(surveyDocumentDBFacade);
 
 			container.RegisterControllers();
 

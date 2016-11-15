@@ -41,12 +41,14 @@ namespace Epi.PersistenceServices.DocumentDB
         {
             public FormResponseProperties()
             {
-                RecStatus = RecordStatus.InProcess;
+                IsNewRecord = true;
+                    RecStatus = RecordStatus.InProcess;
                 PageIds = new List<int>();
             }
             public string GlobalRecordID { get; set; }
             public string FormId { get; set; }
             public string FormName { get; set; }
+            public bool IsNewRecord { get; set; }
             public int RecStatus { get; set; }
             public string RelateParentId { get; set; }
             public string FirstSaveLogonName { get; set; }

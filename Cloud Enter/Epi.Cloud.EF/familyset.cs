@@ -26,7 +26,6 @@ namespace Epi.Data.EF
         public string TemplateXML { get; set; }
         public string ExitText { get; set; }
         public System.Guid UserPublishKey { get; set; }
-        public long TemplateXMLSize { get; set; }
         public System.DateTime DateCreated { get; set; }
         public int OrganizationId { get; set; }
         public bool IsDraftMode { get; set; }

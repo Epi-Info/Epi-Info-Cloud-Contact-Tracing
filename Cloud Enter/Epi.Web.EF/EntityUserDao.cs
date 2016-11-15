@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.Enter.Interfaces.DataInterface;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Cloud.Common.Constants;
 
@@ -290,12 +290,7 @@ namespace Epi.Web.EF
 
 
             return HighestRole;
-
-
         }
-
-
-
 
         public bool UpdateUserOrganization(UserBO User, OrganizationBO OrgBO)
         {
@@ -309,7 +304,6 @@ namespace Epi.Web.EF
                 return true;
             }
         }
-
 
         public bool IsUserExistsInOrganizaion(UserBO User, OrganizationBO OrgBO)
         {

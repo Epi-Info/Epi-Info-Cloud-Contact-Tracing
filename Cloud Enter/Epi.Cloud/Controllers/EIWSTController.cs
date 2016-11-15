@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Web.Mvc;
-using Epi.Web.MVC.Models;
 using System.Collections.Generic;
 using System.Configuration;
-using Epi.Web.Enter.Common.Security;
 using System.Reflection;
+using System.Web.Mvc;
+using Epi.Cloud.Facades.Interfaces;
+using Epi.Web.Enter.Common.Security;
+using Epi.Web.MVC.Models;
+
 namespace Epi.Web.MVC.Controllers
 {
-    public class EIWSTController : Controller
+	public class EIWSTController : Controller
     {
        //declare  SurveyFacade
-        private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
+        private ISurveyFacade _isurveyFacade;
         private  string RequiredList ="";
         private Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
         /// <summary>
         /// injecting surveyFacade to the constructor 
         /// </summary>
         /// <param name="surveyFacade"></param>
-        public EIWSTController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade)
+        public EIWSTController(ISurveyFacade isurveyFacade)
         {
             _isurveyFacade = isurveyFacade;
         }
@@ -81,7 +83,7 @@ namespace Epi.Web.MVC.Controllers
                 TempData["exc2"] = ex.StackTrace.ToString();
               
 
-                return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, TestModel);
+                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
                 }
 
 
@@ -107,7 +109,7 @@ namespace Epi.Web.MVC.Controllers
                 TempData["exc1"] = ex.Source.ToString();
                 TempData["exc2"] = ex.StackTrace.ToString();
 
-                return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, TestModel);
+                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
                 }
 
 
@@ -121,7 +123,7 @@ namespace Epi.Web.MVC.Controllers
             //        {
             //        TestModel.STestStatus = TestResultEnum.Success.ToString();
             //        }
-            //       return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, TestModel);
+            //       return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
             //     }
             //catch (Exception ex)  
             //    {
@@ -133,9 +135,9 @@ namespace Epi.Web.MVC.Controllers
             //    TempData["exc1"] = ex.Source.ToString();
             //    TempData["exc2"] = ex.StackTrace.ToString();
 
-            //    return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, TestModel);
+            //    return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
             //    }
-            return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, TestModel);
+            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
 
 
           

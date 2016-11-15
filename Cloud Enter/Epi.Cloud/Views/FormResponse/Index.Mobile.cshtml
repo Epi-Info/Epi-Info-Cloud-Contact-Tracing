@@ -245,7 +245,7 @@ var pageId = $('#hidPageNumber').val();
     function ExitSurvey() {
 
 
-        var signoutUrl = '@Url.Action("Delete", "FormResponse")' + '?ResponseId=' + $("input[id=hidSelectedResponseId]").val() + '&surveyid=' + '@Model.FormInfoModel.FormId';
+        var signoutUrl = '@Url.Action("Delete", "FormResponse")' + '?ResponseId=' + $("input[id=hidSelectedResponseId]").val();
         $.ajax({
             url: signoutUrl,
             type: 'POST',
@@ -263,8 +263,7 @@ var pageId = $('#hidPageNumber').val();
 
         //var homePageUrl = '@Url.Action("Index", "FormResponse")' + '/' + getQueryStringValue()["formid"].toString();
         //var homePageUrl = '@Url.Action("Index", "Survey", new { responseId = "RId", PageNumber = "1" })';
-        //homePageUrl = homePageUrl.replace("RId", data.toString());
-        //window.location.href = window.location.href;
+
 
         var homePageUrl = '@Url.Action("Index", "FormResponse", new { ViewId = @Model.ViewId, FormId = @Model.FormInfoModel.FormId })';
 
@@ -518,7 +517,7 @@ var pageId = $('#hidPageNumber').val();
             <div id="right" class="col span_1_of_3" style="background: white; padding: 10px;">
                 <div id="formtitle">
                     <h2 class="surveyTitle">@Model.FormInfoModel.FormName</h2>
-                    @if (Model.FormInfoModel.IsSQLProject)
+                    @*@if (Model.FormInfoModel.IsSQLProject)
                     {
 
 
@@ -530,7 +529,7 @@ var pageId = $('#hidPageNumber').val();
                                 </button>
                             </div>
                         }
-                    }
+                    }*@
                 </div>
                 @{
             WebGrid webGrid = new WebGrid(rowsPerPage: 20,

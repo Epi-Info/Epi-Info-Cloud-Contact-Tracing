@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Interfaces.DataInterface;
-using System.Data.SqlClient;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 using System.Data;
 using Epi.Cloud.Common.Constants;
 
@@ -18,18 +17,15 @@ namespace Epi.Web.EF
 
             try
             {
-
                 int Id = UserId;
 
                 using (var Context = DataObjectFactory.CreateContext())
                 {
                     User CurrentUser = Context.Users.Single(x => x.UserID == Id);
 
-
                     var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator);
 
                     List<string> Assigned = GetAssignedForms(Context, CurrentUser);
-
 
                     List<KeyValuePair<int, string>> Shared = GetSharedForms(CurrentOrgId, Context);
 
@@ -45,7 +41,6 @@ namespace Epi.Web.EF
                         }
                     }
 
-
                     var items = from FormInfo in Context.SurveyMetaDatas
                                 join UserInfo in Context.Users
                                 on FormInfo.OwnerId equals UserInfo.UserID
@@ -58,27 +53,20 @@ namespace Epi.Web.EF
 
                     foreach (var item in items)
                     {
-
                         FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, false);
-                        //if (string.IsNullOrEmpty(FormInfoBO.ParentId))
-                        //    {
-
 
                         if (item.UserInfo.UserID == Id)
                         {
                             FormInfoBO.IsOwner = true;
                             FormList.Add(FormInfoBO);
-
                         }
                         else
                         {
-
                             //Only Share or Assign
                             if (SharedForms.Where(x => x.Value == FormInfoBO.FormId).Count() > 0)
                             {
                                 FormInfoBO.IsShared = true;
                                 FormInfoBO.UserId = Id;
-                                //FormInfoBO.OrganizationId = Shared.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
                                 FormInfoBO.OrganizationId = SharedForms.FirstOrDefault(x => x.Value.Equals(FormInfoBO.FormId)).Key;
                                 FormList.Add(FormInfoBO);
                             }
@@ -92,11 +80,7 @@ namespace Epi.Web.EF
                                 }
                                 FormList.Add(FormInfoBO);
                             }
-
                         }
-
-                        // FormList.Add(FormInfoBO);
-                        // }
                     }
                 }
             }
@@ -105,115 +89,19 @@ namespace Epi.Web.EF
                 throw (ex);
             }
 
-
-
-
-            return FormList;
-        }
-
-        private static List<KeyValuePair<int, string>> GetSharedForms(int CurrentOrgId, OSELS_EWEEntities Context)
-        {
-            List<KeyValuePair<int, string>> Shared = new List<KeyValuePair<int, string>>();
-            IQueryable<SurveyMetaData> AllForms1 = Context.SurveyMetaDatas.Where(x => x.ParentId == null
-        && x.Organizations.Any(r => r.OrganizationId == CurrentOrgId)
-       ).Distinct();
-            foreach (var form in AllForms1)
-            {
-                // checking if the form is shared with any organization
-                SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == form.SurveyId);
-                var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
-                var Orgs = Context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
-                //if form is shared 
-                if (Orgs.Count > 0)
-                {
-                    foreach (var org in Orgs)
-                    {
-                        KeyValuePair<int, string> Item = new KeyValuePair<int, string>(org.OrganizationId, form.SurveyId.ToString());
-
-                        Shared.Add(Item);
-                    }
-
-                }
-
-            }
-            return Shared;
-        }
-
-
-        private static List<string> GetAssignedForms(OSELS_EWEEntities Context, User CurrentUser)
-        {
-            List<string> Assigned = new List<string>();
-            IQueryable<SurveyMetaData> AllForms = Context.SurveyMetaDatas.Where(x => x.ParentId == null
-          && x.Users.Any(r => r.UserID == CurrentUser.UserID)
-         ).Distinct();
-            foreach (var form in AllForms)
-            {
-                if (form.Users.Contains(CurrentUser))
-                {
-                    Assigned.Add(form.SurveyId.ToString());
-                }
-            }
-            return Assigned;
-        }
-
-        private int GetUserOrganization(string SurveyId, int UserId)
-        {
-            try
-            {
-                int OrgId = -1;
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-
-
-                    // get UserOrganization
-                    var items = from UserOrgInfo in Context.UserOrganizations
-                                join OrgInfo in Context.Organizations on UserOrgInfo.OrganizationID equals OrgInfo.OrganizationId into temp
-
-                                where UserOrgInfo.UserID == UserId
-
-                                from query in temp.DefaultIfEmpty()
-                                select new { query };
-                    foreach (var Item in items)
-                    {
-
-                        var OId = Item.query.SurveyMetaDatas.Where(x => x.SurveyId == new Guid(SurveyId));
-                        if (OId.Count() > 0)
-                        {
-                            OrgId = Item.query.OrganizationId;
-                            break;
-                        }
-                    }
-
-
-                    //var OId = items.Where(x => x.query.SurveyMetaDatas.Where(z => z.SurveyId == new Guid(SurveyId)) == items1);
-
-                }
-
-                return OrgId;
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
+			return FormList;
         }
 
         public FormInfoBO GetFormByFormId(string FormId, bool getMetadata, int UserId)
         {
-
-
             FormInfoBO FormInfoBO = new FormInfoBO();
 
             try
             {
-
                 Guid Id = new Guid(FormId);
 
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-
-
-
                     var items = from FormInfo in Context.SurveyMetaDatas
                                 join UserInfo in Context.Users
                                 on FormInfo.OwnerId equals UserInfo.UserID
@@ -225,14 +113,10 @@ namespace Epi.Web.EF
                     var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
                     var Orgs = Context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
 
-
-
-                    bool IsShared = false;
+					bool IsShared = false;
 
                     foreach (var org in Orgs)
                     {
-
-
                         var UserInfo = Context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == UserId && x.RoleId == Roles.OrgAdministrator);
                         if (UserInfo.Count() > 0)
                         {
@@ -240,15 +124,10 @@ namespace Epi.Web.EF
                             break;
 
                         }
-
                     }
-
-
-
 
                     foreach (var item in items)
                     {
-
                         FormInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, getMetadata);
                         FormInfoBO.IsShared = IsShared;
 
@@ -260,7 +139,6 @@ namespace Epi.Web.EF
                         {
                             FormInfoBO.IsOwner = false;
                         }
-
                     }
                 }
             }
@@ -269,27 +147,19 @@ namespace Epi.Web.EF
                 throw (ex);
             }
 
-
-
-
-            return FormInfoBO;
-
-
+			return FormInfoBO;
         }
 
         public FormInfoBO GetFormByFormId(string FormId)
         {
-
             FormInfoBO FormInfoBO = new FormInfoBO();
 
             try
             {
-
                 Guid Id = new Guid(FormId);
 
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-
                     SurveyMetaData SurveyMetaData = Context.SurveyMetaDatas.Single(x => x.SurveyId == Id);
                     FormInfoBO = Mapper.ToFormInfoBO(SurveyMetaData);
                 }
@@ -299,39 +169,8 @@ namespace Epi.Web.EF
                 throw (ex);
             }
 
-
-
-
-            return FormInfoBO;
-
+			return FormInfoBO;
         }
-
-        public bool GetEwavLiteToggleSwitch(string FormId, int UserId)
-        {
-            string EWEConnectionString = DataObjectFactory.EWEADOConnectionString;
-            SqlConnection EWEConnection = new SqlConnection(EWEConnectionString);
-            EWEConnection.Open();
-            SqlCommand EWECommand = new SqlCommand(EWEConnectionString, EWEConnection);
-            SqlDataAdapter DataAdapter = new SqlDataAdapter(EWECommand);
-            DataSet DS = new DataSet();
-            EWECommand.CommandText = "usp_read_canvases_for_lite";
-            EWECommand.CommandType = CommandType.StoredProcedure;
-            EWECommand.Parameters.Add(new SqlParameter("FormId", FormId));
-            EWECommand.Parameters.Add(new SqlParameter("UserId", UserId));
-
-            DataAdapter.Fill(DS);
-
-            object numberOfRows = DS.Tables[0].Rows.Count;
-            EWEConnection.Close();
-            if ((int)numberOfRows > 0)
-            {
-                return true;
-            }
-
-            return false;
-
-        }
-
 
         public bool HasDraftRecords(string FormId)
         {
@@ -357,7 +196,83 @@ namespace Epi.Web.EF
             {
                 throw (ex);
             }
-
         }
-    }
+
+		private static List<KeyValuePair<int, string>> GetSharedForms(int CurrentOrgId, OSELS_EWEEntities Context)
+		{
+			List<KeyValuePair<int, string>> Shared = new List<KeyValuePair<int, string>>();
+			IQueryable<SurveyMetaData> AllForms1 = Context.SurveyMetaDatas.Where(x => x.ParentId == null
+				&& x.Organizations.Any(r => r.OrganizationId == CurrentOrgId)).Distinct();
+			foreach (var form in AllForms1)
+			{
+				// checking if the form is shared with any organization
+				SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == form.SurveyId);
+				var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
+				var Orgs = Context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
+				//if form is shared 
+				if (Orgs.Count > 0)
+				{
+					foreach (var org in Orgs)
+					{
+						KeyValuePair<int, string> Item = new KeyValuePair<int, string>(org.OrganizationId, form.SurveyId.ToString());
+
+						Shared.Add(Item);
+					}
+				}
+			}
+			return Shared;
+		}
+
+		private static List<string> GetAssignedForms(OSELS_EWEEntities Context, User CurrentUser)
+		{
+			List<string> assigned = new List<string>();
+			IQueryable<SurveyMetaData> AllForms = Context.SurveyMetaDatas.Where(x => x.ParentId == null
+				&& x.Users.Any(r => r.UserID == CurrentUser.UserID)).Distinct();
+
+			foreach (var form in AllForms)
+			{
+				if (form.Users.Contains(CurrentUser))
+				{
+					assigned.Add(form.SurveyId.ToString());
+				}
+			}
+			return assigned;
+		}
+
+		private int GetUserOrganization(string SurveyId, int UserId)
+		{
+			try
+			{
+				int OrgId = -1;
+				using (var Context = DataObjectFactory.CreateContext())
+				{
+					// get UserOrganization
+					var items = from UserOrgInfo in Context.UserOrganizations
+								join OrgInfo in Context.Organizations on UserOrgInfo.OrganizationID equals OrgInfo.OrganizationId into temp
+
+								where UserOrgInfo.UserID == UserId
+
+								from query in temp.DefaultIfEmpty()
+								select new { query };
+
+					foreach (var Item in items)
+					{
+
+						var OId = Item.query.SurveyMetaDatas.Where(x => x.SurveyId == new Guid(SurveyId));
+						if (OId.Count() > 0)
+						{
+							OrgId = Item.query.OrganizationId;
+							break;
+						}
+					}
+				}
+
+				return OrgId;
+			}
+			catch (Exception ex)
+			{
+				throw (ex);
+			}
+		}
+	}
 }

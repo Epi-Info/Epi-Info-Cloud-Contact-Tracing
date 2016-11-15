@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Utility;
-using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Facades.Interfaces;
 using System.Web.Configuration;
 using Epi.Web.MVC.Models;
 using System.Text.RegularExpressions;
 using System.Reflection;
-using Epi.Web.MVC.Constants;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.MVC.Extensions;
 
 namespace Epi.Web.MVC.Controllers
 {
     public class AdminOrganizationController : Controller
     {
 
-        private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
+        private ISurveyFacade _surveyFacade;
+        private ISecurityFacade _securityFacade;
 
-        public AdminOrganizationController(Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade)
+        public AdminOrganizationController(ISurveyFacade isurveyFacade,
+                                           ISecurityFacade isecurityFacade)
         {
-            _isurveyFacade = isurveyFacade;
+            _surveyFacade = isurveyFacade;
+            _securityFacade = isecurityFacade;
         }
         [HttpGet]
         public ActionResult OrgList()
@@ -31,9 +35,9 @@ namespace Epi.Web.MVC.Controllers
             OrganizationRequest Request = new OrganizationRequest();
             Request.UserId = UserId;
             Request.UserRole = UserHighestRole;
-            OrganizationResponse Organizations = _isurveyFacade.GetUserOrganizations(Request);
+            OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
 
-            List<OrganizationModel> Model = Mapper.ToOrganizationModelList(Organizations.OrganizationList);
+            List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
             OrgListModel OrgListModel = new OrgListModel();
             OrgListModel.OrganizationList = Model;
 
@@ -61,8 +65,8 @@ namespace Epi.Web.MVC.Controllers
                 OrganizationRequest Request = new OrganizationRequest();
                 Request.Organization.OrganizationKey = orgkey;
 
-                OrganizationResponse Organizations = _isurveyFacade.GetOrganizationInfo(Request);
-                OrgInfo = Mapper.ToOrgAdminInfoModel(Organizations);
+                OrganizationResponse Organizations = _securityFacade.GetOrganizationInfo(Request);
+                OrgInfo = Organizations.ToOrgAdminInfoModel();
                 OrgInfo.IsEditMode = iseditmode;
                 return View("OrgInfo", OrgInfo);
             }
@@ -88,16 +92,12 @@ namespace Epi.Web.MVC.Controllers
             //Edit Organization
             if (OrgAdminInfoModel.IsEditMode)
             {
-
                 ModelState.Remove("AdminFirstName");
                 ModelState.Remove("AdminLastName");
                 ModelState.Remove("ConfirmAdminEmail");
                 ModelState.Remove("AdminEmail");
 
-
-
                 OrganizationRequest Request = new OrganizationRequest();
-
 
 				Enter.Common.DTO.UserDTO AdminInfo = new Enter.Common.DTO.UserDTO();
 
@@ -108,7 +108,6 @@ namespace Epi.Web.MVC.Controllers
                 AdminInfo.PhoneNumber = "";
                 Request.OrganizationAdminInfo = AdminInfo;
 
-
                 Request.Organization.Organization = OrgAdminInfoModel.OrgName;
                 Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
 
@@ -118,9 +117,9 @@ namespace Epi.Web.MVC.Controllers
                 Request.Action = "UpDate";
                 try
                 {
-                    OrganizationResponse Result = _isurveyFacade.SetOrganization(Request);
-                    OrganizationResponse Organizations = _isurveyFacade.GetUserOrganizations(Request);
-                    List<OrganizationModel> Model = Mapper.ToOrganizationModelList(Organizations.OrganizationList);
+                    OrganizationResponse Result = _securityFacade.SetOrganization(Request);
+                    OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
+                    List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
                     OrgListModel OrgListModel = new OrgListModel();
                     OrgListModel.OrganizationList = Model;
                     OrgListModel.Message = "Organization " + OrgAdminInfoModel.OrgName + " has been updated.";
@@ -135,8 +134,8 @@ namespace Epi.Web.MVC.Controllers
                         OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
                         Request.Organization.OrganizationKey = GetOrgKey(url); ;
 
-                        Organizations = _isurveyFacade.GetOrganizationInfo(Request);
-                        OrgInfo = Mapper.ToOrgAdminInfoModel(Organizations);
+                        Organizations = _securityFacade.GetOrganizationInfo(Request);
+                        OrgInfo = Organizations.ToOrgAdminInfoModel();
                         OrgInfo.IsEditMode = true;
                         ModelState.AddModelError("IsOrgEnabled", "Organization for the super admin cannot be deactivated.");
                         return View("OrgInfo", OrgInfo);
@@ -146,8 +145,8 @@ namespace Epi.Web.MVC.Controllers
                         OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
                         Request.Organization.OrganizationKey = GetOrgKey(url); ;
 
-                        Organizations = _isurveyFacade.GetOrganizationInfo(Request);
-                        OrgInfo = Mapper.ToOrgAdminInfoModel(Organizations);
+                        Organizations = _securityFacade.GetOrganizationInfo(Request);
+                        OrgInfo = Organizations.ToOrgAdminInfoModel();
                         OrgInfo.IsEditMode = true;
                         ModelState.AddModelError("OrgName", "The organization name provided already exists.");
                         return View("OrgInfo", OrgInfo);
@@ -159,13 +158,8 @@ namespace Epi.Web.MVC.Controllers
                 }
                 catch (Exception ex)
                 {
-
                     return View(OrgAdminInfoModel);
                 }
-
-
-
-
             }
             else
             {
@@ -173,9 +167,6 @@ namespace Epi.Web.MVC.Controllers
 
                 if (ModelState.IsValid)
                 {
-
-
-
                     OrganizationRequest Request = new OrganizationRequest();
                     Request.Organization.Organization = OrgAdminInfoModel.OrgName;
                     Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
@@ -184,7 +175,7 @@ namespace Epi.Web.MVC.Controllers
                     AdminInfo.FirstName = OrgAdminInfoModel.AdminFirstName;
                     AdminInfo.LastName = OrgAdminInfoModel.AdminLastName;
                     AdminInfo.EmailAddress = OrgAdminInfoModel.AdminEmail;
-                    AdminInfo.Role = 2;
+                    AdminInfo.Role = Roles.OrgAdministrator;
                     AdminInfo.PhoneNumber = "123456789";
                     AdminInfo.UGuid = Guid.NewGuid();
                     Request.OrganizationAdminInfo = AdminInfo;
@@ -194,10 +185,10 @@ namespace Epi.Web.MVC.Controllers
                     Request.Action = "Insert";
                     try
                     {
-                        OrganizationResponse Result = _isurveyFacade.SetOrganization(Request);
+                        OrganizationResponse Result = _securityFacade.SetOrganization(Request);
                         OrgListModel OrgListModel = new OrgListModel();
-                        OrganizationResponse Organizations = _isurveyFacade.GetUserOrganizations(Request);
-                        List<OrganizationModel> Model = Mapper.ToOrganizationModelList(Organizations.OrganizationList);
+                        OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
+                        List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
                         OrgListModel.OrganizationList = Model;
 
                         if (Result.Message.ToUpper() != "EXISTS")
@@ -212,7 +203,7 @@ namespace Epi.Web.MVC.Controllers
                             //Request.Organization.OrganizationKey = GetOrgKey(url); ;
 
                             //Organizations = _isurveyFacade.GetOrganizationInfo(Request);
-                            OrgInfo = Mapper.ToOrgAdminInfoModel(Organizations);
+                            OrgInfo = Organizations.ToOrgAdminInfoModel();
                             OrgInfo.IsEditMode = false;
                             ModelState.AddModelError("OrgName", "The organization name provided already exists.");
                             return View("OrgInfo", OrgInfo);
@@ -221,24 +212,14 @@ namespace Epi.Web.MVC.Controllers
                     }
                     catch (Exception ex)
                     {
-
                         return View(OrgAdminInfoModel);
                     }
-
-
                 }
                 else
                 {
-
                     return View(OrgAdminInfoModel);
                 }
-
-
             }
-
-
-
-
         }
 
         private string GetOrgKey(string url)
@@ -259,22 +240,17 @@ namespace Epi.Web.MVC.Controllers
             }
             return Orgkey;
         }
-        [HttpPost]
 
+        [HttpPost]
         public ActionResult AutoComplete(string term)
         {
-
             var result = new[] { "App", "Bbc", "Cool", "Div", "Enter", "False" };
-
-
-
             return Json(result, JsonRequestBehavior.AllowGet);
-
         }
+
         [HttpPost]
         public JsonResult GetUserInfoAD(string email)
         {
-
             UserModel User = new UserModel();
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
@@ -290,8 +266,6 @@ namespace Epi.Web.MVC.Controllers
                 }
             }
             return Json(User);
-
-
         }
     }
 }

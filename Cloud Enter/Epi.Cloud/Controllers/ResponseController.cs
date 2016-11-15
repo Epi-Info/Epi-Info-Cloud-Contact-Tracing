@@ -10,7 +10,7 @@ namespace Epi.Web.Controllers
         {
             try
             {
-                TempData[Epi.Web.MVC.Constants.Constant.RESPONSE_ID] = responseId;
+                TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID] = responseId;
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", surveyId = surveyId, PageNumber = pageNumber });
             }
@@ -18,7 +18,7 @@ namespace Epi.Web.Controllers
             {
                 Epi.Web.Utility.ExceptionMessage.SendLogMessage(ex, this.HttpContext);
 
-                return RedirectToAction(Epi.Web.MVC.Constants.Constant.EXCEPTION_PAGE);
+                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.EXCEPTION_PAGE);
             }
         }
     }

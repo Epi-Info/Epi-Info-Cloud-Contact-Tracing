@@ -11,7 +11,7 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.Web.MVC</RootNamespace>
+    <RootNamespace>Epi.Cloud</RootNamespace>
     <AssemblyName>Epi.Web.MVC</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
@@ -63,10 +63,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Epi.DataPersistenceServices.DocumentDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\Epi.DataPersistenceServices.DocumentDB.dll</HintPath>
     </Reference>
     <Reference Include="Epi.Web.DynamicForms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -366,7 +362,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Constants\Constant.cs" />
     <Compile Include="Constants\SessionKeys.cs" />
     <Compile Include="Controllers\AdminOrganizationController.cs" />
     <Compile Include="Controllers\AdminUserController.cs" />
@@ -381,53 +376,10 @@
     <Compile Include="Controllers\EIWSTController.cs" />
     <Compile Include="Controllers\ViewSwitcherController.cs" />
     <Compile Include="Extensions\SurveryAnswerExtensions.cs" />
-    <Compile Include="Facade\ISecurityFacade.cs" />
-    <Compile Include="Facade\ISurveyFacade.cs" />
-    <Compile Include="Facade\SecurityFacade.cs" />
-    <Compile Include="Facade\SurveyFacade.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ExceptionModel.cs" />
-    <Compile Include="Models\OrgAdminInfoModel.cs" />
-    <Compile Include="Models\OrgListModel.cs" />
-    <Compile Include="Models\SeachBoxModel.cs" />
-    <Compile Include="Models\UserModel.cs" />
-    <Compile Include="Models\FormInfoModel.cs" />
-    <Compile Include="Models\FormModel.cs" />
-    <Compile Include="Models\FormResponseInfoModel.cs" />
-    <Compile Include="Models\Mapper.cs" />
-    <Compile Include="Models\Message.cs" />
-    <Compile Include="Models\Omniture.cs" />
-    <Compile Include="Models\OrganizationModel.cs" />
-    <Compile Include="Models\PassCodeModel.cs" />
-    <Compile Include="Models\RelateModel.cs" />
-    <Compile Include="Models\ResponseInfoModel.cs" />
-    <Compile Include="Models\ResponseModel.cs" />
-    <Compile Include="Models\SettingsInfoModel.cs" />
-    <Compile Include="Models\SurveyModel.cs" />
-    <Compile Include="Models\SurveyResponseModel.cs" />
-    <Compile Include="Models\EIWSTModel.cs" />
-    <Compile Include="Models\UserForgotPasswordModel.cs" />
-    <Compile Include="Models\UserLoginModel.cs" />
-    <Compile Include="Models\UserOrgModel.cs" />
-    <Compile Include="Models\UserResetPasswordModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\IntegratedSurveyAnswerRepository.cs" />
-    <Compile Include="Repositories\IntegratedSurveyInfoEpiMetadataRepository.cs" />
-    <Compile Include="Repositories\Core\Criterion.cs" />
-    <Compile Include="Repositories\Core\IRepository.cs" />
-    <Compile Include="Repositories\Core\ISurveyInfoRepository.cs" />
-    <Compile Include="Repositories\Core\ISurveyResponseRepository.cs" />
-    <Compile Include="Repositories\Core\RepositoryBase.cs" />
-    <Compile Include="Utility\ExceptionMessage.cs" />
-    <Compile Include="Utility\FormProvider.cs" />
-    <Compile Include="Utility\MobileFormProvider.cs" />
-    <Compile Include="Utility\OmnitureHelper.cs" />
-    <Compile Include="Utility\SurveyHelper.cs" />
-    <Compile Include="Utility\SurveyResponseDocDb.cs" />
-    <Compile Include="Utility\ValidateResponse.cs" />
-    <Compile Include="Utility\WindowsAuthentication.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\Microsoft.Practices.ServiceLocation.dll" />
@@ -811,6 +763,14 @@
       <Project>{aa7bfd2a-ab8f-41af-8f37-f4207627563f}</Project>
       <Name>Epi.Cloud.DataEntryServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Facades\Epi.Cloud.Facades.csproj">
+      <Project>{47c60f59-94a2-44ae-b556-f9b3d03e191e}</Project>
+      <Name>Epi.Cloud.Facades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.FormInfoServices\Epi.Cloud.SurveyInfoServices.csproj">
+      <Project>{3725080e-4c8a-4dd2-8435-d42bcaee5e6f}</Project>
+      <Name>Epi.Cloud.SurveyInfoServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
@@ -819,6 +779,10 @@
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
       <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.MVC.Common\Epi.Cloud.MVC.Common.csproj">
+      <Project>{119075a5-6225-4879-82e0-b55baff13e49}</Project>
+      <Name>Epi.Cloud.MVC.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
@@ -826,6 +790,10 @@
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj">
+      <Project>{3e9b6f53-60c7-4671-9138-a1a7edf413c4}</Project>
+      <Name>Epi.DataPersistenceServices.DocumentDB</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
@@ -842,10 +810,6 @@
     <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
       <Project>{B8AF69BD-3CE1-4AA5-875D-3FB87C7FCE44}</Project>
       <Name>Epi.Web.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SurveyManagerInterface\Epi.Web.WCF.SurveyService.csproj">
-      <Project>{31f91938-2997-4650-8d36-71c845f1071d}</Project>
-      <Name>Epi.Web.WCF.SurveyService</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

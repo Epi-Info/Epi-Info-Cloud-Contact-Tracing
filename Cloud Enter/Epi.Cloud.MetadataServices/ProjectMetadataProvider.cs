@@ -209,8 +209,22 @@ namespace Epi.Cloud.MetadataServices
         private async Task<Template> RefreshCache(Guid projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);
+#if CaptureMetadataJson
+            var metadataFromService = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
+            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataFromService.json", metadataFromService);
+
+            var json = System.IO.File.ReadAllText(@"C:\Junk\ZikaMetadataFromService.json");
+            Template metadataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
+#endif
             PopulateRequiredPageLevelSourceTables(metadata);
             GenerateDigests(metadata);
+
+#if CaptureMetadataJson
+            var metadataWithDigests = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
+            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
+#endif
             _epiCloudCache.SetProjectTemplateMetadata(metadata);
             return metadata;
         }

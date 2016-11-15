@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
     public class SurveyInfoBO
     {
         public int DataAccessRuleId { get; set; }
-
-        public string StatusText { get; set; }
 
 		public string SurveyId { get; set; }
 
@@ -33,37 +30,24 @@ namespace Epi.Web.Enter.Common.BusinessObject
 
 		public DateTime DateCreated { get; set; }
 
-		[DataMember]
         public bool IsDraftMode { get; set; }
 
-		[DataMember]
         public bool IsShareable { get; set; }
 
-		[DataMember]
         public DateTime StartDate { get; set; }
 
-		[DataMember]
         public string ParentId { get; set; }
 
-		[DataMember]
         public int ViewId { get; set; }
 
-		[DataMember]
         public int OwnerId { get; set; }
 
-		[DataMember]
         public bool IsSqlProject { get; set; }
 
-		[DataMember]
         public string DBConnectionString { get; set; }
 
-		[DataMember]
         public bool IsShared { get; set; }
 
-		[DataMember]
         public bool HasDraftModeData { get; set; }
-
-		[DataMember]
-        public bool EwavLiteToggleSwitch { get; set; }
 	}
 }

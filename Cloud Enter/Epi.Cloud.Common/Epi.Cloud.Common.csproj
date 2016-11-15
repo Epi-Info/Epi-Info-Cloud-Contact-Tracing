@@ -47,10 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BusinessObjects\FormInfoBO.cs" />
+    <Compile Include="Constants\AppSettings.cs" />
     <Compile Include="BusinessObjects\PageInfoBO.cs" />
     <Compile Include="BusinessObjects\ResponseBO.cs" />
-    <Compile Include="BusinessObjects\SurveyInfoBO.cs" />
     <Compile Include="BusinessObjects\SurveyRequestBO.cs" />
     <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
@@ -59,11 +58,10 @@
     <Compile Include="Constants\EmailCombinationEnum.cs" />
     <Compile Include="Constants\OperationMode.cs" />
     <Compile Include="Constants\Roles.cs" />
-    <Compile Include="Constants\RecordStatus.cs" />
-    <Compile Include="Constants\RecordStatusChangeReason.cs" />
+    <Compile Include="Constants\SessionKeys.cs" />
+    <Compile Include="Constants\SurveyTypes.cs" />
     <Compile Include="DTO.WebEnter\SurveyAnswerDTO.cs" />
     <Compile Include="DTO.WebEnter\SurveyAnswerStateDTO.cs" />
-    <Compile Include="DTO\FormResponseInfoDTO.cs" />
     <Compile Include="DTO.WebEnter\OrganizationDTO.cs" />
     <Compile Include="DTO\PassCodeDTO.cs" />
     <Compile Include="DTO\ResponseDTO.cs" />
@@ -73,14 +71,11 @@
     <Compile Include="Metadata\MetadataAccessor.cs" />
     <Compile Include="Metadata\NullableExtensions.cs" />
     <Compile Include="Metadata\ProjectExtensions.cs" />
-    <Compile Include="Metadata\XmlAttributeExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryStrategies.cs" />
     <Compile Include="Utilities\StringCompressor.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>

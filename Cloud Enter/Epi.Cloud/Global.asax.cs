@@ -37,7 +37,7 @@ namespace Epi.Web.MVC
 
             //DisplayModeProvider.Instance.Modes.Insert(0, new DefaultDisplayMode("iPhone") { ContextCondition = (context => context.Request.UserAgent.IndexOf("iPhone", StringComparison.OrdinalIgnoreCase) >= 0) });
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            Bootstrapper.Initialise();
+            Bootstrapper.Initialize();
 
            // DisplayModes.Modes.Insert(0, new  DefaultDisplayMode("Mobile") 
             //DisplayModeProvider.Instance.Modes.Insert(0, new DefaultDisplayMode("Mobile") 

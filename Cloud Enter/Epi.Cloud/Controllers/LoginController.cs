@@ -9,7 +9,8 @@ using System.Reflection;
 using Epi.Web.Enter.Common.Diagnostics;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Constants;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Facades.Interfaces;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -18,19 +19,20 @@ namespace Epi.Web.MVC.Controllers
     {
         private readonly ILogger _logger;
 
-        private Epi.Web.MVC.Facade.ISecurityFacade _isecurityFacade;
-        //declare SurveyTransactionObject object
-        private Epi.Web.MVC.Facade.ISurveyFacade _isurveyFacade;
-        /// <summary>
-        /// Injectinting SurveyTransactionObject through Constructor
-        /// </summary>
-        /// <param name="iSurveyInfoRepository"></param>
+        private ISecurityFacade _securityFacade;
+        private ISurveyFacade _surveyFacade;
 
-        public LoginController(ILogger logger, Epi.Web.MVC.Facade.ISurveyFacade isurveyFacade, Epi.Web.MVC.Facade.ISecurityFacade isecurityFacade)
+		/// <summary>
+		/// Inject ILogger, IsurveyFacade, ISecurityFacade
+		/// </summary>
+		/// <param name="logger"></param>
+		/// <param name="surveyFacade"></param>
+		/// <param name="securityFacade"></param>
+        public LoginController(ILogger logger, ISurveyFacade surveyFacade, ISecurityFacade securityFacade)
         {
             _logger = logger;
-            _isurveyFacade = isurveyFacade;
-            _isecurityFacade = isecurityFacade;
+            _surveyFacade = surveyFacade;
+            _securityFacade = securityFacade;
         }
 
         // GET: /Login/
@@ -41,26 +43,23 @@ namespace Epi.Web.MVC.Controllers
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             UserLoginModel UserLoginModel = new Models.UserLoginModel();
             ViewBag.Version = version;
-            if (ConfigurationManager.AppSettings["IsDemoMode"] != null)
-                Session[SessionKeys.IsDemoMode] = ConfigurationManager.AppSettings["IsDemoMode"].ToUpper();
-            else
-                Session[SessionKeys.IsDemoMode] = "null";
-            if (System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+
+            var isDemoMode = AppSettings.GetBoolValue(AppSettings.Key.IsDemoMode);
+
+            Session[SessionKeys.IsDemoMode] = isDemoMode.ToString().ToUpper();
+
+            if (isDemoMode)
             {
-                var IsDemoMode = System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"];
                 string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt("1");
-                if (!string.IsNullOrEmpty(IsDemoMode) && IsDemoMode.ToUpper() == "TRUE")
-                {
-                    FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
+                FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
 
-                    Session[SessionKeys.UserId] = UserId;
+                Session[SessionKeys.UserId] = UserId;
 
-                    Session[SessionKeys.UserHighestRole] = 3;
-                     Session[SessionKeys.UserFirstName] = "John";
-                    Session[SessionKeys.UserLastName]= "Doe";
-                    Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
-                    return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
-                }
+                Session[SessionKeys.UserHighestRole] = 3;
+                    Session[SessionKeys.UserFirstName] = "John";
+                Session[SessionKeys.UserLastName]= "Doe";
+                Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
+                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
             }
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
@@ -81,7 +80,7 @@ namespace Epi.Web.MVC.Controllers
                     User.IsAuthenticated = true;
                     User.User.EmailAddress = UserAD.EmailAddress;
 
-                    UserResponse result = _isurveyFacade.GetUserInfo(User);
+                    UserResponse result = _securityFacade.GetUserInfo(User);
                     if (result != null && result.User.Count() > 0)
                     {
                         FormsAuthentication.SetAuthCookie(CurrentUserName.Split('\\')[0].ToString(), false);
@@ -94,7 +93,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
                         Session[SessionKeys.UserLastName] = result.User[0].LastName;
                         Session[SessionKeys.UGuid] = result.User[0].UGuid;
-                        return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+                        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
                     }
                     else
                     {
@@ -138,7 +137,7 @@ namespace Epi.Web.MVC.Controllers
             //        FormsAuthentication.SetAuthCookie(Model.UserName, false);
             //        string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
             //        Session[SessionKeys.UserId] = UserId;
-            //        return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+            //        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
             //    }
             //}
             //else
@@ -189,7 +188,7 @@ namespace Epi.Web.MVC.Controllers
             switch (Action.ToUpper())
             {
                 case "CANCEL":
-                    return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Login");
+                    return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
                 default:
                     break;
             }
@@ -207,10 +206,10 @@ namespace Epi.Web.MVC.Controllers
                 return View("ForgotPassword", Model);
             }
 
-            bool success = _isecurityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, Operation = Epi.Web.Enter.Common.Constants.Constant.OperationMode.UpdatePassword });
+            bool success = _securityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, Operation = Constant.OperationMode.UpdatePassword });
             if (success)
             {
-                return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Login");
+                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
             }
             else
             {
@@ -231,7 +230,7 @@ namespace Epi.Web.MVC.Controllers
             switch (Action.ToUpper())
             {
                 case "CANCEL":
-                    return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Login");
+                    return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
                 default:
                     break;
             }
@@ -252,7 +251,7 @@ namespace Epi.Web.MVC.Controllers
             //    return View("ResetPassword", Model);
             //}
 
-            _isecurityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = Epi.Web.Enter.Common.Constants.Constant.OperationMode.UpdatePassword, ResetPassword = true });
+            _securityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = Constant.OperationMode.UpdatePassword, ResetPassword = true });
             UserLoginModel UserLoginModel = new UserLoginModel();
             UserLoginModel.Password = Model.Password;
             UserLoginModel.UserName = Model.UserName;
@@ -276,7 +275,7 @@ namespace Epi.Web.MVC.Controllers
 
             try
             {
-                Epi.Web.Enter.Common.Message.UserAuthenticationResponse result = _isecurityFacade.ValidateUser(Model.UserName, Model.Password);
+                Epi.Web.Enter.Common.Message.UserAuthenticationResponse result = _securityFacade.ValidateUser(Model.UserName, Model.Password);
                 if (result.UserIsValid)
                 {
                     if (result.User.ResetPassword)
@@ -300,7 +299,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserFirstName] = result.User.FirstName;
                         Session[SessionKeys.UserLastName] = result.User.LastName;
                         Session[SessionKeys.UGuid] = result.User.UGuid;
-                        return RedirectToAction(Epi.Web.MVC.Constants.Constant.INDEX, "Home", new { surveyid = formId });
+                        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = formId });
                         //return Redirect(ReturnUrl);
                     }
                 }

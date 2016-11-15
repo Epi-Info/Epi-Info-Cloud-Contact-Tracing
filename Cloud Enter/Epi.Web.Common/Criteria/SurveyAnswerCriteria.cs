@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
+using Epi.DataPersistence.Constants;
 
 namespace Epi.Web.Enter.Common.Criteria
 {

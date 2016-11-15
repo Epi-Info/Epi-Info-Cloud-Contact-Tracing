@@ -39,10 +39,13 @@ namespace Epi.FormMetadata.Extensions
 		public static FormDigest[] ToFormDigests(this Template projectTemplateMetadata)
 		{
 			var formDigests = new List<FormDigest>();
-			foreach (var view in projectTemplateMetadata.Project.Views)
+            var rootFormId = projectTemplateMetadata.Project.Views.Where(v => v.ParentFormId == null).First().FormId;
+
+            foreach (var view in projectTemplateMetadata.Project.Views)
 			{
-				formDigests.Add(new FormDigest
-				{
+                formDigests.Add(new FormDigest
+                {
+                    RootFormId = rootFormId,
 					ViewId = view.ViewId,
 					FormId = view.FormId,
 					FormName = view.Name,

@@ -1,109 +1,34 @@
 ﻿using System;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
     public class UserBO
     {
-        private int _UserId;
+        public int UserId { get; set; }
 
-        public int UserId
-        {
-            get { return _UserId; }
-            set { _UserId = value; }
-        }
+		public string UserName { get; set; }
 
-        private string _UserName;
+		public string FirstName { get; set; }
 
-        public string UserName
-        {
-            get { return _UserName; }
-            set { _UserName = value; }
-        }
+		public string LastName { get; set; }
 
-        private string _FirstName;
+		public string PasswordHash { get; set; }
 
-        public string FirstName
-        {
-            get { return _FirstName; }
-            set { _FirstName = value; }
-        }
+		public bool ResetPassword { get; set; }
 
-        private string _LastName;
+		public string EmailAddress { get; set; }
 
-        public string LastName
-        {
-            get { return _LastName; }
-            set { _LastName = value; }
-        }
+		public string PhoneNumber { get; set; }
 
-        private string _PasswordHash;
+		public int Role { get; set; }
 
-        public string PasswordHash
-        {
-            get { return _PasswordHash; }
-            set { _PasswordHash = value; }
-        }
+		public Constant.OperationMode Operation { get; set; }
 
-        private bool _ResetPassword;
+		public bool IsActive { get; set; }
 
-        public bool ResetPassword
-        {
-            get { return _ResetPassword; }
-            set { _ResetPassword = value; }
-        }
+		public int UserHighestRole { get; set; }
 
-        private string _EmailAddress;
-
-        public string EmailAddress
-        {
-            get { return _EmailAddress; }
-            set { _EmailAddress = value; }
-        }
-
-        private string _PhoneNumber;
-
-        public string PhoneNumber
-        {
-            get { return _PhoneNumber; }
-            set { _PhoneNumber = value; }
-        }
-
-        private int _Role;
-
-        public int Role
-        {
-            get { return _Role; }
-            set { _Role = value; }
-        }
-
-        private Epi.Web.Enter.Common.Constants.Constant.OperationMode updateMode;
-
-        public Epi.Web.Enter.Common.Constants.Constant.OperationMode Operation
-        {
-            get { return updateMode; }
-            set { updateMode = value; }
-        }
-
-        private bool _IsActive;
-
-        public bool IsActive
-        {
-            get { return _IsActive; }
-            set { _IsActive = value; }
-        }
-        private int _UserHighestRole;
-        public int UserHighestRole
-        {
-            get { return _UserHighestRole; }
-            set { _UserHighestRole = value; }
-        }
-
-        private Guid _UGuid;
-
-        public Guid UGuid
-        {
-            get { return _UGuid; }
-            set { _UGuid = value; }
-        }
-    }
+		public Guid UGuid { get; set; }
+	}
 }

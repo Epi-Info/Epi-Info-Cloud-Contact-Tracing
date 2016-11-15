@@ -4,6 +4,7 @@ using System.Net;
 using Epi.Cloud.MetadataServices.DataTypes;
 using Epi.Cloud.Common.Configuration;
 using System.Configuration;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.MetadataServices
 {
@@ -12,7 +13,7 @@ namespace Epi.Cloud.MetadataServices
         private string _apiUrl;
         public MetadataProxy()
         {
-            var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey("MetadataAccessServiceAPI", "Environment.API");
+            var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey(AppSettings.Key.MetadataAccessServiceAPI, AppSettings.Key.Environment_API);
             _apiUrl = ConfigurationManager.AppSettings[apiUrlKey];
         }
 

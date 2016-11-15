@@ -57,17 +57,18 @@
     <Compile Include="DataInterface\IOrganizationDao.cs" />
     <Compile Include="DataInterface\ISurveyResponseDao.cs" />
     <Compile Include="DataInterface\ISurveyInfoDao.cs" />
-    <Compile Include="DataInterface\IDaoFactory.cs" />
     <Compile Include="DataInterface\IUserDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BusinessInterface\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
       <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>

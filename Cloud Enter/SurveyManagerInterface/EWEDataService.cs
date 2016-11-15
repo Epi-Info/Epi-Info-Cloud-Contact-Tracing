@@ -9,19 +9,21 @@ using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
 using Epi.Web.Enter.Common.ObjectMapping;
-using Epi.Web.Enter.Interfaces.DataInterface;
+using Epi.Web.Enter.Interfaces.DataInterfaces;
 
 namespace Epi.Web.WCF.SurveyService
 {
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class EWEDataService : IEWEDataService
+    public class EWEDataService : IDataService
     {
 
         // Session state variables 
         private string _accessToken;
-        //private ShoppingCart _shoppingCart;
         private string _userName;
 
+		public EWEDataService()
+		{
+		}
 
         /// <summary>
         /// 
@@ -33,8 +35,6 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
-                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
-                //Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
@@ -54,26 +54,7 @@ namespace Epi.Web.WCF.SurveyService
                     SurveyIdList.Add(id.ToUpper());
                 }
 
-
-                //if (request.LoadOptions.Contains("SurveyInfos"))
-                //{
-                //    IEnumerable<SurveyInfoDTO> SurveyInfos;
-                //    if (!criteria.IncludeOrderStatistics)
-                //    {
-                //        SurveyInfos = Implementation.GetSurveyInfos(sort);
-                //    }
-                //    else
-                //    {
-                //        SurveyInfos = Implementation.GetSurveyInfosWithOrderStatistics(sort);
-                //    }
-
-                //    response.SurveyInfos = SurveyInfos.Select(c => Mapper.ToDataTransferObject(c)).ToList();
-                //}
-
-                //if (pRequest.LoadOptions.Contains("SurveyInfo"))
-                //{
                 result.SurveyInfoList = Mapper.ToDataTransferObject(implementation.GetSurveyInfoById(SurveyIdList));
-                //}
 
                 return result;
             }
@@ -102,14 +83,11 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(pRequest.Criteria.UserId, pRequest.Criteria.CurrentOrgId);
-                //  result.SurveyInfoList = FormInfoBOList;
 
                 foreach (FormInfoBO item in FormInfoBOList)
                 {
                     result.FormInfoList.Add(Mapper.ToFormInfoDTO(item));
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -929,9 +907,9 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 
 
-                Epi.Web.Enter.Interfaces.DataInterface.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
-                Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
-                Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
+                Epi.Web.Enter.Interfaces.DataInterfaces.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
+                Epi.Web.Enter.Interfaces.DataInterfaces.IUserDao IUserDao = entityDaoFactory.UserDao;
+                Epi.Web.Enter.Interfaces.DataInterfaces.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao, IUserDao, IFormInfoDao);
                 if (FormSettingReq.FormSetting.Count() > 0)
                 {

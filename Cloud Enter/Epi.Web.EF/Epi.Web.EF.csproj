@@ -61,8 +61,6 @@
     <Compile Include="EntityFormSettingDao.cs" />
     <Compile Include="EntityOrganizationDao.cs" />
     <Compile Include="DataObjectFactory.cs" />
-    <Compile Include="EntityDaoFactory.cs" />
-    <Compile Include="EntitySurveyInfoDao.cs" />
     <Compile Include="EntityUserDao.cs" />
     <Compile Include="Epi.Web.Model.Designer.cs">
       <AutoGen>True</AutoGen>

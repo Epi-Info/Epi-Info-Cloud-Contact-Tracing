@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
-using Epi.Cloud.DataEntryServices.Model;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Web.MVC.Facade;
 using Epi.Web.MVC.Models;
+using Epi.Cloud.Facades.Interfaces;
+using Epi.Web.Enter.Common.Model;
+
 namespace Epi.Web.MVC.Controllers
 {
     public class FinalController : Controller
     {
         private ISurveyFacade _isurveyFacade;
-
-        /// <summary>
-        /// Injecting SurveyTransactionObject through constructor
-        /// </summary>
-        /// <param name="iSurveyInfoRepository"></param>
+		/// <summary>
+		/// Inject ISurveyFacade
+		/// </summary>
+		/// <param name="isurveyFacade"></param>
         public FinalController(ISurveyFacade isurveyFacade)
         {
             _isurveyFacade = isurveyFacade;
@@ -50,12 +50,12 @@ namespace Epi.Web.MVC.Controllers
                 Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(SurveyMode, IsMobileDevice);
 
                 ViewBag.Omniture = OmnitureObj;
-                return View(Epi.Web.MVC.Constants.Constant.INDEX_PAGE, surveyInfoModel);
+                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, surveyInfoModel);
             }
             catch (Exception ex)
             {
                 Epi.Web.Utility.ExceptionMessage.SendLogMessage(ex, this.HttpContext);
-                return View(Epi.Web.MVC.Constants.Constant.EXCEPTION_PAGE);
+                return View(Epi.Cloud.Common.Constants.Constant.EXCEPTION_PAGE);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Epi.Web.MVC.Controllers
             catch (Exception ex)
             {
                 Epi.Web.Utility.ExceptionMessage.SendLogMessage(ex, this.HttpContext);
-                return View(Epi.Web.MVC.Constants.Constant.EXCEPTION_PAGE);
+                return View(Epi.Cloud.Common.Constants.Constant.EXCEPTION_PAGE);
             }
 
         }

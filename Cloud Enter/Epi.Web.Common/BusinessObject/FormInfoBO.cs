@@ -43,9 +43,6 @@ namespace Epi.Web.Enter.Common.BusinessObject
 		[DataMember]
         public string ParentId { get; set; }
 
-		[DataMember]
-        public bool EwavLiteToggleSwitch { get; set; }
-
 		public bool IsSQLProject { get; set; }
 
 		public bool IsShareable { get; set; }

@@ -38,9 +38,9 @@ namespace Epi.Cloud.Common
             _interval = interval;
         }
 
-        public virtual T ExecuteWithRetry<T>(Func<T> action, Func<Exception, int, int, RetryResponse<T>> exceptionHandeler = null)
+        public virtual T ExecuteWithRetry<T>(Func<T> action, Func<Exception, int, int, RetryResponse<T>> exceptionHandler = null)
         {
-            return ExecuteWithRetry<T>(_maximumRetries, _interval, action, exceptionHandeler);
+            return ExecuteWithRetry<T>(_maximumRetries, _interval, action, exceptionHandler);
         }
 
         /// <summary>
@@ -50,16 +50,16 @@ namespace Epi.Cloud.Common
         /// <param name="maximumRetries"></param>
         /// <param name="interval"></param>
         /// <param name="action"></param>
-        /// <param name="exceptionHandeler"></param>
+        /// <param name="exceptionHandler"></param>
         /// <returns></returns>
         /// <remarks>
-        /// Funct: Exception exception, int numberOfRetries, int remainingRetries, RetryResponse
+        /// Funct: Exception exception, int consumedRetries, int remainingRetries, RetryResponse
         /// </remarks>
-        public virtual T ExecuteWithRetry<T>(int maximumRetries, TimeSpan interval, Func<T> action, Func<Exception, int, int, RetryResponse<T>> exceptionHandeler = null)
+        public virtual T ExecuteWithRetry<T>(int maximumRetries, TimeSpan interval, Func<T> action, Func<Exception, int, int, RetryResponse<T>> exceptionHandler = null)
         {
             T result = default(T);
             var remainingRetries = maximumRetries;
-            var numberOfRetries = 0;
+            var consumedRetries = 0;
             while (true)
             {
                 try
@@ -69,11 +69,10 @@ namespace Epi.Cloud.Common
                 }
                 catch (Exception ex)
                 {
-                    remainingRetries -= 1;
 
-                    if (exceptionHandeler != null)
+                    if (exceptionHandler != null)
                     {
-                        var retryResponse = exceptionHandeler(ex, numberOfRetries, remainingRetries);
+                        var retryResponse = exceptionHandler(ex, consumedRetries, remainingRetries);
                         if (retryResponse.Action == RetryAction.ThrowException)
                         {
                             if (retryResponse.OverrideException != null)
@@ -87,37 +86,37 @@ namespace Epi.Cloud.Common
 
                     if (ex.GetType() == typeof(System.NullReferenceException)) throw;
 
-                    if (remainingRetries > 0)
-                    {
-                        Thread.Sleep(interval);
-                    }
+                    remainingRetries -= 1;
+                    consumedRetries += 1;
+
+                    if (remainingRetries >= 0)
+                        if (interval > TimeSpan.Zero) Thread.Sleep(interval);
                     else
-                    {
                         throw;
-                    }
                 }
             }
             return result;
         }
 
-        public virtual void ExecuteWithRetry(Action action, Func<Exception, int, int, RetryAction> exceptionHandeler = null)
+        public virtual void ExecuteWithRetry(Action action, Func<Exception, int, int, RetryAction> exceptionHandler = null)
         {
-            ExecuteWithRetry(_maximumRetries, _interval, action, exceptionHandeler);
+            ExecuteWithRetry(_maximumRetries, _interval, action, exceptionHandler);
         }
 
         /// <summary>
         /// ExecuteWithRetry
         /// </summary>
-        /// <param name="numberOfRetries"></param>
+        /// <param name="maximumRetries"></param>
         /// <param name="interval"></param>
         /// <param name="action"></param>
-        /// <param name="exceptionHandeler"></param>
+        /// <param name="exceptionHandler"></param>
         /// <remarks>
-        /// Funct: Exception exception, int numberOfRetries, int remainingRetries, RetryAction
+        /// Funct: Exception exception, int consumedRetries, int remainingRetries, RetryAction
         /// </remarks>
-        public virtual void ExecuteWithRetry(int numberOfRetries, TimeSpan interval, Action action, Func<Exception, int, int, RetryAction> exceptionHandeler = null)
+        public virtual void ExecuteWithRetry(int maximumRetries, TimeSpan interval, Action action, Func<Exception, int, int, RetryAction> exceptionHandler = null)
         {
-            var remainingRetries = numberOfRetries;
+            var remainingRetries = maximumRetries;
+            var consumedRetries = 0;
             while (true)
             {
                 try
@@ -127,26 +126,33 @@ namespace Epi.Cloud.Common
                 }
                 catch (Exception ex)
                 {
-                    remainingRetries -= 1;
-                    if (exceptionHandeler != null)
+                    if (exceptionHandler != null)
                     {
-                        var retryAction = exceptionHandeler(ex, numberOfRetries, remainingRetries);
+                        var retryAction = exceptionHandler(ex, consumedRetries, remainingRetries);
                         if (retryAction == RetryAction.ThrowException) throw;
                     }
 
+                    remainingRetries -= 1;
+                    consumedRetries += 1;
+
                     if (ex.GetType() == typeof(System.NullReferenceException)) throw;
 
-                    if (remainingRetries > 0)
-                        Thread.Sleep(interval);
+                    if (remainingRetries >= 0)
+                        if (interval > TimeSpan.Zero) Thread.Sleep(interval);
                     else 
                         throw;
                 }
             }
         }
 
-        public virtual void ExecuteWithRetry(Action action, Func<Exception, int, int, RetryResponse> exceptionHandeler)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="exceptionHandler"></param>
+        public virtual void ExecuteWithRetry(Action action, Func<Exception, int, int, RetryResponse> exceptionHandler)
         {
-            ExecuteWithRetry(_maximumRetries, _interval, action, exceptionHandeler);
+            ExecuteWithRetry(_maximumRetries, _interval, action, exceptionHandler);
         }
 
         /// <summary>
@@ -155,13 +161,14 @@ namespace Epi.Cloud.Common
         /// <param name="numberOfRetries"></param>
         /// <param name="interval"></param>
         /// <param name="action"></param>
-        /// <param name="exceptionHandeler"></param>
+        /// <param name="exceptionHandler"></param>
         /// <remarks>
         /// Funct: Exception exception, int numberOfRetries, int remainingRetries, RetryAction
         /// </remarks>
-        public virtual void ExecuteWithRetry(int numberOfRetries, TimeSpan interval, Action action, Func<Exception, int, int, RetryResponse> exceptionHandeler)
+        public virtual void ExecuteWithRetry(int maximumRetries, TimeSpan interval, Action action, Func<Exception, int, int, RetryResponse> exceptionHandler)
         {
-            var remainingRetries = numberOfRetries;
+            var remainingRetries = maximumRetries;
+            var consumedRetries = 0;
             while (true)
             {
                 try
@@ -171,10 +178,9 @@ namespace Epi.Cloud.Common
                 }
                 catch (Exception ex)
                 {
-                    remainingRetries -= 1;
-                    if (exceptionHandeler != null)
+                    if (exceptionHandler != null)
                     {
-                        var retryResponse = exceptionHandeler(ex, numberOfRetries, remainingRetries);
+                        var retryResponse = exceptionHandler(ex, consumedRetries, remainingRetries);
                         if (retryResponse.Action == RetryAction.ThrowException)
                         {
                             if (retryResponse.OverrideException != null)
@@ -186,10 +192,13 @@ namespace Epi.Cloud.Common
                         if (retryResponse.OverrideInterval.HasValue) interval = retryResponse.OverrideInterval.Value;
                     }
 
+                    remainingRetries -= 1;
+                    consumedRetries += 1;
+
                     if (ex.GetType() == typeof(System.NullReferenceException)) throw;
 
-                    if (remainingRetries > 0)
-                        Thread.Sleep(interval);
+                    if (remainingRetries >= 0)
+                        if (interval > TimeSpan.Zero) Thread.Sleep(interval);
                     else
                         throw;
                 }

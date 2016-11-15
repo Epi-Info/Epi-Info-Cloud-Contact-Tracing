@@ -26,8 +26,6 @@ namespace Epi.Web.Enter.Common.DTO
 
         public string ExitText { get; set; }
 
-        public string XML { get; set; }
-
         public bool IsSuccess { get; set; }
 
         public DateTime ClosingDate { get; set; }
@@ -53,7 +51,5 @@ namespace Epi.Web.Enter.Common.DTO
         public bool IsShared { get; set; }
 
         public bool HasDraftModeData { get; set; }
-
-        public bool EwavLiteToggleSwitch { get; set; }
     }
 }

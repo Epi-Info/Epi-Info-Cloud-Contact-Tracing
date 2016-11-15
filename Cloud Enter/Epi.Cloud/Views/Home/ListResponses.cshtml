@@ -31,13 +31,13 @@
         <button id="btnsearch" onclick="" class="default search" type="button">
             Search</button> 
     }
-    @if (System.Configuration.ConfigurationManager.AppSettings["IsEWAVLiteIntegrationEnabled"].ToUpper() == "TRUE" && Model.FormInfoModel.EwavLiteToggleSwitch)
+    @*@if (System.Configuration.ConfigurationManager.AppSettings["IsEWAVLiteIntegrationEnabled"].ToUpper() == "TRUE" && Model.FormInfoModel.EwavLiteToggleSwitch)
     {
 
         <button id="btnEwavLite" onclick="openEWAVLiteURL()" class="default analytics" type="button">
             Launch Analytics
         </button>
-    }
+    }*@
     @if (Model.FormInfoModel.IsOwner || (Session[SessionKeys.UsertRole].ToString() == "2" && Model.FormInfoModel.IsShared))
     {
         <span>&nbsp;&nbsp;</span>

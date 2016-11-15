@@ -4,7 +4,7 @@
     {
         public string ProjectId { get; set; }
 
-        public bool DataAccessRuleId { get; set; }
+        public int DataAccessRuleId { get; set; }
 
         public string FormId { get; set; }
 
@@ -31,8 +31,6 @@
 		public bool IsShareable { get; set; }
 
 		public bool IsShared { get; set; }
-
-		public bool EwavLiteToggleSwitch { get; set; }
 
 		public int OwnerId { get; set; }
 

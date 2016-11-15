@@ -8,6 +8,7 @@ namespace Epi.DataPersistence.DataStructures
         public string GlobalRecordID { get; set; }
         public string FormId { get; set; }
         public string FormName { get; set; }
+        public bool IsNewRecord { get; set; }
         public int RecStatus { get; set; }
         public string ParentFormId { get; set; }
         public string RelateParentResponseId { get; set; }

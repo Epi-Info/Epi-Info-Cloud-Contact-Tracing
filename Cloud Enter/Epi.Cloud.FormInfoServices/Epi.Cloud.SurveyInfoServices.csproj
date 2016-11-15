@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3725080E-4C8A-4DD2-8435-D42BCAEE5E6F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Epi.Cloud.FormInfoServices</RootNamespace>
+    <AssemblyName>Epi.Cloud.FormInfoServices</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DAO\FormInfoDao.cs" />
+    <Compile Include="DAO\SurveyInfoDao.cs" />
+    <Compile Include="Extensions\SurveyInfoBOExtensions.cs" />
+    <Compile Include="Extensions\SurveyMetadataExtensions.cs" />
+    <Compile Include="SurveyInfoService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31FB19A9-9591-4202-8619-E6EC618FCA73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
+      <Project>{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}</Project>
+      <Name>Epi.Cloud.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.MetadataServices\Epi.Cloud.MetadataServices.csproj">
+      <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
+      <Name>Epi.Cloud.MetadataServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
+      <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
+      <Name>Epi.FormMetadata</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
+      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
+      <Name>Epi.Web.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
+      <Project>{05A484AB-A555-4200-936B-BEC573285BCC}</Project>
+      <Name>Epi.Web.EF</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
+      <Project>{B8AF69BD-3CE1-4AA5-875D-3FB87C7FCE44}</Project>
+      <Name>Epi.Web.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

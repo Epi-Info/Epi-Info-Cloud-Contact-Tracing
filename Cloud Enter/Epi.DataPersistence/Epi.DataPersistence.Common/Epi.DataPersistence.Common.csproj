@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants\RecordSource.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
+    <Compile Include="Constants\RecordStatusChangeReason.cs" />
     <Compile Include="DataStructures\FormResponseDetail.cs" />
     <Compile Include="DataStructures\FormResponseDetailMethods.cs" />
     <Compile Include="DataStructures\PageResponseDetail.cs" />

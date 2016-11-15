@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common.Constants;
+using Epi.DataPersistence.Constants;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
 
@@ -111,6 +112,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         bool DoChildrenExistForResponseId(Guid responseId);
         //bool DoesResponseExist(SurveyAnswerCriteria Criteria);
 
+        //bool DoesResponseExist(Guid responseId);
         bool HasResponse(SurveyAnswerCriteria criteria);
         void UpdateRecordStatus(SurveyResponseBO surveyResponseBO);
         void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange);

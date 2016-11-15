@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.Metadata;
+using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
@@ -82,6 +83,7 @@ namespace Epi.DataPersistence.Extensions
 
                 FormId = formResponseProperties.FormId,
                 FormName = formResponseProperties.FormName,
+                IsNewRecord = formResponseProperties.IsNewRecord,
                 RecStatus = formResponseProperties.RecStatus,
                 RelateParentResponseId = formResponseProperties.RelateParentId,
                 FirstSaveLogonName = formResponseProperties.FirstSaveLogonName,
@@ -122,6 +124,7 @@ namespace Epi.DataPersistence.Extensions
 
 				FormId = formResponseDetail.FormId,
 				FormName = formResponseDetail.FormName,
+                IsNewRecord = formResponseDetail.RecStatus == RecordStatus.InProcess ? formResponseDetail.IsNewRecord : false,
 				RecStatus = formResponseDetail.RecStatus,
 				RelateParentId = formResponseDetail.RelateParentResponseId,
 				FirstSaveLogonName = formResponseDetail.FirstSaveLogonName,

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Epi.Web.Enter.Common.BusinessObject;
 
-namespace Epi.Web.Enter.Interfaces.DataInterface
+namespace Epi.Web.Enter.Interfaces.DataInterfaces
 {
     public interface IUserDao
     {

@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
 using com.calitha.goldparser;
-/*
-using Epi.Collections;
-using Epi.Data;
-using Epi.Data.Services;
-using Epi.Fields;
-using VariableCollection = Epi.Collections.NamedObjectCollection<Epi.IVariable>;*/
 using Epi.Core.EnterInterpreter.Rules;
 using EpiInfo.Plugin;
 

@@ -8,7 +8,7 @@ using System.Text;
 using Epi.Fields;
 using System.Text.RegularExpressions;
 using Epi.Resources;
-using Epi.EWEManagerService;
+//using Epi.EWEManagerService;
 
 namespace Epi.Data.Services
 {

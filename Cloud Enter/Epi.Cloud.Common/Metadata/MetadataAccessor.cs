@@ -92,7 +92,15 @@ namespace Epi.Cloud.Common.Metadata
             return fieldDigest;
         }
 
-        public FieldDigest[] GetFieldDigests(string formId)
+		public FieldDigest[] GetFieldDigestsByFieldNames(string formId, IEnumerable<string> fieldNames)
+		{
+			formId = formId.ToLower();
+			var fieldNameList = fieldNames.Select(n => n.ToLower()).ToArray();
+			var fieldDigests = GetFieldDigests(formId).Where(fd => fieldNameList.Contains(fd.FieldName));
+			return fieldDigests.ToArray();
+		}
+
+		public FieldDigest[] GetFieldDigests(string formId)
         {
             FieldDigest[] fieldDigests = null;
             if (!StaticCache._fieldDigests.TryGetValue(formId, out fieldDigests))
@@ -143,6 +151,11 @@ namespace Epi.Cloud.Common.Metadata
                 pageFieldAttributesByPageId[pageId] = pageFieldAttributes = FieldAttributes.MapFieldMetadataToFieldAttributes(pageMetadata, formDigest.CheckCode);
             }
             return pageFieldAttributes;
+        }
+
+        public FormDigest GetCurrentFormDigest()
+        {
+            return GetFormDigest(_formId);
         }
 
         public FormDigest GetFormDigest(string formId)

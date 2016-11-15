@@ -5,10 +5,11 @@ namespace Epi.FormMetadata.DataStructures
 {
     public partial class FormDigest
     {
-        public int ViewId { get; set; }
         public string FormId { get; set; }
         public string FormName { get; set; }
         public string ParentFormId { get; set; }
+        public string RootFormId { get; set; }
+        public int ViewId { get; set; }
         public int OrganizationId { get; set; }
         public string OrganizationName { get; set; }
         public string OrganizationKey { get; set; }
