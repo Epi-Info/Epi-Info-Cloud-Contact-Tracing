@@ -6,7 +6,8 @@ namespace Epi.Web.MVC.Utility
 {
     public class MobileFormProvider : FormProvider
     {
-		public MobileFormProvider()
+        public bool isAndroid = false;
+        public MobileFormProvider()
 		{
 		}
 
@@ -18,6 +19,7 @@ namespace Epi.Web.MVC.Utility
         {
             form.FormWrapperClass = "MvcDynamicMobileForm";
             form.IsMobile = true;
+            isAndroid = form.IsAndroid;
         }
 
         protected override void AddRadioButtonGroupBox(Form form, FieldAttributes fieldAttributes, double _Width, double _Height)
