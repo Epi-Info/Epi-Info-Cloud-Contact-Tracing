@@ -157,7 +157,7 @@ namespace Epi.Web.MVC.Controllers
 
             ValidationTest = PreValidateResponse(Mapper.ToSurveyAnswerModel(surveyAnswerDTO));
 #endregion Summa
-            string formId = surveyId;
+            string formId = surveyAnswerDTO.SurveyId;
 			string formName = MetadataAccessor.GetFormDigest(formId).FormName;
 			if (surveyAnswerDTO.ResponseDetail == null) surveyAnswerDTO.ResponseDetail = new FormResponseDetail { FormId = formId, FormName = formName, LastPageVisited = 1 };
 
