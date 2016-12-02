@@ -239,7 +239,7 @@ namespace Epi.Web.MVC.Controllers
 
             FormResponseDetail responseDetail = surveyAnswerDTO.ResponseDetail;
 
-            form.FormCheckCodeObj = form.GetCheckCodeObj(MetadataAccessor.GetFieldDigests(surveyId), responseDetail, checkcode);
+            form.FormCheckCodeObj = form.GetCheckCodeObj(MetadataAccessor.GetFieldDigests(surveyAnswerDTO.SurveyId), responseDetail, checkcode);
 
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
