@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStructures.cs" />
+    <Compile Include="DocumentDBAttachment.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="SurveyResponseCRUD.cs" />
     <Compile Include="SurveyResponseCRUD.Indexing.cs" />

@@ -7,5 +7,6 @@
         public const int Saved = 2;
         public const int Completed = 3;
         public const int Downloaded = 4;
+        public const int Restore = -1;
     }
 }

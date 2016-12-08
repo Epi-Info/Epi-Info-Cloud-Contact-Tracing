@@ -54,8 +54,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
 		{
 			var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
-			NotifyConsistencyService(responseId, responseStatus, reasonForStatusChange);
-			return result;
+			//NotifyConsistencyService(responseId, responseStatus, reasonForStatusChange);
+			return true;
 		}
 
 		public async Task<bool> InsertResponse(SurveyResponseBO surveyResponseBO)
@@ -186,7 +186,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
 		#region DeleteSurveyByResponseId
 		public SurveyAnswerResponse DeleteResponse(string responseId, int userId)
 		{
-			_surveyResponseCRUD.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId);
+            bool deleteStatus = _surveyResponseCRUD.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId).Result;
+            //_surveyResponseCRUD.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId);
 
 			SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
 			//var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
@@ -358,8 +359,8 @@ namespace Epi.Cloud.DataEntryServices.Facade
 
 		private void ConsistencyHack(FormResponseDetail formResponseDetail)
 		{
-			var hack = new DataPersistence.ConsistencyServiceHack();
-			hack.PersistToSqlServer(formResponseDetail);
+			//var hack = new DataPersistence.ConsistencyServiceHack();
+			//hack.PersistToSqlServer(formResponseDetail);
 		}
 
 	}

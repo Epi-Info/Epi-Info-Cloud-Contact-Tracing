@@ -284,38 +284,44 @@ namespace Epi.Web.BLL
 
         public bool DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponseBO, int Status = -1)
         {
-            bool result = false;
-            List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(surveyResponseBO.ResponseId);
-
-            foreach (var child in Children)
+            if(surveyResponseBO.Status>-1)
             {
-                //Get the original copy of the response
-                SurveyResponseBO response = _surveyResponseDao.GetResponse(child.ResponseId);
-                if (!response.IsNewRecord)
-                {
-                    child.XML = response.XML;
-                    _surveyResponseDao.UpdateSurveyResponse(child);
-                }
-                else
-                {
-                    child.UserId = surveyResponseBO.UserId;
-                    _surveyResponseDao.DeleteSurveyResponse(child);
 
-                }
-                // delete record from ResponseXml Table
-
-                ResponseBO ResponseBO = new ResponseBO();
-                ResponseBO.ResponseId = child.ResponseId;
-                _surveyResponseDao.DeleteResponse(ResponseBO);
-                if (Status > -1)
-                {
-                    _surveyResponseDao.UpdateRecordStatus(ResponseBO.ResponseId, Status, RecordStatusChangeReason.DeleteInEditMode);
-                }
             }
 
-            result = true;
+            return true;
+            //bool result = false;
+            //List<SurveyResponseBO> Children = GetResponsesHierarchyIdsByRootId(surveyResponseBO.ResponseId);
 
-            return result;
+            //foreach (var child in Children)
+            //{
+            //    //Get the original copy of the response
+            //    SurveyResponseBO response = _surveyResponseDao.GetResponse(child.ResponseId);
+            //    if (!response.IsNewRecord)
+            //    {
+            //        child.XML = response.XML;
+            //        _surveyResponseDao.UpdateSurveyResponse(child);
+            //    }
+            //    else
+            //    {
+            //        child.UserId = surveyResponseBO.UserId;
+            //        _surveyResponseDao.DeleteSurveyResponse(child);
+
+            //    }
+            //    // delete record from ResponseXml Table
+
+            //    ResponseBO ResponseBO = new ResponseBO();
+            //    ResponseBO.ResponseId = child.ResponseId;
+            //    _surveyResponseDao.DeleteResponse(ResponseBO);
+            //    if (Status > -1)
+            //    {
+            //        _surveyResponseDao.UpdateRecordStatus(ResponseBO.ResponseId, Status, RecordStatusChangeReason.DeleteInEditMode);
+            //    }
+            //}
+
+            //result = true;
+
+            //return result;
         }
 
         public bool DeleteSingleSurveyResponse(SurveyResponseBO surveyResponseBO)

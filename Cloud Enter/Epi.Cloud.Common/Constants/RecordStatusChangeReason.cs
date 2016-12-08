@@ -11,6 +11,7 @@
 		ReadResponse,
 		CreateMulti,
 		NewChild,
-		Logout 
+		Logout,
+        Restore 
 	}
 }

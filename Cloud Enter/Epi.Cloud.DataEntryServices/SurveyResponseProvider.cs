@@ -238,8 +238,8 @@ namespace Epi.Cloud.DataEntryServices
         {
             _surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
 
-            SurveyResponseBO result = _surveyResponseDao.GetResponse(surveyResponseBO.ResponseId);
-            return result;
+            //SurveyResponseBO result = _surveyResponseDao.GetResponse(surveyResponseBO.ResponseId);
+            return null;
         }
         public List<SurveyResponseBO> UpdateSurveyResponse(List<SurveyResponseBO> pValue, int Status)
         {

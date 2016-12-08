@@ -120,7 +120,7 @@ namespace Epi.Web.MVC.Controllers
             }
 
 			//Update Status
-			UpdateStatus(responseId, relateSurveyId, RecordStatus.InProcess, RecordStatusChangeReason.OpenForEdit);
+			//UpdateStatus(responseId, relateSurveyId, RecordStatus.InProcess, RecordStatusChangeReason.OpenForEdit);
 
 			//Mobile Section
 			bool IsMobileDevice = false;
@@ -700,7 +700,7 @@ namespace Epi.Web.MVC.Controllers
 			sar.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			sar.SurveyAnswerList.Add(surveyAnswerDTO);
 
-			this._surveyFacade.GetSurveyAnswerRepository().SaveSurveyAnswer(sar);
+			//this._surveyFacade.GetSurveyAnswerRepository().SaveSurveyAnswer(sar);
 		}
 
 		private SurveyAnswerDTO GetSurveyAnswer(string responseId, string currentFormId = "")
@@ -913,6 +913,7 @@ namespace Epi.Web.MVC.Controllers
 			SARequest.Criteria.IsDeleteMode = true;
 			SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
 			SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteInEditMode;
+            SARequest.Action = "DoNotSaveAction";
 			// TODO: GEL - Delete from DocumentDB
 			SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
 
@@ -1302,24 +1303,25 @@ namespace Epi.Web.MVC.Controllers
 		)
 		{
 			surveyAnswerDTO = formsHierarchyDTOList.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
-#region Ananth
-			surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
-			if (responseId != null && formValuesHasChanged == "True")
-			{                 //Survey Info
-                SurveyResponseBO surveyResponseBO = new SurveyResponseBO();  
-                surveyResponseBO.ResponseId = responseId;
-                surveyResponseBO.IsDraftMode = surveyInfoModel.IsDraftMode;
-                surveyResponseBO.UserId = userId;
-               // var isSuccesful = _surveyPersistenceFacade.InsertResponse(form, surveyResponseBO);              
-            }
+            //#region Ananth
+            //			surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
+            //			if (responseId != null && formValuesHasChanged == "True")
+            //			{                 //Survey Info
+            //                SurveyResponseBO surveyResponseBO = new SurveyResponseBO();  
+            //                surveyResponseBO.ResponseId = responseId;
+            //                surveyResponseBO.IsDraftMode = surveyInfoModel.IsDraftMode;
+            //                surveyResponseBO.UserId = userId;
+            //               // var isSuccesful = _surveyPersistenceFacade.InsertResponse(form, surveyResponseBO);              
+            //            }
 
-			bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
+            //			bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
 
-			//SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId).SurveyResponseList[0];
-			surveyAnswerDTO = formsHierarchyDTOList.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
-#endregion Ananth
+            //			//SurveyAnswer = _isurveyFacade.GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId).SurveyResponseList[0];
+            //			surveyAnswerDTO = formsHierarchyDTOList.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == responseId);
+            //#endregion Ananth
+            bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
 
-			surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
+            surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
 
 			var lastPageNumber = GetSurveyPageNumber(surveyAnswerDTO.ResponseDetail);
 			form = _surveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, lastPageNumber == 0 ? 1 : lastPageNumber, surveyAnswerDTO, isMobileDevice, null, formsHierarchyDTOList,IsAndroid );
@@ -1498,6 +1500,7 @@ namespace Epi.Web.MVC.Controllers
 				SurveyModel.FormResponseInfoModel.NumberOfResponses = SurveyModel.FormResponseInfoModel.ResponsesList.Count();
 
 				SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
+                surveyAnswerDTO.SurveyId = RelateSurveyId.SurveyInfo.SurveyId;
 
                 if (RelateSurveyId.ResponseIds.Count > 0)
                 {

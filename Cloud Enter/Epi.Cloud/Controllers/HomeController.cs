@@ -287,7 +287,7 @@ namespace Epi.Web.MVC.Controllers
 				this._requiredList = surveyResponseDocDb.RequiredList;
 				Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
 				form.RequiredFieldsList = _requiredList;
-				_surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
+				//_surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
 			}
 
 			///////////////////////////// Execute - Record Before - End//////////////////////
@@ -498,7 +498,9 @@ namespace Epi.Web.MVC.Controllers
 			surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
 			surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
 			surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
-			SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
+            surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
+            surveyAnswerRequest.Action = "Delete";
+            SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
 			return Json(string.Empty);
 		}
 

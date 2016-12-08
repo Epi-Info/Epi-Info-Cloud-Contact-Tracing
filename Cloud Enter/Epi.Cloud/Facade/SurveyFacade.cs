@@ -10,7 +10,7 @@ using Epi.Web.MVC.Utility;
 
 namespace Epi.Web.MVC.Facade
 {
-	public class SurveyFacade : ISurveyFacade
+    public class SurveyFacade : ISurveyFacade
     {
 
         // declare ISurveyInfoRepository which inherits IRepository of SurveyInfoResponse object
@@ -45,8 +45,8 @@ namespace Epi.Web.MVC.Facade
                             Epi.Web.Enter.Common.Message.SurveyInfoRequest surveyInfoRequest,
                             Epi.Web.Enter.Common.Message.SurveyAnswerRequest surveyResponseRequest,
                             Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
-                            SurveyResponseDocDb surveyResponseXML, 
-                            UserAuthenticationRequest surveyAuthenticationRequest, 
+                            SurveyResponseDocDb surveyResponseXML,
+                            UserAuthenticationRequest surveyAuthenticationRequest,
                             FormInfoDTO FormInfoDTO,
                             IProjectMetadataProvider projectMetadataProvider)
         {
@@ -60,25 +60,25 @@ namespace Epi.Web.MVC.Facade
             _projectMetadataProvider = projectMetadataProvider;
         }
 
-		/// <summary>
-		/// get the survey form data
-		/// </summary>
-		/// <param name="surveyId"></param>
-		/// <param name="pageNumber"></param>
-		/// <param name="surveyAnswerDTO"></param>
-		/// <param name="isMobileDevice"></param>
-		/// <param name="surveyAnswerDTOList"></param>
-		/// <param name="formsHierarchyDTOList"></param>
-		/// <param name="isAndroid"></param>
-		/// <returns></returns>
-		public MvcDynamicForms.Form GetSurveyFormData(
-            string surveyId,
-            int pageNumber,
-            SurveyAnswerDTO surveyAnswerDTO,
-            bool isMobileDevice,
-            List<SurveyAnswerDTO> surveyAnswerDTOList = null,
-            List<FormsHierarchyDTO> formsHierarchyDTOList = null,
-			bool isAndroid = false)
+        /// <summary>
+        /// get the survey form data
+        /// </summary>
+        /// <param name="surveyId"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="surveyAnswerDTO"></param>
+        /// <param name="isMobileDevice"></param>
+        /// <param name="surveyAnswerDTOList"></param>
+        /// <param name="formsHierarchyDTOList"></param>
+        /// <param name="isAndroid"></param>
+        /// <returns></returns>
+        public MvcDynamicForms.Form GetSurveyFormData(
+      string surveyId,
+      int pageNumber,
+      SurveyAnswerDTO surveyAnswerDTO,
+      bool isMobileDevice,
+      List<SurveyAnswerDTO> surveyAnswerDTOList = null,
+      List<FormsHierarchyDTO> formsHierarchyDTOList = null,
+               bool isAndroid = false)
         {
             List<SurveyInfoDTO> surveyInfoDTOList = new List<SurveyInfoDTO>();
 
@@ -141,23 +141,23 @@ namespace Epi.Web.MVC.Facade
         /// <param name="SurveyId"></param>
         /// <returns></returns>
         public SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
-                                                  string responseId, 
-                                                  int UserId, 
-                                                  bool IsChild = false, 
-                                                  string RelateResponseId = "", 
+                                                  string responseId,
+                                                  int UserId,
+                                                  bool IsChild = false,
+                                                  string RelateResponseId = "",
                                                   bool IsEditMode = false,
-												  int CurrentOrgId = -1)
+                                                                                    int CurrentOrgId = -1)
         {
             return SurveyHelper.CreateSurveyResponse(surveyId, responseId, _surveyAnswerRequest, _surveyAnswerDTO, _surveyResponseHelper, _iSurveyAnswerRepository, UserId, IsChild, RelateResponseId, IsEditMode, CurrentOrgId);
         }
 
-        public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, 
-                                         string responseId, 
-                                         MvcDynamicForms.Form form, 
-                                         SurveyAnswerDTO surveyAnswerDTO, 
-                                         bool IsSubmited, 
-                                         bool IsSaved, 
-                                         int PageNumber, 
+        public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel,
+                                         string responseId,
+                                         MvcDynamicForms.Form form,
+                                         SurveyAnswerDTO surveyAnswerDTO,
+                                         bool IsSubmited,
+                                         bool IsSaved,
+                                         int PageNumber,
                                          int UserId)
         {
             // 1 Get the record for the current survey response
@@ -168,17 +168,17 @@ namespace Epi.Web.MVC.Facade
             surveyAnswerResponse.SurveyResponseList.Add(surveyAnswerDTO);
             ///2 Update the current survey response and save it
 
-            SurveyHelper.UpdateSurveyResponse(surveyInfoModel, 
-                                              form, 
-                                              _surveyAnswerRequest, 
-                                              _surveyResponseHelper, 
-                                              _iSurveyAnswerRepository, 
-                                              surveyAnswerResponse, 
-                                              responseId, 
-                                              surveyAnswerDTO, 
-                                              IsSubmited, 
-                                              IsSaved, 
-                                              PageNumber, 
+            SurveyHelper.UpdateSurveyResponse(surveyInfoModel,
+                                              form,
+                                              _surveyAnswerRequest,
+                                              _surveyResponseHelper,
+                                              _iSurveyAnswerRepository,
+                                              surveyAnswerResponse,
+                                              responseId,
+                                              surveyAnswerDTO,
+                                              IsSubmited,
+                                              IsSaved,
+                                              PageNumber,
                                               UserId);
         }
 
@@ -234,7 +234,7 @@ namespace Epi.Web.MVC.Facade
                 listOfForms.Add(formInfoModel);
             }
 
-			return listOfForms;
+            return listOfForms;
         }
 
         public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest FormResponseReq)
@@ -260,7 +260,9 @@ namespace Epi.Web.MVC.Facade
 
         public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest SARequest)
         {
-            return _iSurveyInfoRepository.DeleteResponse(SARequest);
+            _iSurveyAnswerRepository.DeleteResponseXml(SARequest);
+            return null;
+            //return _iSurveyInfoRepository.DeleteResponse(SARequest);
         }
 
         public SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest SurveyAnswerRequest)
@@ -317,7 +319,7 @@ namespace Epi.Web.MVC.Facade
 
         }
 
-		public OrganizationResponse GetUserOrganizations(OrganizationRequest OrgRequest)
+        public OrganizationResponse GetUserOrganizations(OrganizationRequest OrgRequest)
         {
             OrganizationResponse OrganizationResponse = new OrganizationResponse();
             OrganizationResponse = _iSurveyAnswerRepository.GetUserOrganizations(OrgRequest);
@@ -397,9 +399,9 @@ namespace Epi.Web.MVC.Facade
             return _iSurveyAnswerRepository.HasResponse(SurveyId, ResponseId);
         }
 
-		//SurveyAnswerDTO ISurveyFacade.CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild, string RelateResponseId, bool IsEditMode, int CurrentOrgId)
-		//{
-		//	return 
-		//}
-	}
+        //SurveyAnswerDTO ISurveyFacade.CreateSurveyAnswer(string surveyId, string responseId, int UserId, bool IsChild, string RelateResponseId, bool IsEditMode, int CurrentOrgId)
+        //{
+        //     return 
+        //}
+    }
 }

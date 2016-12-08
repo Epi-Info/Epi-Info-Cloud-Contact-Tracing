@@ -219,9 +219,10 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			else if (surveyAnswerRequest.Action.Equals("Update", StringComparison.OrdinalIgnoreCase))
 			{
-				_surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
-				response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
-			}
+                _surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
+                //_surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
+                //esponse.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
+            }
 
 			else if (surveyAnswerRequest.Action.Equals("CreateChild", StringComparison.OrdinalIgnoreCase))
 			{
@@ -252,33 +253,50 @@ namespace Epi.Cloud.DataEntryServices
 				//        response.SurveyResponseList.Add(Mapper.ToDataTransferObject(Obj));
 				//    }
 			}
-			else if (surveyAnswerRequest.Action.Equals("Delete", StringComparison.OrdinalIgnoreCase))
-			{
-				throw new NotImplementedException("Delete");
-			//    var criteria = surveyAnswerRequest.Criteria as SurveyAnswerCriteria;
-			//    criteria.SurveyAnswerIdList = new List<string> { SurveyResponse.SurveyId };
-			//    criteria.UserPublishKey = SurveyResponse.UserPublishKey;
-			//    criteria.SurveyId = surveyAnswerRequest.Criteria.SurveyId;
-			//    var survey = Implementation.GetSurveyResponseById(criteria);
+            else if (surveyAnswerRequest.Action.Equals("Delete", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
+                    {
+                        try
+                        {
+                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
+                        }
+                        catch
+                        {
 
-			//    foreach (SurveyResponseBO surveyResponse in survey)
-			//    {
-			//        try
-			//        {
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("DeleteResponse: " + ex.ToString());
+                }
+            }
+            else if (surveyAnswerRequest.Action.Equals("DoNotSaveAction", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
+                    {
+                        try
+                        {
+                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Restore, RecordStatusChangeReason.Restore);
+                        }
+                        catch
+                        {
 
-			//            if (Implementation.DeleteSurveyResponse(surveyResponse))
-			//            {
-			//                response.RowsAffected += 1;
-			//            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("DeleteResponse: " + ex.ToString());
+                }
+            }
 
-			//        }
-			//        catch
-			//        {
-			//            //response.RowsAffected = 0;
-			//        }
-			//    }
-			}
-			else if (surveyAnswerRequest.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
 			{
 				try
 				{
