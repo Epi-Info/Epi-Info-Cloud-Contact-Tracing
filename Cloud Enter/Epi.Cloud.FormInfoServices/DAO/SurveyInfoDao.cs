@@ -334,7 +334,6 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             //            OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
             //        }
 
-            //        SurveyInfo.TemplateXMLSize = RemoveWhitespace(SurveyInfo.XML).Length;
             //        SurveyInfo.DateCreated = DateTime.Now;
 
 

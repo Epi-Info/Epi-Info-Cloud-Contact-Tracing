@@ -114,11 +114,6 @@ namespace Epi.Web.EF
             }
             result.OwnerFName = UserEntity.FirstName;
             result.OwnerLName = UserEntity.LastName;
-
-            if (getMetadata)
-            {
-                result.Xml = entity.TemplateXML;
-            }
             result.ParentId = entity.ParentId.ToString();
             return result;
         }

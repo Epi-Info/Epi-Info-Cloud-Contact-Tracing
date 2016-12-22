@@ -370,43 +370,11 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 {
                     UpdateRecordStatus(surveyResponseBO);
                 }
-
-                //TODO Implement for DocumentDB
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    var Query = from response in Context.SurveyResponses
-                //                where response.ResponseId == Id
-                //                select response;
-
-                //    var DataRow = Query.Single();
-
-                //    if (!string.IsNullOrEmpty(SurveyResponse.RelateParentId) && SurveyResponse.RelateParentId != Guid.Empty.ToString())
-                //    {
-                //        DataRow.RelateParentId = new Guid(SurveyResponse.RelateParentId);
-                //    }
-                //    DataRow.ResponseXML = SurveyResponse.XML;
-                //    //DataRow.DateCompleted = DateTime.Now;
-                //    DataRow.DateCompleted = SurveyResponse.DateCompleted;
-                //    DataRow.StatusId = SurveyResponse.Status;
-                //    DataRow.DateUpdated = DateTime.Now;
-                //    //   DataRow.ResponsePasscode = SurveyResponse.ResponsePassCode;
-                //    DataRow.isDraftMode = SurveyResponse.isDraftMode;
-                //    DataRow.ResponseXMLSize = RemoveWhitespace(SurveyResponse.XML).Length;
-                //    Context.SaveChanges();
-                //}
             }
             catch (Exception ex)
             {
-                //TODO: GEL Don't throw this exception. This code will be removed when DocumentDB is fully implemented.
-                //throw (ex);
+                throw;
             }
-        }
-        public static string RemoveWhitespace(string xml)
-        {
-            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@">\s*<");
-            xml = regex.Replace(xml, "><");
-
-            return xml.Trim();
         }
 
 #if RequiresUserAuthenticationObjects

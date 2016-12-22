@@ -69,13 +69,8 @@ namespace Epi.Web.MVC.Controllers
 			Guid userIdGuid = new Guid();
 			try
 			{
-				string surveyMode = "";
-				//SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyid);
-				//  List<FormInfoModel> listOfformInfoModel = GetFormsInfoList(UserId1);
 
-				FormModel formModel;
-
-				GetFormModel(surveyId, userId, userIdGuid, out orgnizationId, out formModel);
+				FormModel formModel = GetFormModel(surveyId, userId, userIdGuid, out orgnizationId);
 
 				if (orgId == -1)
 				{
@@ -100,8 +95,9 @@ namespace Epi.Web.MVC.Controllers
 					Session[SessionKeys.SearchCriteria] = null;
 					Session[SessionKeys.SearchModel] = null;
 				}
-				Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, IsMobileDevice);
 
+				string surveyMode = "";
+				Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, IsMobileDevice);
 				ViewBag.Omniture = OmnitureObj;
 
 				string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -119,9 +115,9 @@ namespace Epi.Web.MVC.Controllers
 			}
 		}
 
-		private void GetFormModel(string surveyId, int userId, Guid userIdGuid, out int orgnizationId, out FormModel formModel)
-		{
-			formModel = new Models.FormModel();
+		private FormModel GetFormModel(string surveyId, int userId, Guid userIdGuid, out int orgnizationId)
+        {
+			FormModel formModel = new Models.FormModel();
 			formModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
 			// Get OrganizationList
 			OrganizationRequest request = new OrganizationRequest();
@@ -138,6 +134,7 @@ namespace Epi.Web.MVC.Controllers
 			formModel.UserFirstName = Session[SessionKeys.UserFirstName].ToString();
 			formModel.UserLastName = Session[SessionKeys.UserLastName].ToString();
 			formModel.SelectedForm = surveyId;
+            return formModel;
 		}
 
 		/// <summary>
@@ -395,6 +392,7 @@ namespace Epi.Web.MVC.Controllers
 				return View("ListResponses", model);
 			}
 		}
+
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ResetSort(string formid)
@@ -411,7 +409,6 @@ namespace Epi.Web.MVC.Controllers
 
 			if (ValidateSearchFields(formCollection))
 			{
-
 				if (formCollection["col1"].Length > 0 && formCollection["val1"].Length > 0)
 				{
 					searchBuilder.Append(formCollection["col1"] + "='" + formCollection["val1"] + "'");
@@ -488,28 +485,6 @@ namespace Epi.Web.MVC.Controllers
             SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
 			return Json(string.Empty);
 		}
-
-
-		private SurveyAnswerDTO GetCurrentSurveyAnswer()
-		{
-			SurveyAnswerDTO result = null;
-
-			if (TempData.ContainsKey(Epi.Cloud.Common.Constants.Constant.RESPONSE_ID)
-				&& TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID] != null
-				&& !string.IsNullOrEmpty(TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID].ToString())
-				)
-			{
-				string responseId = TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID].ToString();
-
-				//TODO: Now repopulating the TempData (by reassigning to responseId) so it persisits, later we will need to find a better 
-				//way to replace it. 
-				TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID] = responseId;
-				return _surveyFacade.GetSurveyAnswerResponse(responseId).SurveyResponseList[0];
-			}
-
-			return result;
-		}
-
 
 		public SurveyInfoModel GetSurveyInfo(string SurveyId)
 		{
@@ -806,8 +781,8 @@ namespace Epi.Web.MVC.Controllers
 				ModelList.Add(Model);
 			}
 			return PartialView("Settings", ModelList);
-
 		}
+
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult CheckForConcurrency(String responseId)
@@ -851,8 +826,8 @@ namespace Epi.Web.MVC.Controllers
 
 			return Json(1);
 		}
-		//Unlock
-
+        
+        //Unlock
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult Unlock(String ResponseId, bool RecoverLastRecordVersion)
@@ -871,8 +846,8 @@ namespace Epi.Web.MVC.Controllers
 				return Json("Erorr");
 			}
 			return Json("Success");
-
 		}
+
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult SaveSettings(string formid)
@@ -907,7 +882,6 @@ namespace Epi.Web.MVC.Controllers
 			}
 			FormSettingResponse FormSettingResponse = _surveyFacade.SaveSettings(FormSettingReq);
 
-
 			bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
 
 			var model = new FormResponseInfoModel();
@@ -932,8 +906,6 @@ namespace Epi.Web.MVC.Controllers
 			}
 		}
 
-
-
 		private Dictionary<int, string> GetDictionary(string List)
 		{
 			Dictionary<int, string> Dictionary = new Dictionary<int, string>();
@@ -943,6 +915,7 @@ namespace Epi.Web.MVC.Controllers
 			}
 			return Dictionary;
 		}
+
 		private bool GetBoolValue(string value)
 		{
 			bool BoolValue = false;
@@ -970,6 +943,5 @@ namespace Epi.Web.MVC.Controllers
 
 			return FormsHierarchyResponse.FormsHierarchy;
 		}
-
 	}
 }

@@ -70,7 +70,7 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             return surveyMetadata.ToFormInfoBO(formInfoBO);
         }
 
-        public static FormInfoBO MapToFormInfoBO(this SurveyMetaData surveyMetadata, User UserEntity, bool includeMetadata = false)
+        public static FormInfoBO MapToFormInfoBO(this SurveyMetaData surveyMetadata, User UserEntity, bool getMetadata = false)
         {
             FormInfoBO formInfoBO = new FormInfoBO();
             formInfoBO.IsSQLProject = surveyMetadata.IsSQLProject.HasValue ? surveyMetadata.IsSQLProject.Value : false;
@@ -89,10 +89,6 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
 
             formInfoBO.ParentId = surveyMetadata.ParentId.ToString();
 
-            if (includeMetadata)
-            {
-                formInfoBO.Xml = surveyMetadata.TemplateXML;
-            }
             return formInfoBO;
         }
     }

@@ -39,8 +39,8 @@ namespace Epi.DataPersistence.DataStructures
 
 		public void AddChildFormResponseDetail(FormResponseDetail childFormResponseDetail)
 		{
-			var existingItem = ChildFormResponseDetailList.SingleOrDefault(f => f.FormId == childFormResponseDetail.FormId);
-			if (existingItem != null) ChildFormResponseDetailList.Remove(childFormResponseDetail);
+			var existingItem = ChildFormResponseDetailList.Any(f => f.FormId == childFormResponseDetail.FormId);
+			if (existingItem) ChildFormResponseDetailList.Remove(childFormResponseDetail);
 			childFormResponseDetail.ParentFormId = FormId;
 			ChildFormResponseDetailList.Add(childFormResponseDetail);
 		}
