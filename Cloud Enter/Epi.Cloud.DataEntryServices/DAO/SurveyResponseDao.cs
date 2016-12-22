@@ -300,30 +300,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 surveyResponseBO.DateCreated = DateTime.UtcNow;
                 surveyResponseBO.DateUpdated = DateTime.UtcNow;
 
-				var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
-				var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO);
-				#region Web Enter Implementation
-				//using (var Context = DataObjectFactory.CreateContext())
-				//{
-				//    SurveyResponse SurveyResponseEntity = new EF.SurveyResponse();
-				//    //   var _UserOrg  = Context.UserOrganizations.Where(x => x.UserID == SurveyResponse.UserId).First();
-				//    if (SurveyResponse.CurrentOrgId > 0)
-				//    {
-				//        SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
-				//    }
-				//    else
-				//    {
-				//        SurveyResponseEntity = Mapper.ToEF(SurveyResponse);
-				//    }
-				//    //SurveyResponseEntity.Users.Add(new User { UserID = 2 });
-				//    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-				//    SurveyResponseEntity.Users.Add(User);
-				//    Context.AddToSurveyResponses(SurveyResponseEntity);
-
-				//    Context.SaveChanges();
-				//}
-				#endregion Web Enter Implementation
-			}
+                var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
+                var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO);
+            }
             catch (Exception ex)
             {
                 throw (ex);
