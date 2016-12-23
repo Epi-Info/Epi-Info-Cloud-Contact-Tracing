@@ -249,7 +249,7 @@ namespace Epi.Cloud.DataEntryServices
         {
             bool result = false;
 
-            _surveyResponseDao.DeleteSurveyResponse(pValue);
+            _surveyResponseDao.UpdateRecordStatus(pValue.ResponseId, pValue.Status, RecordStatusChangeReason.Restore);
             result = true;
 
             return result;

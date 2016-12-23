@@ -23,39 +23,39 @@ using Epi.Cloud.DataEntryServices;
 namespace Epi.Cloud.DataEntryServices
 {
     public class DataEntryService : IDataEntryService
-	{
-		private readonly ISecurityDataService _securityDataService;
-		private readonly ISurveyInfoService _surveyInfoService;
-		private readonly IFormInfoDao _formInfoDao;
+    {
+        private readonly ISecurityDataService _securityDataService;
+        private readonly ISurveyInfoService _surveyInfoService;
+        private readonly IFormInfoDao _formInfoDao;
         private readonly ISurveyInfoDao _surveyInfoDao;
 
         private readonly ISurveyResponseDao _surveyResponseDao;
-		private readonly SurveyResponseProvider _surveyResponseProvider;
+        private readonly SurveyResponseProvider _surveyResponseProvider;
 
-		private string _accessToken;
-		private string _userName;
+        private string _accessToken;
+        private string _userName;
 
-		public DataEntryService(
-			ISurveyInfoService surveyInfoService,
-			ISecurityDataService securityDataService,
-			IFormInfoDao formInfoDao,
+        public DataEntryService(
+            ISurveyInfoService surveyInfoService,
+            ISecurityDataService securityDataService,
+            IFormInfoDao formInfoDao,
             ISurveyInfoDao surveyInfoDao,
             SurveyResponseProvider surveyResponseProvider,
-			ISurveyResponseDao surveyResponseDao)
-		{
-			_surveyInfoService = surveyInfoService;
-			_securityDataService = securityDataService;
-			_formInfoDao = formInfoDao;
+            ISurveyResponseDao surveyResponseDao)
+        {
+            _surveyInfoService = surveyInfoService;
+            _securityDataService = securityDataService;
+            _formInfoDao = formInfoDao;
             _surveyInfoDao = surveyInfoDao;
             _surveyResponseDao = surveyResponseDao;
-			_surveyResponseProvider = surveyResponseProvider;
-		}
+            _surveyResponseProvider = surveyResponseProvider;
+        }
 
-		public UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO)
-		{
-			// TODO: Implement this correctly
-			var userAuthenticationResponseBO = new UserAuthenticationResponseBO { PassCode = passcodeBO.PassCode, ResponseId = passcodeBO.ResponseId };
-			return userAuthenticationResponseBO;
+        public UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO)
+        {
+            // TODO: Implement this correctly
+            var userAuthenticationResponseBO = new UserAuthenticationResponseBO { PassCode = passcodeBO.PassCode, ResponseId = passcodeBO.ResponseId };
+            return userAuthenticationResponseBO;
 
 #if false // from WebEnter
 			UserAuthenticationResponseBO UserAuthenticationResponseBO = Mapper.ToAuthenticationResponseBO(UserAuthenticationRequestBO);
@@ -78,192 +78,192 @@ namespace Epi.Cloud.DataEntryServices
             }
             return UserAuthenticationResponseBO;
 #endif
-		}
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		public SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest request)
-		{
-			try
-			{
-				SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
-				Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest request)
+        {
+            try
+            {
+                SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
+                Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
 
-				// Validate client tag, access token, and user credentials
-				if (!ValidRequest(request, result, Validate.All))
-				{
-					return result;
-				}
+                // Validate client tag, access token, and user credentials
+                if (!ValidRequest(request, result, Validate.All))
+                {
+                    return result;
+                }
 
-				var criteria = request.Criteria as SurveyAnswerCriteria;
-				string sort = criteria.SortExpression;
+                var criteria = request.Criteria as SurveyAnswerCriteria;
+                string sort = criteria.SortExpression;
 
-				SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoById(request.Criteria.SurveyId);
-				List<SurveyInfoBO> surveyInfoBOList = new List<SurveyInfoBO>();
-				surveyInfoBOList.Add(surveyInfoBO);
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoById(request.Criteria.SurveyId);
+                List<SurveyInfoBO> surveyInfoBOList = new List<SurveyInfoBO>();
+                surveyInfoBOList.Add(surveyInfoBO);
 
-				List<SurveyResponseBO> surveyResponseList = surveyResponseProvider.GetSurveyResponseById(request.Criteria, surveyInfoBOList);
-				result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
-				result.FormInfo = surveyInfoBO.ToFormInfoDTO();
+                List<SurveyResponseBO> surveyResponseList = surveyResponseProvider.GetSurveyResponseById(request.Criteria, surveyInfoBOList);
+                result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
+                result.FormInfo = surveyInfoBO.ToFormInfoDTO();
 
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest request)
-		{
-			try
-			{
-				SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest request)
+        {
+            try
+            {
+                SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
 
-				SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
+                SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
 
-				// Validate client tag, access token, and user credentials
-				if (!ValidRequest(request, result, Validate.All))
-				{
-					return result;
-				}
+                // Validate client tag, access token, and user credentials
+                if (!ValidRequest(request, result, Validate.All))
+                {
+                    return result;
+                }
 
-				SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(request.Criteria);
-				SurveyAnswerDTO surveyAnswerDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerDTO() : null;
-				result.SurveyResponseList = new List<Web.Enter.Common.DTO.SurveyAnswerDTO>();
-				if (surveyAnswerDTO != null) result.SurveyResponseList.Add(surveyAnswerDTO);
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-		}
+                SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(request.Criteria);
+                SurveyAnswerDTO surveyAnswerDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerDTO() : null;
+                result.SurveyResponseList = new List<Web.Enter.Common.DTO.SurveyAnswerDTO>();
+                if (surveyAnswerDTO != null) result.SurveyResponseList.Add(surveyAnswerDTO);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
 
-		public SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			SurveyAnswerResponse response = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
+        public SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            SurveyAnswerResponse response = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
-			// Validate client tag, access token, and user credentials
-			if (!ValidRequest(surveyAnswerRequest, response, Validate.All))
-			{
-				return response;
-			}
+            // Validate client tag, access token, and user credentials
+            if (!ValidRequest(surveyAnswerRequest, response, Validate.All))
+            {
+                return response;
+            }
 
-			// Transform SurveyResponse data transfer object to SurveyResponse business object
-			SurveyResponseBO surveyResponseBO = surveyAnswerRequest.SurveyAnswerList[0].ToSurveyResponseBO();
+            // Transform SurveyResponse data transfer object to SurveyResponse business object
+            SurveyResponseBO surveyResponseBO = surveyAnswerRequest.SurveyAnswerList[0].ToSurveyResponseBO();
 
-			surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
-			surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+            surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+            surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
 
-			// Validate SurveyResponse business rules
+            // Validate SurveyResponse business rules
 
-			if (surveyAnswerRequest.Action != "Delete")
-			{
-				//if (!SurveyResponse.Validate())
-				//{
-				//    response.Acknowledge = AcknowledgeType.Failure;
+            if (surveyAnswerRequest.Action != "Delete")
+            {
+                //if (!SurveyResponse.Validate())
+                //{
+                //    response.Acknowledge = AcknowledgeType.Failure;
 
-				//    foreach (string error in SurveyResponse.ValidationErrors)
-				//        response.Message += error + Environment.NewLine;
+                //    foreach (string error in SurveyResponse.ValidationErrors)
+                //        response.Message += error + Environment.NewLine;
 
-				//    return response;
-				//}
-			}
+                //    return response;
+                //}
+            }
 
-			if (surveyAnswerRequest.Action.Equals("Create", StringComparison.OrdinalIgnoreCase))
-			{
-				_surveyResponseProvider.InsertSurveyResponse(surveyResponseBO);
-				response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
-			}
-			else if (surveyAnswerRequest.Action.Equals("CreateMulti", StringComparison.OrdinalIgnoreCase))
-			{
-				if (surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId != null)
-				{
+            if (surveyAnswerRequest.Action.Equals("Create", StringComparison.OrdinalIgnoreCase))
+            {
+                _surveyResponseProvider.InsertSurveyResponse(surveyResponseBO);
+                response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
+            }
+            else if (surveyAnswerRequest.Action.Equals("CreateMulti", StringComparison.OrdinalIgnoreCase))
+            {
+                if (surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId != null)
+                {
 
-					List<SurveyResponseBO> _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
+                    List<SurveyResponseBO> _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
 
-					//if (!surveyAnswerRequest.SurveyAnswerList[0].RecoverLastRecordVersion)
-					//// if we are not keeping the version of xml found currently in the SurveyResponse table (meaning getting the original copy form the ResponseXml table)
-					//{
-					//    //check if any orphan records exists 
-					//    foreach (var item in _surveyResponseBOList)
-					//    {
-					//        if (item.ResponseId != null)
-					//        {
-					//            SurveyResponseBO SurveyResponseBO = _surveyResponseProvider.GetResponse(item.ResponseId);
-					//            // before we delete the temp version we need to move it the SurveResponse table
+                    //if (!surveyAnswerRequest.SurveyAnswerList[0].RecoverLastRecordVersion)
+                    //// if we are not keeping the version of xml found currently in the SurveyResponse table (meaning getting the original copy form the ResponseXml table)
+                    //{
+                    //    //check if any orphan records exists 
+                    //    foreach (var item in _surveyResponseBOList)
+                    //    {
+                    //        if (item.ResponseId != null)
+                    //        {
+                    //            SurveyResponseBO SurveyResponseBO = _surveyResponseProvider.GetResponse(item.ResponseId);
+                    //            // before we delete the temp version we need to move it the SurveResponse table
 
-					//            if (!string.IsNullOrEmpty(SurveyResponseBO.ResponseId))
-					//            {
-					//                SurveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
-					//                ResponseBO responseBO = new ResponseBO();
-					//                responseBO.ResponseId = SurveyResponseBO.ResponseId;
-					//                // During the delete process below: 
-					//                //  1) Delete the record from ResponseXml table.
-					//                //  2) Update Record status in the SurveyResponse table which fires database triggers.
-					//                _surveyResponseProvider.DeleteResponse(responseBO);
-					//                _surveyResponseProvider.UpdateRecordStatus(responseBO.ResponseId.ToString(), 2);
+                    //            if (!string.IsNullOrEmpty(SurveyResponseBO.ResponseId))
+                    //            {
+                    //                SurveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+                    //                ResponseBO responseBO = new ResponseBO();
+                    //                responseBO.ResponseId = SurveyResponseBO.ResponseId;
+                    //                // During the delete process below: 
+                    //                //  1) Delete the record from ResponseXml table.
+                    //                //  2) Update Record status in the SurveyResponse table which fires database triggers.
+                    //                _surveyResponseProvider.DeleteResponse(responseBO);
+                    //                _surveyResponseProvider.UpdateRecordStatus(responseBO.ResponseId.ToString(), 2);
 
-					//                //This will handle the status update and the swapping of the Xml
-					//                // but for this scenario I will keep the status unchanged 
-					//                // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
-					//            }
-					//        }
-					//    }
+                    //                //This will handle the status update and the swapping of the Xml
+                    //                // but for this scenario I will keep the status unchanged 
+                    //                // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
+                    //            }
+                    //        }
+                    //    }
 
-					//    _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
-					//    // Inserting a temp xml to the ResponseXml table
-					//    response.SurveyResponseList = _surveyResponseProvider.InsertSurveyResponse(_surveyResponseBOList, surveyAnswerRequest.Criteria.UserId).ToSurveyAnswerDTOList();
-					//}
-					//else
-					{
-						// load the version curently found the SurveyResponse table 
+                    //    _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
+                    //    // Inserting a temp xml to the ResponseXml table
+                    //    response.SurveyResponseList = _surveyResponseProvider.InsertSurveyResponse(_surveyResponseBOList, surveyAnswerRequest.Criteria.UserId).ToSurveyAnswerDTOList();
+                    //}
+                    //else
+                    {
+                        // load the version curently found the SurveyResponse table 
 
-						response.SurveyResponseList = _surveyResponseBOList.ToSurveyAnswerDTOList();
-					}
-				}
-			}
-			else if (surveyAnswerRequest.Action.Equals(Constant.UPDATE, StringComparison.OrdinalIgnoreCase))
-			{
-				_surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
-			}
+                        response.SurveyResponseList = _surveyResponseBOList.ToSurveyAnswerDTOList();
+                    }
+                }
+            }
+            else if (surveyAnswerRequest.Action.Equals(Constant.UPDATE, StringComparison.OrdinalIgnoreCase))
+            {
+                _surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
+            }
 
-			else if (surveyAnswerRequest.Action.Equals(Constant.CREATECHILD, StringComparison.OrdinalIgnoreCase))
-			{
-				SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildId(surveyResponseBO.SurveyId);
+            else if (surveyAnswerRequest.Action.Equals(Constant.CREATECHILD, StringComparison.OrdinalIgnoreCase))
+            {
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildId(surveyResponseBO.SurveyId);
 
-				_surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].RelateParentId);
-				response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
+                _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].RelateParentId);
+                response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
 
-				List<SurveyResponseBO> List = new List<SurveyResponseBO>();
-				List.Add(surveyResponseBO);
-				_surveyResponseProvider.InsertSurveyResponse(List, surveyAnswerRequest.Criteria.UserId, true);
-			}
-			else if (surveyAnswerRequest.Action.Equals(Constant.UpdateMulti, StringComparison.OrdinalIgnoreCase))
-			{
-				throw new NotImplementedException(Constant.UpdateMulti);
-			}
-			else if (surveyAnswerRequest.Action.Equals(Constant.DELETE, StringComparison.OrdinalIgnoreCase))
-			{
+                List<SurveyResponseBO> List = new List<SurveyResponseBO>();
+                List.Add(surveyResponseBO);
+                _surveyResponseProvider.InsertSurveyResponse(List, surveyAnswerRequest.Criteria.UserId, true);
+            }
+            else if (surveyAnswerRequest.Action.Equals(Constant.UpdateMulti, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotImplementedException(Constant.UpdateMulti);
+            }
+            else if (surveyAnswerRequest.Action.Equals(Constant.DELETE, StringComparison.OrdinalIgnoreCase))
+            {
                 try
                 {
                     foreach (var item in surveyAnswerRequest.SurveyAnswerList)
@@ -304,125 +304,125 @@ namespace Epi.Cloud.DataEntryServices
                     Console.WriteLine("DeleteResponse: " + ex.ToString());
                 }
             }
-			else if (surveyAnswerRequest.Action.Equals(Constant.DELETERESPONSE, StringComparison.OrdinalIgnoreCase))
-			{
-				try
-				{
-					foreach (var item in surveyAnswerRequest.SurveyAnswerList)
-					{
-						try
-						{
-							_surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
-						}
-						catch
-						{
+            else if (surveyAnswerRequest.Action.Equals(Constant.DELETERESPONSE, StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    foreach (var item in surveyAnswerRequest.SurveyAnswerList)
+                    {
+                        try
+                        {
+                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
+                        }
+                        catch
+                        {
 
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine("DeleteResponse: " + ex.ToString());
-				}
-			}
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("DeleteResponse: " + ex.ToString());
+                }
+            }
 
-			return response;
-		}
-
-
-		/// <summary>
-		/// Validation options enum. Used in validation of messages.
-		/// </summary>
-		[Flags]
-		private enum Validate
-		{
-			ClientTag = 0x0001,
-			AccessToken = 0x0002,
-			UserCredentials = 0x0004,
-			All = ClientTag | AccessToken | UserCredentials
-		}
-
-		/// <summary>
-		/// Validate 3 security levels for a request: ClientTag, AccessToken, and User Credentials
-		/// </summary>
-		/// <param name="request">The request message.</param>
-		/// <param name="response">The response message.</param>
-		/// <param name="validate">The validation that needs to take place.</param>
-		/// <returns></returns>
-		private bool ValidRequest(RequestBase request, ResponseBase response, Validate validate)
-		{
-			bool result = true;
-
-			// Validate Client Tag. 
-			// Hardcoded here. In production this should query a 'client' table in a database.
-			if ((Validate.ClientTag & validate) == Validate.ClientTag)
-			{
-				if (request.ClientTag != "ABC123")
-				{
-					response.Acknowledge = AcknowledgeType.Failure;
-					response.Message = "Unknown Client Tag";
-					//return false;
-				}
-			}
+            return response;
+        }
 
 
-			// Validate access token
-			if ((Validate.AccessToken & validate) == Validate.AccessToken)
-			{
-				if (request.AccessToken != _accessToken)
-				{
-					response.Acknowledge = AcknowledgeType.Failure;
-					response.Message = "Invalid or expired AccessToken. Call GetToken()";
-					//return false;
-				}
-			}
+        /// <summary>
+        /// Validation options enum. Used in validation of messages.
+        /// </summary>
+        [Flags]
+        private enum Validate
+        {
+            ClientTag = 0x0001,
+            AccessToken = 0x0002,
+            UserCredentials = 0x0004,
+            All = ClientTag | AccessToken | UserCredentials
+        }
 
-			// Validate user credentials
-			if ((Validate.UserCredentials & validate) == Validate.UserCredentials)
-			{
-				if (_userName == null)
-				{
-					response.Acknowledge = AcknowledgeType.Failure;
-					response.Message = "Please login and provide user credentials before accessing these methods.";
-					//return false;
-				}
-			}
+        /// <summary>
+        /// Validate 3 security levels for a request: ClientTag, AccessToken, and User Credentials
+        /// </summary>
+        /// <param name="request">The request message.</param>
+        /// <param name="response">The response message.</param>
+        /// <param name="validate">The validation that needs to take place.</param>
+        /// <returns></returns>
+        private bool ValidRequest(RequestBase request, ResponseBase response, Validate validate)
+        {
+            bool result = true;
+
+            // Validate Client Tag. 
+            // Hardcoded here. In production this should query a 'client' table in a database.
+            if ((Validate.ClientTag & validate) == Validate.ClientTag)
+            {
+                if (request.ClientTag != "ABC123")
+                {
+                    response.Acknowledge = AcknowledgeType.Failure;
+                    response.Message = "Unknown Client Tag";
+                    //return false;
+                }
+            }
 
 
-			return result;
-		}
-		
-		public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			try
-			{
-				SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
+            // Validate access token
+            if ((Validate.AccessToken & validate) == Validate.AccessToken)
+            {
+                if (request.AccessToken != _accessToken)
+                {
+                    response.Acknowledge = AcknowledgeType.Failure;
+                    response.Message = "Invalid or expired AccessToken. Call GetToken()";
+                    //return false;
+                }
+            }
 
-				SurveyResponseBO surveyResponseBO1 = surveyAnswerRequest.SurveyAnswerList.ToSurveyResponseBOList(surveyAnswerRequest.Criteria.UserId)[0];
+            // Validate user credentials
+            if ((Validate.UserCredentials & validate) == Validate.UserCredentials)
+            {
+                if (_userName == null)
+                {
+                    response.Acknowledge = AcknowledgeType.Failure;
+                    response.Message = "Please login and provide user credentials before accessing these methods.";
+                    //return false;
+                }
+            }
 
-				List<SurveyResponseBO> SurveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
-				foreach (var surveyResponseBO in SurveyResponseBOList)
-				{
-					surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
-					surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
-				}
 
-				List<SurveyResponseBO> ResultList = surveyResponseImplementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
+            return result;
+        }
 
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-		}
+        public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            try
+            {
+                SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-		public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)
-		{
+                SurveyResponseBO surveyResponseBO1 = surveyAnswerRequest.SurveyAnswerList.ToSurveyResponseBOList(surveyAnswerRequest.Criteria.UserId)[0];
+
+                List<SurveyResponseBO> SurveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
+                foreach (var surveyResponseBO in SurveyResponseBOList)
+                {
+                    surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+                    surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                }
+
+                List<SurveyResponseBO> ResultList = surveyResponseImplementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
+
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
+
+        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)
+        {
             try
             {
                 SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
@@ -438,29 +438,36 @@ namespace Epi.Cloud.DataEntryServices
                     else
                     {
 
-                        surveyResponseImplementation.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
+                        if (surveyAnswerRequest.Action != null && surveyAnswerRequest.Action.Equals("DoNotSaveAction", StringComparison.OrdinalIgnoreCase))
+                        {
+                            surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.Restore);
+                        }
+                        else
+                        {
+                            surveyResponseImplementation.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
+                        }                       
                     }
 
                 }
 
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-	   }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
 
-		public SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			throw new NotImplementedException();
-			try
-			{
+        public SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            throw new NotImplementedException();
+            try
+            {
 #if WebEnterCode
 			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
@@ -471,64 +478,64 @@ namespace Epi.Cloud.DataEntryServices
 
 			return SurveyAnswerResponse;
 #endif //WebEnterCode
-			}
-			catch (Exception ex)
-			{
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-		public FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest formResponseInfoRequest)
-		{
-			throw new NotImplementedException();
-			try
-			{
+        public FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest formResponseInfoRequest)
+        {
+            throw new NotImplementedException();
+            try
+            {
 #if WebEnterCode
 			FormResponseInfoResponse FormResponseInfoResponse = new FormResponseInfoResponse();
 			return FormResponseInfoResponse;
 #endif //WebEnterCode
-			}
-			catch (Exception ex)
-			{
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-		public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			try
-			{
-				SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
+        public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            try
+            {
+                SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
-				SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
+                SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-				SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
+                SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
                 var surveyResponseList = surveyResponseImplementation.GetFormResponseListById(criteria);
 
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
-				surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
-				//Query The number of records
+                surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
+                //Query The number of records
 
-				//result.NumberOfPages = Implementation.GetNumberOfPages(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.IsMobile);
-				//result.NumberOfResponses = Implementation.GetNumberOfResponses(surveyAnswerRequest.Criteria.SurveyId);
+                //result.NumberOfPages = Implementation.GetNumberOfPages(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.IsMobile);
+                //result.NumberOfResponses = Implementation.GetNumberOfResponses(surveyAnswerRequest.Criteria.SurveyId);
 
-				result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
-				result.NumberOfResponses = surveyResponseImplementation.GetNumberOfResponses(surveyAnswerRequest.Criteria);
+                result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
+                result.NumberOfResponses = surveyResponseImplementation.GetNumberOfResponses(surveyAnswerRequest.Criteria);
 
-				//Get form info 
-				Epi.Cloud.BLL.FormInfo formInfoImplementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);
+                //Get form info 
+                Epi.Cloud.BLL.FormInfo formInfoImplementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);
                 var formInfoBO = formInfoImplementation.GetFormInfoByFormId(surveyAnswerRequest.Criteria.SurveyId, false, surveyAnswerRequest.Criteria.UserId);
-				result.FormInfo = formInfoBO.ToFormInfoDTO();
+                result.FormInfo = formInfoBO.ToFormInfoDTO();
 
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				return null;
-			}
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                return null;
+            }
 #if WebEnterCode
 			try
 			{
@@ -568,13 +575,13 @@ namespace Epi.Cloud.DataEntryServices
 				throw new FaultException<CustomFaultException>(customFaultException);
 			}
 #endif //WebEnterCode
-		}
+        }
 
-		public FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest)
-		{
-			throw new NotImplementedException();
-			try
-			{
+        public FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest)
+        {
+            throw new NotImplementedException();
+            try
+            {
 #if WebEnterCode
 			try
 			{
@@ -609,16 +616,16 @@ namespace Epi.Cloud.DataEntryServices
 				throw new FaultException<CustomFaultException>(customFaultException);
 			}
 #endif //WebEnterCode
-			}
-			catch (Exception ex)
-			{
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
         public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest)
-		{
-			try
-			{
+        {
+            try
+            {
                 var rootId = formsHierarchyRequest.SurveyInfo.FormId;
                 var metadatAccessor = new MetadataAccessor(rootId);
                 var viewId = metadatAccessor.GetCurrentFormDigest().ViewId;
@@ -629,33 +636,33 @@ namespace Epi.Cloud.DataEntryServices
 
                 FormsHierarchyResponse formsHierarchyResponse = new FormsHierarchyResponse();
 
-			    List<SurveyResponseBO> AllResponsesIDsList = new List<SurveyResponseBO>();
+                List<SurveyResponseBO> AllResponsesIDsList = new List<SurveyResponseBO>();
 
                 //1- Get All form  ID's
                 List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootId(rootId);
 
                 //2- Get all Responses ID's
                 Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProviderImplementation1 = new SurveyResponseProvider(_surveyResponseDao);
-			    if (!string.IsNullOrEmpty(formsHierarchyRequest.SurveyResponseInfo.ResponseId))
-			    {
-				    AllResponsesIDsList = surveyResponseProviderImplementation1.GetResponsesHierarchyIdsByRootId(formsHierarchyRequest.SurveyResponseInfo.ResponseId);
-			    }
-			    else
-			    {
-				    AllResponsesIDsList = null;
-			    }
+                if (!string.IsNullOrEmpty(formsHierarchyRequest.SurveyResponseInfo.ResponseId))
+                {
+                    AllResponsesIDsList = surveyResponseProviderImplementation1.GetResponsesHierarchyIdsByRootId(formsHierarchyRequest.SurveyResponseInfo.ResponseId);
+                }
+                else
+                {
+                    AllResponsesIDsList = null;
+                }
 
                 //3 Combining the lists.
                 List<FormsHierarchyBO> combinedList = CombineLists(relatedFormIDsList, AllResponsesIDsList);
-			    formsHierarchyResponse.FormsHierarchy = combinedList.ToFormsHierarchyDTOList();
+                formsHierarchyResponse.FormsHierarchy = combinedList.ToFormsHierarchyDTOList();
 
-			    return formsHierarchyResponse;
-			}
-			catch (Exception ex)
-			{
+                return formsHierarchyResponse;
+            }
+            catch (Exception ex)
+            {
                 throw;
-			}
-		}
+            }
+        }
 
         private List<FormsHierarchyBO> CombineLists(List<FormsHierarchyBO> relatedFormIDsList, List<SurveyResponseBO> AllResponsesIDsList)
         {
@@ -682,34 +689,34 @@ namespace Epi.Cloud.DataEntryServices
         }
 
         public FormsInfoResponse GetFormsInfo(FormsInfoRequest formsInfoRequest)
-		{
-			FormsInfoResponse result = new FormsInfoResponse();
-			Epi.Cloud.BLL.FormInfo implementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);
-			try
-			{
-				List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(formsInfoRequest.Criteria.UserId, formsInfoRequest.Criteria.CurrentOrgId);
-				//  result.SurveyInfoList = FormInfoBOList;
+        {
+            FormsInfoResponse result = new FormsInfoResponse();
+            Epi.Cloud.BLL.FormInfo implementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);
+            try
+            {
+                List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(formsInfoRequest.Criteria.UserId, formsInfoRequest.Criteria.CurrentOrgId);
+                //  result.SurveyInfoList = FormInfoBOList;
 
-				foreach (FormInfoBO item in FormInfoBOList)
-				{
-					result.FormInfoList.Add(item.ToFormInfoDTO());
-				}
-
-
-			}
-			catch (Exception ex)
-			{
-
-			}
-			return result;
+                foreach (FormInfoBO item in FormInfoBOList)
+                {
+                    result.FormInfoList.Add(item.ToFormInfoDTO());
+                }
 
 
-		}
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return result;
+
+
+        }
         public SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			throw new NotImplementedException();
-			try
-			{
+        {
+            throw new NotImplementedException();
+            try
+            {
 #if WebEnterCode
 			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
@@ -731,17 +738,17 @@ namespace Epi.Cloud.DataEntryServices
 
 			return SurveyAnswerResponse;
 #endif //WebEnterCode
-			}
-			catch (Exception ex)
-			{
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-		public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest surveyAnswerRequest)
-		{
-			throw new NotImplementedException();
-			try
-			{
+        public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest surveyAnswerRequest)
+        {
+            throw new NotImplementedException();
+            try
+            {
 #if WebEnterCode
 			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
@@ -752,14 +759,14 @@ namespace Epi.Cloud.DataEntryServices
 
 			return SurveyAnswerResponse;
 #endif //WebEnterCode
-			}
-			catch (Exception ex)
-			{
-			}
-		}
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
-		public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest surveyInfoRequest)
-		{
+        public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest surveyInfoRequest)
+        {
             var criteria = surveyInfoRequest.Criteria as SurveyInfoCriteria;
             List<string> SurveyIdList = new List<string>();
             foreach (string id in criteria.SurveyIdList)
@@ -835,19 +842,19 @@ namespace Epi.Cloud.DataEntryServices
 			{
 			}
 #endif //WebEnterCode
-		}
+        }
 
-		public bool HasResponse(string childFormId, string parentResponseId)
-		{
-			try
-			{
-				var hasResponse = _surveyResponseProvider.HasResponse(childFormId, parentResponseId);
-				return hasResponse;
-			}
-			catch (Exception ex)
-			{
-				throw;
-			}
-		}
+        public bool HasResponse(string childFormId, string parentResponseId)
+        {
+            try
+            {
+                var hasResponse = _surveyResponseProvider.HasResponse(childFormId, parentResponseId);
+                return hasResponse;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
     }
 }
