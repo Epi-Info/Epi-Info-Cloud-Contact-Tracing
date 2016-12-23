@@ -111,7 +111,6 @@
     <Compile Include="Extensions\UserBOExtensions.cs" />
     <Compile Include="Extensions\UserDTOExtensions.cs" />
     <Compile Include="Helper\RelatedFormsObj.cs" />
-    <Compile Include="Interfaces\ISurveyPersistenceFacade.cs" />
     <Compile Include="DTO\PublishInfoDTO.cs" />
     <Compile Include="Message\Base\AcknowledgeType.cs" />
     <Compile Include="Message\Base\PersistType.cs" />

@@ -8,10 +8,9 @@ using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.Constants;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.DTO;
+using Epi.Web.Enter.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
-using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.MVC.Utility
 {

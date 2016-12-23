@@ -1,6 +1,6 @@
 ﻿using Epi.Cloud.DataConsistencyServices.Common;
 using Epi.DataPersistence.DataStructures;
-using Epi.Web.Common.Interfaces;
+using Epi.DataPersistence.Common.Interfaces;
 
 namespace Epi.Cloud.DataConsistencyServices
 {

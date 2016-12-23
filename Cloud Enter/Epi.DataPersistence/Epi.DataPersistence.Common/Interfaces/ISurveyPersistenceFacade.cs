@@ -6,7 +6,7 @@ using Epi.FormMetadata.DataStructures;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Message;
 
-namespace Epi.Web.Common.Interfaces
+namespace Epi.DataPersistence.Common.Interfaces
 {
     public interface ISurveyPersistenceFacade
     {

@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MetadataServices.Extensions;
-using Epi.Web.Common.Interfaces;
+using Epi.DataPersistence.Common.Interfaces;
 using Epi.Web.EF;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {
-	/// <summary>
-	/// Implementation of the ISurveyInfoDao interface.
-	/// </summary>
-	public class SurveyInfoDao : MetadataAccessor, ISurveyInfoDao
+    /// <summary>
+    /// Implementation of the ISurveyInfoDao interface.
+    /// </summary>
+    public class SurveyInfoDao : MetadataAccessor, ISurveyInfoDao
     {
         private readonly ISurveyPersistenceFacade _surveyPersistenceFacade;
 

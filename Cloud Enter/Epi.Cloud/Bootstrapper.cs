@@ -67,7 +67,7 @@ namespace Epi.Web.MVC
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterInstance<Epi.Web.Common.Interfaces.ISurveyPersistenceFacade>(surveyDocumentDBFacade);
+            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(surveyDocumentDBFacade);
 
 			container.RegisterControllers();
 

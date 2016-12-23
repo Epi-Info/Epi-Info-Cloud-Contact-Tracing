@@ -1,9 +1,9 @@
-﻿using Epi.Cloud.ServiceBus;
+﻿using System;
+using Epi.Cloud.MetadataServices.ProxiesService;
+using Epi.Cloud.ServiceBus;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 using Newtonsoft.Json;
-using Epi.Cloud.MetadataServices.ProxiesService;
-using System;
 
 namespace Epi.Cloud.WebJobs
 {
