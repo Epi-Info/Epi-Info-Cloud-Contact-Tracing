@@ -14,7 +14,7 @@ namespace Epi.Web.MVC.Controllers
        //declare  SurveyFacade
         private ISurveyFacade _isurveyFacade;
         private  string RequiredList ="";
-        private Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
+        private Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
         /// <summary>
         /// injecting surveyFacade to the constructor 
         /// </summary>

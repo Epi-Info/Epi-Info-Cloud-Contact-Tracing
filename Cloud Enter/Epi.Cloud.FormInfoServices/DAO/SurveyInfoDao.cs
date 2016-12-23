@@ -6,7 +6,7 @@ using Epi.Cloud.MetadataServices.Extensions;
 using Epi.Web.Common.Interfaces;
 using Epi.Web.EF;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {

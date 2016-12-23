@@ -51,7 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataInterface\IAdminDao.cs" />
     <Compile Include="DataInterface\IFormInfoDao.cs" />
     <Compile Include="DataInterface\IFormSettingDao.cs" />
     <Compile Include="DataInterface\IOrganizationDao.cs" />

@@ -43,12 +43,12 @@ namespace Epi.Web.MVC
 			container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();
 
 			// DAOs
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.SurveyInfoServices.DAO.SurveyInfoDao>();
-			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
-            container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IFormInfoDao, Epi.Cloud.SurveyInfoServices.DAO.FormInfoDao>();
-			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IFormSettingDao, Epi.Web.EF.EntityFormSettingDao>();
-			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IUserDao, Epi.Web.EF.EntityUserDao>();
-			container.RegisterType<Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao, Epi.Web.EF.EntityOrganizationDao>();
+            container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.SurveyInfoServices.DAO.SurveyInfoDao>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
+            container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormInfoDao, Epi.Cloud.SurveyInfoServices.DAO.FormInfoDao>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormSettingDao, Epi.Web.EF.EntityFormSettingDao>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IUserDao, Epi.Web.EF.EntityUserDao>();
+			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao, Epi.Web.EF.EntityOrganizationDao>();
 
 			// Facades
 			container.RegisterType<Epi.Cloud.Facades.Interfaces.ISurveyFacade, Epi.Cloud.Facades.SurveyFacade>();

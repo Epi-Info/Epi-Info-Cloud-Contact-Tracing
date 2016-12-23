@@ -67,10 +67,6 @@
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
       <Name>Epi.Web.EF</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
-      <Project>{b8af69bd-3ce1-4aa5-875d-3fb87c7fce44}</Project>
-      <Name>Epi.Web.Interfaces</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

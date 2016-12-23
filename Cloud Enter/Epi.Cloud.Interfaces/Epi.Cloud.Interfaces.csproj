@@ -41,9 +41,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataInterfaces\IDataEntryService.cs" />
+    <Compile Include="DataInterfaces\IFormInfoDao.cs" />
+    <Compile Include="DataInterfaces\IFormSettingDao.cs" />
     <Compile Include="DataInterfaces\IFormSettingsService.cs" />
+    <Compile Include="DataInterfaces\IOrganizationDao.cs" />
+    <Compile Include="DataInterfaces\ISurveyInfoDao.cs" />
     <Compile Include="DataInterfaces\ISurveyInfoService.cs" />
     <Compile Include="DataInterfaces\ISecurityDataService.cs" />
+    <Compile Include="DataInterfaces\ISurveyResponseDao.cs" />
+    <Compile Include="DataInterfaces\IUserDao.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +60,10 @@
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.DynamicForms.Core\Epi.Web.DynamicForms.Core.csproj">
       <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>

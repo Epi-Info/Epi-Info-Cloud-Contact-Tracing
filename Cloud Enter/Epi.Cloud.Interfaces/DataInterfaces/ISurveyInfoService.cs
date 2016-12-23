@@ -9,8 +9,8 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 		SurveyInfoBO GetSurveyInfoById(string surveyId);
 		SurveyInfoBO GetParentInfoByChildId(string childSurveyId);
 
-        SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest pRequest);
+		SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest pRequest);
 
-        List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId);
-    }
+		List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId);
+	}
 }

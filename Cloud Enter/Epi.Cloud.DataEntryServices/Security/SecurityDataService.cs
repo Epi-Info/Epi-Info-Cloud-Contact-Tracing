@@ -10,7 +10,7 @@ using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Extensions;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices
 {

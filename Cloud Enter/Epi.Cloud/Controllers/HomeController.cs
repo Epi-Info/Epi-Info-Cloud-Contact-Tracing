@@ -19,7 +19,7 @@ using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Extensions;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Model;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using Epi.Cloud.DataEntryServices.Extensions;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.DataPersistence.Constants;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.Extensions;
-
+using Epi.Web.Enter.Common.Message;
 using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
-using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -22,9 +20,9 @@ namespace Epi.Cloud.DataEntryServices
             Success = 2,
 
         }
-        private Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _surveyResponseDao;
+        private ISurveyResponseDao _surveyResponseDao;
 
-        public SurveyResponseProvider(Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao)
+        public SurveyResponseProvider(ISurveyResponseDao surveyResponseDao)
         {
             _surveyResponseDao = surveyResponseDao;
         }

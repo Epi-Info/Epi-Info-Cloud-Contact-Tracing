@@ -4,7 +4,7 @@ using System.Linq;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using System.Xml.Linq;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 using System.Configuration;
 using Epi.Cloud.Common.Constants;
 

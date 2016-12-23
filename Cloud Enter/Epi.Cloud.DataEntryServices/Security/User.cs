@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Security;
 using System.Configuration;

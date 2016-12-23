@@ -1,5 +1,4 @@
-﻿using System;
-using Epi.Web.Enter.Common.Message;
+﻿using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {

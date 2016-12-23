@@ -2,8 +2,8 @@
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {
-    public interface ISecurityDataService
-    {
+	public interface ISecurityDataService
+	{
 		UserAuthenticationResponse PassCodeLogin(UserAuthenticationRequest pRequest);
 
 		UserAuthenticationResponse SetPassCode(UserAuthenticationRequest pRequest);
@@ -11,11 +11,11 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 		UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest pRequest);
 
 
-        UserAuthenticationResponse ValidateUser(UserAuthenticationRequest pRequest);
+		UserAuthenticationResponse ValidateUser(UserAuthenticationRequest pRequest);
 
 		UserAuthenticationResponse GetUser(UserAuthenticationRequest request);
 
-        bool UpdateUser(UserAuthenticationRequest request);
+		bool UpdateUser(UserAuthenticationRequest request);
 
 		FormSettingResponse SaveSettings(FormSettingRequest FormSettingReq);
 

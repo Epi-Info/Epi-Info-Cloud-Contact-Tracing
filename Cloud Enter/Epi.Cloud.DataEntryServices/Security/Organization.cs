@@ -11,9 +11,9 @@ namespace Epi.Web.BLL
 
     public class Organization
     {
-        private Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
+        private Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
 
-        public Organization(Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao pOrganizationDao)
+        public Organization(Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao pOrganizationDao)
         {
             this.OrganizationDao = pOrganizationDao;
         }

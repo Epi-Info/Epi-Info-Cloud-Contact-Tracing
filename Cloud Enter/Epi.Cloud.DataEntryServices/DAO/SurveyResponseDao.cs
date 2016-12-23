@@ -10,7 +10,7 @@ using Epi.FormMetadata.DataStructures;
 using Epi.Web.Common.Interfaces;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {

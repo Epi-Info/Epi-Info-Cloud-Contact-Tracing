@@ -17,7 +17,8 @@ using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Extensions;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
+using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Cloud.DataEntryServices;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -28,8 +29,8 @@ namespace Epi.Cloud.DataEntryServices
 		private readonly IFormInfoDao _formInfoDao;
         private readonly ISurveyInfoDao _surveyInfoDao;
 
-        private readonly Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao _surveyResponseDao;
-		private readonly Epi.Cloud.DataEntryServices.SurveyResponseProvider _surveyResponseProvider;
+        private readonly ISurveyResponseDao _surveyResponseDao;
+		private readonly SurveyResponseProvider _surveyResponseProvider;
 
 		private string _accessToken;
 		private string _userName;
@@ -39,8 +40,8 @@ namespace Epi.Cloud.DataEntryServices
 			ISecurityDataService securityDataService,
 			IFormInfoDao formInfoDao,
             ISurveyInfoDao surveyInfoDao,
-            Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider,
-			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyResponseDao)
+            SurveyResponseProvider surveyResponseProvider,
+			ISurveyResponseDao surveyResponseDao)
 		{
 			_surveyInfoService = surveyInfoService;
 			_securityDataService = securityDataService;
@@ -461,9 +462,9 @@ namespace Epi.Cloud.DataEntryServices
 			try
 			{
 #if WebEnterCode
-			Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
+			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
 			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
 			List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetAncestorResponseIdsByChildId(pRequest.Criteria.SurveyAnswerIdList[0]);
 			SurveyAnswerResponse.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
@@ -534,8 +535,8 @@ namespace Epi.Cloud.DataEntryServices
 				SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
 
 
-				Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-				Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
+				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+				Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
 				Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(ISurveyResponseDao);
 
 				SurveyAnswerCriteria criteria = pRequest.Criteria;
@@ -577,7 +578,7 @@ namespace Epi.Cloud.DataEntryServices
 #if WebEnterCode
 			try
 			{
-				Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 
 
 				IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
@@ -710,9 +711,9 @@ namespace Epi.Cloud.DataEntryServices
 			try
 			{
 #if WebEnterCode
-			Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
+			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
 			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
 
 			//List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetResponsesByRelatedFormId(pRequest.Criteria.SurveyAnswerIdList[0], pRequest.Criteria.SurveyId);
@@ -742,9 +743,9 @@ namespace Epi.Cloud.DataEntryServices
 			try
 			{
 #if WebEnterCode
-			Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
 			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
+			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
 			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
 			List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetResponsesHierarchyIdsByRootId(pRequest.SurveyAnswerList[0].ResponseId);
 			SurveyAnswerResponse.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
@@ -779,8 +780,8 @@ namespace Epi.Cloud.DataEntryServices
 				SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
 				//Epi.Cloud.BLL.SurveyInfo implementation = new Epi.Cloud.BLL.SurveyInfo(_surveyInfoDao);
 
-				Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-				Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
+				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+				Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
 				Epi.Cloud.BLL.SurveyInfo implementation = new Epi.Cloud.BLL.SurveyInfo(surveyInfoDao);
 
 				// Validate client tag, access token, and user credentials

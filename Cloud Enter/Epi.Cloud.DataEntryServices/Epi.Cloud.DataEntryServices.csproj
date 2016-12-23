@@ -66,6 +66,10 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Facades\Epi.Cloud.Facades.csproj">
+      <Project>{47c60f59-94a2-44ae-b556-f9b3d03e191e}</Project>
+      <Name>Epi.Cloud.Facades</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.FormInfoServices\Epi.Cloud.SurveyInfoServices.csproj">
       <Project>{3725080E-4C8A-4DD2-8435-D42BCAEE5E6F}</Project>
       <Name>Epi.Cloud.SurveyInfoServices</Name>
@@ -121,10 +125,6 @@
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
       <Name>Epi.Web.EF</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
-      <Project>{b8af69bd-3ce1-4aa5-875d-3fb87c7fce44}</Project>
-      <Name>Epi.Web.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

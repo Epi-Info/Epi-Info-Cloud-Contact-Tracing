@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Epi.Cloud.Common.BusinessObjects;
+using Epi.DataPersistence.Constants;
+using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Criteria;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
@@ -16,28 +17,30 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// <summary>
         /// Gets a specific SurveyResponse.
         /// </summary>
-        /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
+        /// <param name="surveyResponseId">Unique SurveyResponse identifier.</param>
         /// <returns>SurveyResponse.</returns>
-        List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1);
-        List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
+        List<SurveyResponseBO> GetSurveyResponse(List<string> surveyResponseIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1);
+        List<SurveyResponseBO> GetSurveyResponseSize(List<string> surveyResponseIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1, int responseMaxSize = -1);
+
+        SurveyResponseBO GetSurveyResponseState(string responseId);
 
         /// <summary>
         /// Gets a specific SurveyResponse.
         /// </summary>
-        /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
+        /// <param name="surveyResponseId">Unique SurveyResponse identifier.</param>
         /// <returns>SurveyResponse.</returns>
-        List<SurveyResponseBO> GetSurveyResponseBySurveyId(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1);
+        List<SurveyResponseBO> GetSurveyResponseBySurveyId(List<string> surveyIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1);
 
-        List<SurveyResponseBO> GetSurveyResponseBySurveyIdSize(List<string> SurveyIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
+        List<SurveyResponseBO> GetSurveyResponseBySurveyIdSize(List<string> surveyIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1, int responseMaxSize = -1);
 
         /// <summary>
         /// Get SurveyResponses based on criteria.
         /// </summary>
         /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
         /// <returns>SurveyResponse.</returns>
-        List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1);
+        List<SurveyResponseBO> GetSurveyResponse(List<string> surveyAnswerIdList, string surveyId, DateTime dateCompleted, bool isDraftMode = false, int statusId = -1, int pageNumber = -1, int pageSize = -1);
 
-        List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
+        List<SurveyResponseBO> GetSurveyResponseSize(List<string> surveyAnswerIdList, string pSurveyId, DateTime dateCompleted, bool isDraftMode = false, int statusId = -1, int pageNumber = -1, int pageSize = -1, int responseMaxSize = -1);
         /// <summary>
         /// Gets a sorted list of all SurveyResponses.
         /// </summary>
@@ -66,54 +69,52 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// <remarks>
         /// Following insert, SurveyResponse object will contain the new identifier.
         /// </remarks>
-        /// <param name="SurveyResponse">SurveyResponse.</param>
-        void InsertSurveyResponse(SurveyResponseBO SurveyResponse);
+        /// <param name="surveyResponse">SurveyResponse.</param>
+        void InsertSurveyResponse(SurveyResponseBO surveyResponse);
         /// <summary>
         /// Inserts a new SurveyResponse. 
         /// </summary>
         /// <remarks>
         /// Following insert, SurveyResponse object will contain the new identifier.
         /// </remarks>
-        /// <param name="SurveyResponse">SurveyResponse.</param>
-        void InsertChildSurveyResponse(SurveyResponseBO SurveyResponse);
+        /// <param name="surveyResponse">SurveyResponse.</param>
+        void InsertChildSurveyResponse(SurveyResponseBO surveyResponse);
         /// <summary>
         /// Updates a SurveyResponse.
         /// </summary>
-        /// <param name="SurveyResponse">SurveyResponse.</param>
-        void UpdateSurveyResponse(SurveyResponseBO SurveyResponse);
+        /// <param name="surveyResponse">SurveyResponse.</param>
+        void UpdateSurveyResponse(SurveyResponseBO surveyResponse);
 
         /// <summary>
         /// Deletes a SurveyResponse
         /// </summary>
-        /// <param name="SurveyResponse">SurveyResponse.</param>
-        void DeleteSurveyResponse(SurveyResponseBO SurveyResponse);
-#if RequiresUserAuthenticationObjects
+        /// <param name="surveyResponse">SurveyResponse.</param>
+        void DeleteSurveyResponse(SurveyResponseBO surveyResponse);
         void UpdatePassCode(UserAuthenticationRequestBO passcodeBO);
         UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
-#endif //RequiresUserAuthenticationObjects
-
-        List<SurveyResponseBO> GetFormResponseByFormId(string FormId, int PageNumber, int PageSize);
+        List<SurveyResponseBO> GetFormResponseByFormId(string formId, int pageNumber, int pageSize);
         List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria);
-        int GetFormResponseCount(string FormId);
-        int GetFormResponseCount(SurveyAnswerCriteria Criteria);
-        string GetResponseParentId(string ResponseId);
-        SurveyResponseBO GetSingleResponse(string ResponseId);
-        List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string RootId);
-        void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse);
-        SurveyResponseBO GetFormResponseByParentRecordId(string ResponseId);
-        List<SurveyResponseBO> GetAncestorResponseIdsByChildId(string ChildId);
-        List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, string SurveyId);
-        List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, SurveyAnswerCriteria Criteria);
-        void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse);
-        SurveyResponseBO GetResponse(string ResponseId);
-        //void DeleteResponseXml(ResponseXmlBO ResponseXmlBO);
-        //void InsertResponseXml(ResponseXmlBO item);
-        bool ISResponseExists(Guid ResponseId);
-        //bool ISResponseExists(SurveyAnswerCriteria Criteria);
+        int GetFormResponseCount(string formId);
+        int GetFormResponseCount(SurveyAnswerCriteria criteria);
+        string GetResponseParentId(string responseId);
+        SurveyResponseBO GetSingleResponse(string responseId);
+        List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string rootId);
+        void DeleteSingleSurveyResponse(SurveyResponseBO surveyResponse);
+        SurveyResponseBO GetFormResponseByParentRecordId(string responseId);
+        List<SurveyResponseBO> GetAncestorResponseIdsByChildId(string childId);
+        List<SurveyResponseBO> GetResponsesByRelatedFormId(string responseId, string SurveyId);
+        List<SurveyResponseBO> GetResponsesByRelatedFormId(string responseId, SurveyAnswerCriteria Criteria);
+        void DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponse);
+        SurveyResponseBO GetResponse(string responseId);
+        void DeleteResponse(ResponseBO responseBO);
+        void InsertResponse(ResponseBO item);
+        bool DoChildrenExistForResponseId(Guid responseId);
+        //bool DoesResponseExist(SurveyAnswerCriteria Criteria);
 
-        bool HasResponse(SurveyAnswerCriteria Criteria);
-        void UpdateRecordStatus(SurveyResponseBO SurveyResponseBO);
-        void UpdateRecordStatus(string ResponseId, int Status);
-        int GetDataAccessRule(string FormId, int UserId);
+        //bool DoesResponseExist(Guid responseId);
+        bool HasResponse(SurveyAnswerCriteria criteria);
+        void UpdateRecordStatus(SurveyResponseBO surveyResponseBO);
+        void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange);
+        int GetDataAccessRule(string formId, int userId);
     }
 }
