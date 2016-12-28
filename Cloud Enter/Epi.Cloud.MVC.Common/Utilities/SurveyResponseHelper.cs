@@ -92,9 +92,31 @@ namespace Epi.Web.MVC.Utility
                     
                     ResponseQA = fieldNames.Select(x => new { Key = x.ToLower(), Value = string.Empty }).ToDictionary(n => n.Key, v => v.Value)
                 };
+                SetRequiredList(pageDigest.Fields);
                 formResponseDetail.AddPageResponseDetail(pageResponseDetail);
             }
             return formResponseDetail;
         }
+
+
+        public void SetRequiredList(AbridgedFieldInfo[] _Fields)
+        {
+            bool isRequired = false;
+            foreach (var field in _Fields)
+            {
+                if (field.MutableAttributes.IsRequired == true)
+                {
+                    if (this.RequiredList != "")
+                    {
+                        this.RequiredList = this.RequiredList + "," + field.FieldName.ToLower();
+                    }
+                    else
+                    {
+                        this.RequiredList = field.FieldName.ToLower();
+                    }
+                }
+            } 
+        }
+
     }
 }
