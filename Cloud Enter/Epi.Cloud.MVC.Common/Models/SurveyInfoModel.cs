@@ -1,7 +1,7 @@
 ﻿using System;
 using Epi.Cloud.Common.Metadata;
 
-namespace Epi.Web.Enter.Common.Model
+namespace Epi.Cloud.Common.Model
 {
     /// <summary>
     /// The Survey Model that will be pumped to view

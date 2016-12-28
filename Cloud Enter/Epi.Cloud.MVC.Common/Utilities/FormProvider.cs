@@ -8,7 +8,7 @@ using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.Constants;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
 
@@ -582,19 +582,19 @@ namespace Epi.Web.MVC.Utility
             return NewList;
         }
 
-        protected static List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> GetRelateFormObj(List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
+        protected static List<RelatedFormsInfoDTO> GetRelateFormObj(List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList)
         {
-            List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> List = new List<Enter.Common.Helper.RelatedFormsObj>();
+            List<RelatedFormsInfoDTO> List = new List<RelatedFormsInfoDTO>();
 
             for (int i = 0; surveyAnswerList.Count() > i; i++)
             {
-                Epi.Web.Enter.Common.Helper.RelatedFormsObj RelatedFormsObj = new Epi.Web.Enter.Common.Helper.RelatedFormsObj();
+                RelatedFormsInfoDTO relatedFormsInfo = new RelatedFormsInfoDTO();
 
                 MetadataAccessor metadataAccessor = surveyInfoList[i] as MetadataAccessor;
-                RelatedFormsObj.FieldDigests = metadataAccessor.GetFieldDigests(metadataAccessor.CurrentFormId);
-                RelatedFormsObj.ResponseDetail = surveyAnswerList[i].ResponseDetail ?? new FormResponseDetail();
+                relatedFormsInfo.FieldDigests = metadataAccessor.GetFieldDigests(metadataAccessor.CurrentFormId);
+                relatedFormsInfo.ResponseDetail = surveyAnswerList[i].ResponseDetail ?? new FormResponseDetail();
 
-                List.Add(RelatedFormsObj);
+                List.Add(relatedFormsInfo);
             }
 
             return List;

@@ -55,13 +55,13 @@
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
+      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
+      <Name>Epi.DataPersistence.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6e2f059b-c1cd-401f-8a63-dc2933cfb0d8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>

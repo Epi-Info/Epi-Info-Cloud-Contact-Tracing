@@ -9,8 +9,8 @@ using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Criteria;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -255,12 +255,12 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return resultRows;
         }
 
-        public void InsertResponse(ResponseBO responseBO)
+        public void InsertResponse(FormResponseDetail formResponseDetail)
         {
             // TODO: DocumentDB implementation required
             try
             {
-                Guid Id = new Guid(responseBO.ResponseId);
+                Guid Id = new Guid(formResponseDetail.GlobalRecordID);
 
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
@@ -1919,7 +1919,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         }
 
 
-        public void DeleteResponse(ResponseBO responseBO)
+        public void DeleteResponse(FormResponseDetail formResponseDetail)
         {
             // TODO: DocumentDB implementation required
 

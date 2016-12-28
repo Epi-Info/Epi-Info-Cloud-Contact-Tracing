@@ -4,11 +4,11 @@ using System.Linq;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.DataPersistence.Constants;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.Extensions;
-using Epi.Web.Enter.Common.Message;
-using ResponseBO = Epi.Web.Enter.Common.BusinessObject.ResponseBO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Criteria;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -186,13 +186,7 @@ namespace Epi.Cloud.DataEntryServices
         {
             foreach (var item in surveyResponseBOs)
             {
-                ResponseBO responseBO = new ResponseBO();
-                responseBO.User = userId;
-                responseBO.ResponseId = item.ResponseId;
-                responseBO.IsNewRecord = isNewRecord;
-                responseBO.ResponseDetail = item.ResponseDetail;
-
-                _surveyResponseDao.InsertResponse(responseBO);
+                _surveyResponseDao.InsertResponse(item.ResponseDetail);
             }
 
             return surveyResponseBOs;
@@ -382,7 +376,7 @@ namespace Epi.Cloud.DataEntryServices
             return surveyResponseBO;
         }
 
-        public void DeleteResponse(ResponseBO ResponseXmlBO)
+        public void DeleteResponse(FormResponseDetail formResponseDetail)
         {
             throw new NotImplementedException("SurveyResponse.DeleteResponseXml is not implemented");
 #if NotImplemented
@@ -482,7 +476,7 @@ namespace Epi.Cloud.DataEntryServices
             SurveyIdList.Add(SurveyId);
 
             SurveyInfoRequest pRequest = new SurveyInfoRequest();
-            var criteria = pRequest.Criteria as Epi.Web.Enter.Common.Criteria.SurveyInfoCriteria;
+            var criteria = pRequest.Criteria as Epi.Cloud.Common.Criteria.SurveyInfoCriteria;
 
             var entityDaoFactory = new EF.EntityDaoFactory();
             var surveyInfoDao = entityDaoFactory.SurveyInfoDao;

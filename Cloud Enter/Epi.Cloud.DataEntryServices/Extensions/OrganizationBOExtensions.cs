@@ -1,5 +1,5 @@
 ﻿using Epi.Web.EF;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {

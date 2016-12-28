@@ -7,9 +7,9 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.Model;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -33,7 +33,7 @@ namespace Epi.Web.MVC.Utility
 		public static SurveyAnswerDTO CreateSurveyResponse(string surveyId,
 														string responseId, 
 														SurveyAnswerRequest surveyAnswerRequest1,
-														Enter.Common.DTO.SurveyAnswerDTO surveyAnswerDTO,
+														SurveyAnswerDTO surveyAnswerDTO,
 														SurveyResponseHelper surveyResponseHelper,
 														IDataEntryService dataEntryService,
 														int UserId,
@@ -41,8 +41,6 @@ namespace Epi.Web.MVC.Utility
 														string RelateResponseId = "",
 														bool IsEditMode = false,
 														int CurrentOrgId = -1)
-
-
 		{
 			bool AddRoot = false;
 			SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
@@ -386,7 +384,7 @@ namespace Epi.Web.MVC.Utility
 			string DecryptedUserId = "";
 			try
 			{
-				DecryptedUserId = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(Id);
+				DecryptedUserId = Epi.Common.Security.Cryptography.Decrypt(Id);
 			}
 			catch (Exception ex)
 			{

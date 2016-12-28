@@ -1,6 +1,6 @@
 ﻿using Epi.Cloud.Common.Constants;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Extensions
 {

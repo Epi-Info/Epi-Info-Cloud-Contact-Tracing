@@ -104,13 +104,17 @@
       <Project>{247f0154-3f6b-409b-beba-1bf9302d3b9e}</Project>
       <Name>Epi.Cloud.ServiceBus</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Common\Epi.Common.csproj">
+      <Project>{F4C81667-C307-4DB4-A727-FD42342799CF}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>

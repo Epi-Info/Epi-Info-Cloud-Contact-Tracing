@@ -44,6 +44,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
       <Name>Epi.DataPersistence.Common</Name>

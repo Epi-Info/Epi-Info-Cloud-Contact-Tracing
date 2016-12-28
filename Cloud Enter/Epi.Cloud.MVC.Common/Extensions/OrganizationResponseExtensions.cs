@@ -1,4 +1,4 @@
-﻿using Epi.Web.Enter.Common.Message;
+﻿using Epi.Cloud.Common.Message;
 using Epi.Web.MVC.Models;
 
 namespace Epi.Cloud.MVC.Extensions

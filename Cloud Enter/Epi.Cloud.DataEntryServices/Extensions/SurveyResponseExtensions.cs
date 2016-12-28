@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.DataPersistence.DataStructures;
-using SurveyResponseBO = Epi.Web.Enter.Common.BusinessObject.SurveyResponseBO;
+using SurveyResponseBO = Epi.Cloud.Common.BusinessObjects.SurveyResponseBO;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {

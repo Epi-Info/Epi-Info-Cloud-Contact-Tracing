@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Extensions;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF

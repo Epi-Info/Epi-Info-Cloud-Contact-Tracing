@@ -47,9 +47,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessObjects\AdminBO.cs" />
+    <Compile Include="BusinessObjects\BusinessObject.cs" />
+    <Compile Include="BusinessObjects\DbConnectionStringBO.cs" />
+    <Compile Include="BusinessObjects\FormInfoBO.cs" />
+    <Compile Include="BusinessObjects\FormSettingBO.cs" />
+    <Compile Include="BusinessObjects\FormsHierarchyBO.cs" />
+    <Compile Include="BusinessObjects\OrganizationBO.cs" />
+    <Compile Include="BusinessObjects\SurveyInfoBO.cs" />
+    <Compile Include="BusinessObjects\UserAuthenticationRequestBO.cs" />
+    <Compile Include="BusinessObjects\UserAuthenticationResponseBO.cs" />
+    <Compile Include="BusinessObjects\UserBO.cs" />
+    <Compile Include="BusinessRules\BusinessRule.cs" />
+    <Compile Include="BusinessRules\ValidateCompare.cs" />
+    <Compile Include="BusinessRules\ValidateCreditcard.cs" />
+    <Compile Include="BusinessRules\ValidateEmail.cs" />
+    <Compile Include="BusinessRules\ValidateId.cs" />
+    <Compile Include="BusinessRules\ValidateIPAddress.cs" />
+    <Compile Include="BusinessRules\ValidateLength.cs" />
+    <Compile Include="BusinessRules\ValidateRange.cs" />
+    <Compile Include="BusinessRules\ValidateRegex.cs" />
+    <Compile Include="BusinessRules\ValidateRequired.cs" />
+    <Compile Include="BusinessRules\ValidationDataType.cs" />
+    <Compile Include="BusinessRules\ValidationOperator.cs" />
     <Compile Include="Constants\AppSettings.cs" />
     <Compile Include="BusinessObjects\PageInfoBO.cs" />
-    <Compile Include="BusinessObjects\ResponseBO.cs" />
     <Compile Include="BusinessObjects\SurveyRequestBO.cs" />
     <Compile Include="CaseInsesitiveEqualityComparer.cs" />
     <Compile Include="Configuration\ConfigurationHelper.cs" />
@@ -60,12 +82,64 @@
     <Compile Include="Constants\Roles.cs" />
     <Compile Include="Constants\SessionKeys.cs" />
     <Compile Include="Constants\SurveyTypes.cs" />
-    <Compile Include="DTO.WebEnter\SurveyAnswerDTO.cs" />
-    <Compile Include="DTO.WebEnter\SurveyAnswerStateDTO.cs" />
+    <Compile Include="Criteria\Criteria.cs" />
+    <Compile Include="Criteria\FormInfoCriteria.cs" />
+    <Compile Include="Criteria\OrganizationCriteria.cs" />
+    <Compile Include="Criteria\SurveyAnswerCriteria.cs" />
+    <Compile Include="Criteria\SurveyInfoCriteria.cs" />
     <Compile Include="DTO.WebEnter\OrganizationDTO.cs" />
+    <Compile Include="DTO\AdminDTO.cs" />
+    <Compile Include="DTO\FormResponseInfoDTO.cs" />
+    <Compile Include="DTO\FormSettingDTO.cs" />
+    <Compile Include="DTO\FormsHierarchyDTO.cs" />
+    <Compile Include="DTO\PageInfoDTO.cs" />
     <Compile Include="DTO\PassCodeDTO.cs" />
+    <Compile Include="DTO\PreFilledAnswerDTO.cs" />
+    <Compile Include="DTO\PublishInfoDTO.cs" />
+    <Compile Include="DTO\RelatedFormsInfoDTO.cs" />
     <Compile Include="DTO\ResponseDTO.cs" />
     <Compile Include="DTO.WebEnter\UserDTO.cs" />
+    <Compile Include="DTO\SurveyControlDTO.cs" />
+    <Compile Include="DTO\SurveyInfoDTO.cs" />
+    <Compile Include="Extensions\FormSettingBOExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Extensions\OrganizationBOExtensions.cs" />
+    <Compile Include="Extensions\OrganizationDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyAnswerDTOExtensions.cs" />
+    <Compile Include="Extensions\SurveyInfoBOExtensions.cs" />
+    <Compile Include="Extensions\SurveyResponseBOExtensions.cs" />
+    <Compile Include="Extensions\UserAuthenticationRequestExtensions.cs" />
+    <Compile Include="Extensions\UserAuthenticationResponseBOExtensions.cs" />
+    <Compile Include="Extensions\UserBOExtensions.cs" />
+    <Compile Include="Extensions\UserDTOExtensions.cs" />
+    <Compile Include="Message.WebEnter\FormResponseInfoRequest.cs" />
+    <Compile Include="Message.WebEnter\FormResponseInfoResponse.cs" />
+    <Compile Include="Message.WebEnter\FormSettingRequest.cs" />
+    <Compile Include="Message.WebEnter\FormSettingResponse.cs" />
+    <Compile Include="Message.WebEnter\FormsHierarchyRequest.cs" />
+    <Compile Include="Message.WebEnter\FormsHierarchyResponse.cs" />
+    <Compile Include="Message.WebEnter\FormsInfoRequest.cs" />
+    <Compile Include="Message.WebEnter\FormsInfoResponse.cs" />
+    <Compile Include="Message.WebEnter\LoginRequest.cs" />
+    <Compile Include="Message.WebEnter\LoginResponse.cs" />
+    <Compile Include="Message.WebEnter\LogoutRequest.cs" />
+    <Compile Include="Message.WebEnter\LogoutResponse.cs" />
+    <Compile Include="Message.WebEnter\OrganizationRequest.cs" />
+    <Compile Include="Message.WebEnter\OrganizationResponse.cs" />
+    <Compile Include="Message.WebEnter\PreFilledAnswerRequest.cs" />
+    <Compile Include="Message.WebEnter\PreFilledAnswerResponse.cs" />
+    <Compile Include="Message.WebEnter\PublishRequest.cs" />
+    <Compile Include="Message.WebEnter\PublishResponse.cs" />
+    <Compile Include="Message.WebEnter\SurveyAnswerRequest.cs" />
+    <Compile Include="Message.WebEnter\SurveyInfoRequest.cs" />
+    <Compile Include="Message.WebEnter\SurveyInfoResponse.cs" />
+    <Compile Include="Message.WebEnter\SurveyRequest.cs" />
+    <Compile Include="Message.WebEnter\TokenRequest.cs" />
+    <Compile Include="Message.WebEnter\TokenResponse.cs" />
+    <Compile Include="Message.WebEnter\UserAuthenticationRequest.cs" />
+    <Compile Include="Message.WebEnter\UserAuthenticationResponse.cs" />
+    <Compile Include="Message.WebEnter\UserRequest.cs" />
+    <Compile Include="Message.WebEnter\UserResponse.cs" />
     <Compile Include="Metadata\FieldAttributes.cs" />
     <Compile Include="Metadata\Interfaces\IProjectMetadataProvider.cs" />
     <Compile Include="Metadata\MetadataAccessor.cs" />
@@ -77,8 +151,16 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
-      <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
+      <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">

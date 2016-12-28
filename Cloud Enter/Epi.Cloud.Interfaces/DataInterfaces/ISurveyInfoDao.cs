@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {

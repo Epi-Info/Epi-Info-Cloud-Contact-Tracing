@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Epi.DataPersistence.DataStructures;
 
-namespace Epi.Web.Enter.Common.DTO
+namespace Epi.Cloud.Common.DTO
 {
     public class SurveyAnswerDTO : SurveyAnswerStateDTO
     {

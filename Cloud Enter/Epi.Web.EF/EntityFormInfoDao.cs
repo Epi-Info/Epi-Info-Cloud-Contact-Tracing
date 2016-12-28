@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using System.Data;
 using Epi.Cloud.Common.Constants;

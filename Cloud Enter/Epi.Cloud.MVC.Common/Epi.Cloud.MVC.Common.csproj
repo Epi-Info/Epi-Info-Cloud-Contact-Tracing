@@ -110,6 +110,14 @@
       <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
@@ -125,10 +133,6 @@
     <ProjectReference Include="..\Epi.Web.CheckCodeEngine\Epi.Web.CheckCodeEngine.csproj">
       <Project>{6b084882-ef4f-4cf0-85b1-1e8c357ae822}</Project>
       <Name>Epi.Web.CheckCodeEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

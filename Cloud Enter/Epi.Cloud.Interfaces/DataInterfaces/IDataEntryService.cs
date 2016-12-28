@@ -1,5 +1,5 @@
-﻿using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Message;
+﻿using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Message;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {

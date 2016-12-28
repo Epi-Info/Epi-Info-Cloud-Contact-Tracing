@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 using System;
-using Epi.Web.Enter.Common.Security;
+using Epi.Common.Security;
 using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Web.EF

@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using Epi.Cloud.Common.Constants;
 using Epi.Web.EF;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO

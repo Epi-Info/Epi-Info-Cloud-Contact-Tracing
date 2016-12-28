@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Web.Mvc;
 using System.Web.Security;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using Epi.Web.MVC.Models;
 using Epi.Cloud.Facades.Interfaces;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.Model;
 
 namespace Epi.Web.MVC.Controllers
 {

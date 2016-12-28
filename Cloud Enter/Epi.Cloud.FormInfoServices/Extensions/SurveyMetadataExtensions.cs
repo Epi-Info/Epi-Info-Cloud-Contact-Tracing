@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Web.EF;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 
 namespace Epi.Cloud.SurveyInfoServices.Extensions
 {

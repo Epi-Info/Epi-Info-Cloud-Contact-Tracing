@@ -16,9 +16,9 @@ using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.Model;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 
@@ -589,7 +589,7 @@ namespace Epi.Web.MVC.Controllers
         {
             //surveyAnswerDTO.ResponseDetail.LastPageVisited = viewPageNumber;
 
-            Epi.Web.Enter.Common.Message.SurveyAnswerRequest sar = new Enter.Common.Message.SurveyAnswerRequest();
+            SurveyAnswerRequest sar = new SurveyAnswerRequest();
             sar.Action = "Update";
             sar.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             sar.SurveyAnswerList.Add(surveyAnswerDTO);
@@ -825,9 +825,9 @@ namespace Epi.Web.MVC.Controllers
 
             //1-Get the child Id
 
-            SurveyInfoRequest SurveyInfoRequest = new Enter.Common.Message.SurveyInfoRequest();
-            SurveyInfoResponse SurveyInfoResponse = new Enter.Common.Message.SurveyInfoResponse();
-            SurveyInfoDTO SurveyInfoDTO = new Enter.Common.DTO.SurveyInfoDTO();
+            SurveyInfoRequest SurveyInfoRequest = new SurveyInfoRequest();
+            SurveyInfoResponse SurveyInfoResponse = new SurveyInfoResponse();
+            SurveyInfoDTO SurveyInfoDTO = new SurveyInfoDTO();
             SurveyInfoDTO.SurveyId = SurveyId;
             SurveyInfoDTO.ViewId = ViewId;
             SurveyInfoRequest.SurveyInfoList.Add(SurveyInfoDTO);
@@ -975,7 +975,7 @@ namespace Epi.Web.MVC.Controllers
 
         private MvcDynamicForms.Form SetFormPassCode(MvcDynamicForms.Form form, string responseId)
         {
-            Epi.Web.Enter.Common.Message.UserAuthenticationResponse AuthenticationResponse = _securityFacade.GetAuthenticationResponse(responseId);
+            Epi.Cloud.Common.Message.UserAuthenticationResponse AuthenticationResponse = _securityFacade.GetAuthenticationResponse(responseId);
 
             string strPassCode = Epi.Web.MVC.Utility.SurveyHelper.GetPassCode();
             if (string.IsNullOrEmpty(AuthenticationResponse.PassCode))
@@ -1158,7 +1158,7 @@ namespace Epi.Web.MVC.Controllers
             if (!string.IsNullOrEmpty(SurveyId))
             {
                 SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
-                FormSettingRequest FormSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+                FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
                 //Populating the request
 

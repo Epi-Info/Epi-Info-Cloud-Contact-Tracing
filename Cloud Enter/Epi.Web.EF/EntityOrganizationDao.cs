@@ -5,7 +5,7 @@ using System.Collections.Generic;
 //using DataObjects.EntityFramework.ModelMapper;
 //using System.Linq.Dynamic;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF

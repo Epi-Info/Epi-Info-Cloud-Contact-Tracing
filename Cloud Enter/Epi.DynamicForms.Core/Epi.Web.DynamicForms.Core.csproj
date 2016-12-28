@@ -171,6 +171,10 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
@@ -178,10 +182,6 @@
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

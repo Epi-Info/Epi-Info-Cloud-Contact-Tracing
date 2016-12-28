@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 using System.Configuration;
-using Epi.Web.Enter.Common.Email;
-using Epi.Web.Enter.Common.Security;
+using Epi.Common.EmailServices;
+using Epi.Common.Security;
 using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.BLL
@@ -36,7 +36,7 @@ namespace Epi.Web.BLL
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationKeys(OrganizationName);
             foreach (OrganizationBO _result in result)
             {
-                _result.OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(_result.OrganizationKey);
+                _result.OrganizationKey = Epi.Common.Security.Cryptography.Decrypt(_result.OrganizationKey);
             }
 
             return result;
@@ -55,7 +55,7 @@ namespace Epi.Web.BLL
         }
         public void InsertOrganizationInfo(OrganizationBO OrganizationBO)
         {
-            OrganizationBO.OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
+            OrganizationBO.OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
 
             this.OrganizationDao.InsertOrganization(OrganizationBO);
 
@@ -70,7 +70,7 @@ namespace Epi.Web.BLL
         public void InsertOrganizationInfo(OrganizationBO OrganizationBO, UserBO UserBO)
         {
             bool success;
-            OrganizationBO.OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
+            OrganizationBO.OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
             InsertCombination InsertStatus = new InsertCombination();
             // Check if the user Exists
             var User = this.OrganizationDao.GetUserByEmail(UserBO);
@@ -96,7 +96,7 @@ namespace Epi.Web.BLL
             else
             {
                 string KeyForUserPasswordSalt = ConfigurationManager.AppSettings[AppSettings.Key.KeyForUserPasswordSalt];
-                PasswordHasher PasswordHasher = new Web.Enter.Common.Security.PasswordHasher(KeyForUserPasswordSalt);
+                PasswordHasher PasswordHasher = new PasswordHasher(KeyForUserPasswordSalt);
                 string salt = PasswordHasher.CreateSalt(UserBO.EmailAddress);
                 UserBO.ResetPassword = true;
                 PasswordGenerator PassGen = new PasswordGenerator();
@@ -110,7 +110,7 @@ namespace Epi.Web.BLL
                 }
 
             }
-            var OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(OrganizationBO.OrganizationKey);
+            var OrgKey = Epi.Common.Security.Cryptography.Decrypt(OrganizationBO.OrganizationKey);
             if (success && InsertStatus != InsertCombination.None)
             {
                 Email email = new Email();
@@ -161,7 +161,7 @@ namespace Epi.Web.BLL
         }
         public bool UpdateOrganizationInfo(OrganizationBO OrganizationBO)
         {
-            OrganizationBO.OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
+            OrganizationBO.OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
             return this.OrganizationDao.UpdateOrganization(OrganizationBO);
 
         }
@@ -171,7 +171,7 @@ namespace Epi.Web.BLL
         //Validate Organization
         public bool ValidateOrganization(string Key)
         {
-            //string EncryptedKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(Key);
+            //string EncryptedKey = Epi.Common.Security.Cryptography.Encrypt(Key);
             OrganizationBO OrganizationBO = GetOrganizationObjByKey(Key);
             bool ISValidOrg = false;
 
@@ -199,7 +199,7 @@ namespace Epi.Web.BLL
         {
 
             bool orgExists = false;
-            key = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(key);
+            key = Epi.Common.Security.Cryptography.Encrypt(key);
             List<OrganizationBO> orgBOList = GetOrganizationNames();
             //first find if the whether the organization name exists in the database
             foreach (OrganizationBO oBo in orgBOList)
@@ -228,7 +228,7 @@ namespace Epi.Web.BLL
 
         private OrganizationBO GetOrganizationObjByKey(string OrganizationKey)
         {
-            OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(OrganizationKey);
+            OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationKey);
             OrganizationBO result = this.OrganizationDao.GetOrganizationInfoByKey(OrganizationKey);
             return result;
         }
@@ -275,7 +275,7 @@ namespace Epi.Web.BLL
             //+" \n \nPlease click the link below to launch Epi Cloud Enter. \n" + ConfigurationManager.AppSettings["BaseURL"] + "\n\nThank you."; //email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
             email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
 
-            return Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(email);
+            return EmailHandler.SendMessage(email);
         }
     }
 }

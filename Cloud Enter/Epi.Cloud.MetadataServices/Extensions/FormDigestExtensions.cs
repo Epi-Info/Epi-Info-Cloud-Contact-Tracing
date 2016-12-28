@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Cloud.MetadataServices.Extensions
 {

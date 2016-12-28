@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures.Interfaces;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using MvcDynamicForms.Fields;
 using MvcDynamicForms.Utilities;
 
@@ -379,7 +379,7 @@ namespace MvcDynamicForms
 
             return result;
         }
-        public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<Epi.Web.Enter.Common.Helper.RelatedFormsObj> Obj, string formCheckCode)
+        public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<RelatedFormsInfoDTO> Obj, string formCheckCode)
         {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
             Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;

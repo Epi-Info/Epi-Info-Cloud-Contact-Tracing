@@ -98,6 +98,10 @@
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>

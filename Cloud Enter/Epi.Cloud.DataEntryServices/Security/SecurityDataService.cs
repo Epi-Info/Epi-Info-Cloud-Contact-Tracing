@@ -4,12 +4,12 @@ using System.Linq;
 using System.ServiceModel;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Exception;
-using Epi.Web.Enter.Common.Extensions;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.MessageBase;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
+using Epi.Common.Exception;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.MessageBase;
 using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices
@@ -66,7 +66,6 @@ namespace Epi.Cloud.DataEntryServices
 
 			if (result)
 			{
-				response.Acknowledge = AcknowledgeType.Failure;
 				response.Message = "Invalid Pass Code.";
 				response.UserIsValid = true;
 			}
@@ -117,7 +116,7 @@ namespace Epi.Cloud.DataEntryServices
 
 			SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-			Epi.Web.Enter.Common.BusinessObject.UserAuthenticationRequestBO PassCodeBO = request.ToPassCodeBO();
+			Epi.Cloud.Common.BusinessObjects.UserAuthenticationRequestBO PassCodeBO = request.ToPassCodeBO();
 
             var userAuthenticationResponseBO = surveyResponseImplementation.GetAuthenticationResponse(PassCodeBO);
             response = userAuthenticationResponseBO.ToUserAuthenticationResponse();
@@ -131,7 +130,7 @@ namespace Epi.Cloud.DataEntryServices
 
 			SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-			Epi.Web.Enter.Common.BusinessObject.UserAuthenticationRequestBO PassCodeBO = request.ToPassCodeBO();
+			Epi.Cloud.Common.BusinessObjects.UserAuthenticationRequestBO PassCodeBO = request.ToPassCodeBO();
 			surveyResponseImplementation.SavePassCode(PassCodeBO);
 
 			return response;
@@ -148,36 +147,11 @@ namespace Epi.Cloud.DataEntryServices
 		{
 			bool result = true;
 
-			// Validate Client Tag. 
-			// Hardcoded here. In production this should query a 'client' table in a database.
-			if ((Validate.ClientTag & validate) == Validate.ClientTag)
-			{
-				if (request.ClientTag != "ABC123")
-				{
-					response.Acknowledge = AcknowledgeType.Failure;
-					response.Message = "Unknown Client Tag";
-					//return false;
-				}
-			}
-
-
-			// Validate access token
-			if ((Validate.AccessToken & validate) == Validate.AccessToken)
-			{
-				if (request.AccessToken != _accessToken)
-				{
-					response.Acknowledge = AcknowledgeType.Failure;
-					response.Message = "Invalid or expired AccessToken. Call GetToken()";
-					//return false;
-				}
-			}
-
 			// Validate user credentials
 			if ((Validate.UserCredentials & validate) == Validate.UserCredentials)
 			{
 				if (_userName == null)
 				{
-					response.Acknowledge = AcknowledgeType.Failure;
 					response.Message = "Please login and provide user credentials before accessing these methods.";
 					//return false;
 				}
@@ -191,7 +165,6 @@ namespace Epi.Cloud.DataEntryServices
 
 		public UserAuthenticationResponse GetUser(UserAuthenticationRequest request)
         {
-
             var response = new UserAuthenticationResponse();
             Epi.Web.BLL.User userImplementation = new Epi.Web.BLL.User(_userDao);
 
@@ -241,19 +214,13 @@ namespace Epi.Cloud.DataEntryServices
             {
                 Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
 
-                var response = new OrganizationResponse(request.RequestId);
+                var response = new OrganizationResponse();
 
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
 
-                List<OrganizationBO> ListOrganizationBO = organizationImplementation.GetOrganizationsByUserId(request.UserId);
-                response.OrganizationList = new List<OrganizationDTO>();
-                foreach (OrganizationBO Item in ListOrganizationBO)
-                {
-                    (response.OrganizationList).Add(Item.ToOrganizationDTO());
-
-                }
-
+                List<OrganizationBO> organizationBOList = organizationImplementation.GetOrganizationsByUserId(request.UserId);
+                response.OrganizationList = organizationBOList.ToOrganizationDTOList();
                 return response;
             }
             catch (Exception ex)
@@ -272,7 +239,7 @@ namespace Epi.Cloud.DataEntryServices
             try
             {
                 Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
-                var response = new OrganizationResponse(request.RequestId);
+                var response = new OrganizationResponse();
 
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
@@ -302,19 +269,14 @@ namespace Epi.Cloud.DataEntryServices
             {
                 Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
                 
-                var response = new OrganizationResponse(request.RequestId);
+                var response = new OrganizationResponse();
 
 
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
 
-                List<OrganizationBO> ListOrganizationBO = organizationImplementation.GetOrganizationInfoForAdmin(request.UserId, request.UserRole);
-                response.OrganizationList = new List<OrganizationDTO>();
-                foreach (OrganizationBO Item in ListOrganizationBO)
-                {
-                    (response.OrganizationList).Add(Item.ToOrganizationDTO());
-
-                }
+                List<OrganizationBO> organizationBOList = organizationImplementation.GetOrganizationInfoForAdmin(request.UserId, request.UserRole);
+                response.OrganizationList = organizationBOList.ToOrganizationDTOList();
                 return response;
             }
             catch (Exception ex)
@@ -334,7 +296,7 @@ namespace Epi.Cloud.DataEntryServices
             {
                 Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
                 
-                OrganizationResponse response = new OrganizationResponse(request.RequestId);
+                OrganizationResponse response = new OrganizationResponse();
 
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
@@ -367,7 +329,7 @@ namespace Epi.Cloud.DataEntryServices
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 var Organization = request.Organization.ToOrganizationBO();
                 var User = request.OrganizationAdminInfo.ToUserBO();
-                var response = new OrganizationResponse(request.RequestId);
+                var response = new OrganizationResponse();
 
                 if (request.Action.ToUpper() == "UPDATE")
                 {
@@ -436,17 +398,13 @@ namespace Epi.Cloud.DataEntryServices
                 Epi.Web.BLL.User userImplementation = new Epi.Web.BLL.User(_userDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = request.Organization.ToOrganizationBO();
-                var response = new OrganizationResponse(request.RequestId);
+                var response = new OrganizationResponse();
 
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
 
-                List<UserBO> ListUserBO = userImplementation.GetUsersByOrgId(request.Organization.OrganizationId);
-                response.OrganizationUsersList = new List<UserDTO>();
-                foreach (UserBO Item in ListUserBO)
-                {
-                    (response.OrganizationUsersList).Add(Item.ToUserDTO());
-                }
+                List<UserBO> userBOList = userImplementation.GetUsersByOrgId(request.Organization.OrganizationId);
+                response.OrganizationUsersList = userBOList.ToUserDTOList();
                 return response;
             }
             catch (Exception ex)

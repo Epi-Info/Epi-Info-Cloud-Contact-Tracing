@@ -62,6 +62,14 @@
       <Project>{985a11ff-91af-4379-83f8-27aeca8427af}</Project>
       <Name>Epi.Cloud.MetadataServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
@@ -69,10 +77,6 @@
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05A484AB-A555-4200-936B-BEC573285BCC}</Project>

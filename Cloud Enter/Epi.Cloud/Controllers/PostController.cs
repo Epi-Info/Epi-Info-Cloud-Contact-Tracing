@@ -5,6 +5,8 @@ using System.Web.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Configuration;
+using Epi.Common.EmailServices;
+
 namespace Epi.Web.Controllers
 {
     public class PostController : Controller
@@ -18,15 +20,15 @@ namespace Epi.Web.Controllers
         {
             try
             {
-                Epi.Web.Enter.Common.Email.Email EmailObj = new Enter.Common.Email.Email();
-                EmailObj.Body = redirectUrl + " and Pass Code is: " + passCode;
-                EmailObj.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
-                EmailObj.Subject = "Link for Survey: " + surveyName;// EmailSubject;
+                var email = new Email();
+                email.Body = redirectUrl + " and Pass Code is: " + passCode;
+                email.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
+                email.Subject = "Link for Survey: " + surveyName;// EmailSubject;
                 List<string> tempList = new List<string>();
                 tempList.Add(emailAddress);
-                EmailObj.To = tempList;
+                email.To = tempList;
 
-                if (Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(EmailObj))
+                if (EmailHandler.SendMessage(email))
                 {
                     return Json(true);
                 }

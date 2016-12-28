@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.Message;
 using Epi.Web.MVC.Utility;
 using Epi.Cloud.Facades.Interfaces;
 using System.Web.Configuration;
@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MVC.Extensions;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -99,7 +100,7 @@ namespace Epi.Web.MVC.Controllers
 
                 OrganizationRequest Request = new OrganizationRequest();
 
-				Enter.Common.DTO.UserDTO AdminInfo = new Enter.Common.DTO.UserDTO();
+				UserDTO AdminInfo = new UserDTO();
 
                 AdminInfo.FirstName = "";
                 AdminInfo.LastName = "";
@@ -170,7 +171,7 @@ namespace Epi.Web.MVC.Controllers
                     OrganizationRequest Request = new OrganizationRequest();
                     Request.Organization.Organization = OrgAdminInfoModel.OrgName;
                     Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
-					Enter.Common.DTO.UserDTO AdminInfo = new Enter.Common.DTO.UserDTO();
+					UserDTO AdminInfo = new UserDTO();
 
                     AdminInfo.FirstName = OrgAdminInfoModel.AdminFirstName;
                     AdminInfo.LastName = OrgAdminInfoModel.AdminLastName;

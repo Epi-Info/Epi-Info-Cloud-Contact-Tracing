@@ -8,17 +8,14 @@ using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MetadataServices.Extensions;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Cloud.SurveyInfoServices;
 using Epi.DataPersistence.Constants;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Exception;
-using Epi.Web.Enter.Common.Extensions;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.MessageBase;
-using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Cloud.DataEntryServices;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Criteria;
+using Epi.Cloud.Common.DTO;
+using Epi.Common.Exception;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.MessageBase;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -92,12 +89,6 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
                 Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
 
-                // Validate client tag, access token, and user credentials
-                if (!ValidRequest(request, result, Validate.All))
-                {
-                    return result;
-                }
-
                 var criteria = request.Criteria as SurveyAnswerCriteria;
                 string sort = criteria.SortExpression;
 
@@ -134,16 +125,9 @@ namespace Epi.Cloud.DataEntryServices
 
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-
-                // Validate client tag, access token, and user credentials
-                if (!ValidRequest(request, result, Validate.All))
-                {
-                    return result;
-                }
-
                 SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(request.Criteria);
                 SurveyAnswerDTO surveyAnswerDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerDTO() : null;
-                result.SurveyResponseList = new List<Web.Enter.Common.DTO.SurveyAnswerDTO>();
+                result.SurveyResponseList = new List<SurveyAnswerDTO>();
                 if (surveyAnswerDTO != null) result.SurveyResponseList.Add(surveyAnswerDTO);
                 return result;
             }
@@ -162,12 +146,6 @@ namespace Epi.Cloud.DataEntryServices
         {
             SurveyAnswerResponse response = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
-            // Validate client tag, access token, and user credentials
-            if (!ValidRequest(surveyAnswerRequest, response, Validate.All))
-            {
-                return response;
-            }
-
             // Transform SurveyResponse data transfer object to SurveyResponse business object
             SurveyResponseBO surveyResponseBO = surveyAnswerRequest.SurveyAnswerList[0].ToSurveyResponseBO();
 
@@ -180,7 +158,6 @@ namespace Epi.Cloud.DataEntryServices
             {
                 //if (!SurveyResponse.Validate())
                 //{
-                //    response.Acknowledge = AcknowledgeType.Failure;
 
                 //    foreach (string error in SurveyResponse.ValidationErrors)
                 //        response.Message += error + Environment.NewLine;
@@ -330,68 +307,6 @@ namespace Epi.Cloud.DataEntryServices
         }
 
 
-        /// <summary>
-        /// Validation options enum. Used in validation of messages.
-        /// </summary>
-        [Flags]
-        private enum Validate
-        {
-            ClientTag = 0x0001,
-            AccessToken = 0x0002,
-            UserCredentials = 0x0004,
-            All = ClientTag | AccessToken | UserCredentials
-        }
-
-        /// <summary>
-        /// Validate 3 security levels for a request: ClientTag, AccessToken, and User Credentials
-        /// </summary>
-        /// <param name="request">The request message.</param>
-        /// <param name="response">The response message.</param>
-        /// <param name="validate">The validation that needs to take place.</param>
-        /// <returns></returns>
-        private bool ValidRequest(RequestBase request, ResponseBase response, Validate validate)
-        {
-            bool result = true;
-
-            // Validate Client Tag. 
-            // Hardcoded here. In production this should query a 'client' table in a database.
-            if ((Validate.ClientTag & validate) == Validate.ClientTag)
-            {
-                if (request.ClientTag != "ABC123")
-                {
-                    response.Acknowledge = AcknowledgeType.Failure;
-                    response.Message = "Unknown Client Tag";
-                    //return false;
-                }
-            }
-
-
-            // Validate access token
-            if ((Validate.AccessToken & validate) == Validate.AccessToken)
-            {
-                if (request.AccessToken != _accessToken)
-                {
-                    response.Acknowledge = AcknowledgeType.Failure;
-                    response.Message = "Invalid or expired AccessToken. Call GetToken()";
-                    //return false;
-                }
-            }
-
-            // Validate user credentials
-            if ((Validate.UserCredentials & validate) == Validate.UserCredentials)
-            {
-                if (_userName == null)
-                {
-                    response.Acknowledge = AcknowledgeType.Failure;
-                    response.Message = "Please login and provide user credentials before accessing these methods.";
-                    //return false;
-                }
-            }
-
-
-            return result;
-        }
-
         public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
         {
             try
@@ -408,7 +323,6 @@ namespace Epi.Cloud.DataEntryServices
                 }
 
                 List<SurveyResponseBO> ResultList = surveyResponseImplementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
-
             }
             catch (Exception ex)
             {

@@ -1,4 +1,4 @@
-﻿using Epi.Web.Enter.Common.Message;
+﻿using Epi.Cloud.Common.Message;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {

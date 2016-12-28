@@ -1,5 +1,5 @@
 ﻿using System;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 using Newtonsoft.Json;
 
 namespace Epi.Cloud.CacheServices

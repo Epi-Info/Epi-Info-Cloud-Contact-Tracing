@@ -1,8 +1,8 @@
 ﻿
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.Model;
 using Epi.Web.MVC.Models;
 
 namespace Epi.Cloud.Facades.Interfaces

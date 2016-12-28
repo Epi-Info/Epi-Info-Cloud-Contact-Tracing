@@ -1,5 +1,5 @@
-﻿using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Model;
+﻿using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Model;
 
 namespace Epi.Cloud.MVC.Extensions
 {

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Epi.DataPersistence.Constants;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Criteria;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {
@@ -106,8 +107,8 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         List<SurveyResponseBO> GetResponsesByRelatedFormId(string responseId, SurveyAnswerCriteria Criteria);
         void DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponse);
         SurveyResponseBO GetResponse(string responseId);
-        void DeleteResponse(ResponseBO responseBO);
-        void InsertResponse(ResponseBO item);
+        void DeleteResponse(FormResponseDetail formResponseDetail);
+        void InsertResponse(FormResponseDetail formResponseDetail);
         bool DoChildrenExistForResponseId(Guid responseId);
         //bool DoesResponseExist(SurveyAnswerCriteria Criteria);
 

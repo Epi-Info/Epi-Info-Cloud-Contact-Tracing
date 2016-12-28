@@ -3,6 +3,7 @@ using Microsoft.Practices.Unity;
 using Unity.Mvc3;
 using Epi.Web.MVC.Utility;
 using System.Configuration;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC
 {
@@ -32,12 +33,12 @@ namespace Epi.Web.MVC
                 .ConfigureInjectionFor<SurveyResponseHelper>(new InjectionConstructor());
 
 			// Logger
-			container.RegisterType<Epi.Web.Enter.Common.Diagnostics.ILogger, Epi.Web.Enter.Common.Diagnostics.Logger>();
+			container.RegisterType<Epi.Common.Diagnostics.ILogger, Epi.Common.Diagnostics.Logger>();
 
-            container.RegisterType<Epi.Web.Enter.Common.Message.SurveyInfoRequest, Epi.Web.Enter.Common.Message.SurveyInfoRequest>();
-            container.RegisterType<Epi.Web.Enter.Common.Message.SurveyAnswerRequest, Epi.Web.Enter.Common.Message.SurveyAnswerRequest>();
+            container.RegisterType<Epi.Cloud.Common.Message.SurveyInfoRequest, Epi.Cloud.Common.Message.SurveyInfoRequest>();
+            container.RegisterType<Epi.Cloud.Common.Message.SurveyAnswerRequest, Epi.Cloud.Common.Message.SurveyAnswerRequest>();
 
-            container.RegisterType<Epi.Web.Enter.Common.DTO.SurveyAnswerDTO, Epi.Web.Enter.Common.DTO.SurveyAnswerDTO>();
+            container.RegisterType<Epi.Cloud.Common.DTO.SurveyAnswerDTO, Epi.Cloud.Common.DTO.SurveyAnswerDTO>();
 			container.RegisterType<Epi.Cloud.Common.DTO.PassCodeDTO, Epi.Cloud.Common.DTO.PassCodeDTO>();
 
 			container.RegisterType<Epi.Cloud.DataEntryServices.SurveyResponseProvider, Epi.Cloud.DataEntryServices.SurveyResponseProvider>();

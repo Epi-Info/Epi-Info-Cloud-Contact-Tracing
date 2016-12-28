@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Reflection;
 using System.Web.Mvc;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Facades.Interfaces;
-using Epi.Web.Enter.Common.Security;
+using Epi.Common.EmailServices;
+using Epi.Common.Security;
 using Epi.Web.MVC.Models;
 
 namespace Epi.Web.MVC.Controllers
 {
-	public class EIWSTController : Controller
+    public class EIWSTController : Controller
     {
        //declare  SurveyFacade
         private ISurveyFacade _isurveyFacade;
-        private  string RequiredList ="";
-        private Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
         /// <summary>
         /// injecting surveyFacade to the constructor 
         /// </summary>
@@ -24,10 +24,10 @@ namespace Epi.Web.MVC.Controllers
             _isurveyFacade = isurveyFacade;
         }
         private enum TestResultEnum
-            {
+        {
             Success,
             Error
-            }
+        }
 
         //public ActionResult Index()
         //{
@@ -90,7 +90,7 @@ namespace Epi.Web.MVC.Controllers
             try
                 {
                 Epi.Web.EF.EntityOrganizationDao NewEntity = new Epi.Web.EF.EntityOrganizationDao();
-                List<Epi.Web.Enter.Common.BusinessObject.OrganizationBO> OrganizationBO = new List<Enter.Common.BusinessObject.OrganizationBO>();
+                List<OrganizationBO> OrganizationBO = new List<OrganizationBO>();
                 OrganizationBO = NewEntity.GetOrganizationNames();
                 if (OrganizationBO != null)
                     {
@@ -143,7 +143,7 @@ namespace Epi.Web.MVC.Controllers
           
 
             }
-       // [AcceptVerbs(HttpVerbs.Post)]
+        // [AcceptVerbs(HttpVerbs.Post)]
         //[ValidateAntiForgeryToken]
         [HttpPost]
         public JsonResult Notify(string emailAddress, string emailSubject)
@@ -151,16 +151,16 @@ namespace Epi.Web.MVC.Controllers
             string  message = "";
             try
             {
-                Epi.Web.Enter.Common.Email.Email EmailObj = new Epi.Web.Enter.Common.Email.Email();
-                EmailObj.Body = "Test email From EWE System.";
-                EmailObj.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
-                EmailObj.Subject = emailSubject;
+                var email = new Email();
+                email.Body = "Test email From EWE System.";
+                email.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
+                email.Subject = emailSubject;
 
                 List<string> tempList = new List<string>();
                 tempList.Add(emailAddress);
-                EmailObj.To = tempList;
-                  message = Epi.Web.Enter.Common.Email.EmailHandler.SendNotification(EmailObj);
-                  if (message.Contains("Success"))
+                email.To = tempList;
+                message = EmailHandler.SendNotification(email);
+                if (message.Contains("Success"))
                 {
                     return Json(true);
                 }

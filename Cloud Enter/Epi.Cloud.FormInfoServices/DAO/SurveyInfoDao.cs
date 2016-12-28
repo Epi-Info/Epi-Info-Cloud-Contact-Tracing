@@ -6,7 +6,7 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MetadataServices.Extensions;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.Web.EF;
-using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Cloud.Common.BusinessObjects;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {
@@ -330,7 +330,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             //        //retrieve OrganizationId based on OrganizationKey
             //        using (var ContextOrg = DataObjectFactory.CreateContext())
             //        {
-            //            string OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
+            //            string OrgKey = Epi.Common.Security.Cryptography.Encrypt(SurveyInfo.OrganizationKey.ToString());
             //            OrganizationId = ContextOrg.Organizations.FirstOrDefault(x => x.OrganizationKey == OrgKey).OrganizationId;
             //        }
 

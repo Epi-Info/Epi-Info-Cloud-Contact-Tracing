@@ -1,4 +1,4 @@
-﻿using Epi.Web.Enter.Common.BusinessObject;
+﻿using Epi.Cloud.Common.BusinessObjects;
 using Epi.Web.Enter.Common.Message;
 
 namespace Epi.Web.Enter.Common.Extensions

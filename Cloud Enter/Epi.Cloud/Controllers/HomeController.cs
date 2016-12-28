@@ -15,13 +15,14 @@ using Epi.Cloud.MVC.Extensions;
 using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.Constants;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Extensions;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.Model;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using Epi.Common.EmailServices;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -680,7 +681,7 @@ namespace Epi.Web.MVC.Controllers
 		[HttpGet]
 		public ActionResult GetSettings(string formid)//List<FormInfoModel> ModelList, string formid)
 		{
-			FormSettingRequest FormSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+			FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 			List<KeyValuePair<int, string>> TempColumns = new List<KeyValuePair<int, string>>();
 			//Get All forms
 			List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy(formid);
@@ -813,16 +814,16 @@ namespace Epi.Web.MVC.Controllers
 
 			var OwnerInfo = _securityFacade.GetUserInfo(surveyAnswerDTO.FormOwnerId);
 
-			Epi.Web.Enter.Common.Email.Email EmilObj = new Enter.Common.Email.Email();
+			var email = new Email();
 			//ResponseId;
 
-			EmilObj.Subject = "Record locked notification.";
-			EmilObj.Body = " A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + ResponseId + "\n\n User email: " + UserInfo.User.EmailAddress + "\n\n";
-			EmilObj.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
-			EmilObj.To = new List<string>();
-			EmilObj.To.Add(OwnerInfo.User.EmailAddress);
+			email.Subject = "Record locked notification.";
+			email.Body = " A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + ResponseId + "\n\n User email: " + UserInfo.User.EmailAddress + "\n\n";
+			email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
+			email.To = new List<string>();
+			email.To.Add(OwnerInfo.User.EmailAddress);
 
-			var success = Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(EmilObj);
+			var success = EmailHandler.SendMessage(email);
 
 			return Json(1);
 		}
@@ -853,7 +854,7 @@ namespace Epi.Web.MVC.Controllers
 		public ActionResult SaveSettings(string formid)
 		{
 			List<FormsHierarchyDTO> FormList = GetFormsHierarchy(formid);
-			FormSettingRequest FormSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+			FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 			int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 			foreach (var Form in FormList)
 			{

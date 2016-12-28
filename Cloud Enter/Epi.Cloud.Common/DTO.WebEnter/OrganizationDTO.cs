@@ -1,4 +1,4 @@
-﻿namespace Epi.Web.Enter.Common.DTO
+﻿namespace Epi.Cloud.Common.DTO
 {
     public class OrganizationDTO
     {

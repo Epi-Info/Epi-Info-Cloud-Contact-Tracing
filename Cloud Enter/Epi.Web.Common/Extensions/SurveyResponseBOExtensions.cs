@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using Epi.DataPersistence.DataStructures;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Extensions
 {

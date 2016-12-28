@@ -1,5 +1,5 @@
-﻿using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
+﻿using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 
 namespace Epi.Cloud.Facades.Interfaces
 {

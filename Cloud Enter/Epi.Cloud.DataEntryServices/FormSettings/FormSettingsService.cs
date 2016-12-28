@@ -4,9 +4,9 @@ using System.ServiceModel;
 using Epi.Cloud.BLL;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Web.Enter.Common.Exception;
-using Epi.Web.Enter.Common.Extensions;
-using Epi.Web.Enter.Common.Message;
+using Epi.Common.Exception;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices

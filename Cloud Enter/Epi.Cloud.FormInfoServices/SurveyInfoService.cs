@@ -1,9 +1,9 @@
 ﻿using System;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.Message;
 using System.Collections.Generic;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Exception;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Common.Exception;
 using System.ServiceModel;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 
@@ -56,7 +56,7 @@ namespace Epi.Cloud.SurveyInfoServices
 		{
 			try
 			{
-				SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
+				SurveyInfoResponse result = new SurveyInfoResponse (pRequest.RequestId);
 
 				Dictionary<string, int> parentIdList = new Dictionary<string, int>();
 				foreach (var item in pRequest.SurveyInfoList)

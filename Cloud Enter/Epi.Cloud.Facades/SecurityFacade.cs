@@ -2,9 +2,10 @@
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Web.MVC.Utility;
+using Epi.Cloud.Common.BusinessObjects;
 
 namespace Epi.Cloud.Facades
 {
@@ -38,8 +39,7 @@ namespace Epi.Cloud.Facades
         }
         public UserAuthenticationResponse GetAuthenticationResponse(string responseId)
         {
-
-			var surveyAuthenticationRequest = new Web.Enter.Common.BusinessObject.UserAuthenticationRequestBO { ResponseId = responseId };
+			var surveyAuthenticationRequest = new UserAuthenticationRequestBO { ResponseId = responseId };
 			var authenticationResponseBO = _dataEntryService.GetAuthenticationResponse(surveyAuthenticationRequest);
 			var authenticationResponse = new UserAuthenticationResponse { PassCode = authenticationResponseBO.PassCode };
 			return authenticationResponse;

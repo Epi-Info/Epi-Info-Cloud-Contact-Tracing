@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Security;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Common.Security;
 using System.Configuration;
-using Epi.Web.Enter.Common.Email;
 using Epi.Cloud.Common.Constants;
+using Epi.Common.EmailServices;
 
 namespace Epi.Web.BLL
 {
@@ -22,7 +22,7 @@ namespace Epi.Web.BLL
         {
             UserBO UserResponseBO;
             string KeyForUserPasswordSalt = ReadSalt();
-            PasswordHasher PasswordHasher = new Web.Enter.Common.Security.PasswordHasher(KeyForUserPasswordSalt);
+            PasswordHasher PasswordHasher = new PasswordHasher(KeyForUserPasswordSalt);
             string salt = PasswordHasher.CreateSalt(User.UserName);
 
             User.PasswordHash = PasswordHasher.HashPassword(salt, User.PasswordHash);
@@ -86,7 +86,7 @@ namespace Epi.Web.BLL
 
 
                     string KeyForUserPasswordSalt = ReadSalt();
-                    PasswordHasher PasswordHasher = new Web.Enter.Common.Security.PasswordHasher(KeyForUserPasswordSalt);
+                    PasswordHasher PasswordHasher = new PasswordHasher(KeyForUserPasswordSalt);
                     string salt = PasswordHasher.CreateSalt(User.UserName);
 
                     User.PasswordHash = PasswordHasher.HashPassword(salt, password);
@@ -138,7 +138,7 @@ namespace Epi.Web.BLL
         private bool SendEmail(Email email, Constant.EmailCombinationEnum Combination)
         {
 
-            //   Epi.Web.Enter.Common.Email.Email Email = new Web.Common.Email.Email();
+            //   Epi.Common.Email.Email Email = new Web.Common.Email.Email();
 
             switch (Combination)
             {
@@ -165,7 +165,7 @@ namespace Epi.Web.BLL
             //email.Body = email.Body.ToString() + " \n \nPlease click the link below to launch Epi Cloud Enter. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\nThank you.";
             email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
 
-            return Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(email);
+            return EmailHandler.SendMessage(email);
 
         }
 
@@ -204,7 +204,7 @@ namespace Epi.Web.BLL
             if (UserBO.UserName == null)
             {
                 string KeyForUserPasswordSalt = ReadSalt();
-                PasswordHasher PasswordHasher = new Web.Enter.Common.Security.PasswordHasher(KeyForUserPasswordSalt);
+                PasswordHasher PasswordHasher = new PasswordHasher(KeyForUserPasswordSalt);
                 string salt = PasswordHasher.CreateSalt(UserBO.EmailAddress);
                 UserBO.ResetPassword = true;
                 PasswordGenerator PassGen = new PasswordGenerator();
@@ -213,7 +213,7 @@ namespace Epi.Web.BLL
                 //UserBO.PasswordHash = PasswordHasher.HashPassword(salt, "PassWord1");
                 success = _userDao.InsertUser(UserBO, OrgBO);
                 StringBuilder Body = new StringBuilder();
-                var OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(OrgBO.OrganizationKey);
+                var OrgKey = Epi.Common.Security.Cryptography.Decrypt(OrgBO.OrganizationKey);
                 if (success)
                 {
                     Email email = new Email();
@@ -257,7 +257,7 @@ namespace Epi.Web.BLL
 
                     Body.Append("Welcome to Epi Info™ Cloud Enter. \nYour account has now been created for organization - " + OrgBO.Organization + ".");
                     // var OrgKey = OrgBO.OrganizationKey;
-                    var OrgKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(OrgBO.OrganizationKey);
+                    var OrgKey = Epi.Common.Security.Cryptography.Decrypt(OrgBO.OrganizationKey);
                     Body.Append("\n\nOrganization Key: " + OrgKey);
                     Body.Append("\n\nPlease click the link below to launch Epi Info™ Cloud Enter. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\n\nThank you.");
                     email.Body = Body.ToString();

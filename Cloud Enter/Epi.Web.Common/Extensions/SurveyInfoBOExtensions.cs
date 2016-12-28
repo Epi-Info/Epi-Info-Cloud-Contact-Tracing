@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Extensions
 {
@@ -41,7 +41,7 @@ namespace Epi.Web.Enter.Common.Extensions
 
         public static SurveyInfoDTO ToSurveyInfoDTO(this SurveyInfoBO surveyInfoBO)
         {
-            return new Epi.Web.Enter.Common.DTO.SurveyInfoDTO
+            return new Epi.Cloud.Common.DTO.SurveyInfoDTO
             {
                 SurveyId = surveyInfoBO.SurveyId,
                 SurveyNumber = surveyInfoBO.SurveyNumber,

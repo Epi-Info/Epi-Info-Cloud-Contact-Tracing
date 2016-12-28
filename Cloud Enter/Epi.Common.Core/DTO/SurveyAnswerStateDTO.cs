@@ -1,7 +1,7 @@
 ﻿using System;
 using Epi.DataPersistence.Constants;
 
-namespace Epi.Web.Enter.Common.DTO
+namespace Epi.Cloud.Common.DTO
 {
 	public class SurveyAnswerStateDTO
 	{

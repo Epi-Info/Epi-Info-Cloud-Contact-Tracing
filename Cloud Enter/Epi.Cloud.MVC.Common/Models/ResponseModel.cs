@@ -1,4 +1,4 @@
-﻿using Epi.Web.Enter.Common.Criteria;
+﻿using Epi.Cloud.Common.Criteria;
 
 namespace Epi.Web.MVC.Models
 {

@@ -98,6 +98,14 @@
       <Project>{1b1fdcfe-78e1-487c-9168-c9fee18ad936}</Project>
       <Name>Epi.Cloud.SqlServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}</Project>
       <Name>Epi.DataPersistence.Common</Name>
@@ -106,10 +114,6 @@
       <Project>{3e9b6f53-60c7-4671-9138-a1a7edf413c4}</Project>
       <Name>Epi.DataPersistenceServices.DocumentDB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistence\Epi.DataPersistence.csproj">
-      <Project>{42b79d8b-0388-4134-aa9b-3dc2c1cd23df}</Project>
-      <Name>Epi.DataPersistence</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Epi.DynamicForms.Core\Epi.Web.DynamicForms.Core.csproj">
       <Project>{9624e64a-013f-41e8-84ba-c34ee744685e}</Project>
       <Name>Epi.Web.DynamicForms.Core</Name>
@@ -117,10 +121,6 @@
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
-      <Project>{6e2f059b-c1cd-401f-8a63-dc2933cfb0d8}</Project>
-      <Name>Epi.Web.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
       <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>

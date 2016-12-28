@@ -10,16 +10,16 @@ using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Newtonsoft.Json;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
-    public class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
-	{
+    public class DocumentDBSurveyPersistenceFacade : MetadataAccessor, Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade
+    {
 		public DocumentDBSurveyPersistenceFacade()
 		{
 		}

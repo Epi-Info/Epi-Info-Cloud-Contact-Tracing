@@ -6,11 +6,12 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Reflection;
-using Epi.Web.Enter.Common.Diagnostics;
-using Epi.Web.Enter.Common.Message;
+using Epi.Common.Diagnostics;
+using Epi.Cloud.Common.Message;
 using Epi.Web.MVC.Models;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -50,7 +51,7 @@ namespace Epi.Web.MVC.Controllers
 
             if (isDemoMode)
             {
-                string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt("1");
+                string UserId = Epi.Common.Security.Cryptography.Encrypt("1");
                 FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
 
                 Session[SessionKeys.UserId] = UserId;
@@ -84,7 +85,7 @@ namespace Epi.Web.MVC.Controllers
                     if (result != null && result.User.Count() > 0)
                     {
                         FormsAuthentication.SetAuthCookie(CurrentUserName.Split('\\')[0].ToString(), false);
-                        string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(result.User[0].UserId.ToString());
+                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User[0].UserId.ToString());
                         Session[SessionKeys.UserId] = UserId;
                         //Session[SessionKeys.UsertRole] = result.User.Role;
                         Session[SessionKeys.UserHighestRole] = result.User[0].UserHighestRole;
@@ -123,7 +124,7 @@ namespace Epi.Web.MVC.Controllers
             //}
 
 
-            //Epi.Web.Enter.Common.Message.UserAuthenticationResponse result = _isurveyFacade.ValidateUser(Model.UserName, Model.Password);
+            //Epi.Cloud.Common.Message.UserAuthenticationResponse result = _isurveyFacade.ValidateUser(Model.UserName, Model.Password);
 
             //if (result.UserIsValid)
             //{
@@ -135,7 +136,7 @@ namespace Epi.Web.MVC.Controllers
             //    {
 
             //        FormsAuthentication.SetAuthCookie(Model.UserName, false);
-            //        string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
+            //        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
             //        Session[SessionKeys.UserId] = UserId;
             //        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
             //    }
@@ -206,7 +207,7 @@ namespace Epi.Web.MVC.Controllers
                 return View("ForgotPassword", Model);
             }
 
-            bool success = _securityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, Operation = Constant.OperationMode.UpdatePassword });
+            bool success = _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, Operation = Constant.OperationMode.UpdatePassword });
             if (success)
             {
                 return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
@@ -251,7 +252,7 @@ namespace Epi.Web.MVC.Controllers
             //    return View("ResetPassword", Model);
             //}
 
-            _securityFacade.UpdateUser(new Enter.Common.DTO.UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = Constant.OperationMode.UpdatePassword, ResetPassword = true });
+            _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = Constant.OperationMode.UpdatePassword, ResetPassword = true });
             UserLoginModel UserLoginModel = new UserLoginModel();
             UserLoginModel.Password = Model.Password;
             UserLoginModel.UserName = Model.UserName;
@@ -275,7 +276,7 @@ namespace Epi.Web.MVC.Controllers
 
             try
             {
-                Epi.Web.Enter.Common.Message.UserAuthenticationResponse result = _securityFacade.ValidateUser(Model.UserName, Model.Password);
+                Epi.Cloud.Common.Message.UserAuthenticationResponse result = _securityFacade.ValidateUser(Model.UserName, Model.Password);
                 if (result.UserIsValid)
                 {
                     if (result.User.ResetPassword)
@@ -291,7 +292,7 @@ namespace Epi.Web.MVC.Controllers
                     {
 
                         FormsAuthentication.SetAuthCookie(Model.UserName, false);
-                        string UserId = Epi.Web.Enter.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
+                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
                         Session[SessionKeys.UserId] = UserId;
                         //Session[SessionKeys.UsertRole] = result.User.Role;
                         Session[SessionKeys.UserHighestRole] = result.User.UserHighestRole;

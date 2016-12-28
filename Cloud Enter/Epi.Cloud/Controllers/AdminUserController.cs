@@ -6,9 +6,10 @@ using System.Web.Mvc;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.Message;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -55,10 +56,10 @@ namespace Epi.Web.MVC.Controllers
             {
 
 
-                Request.Organization = new Enter.Common.DTO.OrganizationDTO();
+                Request.Organization = new OrganizationDTO();
                 Request.Organization.OrganizationId = orgid;
 
-                Request.User = new Enter.Common.DTO.UserDTO();
+                Request.User = new UserDTO();
                 Request.User.UserId = userid;
 
                 UserResponse Response = _securityFacade.GetUserInfo(Request);

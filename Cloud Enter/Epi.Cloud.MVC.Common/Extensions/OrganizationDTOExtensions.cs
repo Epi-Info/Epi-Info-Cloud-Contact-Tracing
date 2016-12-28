@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using Epi.Web.MVC.Models;
 
 namespace Epi.Cloud.MVC.Extensions

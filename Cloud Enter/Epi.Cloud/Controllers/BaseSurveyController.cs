@@ -4,8 +4,8 @@ using System.Web.Mvc;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Constants;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
@@ -37,7 +37,7 @@ namespace Epi.Web.MVC.Controllers
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
             var surveyResponseHelper = new SurveyResponseHelper();
-            FormSettingRequest formSettingReq = new Enter.Common.Message.FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
             //Populating the request
 

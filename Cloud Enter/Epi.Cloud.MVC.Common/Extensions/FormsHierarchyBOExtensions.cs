@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 using Epi.Cloud.MVC.Extensions;
 
-namespace Epi.Web.Enter.Common.Extensions
+namespace Epi.Cloud.Common.Extensions
 {
     public static class FormsHierarchyBOExtensions
     {

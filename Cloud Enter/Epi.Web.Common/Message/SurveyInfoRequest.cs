@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.MessageBase;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Message
 {

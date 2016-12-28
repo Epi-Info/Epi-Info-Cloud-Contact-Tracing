@@ -58,6 +58,10 @@
       <Project>{1b1fdcfe-78e1-487c-9168-c9fee18ad936}</Project>
       <Name>Epi.Cloud.SqlServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
+      <Name>Epi.Common.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj">
       <Project>{1bd3b7da-c63f-4644-b391-b364fdf62ff4}</Project>
       <Name>Epi.DataPersistence.Common</Name>

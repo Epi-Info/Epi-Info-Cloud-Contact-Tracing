@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Message;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Message;
 
 namespace Epi.DataPersistence.Common.Interfaces
 {

@@ -6,9 +6,9 @@ using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Model;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Common.Model;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
 
@@ -22,9 +22,9 @@ namespace Epi.Cloud.Facades
 		private readonly IFormSettingsService _formSettingsService;
 		private readonly ISecurityFacade _securityFacade;
 
-		private Epi.Web.Enter.Common.Message.SurveyInfoRequest _surveyInfoRequest;
+		private Epi.Cloud.Common.Message.SurveyInfoRequest _surveyInfoRequest;
 
-        private Epi.Web.Enter.Common.Message.SurveyAnswerRequest _surveyAnswerRequest;
+        private Epi.Cloud.Common.Message.SurveyAnswerRequest _surveyAnswerRequest;
 
         private SurveyAnswerDTO _surveyAnswerDTO;
 
@@ -43,9 +43,9 @@ namespace Epi.Cloud.Facades
                             SurveyResponseHelper surveyResponseXML, 
                             IProjectMetadataProvider projectMetadataProvider,
 
-                            Epi.Web.Enter.Common.Message.SurveyInfoRequest surveyInfoRequest,
-                            Epi.Web.Enter.Common.Message.SurveyAnswerRequest surveyResponseRequest,
-                            Epi.Web.Enter.Common.Message.UserAuthenticationRequest surveyAuthenticationRequest,
+                            Epi.Cloud.Common.Message.SurveyInfoRequest surveyInfoRequest,
+                            Epi.Cloud.Common.Message.SurveyAnswerRequest surveyResponseRequest,
+                            Epi.Cloud.Common.Message.UserAuthenticationRequest surveyAuthenticationRequest,
 							 
                             SurveyAnswerDTO surveyAnswerDTO,
                             FormInfoDTO formInfoDTO)
@@ -95,7 +95,7 @@ namespace Epi.Cloud.Facades
                 {
                     foreach (var item in surveyAnswerDTOList)
                     {
-                        Epi.Web.Enter.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
+                        Epi.Cloud.Common.Message.SurveyInfoRequest request = new SurveyInfoRequest();
                         request.Criteria.SurveyIdList.Add(item.SurveyId);
                         SurveyInfoDTO surveyInfoDTO2 = SurveyHelper.GetSurveyInfoDTO(request, _surveyInfoService, item.SurveyId);
                         surveyInfoDTOList.Add(surveyInfoDTO2);

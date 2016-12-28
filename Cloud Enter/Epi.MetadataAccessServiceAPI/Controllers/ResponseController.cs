@@ -1,30 +1,24 @@
-﻿using System.Web.Http;
-using Newtonsoft.Json;
+﻿using System;
+using System.Web.Http;
 using Epi.DataPersistence.DataStructures;
-using System;
+using Newtonsoft.Json;
 
 namespace Epi.MetadataAccessServiceAPI.Controllers
 {
     [Authorize]
     public class ResponseController : ApiController
     {
-		// GET api/response/5
-		//public string Get(string id)
-		//{
-		//    return "value";
-		//}
-
 		// PUT api/response/formResponseDetailJson
 		public void Put([FromBody]string formResponseDetailJson)
         {
 			try
 			{
 				var formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(formResponseDetailJson);
+			    // TODO: Persist to SQL Database
 			}
 			catch (Exception ex)
 			{
 			}
-			// TODO: Persist to SQL Database
 		}
 	}
 }

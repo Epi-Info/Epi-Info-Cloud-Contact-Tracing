@@ -1,5 +1,5 @@
 ﻿using System;
-using Epi.Web.Enter.Common.DTO;
+using Epi.Cloud.Common.DTO;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.Message

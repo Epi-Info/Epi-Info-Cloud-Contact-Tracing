@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.DTO;
 using System.Xml.Linq;
-using Epi.Cloud.Interfaces.DataInterfaces;
-using System.Configuration;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Common.EmailServices;
 
 namespace Epi.Web.BLL
 {
@@ -150,18 +150,14 @@ namespace Epi.Web.BLL
             this.FormSettingDao.UpDateFormMode(FormInfoBO);
             if (FormSettingDTO.IsDisabled)
             {
-
                 this.FormSettingDao.SoftDeleteForm(FormSettingDTO.FormId);
-
             }
 
         }
         private void SendEmail(Dictionary<int, String> AssignedUserList, string FormId, List<UserBO> FormCurrentUsersList, bool ShareForm = false)
         {
-
             try
             {
-
                 FormInfoBO FormInfoBO = this.FormInfoDao.GetFormByFormId(FormId);
                 if (!string.IsNullOrEmpty(FormInfoBO.ParentId))
                 {
@@ -175,7 +171,6 @@ namespace Epi.Web.BLL
                 {
                     CurrentUsersEmail.Add(User.EmailAddress);
                 }
-
 
                 if (CurrentUsersEmail.Count() > 0)
                 {
@@ -202,32 +197,25 @@ namespace Epi.Web.BLL
 
                 if (UsersEmail.Count() > 0)
                 {
-                    Epi.Web.Enter.Common.Email.Email Email = new Web.Enter.Common.Email.Email();
+                    Email email = new Email();
                     if (!ShareForm)
                     {
-
-                        Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form  to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                        Email.Body = Email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
-                        Email.From = UserBO.EmailAddress;
-                        Email.To = UsersEmail;
-                        Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to You";
-
+                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form  to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+                        email.From = UserBO.EmailAddress;
+                        email.To = UsersEmail;
+                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to You";
                     }
                     else
                     {
-
-                        Email.Body = UserBO.FirstName + " " + UserBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                        Email.Body = Email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
-                        Email.From = UserBO.EmailAddress;
-                        Email.To = UsersEmail;
-                        Email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shered with your organization.";
-
-
+                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+                        email.From = UserBO.EmailAddress;
+                        email.To = UsersEmail;
+                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shered with your organization.";
                     }
-                    Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(Email);
-
+                    EmailHandler.SendMessage(email);
                 }
-
             }
             catch (Exception ex)
             {

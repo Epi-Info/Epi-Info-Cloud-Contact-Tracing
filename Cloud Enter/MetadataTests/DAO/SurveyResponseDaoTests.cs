@@ -8,7 +8,7 @@
 //using Epi.Cloud.Interfaces;
 //using Epi.Cloud.Interfaces.MetadataInterfaces;
 //using Epi.Web.Common.Interfaces;
-//using Epi.Web.Enter.Common.BusinessObject;
+//using Epi.Cloud.Common.BusinessObjects;
 //using Epi.Cloud.MetadataServices;
 
 //namespace Epi.Cloud.DataEntryServices.DAO.Tests

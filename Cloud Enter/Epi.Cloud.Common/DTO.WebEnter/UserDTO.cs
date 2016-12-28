@@ -1,7 +1,7 @@
 ﻿using System;
 using Epi.Cloud.Common.Constants;
 
-namespace Epi.Web.Enter.Common.DTO
+namespace Epi.Cloud.Common.DTO
 {
     public class UserDTO
     {
