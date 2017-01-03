@@ -22,19 +22,18 @@ namespace Epi.DataPersistence.Common.Interfaces
 
         FormResponseDetail GetFormResponseByResponseId(string responseId);
 
-		Task<bool> InsertResponse(SurveyResponseBO surveyResponseBO);
-
-        Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO);
+        bool SaveResponse(SurveyResponseBO surveyResponseBO);
+		bool InsertResponse(SurveyResponseBO surveyResponseBO);
 
         PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
         SurveyAnswerResponse DeleteResponse(string responseId, int userId);
 
-        Task<bool> SaveFormProperties(SurveyResponseBO request);
+        bool SaveFormProperties(SurveyResponseBO request);
 
-        SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
+        //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
 
-        SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
+        //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
 
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
 

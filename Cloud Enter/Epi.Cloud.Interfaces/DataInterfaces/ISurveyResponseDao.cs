@@ -72,14 +72,14 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// </remarks>
         /// <param name="surveyResponse">SurveyResponse.</param>
         void InsertSurveyResponse(SurveyResponseBO surveyResponse);
-        /// <summary>
-        /// Inserts a new SurveyResponse. 
-        /// </summary>
-        /// <remarks>
-        /// Following insert, SurveyResponse object will contain the new identifier.
-        /// </remarks>
-        /// <param name="surveyResponse">SurveyResponse.</param>
-        void InsertChildSurveyResponse(SurveyResponseBO surveyResponse);
+        ///// <summary>
+        ///// Inserts a new SurveyResponse. 
+        ///// </summary>
+        ///// <remarks>
+        ///// Following insert, SurveyResponse object will contain the new identifier.
+        ///// </remarks>
+        ///// <param name="surveyResponse">SurveyResponse.</param>
+        //void InsertChildSurveyResponse(SurveyResponseBO surveyResponse);
         /// <summary>
         /// Updates a SurveyResponse.
         /// </summary>

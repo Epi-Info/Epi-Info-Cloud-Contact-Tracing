@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
-using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.BusinessObjects;
-using Epi.Cloud.Common.DTO;
-using Epi.Cloud.Common.Message;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
@@ -49,13 +50,75 @@ namespace Epi.PersistenceServices.DocumentDB
 
 		public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
 		{
-			var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
-            //NotifyConsistencyService(responseId, responseStatus, reasonForStatusChange);
+            Task.Run(() =>
+            {
+                var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus).ConfigureAwait(false).GetAwaiter().GetResult();
+            }).Wait();
             return true;
-			//return result;
 		}
 
-		public async Task<bool> InsertResponse(SurveyResponseBO surveyResponseBO)
+
+        public bool SaveResponse(SurveyResponseBO surveyResponseBO)
+        {
+            // Both SaveFormProperties and InsertResponse perform Task.Run
+            bool saveFormPropertiesIsSuccessful = SaveFormProperties(surveyResponseBO);
+            bool insertResponseIsSuccessful = InsertResponse(surveyResponseBO);
+            return saveFormPropertiesIsSuccessful && insertResponseIsSuccessful;
+        }
+
+        #region Save FormParentProperties
+        /// <summary>
+        /// First time store ResonseId,RecStatus, and SurveyId in DocumentDB
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public bool SaveFormProperties(SurveyResponseBO request)
+        {
+            //if(request.IsDeleteMode)
+            //{
+            //     request.SurveyAnswerList[0].Status = RecordStatus.Deleted;
+            //}
+
+            //var formName = GetFormDigest(request.Criteria.SurveyId).FormName;
+            var formName = GetFormDigest(request.SurveyId).FormName;
+            var now = DateTime.UtcNow;
+            FormResponseProperties formResponseProperties = new FormResponseProperties
+            {
+                Id = request.ResponseId,
+                GlobalRecordID = request.ResponseId,
+                IsNewRecord = request.Status == RecordStatus.InProcess ? request.IsNewRecord : false,
+                RecStatus = request.Status,
+                FormId = request.SurveyId,
+                FormName = formName,
+                RelateParentId = request.RelateParentId,
+                IsRelatedView = request.RelateParentId != null,
+                FirstSaveTime = request.ResponseDetail.FirstSaveTime,
+                LastSaveTime = now,
+                FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
+                UserId = request.UserId,
+                IsDraftMode = request.IsDraftMode,
+                PageIds = request.ResponseDetail.PageIds != null ? request.ResponseDetail.PageIds.Where(pid => pid != 0).ToList() : new List<int>(),
+                RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
+                HiddenFieldsList = request.ResponseDetail.HiddenFieldsList,
+                HighlightedFieldsList = request.ResponseDetail.HighlightedFieldsList,
+                DisabledFieldsList = request.ResponseDetail.DisabledFieldsList
+            };
+
+            bool isSuccessful = false;
+            Task.Run(() =>
+            {
+                ResourceResponse<Document> result = _surveyResponseCRUD.UpsertFormResponseProperties(formResponseProperties).ConfigureAwait(false).GetAwaiter().GetResult();
+                isSuccessful = result != null;
+            }).Wait();
+
+            return isSuccessful;
+        }
+
+        #endregion
+
+        #region InsertResponse
+
+        public bool InsertResponse(SurveyResponseBO surveyResponseBO)
 		{
             bool isSuccessful = false;
             var formId = surveyResponseBO.SurveyId;
@@ -83,11 +146,17 @@ namespace Epi.PersistenceServices.DocumentDB
 
                 documentResponseProperties.PageResponsePropertiesList = new List<PageResponseProperties>();
                 documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
-                isSuccessful = await _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties);
+
+                Task.Run(() =>
+                {
+                    ResourceResponse<Document> response = _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties).ConfigureAwait(false).GetAwaiter().GetResult();
+                    isSuccessful = response != null;
+                }).Wait();
             }
             return isSuccessful;
 		}
 
+        #endregion InsertResponse
 
         #region Insert Survey Response
 #if false
@@ -105,9 +174,9 @@ namespace Epi.PersistenceServices.DocumentDB
 				return isSuccessful;
 		}
 #endif
-#endregion
+        #endregion
 
-#region Insert Survey Response // Garry
+        #region Insert Survey Response // Garry
 #if false
 		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
 		{
@@ -124,27 +193,27 @@ namespace Epi.PersistenceServices.DocumentDB
 			return isSuccessful;
 		}
 #endif
-#endregion
+        #endregion
 
-#region Insert Child Survey Response
-		public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
-		{
-			var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.SingleOrDefault();
-			var formId = surveyResponseBO.SurveyId;
-			var pageId = pageResponseDetail != null ? pageResponseDetail.PageId : 0;
+  //      #region Insert Child Survey Response
+  //      public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
+		//{
+		//	var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.SingleOrDefault();
+		//	var formId = surveyResponseBO.SurveyId;
+		//	var pageId = pageResponseDetail != null ? pageResponseDetail.PageId : 0;
 
-			var parentRecordId = surveyResponseBO.ParentRecordId;
-			var relateParentId = surveyResponseBO.RelateParentId;
+		//	var parentRecordId = surveyResponseBO.ParentRecordId;
+		//	var relateParentId = surveyResponseBO.RelateParentId;
 
-			DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
-			documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
-			if (pageResponseDetail != null && pageResponseDetail.PageId > 0)
-			{
-				documentResponseProperties.PageResponsePropertiesList.Add(pageResponseDetail.ToPageResponseProperties());
-			}
-			return Task.FromResult(true);
-		}
-#endregion
+		//	DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
+		//	documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
+		//	if (pageResponseDetail != null && pageResponseDetail.PageId > 0)
+		//	{
+		//		documentResponseProperties.PageResponsePropertiesList.Add(pageResponseDetail.ToPageResponseProperties());
+		//	}
+		//	return Task.FromResult(true);
+		//}
+//#endregion
 
 #region ReadSurveyAnswerByResponseID,PageId 
 		public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
@@ -189,84 +258,41 @@ namespace Epi.PersistenceServices.DocumentDB
 		//	return formHierarchyDTO;
 		//}
 
-#region Save FormParentProperties
-		/// <summary>
-		/// First time store ResonseId,RecStatus, and SurveyId in DocumentDB
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		public async Task<bool> SaveFormProperties(SurveyResponseBO request)
-		{
-			//if(request.IsDeleteMode)
-			//{
-			//     request.SurveyAnswerList[0].Status = RecordStatus.Deleted;
-			//}
 
-			//var formName = GetFormDigest(request.Criteria.SurveyId).FormName;
-			var formName = GetFormDigest(request.SurveyId).FormName;
-			var now = DateTime.UtcNow;
-			FormResponseProperties formResponseProperties = new FormResponseProperties
-			{
-				Id = request.ResponseId,
-				GlobalRecordID = request.ResponseId,
-                IsNewRecord = request.Status == RecordStatus.InProcess ? request.IsNewRecord : false,
-				RecStatus = request.Status,
-				FormId = request.SurveyId,
-				FormName = formName,
-				RelateParentId = request.RelateParentId,
-				IsRelatedView = request.RelateParentId != null,
-				FirstSaveTime = request.ResponseDetail.FirstSaveTime,
-				LastSaveTime = now,
-				FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
-				UserId = request.UserId,
-				IsDraftMode = request.IsDraftMode,
-				PageIds = request.ResponseDetail.PageIds != null ? request.ResponseDetail.PageIds.Where(pid => pid != 0).ToList() : new List<int>(),
-                RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
-                HiddenFieldsList = request.ResponseDetail.HiddenFieldsList,
-                HighlightedFieldsList = request.ResponseDetail.HighlightedFieldsList,
-                DisabledFieldsList = request.ResponseDetail.DisabledFieldsList
-            };
+//#region Get the Record by GlobalRecordID
+//		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId)
+//		{
+//			// TODO Implement GetSurveyAnswerResponse
+//			return null;
+//		}
+//#endregion
 
-			var saveTask = await _surveyResponseCRUD.UpsertFormResponseProperties(formResponseProperties);
-			return true;
-		}
+//#region Get Survey Answer Response
+//		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
+//		{
+//			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
+//			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
 
-#endregion
+//			var formDocumentDbEntity = _surveyResponseCRUD.GetAllPageResponsesByResponseId(responseId);
+//			List<SurveyAnswerDTO> surveyResponseList = new List<SurveyAnswerDTO>();
+//			SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
+//			surveyAnswerDTO.ResponseId = responseId;
+//			surveyAnswerDTO.SurveyId = formDocumentDbEntity.FormResponseProperties.FormId;
 
-#region Get the Record by GlobalRecordID
-		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId)
-		{
-			// TODO Implement GetSurveyAnswerResponse
-			return null;
-		}
-#endregion
+//			surveyAnswerDTO.ResponseDetail = formDocumentDbEntity.ToFormResponseDetail();
 
-#region Get Survey Answer Response
-		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
-		{
-			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
-			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
+//			surveyAnswerDTO.DateCreated = formDocumentDbEntity.FormResponseProperties.FirstSaveTime;
+//			surveyAnswerDTO.DateUpdated = formDocumentDbEntity.FormResponseProperties.LastSaveTime;
+//			surveyAnswerDTO.RelateParentId = formDocumentDbEntity.FormResponseProperties.RelateParentId;
+//			surveyAnswerDTO.LastActiveUserId = formDocumentDbEntity.FormResponseProperties.UserId;
+//			surveyAnswerDTO.Status = RecordStatus.Saved;
+//			surveyAnswerDTO.ReasonForStatusChange = RecordStatusChangeReason.Unknown;
 
-			var formDocumentDbEntity = _surveyResponseCRUD.GetAllPageResponsesByResponseId(responseId);
-			List<SurveyAnswerDTO> surveyResponseList = new List<SurveyAnswerDTO>();
-			SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
-			surveyAnswerDTO.ResponseId = responseId;
-			surveyAnswerDTO.SurveyId = formDocumentDbEntity.FormResponseProperties.FormId;
-
-			surveyAnswerDTO.ResponseDetail = formDocumentDbEntity.ToFormResponseDetail();
-
-			surveyAnswerDTO.DateCreated = formDocumentDbEntity.FormResponseProperties.FirstSaveTime;
-			surveyAnswerDTO.DateUpdated = formDocumentDbEntity.FormResponseProperties.LastSaveTime;
-			surveyAnswerDTO.RelateParentId = formDocumentDbEntity.FormResponseProperties.RelateParentId;
-			surveyAnswerDTO.LastActiveUserId = formDocumentDbEntity.FormResponseProperties.UserId;
-			surveyAnswerDTO.Status = RecordStatus.Saved;
-			surveyAnswerDTO.ReasonForStatusChange = RecordStatusChangeReason.Unknown;
-
-			surveyResponseList.Add(surveyAnswerDTO);
-			_surveyAnswerResponse.SurveyResponseList = surveyResponseList;
-			return _surveyAnswerResponse;
-		}
-#endregion
+//			surveyResponseList.Add(surveyAnswerDTO);
+//			_surveyAnswerResponse.SurveyResponseList = surveyResponseList;
+//			return _surveyAnswerResponse;
+//		}
+//#endregion
 
 #region Read All Records By SurveyID
 		public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields)
@@ -340,13 +366,6 @@ namespace Epi.PersistenceServices.DocumentDB
 
 			}
 		}
-#endregion NotifyConsistencyService
-
-		private void ConsistencyHack(FormResponseDetail formResponseDetail)
-		{
-			//var hack = new DataPersistence.ConsistencyServiceHack();
-			//hack.PersistToSqlServer(formResponseDetail);
-		}
-
-	}
+        #endregion NotifyConsistencyService  
+    }
 }

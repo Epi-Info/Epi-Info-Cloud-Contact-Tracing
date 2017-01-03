@@ -11,6 +11,7 @@ using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Criteria;
+using System.Threading.Tasks;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -258,6 +259,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public void InsertResponse(FormResponseDetail formResponseDetail)
         {
             // TODO: DocumentDB implementation required
+            throw new NotImplementedException("SurveyResponseProvider.InsertResponse");
             try
             {
                 Guid Id = new Guid(formResponseDetail.GlobalRecordID);
@@ -296,12 +298,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                //Save Properties to Document DB
                 surveyResponseBO.DateCreated = DateTime.UtcNow;
                 surveyResponseBO.DateUpdated = DateTime.UtcNow;
-
-                var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
-                var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO);
+                bool isSuccessful = _surveyPersistenceFacade.SaveResponse(surveyResponseBO);
             }
             catch (Exception ex)
             {
@@ -309,53 +308,25 @@ namespace Epi.Cloud.DataEntryServices.DAO
             }
         }
 
-        ///If your user Click save button call the SaveSurveyResponse()
-        public void SaveSurveyResponse(SurveyResponseBO surveyResponseBO)
-        {
-            try
-            {
-                //Save Properties to Document DB
-                surveyResponseBO.DateCreated = DateTime.UtcNow;
-                surveyResponseBO.DateUpdated = DateTime.UtcNow;
+        ///// <summary>
+        ///// Inserts a new SurveyResponse. 
+        ///// </summary>
+        ///// <remarks>
+        ///// Following insert, SurveyResponse object will contain the new identifier.
+        ///// </remarks>  
+        ///// <param name="surveyResponseBO">SurveyResponse.</param>
+        //public void InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO)
+        //{
+        //    try
+        //    {
+        //        bool isSuccessful = _surveyPersistenceFacade.InsertChildResponseAsync(surveyResponseBO).Result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw (ex);
+        //    }
+        //}
 
-                var formInfoResponse = _surveyPersistenceFacade.SaveFormProperties(surveyResponseBO);
-                var pageResponse = _surveyPersistenceFacade.InsertResponse(surveyResponseBO); 
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-        }
-
-        /// <summary>
-        /// Inserts a new SurveyResponse. 
-        /// </summary>
-        /// <remarks>
-        /// Following insert, SurveyResponse object will contain the new identifier.
-        /// </remarks>  
-        /// <param name="surveyResponseBO">SurveyResponse.</param>
-        public void InsertChildSurveyResponse(SurveyResponseBO surveyResponseBO)
-        {
-            try
-            {
-                //TODO Implement for DocumentDB
-                var response = _surveyPersistenceFacade.InsertChildResponseAsync(surveyResponseBO);
-				var result = response.Result;
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    SurveyResponse SurveyResponseEntity = Mapper.ToEF(SurveyResponse, SurveyResponse.CurrentOrgId);
-                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-                //    SurveyResponseEntity.Users.Add(User);
-                //    Context.AddToSurveyResponses(SurveyResponseEntity);
-
-                //    Context.SaveChanges();
-                //}
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-        }
         /// <summary>
         /// Updates a SurveyResponse.
         /// </summary>
@@ -364,12 +335,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                //Save Properties to Document DB
+                //Save Properties
                 InsertSurveyResponse(surveyResponseBO);
-                if(surveyResponseBO.Status==RecordStatus.Saved)
-                {
-                    UpdateRecordStatus(surveyResponseBO);
-                }
             }
             catch (Exception ex)
             {
@@ -548,25 +515,11 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse)
         {
 
-            var responseId = SurveyResponse.ResponseId;
-            var userId = SurveyResponse.UserId;
-            _surveyPersistenceFacade.DeleteResponse(responseId, userId);
             try
             {
-                Guid Id = new Guid(SurveyResponse.ResponseId);
-
-                //TODO Implement for DocumentDB
-                //using (var Context = DataObjectFactory.CreateContext())
-                //{
-                //    User User = Context.Users.FirstOrDefault(x => x.UserID == SurveyResponse.UserId);
-
-                //    SurveyResponse Response = Context.SurveyResponses.First(x => x.ResponseId == Id);
-                //    Response.Users.Remove(User);
-
-                //    Context.SurveyResponses.DeleteObject(Response);
-
-                //    Context.SaveChanges();
-                //}
+                var responseId = SurveyResponse.ResponseId;
+                var userId = SurveyResponse.UserId;
+                _surveyPersistenceFacade.DeleteResponse(responseId, userId);
             }
             catch (Exception ex)
             {
@@ -1940,7 +1893,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange)
         {
-			_surveyPersistenceFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
+			bool isSuccessful = _surveyPersistenceFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
 		}
 
         public int GetFormResponseCount(SurveyAnswerCriteria criteria)
@@ -2025,7 +1978,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                _surveyPersistenceFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, surveyResponse.ReasonForStatusChange);
+                bool isSuccessful = _surveyPersistenceFacade.UpdateResponseStatus(surveyResponse.ResponseId, surveyResponse.Status, surveyResponse.ReasonForStatusChange);
             }
             catch (Exception ex)
             {

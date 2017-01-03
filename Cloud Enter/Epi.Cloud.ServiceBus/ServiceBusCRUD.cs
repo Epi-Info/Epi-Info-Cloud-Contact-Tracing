@@ -11,7 +11,7 @@ namespace Epi.Cloud.ServiceBus
     {
 
         public TopicClient topicClient;
-        public string TopicName = "ResponseInfoTopic";
+        public string TopicName = ConfigurationManager.AppSettings["ServiceBusTopicName"];
         const Int16 maxTrials = 4;
 
         public ServiceBusCRUD()

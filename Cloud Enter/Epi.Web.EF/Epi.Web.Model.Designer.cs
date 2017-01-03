@@ -34,7 +34,6 @@ using System.Xml.Serialization;
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "SurveyResponseUser", "SurveyResponse", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.SurveyResponse), "User", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.User))]
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "FK_SurveyResponseTracking_SurveyResponse", "SurveyResponse", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Epi.Web.EF.SurveyResponse), "SurveyResponseTracking", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Epi.Web.EF.SurveyResponseTracking), true)]
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "SurveyMetadataOrganization", "Organization", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.Organization), "SurveyMetaData", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.SurveyMetaData))]
-[assembly: EdmRelationshipAttribute("OSELS_EWEModel", "FK_SurveyResponse_Organization", "Organization", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Epi.Web.EF.Organization), "SurveyResponse", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.SurveyResponse), true)]
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "FK_SurveyMetaData_DataAccessRules", "DataAccessRule", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Epi.Web.EF.DataAccessRule), "SurveyMetaData", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.SurveyMetaData), true)]
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "FK_Canvas__Datasource", "Datasource", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Epi.Web.EF.Datasource), "Canva", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.Canva), true)]
 [assembly: EdmRelationshipAttribute("OSELS_EWEModel", "FK_Canvas_CreatorUser", "User", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Epi.Web.EF.User), "Canva", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Epi.Web.EF.Canva), true)]
@@ -203,22 +202,6 @@ namespace Epi.Web.EF
             }
         }
         private ObjectSet<ResponseDisplaySetting> _ResponseDisplaySettings;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<ResponseXml> ResponseXmls
-        {
-            get
-            {
-                if ((_ResponseXmls == null))
-                {
-                    _ResponseXmls = base.CreateObjectSet<ResponseXml>("ResponseXmls");
-                }
-                return _ResponseXmls;
-            }
-        }
-        private ObjectSet<ResponseXml> _ResponseXmls;
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -518,14 +501,6 @@ namespace Epi.Web.EF
         public void AddToResponseDisplaySettings(ResponseDisplaySetting responseDisplaySetting)
         {
             base.AddObject("ResponseDisplaySettings", responseDisplaySetting);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the ResponseXmls EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToResponseXmls(ResponseXml responseXml)
-        {
-            base.AddObject("ResponseXmls", responseXml);
         }
     
         /// <summary>
@@ -3864,28 +3839,6 @@ namespace Epi.Web.EF
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("OSELS_EWEModel", "FK_SurveyResponse_Organization", "SurveyResponse")]
-        public EntityCollection<SurveyResponse> SurveyResponses
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<SurveyResponse>("OSELS_EWEModel.FK_SurveyResponse_Organization", "SurveyResponse");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<SurveyResponse>("OSELS_EWEModel.FK_SurveyResponse_Organization", "SurveyResponse", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("OSELS_EWEModel", "FK_Datasource_Organization", "Datasource")]
         public EntityCollection<Datasource> Datasources
         {
@@ -4054,136 +4007,6 @@ namespace Epi.Web.EF
                 }
             }
         }
-
-        #endregion
-
-    }
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="OSELS_EWEModel", Name="ResponseXml")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class ResponseXml : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new ResponseXml object.
-        /// </summary>
-        /// <param name="responseId">Initial value of the ResponseId property.</param>
-        /// <param name="xml">Initial value of the Xml property.</param>
-        public static ResponseXml CreateResponseXml(global::System.Guid responseId, global::System.String xml)
-        {
-            ResponseXml responseXml = new ResponseXml();
-            responseXml.ResponseId = responseId;
-            responseXml.Xml = xml;
-            return responseXml;
-        }
-
-        #endregion
-
-        #region Simple Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Guid ResponseId
-        {
-            get
-            {
-                return _ResponseId;
-            }
-            set
-            {
-                if (_ResponseId != value)
-                {
-                    OnResponseIdChanging(value);
-                    ReportPropertyChanging("ResponseId");
-                    _ResponseId = StructuralObject.SetValidValue(value, "ResponseId");
-                    ReportPropertyChanged("ResponseId");
-                    OnResponseIdChanged();
-                }
-            }
-        }
-        private global::System.Guid _ResponseId;
-        partial void OnResponseIdChanging(global::System.Guid value);
-        partial void OnResponseIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.String Xml
-        {
-            get
-            {
-                return _Xml;
-            }
-            set
-            {
-                OnXmlChanging(value);
-                ReportPropertyChanging("Xml");
-                _Xml = StructuralObject.SetValidValue(value, false, "Xml");
-                ReportPropertyChanged("Xml");
-                OnXmlChanged();
-            }
-        }
-        private global::System.String _Xml;
-        partial void OnXmlChanging(global::System.String value);
-        partial void OnXmlChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Int32> UserId
-        {
-            get
-            {
-                return _UserId;
-            }
-            set
-            {
-                OnUserIdChanging(value);
-                ReportPropertyChanging("UserId");
-                _UserId = StructuralObject.SetValidValue(value, "UserId");
-                ReportPropertyChanged("UserId");
-                OnUserIdChanged();
-            }
-        }
-        private Nullable<global::System.Int32> _UserId;
-        partial void OnUserIdChanging(Nullable<global::System.Int32> value);
-        partial void OnUserIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Boolean> IsNewRecord
-        {
-            get
-            {
-                return _IsNewRecord;
-            }
-            set
-            {
-                OnIsNewRecordChanging(value);
-                ReportPropertyChanging("IsNewRecord");
-                _IsNewRecord = StructuralObject.SetValidValue(value, "IsNewRecord");
-                ReportPropertyChanged("IsNewRecord");
-                OnIsNewRecordChanged();
-            }
-        }
-        private Nullable<global::System.Boolean> _IsNewRecord;
-        partial void OnIsNewRecordChanging(Nullable<global::System.Boolean> value);
-        partial void OnIsNewRecordChanged();
 
         #endregion
 
@@ -6241,44 +6064,6 @@ namespace Epi.Web.EF
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<SurveyResponseTracking>("OSELS_EWEModel.FK_SurveyResponseTracking_SurveyResponse", "SurveyResponseTracking", value);
-                }
-            }
-        }
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("OSELS_EWEModel", "FK_SurveyResponse_Organization", "Organization")]
-        public Organization Organization
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Organization>("OSELS_EWEModel.FK_SurveyResponse_Organization", "Organization").Value;
-            }
-            set
-            {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Organization>("OSELS_EWEModel.FK_SurveyResponse_Organization", "Organization").Value = value;
-            }
-        }
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [BrowsableAttribute(false)]
-        [DataMemberAttribute()]
-        public EntityReference<Organization> OrganizationReference
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Organization>("OSELS_EWEModel.FK_SurveyResponse_Organization", "Organization");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Organization>("OSELS_EWEModel.FK_SurveyResponse_Organization", "Organization", value);
                 }
             }
         }
