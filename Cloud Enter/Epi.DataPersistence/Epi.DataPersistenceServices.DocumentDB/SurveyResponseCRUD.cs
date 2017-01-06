@@ -339,10 +339,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <summary>
         /// Created instance of DocumentClient and Getting reference to database and Document collections
         /// </summary>
-        public async Task<ResourceResponse<Document>> InsertResponseAsync(DocumentResponseProperties documentResponseProperties)
+        public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties)
         {
             ResourceResponse<Document> response = null;
-
+            bool tasksRanToCompletion = true;
             Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
 
             var formResponseProperties = ReadFormInfoByResponseId(documentResponseProperties.GlobalRecordID, formInfoCollectionUri);
@@ -351,18 +351,18 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 var pageId = newPageResponseProperties.PageId;
                 Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                var pageResponse = await Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties).ConfigureAwait(false);
+                var pageResponse = await Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
 
-                if (!formResponseProperties.PageIds.Contains(pageId))
-                {
-                    formResponseProperties.PageIds.Add(pageId);
-                }
+                //if (!formResponseProperties.PageIds.Contains(pageId))
+                //{
+                //    formResponseProperties.PageIds.Add(pageId);
+                //}
             }
 
-            formResponseProperties.PageIds.Sort();
+            //formResponseProperties.PageIds.Sort();
 
-            response = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
-            return response;
+            //response = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
+            return tasksRanToCompletion;
         }
 
         private async Task<ResourceResponse<Document>> UpsertDocumentAsync(Uri formInfoCollectionUri, FormResponseProperties formResponseProperties)
@@ -423,19 +423,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
                         attachment = CreateAttachment(existingFormResponseProperties.SelfLink, AttachmentId, existingFormResponseProperties.GlobalRecordID, hierarchialResponseJson);
 
-                    }
-                    //if (existingFormResponseProperties.RecStatus == RecordStatus.Saved || true)
-                    //{
-                    //    Attachment attachment = null;
-                    //    attachment = GetAttachmentInfo(existingFormResponseProperties.GlobalRecordID, AttachmentId, existingFormResponseProperties.SelfLink, null);
-                    //    if (attachment == null)
-                    //    {
-                    //        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
-                    //        var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
-                    //        //Check Attachment is exist or not ,If not create attachment                             
-                    //        attachment = GetAttachmentInfo(existingFormResponseProperties.GlobalRecordID, AttachmentId, existingFormResponseProperties.SelfLink, hierarchialResponseJson);
-                    //    }
-                    //}
+                    } 
 
                     var pageIdsUpdated = false;
                     formResponseProperties.RelateParentId = existingFormResponseProperties.RelateParentId;

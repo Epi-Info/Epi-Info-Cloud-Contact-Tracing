@@ -186,7 +186,8 @@ namespace Epi.Cloud.DataEntryServices
         {
             foreach (var item in surveyResponseBOs)
             {
-                _surveyResponseDao.InsertResponse(item.ResponseDetail);
+                _surveyResponseDao.InsertSurveyResponse(item);
+                //_surveyResponseDao.InsertResponse(item.ResponseDetail);
             }
 
             return surveyResponseBOs;
