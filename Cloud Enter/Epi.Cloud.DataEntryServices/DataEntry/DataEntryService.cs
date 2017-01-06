@@ -320,6 +320,8 @@ namespace Epi.Cloud.DataEntryServices
                 {
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
                     surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                    surveyResponseBO.Status = surveyAnswerRequest.Criteria.StatusId;
+                    surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
                 }
 
                 List<SurveyResponseBO> ResultList = surveyResponseImplementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);

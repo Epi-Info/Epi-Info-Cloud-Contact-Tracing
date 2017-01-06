@@ -579,9 +579,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 Guid Id = new Guid(criteria.SurveyId);
 
+#if ImplementSharableRules
                 if (criteria.IsShareable)
                 {
-#if ImplementSharableRules
                     // TODO: Implement Sharable Rules
 
                     //Shareable
@@ -642,12 +642,12 @@ namespace Epi.Cloud.DataEntryServices.DAO
                                 break;
                         }
                     }
-#endif //ImplementSharableRules
                 }
                 else
+#endif //ImplementSharableRules
                 {
                     var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
-                    
+
                     var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields);
                     if (surveyResponses != null)
                     {

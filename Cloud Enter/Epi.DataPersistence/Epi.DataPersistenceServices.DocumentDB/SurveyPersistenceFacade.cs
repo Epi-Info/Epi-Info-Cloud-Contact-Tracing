@@ -51,6 +51,7 @@ namespace Epi.PersistenceServices.DocumentDB
         public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
         {
             var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
+          
             return true;
         }
 
@@ -60,6 +61,10 @@ namespace Epi.PersistenceServices.DocumentDB
             // Both SaveFormProperties and InsertResponse perform Task.Run
             bool saveFormPropertiesIsSuccessful = SaveFormProperties(surveyResponseBO);
             bool insertResponseIsSuccessful = InsertResponse(surveyResponseBO);
+            if (surveyResponseBO.Status == RecordStatus.Saved)
+            {
+                NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status,RecordStatusChangeReason.SubmitOrClose);
+            }
             return saveFormPropertiesIsSuccessful && insertResponseIsSuccessful;
         }
 
