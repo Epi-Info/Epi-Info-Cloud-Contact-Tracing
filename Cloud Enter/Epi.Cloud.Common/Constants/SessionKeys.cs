@@ -30,5 +30,6 @@
 		public const string UserId = "UserId";
 		public const string UserLastName = "UserLastName";
 		public const string UsertRole = "UsertRole";
-	}
+        public const string UserName = "UserName";
+    }
 }
