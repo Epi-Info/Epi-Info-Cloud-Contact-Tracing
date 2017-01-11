@@ -233,6 +233,7 @@ namespace Epi.Web.MVC.Controllers
             SetGlobalVariable();
             ViewBag.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string UserName = Session[SessionKeys.UserName].ToString();
             string responseId = surveyAnswerModel.ResponseId;
             Session[SessionKeys.FormValuesHasChanged] = Form_Has_Changed;
 
@@ -306,7 +307,7 @@ namespace Epi.Web.MVC.Controllers
 
                             if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                             {
-                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
+                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, UserName, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                                 form = SetLists(form);
                                 TempData["Width"] = form.Width + 5;
                                 SurveyModel SurveyModel = new SurveyModel();
@@ -318,7 +319,7 @@ namespace Epi.Web.MVC.Controllers
                             else if (!string.IsNullOrEmpty(this.Request.Form["Go_Home_action"]) && this.Request.Form["Go_Home_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                             {
                                 IsSaved = true;
-                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
+                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, UserName, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                                 form = SetLists(form);
                                 TempData["Width"] = form.Width + 5;
                                 SurveyModel SurveyModel = new SurveyModel();
@@ -332,7 +333,7 @@ namespace Epi.Web.MVC.Controllers
                                 IsSaved = true;
 
                                 string RelateParentId = "";
-                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
+                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, UserName, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                                 form = SetLists(form);
                                 TempData["Width"] = form.Width + 5;
                                 SurveyModel SurveyModel = new SurveyModel();
@@ -371,7 +372,7 @@ namespace Epi.Web.MVC.Controllers
                                 SetRelateSession(responseId, PageNumber);
                                 RequestedViewId = int.Parse(this.Request.Form["Requested_View_Id"]);
                                 SurveyAnswer.RelateParentId = responseId;
-                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
+                                form = SaveCurrentForm(form, surveyInfoModel, SurveyAnswer, responseId, UserId, UserName, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, PageNumber, FormsHierarchy);
                                 form = SetLists(form);
                                 TempData["Width"] = form.Width + 5;
                                 Session[SessionKeys.RequestedViewId] = RequestedViewId;
@@ -1113,7 +1114,7 @@ namespace Epi.Web.MVC.Controllers
             return result;
         }
 
-        private MvcDynamicForms.Form SaveCurrentForm(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO surveyAnswerDTO, string responseId, int userId, bool isSubmited, bool isSaved,
+        private MvcDynamicForms.Form SaveCurrentForm(MvcDynamicForms.Form form, SurveyInfoModel surveyInfoModel, SurveyAnswerDTO surveyAnswerDTO, string responseId, int userId,string userName, bool isSubmited, bool isSaved,
             bool isMobileDevice, string formValuesHasChanged, int pageNumber, List<FormsHierarchyDTO> formsHierarchyDTOList = null
         )
         {

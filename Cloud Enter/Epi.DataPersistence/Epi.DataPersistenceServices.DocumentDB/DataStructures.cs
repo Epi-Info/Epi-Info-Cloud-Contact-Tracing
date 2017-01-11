@@ -51,6 +51,7 @@ namespace Epi.PersistenceServices.DocumentDB
             public bool IsNewRecord { get; set; }
             public int RecStatus { get; set; }
             public string RelateParentId { get; set; }
+            public string UserName { get; set; }
             public string FirstSaveLogonName { get; set; }
             public string LastSaveLogonName { get; set; }
             public DateTime FirstSaveTime { get; set; }
