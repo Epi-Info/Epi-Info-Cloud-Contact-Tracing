@@ -1158,7 +1158,7 @@ namespace Epi.Web.MVC.Controllers
             SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper();
             if (!string.IsNullOrEmpty(SurveyId))
             {
-                SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
+                //SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
                 FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
                 //Populating the request
@@ -1176,6 +1176,9 @@ namespace Epi.Web.MVC.Controllers
                 //Getting Resposes
                 var ResponseListDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).ResponseIds;
 
+                //Getting Resposes
+                
+
                 // If we don't have any data for this child form yet then create a response 
                 if (ResponseListDTO.Count == 0)
                 {
@@ -1192,15 +1195,18 @@ namespace Epi.Web.MVC.Controllers
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
                 foreach (var item in ResponseListDTO)
                 {
-
-                    if (item.SqlData != null)
+                    if(item.RelateParentId== ResponseId)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, Columns, "ChildGlobalRecordID"));
+                        if (item.SqlData != null)
+                        {
+                            ResponseList.Add(ConvertRowToModel(item, Columns, "ChildGlobalRecordID"));
+                        }
+                        else
+                        {
+                            ResponseList.Add(item.ToResponseModel(Columns));
+                        }
                     }
-                    else
-                    {
-                        ResponseList.Add(item.ToResponseModel(Columns));
-                    }
+                 
                 }
 
                 FormResponseInfoModel.ResponsesList = ResponseList;

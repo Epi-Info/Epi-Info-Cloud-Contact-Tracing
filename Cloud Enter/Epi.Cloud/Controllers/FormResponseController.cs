@@ -106,7 +106,8 @@ namespace Epi.Web.MVC.Controllers
 
                 if (!string.IsNullOrEmpty(responseid))
                 {
-                    SurveyModel.FormResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, responseid, Pagenumber, null, null);
+                    //SurveyModel.FormResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, responseid, Pagenumber, null, null);
+                    SurveyModel.FormResponseInfoModel = GetFormResponseInfoModels(RelateSurveyId.FormId, responseid, FormsHierarchy);
                     SurveyModel.FormResponseInfoModel.NumberOfResponses = SurveyModel.FormResponseInfoModel.ResponsesList.Count();
 
                     SurveyModel.FormResponseInfoModel.ParentResponseId = responseid;
@@ -120,7 +121,8 @@ namespace Epi.Web.MVC.Controllers
                     SurveyModel.Form = form;
                     if (string.IsNullOrEmpty(responseid))
                     {
-                        SurveyModel.FormResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, RelateSurveyId.ResponseIds[0].RelateParentId, Pagenumber, null, null);
+                        SurveyModel.FormResponseInfoModel = GetFormResponseInfoModels(RelateSurveyId.FormId, responseid, FormsHierarchy);
+                        //SurveyModel.FormResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, RelateSurveyId.ResponseIds[0].RelateParentId, Pagenumber, null, null);
                         SurveyModel.FormResponseInfoModel.ParentResponseId = RelateSurveyId.ResponseIds[0].RelateParentId;
 
                     }
@@ -137,7 +139,8 @@ namespace Epi.Web.MVC.Controllers
                     if (SurveyModel.FormResponseInfoModel.ResponsesList.Count() > 0)
                     {
                         SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(SurveyModel.FormResponseInfoModel.ResponsesList[0].Column0, RelateSurveyId.FormId);
-                        ResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, responseid, Pagenumber, null, null);
+                        ResponseInfoModel = GetFormResponseInfoModels(RelateSurveyId.FormId, responseid, FormsHierarchy);
+                        //ResponseInfoModel = GetFormResponseInfoModel(RelateSurveyId.FormId, responseid, Pagenumber, null, null);
                         SurveyModel.Form = _surveyFacade.GetSurveyFormData(surveyAnswerDTO.SurveyId, 1, surveyAnswerDTO, IsMobileDevice, null, null, IsAndroid);
                         ResponseInfoModel.FormInfoModel.FormName = SurveyModel.Form.SurveyInfo.SurveyName.ToString();
                         ResponseInfoModel.FormInfoModel.FormId = SurveyModel.Form.SurveyInfo.SurveyId.ToString();
@@ -609,6 +612,72 @@ namespace Epi.Web.MVC.Controllers
                 formsHierarchyResponse = _surveyFacade.GetFormsHierarchy(formsHierarchyRequest);
             }
             return formsHierarchyResponse.FormsHierarchy;
+        }
+
+        private FormResponseInfoModel GetFormResponseInfoModels(string SurveyId, string ResponseId, List<FormsHierarchyDTO> FormsHierarchyDTOList = null)
+        {
+            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
+
+            var formHieratchyDTO = FormsHierarchyDTOList.FirstOrDefault(h => h.FormId == SurveyId);
+
+            SurveyResponseHelper surveyResponseHelper = new SurveyResponseHelper();
+            if (!string.IsNullOrEmpty(SurveyId))
+            {
+                SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
+                FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+
+                //Populating the request
+
+                FormSettingReq.FormInfo.FormId = SurveyId;
+                FormSettingReq.FormInfo.UserId = UserId;
+                //Getting Column Name  List
+                FormSettingResponse FormSettingResponse = _surveyFacade.GetFormSettings(FormSettingReq);
+                Columns = FormSettingResponse.FormSetting.ColumnNameList.ToList();
+                Columns.Sort(Compare);
+
+                // Setting  Column Name  List
+                FormResponseInfoModel.Columns = Columns;
+
+                //Getting Resposes
+                var ResponseListDTO = FormsHierarchyDTOList.FirstOrDefault(x => x.FormId == SurveyId).ResponseIds;
+
+                // If we don't have any data for this child form yet then create a response 
+                if (ResponseListDTO.Count == 0)
+                {
+                    var surveyAnswerDTO = new SurveyAnswerDTO();
+                    surveyAnswerDTO.CurrentPageNumber = 1;
+                    surveyAnswerDTO.DateUpdated = DateTime.UtcNow;
+                    surveyAnswerDTO.RelateParentId = ResponseId;
+                    surveyAnswerDTO.ResponseId = Guid.NewGuid().ToString();
+                    surveyAnswerDTO.ResponseDetail = new FormResponseDetail();
+                    ResponseListDTO.Add(surveyAnswerDTO);
+                }
+
+                //Setting Resposes List
+                List<ResponseModel> ResponseList = new List<ResponseModel>();
+                foreach (var item in ResponseListDTO)
+                {
+                    if (item.RelateParentId == ResponseId)
+                    {
+                        if (item.SqlData != null)
+                        {
+                            ResponseList.Add(ConvertRowToModel(item, Columns, "ChildGlobalRecordID"));
+                        }
+                        else
+                        {
+                            ResponseList.Add(item.ToResponseModel(Columns));
+                        }
+                    }
+                }
+
+                FormResponseInfoModel.ResponsesList = ResponseList;
+
+                FormResponseInfoModel.PageSize = ReadPageSize();
+
+                FormResponseInfoModel.CurrentPage = 1;
+            }
+            return FormResponseInfoModel;
         }
 
         private FormResponseInfoModel GetFormResponseInfoModel(string surveyId, string responseId, int pageNumber, string sort = "", string sortfield = "", int orgid = -1)
