@@ -233,7 +233,7 @@ namespace Epi.Web.MVC.Controllers
             SetGlobalVariable();
             ViewBag.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string UserName = Session[SessionKeys.UserName].ToString();
+            string UserName = string.Empty;
             string responseId = surveyAnswerModel.ResponseId;
             Session[SessionKeys.FormValuesHasChanged] = Form_Has_Changed;
 
