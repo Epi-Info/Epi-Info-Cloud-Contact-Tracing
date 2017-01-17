@@ -169,6 +169,7 @@ namespace Epi.Web.MVC.Controllers
         {
 
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string UserName = Session[SessionKeys.UserName].ToString();
             bool isMobileDevice = this.Request.Browser.IsMobileDevice;
             FormsAuthentication.SetAuthCookie("BeginSurvey", false);
             bool isEditMode = false;
@@ -274,7 +275,7 @@ namespace Epi.Web.MVC.Controllers
                     ContextDetailList = Epi.Web.MVC.Utility.SurveyHelper.GetContextDetailList(FunctionObject_B);
                     form = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
 
-                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseID.ToString(), form, surveyAnswerDTO, false, false, 0, userId);
+                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseID.ToString(), form, surveyAnswerDTO, false, false, 0, userId, UserName);
                 }
                 catch (Exception ex)
                 {
@@ -292,7 +293,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
                 form.RequiredFieldsList = _requiredList;
                 // Session[SessionKeys.RequiredList] = _requiredList;
-                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, userId);
+                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, userId, UserName);
             }
 
             surveyAnswerDTO = (SurveyAnswerDTO)formsHierarchy.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.ResponseId);
