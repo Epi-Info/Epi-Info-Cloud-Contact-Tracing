@@ -98,6 +98,7 @@ namespace Epi.PersistenceServices.DocumentDB
                 LastSaveTime = now,
                 FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
                 UserId = request.UserId,
+                UserName=request.UserName,
                 IsDraftMode = request.IsDraftMode,
                 PageIds = request.ResponseDetail.PageIds != null ? request.ResponseDetail.PageIds.Where(pid => pid != 0).ToList() : new List<int>(),
                 RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
@@ -288,9 +289,9 @@ namespace Epi.PersistenceServices.DocumentDB
         //#endregion
 
         #region Read All Records By SurveyID
-        public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields)
+        public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, int pageSize = 0, int pageNumber = 0)
         {
-            return _surveyResponseCRUD.GetAllResponsesWithFieldNames(gridFields);
+            return _surveyResponseCRUD.GetAllResponsesWithFieldNames(gridFields,null,pageSize, pageNumber);
         }
 
         public FormResponseDetail GetFormResponseByResponseId(string responseId)

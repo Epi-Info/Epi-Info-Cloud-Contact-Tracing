@@ -605,8 +605,12 @@
     <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\jquery-1.6.min.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
+    <None Include="Properties\PublishProfiles\CloudEnterApiQA - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\CloudEnterApiQA - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterDev - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterDev - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\CloudEnterQA - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\CloudEnterQA - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %284%29.pubxml" />

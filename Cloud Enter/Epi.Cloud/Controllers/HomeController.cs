@@ -147,7 +147,8 @@ namespace Epi.Web.MVC.Controllers
 		public ActionResult Index(string surveyId, string addNewFormId, string editForm)
 		{
 			int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-			Session[SessionKeys.FormValuesHasChanged] = "";
+            string UserName = Session[SessionKeys.UserName].ToString();
+            Session[SessionKeys.FormValuesHasChanged] = "";
 
 			if (string.IsNullOrEmpty(editForm) && Session[SessionKeys.EditForm] != null)
 			{
@@ -254,7 +255,7 @@ namespace Epi.Web.MVC.Controllers
 														false, 
 														false,
 														0, 
-														SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
+														SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), UserName);
 				}
 				catch (Exception ex)
 				{
@@ -337,7 +338,7 @@ namespace Epi.Web.MVC.Controllers
 				Session[SessionKeys.SortField] = "";
 
                 // TODO: Temporary clear cache
-                var sessionProjectId = Session[SessionKeys.ProjectId] as string;
+                var sessionProjectId =Session[SessionKeys.ProjectId] as string;
                 if (!string.IsNullOrWhiteSpace(sessionProjectId))
                 {
                     _cacheServices.ClearAllCache(new Guid(sessionProjectId));
@@ -573,8 +574,8 @@ namespace Epi.Web.MVC.Controllers
 				// Following code retain search ends
 				PopulateDropDownlists(formResponseInfoModel, formSettingResponse.FormSetting.FormControlNameList.ToList());
 
-				if (sort.Length > 0)
-				{
+                if (sort != null && sort.Length > 0)
+                {
 					formResponseReq.Criteria.SortOrder = sort;
 				}
 				if (sortfield.Length > 0)

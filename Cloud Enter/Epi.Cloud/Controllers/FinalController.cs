@@ -102,7 +102,7 @@ namespace Epi.Web.MVC.Controllers
                     form.RequiredFieldsList = string.Join(",", requiredFields);
                 }
 
-                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 1, 0);
+                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 1, 0,null);
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseId = responseId, PageNumber = 1 });
             }

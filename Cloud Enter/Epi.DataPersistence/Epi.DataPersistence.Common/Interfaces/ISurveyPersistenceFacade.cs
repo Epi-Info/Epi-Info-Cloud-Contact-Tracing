@@ -35,7 +35,7 @@ namespace Epi.DataPersistence.Common.Interfaces
 
         //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
 
-        IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields);
+        IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, int pageSize = 0, int pageNumber = 0);
 
         FormResponseDetail GetHierarchialResponseIdsByResponseId(string responseId, bool includeDeletedRecords = false);
 

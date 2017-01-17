@@ -205,6 +205,7 @@ namespace Epi.Web.MVC.Controllers
             SurveyAnswerRequest.Criteria.StatusChangeReason = statusChangeReason;
 
             SurveyAnswerRequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            SurveyAnswerRequest.Criteria.UserName = Session[SessionKeys.UserName].ToString();
             if (!string.IsNullOrEmpty(SurveyId))
             {
                 SurveyAnswerRequest.Criteria.SurveyId = SurveyId;
@@ -233,7 +234,8 @@ namespace Epi.Web.MVC.Controllers
             SetGlobalVariable();
             ViewBag.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string UserName = string.Empty;
+            string UserName =Session[SessionKeys.UserName].ToString();
+            
             string responseId = surveyAnswerModel.ResponseId;
             Session[SessionKeys.FormValuesHasChanged] = Form_Has_Changed;
 
@@ -303,7 +305,7 @@ namespace Epi.Web.MVC.Controllers
 
                             form = SetLists(form);
 
-                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId, UserName);
 
                             if (!string.IsNullOrEmpty(this.Request.Form["is_save_action"]) && this.Request.Form["is_save_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                             {
@@ -425,7 +427,7 @@ namespace Epi.Web.MVC.Controllers
 
                                 form = SetLists(form);
 
-                                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId);
+                                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, IsSubmited, IsSaved, PageNumber, UserId, UserName);
 
                                 SurveyAnswer = _surveyFacade.GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId).SurveyResponseList[0];
                                 form = _surveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, PageNumber, SurveyAnswer, IsMobileDevice, null, FormsHierarchy, IsAndroid);
@@ -443,7 +445,7 @@ namespace Epi.Web.MVC.Controllers
                                 if (!string.IsNullOrEmpty(Submitbutton) || !string.IsNullOrEmpty(CloseButton) || (!string.IsNullOrEmpty(this.Request.Form["is_save_action_Mobile"]) && this.Request.Form["is_save_action_Mobile"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase)))
                                 {
 
-                                    KeyValuePair<string, int> ValidateValues = ValidateAll(form, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged);
+                                    KeyValuePair<string, int> ValidateValues = ValidateAll(form, UserId, IsSubmited, IsSaved, IsMobileDevice, FormValuesHasChanged, UserName);
 
                                     if (!string.IsNullOrEmpty(FormValuesHasChanged))
                                     {
@@ -644,13 +646,13 @@ namespace Epi.Web.MVC.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult UpdateResponse(string NameList, string Value, string responseId)
         {
-            bool IsAndroid = false;
-
+            bool IsAndroid = false; 
             if (this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 IsAndroid = true;
             }
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string UserName = Session[SessionKeys.UserName].ToString();
             try
             {
                 if (!string.IsNullOrEmpty(NameList))
@@ -680,7 +682,7 @@ namespace Epi.Web.MVC.Controllers
 
                             formRs = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValues(formRs, Name, Value);
 
-                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, formRs, SurveyAnswer, false, false, i, UserId);
+                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, formRs, SurveyAnswer, false, false, i, UserId, UserName);
                         }
                     }
                     return Json(true);
@@ -698,6 +700,7 @@ namespace Epi.Web.MVC.Controllers
         public JsonResult SaveSurvey(string Key, int Value, string responseId)
         {
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string UserName = Session[SessionKeys.UserName].ToString();
             try
             {
                 bool IsMobileDevice = false;
@@ -729,11 +732,11 @@ namespace Epi.Web.MVC.Controllers
                 //Update the model
                 UpdateModel(form);
                 //Save the child form
-                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, false, IsSaved, PageNumber, UserId);
+                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, false, IsSaved, PageNumber, UserId, UserName);
                 //  SetCurrentPage(SurveyAnswer, PageNumber);
                 //Save the parent form 
                 IsSaved = form.IsSaved = true;
-                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, false, IsSaved, PageNumber, UserId);
+                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, SurveyAnswer, false, IsSaved, PageNumber, UserId, UserName);
                 return Json(true);
 
             }
@@ -875,6 +878,7 @@ namespace Epi.Web.MVC.Controllers
         public string CreateResponse(string surveyId, string relateResponseId)
         {
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string UserName = Session[SessionKeys.UserName].ToString();
             bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
 
             bool IsAndroid = false;
@@ -945,7 +949,7 @@ namespace Epi.Web.MVC.Controllers
                     ContextDetailList = Epi.Web.MVC.Utility.SurveyHelper.GetContextDetailList(FunctionObject_B);
                     form = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
 
-                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, ResponseID.ToString(), form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
+                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, ResponseID.ToString(), form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), UserName);
                 }
                 catch (Exception ex)
                 {
@@ -962,7 +966,7 @@ namespace Epi.Web.MVC.Controllers
                 this._requiredList = surveyResponseHelper.RequiredList;
                 Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                 form.RequiredFieldsList = _requiredList;
-                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
+                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), UserName);
             }
 
             var surveyAnswerResponse = _surveyFacade.GetSurveyAnswerResponse(SurveyAnswer.ResponseId, SurveyAnswer.SurveyId);
@@ -1078,7 +1082,7 @@ namespace Epi.Web.MVC.Controllers
             return form;
         }
 
-        private KeyValuePair<string, int> ValidateAll(MvcDynamicForms.Form form, int userId, bool isSubmited, bool isSaved, bool isMobileDevice, string formValuesHasChanged)
+        private KeyValuePair<string, int> ValidateAll(MvcDynamicForms.Form form, int userId, bool isSubmited, bool isSaved, bool isMobileDevice, string formValuesHasChanged,string userName)
         {
             List<FormsHierarchyDTO> formsHierarchy = GetFormsHierarchy();
             KeyValuePair<string, int> result = new KeyValuePair<string, int>();
@@ -1102,7 +1106,7 @@ namespace Epi.Web.MVC.Controllers
                         {
                             TempData["isredirect"] = "true";
                             TempData["Width"] = form.Width + 5;
-                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, surveyAnswer, isSubmited, isSaved, i, userId);
+                            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, surveyAnswer, isSubmited, isSaved, i, userId, userName);
 
                             result = new KeyValuePair<string, int>(responseId, i);
                             return result;
@@ -1135,7 +1139,7 @@ namespace Epi.Web.MVC.Controllers
             form = SetFormPassCode(form, responseId);
             // Pass Code Logic  end
 
-            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, surveyAnswerDTO, isSubmited, isSaved, pageNumber, userId);
+            _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId, form, surveyAnswerDTO, isSubmited, isSaved, pageNumber, userId,userName);
 
             return form;
         }

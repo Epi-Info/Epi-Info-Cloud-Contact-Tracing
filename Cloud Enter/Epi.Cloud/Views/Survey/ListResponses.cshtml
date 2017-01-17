@@ -80,9 +80,13 @@
     </div>
 </div>
 @{
-    WebGrid webGrid = new WebGrid(rowsPerPage: 20,
-        canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
-    webGrid.Bind(Model.FormResponseInfoModel.ResponsesList, autoSortAndPage: false, rowCount: Model.FormResponseInfoModel.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
+    //WebGrid webGrid = new WebGrid(rowsPerPage: 20,
+    //    canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
+    //webGrid.Bind(Model.FormResponseInfoModel.ResponsesList, autoSortAndPage: false, rowCount: Model.FormResponseInfoModel.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
+
+    WebGrid webGrid = new WebGrid(canSort: true, canPage: true, ajaxUpdateContainerId: "recordstable");
+    webGrid.Bind(Model.FormResponseInfoModel.ResponsesList, autoSortAndPage: false, rowCount: Model.FormResponseInfoModel.NumberOfResponses);
+
 }
 <div id="recordscontent">
     <!--style="display:inline-block;"-->
