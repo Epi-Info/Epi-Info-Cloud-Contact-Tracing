@@ -284,8 +284,14 @@ namespace Epi.Web.MVC.Controllers
             }
             else
             {
+                PageDigest[] pageDigestArray = form.MetadataAccessor.GetCurrentFormPageDigests();// metadataAccessor.GetPageDigests(surveyInfoModel.SurveyId);
+
+                surveyAnswerDTO.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(pageDigestArray);
+
+                this._requiredList = surveyResponseDocDb.RequiredList;
+                Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
                 form.RequiredFieldsList = _requiredList;
-                Session[SessionKeys.RequiredList] = _requiredList;
+                // Session[SessionKeys.RequiredList] = _requiredList;
                 _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, userId);
             }
 
