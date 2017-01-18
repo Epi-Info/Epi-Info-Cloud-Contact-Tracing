@@ -159,7 +159,10 @@ namespace Epi.Cloud.SqlServer
 
                         var lstViewMetadata = new List<Epi.FormMetadata.DataStructures.View>();
 
-                        var lstGetViews = result.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToArray();
+                        var results = result.ToArray();
+
+                        var lstGetViews = results.GroupBy(u => u.ViewId).Select(grp => grp.ToList()).ToArray();
+
 
                         var viewProperties = lstGetViews.Select(v => v.First());
                         var eweFormIds = viewProperties.Select(vp => new Guid(vp.EWEFormId)).Distinct().ToArray();
@@ -196,9 +199,9 @@ namespace Epi.Cloud.SqlServer
                             view.Orientation = viewProp.Orientation;
                             view.LabelAlign = viewProp.LabelAlign;
                             view.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
-                            view.EIWSFormId = viewProp.EIWSFormId;
+                            view.EIWSFormId = viewProp.EIWSFormId != null ? viewProp.EIWSFormId.ToLower() : viewProp.EIWSFormId;
                             view.OrganizationKey = viewProp.EWEOrganizationKey;
-                            view.FormId = viewProp.EWEFormId;
+                            view.FormId = viewProp.EWEFormId.ToLower();
                             var eweViewProps = surveyMetadataProperties.Where(x => x.SurveyId == new Guid(viewProp.EWEFormId)).SingleOrDefault();
                             if (eweViewProps != null)
                             {
@@ -216,7 +219,7 @@ namespace Epi.Cloud.SqlServer
                         }
 
                         projMetaDataInfo.Views = lstViewMetadata.ToArray();
-                        var lstGetPages = result.GroupBy(u => new { u.ViewId, u.PageId }).Select(group => group.ToList()).ToList();
+                        var lstGetPages = results.GroupBy(u => new { u.ViewId, u.PageId }).Select(group => group.ToList()).ToList();
 
                         var sourceTableNames = new List<SourceTableInfo>();
                         var lstPageMetadata = new List<Epi.FormMetadata.DataStructures.Page>();
