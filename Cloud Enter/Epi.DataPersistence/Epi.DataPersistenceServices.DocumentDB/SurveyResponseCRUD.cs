@@ -316,19 +316,54 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     int numberOfPagesInitiated = 0;
                     int numberOfPagesCompleted = 0;
 
+                    var globalRecordId = documentResponseProperties.FormResponseProperties.GlobalRecordID;
+
                     foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
+                        bool isUpdated = false;
                         var pageId = newPageResponseProperties.PageId;
                         Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                        var task = Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
-                        var success = pendingTasksBC.TryAdd(task, 100);
-                        if (success)
+                        var pageResponseProperties = ReadPageResponsePropertiesByResponseId(globalRecordId, pageCollectionUri);
+                        if (pageResponseProperties != null)
                         {
-                            Interlocked.Increment(ref numberOfPagesInitiated);
+                            foreach (var newFieldKvp in newPageResponseProperties.ResponseQA)
+                            {
+                                if (newFieldKvp.Value != null)
+                                {
+                                    var responseQA = pageResponseProperties.ResponseQA;
+                                    string existingValue;
+                                    var existingFieldExists = responseQA.TryGetValue(newFieldKvp.Key, out existingValue);
+                                    {
+                                        if (!existingFieldExists || existingValue != newFieldKvp.Value)
+                                        {
+                                            responseQA[newFieldKvp.Key] = newFieldKvp.Value;
+                                            isUpdated = true;
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {
-                            throw new TimeoutException("Unable to add task");
+                            pageResponseProperties = newPageResponseProperties;
+                            isUpdated = true;
+                        }
+                        if (isUpdated)
+                        {
+                            var task = Client.UpsertDocumentAsync(pageCollectionUri, pageResponseProperties);
+                            var success = pendingTasksBC.TryAdd(task, 100);
+                            if (success)
+                            {
+                                Interlocked.Increment(ref numberOfPagesInitiated);
+                            }
+                            else
+                            {
+                                throw new TimeoutException("Unable to add task");
+                            }
+                        }
+                        else
+                        {
+                            Interlocked.Decrement(ref numberOfPages); 
                         }
                     }
 
