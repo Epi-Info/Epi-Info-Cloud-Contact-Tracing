@@ -222,6 +222,7 @@ namespace Epi.Cloud.DataEntryServices
             else if (surveyAnswerRequest.Action.Equals(Constant.UPDATE, StringComparison.OrdinalIgnoreCase))
             {
                 _surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
+                response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
             }
 
             else if (surveyAnswerRequest.Action.Equals(Constant.CREATECHILD, StringComparison.OrdinalIgnoreCase))

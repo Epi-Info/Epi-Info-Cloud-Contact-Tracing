@@ -97,7 +97,7 @@ namespace Epi.DataPersistence.Extensions
                 PageIds = formResponseProperties.PageIds,
                 RequiredFieldsList = formResponseProperties.RequiredFieldsList,
                 HiddenFieldsList = formResponseProperties.HiddenFieldsList,
-                HighlightedFieldsList = formResponseProperties.HiddenFieldsList,
+                HighlightedFieldsList = formResponseProperties.HighlightedFieldsList,
                 DisabledFieldsList = formResponseProperties.DisabledFieldsList
             };
 
@@ -135,7 +135,13 @@ namespace Epi.DataPersistence.Extensions
 				UserId = formResponseDetail.LastActiveUserId,
 				IsRelatedView = formResponseDetail.IsRelatedView,
 				IsDraftMode = formResponseDetail.IsDraftMode,
-				PageIds = formResponseDetail.PageIds
+
+				PageIds = formResponseDetail.PageIds,
+
+                HiddenFieldsList = formResponseDetail.HiddenFieldsList,
+                HighlightedFieldsList = formResponseDetail.HighlightedFieldsList,
+                DisabledFieldsList = formResponseDetail.DisabledFieldsList,
+                RequiredFieldsList = formResponseDetail.RequiredFieldsList
 			};
 
 

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Epi.DataPersistence.DataStructures
 {
@@ -7,6 +9,7 @@ namespace Epi.DataPersistence.DataStructures
         public PageResponseDetail()
         {
             ResponseQA = new Dictionary<string, string>();
+            ResponseFieldInfo = new Dictionary<string, FieldInfo>();
         }
 
         public string FormId { get; set; }
@@ -20,6 +23,7 @@ namespace Epi.DataPersistence.DataStructures
 		public bool HasBeenUpdated { get; set; }
 
         public Dictionary<string, string> ResponseQA { get; set; }
+        public Dictionary<string, FieldInfo> ResponseFieldInfo { get; set; }
 
 		public override int GetHashCode()
 		{
@@ -52,5 +56,14 @@ namespace Epi.DataPersistence.DataStructures
 			}
 			return areEqual;
 		}
-	}
+    }
+
+    public class FieldInfo
+    {
+        public bool IsHidden { get; set; }
+        public bool IsDisabled { get; set; }
+        public bool IsHighlighted { get; set; }
+        public bool IsRequired { get; set; }
+        public string Value { get; set; }
+    }
 }

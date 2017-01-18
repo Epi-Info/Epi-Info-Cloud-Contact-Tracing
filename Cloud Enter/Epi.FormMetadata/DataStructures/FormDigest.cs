@@ -1,4 +1,5 @@
-﻿using Epi.FormMetadata.Utilities;
+﻿using System.Collections.Generic;
+using Epi.FormMetadata.Utilities;
 using Newtonsoft.Json;
 
 namespace Epi.FormMetadata.DataStructures
@@ -18,6 +19,15 @@ namespace Epi.FormMetadata.DataStructures
         public string Orientation { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
+
+        public Dictionary<string, int> FieldNameToPageIdDirectory { get; set; }
+
+        public int FieldNameToPageId(string fieldName)
+        {
+            int pageId = 0;
+            pageId = FieldNameToPageIdDirectory.TryGetValue(fieldName.ToLower(), out pageId) ? pageId : 0;
+            return pageId;
+        }
 
         [JsonProperty]
         private string _compressedCheckCode = null;

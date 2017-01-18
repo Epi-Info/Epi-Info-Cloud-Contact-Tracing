@@ -3,6 +3,7 @@ using System.Linq;
 using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.MetadataServices.Extensions
 {
@@ -75,5 +76,22 @@ namespace Epi.Cloud.MetadataServices.Extensions
             if (surveyInfoDTO != null) formsHierarchyDTO.SurveyInfo = surveyInfoDTO;
             return formsHierarchyDTO;
         }
+
+        public static FieldAttributes[][] ToFlattenedFieldAttributes(this Template projectTemplateMetadata, string formCheckCode)
+        {
+            List<FieldAttributes[]> projectFlattenedFieldAttributes = new List<FieldAttributes[]>();
+            var viewIdToViewMap = new Dictionary<int, View>();
+            foreach (var view in projectTemplateMetadata.Project.Views)
+            {
+                viewIdToViewMap[view.ViewId] = view;
+                var pages = new Page[0];
+                pages = pages.Union(view.Pages).ToArray();
+                var formFlattenedFieldAttributes = pages.SelectMany(pageMetadata => FieldAttributes.MapFieldMetadataToFieldAttributes(pageMetadata.Fields, formCheckCode).Values).ToArray();
+                projectFlattenedFieldAttributes.Add(formFlattenedFieldAttributes);
+            }
+
+            return projectFlattenedFieldAttributes.ToArray();
+        }
+
     }
 }

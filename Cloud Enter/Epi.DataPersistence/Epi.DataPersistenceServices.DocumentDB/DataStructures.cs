@@ -42,7 +42,7 @@ namespace Epi.PersistenceServices.DocumentDB
             public FormResponseProperties()
             {
                 IsNewRecord = true;
-                    RecStatus = RecordStatus.InProcess;
+                RecStatus = RecordStatus.InProcess;
                 PageIds = new List<int>();
             }
             public string GlobalRecordID { get; set; }

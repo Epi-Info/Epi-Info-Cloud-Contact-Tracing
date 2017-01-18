@@ -8,11 +8,8 @@ namespace Epi.FormMetadata.DataStructures
 {    public class AbridgedFieldInfo : IAbridgedFieldInfo
     {
  
-        protected MutableAttributes _mutableAttributes;
-
         public AbridgedFieldInfo()
         {
-            _mutableAttributes = new MutableAttributes();
         }
 
         public AbridgedFieldInfo(IAbridgedFieldInfo fieldAttributes) : this()
@@ -51,35 +48,19 @@ namespace Epi.FormMetadata.DataStructures
         public string List { get; protected set; }
         [JsonProperty]
         public bool IsReadOnly { get; protected set; }
-        [JsonIgnore]
-        public bool IsRequired { get { return _mutableAttributes.IsRequired; } set { _mutableAttributes.IsRequired = value; } }
-        [JsonIgnore]
-        public bool IsHidden { get { return _mutableAttributes.IsHidden; } set { _mutableAttributes.IsHidden = value; } }
-        [JsonIgnore]
-        public bool IsDisabled { get { return _mutableAttributes.IsDisabled; } set { _mutableAttributes.IsDisabled = value; } }
-        [JsonIgnore]
-        public bool IsHighlighted { get { return _mutableAttributes.IsHighlighted; } set { _mutableAttributes.IsHighlighted = value; } }
-        [JsonIgnore]
-        public string Value { get { return _mutableAttributes.Value; } set { _mutableAttributes.Value = value; } }
+        [JsonProperty]
+        public bool IsRequired { get; protected set; }
+        [JsonProperty]
+        public bool IsHidden { get; protected set; }
+        [JsonProperty]
+        public bool IsDisabled { get; protected set; }
+        [JsonProperty]
+        public bool IsHighlighted { get; protected set; }
+
+        //[JsonIgnore]
+        //public string Value { get; private set; }
         [JsonIgnore]
         public FieldDataType DataType { get { return FieldMetadata.GetDataType(FieldType); } }
-
-        [JsonProperty]
-        public MutableAttributes MutableAttributes { get { return _mutableAttributes; } protected set { _mutableAttributes = value; } }
-
-        public AbridgedFieldInfo Clone()
-        {
-            var clone = (AbridgedFieldInfo)MemberwiseClone();
-            clone._mutableAttributes = new MutableAttributes
-            {
-                IsRequired = this.IsRequired,
-                IsHidden = this.IsHidden,
-                IsDisabled = this.IsDisabled,
-                IsHighlighted = this.IsHighlighted,
-                Value = this.Value
-            };
-            return clone;
-        }
     }
 
     
@@ -95,11 +76,5 @@ namespace Epi.FormMetadata.DataStructures
         public bool IsHighlighted { get; set; }
         [JsonProperty]
         public string Value { get; set; }
-
-        public MutableAttributes Clone()
-        {
-            var clone = (MutableAttributes)MemberwiseClone();
-            return clone;
-        }
     }
 }

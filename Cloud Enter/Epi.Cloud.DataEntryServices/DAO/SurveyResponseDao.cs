@@ -298,8 +298,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
         {
             try
             {
-                surveyResponseBO.DateCreated = DateTime.UtcNow;
-                surveyResponseBO.DateUpdated = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
+                surveyResponseBO.DateCreated = now;
+                surveyResponseBO.DateUpdated = now;
                 bool isSuccessful = _surveyPersistenceFacade.SaveResponse(surveyResponseBO);
             }
             catch (Exception ex)

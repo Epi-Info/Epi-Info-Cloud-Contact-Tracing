@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.Common.DTO

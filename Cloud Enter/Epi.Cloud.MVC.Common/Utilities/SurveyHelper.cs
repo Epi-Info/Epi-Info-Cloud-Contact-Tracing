@@ -10,6 +10,7 @@ using Epi.DataPersistence.DataStructures;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -44,8 +45,8 @@ namespace Epi.Web.MVC.Utility
 		{
 			bool AddRoot = false;
 			SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
-			surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId.ToString());
-			surveyAnswerDTO.ResponseId = responseId.ToString();
+			surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
+			surveyAnswerDTO.ResponseId = responseId;
 			surveyAnswerDTO.DateCreated = DateTime.UtcNow;
 			surveyAnswerDTO.SurveyId = surveyId;
 			surveyAnswerDTO.Status = RecordStatus.InProcess;
@@ -63,7 +64,7 @@ namespace Epi.Web.MVC.Utility
 			//    surveyAnswerDTO.Status = RecordStatus.InProcess;
 			//    }
 
-			FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyId, AddRoot, 0, "");
+			FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyId, AddRoot, 0, "", responseId);
 			surveyAnswerDTO.ResponseDetail = responseDetail;
 
 			surveyAnswerDTO.RelateParentId = RelateResponseId;
@@ -118,7 +119,7 @@ namespace Epi.Web.MVC.Utility
 				surveyResponseHelper.Add(form);
 				bool addRoot = false;
 
-				FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, addRoot, form.CurrentPage, form.PageId);
+				FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, addRoot, form.CurrentPage, form.PageId, responseId);
 
 				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
 				// 2 b. save the current survey response
@@ -162,33 +163,35 @@ namespace Epi.Web.MVC.Utility
 				updatedFromResponseDetail.RequiredFieldsList = form.RequiredFieldsList;
 			}
 
-			//  AssignList 
-			List<KeyValuePair<string, String>> FieldsList = new List<KeyValuePair<string, string>>();
+            //  AssignList 
+            List<KeyValuePair<string, string>> fieldsList = GetHiddenFieldsList(form).Where(kvp => kvp.Value != null).ToList();
 
-			FieldsList = GetHiddenFieldsList(form);
-			// form.AssignList = FieldsList;
-			if (FieldsList.Count > 0)
-			{
-				var pageList = form.SurveyInfo.PageDigests;
-				for (var i = 0; i < pageList.Length; i++)
-				{
-					for (var j = 0; j < pageList[i].Length; j++)
-					{
-						var fields = pageList[i][j].Fields;
-						foreach (var fieldx in fields)
-						{
-							foreach (var k in FieldsList)
-							{
-								if (fieldx.FieldName == k.Key)
-								{
-									if (k.Value != null)
-										fieldx.Value = k.Value;
-								}
-							}
-						}
-					}
-				}
-			}
+            if (fieldsList.Count > 0)
+            {
+                var formId = form.SurveyInfo.SurveyId;
+                var metadataAccessor = form.SurveyInfo as MetadataAccessor;
+                var formDigest = metadataAccessor.GetFormDigest(formId);
+                foreach (var fieldsListKvp in fieldsList)
+                {
+                    var fieldName = fieldsListKvp.Key.ToLower();
+                    var pageId = formDigest.FieldNameToPageId(fieldName);
+                    var pageResponseDetail = updatedFromResponseDetail.PageResponseDetailList.SingleOrDefault(p => p.PageId == pageId);
+                    if (pageResponseDetail == null)
+                    {
+                        var pageDigest = metadataAccessor.GetPageDigestByPageId(formId, pageId);
+                        pageResponseDetail = new PageResponseDetail { PageId = pageId, PageNumber = pageDigest.PageNumber };
+                        updatedFromResponseDetail.AddPageResponseDetail(pageResponseDetail);
+                    }
+                    pageResponseDetail.ResponseQA[fieldName] = fieldsListKvp.Value;
+                    pageResponseDetail.HasBeenUpdated = true;
+
+                    //var fieldAttributes = metadataAccessor.GetFieldAttributesByPageId(formId, pageId, fieldName);
+                    //if (fieldAttributes != null)
+                    //{
+                    //    fieldAttributes.Value = fieldsListKvp.Value;
+                    //}
+                }
+            }
 
 			if (IsSaved)
 			{
@@ -299,20 +302,10 @@ namespace Epi.Web.MVC.Utility
 			return ContextDetailList;
 		}
 
-		public static List<KeyValuePair<string, string>> GetHiddenFieldsList(MvcDynamicForms.Form pForm)
+		public static List<KeyValuePair<string, string>> GetHiddenFieldsList(MvcDynamicForms.Form form)
 		{
-			List<KeyValuePair<string, String>> FieldsList = new List<KeyValuePair<string, string>>();
-
-			foreach (var field in pForm.InputFields)
-			{
-				if (field.IsPlaceHolder)
-				{
-					FieldsList.Add(new KeyValuePair<string, string>(field.Title, field.Response));
-
-				}
-			}
-
-			return FieldsList;
+            List<KeyValuePair<string, String>> hiddenFields = form.InputFields.Where(field => field.IsPlaceHolder).Select(field => new KeyValuePair<string, string>(field.Title, field.Response)).ToList();
+			return hiddenFields;
 		}
 		public static void UpdatePassCode(UserAuthenticationRequest AuthenticationRequest, ISecurityDataService securityDataService)
 		{

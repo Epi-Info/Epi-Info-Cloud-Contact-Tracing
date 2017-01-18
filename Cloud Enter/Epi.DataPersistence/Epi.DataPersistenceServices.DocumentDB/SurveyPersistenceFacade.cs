@@ -120,32 +120,21 @@ namespace Epi.PersistenceServices.DocumentDB
         {
             bool isSuccessful = false;
             var formId = surveyResponseBO.SurveyId;
-            int pageId = 0;
-            PageResponseProperties pageResponseProperties = new PageResponseProperties();
-            if (surveyResponseBO.ResponseDetail.PageResponseDetailList.FirstOrDefault() != null)
-            {
-                pageId = Convert.ToInt32(surveyResponseBO.ResponseDetail.PageResponseDetailList[0].PageId);
-            }
             var formDigest = GetFormDigest(formId);
-            DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
+            DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, 0);
             documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
             documentResponseProperties.UserId = surveyResponseBO.UserId;
-            documentResponseProperties.FormResponseProperties = surveyResponseBO.ResponseDetail.ToFormResponseProperties(); ;
-
-            if (surveyResponseBO.ResponseDetail.PageResponseDetailList.Count >= 1 && surveyResponseBO.ResponseDetail.PageResponseDetailList[0] != null)
+            documentResponseProperties.FormResponseProperties = surveyResponseBO.ResponseDetail.ToFormResponseProperties();
+            documentResponseProperties.PageResponsePropertiesList = new List<PageResponseProperties>();
+            var updatedPageResponseDetailList = surveyResponseBO.ResponseDetail.PageResponseDetailList.Where(p => p.HasBeenUpdated).OrderBy(p => p.PageId);
+            foreach (var pageResponseDetail in updatedPageResponseDetailList)
             {
-                pageResponseProperties.ResponseQA = surveyResponseBO.ResponseDetail.PageResponseDetailList[0].ResponseQA;
-                pageResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
-                pageResponseProperties.Id = surveyResponseBO.ResponseId;
-                if (surveyResponseBO.ResponseDetail.PageResponseDetailList[0].PageId != 0)
-                {
-                    pageResponseProperties.PageId = surveyResponseBO.ResponseDetail.PageResponseDetailList[0].PageId;
-                }
-
-                documentResponseProperties.PageResponsePropertiesList = new List<PageResponseProperties>();
+                int pageId = pageResponseDetail.PageId;
+                var pageResponseProperties = pageResponseDetail.ToPageResponseProperties();
                 documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
-                var response = _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties);
             }
+
+            var response = _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties);
             return isSuccessful;
         }
 
@@ -323,11 +312,7 @@ namespace Epi.PersistenceServices.DocumentDB
         #region Create Resonse Document Info
         private DocumentResponseProperties CreateResponseDocumentInfo(string formId, int pageId)
         {
-            var pageDigest = GetPageDigestByPageId(formId, pageId);
-
             DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties();
-            documentResponseProperties.FormName = pageDigest.FormName;
-            documentResponseProperties.IsChildForm = pageDigest.IsRelatedView;
             return documentResponseProperties;
         }
         #endregion

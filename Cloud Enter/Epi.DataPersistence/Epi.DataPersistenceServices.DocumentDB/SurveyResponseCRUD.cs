@@ -442,12 +442,15 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         formResponseProperties.PageIds.Sort();
                     }
 
-                    if (pageIdsUpdated
+                    var isUpdated = pageIdsUpdated
+                        || existingFormResponseProperties.LastSaveTime != formResponseProperties.LastSaveTime
                         || existingFormResponseProperties.RecStatus != formResponseProperties.RecStatus
                         || existingFormResponseProperties.HiddenFieldsList != formResponseProperties.HiddenFieldsList
                         || existingFormResponseProperties.DisabledFieldsList != formResponseProperties.DisabledFieldsList
                         || existingFormResponseProperties.HighlightedFieldsList != formResponseProperties.HighlightedFieldsList
-                        || existingFormResponseProperties.RequiredFieldsList != formResponseProperties.RequiredFieldsList)
+                        || existingFormResponseProperties.RequiredFieldsList != formResponseProperties.RequiredFieldsList;
+
+                    if (isUpdated)
                     {
                         result = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties, null).ConfigureAwait(false);
                     }

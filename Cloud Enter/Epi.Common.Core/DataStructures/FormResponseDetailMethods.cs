@@ -27,14 +27,9 @@ namespace Epi.DataPersistence.DataStructures
 			FormName = FormName ?? pageResponseDetail.FormName;
 			pageResponseDetail.FormId = FormId;
 			pageResponseDetail.FormName = FormName;
-			if (pageResponseDetail.PageNumber < 1)
-			{
-				// TODO: Remove dependancy on MetadataAccessor
-				//if (_metadataAccessor == null) _metadataAccessor = new MetadataAccessor(FormId);
-				//var pageDigest = _metadataAccessor.GetPageDigestByPageId(FormId, pageResponseDetail.PageId);
-				//pageResponseDetail.PageNumber = pageDigest.PageNumber;
-			}
+            pageResponseDetail.GlobalRecordID = GlobalRecordID;
 			PageResponseDetailList.Add(pageResponseDetail);
+            PageIds = PageResponseDetailList.Select(p => p.PageId).OrderBy(pid => pid).ToList();
 		}
 
 		public void AddChildFormResponseDetail(FormResponseDetail childFormResponseDetail)

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.Constants;
 using Epi.FormMetadata.DataStructures;
 using Epi.FormMetadata.DataStructures.Interfaces;
+using Epi.FormMetadata.Extensions;
 
-namespace Epi.Cloud.Common.Metadata
+namespace Epi.FormMetadata
 {
     public class FieldAttributes : IAbridgedFieldInfo
     {
@@ -60,19 +60,13 @@ namespace Epi.Cloud.Common.Metadata
         public string[] SourceTableValues { get; set; }
         public string RelatedViewId { get; set; }
 
-        /// <summary>
-        /// Value is set / retrieved at runtime by SurveyHelper
-        /// </summary>
-        public string Value { get; set; }
-
-
-        public static Dictionary<string, FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, string formCheckcode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Page page, string formCheckcode)
         {
             var fields = page.Fields;
             return MapFieldMetadataToFieldAttributes(fields, formCheckcode);
         }
 
-        public static Dictionary<string, FieldAttributes> MapFieldMetadataToFieldAttributes(Field[] fields, string formCheckcode)
+        public static IEnumerable<FieldAttributes> MapFieldMetadataToFieldAttributes(Field[] fields, string formCheckcode)
         {
             var sourceTableFields = fields.Where(f => f.SourceTableValues != null).ToArray();
 			var results = fields.Select(f => new FieldAttributes
@@ -120,7 +114,7 @@ namespace Epi.Cloud.Common.Metadata
                 RelatedViewId = f.RelatedViewId.ToString()
 
             });
-            return results.ToDictionary(f => f.FieldName, f => f);
+            return results;
         }
     }
 }

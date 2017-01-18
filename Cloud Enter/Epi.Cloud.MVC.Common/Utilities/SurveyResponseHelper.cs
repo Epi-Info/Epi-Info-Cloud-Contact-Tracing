@@ -49,11 +49,12 @@ namespace Epi.Web.MVC.Utility
             }
         }
 
-        public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId)
+        public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId, string responseId)
         {
             var formName = MetadataAccessor.GetFormDigest(formId).FormName;
             var formResponseDetail = new FormResponseDetail
             {
+                GlobalRecordID = responseId,
                 IsNewRecord = true,
 				RecStatus = RecordStatus.InProcess,
                 FormId = formId,
@@ -62,11 +63,13 @@ namespace Epi.Web.MVC.Utility
             };
 
             if (!String.IsNullOrWhiteSpace(pageId))
+            {
+                var pageResponseDetail = new PageResponseDetail
                 {
-                var pageResponseDetail = new PageResponseDetail();
-                pageResponseDetail.PageId = Convert.ToInt32(pageId);
-                pageResponseDetail.PageNumber = currentPage;
-                pageResponseDetail.ResponseQA = _responseQA;
+                    PageId = Convert.ToInt32(pageId),
+                    PageNumber = currentPage,
+                    ResponseQA = _responseQA
+                };
                 formResponseDetail.AddPageResponseDetail(pageResponseDetail);
             }
 
@@ -99,12 +102,11 @@ namespace Epi.Web.MVC.Utility
         }
 
 
-        public void SetRequiredList(AbridgedFieldInfo[] _Fields)
+        public void SetRequiredList(AbridgedFieldInfo[] fields)
         {
-            bool isRequired = false;
-            foreach (var field in _Fields)
+            foreach (var field in fields)
             {
-                if (field.MutableAttributes.IsRequired == true)
+                if (field.IsRequired == true)
                 {
                     if (this.RequiredList != "")
                     {

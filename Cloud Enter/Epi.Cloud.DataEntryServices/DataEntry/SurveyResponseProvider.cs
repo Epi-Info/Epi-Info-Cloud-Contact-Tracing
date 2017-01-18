@@ -205,6 +205,15 @@ namespace Epi.Cloud.DataEntryServices
 
         public SurveyResponseBO UpdateSurveyResponse(SurveyResponseBO surveyResponseBO)
         {
+#if false // Code from Web Enter
+            //Check if this respose has parent
+            string ParentId = SurveyResponseDao.GetResponseParentId(pValue.ResponseId);
+            Guid ParentIdGuid = Guid.Empty;
+            if (!string.IsNullOrEmpty(ParentId))
+            {
+                ParentIdGuid = new Guid(ParentId);
+            }
+#endif
             _surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
 
             SurveyResponseBO result = _surveyResponseDao.GetResponse(surveyResponseBO.ResponseId);

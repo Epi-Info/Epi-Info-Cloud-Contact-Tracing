@@ -693,6 +693,7 @@ namespace Epi.Web.MVC.Controllers
 
                 formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
+                
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
                 //foreach (var item in formResponseList.SurveyResponseList)
                 //{

@@ -114,19 +114,19 @@ namespace Epi.Web.MVC.Utility
 
             var responseQA = pageResponseDetail != null ? pageResponseDetail.ResponseQA : new Dictionary<string, string>();
 
-            if (responseQA.Count == 0)
-            {
-                var pageDigest = GetPageDigestByPageId(surveyId, pageId);
-                responseQA = new Dictionary<string, string>();
+            //if (responseQA.Count == 0)
+            //{
+            //    var pageFieldAttributes = GetPageFieldAttributesByPageId(surveyId, pageId);
+            //    responseQA = new Dictionary<string, string>();
 
-                foreach (var fi in pageDigest.Fields)
-                {
-                    if (fi.Value != null)
-                    {
-                        responseQA.Add(fi.FieldName.ToLower(), fi.Value);
-                    }
-                }
-            }
+            //    foreach (var fieldAttributes in pageFieldAttributes.Values)
+            //    {
+            //        if (fieldAttributes.Value != null)
+            //        {
+            //            responseQA.Add(fieldAttributes.FieldName.ToLower(), fieldAttributes.Value);
+            //        }
+            //    }
+            //}
 
             AddFormFields(surveyInfo, pageId, responseQA, form, _Width, _Height, checkcode, javaScript);
 
@@ -143,7 +143,8 @@ namespace Epi.Web.MVC.Utility
 
         protected virtual void AddFormFields(SurveyInfoDTO surveyInfo, int pageId, Dictionary<string, string> responseQA, Form form, double _Width, double _Height, string checkcode, StringBuilder javaScript)
         {
-            IEnumerable<FieldAttributes> currentPageFieldAttributes = surveyInfo.GetCurrentFormPageFieldAttributesByPageId(pageId).ToArray();
+            var formId = surveyInfo.SurveyId;
+            IEnumerable<FieldAttributes> currentPageFieldAttributes = surveyInfo.GetPageFieldAttributesByPageId(formId, pageId).Values;
 
             foreach (var fieldAttributes in currentPageFieldAttributes)
             {
