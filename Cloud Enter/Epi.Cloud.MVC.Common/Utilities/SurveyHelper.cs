@@ -201,7 +201,7 @@ namespace Epi.Web.MVC.Utility
 
 			/////Update Survey Mode ////////////////////
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
-			surveyAnswerRequest.Criteria.UserId = UserId;
+			//surveyAnswerRequest.Criteria.UserId = UserId;
 			dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
 		}
 

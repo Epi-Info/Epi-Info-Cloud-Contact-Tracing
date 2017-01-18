@@ -160,7 +160,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                             Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
                                             try
                                             {
-                                                var ParentResponse = await Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).ConfigureAwait(false);
+                                                var ParentResponse = await Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties);
                                             }
                                             catch (Exception ex)
                                             {
@@ -173,9 +173,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                     {
                                         foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
                                         {
-                                            var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName;
-                                            Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                                            var forminfoResponse = await Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).ConfigureAwait(false);
+                                            //RestoreChildOfChilds(pageAttachmentResponseProperties);
+                                           
+
                                         }
                                     }
                                     //Delete new survey data in Document DB
@@ -211,7 +211,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 
-        #region DeleteChilds
+        #region Delete Child of Child
         public void DeleteChildOfChilds(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
             //Delete FormInfo   
@@ -254,87 +254,49 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         #endregion
 
-
-        #region Attachment
-        public Attachment GetAttachmentInfo(string globalRecordID, string attachmentId, string documentSelfLink, string hierarchialResponseJson)
+        #region Restore Child of Child
+        public async void RestoreChildOfChilds(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
+            //Delete FormInfo   
+            foreach (var child in hierarchicalDocumentResponseProperties.ChildResponseList)
+            {
 
-            Attachment attachment = null;
-            //Check Attachment is exist or not 
-            attachment = ReadAttachment(globalRecordID, attachmentId);
-            //if (attachment == null && hierarchialResponseJson != null)
-            //{
-            //    attachment = CreateAttachment(documentSelfLink, attachmentId, globalRecordID, hierarchialResponseJson);
-            //}
-            return attachment;
+                foreach (var _page in child.FormResponseProperties.PageIds)
+                {
+                    //Delete document in Document DB Child collection
+                    var collectionName = child.FormResponseProperties.FormName + _page;
+                    try
+                    {
+                        Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
+                        var forminfoResponse = await Client.UpsertDocumentAsync(pageCollectionUri, child);                       
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                    ////Delete document in Document DB FormInfo collection
+                    //collectionName = child.FormResponseProperties.FormName + _page;
+                    //try
+                    //{
+                    //    var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, child.FormResponseProperties.GlobalRecordID);
+                    //    var response = Client.DeleteDocumentAsync(docLink).Result;
+                    ////}
+                    //catch (Exception ex)
+                    //{
+
+                    //}
+
+                }
+
+                if (child.ChildResponseList.Count > 0)
+                {
+                    RestoreChildOfChilds(child);
+                }
+            }
         }
+
         #endregion
-        public async Task<bool> RestoreSurveyDataFromAttachment(Attachment attachmentInfo, string attachmentId, FormResponseProperties existingFormResponseProperties)
-        {
 
-            Attachment attachment = null;
-            bool tasksRanToCompletion = false;
-            bool deleteResponse = false;
-            bool isSuccessful = false;
-            try
-            {
-                var formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                var formInfoResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, existingFormResponseProperties).ConfigureAwait(false);
-                HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = ConvertAttachmentToHierarchical(attachmentInfo);
-                //Restore Attachment to FormInfo
-                if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
-                {
-                    var existingFormRespodgnseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
-
-                }
-                //Restore Attachment to Parent
-                if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList != null)
-                {
-                    foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.PageResponsePropertiesList)
-                    {
-                        var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                        Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                        try
-                        {
-                            var ParentResponse = Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).Result;
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-                }
-                //Restore Attachment to Child
-                if (hierarchicalDocumentResponseProperties.ChildResponseList != null)
-                {
-                    List<Task<ResourceResponse<Document>>> tasks = new List<Task<ResourceResponse<Document>>>();
-                    foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
-                    {
-                        var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName;
-                        Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                        tasks.Add(Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties));
-                    }
-                    Task.WaitAll(tasks.ToArray());
-                }
-                //Delete new survey data
-                if (hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds != null)
-                {
-                    var newFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
-                    hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds = hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds.Except(newFormResponseProperties.PageIds).ToList();
-                    deleteResponse = DeleteSurveyDataInDocumentDB(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, hierarchicalDocumentResponseProperties.FormResponseProperties.FormName, hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds);
-                }
-                if (deleteResponse)
-                {
-                    Uri collectionUri = UriFactory.CreateAttachmentUri(DatabaseName, FormInfoCollectionName, hierarchicalDocumentResponseProperties.FormResponseProperties.Id, attachmentId);
-                    deleteResponse = DeleteAttachment(attachment);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            return tasksRanToCompletion;
-        }
         #region InsertToSurveyToDocumentDB
         /// <summary>
         /// Created instance of DocumentClient and Getting reference to database and Document collections
@@ -351,41 +313,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 var pageId = newPageResponseProperties.PageId;
                 Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                var pageResponse = await Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
-
-                //if (!formResponseProperties.PageIds.Contains(pageId))
-                //{
-                //    formResponseProperties.PageIds.Add(pageId);
-                //}
+                var pageResponse = await Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);                
             }
-
-            //formResponseProperties.PageIds.Sort();
-
-            //response = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
             return tasksRanToCompletion;
         }
-
-        private async Task<ResourceResponse<Document>> UpsertDocumentAsync(Uri formInfoCollectionUri, FormResponseProperties formResponseProperties)
-        {
-            ResourceResponse<Document> response = null;
-
-            formResponseProperties = new FormResponseProperties();
-            formResponseProperties.Id = "ATL10";
-            try
-            {
-                response = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-				Console.WriteLine(ex.ToString());
-            }
-            return response;
-		}
-
-		private Task<ResourceResponse<Document>> UpsertDocumentAsync(PageResponseProperties newPageResponseProperties, Uri pageCollectionUri)
-		{
-			return Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
-		}
 
 		#endregion
 
@@ -490,14 +421,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 		#region Get All Responses With FieldNames 
-		public List<SurveyResponse> GetAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fields, string relateParentId = null)
+		public List<SurveyResponse> GetAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fields, string relateParentId = null, int pageSize = 0, int pageNumber = 0)
 		{
 			 
 			List<SurveyResponse> surveyResponse = null;
 
             try
             {
-                var surveyResponses = ReadAllResponsesWithFieldNames(fields, relateParentId);
+                var surveyResponses = ReadAllResponsesWithFieldNames(fields, relateParentId, pageSize, pageNumber);
                 return surveyResponses;
             }
             catch (DocumentQueryException ex)
@@ -507,7 +438,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return surveyResponse;
 		}
 
-		private List<SurveyResponse> ReadAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fieldDigestList, string relateParentId)
+		private List<SurveyResponse> ReadAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fieldDigestList, string relateParentId, int pageSize = 0, int pageNumber = 0)
 		{
 			// Set some common query options
 			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
@@ -517,7 +448,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 				// One SurveyResponse per GlobalRecordId
 				Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
 
-				List<FormResponseProperties> parentGlobalIdList = ReadAllResponsesByRelateParentResponseId(relateParentId, fieldDigestList.FirstOrDefault().Value.FormId);
+				List<FormResponseProperties> parentGlobalIdList = ReadAllResponsesByRelateParentResponseId(relateParentId, fieldDigestList.FirstOrDefault().Value.FormId, pageSize, pageNumber);
 				string parentGlobalRecordIds = string.Empty;
 
 				if (parentGlobalIdList != null)
@@ -1114,14 +1045,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		#endregion GetFormResponseState
 
 		#region Read All Responses By RelateParentResponseId
-		private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(string relateParentId, string formId)
+		private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(string relateParentId, string formId,int pageSize=0,int pageNumber=0)
 		{
 			try
 			{
 				List<FormResponseProperties> globalRecordIdList = new List<FormResponseProperties>();
 
 				// Set some common query options
-				FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+				FeedOptions queryOptions = new FeedOptions { MaxItemCount = 100 };
 				IQueryable<dynamic> query;
 
 				Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
@@ -1149,10 +1080,17 @@ namespace Epi.DataPersistenceServices.DocumentDB
 															And_Expression("FormId", EQ, formId, skipAnd))
 					   , queryOptions);
 				}
-
-				globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
-
-				return globalRecordIdList;
+                if(pageSize==0 && pageNumber==0)
+                {
+                    globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
+                }
+                else
+                {
+                    //globalRecordIdList = query.AsEnumerable<dynamic>().Skip(pageNumber).Take(pageSize).OrderByDescending(x => x._ts).Select(x => (FormResponseProperties)x).ToList();
+                    globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
+                    //globalRecordIdList = query.AsEnumerable<dynamic>().Skip(pageNumber).Take(pageSize).Select(x => (FormResponseProperties)x).ToList();
+                }
+                return globalRecordIdList;
 			}
 			catch (Exception ex)
 			{

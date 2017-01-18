@@ -82,6 +82,9 @@ namespace Epi.Cloud.Common.Criteria
         public bool IsMobile { get; set; }
         [DataMember]
         public int UserId { get; set; }
+
+        [DataMember]
+        public string UserName { get; set; }
         [DataMember]
         public bool IsEditMode { get; set; }
 

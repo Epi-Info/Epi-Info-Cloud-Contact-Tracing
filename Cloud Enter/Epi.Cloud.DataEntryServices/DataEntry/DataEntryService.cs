@@ -150,6 +150,7 @@ namespace Epi.Cloud.DataEntryServices
             SurveyResponseBO surveyResponseBO = surveyAnswerRequest.SurveyAnswerList[0].ToSurveyResponseBO();
 
             surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+            surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
             surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
 
             // Validate SurveyResponse business rules
@@ -314,12 +315,13 @@ namespace Epi.Cloud.DataEntryServices
             {
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-                SurveyResponseBO surveyResponseBO1 = surveyAnswerRequest.SurveyAnswerList.ToSurveyResponseBOList(surveyAnswerRequest.Criteria.UserId)[0];
+                //SurveyResponseBO surveyResponseBO1 = surveyAnswerRequest.SurveyAnswerList.ToSurveyResponseBOList(surveyAnswerRequest.Criteria.UserId)[0];
 
                 List<SurveyResponseBO> SurveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
                 foreach (var surveyResponseBO in SurveyResponseBOList)
                 {
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+                    surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
                     surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
                     surveyResponseBO.Status = surveyAnswerRequest.Criteria.StatusId;
                     surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;

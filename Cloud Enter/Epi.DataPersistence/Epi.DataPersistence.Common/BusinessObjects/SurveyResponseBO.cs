@@ -28,6 +28,7 @@ namespace Epi.Cloud.Common.BusinessObjects
         public string ParentRecordId { get; set; }
         public int UserId { get; set; }
         public string UserEmail { get; set; }
+        public string UserName { get; set; }
         public string ParentId { get; set; }
         public string RelateParentId { get; set; }
         public List<SurveyResponseBO> ResponseHierarchyIds { get; set; }

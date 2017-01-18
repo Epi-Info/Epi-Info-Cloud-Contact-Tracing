@@ -65,8 +65,8 @@ namespace MetadataTests
 
             EpiCloudCache metaDataCache = new EpiCloudCache();
 
-          //  Guid projectguid = Guid.NewGuid();// Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
-            Guid projectguid =  Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
+            //  Guid projectguid = Guid.NewGuid();// Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
+            Guid projectguid = Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
 
 
             bool result = metaDataCache.FullProjectTemplateMetadataExists(projectguid);

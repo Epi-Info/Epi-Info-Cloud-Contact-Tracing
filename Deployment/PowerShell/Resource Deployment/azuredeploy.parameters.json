@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseAccounts_eicdc_name": {
+            "value": "eicsraqaac"
+        },
+        "Redis_eicdcsession_name": {
+            "value": "eicdccsrasessionqa"
+        },
+        "Redis_eicdccache_name": {
+            "value": "eicdccsracacheqa"
+        },
+        "databaseAccounts_eicdc_name_1": {
+            "value": "eicsraqaac"
+        },
+        "components_eicdcapi_name": {
+            "value": "eicdcapiqa"
+        },
+        "components_eicdc_name": {
+            "value": "EICDCCSRAQA"
+        },
+        "namespaces_eicdcsb_name": {
+            "value": "eicdccsrasbqa"
+        },
+        "servers_eicsracdc_name": {
+            "value": "eicsracdcqa"
+        },
+        "storageAccounts_eicsracdc_name": {
+            "value": "eicsracdcqastorage"
+        },
+        "serverfarms_eicsraappservice_name": {
+            "value": "eicsraappserviceqa"
+        },
+        "sites_EICDCDataConsistencyServicesAPI_name": {
+            "value": "EICDCCsraDataConsistencyServicesAPIQA"
+        },
+        "sites_EICDCResponseDataAccessAPI_name": {
+            "value": "EICDCCsraResponseDataAccessAPIQA"
+        },
+        "sites_EICDC_name": {
+            "value": "EICDCCSRAQA"
+        },
+        "sites_EICDCMetadataAPI_name": {
+            "value": "EICDCCsraMetadataAPIQA"
+        },
+        "AuthorizationRules_RootManageSharedAccessKey_name": {
+            "value": "eicdccsrasbqa/RootManageSharedAccessKey"
+        },
+        "databases_EICDC_name": {
+            "value": "eicsracdcqa/EICDCCSRAQA"
+        },
+        "databases_master_name": {
+            "value": "eicsracdcqa/master"
+        },
+        "firewallRules_Allow_all_name": {
+            "value": "eicsracdcqa/Allow all"
+        },
+        "firewallRules_AllowAllWindowsAzureIps_name": {
+            "value": "eicsracdcqa/AllowAllWindowsAzureIps"
+            
+        }
+    }
+}

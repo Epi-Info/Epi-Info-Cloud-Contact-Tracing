@@ -156,9 +156,12 @@
         Reset</button>
 </div>
 @{
-    WebGrid webGrid = new WebGrid(rowsPerPage: 20,
-        canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
-    webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
+    //WebGrid webGrid = new WebGrid(rowsPerPage: 20,
+    //    canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
+    //webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
+
+    WebGrid webGrid = new WebGrid(canSort: true, canPage: true, ajaxUpdateContainerId: "recordstable");
+    webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses);
 }
 <div id="recordscontent" style="margin-top: 20px;">
     <!--style="display:inline-block;"-->
@@ -167,35 +170,40 @@
             Add New Record
         </button>
     </div>
-    @if (Model.FormInfoModel.IsSQLProject)
-    {
-        <div id="tableSort" style="vertical-align: middle;">
-            <select id="columns" style="width: 172px;">
-                @*<option value="0" selected="selected">Sort by:</option>*@
-                @foreach (var item in Model.Columns)
-                {
-                    if (@item.Value.ToString() == @Model.sortfield)
-                    {
-                    <option value="@item.Value.ToString()" selected= selected >@item.Value.ToString()</option>
-                    }
-                    else
-                    {
-                    <option value="@item.Value.ToString()" >@item.Value.ToString()</option>
-                    }
-                }
-            </select>
-            @* <select style="vertical-align:middle;">
+    @*Commented for new Sort Implementation with DocDb.*@
 
-        <option>Sort by</option>
-        <option>Column1</option>
-    </select>*@
-            <button id="SortASC" class="default" style="height: 35px; margin: -7px 0 0;">
-                <img src="~/Content/images/Sort-Ascending.png" style="width: 18px; vertical-align: middle;" /></button>
-            <button id="SortDESC" class="default" style="height: 35px; margin: -7px 0 0;">
-                <img src="~/Content/images/Sort-Descending.png" style="width: 18px; vertical-align: middle;" /></button>
-            <button id="ResetSort" class="default" style="height: 35px; margin: -7px 0 0;">Reset</button>
-        </div>
-    }
+    @* @if (Model.FormInfoModel.IsSQLProject)
+        {
+         <!--   <div id="tableSort" style="vertical-align: middle;">
+                <select id="columns" style="width: 172px;">
+                    @*<option value="0" selected="selected">Sort by:</option>*@
+    @*@foreach (var item in Model.Columns)
+            {
+                if (@item.Value.ToString() == @Model.sortfield)
+                {
+                    <option value="@item.Value.ToString()" selected=selected>@item.Value.ToString()</option>
+                }
+                else
+                {
+                    <option value="@item.Value.ToString()">@item.Value.ToString()</option>
+                }
+            }
+        </select>
+        @* <select style="vertical-align:middle;">
+
+                <option>Sort by</option>
+                <option>Column1</option>
+            </select>*@
+    @*<button id="SortASC" class="default" style="height: 35px; margin: -7px 0 0;">
+                <img src="~/Content/images/Sort-Ascending.png" style="width: 18px; vertical-align: middle;" />
+            </button>
+            <button id="SortDESC" class="default" style="height: 35px; margin: -7px 0 0;">
+                <img src="~/Content/images/Sort-Descending.png" style="width: 18px; vertical-align: middle;" />
+            </button>
+            <button id="ResetSort" class="default" style="height: 35px; margin: -7px 0 0;">Reset</button>
+        </div> }*@
+
+    
    
     <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;">
      @if (Model.FormInfoModel.IsSQLProject && Model.SearchModel.SearchCol1 != null)
@@ -226,6 +234,7 @@
                         }
                         else
                         {
+
                             @Model.NumberOfResponses
                         }</span>
                     <span>of </span><span class="boldlabel" style="font-size: 14pt;">@Model.NumberOfResponses
@@ -246,9 +255,9 @@
                 </div>-->
         <div id="paging">
             @{
-                    
                 if (Model.NumberOfPages > 1)
                 {
+
                 <div id='pager'>
                     @Html.Partial("PagerPartial", Model)
                 </div>  
@@ -283,17 +292,13 @@
                 if (Model.Columns.Count >= 4)
                 {
                     gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
-                }
-                if (Model.Columns.Count >= 5)
-                {
-                    gridColumns.Add(webGrid.Column("Column5", (Model.Columns.Count >= 5) ? Model.Columns[4].Value : ""));
-                }
+                } 
                 @webGrid.GetHtml(columns: gridColumns);
 
                
             }
             @Html.Hidden("hidFormId", @Model.FormInfoModel.FormId)
-            @Html.Hidden("hidPageNumber", @Model.CurrentPage)
+            @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
             @{
                 if (Model.NumberOfPages == 0)
                 {
@@ -303,12 +308,13 @@
             }
         </div>
         <div id="paging">
+            <b>Pagging Test</b>
             @{
                     
                 if (Model.NumberOfPages > 1)
                 {
                 <div id='pager2'>
-                    @*@Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)*@
+                    @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
                     @Html.Partial("PagerPartial", Model)
                 </div>  
                 }

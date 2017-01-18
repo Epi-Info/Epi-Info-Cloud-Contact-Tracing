@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Epi.FormMetadata.DataStructures;
+using System.Linq;
 //using Epi.Cloud.Interfaces.MetadataInterfaces;
 
 namespace Epi.Web.SurveyManager.Test
@@ -27,7 +28,7 @@ namespace Epi.Web.SurveyManager.Test
                 foreach (var view in projectMetadata.Project.Views)
                 {
                     Assert.IsNotNull(view.FormId,"FormId is Null");
-
+                    Assert.IsTrue(view.ParentFormId != null ? projectMetadata.Project.Views.Any(v => v.FormId == view.ParentFormId) : true, "Child view no corresponding Parent");
                     if (view.Pages.Length > 0)
                     {
                         foreach (var page in view.Pages)

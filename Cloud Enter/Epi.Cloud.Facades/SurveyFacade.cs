@@ -186,7 +186,7 @@ namespace Epi.Cloud.Facades
                                          bool isSubmited, 
                                          bool isSaved, 
                                          int pageNumber, 
-                                         int userId)
+                                         int userId, string userName)
         {
             // 1 Get the record for the current survey response
             // 2 update the current survey response and save the response
@@ -195,7 +195,8 @@ namespace Epi.Cloud.Facades
             SurveyAnswerResponse surveyAnswerResponse = new SurveyAnswerResponse();//GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId.ToString());
             surveyAnswerResponse.SurveyResponseList.Add(surveyAnswerDTO);
             ///2 Update the current survey response and save it
-
+            _surveyAnswerRequest.Criteria.UserId = userId;
+            _surveyAnswerRequest.Criteria.UserName = userName;
             SurveyHelper.UpdateSurveyResponse(surveyInfoModel, 
                                               form, 
                                               _surveyAnswerRequest, 

@@ -1,0 +1,467 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "databaseAccounts_eicdc_name": {
+            "type": "SecureString"
+        },
+        "Redis_eicdcsession_name": {           
+            "type": "String"
+        },
+        "Redis_eicdccache_name": {            
+            "type": "String"
+        },
+        "databaseAccounts_eicdc_name_1": {           
+            "type": "String"
+        },
+        "components_eicdcapi_name": {           
+            "type": "String"
+        },
+        "components_eicdc_name": {           
+            "type": "String"
+        },
+        "namespaces_eicdcsb_name": {            
+            "type": "String"
+        },
+        "servers_eicsracdc_name": {            
+            "type": "String"
+        },
+        "storageAccounts_eicsracdc_name": {           
+            "type": "String"
+        },
+        "serverfarms_eicsraappservice_name": {            
+            "type": "String"
+        },
+        "sites_EICDCDataConsistencyServicesAPI_name": {            
+            "type": "String"
+        },
+        "sites_EICDCResponseDataAccessAPI_name": {           
+            "type": "String"
+        },
+        "sites_EICDC_name": {            
+            "type": "String"
+        },
+        "sites_EICDCMetadataAPI_name": {            
+            "type": "String"
+        },
+        "AuthorizationRules_RootManageSharedAccessKey_name": {            
+            "type": "String"
+        },
+        "databases_EICDC_name": {           
+            "type": "String"
+        },
+        "databases_master_name": {            
+            "type": "String"
+        },
+        "firewallRules_Allow_all_name": {            
+            "type": "String"
+        },
+        "firewallRules_AllowAllWindowsAzureIps_name": {            
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+		{
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.ServiceBus/namespaces/eicdccsrasbqa'.",
+            "type": "Microsoft.ServiceBus/namespaces",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "kind": "Messaging",
+            "name": "[parameters('namespaces_eicdcsb_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "tags": {},
+            "properties": {
+                "provisioningState": "Succeeded",
+                "status": "Active",             
+                "serviceBusEndpoint": "[concat('https://', parameters('namespaces_eicdcsb_name'),'.servicebus.windows.net:443/')]",
+                "enabled": true               
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Cache/Redis/eicdcsessionqa'.",
+            "type": "Microsoft.Cache/Redis",
+            "name": "[parameters('Redis_eicdcsession_name')]",
+            "apiVersion": "2016-04-01",
+            "location": "East US",
+            "tags": {},
+            "properties": {
+                "redisVersion": "3.2",
+                "sku": {
+                    "name": "Standard",
+                    "family": "C",
+                    "capacity": 1
+                },
+                "enableNonSslPort": false,
+                "redisConfiguration": {
+                    "maxclients": "1000",
+                    "maxmemory-reserved": "50",
+                    "maxmemory-delta": "50"
+                }
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Cache/Redis/eicdccacheqa'.",
+            "type": "Microsoft.Cache/Redis",
+            "name": "[parameters('Redis_eicdccache_name')]",
+            "apiVersion": "2016-04-01",
+            "location": "East US",
+            "tags": {},
+            "properties": {
+                "redisVersion": "3.2",
+                "sku": {
+                    "name": "Standard",
+                    "family": "C",
+                    "capacity": 1
+                },
+                "enableNonSslPort": false,
+                "redisConfiguration": {
+                    "maxclients": "1000",
+                    "maxmemory-reserved": "50",
+                    "maxmemory-delta": "50"
+                }
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.DocumentDB/databaseAccounts/EICDCCSRAQA'.",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "kind": "GlobalDocumentDB",
+            "name": "[parameters('databaseAccounts_eicdc_name_1')]",
+            "apiVersion": "2015-04-08",
+            "location": "East US",
+            "tags": {},
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "name": "[parameters('databaseAccounts_eicdc_name')]"
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/microsoft.insights/components/eicdcapiqa'.",
+            "type": "microsoft.insights/components",
+            "kind": "web",
+            "name": "[parameters('components_eicdcapi_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "East US",
+            "tags": {
+                "hidden-link:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCApiQA": "Resource"
+            },
+            "properties": {
+                "ApplicationId": "[parameters('components_eicdcapi_name')]"
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/microsoft.insights/components/EICDCCSRAQA'.",
+            "type": "microsoft.insights/components",
+            "kind": "web",
+            "name": "[parameters('components_eicdc_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "East US",
+            "tags": {
+                "hidden-link:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCCSRAQA": "Resource"
+            },
+            "properties": {
+                "ApplicationId": "[parameters('components_eicdc_name')]"
+            },
+            "resources": [],
+            "dependsOn": []
+        },        
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Sql/servers/eicsracdcqa'.",
+            "type": "Microsoft.Sql/servers",
+            "kind": "v12.0",
+            "name": "[parameters('servers_eicsracdc_name')]",
+            "apiVersion": "2014-04-01-preview",
+            "location": "East US",
+            "properties": {
+                "administratorLogin": "eicsraadmin",
+                "administratorLoginPassword": "hK=JDZNjW@S8!pv",
+                "version": "12.0"
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/epiinfocsraqa/providers/Microsoft.Storage/storageAccounts/eicsracdcqa'.",
+            "type": "Microsoft.Storage/storageAccounts",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "name": "[parameters('storageAccounts_eicsracdc_name')]",
+            "apiVersion": "2016-01-01",
+            "location": "eastus",
+            "tags": {},
+            "properties": {},
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa'.",
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "F1",
+                "tier": "Free",
+                "size": "F1",
+                "family": "F",
+                "capacity": 0
+            },
+            "kind": "app",
+            "name": "[parameters('serverfarms_eicsraappservice_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "properties": {
+                "name": "[parameters('serverfarms_eicsraappservice_name')]",
+                "numberOfWorkers": 0
+            },
+            "resources": [],
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCCsraDataConsistencyServicesAPIQA'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('sites_EICDCDataConsistencyServicesAPI_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "tags": {
+                "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
+            },
+            "properties": {
+                "name": "[parameters('sites_EICDCDataConsistencyServicesAPI_name')]",
+                "hostNames": [
+                    "eicdccsradataconsistencyservicesapiqa.azurewebsites.net"
+                ],
+                "enabledHostNames": [
+                    "eicdccsradataconsistencyservicesapiqa.azurewebsites.net",
+                    "eicdccsradataconsistencyservicesapiqa.scm.azurewebsites.net"
+                ],
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_EICDCDataConsistencyServicesAPI_name'),'eicdccsradataconsistencyservicesapiqa.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('sites_EICDCDataConsistencyServicesAPI_name'),'eicdccsradataconsistencyservicesapiqa.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCCsraResponseDataAccessAPIQA'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('sites_EICDCResponseDataAccessAPI_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "tags": {
+                "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
+            },
+            "properties": {
+                "name": "[parameters('sites_EICDCResponseDataAccessAPI_name')]",
+                "hostNames": [
+                    "eicdccsraresponsedataaccessapiqa.azurewebsites.net"
+                ],
+                "enabledHostNames": [
+                    "eicdccsraresponsedataaccessapiqa.azurewebsites.net",
+                    "eicdccsraresponsedataaccessapiqa.scm.azurewebsites.net"
+                ],
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_EICDCResponseDataAccessAPI_name'),'eicdccsraresponsedataaccessapiqa.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('sites_EICDCResponseDataAccessAPI_name'),'eicdccsraresponsedataaccessapiqa.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCCSRAQA'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "app",
+            "name": "[parameters('sites_EICDC_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "tags": {
+                "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
+            },
+            "properties": {
+                "name": "[parameters('sites_EICDC_name')]",
+                "hostNames": [
+                    "EICDCCSRAQA.azurewebsites.net"
+                ],
+                "enabledHostNames": [
+                    "EICDCCSRAQA.azurewebsites.net",
+                    "EICDCCSRAQA.scm.azurewebsites.net"
+                ],
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_EICDC_name'),'EICDCCSRAQA.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('sites_EICDC_name'),'EICDCCSRAQA.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCCsraMetadataAPIQA'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('sites_EICDCMetadataAPI_name')]",
+            "apiVersion": "2015-08-01",
+            "location": "East US",
+            "tags": {
+                "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
+            },
+            "properties": {
+                "name": "[parameters('sites_EICDCMetadataAPI_name')]",
+                "hostNames": [
+                    "eicdccsrametadataapiqa.azurewebsites.net"
+                ],
+                "enabledHostNames": [
+                    "eicdccsrametadataapiqa.azurewebsites.net",
+                    "eicdccsrametadataapiqa.scm.azurewebsites.net"
+                ],
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_EICDCMetadataAPI_name'),'eicdccsrametadataapiqa.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('sites_EICDCMetadataAPI_name'),'eicdccsrametadataapiqa.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicsraappservice_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.ServiceBus/namespaces/eicdccsrasbqa/AuthorizationRules/RootManageSharedAccessKey'.",
+            "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+            "name": "[parameters('AuthorizationRules_RootManageSharedAccessKey_name')]",
+            "apiVersion": "2015-08-01",
+            "properties": {
+                "rights": [
+                    "Listen",
+                    "Manage",
+                    "Send"
+                ]
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('namespaces_eicdcsb_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Sql/servers/eicsracdcqa/databases/EICDCCSRAQA'.",
+            "type": "Microsoft.Sql/servers/databases",
+            "kind": "v12.0,user",
+            "name": "[parameters('databases_EICDC_name')]",
+            "apiVersion": "2014-04-01-preview",
+            "location": "East US",
+            "properties": {                
+                "edition": "Basic",
+                "status": "Online",                
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "maxSizeBytes": "2147483648",  
+                "requestedServiceObjectiveName": "Basic"               
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('servers_eicsracdc_name'))]"
+            ]
+        },        
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Sql/servers/eicsracdcqa/firewallRules/Allow all'.",
+            "type": "Microsoft.Sql/servers/firewallRules",
+            "kind": "v12.0",
+            "name": "[parameters('firewallRules_Allow_all_name')]",
+            "apiVersion": "2014-04-01-preview",
+            "location": "East US",
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "255.255.255.255"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('servers_eicsracdc_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Sql/servers/eicsracdcqa/firewallRules/AllowAllWindowsAzureIps'.",
+            "type": "Microsoft.Sql/servers/firewallRules",
+            "kind": "v12.0",
+            "name": "[parameters('firewallRules_AllowAllWindowsAzureIps_name')]",
+            "apiVersion": "2014-04-01-preview",
+            "location": "East US",
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+            },
+            "resources": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('servers_eicsracdc_name'))]"
+            ]
+        }
+    ]
+}

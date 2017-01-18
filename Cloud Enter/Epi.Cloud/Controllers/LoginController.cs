@@ -299,6 +299,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserEmailAddress] = result.User.EmailAddress;
                         Session[SessionKeys.UserFirstName] = result.User.FirstName;
                         Session[SessionKeys.UserLastName] = result.User.LastName;
+                        Session[SessionKeys.UserName] = result.User.UserName;
                         Session[SessionKeys.UGuid] = result.User.UGuid;
                         return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = formId });
                         //return Redirect(ReturnUrl);
