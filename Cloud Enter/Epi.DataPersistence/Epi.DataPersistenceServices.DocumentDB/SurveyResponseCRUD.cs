@@ -303,19 +303,38 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// </summary>
         public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties)
         {
-            ResourceResponse<Document> response = null;
-            bool tasksRanToCompletion = true;
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-
-            var formResponseProperties = ReadFormInfoByResponseId(documentResponseProperties.GlobalRecordID, formInfoCollectionUri);
-
-            foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
+            bool tasksRanToCompletion = false;
+            try
             {
-                var pageId = newPageResponseProperties.PageId;
-                Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                var pageResponse = await Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);                
+                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
+
+                var formResponseProperties = ReadFormInfoByResponseId(documentResponseProperties.GlobalRecordID, formInfoCollectionUri);
+
+                List<Task<ResourceResponse<Document>>> pendingTasks = new List<Task<ResourceResponse<Document>>>();
+                foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
+                {
+                    var pageId = newPageResponseProperties.PageId;
+                    Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
+                    pendingTasks.Add(Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties));
+                }
+                if (pendingTasks.Count > 0)
+                {
+                    foreach (var task in pendingTasks)
+                    {
+                        await task.ConfigureAwait(false);
+                    }
+                    tasksRanToCompletion = true;
+                }
+                else
+                {
+                    tasksRanToCompletion = true;
+                }
             }
-            return tasksRanToCompletion;
+            catch (Exception ex)
+            {
+                Console.Write(ex);
+            }
+            return await Task.FromResult(tasksRanToCompletion);
         }
 
 		#endregion
