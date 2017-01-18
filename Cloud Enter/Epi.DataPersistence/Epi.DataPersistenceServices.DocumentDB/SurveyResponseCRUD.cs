@@ -1,9 +1,11 @@
 ﻿#define ConfigureIndexing
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.Constants;
@@ -297,36 +299,55 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         #endregion
 
-        #region InsertToSurveyToDocumentDB
+        #region Save Page Response Properties Async
         /// <summary>
         /// Created instance of DocumentClient and Getting reference to database and Document collections
         /// </summary>
-        public async Task<bool> InsertResponseAsync(DocumentResponseProperties documentResponseProperties)
+        public async Task<bool> SavePageResponsePropertiesAsync(DocumentResponseProperties documentResponseProperties)
         {
             bool tasksRanToCompletion = false;
             try
             {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
+                var numberOfPages = documentResponseProperties.PageResponsePropertiesList.Count();
+                if (numberOfPages == 0) return true;
 
-                var formResponseProperties = ReadFormInfoByResponseId(documentResponseProperties.GlobalRecordID, formInfoCollectionUri);
+                using (BlockingCollection<Task<ResourceResponse<Document>>> pendingTasksBC = new BlockingCollection<Task<ResourceResponse<Document>>>(numberOfPages))
+                {
+                    int numberOfPagesInitiated = 0;
+                    int numberOfPagesCompleted = 0;
 
-                List<Task<ResourceResponse<Document>>> pendingTasks = new List<Task<ResourceResponse<Document>>>();
-                foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
-                {
-                    var pageId = newPageResponseProperties.PageId;
-                    Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                    pendingTasks.Add(Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties));
-                }
-                if (pendingTasks.Count > 0)
-                {
-                    foreach (var task in pendingTasks)
+                    foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
-                        await task.ConfigureAwait(false);
+                        var pageId = newPageResponseProperties.PageId;
+                        Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
+                        var task = Client.UpsertDocumentAsync(pageCollectionUri, newPageResponseProperties);
+                        var success = pendingTasksBC.TryAdd(task, 100);
+                        if (success)
+                        {
+                            Interlocked.Increment(ref numberOfPagesInitiated);
+                        }
+                        else
+                        {
+                            throw new TimeoutException("Unable to add task");
+                        }
                     }
-                    tasksRanToCompletion = true;
-                }
-                else
-                {
+
+                    pendingTasksBC.CompleteAdding();
+
+                    while (numberOfPages != numberOfPagesCompleted)
+                    {
+                        Task<ResourceResponse<Document>> task;
+                        if (pendingTasksBC.TryTake(out task, 100))
+                        {
+                            Interlocked.Increment(ref numberOfPagesCompleted);
+                            var result = await task.ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            throw new TimeoutException("Unable to take task");
+                        }
+                    }
+
                     tasksRanToCompletion = true;
                 }
             }
@@ -337,17 +358,17 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return await Task.FromResult(tasksRanToCompletion);
         }
 
-		#endregion
+        #endregion
 
-		#region SaveQuestionInDocumentDB
+        #region Save Form Response Properties Async
 
-		/// <summary>
-		/// This method help to save form properties 
-		/// and also used for delete operation.Ex:RecStatus=0
-		/// </summary>
-		/// <param name="formResponseProperties"></param>
-		/// <returns></returns>
-		public async Task<ResourceResponse<Document>> UpsertFormResponseProperties(FormResponseProperties formResponseProperties)
+        /// <summary>
+        /// This method help to save form properties 
+        /// and also used for delete operation.Ex:RecStatus=0
+        /// </summary>
+        /// <param name="formResponseProperties"></param>
+        /// <returns></returns>
+        public async Task<ResourceResponse<Document>> SaveFormResponsePropertiesAsync(FormResponseProperties formResponseProperties)
 		{
             ResourceResponse<Document> result = null;
             try

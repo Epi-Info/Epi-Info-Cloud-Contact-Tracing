@@ -59,22 +59,22 @@ namespace Epi.PersistenceServices.DocumentDB
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
             // Both SaveFormProperties and InsertResponse perform Task.Run
-            bool saveFormPropertiesIsSuccessful = SaveFormProperties(surveyResponseBO);
-            bool insertResponseIsSuccessful = InsertResponse(surveyResponseBO);
+            bool saveFormPropertiesIsSuccessful = SaveFormResponseProperties(surveyResponseBO);
+            bool savePagePropertiesIsSuccessful = SavePageResponseProperties(surveyResponseBO);
             if (surveyResponseBO.Status == RecordStatus.Saved)
             {
                 NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status,RecordStatusChangeReason.SubmitOrClose);
             }
-            return saveFormPropertiesIsSuccessful && insertResponseIsSuccessful;
+            return saveFormPropertiesIsSuccessful && savePagePropertiesIsSuccessful;
         }
 
-        #region Save FormParentProperties
+        #region Save Form Response Properties
         /// <summary>
         /// First time store ResonseId,RecStatus, and SurveyId in DocumentDB
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public bool SaveFormProperties(SurveyResponseBO request)
+        public bool SaveFormResponseProperties(SurveyResponseBO request)
         {
             //if(request.IsDeleteMode)
             //{
@@ -108,18 +108,18 @@ namespace Epi.PersistenceServices.DocumentDB
             };
 
             bool isSuccessful = false;
-            var result = _surveyResponseCRUD.UpsertFormResponseProperties(formResponseProperties);
+            var result = _surveyResponseCRUD.SaveFormResponsePropertiesAsync(formResponseProperties);
 
             return isSuccessful;
         }
 
         #endregion
 
-        #region InsertResponse
+        #region Save Page Response Properties
 
-        public bool InsertResponse(SurveyResponseBO surveyResponseBO)
+        public bool SavePageResponseProperties(SurveyResponseBO surveyResponseBO)
         {
-            bool isSuccessful = false;
+            bool isSuccessful = true;
             var formId = surveyResponseBO.SurveyId;
             var formDigest = GetFormDigest(formId);
             DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, 0);
@@ -128,14 +128,19 @@ namespace Epi.PersistenceServices.DocumentDB
             documentResponseProperties.FormResponseProperties = surveyResponseBO.ResponseDetail.ToFormResponseProperties();
             documentResponseProperties.PageResponsePropertiesList = new List<PageResponseProperties>();
             var updatedPageResponseDetailList = surveyResponseBO.ResponseDetail.PageResponseDetailList.Where(p => p.HasBeenUpdated).OrderBy(p => p.PageId);
-            foreach (var pageResponseDetail in updatedPageResponseDetailList)
+            if (updatedPageResponseDetailList.Count() > 0)
             {
-                int pageId = pageResponseDetail.PageId;
-                var pageResponseProperties = pageResponseDetail.ToPageResponseProperties();
-                documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
+                foreach (var pageResponseDetail in updatedPageResponseDetailList)
+                {
+                    int pageId = pageResponseDetail.PageId;
+                    var pageResponseProperties = pageResponseDetail.ToPageResponseProperties();
+                    documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
+                }
+
+                //
+                var pageTask = _surveyResponseCRUD.SavePageResponsePropertiesAsync(documentResponseProperties);
             }
 
-            var response = _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties);
             return isSuccessful;
         }
 

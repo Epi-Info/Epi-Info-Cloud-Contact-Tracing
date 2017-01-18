@@ -23,13 +23,13 @@ namespace Epi.DataPersistence.Common.Interfaces
         FormResponseDetail GetFormResponseByResponseId(string responseId);
 
         bool SaveResponse(SurveyResponseBO surveyResponseBO);
-		bool InsertResponse(SurveyResponseBO surveyResponseBO);
+		bool SavePageResponseProperties(SurveyResponseBO surveyResponseBO);
 
         PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
         SurveyAnswerResponse DeleteResponse(string responseId, int userId);
 
-        bool SaveFormProperties(SurveyResponseBO request);
+        bool SaveFormResponseProperties(SurveyResponseBO request);
 
         //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
 
