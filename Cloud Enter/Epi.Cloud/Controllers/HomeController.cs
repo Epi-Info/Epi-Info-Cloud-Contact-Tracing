@@ -324,9 +324,10 @@ namespace Epi.Web.MVC.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public ActionResult ReadSortedResponseInfo(string formId, int page, string sort, string sortField, int orgId, bool reset = false)
+		public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
 		{
 			Template projectMetadata = null;
+            page = page.HasValue ? page.Value : 1;
 
 			bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
 
@@ -364,14 +365,14 @@ namespace Epi.Web.MVC.Controllers
 
 				Session[SessionKeys.SortOrder] = sort;
 				Session[SessionKeys.SortField] = sortField;
-				Session[SessionKeys.PageNumber] = page;
+				Session[SessionKeys.PageNumber] = page.Value;
 			}
 			else
 			{
 				Session.Remove("SortOrder");
 				Session.Remove("SortField");
 				Session[SessionKeys.RootFormId] = formId;
-				Session[SessionKeys.PageNumber] = page;
+				Session[SessionKeys.PageNumber] = page.Value;
 
 				if (Session[SessionKeys.ProjectId] == null)
 				{
@@ -383,7 +384,7 @@ namespace Epi.Web.MVC.Controllers
 			//Code added to retain Search Ends. 
 
 			var model = new FormResponseInfoModel();
-			model = GetFormResponseInfoModel(formId, page, sort, sortField, orgId);
+			model = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
 
 			if (IsMobileDevice == false)
 			{
@@ -828,11 +829,11 @@ namespace Epi.Web.MVC.Controllers
 
 			return Json(1);
 		}
-        
+
         //Unlock
-		[HttpPost]
-		[AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult Unlock(String ResponseId, bool RecoverLastRecordVersion)
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Unlock(String ResponseId, bool RecoverLastRecordVersion = false)
 		{
 			try
 			{

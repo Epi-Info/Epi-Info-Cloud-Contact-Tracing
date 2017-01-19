@@ -311,10 +311,8 @@ namespace Epi.Cloud.DataEntryServices
             {
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-                //SurveyResponseBO surveyResponseBO1 = surveyAnswerRequest.SurveyAnswerList.ToSurveyResponseBOList(surveyAnswerRequest.Criteria.UserId)[0];
-
-                List<SurveyResponseBO> SurveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
-                foreach (var surveyResponseBO in SurveyResponseBOList)
+                List<SurveyResponseBO> surveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
+                foreach (var surveyResponseBO in surveyResponseBOList)
                 {
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
                     surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
@@ -323,7 +321,7 @@ namespace Epi.Cloud.DataEntryServices
                     surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
                 }
 
-                List<SurveyResponseBO> ResultList = surveyResponseImplementation.UpdateSurveyResponse(SurveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
+                List<SurveyResponseBO> resultList = surveyResponseImplementation.UpdateSurveyResponse(surveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
             }
             catch (Exception ex)
             {
@@ -391,11 +389,8 @@ namespace Epi.Cloud.DataEntryServices
 
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
                 surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
+
                 //Query The number of records
-
-                //result.NumberOfPages = Implementation.GetNumberOfPages(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.IsMobile);
-                //result.NumberOfResponses = Implementation.GetNumberOfResponses(surveyAnswerRequest.Criteria.SurveyId);
-
                 result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
                 result.NumberOfResponses = surveyResponseImplementation.GetNumberOfResponses(surveyAnswerRequest.Criteria);
 
@@ -415,90 +410,6 @@ namespace Epi.Cloud.DataEntryServices
                 customFaultException.HelpLink = ex.HelpLink;
                 return null;
             }
-#if WebEnterCode
-			try
-			{
-				SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
-
-
-				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-				Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-				Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(ISurveyResponseDao);
-
-				SurveyAnswerCriteria criteria = pRequest.Criteria;
-				//result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(pRequest.Criteria.SurveyId, pRequest.Criteria.PageNumber, pRequest.Criteria.IsMobile));
-				result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(criteria));
-				pRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
-				//Query The number of records
-
-				//result.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria.SurveyId, pRequest.Criteria.IsMobile);
-				//result.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria.SurveyId);
-
-				result.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria);
-				result.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria);
-
-				//Get form info 
-				Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao formInfoDao = new EF.EntityFormInfoDao();
-				Epi.Cloud.BLL.FormInfo ImplementationFormInfo = new Epi.Cloud.BLL.FormInfo(formInfoDao);
-				result.FormInfo = Mapper.ToFormInfoDTO(ImplementationFormInfo.GetFormInfoByFormId(pRequest.Criteria.SurveyId, false, pRequest.Criteria.UserId));
-
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-#endif //WebEnterCode
-        }
-
-        public FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest)
-        {
-            throw new NotImplementedException();
-            try
-            {
-#if WebEnterCode
-			try
-			{
-				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-
-
-				IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
-				Epi.Cloud.BLL.FormInfo FormInfoImplementation = new Epi.Cloud.BLL.FormInfo(FormInfoDao);
-				FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetMetadata, pRequest.FormInfo.UserId);
-				Response.FormInfo = Mapper.ToFormInfoDTO(FormInfoBO);
-
-
-				Epi.Web.Enter.Interfaces.DataInterface.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
-				Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
-				Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
-				Epi.Cloud.BLL.FormSetting SettingsImplementation = new Epi.Cloud.BLL.FormSetting(IFormSettingDao, IUserDao, IFormInfoDao);
-				Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml, pRequest.CurrentOrgId));
-
-
-
-				return Response;
-
-
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-            }
         }
 
         public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest)
@@ -515,7 +426,7 @@ namespace Epi.Cloud.DataEntryServices
 
                 FormsHierarchyResponse formsHierarchyResponse = new FormsHierarchyResponse();
 
-                List<SurveyResponseBO> AllResponsesIDsList = new List<SurveyResponseBO>();
+                List<SurveyResponseBO> allResponsesIDsList = new List<SurveyResponseBO>();
 
                 //1- Get All form  ID's
                 List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootId(rootId);
@@ -524,15 +435,15 @@ namespace Epi.Cloud.DataEntryServices
                 Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProviderImplementation1 = new SurveyResponseProvider(_surveyResponseDao);
                 if (!string.IsNullOrEmpty(formsHierarchyRequest.SurveyResponseInfo.ResponseId))
                 {
-                    AllResponsesIDsList = surveyResponseProviderImplementation1.GetResponsesHierarchyIdsByRootId(formsHierarchyRequest.SurveyResponseInfo.ResponseId);
+                    allResponsesIDsList = surveyResponseProviderImplementation1.GetResponsesHierarchyIdsByRootId(formsHierarchyRequest.SurveyResponseInfo.ResponseId);
                 }
                 else
                 {
-                    AllResponsesIDsList = null;
+                    allResponsesIDsList = null;
                 }
 
                 //3 Combining the lists.
-                List<FormsHierarchyBO> combinedList = CombineLists(relatedFormIDsList, AllResponsesIDsList);
+                List<FormsHierarchyBO> combinedList = CombineLists(relatedFormIDsList, allResponsesIDsList);
                 formsHierarchyResponse.FormsHierarchy = combinedList.ToFormsHierarchyDTOList();
 
                 return formsHierarchyResponse;
@@ -543,28 +454,26 @@ namespace Epi.Cloud.DataEntryServices
             }
         }
 
-        private List<FormsHierarchyBO> CombineLists(List<FormsHierarchyBO> relatedFormIDsList, List<SurveyResponseBO> AllResponsesIDsList)
+        private List<FormsHierarchyBO> CombineLists(List<FormsHierarchyBO> relatedFormIDsList, List<SurveyResponseBO> allResponsesIDsList)
         {
-
             List<FormsHierarchyBO> List = new List<FormsHierarchyBO>();
 
-            foreach (var Item in relatedFormIDsList)
+            foreach (var item in relatedFormIDsList)
             {
-                FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
-                FormsHierarchyBO.RootFormId = Item.RootFormId;
-                FormsHierarchyBO.FormId = Item.FormId;
-                FormsHierarchyBO.ViewId = Item.ViewId;
-                FormsHierarchyBO.IsSqlProject = Item.IsSqlProject;
-                FormsHierarchyBO.IsRoot = Item.IsRoot;
-                FormsHierarchyBO.SurveyInfo = Item.SurveyInfo;
-                if (AllResponsesIDsList != null)
+                FormsHierarchyBO formsHierarchyBO = new FormsHierarchyBO();
+                formsHierarchyBO.RootFormId = item.RootFormId;
+                formsHierarchyBO.FormId = item.FormId;
+                formsHierarchyBO.ViewId = item.ViewId;
+                formsHierarchyBO.IsSqlProject = item.IsSqlProject;
+                formsHierarchyBO.IsRoot = item.IsRoot;
+                formsHierarchyBO.SurveyInfo = item.SurveyInfo;
+                if (allResponsesIDsList != null)
                 {
-                    FormsHierarchyBO.ResponseIds = AllResponsesIDsList.Where(x => x.SurveyId == Item.FormId).ToList();
+                    formsHierarchyBO.ResponseIds = allResponsesIDsList.Where(x => x.SurveyId == item.FormId).ToList();
                 }
-                List.Add(FormsHierarchyBO);
+                List.Add(formsHierarchyBO);
             }
             return List;
-
         }
 
         public FormsInfoResponse GetFormsInfo(FormsInfoRequest formsInfoRequest)
@@ -574,53 +483,19 @@ namespace Epi.Cloud.DataEntryServices
             try
             {
                 List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(formsInfoRequest.Criteria.UserId, formsInfoRequest.Criteria.CurrentOrgId);
-                //  result.SurveyInfoList = FormInfoBOList;
 
                 foreach (FormInfoBO item in FormInfoBOList)
                 {
                     result.FormInfoList.Add(item.ToFormInfoDTO());
                 }
-
-
             }
             catch (Exception ex)
             {
-
+                throw;
             }
             return result;
 
 
-        }
-        public SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest surveyAnswerRequest)
-        {
-            throw new NotImplementedException();
-            try
-            {
-#if WebEnterCode
-			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
-
-			//List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetResponsesByRelatedFormId(pRequest.Criteria.SurveyAnswerIdList[0], pRequest.Criteria.SurveyId);
-
-			List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetResponsesByRelatedFormId(pRequest.Criteria.SurveyAnswerIdList[0], pRequest.Criteria);
-
-			SurveyAnswerResponse.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
-			//Query The number of records
-
-			//SurveyAnswerResponse.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria.SurveyId, pRequest.Criteria.IsMobile);
-			//SurveyAnswerResponse.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria);
-
-			//SurveyAnswerResponse.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria);
-			//SurveyAnswerResponse.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria);
-
-			return SurveyAnswerResponse;
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-            }
         }
 
         public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest surveyInfoRequest)
@@ -637,69 +512,6 @@ namespace Epi.Cloud.DataEntryServices
             var result = new SurveyInfoResponse();
             result.SurveyInfoList.Add(surveyInfoBO.ToSurveyInfoDTO());
             return result;
-#if WebEnterCode
-            try
-			{
-			try
-			{
-				SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
-				//Epi.Cloud.BLL.SurveyInfo implementation = new Epi.Cloud.BLL.SurveyInfo(_surveyInfoDao);
-
-				Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-				Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
-				Epi.Cloud.BLL.SurveyInfo implementation = new Epi.Cloud.BLL.SurveyInfo(surveyInfoDao);
-
-				// Validate client tag, access token, and user credentials
-				if (!ValidRequest(pRequest, result, Validate.All))
-				{
-					return result;
-				}
-
-				var criteria = pRequest.Criteria as SurveyInfoCriteria;
-				string sort = criteria.SortExpression;
-				List<string> SurveyIdList = new List<string>();
-				foreach (string id in criteria.SurveyIdList)
-				{
-					SurveyIdList.Add(id.ToUpper());
-				}
-
-
-				//if (request.LoadOptions.Contains("SurveyInfos"))
-				//{
-				//    IEnumerable<SurveyInfoDTO> SurveyInfos;
-				//    if (!criteria.IncludeOrderStatistics)
-				//    {
-				//        SurveyInfos = Implementation.GetSurveyInfos(sort);
-				//    }
-				//    else
-				//    {
-				//        SurveyInfos = Implementation.GetSurveyInfosWithOrderStatistics(sort);
-				//    }
-
-				//    response.SurveyInfos = SurveyInfos.Select(c => Mapper.ToDataTransferObject(c)).ToList();
-				//}
-
-				//if (pRequest.LoadOptions.Contains("SurveyInfo"))
-				//{
-				result.SurveyInfoList = Mapper.ToDataTransferObject(implementation.GetSurveyInfoById(SurveyIdList));
-				//}
-
-				return result;
-			}
-			catch (Exception ex)
-			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-			}
-			catch (Exception ex)
-			{
-			}
-#endif //WebEnterCode
         }
 
         public bool HasResponse(string childFormId, string parentResponseId)
