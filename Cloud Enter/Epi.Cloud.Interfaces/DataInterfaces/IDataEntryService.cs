@@ -26,20 +26,11 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 
 		SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest surveyAnswerRequest);
 
-		SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest surveyAnswerRequest);
-
-		SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest surveyAnswerRequest);
-
 		SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest);
-
-
 
 		SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest surveyInfoRequest);
 
 		FormsInfoResponse GetFormsInfo(FormsInfoRequest formsInfoRequest);
-
-		FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest formsInfoRequest);
-
 
 		FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest);
 	}

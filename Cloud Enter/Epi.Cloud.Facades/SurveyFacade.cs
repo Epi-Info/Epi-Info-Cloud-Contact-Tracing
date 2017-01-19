@@ -40,7 +40,7 @@ namespace Epi.Cloud.Facades
 							IFormSettingsService formSettingsService,
 							ISecurityFacade securityFacade,
 
-                            SurveyResponseHelper surveyResponseXML, 
+                            SurveyResponseHelper surveyResponseHelper, 
                             IProjectMetadataProvider projectMetadataProvider,
 
                             Epi.Cloud.Common.Message.SurveyInfoRequest surveyInfoRequest,
@@ -54,7 +54,7 @@ namespace Epi.Cloud.Facades
             _surveyInfoService = surveyInfoService;
 			_formSettingsService = formSettingsService;
 			_securityFacade = securityFacade;
-            _surveyResponseHelper = surveyResponseXML;
+            _surveyResponseHelper = surveyResponseHelper;
             _projectMetadataProvider = projectMetadataProvider;
 
             _surveyInfoRequest = surveyInfoRequest;
@@ -145,11 +145,11 @@ namespace Epi.Cloud.Facades
         /// <returns></returns>
         public SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
                                                   string responseId, 
-                                                  int UserId, 
-                                                  bool IsChild = false, 
-                                                  string RelateResponseId = "", 
-                                                  bool IsEditMode = false,
-												  int CurrentOrgId = -1)
+                                                  int userId, 
+                                                  bool isChild = false, 
+                                                  string relateResponseId = "", 
+                                                  bool isEditMode = false,
+												  int currentOrgId = -1)
         {
             return SurveyHelper.CreateSurveyResponse(surveyId,
 													 responseId, 
@@ -157,27 +157,12 @@ namespace Epi.Cloud.Facades
 													 _surveyAnswerDTO, 
 													 _surveyResponseHelper, 
 													 _dataEntryService, 
-													 UserId, 
-													 IsChild, 
-													 RelateResponseId, 
-													 IsEditMode, 
-													 CurrentOrgId);
+													 userId, 
+													 isChild, 
+													 relateResponseId, 
+													 isEditMode, 
+													 currentOrgId);
         }
-
-        public SurveyAnswerResponse SaveSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest)
-        {
-            try
-            {
-                SurveyAnswerResponse result = _dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-
-            }
-        }
-
 
         public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, 
                                          string responseId, 
@@ -186,7 +171,8 @@ namespace Epi.Cloud.Facades
                                          bool isSubmited, 
                                          bool isSaved, 
                                          int pageNumber, 
-                                         int userId, string userName)
+                                         int userId, 
+                                         string userName)
         {
             // 1 Get the record for the current survey response
             // 2 update the current survey response and save the response
@@ -300,42 +286,28 @@ namespace Epi.Cloud.Facades
             return SurveyAnswerResponse;
         }
 
-        public FormSettingResponse SaveSettings(FormSettingRequest FormSettingReq)
+        public FormSettingResponse SaveSettings(FormSettingRequest formSettingRequest)
         {
-            FormSettingResponse FormSettingResponse = _formSettingsService.SaveSettings(FormSettingReq);
+            FormSettingResponse formSettingResponse = _formSettingsService.SaveSettings(formSettingRequest);
 
-            return FormSettingResponse;
+            return formSettingResponse;
         }
 
-        public SurveyInfoResponse GetChildFormInfo(SurveyInfoRequest SurveyInfoRequest)
+        public SurveyInfoResponse GetChildFormInfo(SurveyInfoRequest surveyInfoRequest)
         {
 
-            SurveyInfoResponse SurveyInfoResponse = _surveyInfoService.GetFormChildInfo(SurveyInfoRequest);
-            return SurveyInfoResponse;
+            SurveyInfoResponse surveyInfoResponse = _surveyInfoService.GetFormChildInfo(surveyInfoRequest);
+            return surveyInfoResponse;
         }
 
-        public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest pRequest)
+        public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
         {
-            SurveyAnswerResponse SurveyAnswerResponse = _dataEntryService.GetSurveyAnswerHierarchy(pRequest);
-
-            return SurveyAnswerResponse;
-        }
-
-        public SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest FormResponseReq)
-        {
-            SurveyAnswerResponse SurveyAnswerResponse = _dataEntryService.GetResponsesByRelatedFormId(FormResponseReq);
-
-            return SurveyAnswerResponse;
-        }
-
-        public void UpdateResponseStatus(SurveyAnswerRequest Request)
-        {
-            _dataEntryService.UpdateResponseStatus(Request);
+            _dataEntryService.UpdateResponseStatus(surveyAnswerRequest);
 
         }
+
         public bool HasResponse(string childFormId, string parentReponseId)
         {
-
             return _dataEntryService.HasResponse(childFormId, parentReponseId);
         }
 
@@ -344,5 +316,5 @@ namespace Epi.Cloud.Facades
 			FormsHierarchyResponse FormsHierarchyResponse = _dataEntryService.GetFormsHierarchy(FormsHierarchyRequest);
 			return FormsHierarchyResponse;
 		}
-	}
+    }
 }

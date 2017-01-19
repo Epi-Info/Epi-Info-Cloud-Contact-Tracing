@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Criteria;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MetadataServices.Extensions;
 using Epi.Cloud.MVC.Extensions;
-using Epi.DataPersistence.Constants;
-using Epi.Cloud.Common.BusinessObjects;
-using Epi.Cloud.Common.Criteria;
-using Epi.Cloud.Common.DTO;
 using Epi.Common.Exception;
-using Epi.Cloud.Common.Extensions;
-using Epi.Cloud.Common.Message;
-using Epi.Cloud.Common.MessageBase;
+using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -28,9 +27,6 @@ namespace Epi.Cloud.DataEntryServices
 
         private readonly ISurveyResponseDao _surveyResponseDao;
         private readonly SurveyResponseProvider _surveyResponseProvider;
-
-        private string _accessToken;
-        private string _userName;
 
         public DataEntryService(
             ISurveyInfoService surveyInfoService,
@@ -382,42 +378,6 @@ namespace Epi.Cloud.DataEntryServices
             }
         }
 
-        public SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest surveyAnswerRequest)
-        {
-            throw new NotImplementedException();
-            try
-            {
-#if WebEnterCode
-			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
-			List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetAncestorResponseIdsByChildId(pRequest.Criteria.SurveyAnswerIdList[0]);
-			SurveyAnswerResponse.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
-
-			return SurveyAnswerResponse;
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        public FormResponseInfoResponse GetFormResponseInfo(FormResponseInfoRequest formResponseInfoRequest)
-        {
-            throw new NotImplementedException();
-            try
-            {
-#if WebEnterCode
-			FormResponseInfoResponse FormResponseInfoResponse = new FormResponseInfoResponse();
-			return FormResponseInfoResponse;
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
         public SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest)
         {
             try
@@ -654,27 +614,6 @@ namespace Epi.Cloud.DataEntryServices
 
 			//SurveyAnswerResponse.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria);
 			//SurveyAnswerResponse.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria);
-
-			return SurveyAnswerResponse;
-#endif //WebEnterCode
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest surveyAnswerRequest)
-        {
-            throw new NotImplementedException();
-            try
-            {
-#if WebEnterCode
-			Epi.Cloud.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
-			SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
-			Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-			Epi.Cloud.BLL.SurveyResponse Implementation = new Epi.Cloud.BLL.SurveyResponse(SurveyResponseDao);
-			List<SurveyResponseBO> SurveyResponseBOList = Implementation.GetResponsesHierarchyIdsByRootId(pRequest.SurveyAnswerList[0].ResponseId);
-			SurveyAnswerResponse.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
 
 			return SurveyAnswerResponse;
 #endif //WebEnterCode

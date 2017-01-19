@@ -87,7 +87,7 @@
     <Compile Include="Criteria\OrganizationCriteria.cs" />
     <Compile Include="Criteria\SurveyAnswerCriteria.cs" />
     <Compile Include="Criteria\SurveyInfoCriteria.cs" />
-    <Compile Include="DTO.WebEnter\OrganizationDTO.cs" />
+    <Compile Include="DTO\OrganizationDTO.cs" />
     <Compile Include="DTO\AdminDTO.cs" />
     <Compile Include="DTO\FormResponseInfoDTO.cs" />
     <Compile Include="DTO\FormSettingDTO.cs" />
@@ -98,7 +98,7 @@
     <Compile Include="DTO\PublishInfoDTO.cs" />
     <Compile Include="DTO\RelatedFormsInfoDTO.cs" />
     <Compile Include="DTO\ResponseDTO.cs" />
-    <Compile Include="DTO.WebEnter\UserDTO.cs" />
+    <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\SurveyControlDTO.cs" />
     <Compile Include="DTO\SurveyInfoDTO.cs" />
     <Compile Include="Extensions\FormSettingBOExtensions.cs" />
