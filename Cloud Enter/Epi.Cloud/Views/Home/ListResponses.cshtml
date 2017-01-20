@@ -160,7 +160,7 @@
     //    canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
     //webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
 
-    WebGrid webGrid = new WebGrid(canSort: true, canPage: true, ajaxUpdateContainerId: "recordstable");
+    WebGrid webGrid = new WebGrid(rowsPerPage: 50, canSort: true, canPage:true, ajaxUpdateContainerId: "recordstable");
     webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses);
 }
 <div id="recordscontent" style="margin-top: 20px;">
@@ -270,7 +270,7 @@
         </div>
         <div id="recordstable">
             @{
-       
+
                 var gridColumns = new List<WebGridColumn>();
 
                 gridColumns.Add(webGrid.Column(header: "",
@@ -292,10 +292,12 @@
                 if (Model.Columns.Count >= 4)
                 {
                     gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
-                } 
-                @webGrid.GetHtml(columns: gridColumns);
+                }
+                @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount:3, firstText: "First", lastText: "Last")
 
-               
+                @webGrid.GetHtml(columns: gridColumns, mode:WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText:"Last");
+
+
             }
             @Html.Hidden("hidFormId", @Model.FormInfoModel.FormId)
             @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
@@ -308,7 +310,7 @@
             }
         </div>
         <div id="paging">
-            <b>Pagging Test</b>
+            
             @{
                     
                 if (Model.NumberOfPages > 1)
