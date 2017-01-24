@@ -25,12 +25,16 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
 
         private CloudBlobContainer  BlobContainer { get { return _cloudBlobContainer ?? GetBlobContainer(_containerName); } }
 
-        public bool UploadText(string content,  string blobName)
+        public bool UploadText(string content,  string blobName, string description = null)
         {
             try
             {
                 CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
                 blob.UploadText(content);
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    BlobContainer.Metadata.Add(blobName, description);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -184,8 +188,23 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
             List<string> listOfBlobs = new List<string>();
             foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, BlobListingDetails.All))
             {
-                string oneFile = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
-                listOfBlobs.Add(oneFile);
+                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                listOfBlobs.Add(blobName);
+            }
+            return listOfBlobs;
+        }
+
+        public List<string> GetBlobListWithDescription()
+        {
+            List<string> listOfBlobs = new List<string>();
+            foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, BlobListingDetails.All))
+            {
+                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                if (BlobContainer.Metadata.ContainsKey(blobName))
+                {
+                    blobName = blobName + ':' + BlobContainer.Metadata[blobName];
+                }
+                listOfBlobs.Add(blobName);
             }
             return listOfBlobs;
         }
