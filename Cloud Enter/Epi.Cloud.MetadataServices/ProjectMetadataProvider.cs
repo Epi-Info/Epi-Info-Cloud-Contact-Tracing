@@ -220,6 +220,7 @@ namespace Epi.Cloud.MetadataServices
 
         private async Task<Template> RetrieveProjectMetadata(Guid projectId)
         {
+
             Template metadata = RetriveMetadataFromBlobStorage(projectId);
             if (metadata == null)
             {
@@ -272,7 +273,7 @@ namespace Epi.Cloud.MetadataServices
 
         private void SaveMetadataToBlobStorage(Template metadata)
         {
-            var metadataWithDigests = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+            var metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
 
 #if CaptureMetadataJson
                         if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
@@ -284,7 +285,11 @@ namespace Epi.Cloud.MetadataServices
                 var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
                 _metadataBlobCRUD = new MetadataBlobService.MetadataBlobCRUD(containerName);
             }
-            var isUploadBlobSuccessful = _metadataBlobCRUD.UploadText(metadataWithDigests, new Guid(metadata.Project.Id).ToString("N"));
+            var projectKey = new Guid(metadata.Project.Id).ToString("N");
+
+            _metadataBlobCRUD.DeleteBlob(projectKey);
+
+            var isUploadBlobSuccessful = _metadataBlobCRUD.UploadText(metadataWithDigestsJson, projectKey, metadata.Project.Name);
         }
 
         private void GenerateDigests(Template projectTemplateMetadata)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Configuration;
+using Epi.Cloud.Common.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -8,6 +9,12 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
 {
     public partial class MetadataBlobCRUD
     {
+        public struct BlobMetadataKeys
+        {
+            public const string Id = "Id";
+            public const string Description = "Description";
+        }
+
         //these variables are used throughout the class
         string _containerName { get; set; }
 
@@ -25,42 +32,48 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
 
         private CloudBlobContainer  BlobContainer { get { return _cloudBlobContainer ?? GetBlobContainer(_containerName); } }
 
-        public bool UploadText(string content,  string blobName)
+        private void Initialize(string containerName)
+        {
+            lock (this)
+            {
+                var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("MetadataBlobStorage.ConnectionString");
+                var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+
+                _cloudStorageAccount = CloudStorageAccount.Parse(connectionString);
+                _containerName = containerName.ToLower();
+           }
+        }
+
+        private CloudBlobClient GetBlobClient()
+        {
+            _cloudBlobClient = _cloudStorageAccount.CreateCloudBlobClient();
+            return _cloudBlobClient;
+        }
+
+        private CloudBlobContainer GetBlobContainer(string containerName)
+        {
+            _cloudBlobContainer = BlobClient.GetContainerReference(containerName);
+            if (_cloudBlobContainer.CreateIfNotExists())
+            {
+                BlobContainerPermissions permissions = new BlobContainerPermissions();
+                permissions.PublicAccess = BlobContainerPublicAccessType.Blob;
+                _cloudBlobContainer.SetPermissions(permissions);
+            }
+            return _cloudBlobContainer;
+        }
+
+        public bool UploadText(string content, string blobName, string description = null)
         {
             try
             {
                 CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
                 blob.UploadText(content);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public bool UploadFromByteArray(Byte[] buffer, string blobName)
-        {
-            try
-            {
-                CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
-                blob.UploadFromByteArray(buffer, 0, buffer.Length);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public bool UploadFromStream(Stream stream, string blobName)
-        {
-            try
-            {
-                //reset the stream back to its starting point (no partial saves)
-                stream.Position = 0;
-                CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
-                blob.UploadFromStream(stream);
+                CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
+                blobReference.Metadata.Add(BlobMetadataKeys.Id, blobName);
+                if (!string.IsNullOrWhiteSpace(description))
+                {
+                    blobReference.Metadata.Add(BlobMetadataKeys.Description, description);
+                }
                 return true;
             }
             catch (Exception ex)
@@ -76,57 +89,6 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
             return content;
         }
 
-        public bool DownloadFile(string blobName, string downloadFolder)
-        {
-            try
-            {
-                CloudBlockBlob blobSource = BlobContainer.GetBlockBlobReference(blobName);
-                if (blobSource.Exists())
-                {
-                    //blob storage uses forward slashes, windows uses backward slashes; do a replace
-                    //  so localPath will be right
-                    string localPath = Path.Combine(downloadFolder, blobSource.Name.Replace(@"/", @"\"));
-                    //if the directory path matching the "folders" in the blob name don't exist, create them
-                    string dirPath = Path.GetDirectoryName(localPath);
-                    if (!Directory.Exists(localPath))
-                    {
-                        Directory.CreateDirectory(dirPath);
-                    }
-                    blobSource.DownloadToFile(localPath, FileMode.Create);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public Byte[] DownloadToByteArray(string blobName)
-        {
-            CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
-            //you have to fetch the attributes to read the length
-            blob.FetchAttributes();
-            long fileByteLength = blob.Properties.Length;
-            Byte[] myByteArray = new Byte[fileByteLength];
-            blob.DownloadToByteArray(myByteArray, 0);
-            return myByteArray;
-        }
-
-        public bool DownloadToStream(string blobName, Stream stream)
-        {
-            try
-            {
-                CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
-                blob.DownloadToStream(stream);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
 
         public bool RenameBlob(string blobName, string newBlobName)
         {
@@ -179,33 +141,31 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
             return oneFile;
         }
 
-        public List<string> GetBlobList()
+        public List<string> GetBlobList(BlobListingDetails details = BlobListingDetails.None)
         {
             List<string> listOfBlobs = new List<string>();
-            foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, BlobListingDetails.All))
+            foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, details))
             {
-                string oneFile = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
-                listOfBlobs.Add(oneFile);
+                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                listOfBlobs.Add(blobName);
             }
             return listOfBlobs;
         }
 
-        public List<string> GetBlobListForRelPath(string relativePath)
+        public List<string> GetBlobListWithDescription()
         {
-            //first, check the slashes and change them if necessary
-            //second, remove leading slash if it's there
-            relativePath = relativePath.Replace(@"\", @"/");
-            if (relativePath.Substring(0, 1) == @"/")
-                relativePath = relativePath.Substring(1, relativePath.Length - 1);
-
-            List<string> listOBlobs = new List<string>();
-            foreach (IListBlobItem blobItem in
-            _cloudBlobContainer.ListBlobs(relativePath, true, BlobListingDetails.All))
+            List<string> listOfBlobs = new List<string>();
+            foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, BlobListingDetails.None))
             {
-                string oneFile = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
-                listOBlobs.Add(oneFile);
+                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
+                if (blobReference.Metadata.ContainsKey(BlobMetadataKeys.Description))
+                {
+                    blobName = blobName + ':' + blobReference.Metadata[BlobMetadataKeys.Description];
+                }
+                listOfBlobs.Add(blobName);
             }
-            return listOBlobs;
+            return listOfBlobs;
         }
     }
 }
