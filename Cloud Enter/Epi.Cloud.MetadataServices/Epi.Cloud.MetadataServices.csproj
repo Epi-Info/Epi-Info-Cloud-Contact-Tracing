@@ -65,7 +65,7 @@
   <ItemGroup>
     <Compile Include="Extensions\FormDigestExtensions.cs" />
     <Compile Include="MetadataBlobService\MetadataBlobCRUD.cs" />
-    <Compile Include="MetadataBlobService\MetadataBlobCRUD.Utilities.cs" />
+    <Compile Include="MetadataBlobService\MetadataBlobCRUD.UnusedMethods.cs" />
     <Compile Include="MetadataService\Interface\IProjectMetadataProxy.cs" />
     <Compile Include="MetadataService\ProjectMetadataServiceProxy.cs" />
     <Compile Include="ProjectMetadataProvider.cs" />
