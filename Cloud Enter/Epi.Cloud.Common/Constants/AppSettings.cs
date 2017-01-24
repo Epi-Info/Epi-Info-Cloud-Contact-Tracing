@@ -48,6 +48,9 @@ namespace Epi.Cloud.Common.Constants
             [DefaultValue(false)]
             public const string IsDemoMode = "IsDemoMode";
 
+            [DefaultValue("ProjectMetadataTemplate")]
+            public const string MetadataBlogContainerName = "MetadataBlog.ContainerName";
+
             [DefaultValue(false)]
             public const string IsLocalReleaseBuild = "IsLocalReleaseBuild";
 

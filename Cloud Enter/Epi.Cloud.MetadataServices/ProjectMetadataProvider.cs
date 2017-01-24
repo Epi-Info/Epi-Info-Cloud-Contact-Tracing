@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.CacheServices;
 using Epi.Cloud.Common;
+using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MetadataServices.ProxiesService;
 using Epi.FormMetadata.DataStructures;
@@ -209,6 +211,29 @@ namespace Epi.Cloud.MetadataServices
         private async Task<Template> RefreshCache(Guid projectId)
         {
             Template metadata = await RetrieveProjectMetadata(projectId);
+            _epiCloudCache.SetProjectTemplateMetadata(metadata);
+            return metadata;
+        }
+
+        [ThreadStatic]
+        MetadataBlobService.MetadataBlobCRUD _metadataBlobCRUD;
+
+        private async Task<Template> RetrieveProjectMetadata(Guid projectId)
+        {
+            Template metadata = RetriveMetadataFromBlobStorage(projectId);
+            if (metadata == null)
+            {
+                metadata = await RetrieveProjectMetadataViaAPI(projectId);
+                SaveMetadataToBlobStorage(metadata);
+            }
+            return metadata;
+        }
+
+        private async Task<Template> RetrieveProjectMetadataViaAPI(Guid projectId)
+        {
+            ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
+            var metadata = await serviceProxy.GetProjectMetadataAsync(projectId.ToString("N"));
+            _projectId = metadata != null ? new Guid(metadata.Project.Id) : Guid.Empty;
 #if CaptureMetadataJson
             var metadataFromService = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
             if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
@@ -220,21 +245,46 @@ namespace Epi.Cloud.MetadataServices
             PopulateRequiredPageLevelSourceTables(metadata);
             GenerateDigests(metadata);
 
-#if CaptureMetadataJson
-            var metadataWithDigests = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
-            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
-            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
-#endif
-            _epiCloudCache.SetProjectTemplateMetadata(metadata);
             return metadata;
         }
 
-        private static async Task<Template> RetrieveProjectMetadata(Guid projectId)
+        private Template RetriveMetadataFromBlobStorage(Guid projectId)
         {
-            ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
-            var templateMetadata = await serviceProxy.GetProjectMetadataAsync(projectId.ToString("N"));
-            _projectId = templateMetadata != null ? new Guid(templateMetadata.Project.Id) : Guid.Empty;
-            return templateMetadata;
+            Template metadata = null;
+            if (projectId == Guid.Empty)
+            {
+                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+                _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobService.MetadataBlobCRUD(containerName);
+                var metadataBlobs = _metadataBlobCRUD.GetBlobList();
+                if (metadataBlobs.Count > 0)
+                {
+                    Guid.TryParse(metadataBlobs.First(), out projectId);
+                }
+            }
+            if (projectId != Guid.Empty)
+            {
+                var json = _metadataBlobCRUD.DownloadText(projectId.ToString("N"));
+                metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
+            }
+
+            return metadata;
+        }
+
+        private void SaveMetadataToBlobStorage(Template metadata)
+        {
+            var metadataWithDigests = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+
+#if CaptureMetadataJson
+                        if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
+                        System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
+#endif
+
+            if (_metadataBlobCRUD == null)
+            {
+                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+                _metadataBlobCRUD = new MetadataBlobService.MetadataBlobCRUD(containerName);
+            }
+            var isUploadBlobSuccessful = _metadataBlobCRUD.UploadText(metadataWithDigests, new Guid(metadata.Project.Id).ToString("N"));
         }
 
         private void GenerateDigests(Template projectTemplateMetadata)
