@@ -339,6 +339,7 @@ namespace Epi.Web.MVC.Controllers
                 formResponseReq.Criteria.UserId = userId;
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
                 formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                formResponseReq.Criteria.IsMobile = true;
                 formResponseReq.Criteria.UserOrganizationId = orgid;
 
                 Session[SessionKeys.IsSqlProject] = formSettingResponse.FormInfo.IsSQLProject;

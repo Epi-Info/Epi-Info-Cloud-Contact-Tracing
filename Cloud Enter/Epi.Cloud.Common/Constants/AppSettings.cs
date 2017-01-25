@@ -36,7 +36,7 @@ namespace Epi.Cloud.Common.Constants
             public const string BindingProtocol = "BINDING_PROTOCOL";
             #endregion EMail Body Message Text
 
-            [DefaultValue(50)]
+            [DefaultValue(20)]
             public const string ResponsePageSize = "RESPONSE_PAGE_SIZE";
 
             [DefaultValue(10)]

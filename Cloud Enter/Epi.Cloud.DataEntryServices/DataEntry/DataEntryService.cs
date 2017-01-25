@@ -385,14 +385,18 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
                 SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
-                var surveyResponseList = surveyResponseImplementation.GetFormResponseListById(criteria);
+                List<SurveyResponseBO> surveyResponseBo = surveyResponseImplementation.GetFormResponseListById(criteria);
 
+                //Query The number of records
+                result.NumberOfResponses = surveyResponseBo.Count;
+                var surveyResponse = surveyResponseBo.Skip((criteria.PageNumber - 1) * criteria.GridPageSize).Take(criteria.GridPageSize);
+                var surveyResponseList = surveyResponse.ToList();
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
+
                 surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
 
                 //Query The number of records
                 result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
-                result.NumberOfResponses = surveyResponseImplementation.GetNumberOfResponses(surveyAnswerRequest.Criteria);
 
                 //Get form info 
                 Epi.Cloud.BLL.FormInfo formInfoImplementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);

@@ -265,7 +265,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields, criteria.GridPageSize,criteria.PageNumber);
                     if (surveyResponses != null)
                     {
-                        var responseList = surveyResponses.Skip((criteria.PageNumber - 1) * criteria.GridPageSize).Take(criteria.GridPageSize);
+                        var responseList = surveyResponses;
                         result = responseList.Select(r => r.ToSurveyResponseBO()).ToList();
                     }
                 }
