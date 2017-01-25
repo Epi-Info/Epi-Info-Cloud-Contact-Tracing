@@ -1,5 +1,5 @@
 ﻿using System;
-using Epi.Cloud.MetadataServices.ProxiesService;
+using Epi.Cloud.MetadataServices.Common.ProxyService;
 using Epi.Cloud.ServiceBus;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;

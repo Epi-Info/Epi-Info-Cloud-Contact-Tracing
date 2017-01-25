@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Cloud.MetadataServices.Extensions;
+using Epi.Cloud.MetadataServices.Common.Extensions;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.Web.EF;
 using Epi.Cloud.Common.BusinessObjects;

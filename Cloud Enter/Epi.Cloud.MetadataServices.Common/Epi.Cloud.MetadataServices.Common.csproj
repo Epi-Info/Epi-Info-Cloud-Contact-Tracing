@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{985A11FF-91AF-4379-83F8-27AECA8427AF}</ProjectGuid>
+    <ProjectGuid>{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.Cloud.MetadataServices</RootNamespace>
-    <AssemblyName>Epi.Cloud.MetadataServices</AssemblyName>
+    <RootNamespace>Epi.Cloud.MetadataServices.Common</RootNamespace>
+    <AssemblyName>Epi.Cloud.MetadataServices.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,62 +30,59 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=8.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.Storage.8.0.1\lib\net45\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Extensions.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\Epi.Cloud\bin\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Epi.Cloud\bin\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Net.Http.Formatting.Extension.5.2.3.0\lib\System.Net.Http.Primitives.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\Epi.Cloud\bin\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ProjectMetadataProvider.cs" />
+    <Compile Include="DataTypes\CDTBase.cs" />
+    <Compile Include="DataTypes\CDTResponse.cs" />
+    <Compile Include="DataTypes\Constants.cs" />
+    <Compile Include="Extensions\FormDigestExtensions.cs" />
+    <Compile Include="MetadataBlobService\MetadataBlobCRUD.cs" />
+    <Compile Include="MetadataBlobService\MetadataBlobCRUD.UnusedMethods.cs" />
+    <Compile Include="MetadataProvider.cs" />
+    <Compile Include="ProxyService\Interfaces\IProjectMetadataProxy.cs" />
+    <Compile Include="ProxyService\ProjectMetadataServiceProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
-      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
+      <Project>{31FB19A9-9591-4202-8619-E6EC618FCA73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
-      <Project>{1abbbd53-0239-4bde-8f14-1aaa9fda2ac2}</Project>
+      <Project>{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}</Project>
       <Name>Epi.Cloud.Interfaces</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Cloud.MetadataServices.Common\Epi.Cloud.MetadataServices.Common.csproj">
-      <Project>{57ed7a5a-2b03-4d5c-89dd-1b5e3880eafc}</Project>
-      <Name>Epi.Cloud.MetadataServices.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
-      <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
-      <Name>Epi.Cloud.CacheServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

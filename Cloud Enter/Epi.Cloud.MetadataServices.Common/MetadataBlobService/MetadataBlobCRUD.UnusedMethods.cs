@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Epi.Cloud.MetadataServices.MetadataBlobService
+namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 {
     public partial class MetadataBlobCRUD
     {

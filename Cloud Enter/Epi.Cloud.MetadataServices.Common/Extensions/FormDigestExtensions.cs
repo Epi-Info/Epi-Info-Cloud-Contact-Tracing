@@ -5,7 +5,7 @@ using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Metadata;
 
-namespace Epi.Cloud.MetadataServices.Extensions
+namespace Epi.Cloud.MetadataServices.Common.Extensions
 {
     public static class FormDigestExtensions
     {

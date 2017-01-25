@@ -11,7 +11,7 @@ using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Cloud.MetadataServices.Extensions;
+using Epi.Cloud.MetadataServices.Common.Extensions;
 using Epi.Cloud.MVC.Extensions;
 using Epi.Common.Exception;
 using Epi.DataPersistence.Constants;
