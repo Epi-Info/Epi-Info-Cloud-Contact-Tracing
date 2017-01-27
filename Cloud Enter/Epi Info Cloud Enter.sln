@@ -84,6 +84,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Common", "Epi.Common\Ep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Common.Core", "Epi.Common.Core\Epi.Common.Core.csproj", "{7555D754-575E-4988-BDD4-F6AD47CFB9D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.MetadataServices.Common", "Epi.Cloud.MetadataServices.Common\Epi.Cloud.MetadataServices.Common.csproj", "{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -938,6 +940,36 @@ Global
 		{7555D754-575E-4988-BDD4-F6AD47CFB9D9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7555D754-575E-4988-BDD4-F6AD47CFB9D9}.Release|x86.ActiveCfg = Release|Any CPU
 		{7555D754-575E-4988-BDD4-F6AD47CFB9D9}.Release|x86.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|x86.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Linux|x86.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

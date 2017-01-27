@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Text;
 using Epi.Cloud.Common.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Epi.Cloud.MetadataServices.MetadataBlobService
+namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 {
+    public struct BlobMetadataKeys
+    {
+        public const string Id = "Id";
+        public const string ProjectId = "ProjectId";
+        public const string ProjectName = "ProjectName";
+        public const string Description = "Description";
+        public const string Forms = "Forms";
+    }
+
     public partial class MetadataBlobCRUD
     {
-        public struct BlobMetadataKeys
-        {
-            public const string Id = "Id";
-            public const string Description = "Description";
-        }
 
         //these variables are used throughout the class
         string _containerName { get; set; }
@@ -74,6 +79,31 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
                 {
                     blobReference.Metadata.Add(BlobMetadataKeys.Description, description);
                 }
+                blobReference.SetMetadata();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool UploadText(string content, string blobName, IDictionary<string, string> metadataDictionary = null)
+        {
+            try
+            {
+                CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
+                blob.UploadText(content);
+                CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
+                blobReference.Metadata.Add(BlobMetadataKeys.Id, blobName);
+                if (metadataDictionary != null)
+                {
+                    foreach (var kvp in metadataDictionary)
+                    {
+                        blobReference.Metadata.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                blobReference.SetMetadata();
                 return true;
             }
             catch (Exception ex)
@@ -146,8 +176,16 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
             List<string> listOfBlobs = new List<string>();
             foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, details))
             {
-                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
-                listOfBlobs.Add(blobName);
+                string blobInfo;
+                if (details == BlobListingDetails.Metadata)
+                {
+                    blobInfo = Newtonsoft.Json.JsonConvert.SerializeObject(((CloudBlockBlob)blobItem).Metadata);
+                }
+                else
+                {
+                    blobInfo = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                }
+                listOfBlobs.Add(blobInfo);
             }
             return listOfBlobs;
         }
@@ -159,11 +197,39 @@ namespace Epi.Cloud.MetadataServices.MetadataBlobService
             {
                 string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
                 CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
-                if (blobReference.Metadata.ContainsKey(BlobMetadataKeys.Description))
-                {
-                    blobName = blobName + ':' + blobReference.Metadata[BlobMetadataKeys.Description];
-                }
+                blobReference.FetchAttributes();
+                var value = blobReference.Metadata[BlobMetadataKeys.Description];
+                blobName = blobName + (string.IsNullOrWhiteSpace(value) ? "" : ':' + value);
                 listOfBlobs.Add(blobName);
+            }
+            return listOfBlobs;
+        }
+        public List<string> GetBlobListWithKeys(params string[] metadataKeys)
+        {
+            List<string> listOfBlobs = new List<string>();
+            foreach (IListBlobItem blobItem in BlobContainer.ListBlobs(null, true, BlobListingDetails.None))
+            {
+                string blobName = GetFileNameFromBlobURI(blobItem.Uri, _containerName);
+                CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
+                blobReference.FetchAttributes();
+                var keys = blobReference.Metadata.Keys;
+                var sb = new StringBuilder();
+                sb.Append(blobName);
+                bool isFirst = true;
+                foreach (var key in metadataKeys)
+                {
+                    if (keys.Contains(key))
+                    {
+                        var value = blobReference.Metadata[key];
+                        if (!string.IsNullOrWhiteSpace(value))
+                        {
+                            sb.Append((isFirst ? ":" : "|") + key + "=" + value);
+                            isFirst = false;
+                        }
+                    }
+                }
+                var blobMetadata = sb.ToString();
+                listOfBlobs.Add(blobMetadata);
             }
             return listOfBlobs;
         }

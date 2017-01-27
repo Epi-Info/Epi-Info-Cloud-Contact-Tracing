@@ -1,5 +1,5 @@
 ﻿
-using Epi.Cloud.MetadataServices.DataTypes;
+using Epi.Cloud.MetadataServices.Common.DataTypes;
 using System.Net;
 using System.Net.Http;
 using System.Threading;

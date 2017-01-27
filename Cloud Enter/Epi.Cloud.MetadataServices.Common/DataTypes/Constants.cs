@@ -1,4 +1,4 @@
-﻿namespace Epi.Cloud.MetadataServices.DataTypes
+﻿namespace Epi.Cloud.MetadataServices.Common.DataTypes
 {
     public class Constants
     {

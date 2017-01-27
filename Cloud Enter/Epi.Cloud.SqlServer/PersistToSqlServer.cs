@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.MetadataServices.ProxiesService;
+using Epi.Cloud.MetadataServices.Common.ProxyService;
 using Epi.FormMetadata.Constants;
 
 namespace Epi.Cloud.SqlServer

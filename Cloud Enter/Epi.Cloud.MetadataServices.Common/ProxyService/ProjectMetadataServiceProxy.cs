@@ -1,71 +1,68 @@
-﻿using System.Net.Http;
-using Newtonsoft.Json;
+﻿using System.Configuration;
 using System.Net;
-using Epi.Cloud.MetadataServices.DataTypes;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Epi.Cloud.Common.Configuration;
-using System.Configuration;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.MetadataServices.Common.ProxyService.Interfaces;
+using Epi.Cloud.MetadataServices.Common.DataTypes;
+using Epi.FormMetadata.DataStructures;
+using Newtonsoft.Json;
+using static Epi.Cloud.MetadataServices.Common.DataTypes.Constants;
 
-namespace Epi.Cloud.MetadataServices
+namespace Epi.Cloud.MetadataServices.Common.ProxyService
 {
-    public abstract class MetadataProxy
+    public class ProjectMetadataServiceProxy : IProjectMetadataProxy
     {
         private string _apiUrl;
-        public MetadataProxy()
+        public ProjectMetadataServiceProxy()
         {
             var apiUrlKey = ConfigurationHelper.GetEnvironmentResourceKey(AppSettings.Key.MetadataAccessServiceAPI, AppSettings.Key.Environment_API);
             _apiUrl = ConfigurationManager.AppSettings[apiUrlKey];
         }
 
+        //Forming url to call the Metadata Access API
+        public async Task<Template> GetProjectMetadataAsync(string projectId)
+        {
+            Template projectResponse= new Template();
+            string url = string.Format("{0}?ID={1}", ApiEndPoints.Project, projectId ?? "0");
+            if (url != null)
+            {
+                projectResponse = GetData<Template>(url);
+            }
+            return await Task.FromResult(projectResponse);
+        }
 
-        protected T GetData<T>(string endpoint)
+        //Forming url to call the API for pageDigest
+        public async Task<PageDigest[][]> GetPageDigestMetadataAsync()
+        {
+            PageDigest[][] pageResponse = null;
+            string url = string.Format("{0}", ApiEndPoints.PageDigest);
+            if (url != null)
+            {
+                pageResponse = GetData<PageDigest[][]>(url);
+            }
+            return await Task.FromResult(pageResponse);
+        }
+
+
+        private HttpClient GetClient()
+        {
+            HttpClient client = new HttpClient();
+            return client;
+        }
+
+        private T GetData<T>(string endpoint)
         {
             string url = FormatUrl(endpoint);
             var resp = GetClient().GetAsync(url).Result;
             return GetResponse<T>(resp);
         }
 
-        protected T2 PostData<T1, T2>(string endpoint, T1 data)
-            where T1 : class
-            where T2 : class
-        {
-            HttpClient client = GetClient();
-            var response = client.PostAsJsonAsync<T1>(FormatUrl(endpoint), data).Result;
-            return GetResponse<T2>(response);
-        }
-
-
-
-        protected T2 PutData<T1, T2>(string endpoint, T1 data)
-            where T1 : class
-            where T2 : class
-        {
-            HttpClient client = GetClient();
-            var response = client.PostAsJsonAsync<T1>(FormatUrl(endpoint), data).Result;
-            return GetResponse<T2>(response);
-        }
-
-        protected T DeleteData<T>(string endpoint)
-            where T : class
-        {
-            HttpClient client = GetClient();
-            var response = client.DeleteAsync(FormatUrl(endpoint)).Result;
-            return GetResponse<T>(response);
-        }
-
-        private HttpClient GetClient()
-        {
-            HttpClient client = new HttpClient();
-            ///Token logic;
-            return client;
-        }
-
-
         private string FormatUrl(string endpoint)
         {
             return string.Format("{0}{1}", _apiUrl, endpoint);
         }
-
 
         private T GetResponse<T>(HttpResponseMessage resp)
         {
@@ -92,6 +89,5 @@ namespace Epi.Cloud.MetadataServices
             }
             return default(T);
         }
-
     }
 }

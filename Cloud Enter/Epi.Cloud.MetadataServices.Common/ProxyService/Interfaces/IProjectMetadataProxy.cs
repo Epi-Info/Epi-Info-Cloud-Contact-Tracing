@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Cloud.MetadataServices.ProxiesService.Interface
+namespace Epi.Cloud.MetadataServices.Common.ProxyService.Interfaces
 {
     public interface IProjectMetadataProxy
     {
