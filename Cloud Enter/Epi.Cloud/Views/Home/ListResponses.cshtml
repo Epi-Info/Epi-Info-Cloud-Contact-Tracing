@@ -206,26 +206,27 @@
     
    
     <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;">
-     @if (Model.FormInfoModel.IsSQLProject && Model.SearchModel.SearchCol1 != null)
-    {
-        <div id="searchmsg" style="display:block;">
-            <h4 style="margin: 2px 0 20px 0; background:#ffdead; padding:5px 5px 8px 5px; color:#794800; ">
-                Only showing records matching your search criteria. &nbsp;&nbsp;&nbsp;
-                <button class="default" name="ResetSearch" style="float:right;">Reset Search</button>
-            </h4>
-        </div>
-         }
+        @if (Model.FormInfoModel.IsSQLProject && Model.SearchModel.SearchCol1 != null)
+        {
+            <div id="searchmsg" style="display:block;">
+                <h4 style="margin: 2px 0 20px 0; background:#ffdead; padding:5px 5px 8px 5px; color:#794800; ">
+                    Only showing records matching your search criteria. &nbsp;&nbsp;&nbsp;
+                    <button class="default" name="ResetSearch" style="float:right;">Reset Search</button>
+                </h4>
+            </div>
+        }
         <div id="NumberOfRecords" style="float: left;">
             <div>
                 @{
                     if (Model.NumberOfPages == 0)
                     {
-                    <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
+                        <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
                     }
                     else
                     {
-@*<span >Showing</span>*@
-                    <span class="boldlabel" style="font-size: 14pt;">@(
+                        @*<span >Showing</span>*@
+                        <span class="boldlabel" style="font-size: 14pt;">
+                            @(
  Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
                         -
                         @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
@@ -236,13 +237,15 @@
                         {
 
                             @Model.NumberOfResponses
-                        }</span>
-                    <span>of </span><span class="boldlabel" style="font-size: 14pt;">@Model.NumberOfResponses
+                        }
+                    </span>
+                        <span>of </span><span class="boldlabel" style="font-size: 14pt;">
+                            @Model.NumberOfResponses
                     </span>
                     }
                 }
             </div>
-            
+
             @* <span>Total Records:</span> <span class="boldlabel" style="font-size: 14pt;">@Model.NumberOfResponses</span>*@
         </div>
         <!--<div id="paging" >
@@ -251,16 +254,16 @@
                     &nbsp; <span class="boldlabel">21-40 of 80</span> &nbsp;
                     <button class="default paging">
                         <img alt="Next" src="~/Content/images/next.png" align="middle" /></button>
-                        
+
                 </div>-->
         <div id="paging">
             @{
                 if (Model.NumberOfPages > 1)
                 {
 
-                <div id='pager'>
-                    @Html.Partial("PagerPartial", Model)
-                </div>  
+                    <div id='pager'>
+                        @*@Html.Partial("PagerPartial", Model)*@
+                    </div>
                 }
 
 
@@ -293,9 +296,9 @@
                 {
                     gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
                 }
-                @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount:3, firstText: "First", lastText: "Last")
+                @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")
 
-                @webGrid.GetHtml(columns: gridColumns, mode:WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText:"Last");
+                @webGrid.GetHtml(columns: gridColumns, mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last");
 
 
             }
@@ -304,26 +307,28 @@
             @{
                 if (Model.NumberOfPages == 0)
                 {
-                <div class="zerorec">
-                    No records found.</div>
+                    <div class="zerorec">
+                        No records found.
+                    </div>
                 }
             }
         </div>
         <div id="paging">
-            
-            @{
-                    
-                if (Model.NumberOfPages > 1)
-                {
-                <div id='pager2'>
-                    @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
-                    @Html.Partial("PagerPartial", Model)
-                </div>  
-                }
+
+            @*@{
+
+                    if (Model.NumberOfPages > 1)
+                    {
+                    <div id='pager2'>
+                        @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
+                        @Html.Partial("PagerPartial", Model)
+                    </div>
+                    }
 
 
-            }
+                }*@
         </div>
+    </div>
     </div>
 @*  <script type="text/javascript">
 var formId =  document.getElementById('hidFormId').value; //$('#hidFormId').val();
