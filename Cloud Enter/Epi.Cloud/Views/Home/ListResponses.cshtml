@@ -206,43 +206,18 @@
     
    
     <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;">
-     @if (Model.FormInfoModel.IsSQLProject && Model.SearchModel.SearchCol1 != null)
-    {
-        <div id="searchmsg" style="display:block;">
-            <h4 style="margin: 2px 0 20px 0; background:#ffdead; padding:5px 5px 8px 5px; color:#794800; ">
-                Only showing records matching your search criteria. &nbsp;&nbsp;&nbsp;
-                <button class="default" name="ResetSearch" style="float:right;">Reset Search</button>
-            </h4>
-        </div>
-         }
-        <div id="NumberOfRecords" style="float: left;">
-            <div>
-                @{
-                    if (Model.NumberOfPages == 0)
-                    {
-                    <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
-                    }
-                    else
-                    {
-@*<span >Showing</span>*@
-                    <span class="boldlabel" style="font-size: 14pt;">@(
- Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
-                        -
-                        @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
-                        {
-                            @(Model.CurrentPage * Model.PageSize)
-                        }
-                        else
-                        {
-
-                            @Model.NumberOfResponses
-                        }</span>
-                    <span>of </span><span class="boldlabel" style="font-size: 14pt;">@Model.NumberOfResponses
-                    </span>
-                    }
-                }
+        @if (Model.FormInfoModel.IsSQLProject && Model.SearchModel.SearchCol1 != null)
+        {
+            <div id="searchmsg" style="display:block;">
+                <h4 style="margin: 2px 0 20px 0; background:#ffdead; padding:5px 5px 8px 5px; color:#794800; ">
+                    Only showing records matching your search criteria. &nbsp;&nbsp;&nbsp;
+                    <button class="default" name="ResetSearch" style="float:right;">Reset Search</button>
+                </h4>
             </div>
+        }
+        <div id="NumberOfRecords" style="float: left;">
             
+
             @* <span>Total Records:</span> <span class="boldlabel" style="font-size: 14pt;">@Model.NumberOfResponses</span>*@
         </div>
         <!--<div id="paging" >
@@ -251,16 +226,16 @@
                     &nbsp; <span class="boldlabel">21-40 of 80</span> &nbsp;
                     <button class="default paging">
                         <img alt="Next" src="~/Content/images/next.png" align="middle" /></button>
-                        
+
                 </div>-->
         <div id="paging">
             @{
                 if (Model.NumberOfPages > 1)
                 {
 
-                <div id='pager'>
-                    @Html.Partial("PagerPartial", Model)
-                </div>  
+                    <div id='pager'>
+                        @*@Html.Partial("PagerPartial", Model)*@
+                    </div>
                 }
 
 
@@ -271,59 +246,94 @@
         <div id="recordstable">
             @{
 
-                var gridColumns = new List<WebGridColumn>();
+                <div>
+                    @{
+                        if (Model.NumberOfPages == 0)
+                        {
+                            <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
+                        }
+                        else
+                        {
+                            @*<span >Showing</span>*@
+                            <span class="boldlabel" style="font-size: 14pt;">
+                                @(
+ Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
+                                -
+                                @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
+                                {
+                                    @(Model.CurrentPage * Model.PageSize)
+                                }
+                                else
+                                {
 
-                gridColumns.Add(webGrid.Column(header: "",
-                 format: (item) => new HtmlString("<button name='EditForm' type='button' onclick ='CheckForConcurrency(this)'  class='default edit'  id='" + item.Column0 + "'value='" + item.Column0 + "'>Open</button> " +
-                "<button name='DeleteButton' type='submit'  class='default edit'  id='" + item.Column0 + "'value='" + item.Column0 + "'> Delete</button>"
-                                                                                                       )));
-                if (Model.Columns.Count >= 1)
-                {
-                    gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 1) ? Model.Columns[0].Value : ""));
-                }
-                if (Model.Columns.Count >= 2)
-                {
-                    gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 2) ? Model.Columns[1].Value : ""));
-                }
-                if (Model.Columns.Count >= 3)
-                {
-                    gridColumns.Add(webGrid.Column("Column3", (Model.Columns.Count >= 3) ? Model.Columns[2].Value : ""));
-                }
-                if (Model.Columns.Count >= 4)
-                {
-                    gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
-                }
-                @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount:3, firstText: "First", lastText: "Last")
+                                    @Model.NumberOfResponses
+                                }
+                            </span>
+                            <span>of </span><span class="boldlabel" style="font-size: 14pt;">
+                                @Model.NumberOfResponses
+                            </span>
+                        }
+                    }
+                </div>
+                <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;"></div>
+                        var gridColumns = new List<WebGridColumn>
+                            ();
 
-                @webGrid.GetHtml(columns: gridColumns, mode:WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText:"Last");
+                        gridColumns.Add(webGrid.Column(header: "",
+                        format: (item) => new HtmlString("<button name='EditForm' type='button' onclick='CheckForConcurrency(this)' class='default edit' id='" + item.Column0 + "' value='" + item.Column0 + "'>Open</button> " +
+                        "<button name='DeleteButton' type='submit' class='default edit' id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+                        )));
+                        if (Model.Columns.Count >= 1)
+                        {
+                            gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 1) ? Model.Columns[0].Value : ""));
+                        }
+                        if (Model.Columns.Count >= 2)
+                        {
+                            gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 2) ? Model.Columns[1].Value : ""));
+                        }
+                        if (Model.Columns.Count >= 3)
+                        {
+                            gridColumns.Add(webGrid.Column("Column3", (Model.Columns.Count >= 3) ? Model.Columns[2].Value : ""));
+                        }
+                        if (Model.Columns.Count >= 4)
+                        {
+                            gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
+                        }
+                        @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)
+                       
+                         @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
+
+                        @webGrid.GetHtml(columns: gridColumns, mode: WebGridPagerModes.All, numericLinksCount: 3);
 
 
-            }
-            @Html.Hidden("hidFormId", @Model.FormInfoModel.FormId)
-            @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
-            @{
-                if (Model.NumberOfPages == 0)
-                {
-                <div class="zerorec">
-                    No records found.</div>
-                }
-            }
-        </div>
+                        }
+                        @Html.Hidden("hidFormId", @Model.FormInfoModel.FormId)
+                        @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
+                        @{
+                            if (Model.NumberOfPages == 0)
+                            {
+                                <div class="zerorec">
+                                    No records found.
+                                </div>
+                            }
+                        }
+                </div>
         <div id="paging">
-            
-            @{
-                    
-                if (Model.NumberOfPages > 1)
-                {
-                <div id='pager2'>
-                    @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
-                    @Html.Partial("PagerPartial", Model)
-                </div>  
-                }
+
+            @*@{
+
+                    if (Model.NumberOfPages > 1)
+                    {
+                    <div id='pager2'>
+                        @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
+                        @Html.Partial("PagerPartial", Model)
+                    </div>
+                    }
 
 
-            }
+                }*@
         </div>
+    </div>
     </div>
 @*  <script type="text/javascript">
 var formId =  document.getElementById('hidFormId').value; //$('#hidFormId').val();

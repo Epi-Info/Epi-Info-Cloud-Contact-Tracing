@@ -393,7 +393,7 @@ namespace Epi.Cloud.DataEntryServices
                 var surveyResponseList = surveyResponse.ToList();
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
 
-                surveyAnswerRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
+                surveyAnswerRequest.Criteria.FormResponseCount = result.NumberOfResponses;
 
                 //Query The number of records
                 result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
