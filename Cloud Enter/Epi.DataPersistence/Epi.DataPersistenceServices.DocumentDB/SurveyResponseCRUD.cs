@@ -496,14 +496,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 		#region Get All Responses With FieldNames 
-		public List<SurveyResponse> GetAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fields, string relateParentId = null, int pageSize = 0, int pageNumber = 0)
+		public List<SurveyResponse> GetAllResponsesWithCriteria(IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string relateParentId = null, int pageSize = 0, int pageNumber = 0)
 		{
 			 
 			List<SurveyResponse> surveyResponse = null;
 
             try
             {
-                var surveyResponses = ReadAllResponsesWithFieldNames(fields, relateParentId, pageSize, pageNumber);
+                var surveyResponses = ReadAllResponsesWithCriteria(fields, searchFields, relateParentId, pageSize, pageNumber);
                 return surveyResponses;
             }
             catch (DocumentQueryException ex)
@@ -513,13 +513,20 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return surveyResponse;
 		}
 
-		private List<SurveyResponse> ReadAllResponsesWithFieldNames(IDictionary<int, FieldDigest> fieldDigestList, string relateParentId, int pageSize = 0, int pageNumber = 0)
+		private List<SurveyResponse> ReadAllResponsesWithCriteria(IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string relateParentId, int pageSize = 0, int pageNumber = 0)
 		{
 			// Set some common query options
 			FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 			List<SurveyResponse> surveyList = new List<SurveyResponse>();
-			try
+            int FailedSearchStatus = int.MaxValue;
+            int WentThroughSearch = int.MaxValue - 1;
+
+
+            try
 			{
+                // Build a composit of both the grid display field digests and the search field digests
+                var compositeFieldDigestList = fieldDigestList.Values.Select(x => x).Union(searchFields.Values.Select(x => x.Key)).Distinct();
+
 				// One SurveyResponse per GlobalRecordId
 				Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
 
@@ -532,8 +539,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
 				}
 
 				// Query DocumentDB one page at a time. Only query pages that contain a specified field.
-				var pageGroups = fieldDigestList.Values.GroupBy(d => d.PageId);
-				foreach (var pageGroup in pageGroups)
+                var pageGroups = compositeFieldDigestList.GroupBy(d => d.PageId);
+                foreach (var pageGroup in pageGroups)
 				{
 					var pageId = pageGroup.Key;
 					var firstPageGroup = pageGroup.First();
@@ -549,10 +556,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
 						+ FROM + collectionName
 						+ WHERE + collectionName + ".GlobalRecordID in (" + parentGlobalRecordIds + ")", queryOptions);
 
-					foreach (var items in pageQuery.AsQueryable())
+                    var searchQueries = searchFields.Values.Where(kvp => kvp.Key.PageId == pageId).ToArray();
+
+                    foreach (var items in pageQuery.AsQueryable())
 					{
+                        bool wentThroughSearch = false;
 						var json = JsonConvert.SerializeObject(items);
 						var pageResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                        
 
 						string globalRecordId = pageResponseQA["GlobalRecordID"];
 						SurveyResponse surveyResponse;
@@ -567,44 +578,81 @@ namespace Epi.DataPersistenceServices.DocumentDB
 						formResponseDetail.FormId = formId;
 						formResponseDetail.FormName = formName;
 
-						Dictionary<string, string> aggregatePageResponseQA;
-						PageResponseDetail pageResponseDetail = formResponseDetail.PageResponseDetailList.SingleOrDefault(p => p.PageId == pageId);
-						if (pageResponseDetail == null)
-						{
-							pageResponseDetail = new PageResponseDetail { FormId = formId, FormName = formName, PageId = pageId };
-							formResponseDetail.AddPageResponseDetail(pageResponseDetail);
-						}
+                        // If this particular record has already failed the search criteria
+                        // then we can skip additional tests.
+                        if (formResponseDetail.RecStatus != FailedSearchStatus)
+                        {
+                            Dictionary<string, string> aggregatePageResponseQA;
+                            PageResponseDetail pageResponseDetail = formResponseDetail.PageResponseDetailList.SingleOrDefault(p => p.PageId == pageId);
+                            if (pageResponseDetail == null)
+                            {
+                                pageResponseDetail = new PageResponseDetail { FormId = formId, FormName = formName, PageId = pageId };
+                                formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+                            }
 
-						aggregatePageResponseQA = pageResponseDetail.ResponseQA;
+                            foreach (var searchQuery in searchQueries)
+                            {
+                                if (formResponseDetail.RecStatus != FailedSearchStatus) formResponseDetail.RecStatus = WentThroughSearch;
+                                var fieldName = searchQuery.Key.FieldName;
+                                var searchValue = searchQuery.Value;
+                                string responseValue;
+                                bool responseExists = pageResponseQA.TryGetValue(fieldName, out responseValue);
+                                if ((!responseExists && searchValue != null) || !String.Equals(responseValue, searchValue, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    formResponseDetail.RecStatus = FailedSearchStatus;
+                                    break;
+                                }
+                                else
+                                {
+                                }
+                            }
 
-						foreach (dynamic qa in pageResponseQA)
-						{
-							string key = qa.Key;
-							switch (key)
-							{
-								case "_ts":
-									var newTimestamp = Int64.Parse(qa.Value);
+                            // If the current record just failed the search criteria 
+                            // then we can skip the remaining code.
+                            if (formResponseDetail.RecStatus != FailedSearchStatus)
+                            {
+                                aggregatePageResponseQA = pageResponseDetail.ResponseQA;
 
-									string _ts;
-									var existingPageTimestamp = aggregatePageResponseQA.TryGetValue("_ts", out _ts) ? Int64.Parse(_ts) : 0;
-									if (newTimestamp > existingPageTimestamp) aggregatePageResponseQA["_ts"] = qa.Value;
+                                foreach (dynamic qa in pageResponseQA)
+                                {
+                                    string key = qa.Key;
+                                    switch (key)
+                                    {
+                                        case "_ts":
+                                            var newTimestamp = Int64.Parse(qa.Value);
 
-									if (newTimestamp > surveyResponse.Timestamp)
-									{
-										surveyResponse.Timestamp = newTimestamp;
-										surveyResponse.DateUpdated = new DateTime(1970, 1, 1) + TimeSpan.FromSeconds(newTimestamp);
-									}
-									break;
+                                            string _ts;
+                                            var existingPageTimestamp = aggregatePageResponseQA.TryGetValue("_ts", out _ts) ? Int64.Parse(_ts) : 0;
+                                            if (newTimestamp > existingPageTimestamp) aggregatePageResponseQA["_ts"] = qa.Value;
 
-								default:
-									aggregatePageResponseQA[key] = qa.Value;
-									break;
-							}
-						}
+                                            if (newTimestamp > surveyResponse.Timestamp)
+                                            {
+                                                surveyResponse.Timestamp = newTimestamp;
+                                                surveyResponse.DateUpdated = new DateTime(1970, 1, 1) + TimeSpan.FromSeconds(newTimestamp);
+                                            }
+                                            break;
+
+                                        default:
+                                            aggregatePageResponseQA[key] = qa.Value;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
 					}
 				}
 
-				surveyList = responsesByGlobalRecordId.Values.OrderByDescending(v => v.Timestamp).ToList();
+                if (searchFields.Count > 0)
+                {
+                    surveyList = responsesByGlobalRecordId.Values
+                        .Where(s => s.ResponseDetail.RecStatus == WentThroughSearch)
+                        .OrderByDescending(v => v.Timestamp).ToList();
+                }
+                else
+                {
+                    surveyList = responsesByGlobalRecordId.Values
+                        .OrderByDescending(v => v.Timestamp).ToList();
+                }
 			}
 			catch (DocumentQueryException ex)
 			{
@@ -612,11 +660,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			}
 			return surveyList;
 		}
-		#endregion Get All Responses With FieldNames
+        #endregion Get All Responses With FieldNames
 
 
-		#region Get form response properties by ResponseId
-		public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
+        #region Get form response properties by ResponseId
+        public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
 		{
 			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
 

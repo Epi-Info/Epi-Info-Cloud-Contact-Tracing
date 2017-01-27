@@ -283,9 +283,9 @@ namespace Epi.PersistenceServices.DocumentDB
         //#endregion
 
         #region Read All Records By SurveyID
-        public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, int pageSize = 0, int pageNumber = 0)
+        public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
         {
-            return _surveyResponseCRUD.GetAllResponsesWithFieldNames(gridFields,null,pageSize, pageNumber);
+            return _surveyResponseCRUD.GetAllResponsesWithCriteria(gridFields, searchFields, null,pageSize, pageNumber);
         }
 
         public FormResponseDetail GetFormResponseByResponseId(string responseId)

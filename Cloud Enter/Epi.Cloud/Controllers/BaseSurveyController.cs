@@ -9,6 +9,7 @@ using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Constants;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using System;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -96,6 +97,8 @@ namespace Epi.Web.MVC.Controllers
             return responseModel;
         }
 
+
+
         protected SurveyAnswerStateDTO GetSurveyAnswerState(string responseId, string rootFormId = "", int userId = 0)
         {
             SurveyAnswerDTO result = null;
@@ -103,6 +106,37 @@ namespace Epi.Web.MVC.Controllers
             var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
             result = surveyAnswerState.SurveyResponseList[0];
             return result;
+        }
+
+        public IDictionary<int, KeyValuePair<FieldDigest, string>> ToSearchDigestList(SearchBoxModel searchModel, string formId)
+        {
+            var searchDigestList = new Dictionary<int, KeyValuePair<FieldDigest, string>>();
+            if (!string.IsNullOrWhiteSpace(searchModel.SearchCol1))
+            {
+                FieldDigest fieldDigest = MetadataAccessor.GetFieldDigestByFieldName(formId, searchModel.SearchCol1);
+                searchDigestList.Add(1, new KeyValuePair<FieldDigest, string>(fieldDigest, searchModel.Value1));
+            }
+            if (!string.IsNullOrWhiteSpace(searchModel.SearchCol2))
+            {
+                FieldDigest fieldDigest = MetadataAccessor.GetFieldDigestByFieldName(formId, searchModel.SearchCol2);
+                searchDigestList.Add(2, new KeyValuePair<FieldDigest, string>(fieldDigest, searchModel.Value2));
+            }
+            if (!string.IsNullOrWhiteSpace(searchModel.SearchCol3))
+            {
+                FieldDigest fieldDigest = MetadataAccessor.GetFieldDigestByFieldName(formId, searchModel.SearchCol3);
+                searchDigestList.Add(3, new KeyValuePair<FieldDigest, string>(fieldDigest, searchModel.Value3));
+            }
+            if (!string.IsNullOrWhiteSpace(searchModel.SearchCol4))
+            {
+                FieldDigest fieldDigest = MetadataAccessor.GetFieldDigestByFieldName(formId, searchModel.SearchCol4);
+                searchDigestList.Add(4, new KeyValuePair<FieldDigest, string>(fieldDigest, searchModel.Value4));
+            }
+            if (!string.IsNullOrWhiteSpace(searchModel.SearchCol5))
+            {
+                FieldDigest fieldDigest = MetadataAccessor.GetFieldDigestByFieldName(formId, searchModel.SearchCol5);
+                searchDigestList.Add(5, new KeyValuePair<FieldDigest, string>(fieldDigest, searchModel.Value5));
+            }
+            return searchDigestList;
         }
     }
 }

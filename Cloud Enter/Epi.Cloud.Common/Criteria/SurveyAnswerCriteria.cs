@@ -123,6 +123,7 @@ namespace Epi.Cloud.Common.Criteria
 
         public IDictionary<string, string> SurveyQAList { get; set; }
         public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
+        public IDictionary<int, KeyValuePair<FieldDigest, string>> SearchDigestList { get; set; }
 		public RecordStatusChangeReason StatusChangeReason { get; set; }
 	}
 }

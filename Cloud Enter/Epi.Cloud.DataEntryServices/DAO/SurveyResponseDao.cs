@@ -261,8 +261,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
 #endif //ImplementSharableRules
                 {
                     var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
+                    var searchFields = criteria.SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>();
 
-                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields, criteria.GridPageSize,criteria.PageNumber);
+                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields, searchFields, criteria.GridPageSize,criteria.PageNumber);
                     if (surveyResponses != null)
                     {
                         var responseList = surveyResponses;

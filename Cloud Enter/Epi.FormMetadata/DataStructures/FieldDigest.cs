@@ -21,6 +21,17 @@ namespace Epi.FormMetadata.DataStructures
             Position = pageDigest.Position;
         }
 
+        public override bool Equals(object obj)
+        {
+            var other = obj as FieldDigest;
+            return other != null
+                && other.FormName == this.FormName
+                && other.FormId == this.FormId
+                && other.ViewId == this.ViewId
+                && other.PageId == this.PageId
+                && other.Position == this.Position;
+        }
+
         public IAbridgedFieldInfo Field { get; set; }
         public string FormName { get; set; }
         public string FormId { get; set; }
