@@ -18,7 +18,7 @@ namespace Epi.Cloud.MVC.Extensions
                 DateCompleted = surveyAnswerDTO.DateCompleted,
                 DateCreated = surveyAnswerDTO.DateCreated,
                 Status = surveyAnswerDTO.Status,
-				ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange,
+                ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange,
                 UserPublishKey = surveyAnswerDTO.UserPublishKey,
                 IsDraftMode = surveyAnswerDTO.IsDraftMode,
                 IsLocked = surveyAnswerDTO.IsLocked,
@@ -82,9 +82,11 @@ namespace Epi.Cloud.MVC.Extensions
 
                 var responseQA = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
                 string value;
+                string _key = string.Empty;
                 var columnsCount = Columns.Count;
                 for (int i = 0; i < 5; ++i)
                 {
+
                     if (i >= columnsCount)
                     {
                         // set value to empty string for unspecified columns
@@ -97,8 +99,13 @@ namespace Epi.Cloud.MVC.Extensions
                     }
                     else
                     {
-                        // set value to value in the response
-                        value = responseQA.TryGetValue(Columns[i].Value.ToLower(), out value) ? (value ?? string.Empty) : string.Empty;
+                        KeyValuePair<int, string> Column = Columns[i];
+                        _key = Column.Value.ToLower();
+                        value = responseQA.ContainsKey(Column.Value.ToLower()) ? responseQA[Column.Value.ToLower()] : string.Empty;
+
+                        //// set value to value in the response
+                        //value = responseQA.TryGetValue(Column.Value.ToLower(), out value) ? (value ?? string.Empty) : string.Empty;
+                        ////_key = responseQA.TryGetValue(Column.Key.ToString(), out value) ? (_key ?? string.Empty) : string.Empty;
                     }
 
                     // set the associated ResponseModel column
@@ -106,18 +113,23 @@ namespace Epi.Cloud.MVC.Extensions
                     {
                         case 0:
                             ResponseModel.Column1 = value;
+                            ResponseModel.Column1Key = _key;
                             break;
                         case 1:
                             ResponseModel.Column2 = value;
+                            ResponseModel.Column2Key = _key;
                             break;
                         case 2:
                             ResponseModel.Column3 = value;
+                            ResponseModel.Column3Key = _key;
                             break;
                         case 3:
                             ResponseModel.Column4 = value;
+                            ResponseModel.Column4Key = _key;
                             break;
                         case 4:
                             ResponseModel.Column5 = value;
+                            ResponseModel.Column5Key = _key;
                             break;
                     }
                 }
