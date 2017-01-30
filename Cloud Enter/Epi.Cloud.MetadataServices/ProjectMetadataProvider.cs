@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Epi.Cloud.CacheServices;
 using Epi.Cloud.Common;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MetadataServices.Common;
 using Epi.Cloud.MetadataServices.Common.ProxyService;
@@ -212,11 +213,13 @@ namespace Epi.Cloud.MetadataServices
 
         private async Task<Template> RefreshCache(Guid projectId)
         {
-            var _metadataProvider = new MetadataProvider();
-            Template metadata = await _metadataProvider.RetrieveProjectMetadata(projectId);
-            _epiCloudCache.ClearAllCache(Guid.Parse(metadata.Project.Id));
-            _epiCloudCache.SetProjectTemplateMetadata(metadata);
-            return metadata;
+            lock (MetadataAccessor.StaticCache.Gate)
+            {
+                var _metadataProvider = new MetadataProvider();
+                Template metadata = _metadataProvider.RetrieveProjectMetadata(projectId).Result;
+                _epiCloudCache.SetProjectTemplateMetadata(metadata);
+                return metadata;
+            }
         }
 
 //        private async Task<Template> RetrieveProjectMetadata(Guid projectId)
