@@ -75,8 +75,8 @@ namespace Epi.Web.MVC.Controllers
                 }
 
                 Session[SessionKeys.RootFormId] = formid;
-                Session.Remove("RootResponseId");
-                Session.Remove("FormValuesHasChanged");
+                Session.Remove(SessionKeys.RootResponseId);
+                Session.Remove(SessionKeys.FormValuesHasChanged);
                 Session[SessionKeys.IsEditMode] = false;
 
                 var model = new FormResponseInfoModel();
@@ -208,7 +208,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.IsEditMode] = true;
                 isEditMode = true;
                 SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId);
-                if (Session["RecoverLastRecordVersion"] != null)
+                if (Session[SessionKeys.RecoverLastRecordVersion] != null)
                 {
                     surveyAnswer.RecoverLastRecordVersion = bool.Parse(Session[SessionKeys.RecoverLastRecordVersion].ToString());
                 }

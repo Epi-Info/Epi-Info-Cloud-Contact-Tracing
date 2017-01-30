@@ -369,8 +369,8 @@ namespace Epi.Web.MVC.Controllers
 			}
 			else
 			{
-				Session.Remove("SortOrder");
-				Session.Remove("SortField");
+				Session.Remove(SessionKeys.SortOrder);
+				Session.Remove(SessionKeys.SortField);
 				Session[SessionKeys.RootFormId] = formId;
 				Session[SessionKeys.PageNumber] = page.Value;
 
@@ -400,8 +400,8 @@ namespace Epi.Web.MVC.Controllers
 		[AcceptVerbs(HttpVerbs.Post)]
 		public ActionResult ResetSort(string formid)
 		{
-			Session["SortOrder"] = null;
-			Session["SortField"] = null;
+			Session[SessionKeys.SortOrder] = null;
+			Session[SessionKeys.SortField] = null;
 			return Json(true);
 		}
 		private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)

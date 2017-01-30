@@ -18,6 +18,7 @@ using Epi.Web.MVC.Utility;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.Cloud.DataEntryServices;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.Metadata.Tests
 {
@@ -102,18 +103,18 @@ namespace Epi.Cloud.Metadata.Tests
             var mockControllerContext = new Mock<ControllerContext>();
             var mockSession = new Mock<HttpSessionStateBase>();
             string UserId = Epi.Common.Security.Cryptography.Encrypt("1014");
-            mockSession.SetupGet(s => s["UserId"]).Returns(UserId); //somevalue
-            mockSession.SetupGet(s => s["orgid"]).Returns(1);
+            mockSession.SetupGet(s => s[SessionKeys.UserId]).Returns(UserId); //somevalue
+            mockSession.SetupGet(s => s[SessionKeys.CurrentOrgId]).Returns(1);
             //surveyid=2e1d01d4-f50d-4f23-888b-cd4b7fc9884b
             //formid=63035d12-0386-4e52-a16e-afcadd1d1d7c //257b05f2-dab2-c8e3-caed-92f0f6a88169
-            mockSession.SetupGet(s => s["ProjectId"]).Returns("257b05f2-dab2-c8e3-caed-92f0f6a88169"); //somevalue
+            mockSession.SetupGet(s => s[SessionKeys.ProjectId]).Returns("257b05f2-dab2-c8e3-caed-92f0f6a88169"); //somevalue
             mockControllerContext.Setup(p => p.HttpContext.Session).Returns(mockSession.Object);
             HomeController hmc = new HomeController(surveyFacade.Object, securityFacade.Object, projectMetadataProvider.Object, iCacheServices.Object, surveyResponseDao.Object);
             hmc.ControllerContext = mockControllerContext.Object;
             // Create fake Controller Context
             //var sessionItems = new SessionStateItemCollection();
-            //sessionItems["UserId"] = "1014";
-            //sessionItems["ProjectId"] = "f2aed655-b0a5-4f5e-8071-267f035e87a5";
+            //sessionItems[SessionKeys.UserId] = "1014";
+            //sessionItems[SessionKeys.ProjectId] = "f2aed655-b0a5-4f5e-8071-267f035e87a5";
             //hmc.ControllerContext = new FakeControllerContext(hmc, sessionItems);
             FormResponseInfoModel infomdl = new FormResponseInfoModel();
             infomdl = hmc.GetFormResponseInfoModel("2e1d01d4-f50d-4f23-888b-cd4b7fc9884b",1,"","",1);
