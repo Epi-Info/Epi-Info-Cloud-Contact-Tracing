@@ -71,7 +71,6 @@ namespace MetadataTests
 
             bool result = metaDataCache.FullProjectTemplateMetadataExists(projectguid);
             //  Assert.AreEqual(result, false,"Project does not exist");
-            //_weakProjectMetadataObjectCache count 0
 
             Assert.IsTrue(result, " Metadatacache Doesnot Exists");
         }

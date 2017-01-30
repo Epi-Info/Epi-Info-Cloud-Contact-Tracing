@@ -26,7 +26,7 @@ namespace MetadataTests
             //MetadataAccessor.ProjectMetadataProvider.GetFormDigestAsync(formId: "2e1d01d4-f50d-4f23-888b-cd4b7fc9884b");
             
             var _projectMetadataProvider = new Mock<IProjectMetadataProvider>();
-            MetadataAccessor.StaticCache._projectMetadataProvider = _projectMetadataProvider.Object;
+            MetadataAccessor.StaticCache.ProjectMetadataProvider = _projectMetadataProvider.Object;
 
             var surveyresp = new SurveyResponse()
             {

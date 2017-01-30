@@ -13,22 +13,36 @@ namespace Epi.Cloud.Common.Metadata
     {
         public static class StaticCache
         {
+            public static void ClearAll()
+            {
+                lock (Gate)
+                {
+                    FormDigests = null;
+                    PageMetadata = new Dictionary<string, Dictionary<int, Page>>();
+                    PageDigests = null;
+                    FieldDigests = new Dictionary<string, FieldDigest[]>();
+                    ProjectMetadataProvider = null;
+                    PageFieldAttributes = null;
+                }
+            }
+            public static object Gate = new object();
+
             // Form Digests [FormId]
-            public static FormDigest[] _formDigests = null;
+            public static FormDigest[] FormDigests = null;
 
             // Page[FormId][PageId]
-            public static Dictionary<string, Dictionary<int, Page>> _pageMetadata = new Dictionary<string, Dictionary<int, Page>>();
+            public static Dictionary<string, Dictionary<int, Page>> PageMetadata = new Dictionary<string, Dictionary<int, Page>>();
 
             // PageDigests[FormId][PageId]
-            public static PageDigest[][] _pageDigests = null;
+            public static PageDigest[][] PageDigests = null;
 
             // FieldDigests[FormId][PageId]
-            public static Dictionary<string, FieldDigest[]> _fieldDigests = new Dictionary<string, FieldDigest[]>();
+            public static Dictionary<string, FieldDigest[]> FieldDigests = new Dictionary<string, FieldDigest[]>();
 
-            public static IProjectMetadataProvider _projectMetadataProvider = null;
+            public static IProjectMetadataProvider ProjectMetadataProvider = null;
 
             // FieldAttributes[FormId][PageId][FieldName]
-            public static Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>> _pageFieldAttributes = null;
+            public static Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>> PageFieldAttributes = null;
         }
 
         [ThreadStatic]
@@ -50,22 +64,34 @@ namespace Epi.Cloud.Common.Metadata
         {
             get
             {
-                if (StaticCache._projectMetadataProvider == null)
+                lock (StaticCache.Gate)
                 {
-                    StaticCache._projectMetadataProvider = DependencyHelper.GetService<IProjectMetadataProvider>();
+                    if (StaticCache.ProjectMetadataProvider == null)
+                    {
+                        StaticCache.ProjectMetadataProvider = DependencyHelper.GetService<IProjectMetadataProvider>();
+                    }
+                    return StaticCache.ProjectMetadataProvider;
                 }
-                return StaticCache._projectMetadataProvider;
             }
 
-            protected set { StaticCache._projectMetadataProvider = value; }
+            protected set
+            {
+                lock (StaticCache.Gate)
+                {
+                    StaticCache.ProjectMetadataProvider = value;
+                }
+            }
         }
 
         public FormDigest[] FormDigests
         {
             get
             {
-                if (StaticCache._formDigests == null) StaticCache._formDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
-                return StaticCache._formDigests;
+                lock (StaticCache.Gate)
+                {
+                    if (StaticCache.FormDigests == null) StaticCache.FormDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
+                    return StaticCache.FormDigests;
+                }
             }
         }
 
@@ -73,8 +99,81 @@ namespace Epi.Cloud.Common.Metadata
         {
             get
             {
-                if (StaticCache._pageDigests == null) StaticCache._pageDigests = (PageDigest[][])ProjectMetadataProvider.GetProjectPageDigestsAsync().Result.Clone();
-                return StaticCache._pageDigests;
+                lock (StaticCache.Gate)
+                {
+                    if (StaticCache.PageDigests == null) StaticCache.PageDigests = (PageDigest[][])ProjectMetadataProvider.GetProjectPageDigestsAsync().Result.Clone();
+                    return StaticCache.PageDigests;
+                }
+            }
+        }
+
+		public FieldDigest[] GetFieldDigests(string formId)
+        {
+            lock (StaticCache.Gate)
+            {
+                FieldDigest[] fieldDigests = null;
+                if (!StaticCache.FieldDigests.TryGetValue(formId, out fieldDigests))
+                    StaticCache.FieldDigests[formId] = fieldDigests = ProjectMetadataProvider.GetFieldDigestsAsync(formId).Result;
+                return fieldDigests;
+            }
+        }
+
+        public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)
+        {
+            lock (StaticCache.Gate)
+            {
+                Dictionary<int, Page> pageMetadatas = null;
+                if (!StaticCache.PageMetadata.TryGetValue(formId, out pageMetadatas))
+                {
+                    StaticCache.PageMetadata[formId] = pageMetadatas = new Dictionary<int, Page>();
+                }
+                return pageMetadatas;
+            }
+        }
+
+        public Page GetPageMetadataByPageId(string formId, int pageId)
+        {
+            lock (StaticCache.Gate)
+            {
+                Dictionary<int, Page> pageMetadatas = null;
+                if (!StaticCache.PageMetadata.TryGetValue(formId, out pageMetadatas))
+                {
+                    StaticCache.PageMetadata[formId] = pageMetadatas = new Dictionary<int, Page>();
+                }
+
+                Page pageMetadata = null;
+                if (!pageMetadatas.TryGetValue(pageId, out pageMetadata))
+                {
+                    pageMetadatas[pageId] = pageMetadata = ProjectMetadataProvider.GetPageMetadataAsync(formId, pageId).Result;
+                }
+
+                return pageMetadata;
+            }
+        }
+
+        public Dictionary<string, FieldAttributes> GetPageFieldAttributesByPageId(string formId, int pageId)
+        {
+            lock (StaticCache.Gate)
+            {
+                if (StaticCache.PageFieldAttributes == null)
+                {
+                    StaticCache.PageFieldAttributes = new Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>>();
+                }
+
+                Dictionary<int, Dictionary<string, FieldAttributes>> pageFieldAttributesByPageId = null;
+                if (!StaticCache.PageFieldAttributes.TryGetValue(formId, out pageFieldAttributesByPageId))
+                {
+                    StaticCache.PageFieldAttributes[formId] = pageFieldAttributesByPageId = new Dictionary<int, Dictionary<string, FieldAttributes>>();
+                }
+
+                Dictionary<string, FieldAttributes> pageFieldAttributes;
+                if (!pageFieldAttributesByPageId.TryGetValue(pageId, out pageFieldAttributes))
+                {
+                    var formDigest = FormDigests.Single(d => d.FormId == formId);
+                    var pageMetadata = GetPageMetadataByPageId(formId, pageId);
+                    pageFieldAttributesByPageId[pageId] = pageFieldAttributes = FieldAttributes.MapFieldMetadataToFieldAttributes(pageMetadata, formDigest.CheckCode);
+                }
+                return pageFieldAttributes;
             }
         }
 
@@ -112,67 +211,9 @@ namespace Epi.Cloud.Common.Metadata
 			return fieldDigests.ToArray();
 		}
 
-		public FieldDigest[] GetFieldDigests(string formId)
-        {
-            FieldDigest[] fieldDigests = null;
-            if (!StaticCache._fieldDigests.TryGetValue(formId, out fieldDigests))
-                StaticCache._fieldDigests[formId] = fieldDigests = ProjectMetadataProvider.GetFieldDigestsAsync(formId).Result;
-            return fieldDigests;
-        }
-
         public Page GetCurrentFormPageMetadataByPageId(int pageId)
         {
             return GetPageMetadataByPageId(_formId, pageId);
-        }
-
-        public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)
-        {
-            Dictionary<int, Page> pageMetadatas = null;
-            if (!StaticCache._pageMetadata.TryGetValue(formId, out pageMetadatas))
-            {
-                StaticCache._pageMetadata[formId] = pageMetadatas = new Dictionary<int, Page>();
-            }
-            return pageMetadatas;
-        }
-
-        public Page GetPageMetadataByPageId(string formId, int pageId)
-        {
-            Dictionary<int, Page> pageMetadatas = null;
-            if (!StaticCache._pageMetadata.TryGetValue(formId, out pageMetadatas))
-            {
-                StaticCache._pageMetadata[formId] = pageMetadatas = new Dictionary<int, Page>();
-            }
-
-            Page pageMetadata = null;
-            if (!pageMetadatas.TryGetValue(pageId, out pageMetadata))
-            {
-                pageMetadatas[pageId] = pageMetadata = ProjectMetadataProvider.GetPageMetadataAsync(formId, pageId).Result;
-            }
-
-            return pageMetadata;
-        }
-
-        public Dictionary<string, FieldAttributes> GetPageFieldAttributesByPageId(string formId, int pageId)
-        {
-            if (StaticCache._pageFieldAttributes == null)
-            {
-                StaticCache._pageFieldAttributes = new Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>>();
-            }
-
-            Dictionary<int, Dictionary<string, FieldAttributes>> pageFieldAttributesByPageId = null;
-            if (!StaticCache._pageFieldAttributes.TryGetValue(formId, out pageFieldAttributesByPageId))
-            {
-                StaticCache._pageFieldAttributes[formId] = pageFieldAttributesByPageId = new Dictionary<int, Dictionary<string, FieldAttributes>>();
-            }
-
-            Dictionary<string, FieldAttributes> pageFieldAttributes;
-            if (!pageFieldAttributesByPageId.TryGetValue(pageId, out pageFieldAttributes))
-            {
-                var formDigest = FormDigests.Single(d => d.FormId == formId);
-                var pageMetadata = GetPageMetadataByPageId(formId, pageId);
-                pageFieldAttributesByPageId[pageId] = pageFieldAttributes = FieldAttributes.MapFieldMetadataToFieldAttributes(pageMetadata, formDigest.CheckCode);
-            }
-            return pageFieldAttributes;
         }
 
         public FormDigest GetCurrentFormDigest()

@@ -1,4 +1,5 @@
 ﻿using System;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.CacheServices
 {
@@ -6,7 +7,11 @@ namespace Epi.Cloud.CacheServices
     {
         public void ClearAllCache(Guid projectId)
         {
-            DeleteAllKeys(projectId, null);
+            lock (MetadataAccessor.StaticCache.Gate)
+            {
+                DeleteAllKeys(projectId, null);
+                MetadataAccessor.StaticCache.ClearAll();
+            }
         }
     }
 }

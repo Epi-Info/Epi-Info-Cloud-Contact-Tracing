@@ -338,13 +338,13 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.SortOrder] = "";
                 Session[SessionKeys.SortField] = "";
 
-                // TODO: Temporary clear cache
-                var sessionProjectId = Session[SessionKeys.ProjectId] as string;
-                if (!string.IsNullOrWhiteSpace(sessionProjectId))
-                {
-                    _cacheServices.ClearAllCache(new Guid(sessionProjectId));
-                }
-            }
+                //// TODO: Temporary clear cache
+                //var sessionProjectId =Session[SessionKeys.ProjectId] as string;
+                //if (!string.IsNullOrWhiteSpace(sessionProjectId))
+                //{
+                //    _cacheServices.ClearAllCache(new Guid(sessionProjectId));
+                //}
+			}
 
             Session[SessionKeys.SelectedOrgId] = orgId;
             if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootFormId].ToString() == formId)
@@ -363,25 +363,37 @@ namespace Epi.Web.MVC.Controllers
                     sortField = Session[SessionKeys.SortField].ToString();
                 }
 
-                Session[SessionKeys.SortOrder] = sort;
-                Session[SessionKeys.SortField] = sortField;
-                Session[SessionKeys.PageNumber] = page.Value;
-            }
-            else
-            {
-                Session.Remove("SortOrder");
-                Session.Remove("SortField");
-                Session[SessionKeys.RootFormId] = formId;
-                Session[SessionKeys.PageNumber] = page.Value;
+				Session[SessionKeys.SortOrder] = sort;
+				Session[SessionKeys.SortField] = sortField;
+				Session[SessionKeys.PageNumber] = page.Value;
+			}
+			else
+			{
+				Session.Remove(SessionKeys.SortOrder);
+				Session.Remove(SessionKeys.SortField);
+				Session[SessionKeys.RootFormId] = formId;
+				Session[SessionKeys.PageNumber] = page.Value;
 
-                if (Session[SessionKeys.ProjectId] == null)
+                lock (MetadataAccessor.StaticCache.Gate)
                 {
-                    // Prime the cache
-                    projectMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithNoPages).Result;
-                    Session[SessionKeys.ProjectId] = projectMetadata.Project.Id;
+                    if (Session[SessionKeys.ProjectId] == null)
+                    {
+
+                        if (!string.IsNullOrWhiteSpace(_projectMetadataProvider.ProjectId) && Guid.Parse(_projectMetadataProvider.ProjectId) != Guid.Empty)
+                        {
+                            Session[SessionKeys.ProjectId] = _projectMetadataProvider.ProjectId;
+                        }
+                        else
+                        {
+                            // Prime the cache
+                            projectMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithNoPages).Result;
+                            Session[SessionKeys.ProjectId] = projectMetadata.Project.Id;
+                        }
+                    }
                 }
-            }
-            //Code added to retain Search Ends. 
+
+			}
+			//Code added to retain Search Ends. 
 
             var model = new FormResponseInfoModel();
             model = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
@@ -396,17 +408,17 @@ namespace Epi.Web.MVC.Controllers
             }
         }
 
-        [HttpPost]
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult ResetSort(string formid)
-        {
-            Session["SortOrder"] = null;
-            Session["SortField"] = null;
-            return Json(true);
-        }
-        private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
-        {
-            FormCollection formCollection = new FormCollection(nameValueCollection);
+		[HttpPost]
+		[AcceptVerbs(HttpVerbs.Post)]
+		public ActionResult ResetSort(string formid)
+		{
+			Session[SessionKeys.SortOrder] = null;
+			Session[SessionKeys.SortField] = null;
+			return Json(true);
+		}
+		private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
+		{
+			FormCollection formCollection = new FormCollection(nameValueCollection);
 
             StringBuilder searchBuilder = new StringBuilder();
 

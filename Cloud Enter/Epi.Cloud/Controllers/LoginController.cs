@@ -57,7 +57,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.UserId] = UserId;
 
                 Session[SessionKeys.UserHighestRole] = 3;
-                    Session[SessionKeys.UserFirstName] = "John";
+                Session[SessionKeys.UserFirstName] = "John";
                 Session[SessionKeys.UserLastName]= "Doe";
                 Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
                 return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
