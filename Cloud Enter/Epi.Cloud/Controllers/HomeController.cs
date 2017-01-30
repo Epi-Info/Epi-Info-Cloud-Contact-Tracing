@@ -374,12 +374,20 @@ namespace Epi.Web.MVC.Controllers
 				Session[SessionKeys.RootFormId] = formId;
 				Session[SessionKeys.PageNumber] = page.Value;
 
-				if (Session[SessionKeys.ProjectId] == null)
-				{
-					// Prime the cache
-					projectMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithNoPages).Result;
-					Session[SessionKeys.ProjectId] = projectMetadata.Project.Id;
-				}
+                if (Session[SessionKeys.ProjectId] == null)
+                {
+
+                    if (!string.IsNullOrWhiteSpace(_projectMetadataProvider.ProjectId) && Guid.Parse(_projectMetadataProvider.ProjectId) != Guid.Empty)
+                    {
+                        Session[SessionKeys.ProjectId] = _projectMetadataProvider.ProjectId;
+                    }
+                    else
+                    {
+                        // Prime the cache
+                        projectMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithNoPages).Result;
+                        Session[SessionKeys.ProjectId] = projectMetadata.Project.Id;
+                    }
+                }
 			}
 			//Code added to retain Search Ends. 
 

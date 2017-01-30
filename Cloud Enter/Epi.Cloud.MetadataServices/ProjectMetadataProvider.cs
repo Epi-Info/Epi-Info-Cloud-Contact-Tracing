@@ -214,6 +214,7 @@ namespace Epi.Cloud.MetadataServices
         {
             var _metadataProvider = new MetadataProvider();
             Template metadata = await _metadataProvider.RetrieveProjectMetadata(projectId);
+            _epiCloudCache.ClearAllCache(Guid.Parse(metadata.Project.Id));
             _epiCloudCache.SetProjectTemplateMetadata(metadata);
             return metadata;
         }
