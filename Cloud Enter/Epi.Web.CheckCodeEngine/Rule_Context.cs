@@ -655,7 +655,11 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         var.DataType = DataType.Text;
                         var.ControlType = "commentlegal";
                         break;
-
+                    case 20://Relate Button
+                        var.DataType = DataType.Text;
+                        var.ControlType = "relatebutton";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "commentlegal", "datasource", var.Expression)); 
+                        break;
                     case 21://GroupBox
                         var.DataType = DataType.Unknown;
                         var.ControlType = "groupbox";
