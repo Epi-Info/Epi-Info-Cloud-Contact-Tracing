@@ -416,68 +416,6 @@ namespace Epi.Web.MVC.Controllers
 			Session[SessionKeys.SortField] = null;
 			return Json(true);
 		}
-		private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
-		{
-			FormCollection formCollection = new FormCollection(nameValueCollection);
-
-			StringBuilder searchBuilder = new StringBuilder();
-
-			if (ValidateSearchFields(formCollection))
-			{
-				if (formCollection["col1"].Length > 0 && formCollection["val1"].Length > 0)
-				{
-					searchBuilder.Append(formCollection["col1"] + "='" + formCollection["val1"] + "'");
-					searchModel.SearchCol1 = formCollection["col1"];
-					searchModel.Value1 = formCollection["val1"];
-				}
-				if (formCollection["col2"].Length > 0 && formCollection["val2"].Length > 0)
-				{
-					searchBuilder.Append(" AND " + formCollection["col2"] + "='" + formCollection["val2"] + "'");
-					searchModel.SearchCol2 = formCollection["col2"];
-					searchModel.Value2 = formCollection["val2"];
-				}
-				if (formCollection["col3"].Length > 0 && formCollection["val3"].Length > 0)
-				{
-					searchBuilder.Append(" AND " + formCollection["col3"] + "='" + formCollection["val3"] + "'");
-					searchModel.SearchCol3 = formCollection["col3"];
-					searchModel.Value3 = formCollection["val3"];
-				}
-				if (formCollection["col4"].Length > 0 && formCollection["val4"].Length > 0)
-				{
-					searchBuilder.Append(" AND " + formCollection["col4"] + "='" + formCollection["val4"] + "'");
-					searchModel.SearchCol4 = formCollection["col4"];
-					searchModel.Value4 = formCollection["val4"];
-				}
-				if (formCollection["col5"].Length > 0 && formCollection["val5"].Length > 0)
-				{
-					searchBuilder.Append(" AND " + formCollection["col5"] + "='" + formCollection["val5"] + "'");
-					searchModel.SearchCol5 = formCollection["col5"];
-					searchModel.Value5 = formCollection["val5"];
-				}
-			}
-
-			return searchBuilder.ToString();
-		}
-
-		private bool ValidateSearchFields(FormCollection formCollection)
-		{
-			if (string.IsNullOrEmpty(formCollection["col1"]) || formCollection["col1"] == "undefined" ||
-			   string.IsNullOrEmpty(formCollection["val1"]) || formCollection["val1"] == "undefined")
-			{
-				return false;
-			}
-			return true;
-		}
-
-		private void PopulateDropDownlist(out List<SelectListItem> searchColumns, string selectedValue, List<KeyValuePair<int, string>> columns)
-		{
-			searchColumns = new List<SelectListItem>();
-			foreach (var item in columns)
-			{
-				SelectListItem newSelectListItem = new SelectListItem { Text = item.Value, Value = item.Value, Selected = item.Value == selectedValue };
-				searchColumns.Add(newSelectListItem);
-			}
-		}
 
 		/// <summary>
 		/// Following Action method takes ResponseId as a parameter and deletes the response.
