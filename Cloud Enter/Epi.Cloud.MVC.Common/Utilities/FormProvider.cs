@@ -221,9 +221,9 @@ namespace Epi.Web.MVC.Utility
                         break;
 
                     case FieldTypes.Codes:  //DropDown Codes
-                        var dropDownCodesValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
-                        var selectedCodesValue = fieldValue;
-                        var dropDownSelectedCodesValue = GetDropDown(fieldAttributes, _Width, _Height, selectedCodesValue, dropDownCodesValues, (int)FieldTypes.Codes);
+                        var dropDownCodesValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower(); 
+                         var selectedCodesValue = fieldValue;
+                        var dropDownSelectedCodesValue = GetDropDown(fieldAttributes, _Width, _Height, selectedCodesValue, dropDownCodesValues, (int)FieldTypes.Codes, fieldAttributes.RelateCondition);
                         form.AddFields(dropDownSelectedCodesValue);
                         break;
 
@@ -355,7 +355,7 @@ namespace Epi.Web.MVC.Utility
                         case 18: //DropDown Codes
                             string DropDownValues2 = "";
                             var _DropDownSelectedValue2 = Value;
-                            field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18);
+                            field = GetDropDown(fieldAttributes, _Width, _Height, _DropDownSelectedValue2, DropDownValues2, 18, fieldAttributes.RelateCondition);
                             break;
 
                         case 19: //DropDown CommentLegal
@@ -467,7 +467,7 @@ namespace Epi.Web.MVC.Utility
             return RelateButton;
         }
 
-        protected virtual MvcDynamicForms.Fields.Field GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
+        protected virtual MvcDynamicForms.Fields.Field GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId, string RelateCondition = "")
         {
             var select = new Select(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
             {
@@ -484,6 +484,31 @@ namespace Epi.Web.MVC.Utility
             {
                 select.Choices[controlValue] = true;
             }
+
+
+            List<string> CodesItemList1 = new List<string>();
+            select.CodesList = new Dictionary<string, List<string>>();
+            if (!string.IsNullOrEmpty(RelateCondition))
+            {
+                List<string> CodesItemList = RelateCondition.Split(',').ToList();
+
+                foreach (var item in CodesItemList)
+                {
+                    CodesItemList1.Add(item.Remove(item.IndexOf(':')));
+
+                }
+            }
+
+            if (CodesItemList1.Count() > 0)
+            {
+                List<string> List = new List<string>();
+                foreach (var item in CodesItemList1)
+                {
+                    List.Add(item.ToLower().ToString());
+                }
+                select.CodesList.Add(DropDownValues.ToLower().Trim(), List);
+            }
+
 
             return select;
         }

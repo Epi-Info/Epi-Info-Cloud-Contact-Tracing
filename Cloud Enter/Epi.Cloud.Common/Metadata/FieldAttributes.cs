@@ -60,6 +60,8 @@ namespace Epi.Cloud.Common.Metadata
         public string[] SourceTableValues { get; set; }
         public string RelatedViewId { get; set; }
 
+        public string RelateCondition { get; set; }
+
         /// <summary>
         /// Value is set / retrieved at runtime by SurveyHelper
         /// </summary>
@@ -117,7 +119,8 @@ namespace Epi.Cloud.Common.Metadata
                 IsDisabled = false,
                 List = f.List,
                 SourceTableValues = f.SourceTableValues,
-                RelatedViewId = f.RelatedViewId.ToString()
+                RelatedViewId = f.RelatedViewId.ToString(),
+                RelateCondition = f.RelateCondition
 
             })/*.OrderBy(x => x.ControlTopPositionPercentage).ThenByDescending(x => x.ControlLeftPositionPercentage)*/;
             return results.ToDictionary(f => f.FieldName, f => f);
