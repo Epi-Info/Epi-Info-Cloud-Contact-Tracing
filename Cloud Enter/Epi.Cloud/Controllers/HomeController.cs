@@ -621,6 +621,8 @@ namespace Epi.Web.MVC.Controllers
 
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List
+                var surveyResponse = formResponseList.SurveyResponseList.Skip((pageNumber - 1) * 20).Take(20);
+                formResponseList.SurveyResponseList = surveyResponse.ToList();
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
                 List<ResponseModel> ResponseListModel = new List<ResponseModel>();
                 Dictionary<string, string> dictory = new Dictionary<string, string>();
@@ -633,57 +635,88 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
-                        //dictory = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-
-                        //dictoryList.Add(dictory);// = new List<Dictionary<string, string>>();
-
                         ResponseList.Add(item.ToResponseModel(Columns));
                     }
 
                 }
 
+                var sortList = ResponseList;
+                sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
                 {
-                    var sortList = ResponseList;
-                    sortfield = sortfield.ToLower();
-                    var columnValue = Columns.First(item => item.Value.ToLower() == sortfield);
-
-                    for(int i=0;i<=5;i++)
+                    if(sort != "ASC")
                     {
-                        var key = Columns[i].Value.ToLower();
-                        if (key == sortfield)
+                        for (int i = 0; i <= 5; i++)
                         {
-                            ResponseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
-                            break;
+                            var key = Columns[i].Value.ToLower();
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
+                                break;
+                            }
                         }
-                        if (key == sortfield)
-                        {
-                            ResponseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
-                            break;
-                        }
-                        if (key == sortfield)
-                        {
-                            ResponseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
-                            break;
-                        }
-                        if (key == sortfield)
-                        {
-                            ResponseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
-                            break;
-                        }
-                        if (key == sortfield)
-                        {
-                            ResponseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
-                            break;
-                        }
-                    }
 
-                    formResponseInfoModel.ResponsesList = ResponseListModel;
-                }
-                else
+                        formResponseInfoModel.ResponsesList = ResponseListModel;
+                    }
+                    else
+                    {
+                        for (int i = 0; i <= 5; i++)
+                        {
+                            var key = Columns[i].Value.ToLower();
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderBy(x => x.Column1).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderBy(x => x.Column2).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderBy(x => x.Column3).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderBy(x => x.Column4).ToList();
+                                break;
+                            }
+                            if (key == sortfield)
+                            {
+                                ResponseListModel = sortList.OrderBy(x => x.Column5).ToList();
+                                break;
+                            }
+                        }
+                        formResponseInfoModel.ResponsesList = ResponseListModel;
+                    }
+                } 
+                if(string.IsNullOrEmpty(sort))
                 {
                     formResponseInfoModel.ResponsesList = ResponseList;
                 }
+
 
                 //Setting Form Info 
                 formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
