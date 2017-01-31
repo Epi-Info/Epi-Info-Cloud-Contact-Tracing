@@ -504,9 +504,12 @@ namespace Epi.Web.MVC.Utility
                 List<string> List = new List<string>();
                 foreach (var item in CodesItemList1)
                 {
-                    List.Add(item.ToLower().ToString());
+                    List.Add(item.ToString());
                 }
-                select.CodesList.Add(DropDownValues.ToLower().Trim(), List);
+                if (!select.CodesList.ContainsKey(controlValue.ToString()))
+                {
+                    select.CodesList.Add(controlValue.Trim(), List);
+                }
             }
 
 
