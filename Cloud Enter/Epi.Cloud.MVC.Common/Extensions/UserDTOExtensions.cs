@@ -46,15 +46,15 @@ namespace Epi.Cloud.MVC.Extensions
             switch (p)
             {
                 case 1:
-                    Role = "User";
+                    Role = "Analyst";
                     break;
 
                 case 2:
-                    Role = "Organization Admin";
+                    Role = "Administrator";
                     break;
 
                 case 3:
-                    Role = "Admin";
+                    Role = "Super Administrator";
                     break;
 
                 default:

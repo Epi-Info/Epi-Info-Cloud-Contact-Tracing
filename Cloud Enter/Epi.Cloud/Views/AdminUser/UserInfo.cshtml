@@ -164,9 +164,9 @@
                             {
                                 @Html.DropDownListFor(model => model.Role, new SelectList(
                   new List<Object>{
-                       new { value = 1, text = "User"  },
-                       new { value = 2 , text = "Organization Admin" },
-                       new { value = 3 , text = "Admin"}
+                       new { value = 1, text = "Analyst"  },
+                       new { value = 2 , text = "Administrator" },
+                       new { value = 3 , text = "Super Administrator"}
                     },
                   "value",
                   "text",
@@ -179,8 +179,8 @@
                             {
                                     @Html.DropDownListFor(model => model.Role, new SelectList(
                   new List<Object>{
-                       new { value = 1, text = "User"  },
-                       new { value = 2 , text = "Organization Admin" },
+                       new { value = 1, text = "Analyst"  },
+                       new { value = 2 , text = "Administrator" },
                        //new { value = 3 , text = "Admin"}
                     },
                   "value",
