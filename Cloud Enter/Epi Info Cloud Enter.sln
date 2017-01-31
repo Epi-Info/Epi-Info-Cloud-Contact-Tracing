@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}"
 	ProjectSection(SolutionItems) = preProject
@@ -85,6 +85,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Common.Core", "Epi.Common.Core\Epi.Common.Core.csproj", "{7555D754-575E-4988-BDD4-F6AD47CFB9D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.MetadataServices.Common", "Epi.Cloud.MetadataServices.Common\Epi.Cloud.MetadataServices.Common.csproj", "{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EpiInfoProjectMetadataAdmin", "EpiInfoProjectMetadataAdmin\EpiInfoProjectMetadataAdmin.csproj", "{FDDF8290-669B-4124-944C-FD9D95159B41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -970,6 +972,36 @@ Global
 		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|x86.ActiveCfg = Release|Any CPU
 		{57ED7A5A-2B03-4D5C-89DD-1B5E3880EAFC}.Release|x86.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Debug|x86.Build.0 = Debug|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|x86.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Linux|x86.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|x86.ActiveCfg = Release|Any CPU
+		{FDDF8290-669B-4124-944C-FD9D95159B41}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
