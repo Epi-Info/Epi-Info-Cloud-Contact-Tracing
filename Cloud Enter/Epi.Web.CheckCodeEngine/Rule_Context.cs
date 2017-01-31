@@ -655,7 +655,11 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                         var.DataType = DataType.Text;
                         var.ControlType = "commentlegal";
                         break;
-
+                    case 20://Relate Button
+                        var.DataType = DataType.Text;
+                        var.ControlType = "relatebutton";
+                        //JavaScriptVariableDefinitions.AppendLine(string.Format(defineFormat, _FieldTypeID.Attribute("Name").Value, "commentlegal", "datasource", var.Expression)); 
+                        break;
                     case 21://GroupBox
                         var.DataType = DataType.Unknown;
                         var.ControlType = "groupbox";
@@ -737,6 +741,8 @@ public System.Collections.Specialized.NameValueCollection GlobalVariables;*/
                     case "datepicker":
                     case "timepicker":
                     case "multiline":
+                       //// pJavaScriptBuilder.AppendLine(string.Format(defineFormat, var.Name, var.ControlType, DataSource, var.PageNumber, var.Expression.Replace("\n", " ")));
+                       // break;
                     case "textbox":
 
                     default:

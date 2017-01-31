@@ -375,6 +375,8 @@ namespace Epi.Web.MVC.Controllers
                 }
                 formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
+                formResponseReq.Criteria.SearchDigestList = ToSearchDigestList(formResponseInfoModel.SearchModel, surveyId);
+
 
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
 
@@ -424,69 +426,6 @@ namespace Epi.Web.MVC.Controllers
             return formResponseInfoModel;
         }
 
-        private string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
-        {
-            FormCollection Collection = new FormCollection(nameValueCollection);
-            StringBuilder searchBuilder = new StringBuilder();
-            //SortField = Collection[""];                   
-
-            if (ValidateSearchFields(Collection))
-            {
-
-                if (Collection["col1"].Length > 0 && Collection["val1"].Length > 0)
-                {
-                    searchBuilder.Append(Collection["col1"] + "='" + Collection["val1"] + "'");
-                    searchModel.SearchCol1 = Collection["col1"];
-                    searchModel.Value1 = Collection["val1"];
-                }
-                if (Collection["col2"].Length > 0 && Collection["val2"].Length > 0)
-                {
-                    searchBuilder.Append(" AND " + Collection["col2"] + "='" + Collection["val2"] + "'");
-                    searchModel.SearchCol2 = Collection["col2"];
-                    searchModel.Value2 = Collection["val2"];
-                }
-                if (Collection["col3"].Length > 0 && Collection["val3"].Length > 0)
-                {
-                    searchBuilder.Append(" AND " + Collection["col3"] + "='" + Collection["val3"] + "'");
-                    searchModel.SearchCol3 = Collection["col3"];
-                    searchModel.Value3 = Collection["val3"];
-                }
-                if (Collection["col4"].Length > 0 && Collection["val4"].Length > 0)
-                {
-                    searchBuilder.Append(" AND " + Collection["col4"] + "='" + Collection["val4"] + "'");
-                    searchModel.SearchCol4 = Collection["col4"];
-                    searchModel.Value4 = Collection["val4"];
-                }
-                if (Collection["col5"].Length > 0 && Collection["val5"].Length > 0)
-                {
-                    searchBuilder.Append(" AND " + Collection["col5"] + "='" + Collection["val5"] + "'");
-                    searchModel.SearchCol5 = Collection["col5"];
-                    searchModel.Value5 = Collection["val5"];
-                }
-            }
-
-            return searchBuilder.ToString();
-        }
-
-        private bool ValidateSearchFields(FormCollection collection)
-        {
-            if (string.IsNullOrEmpty(collection["col1"]) || collection["col1"] == "undefined" ||
-               string.IsNullOrEmpty(collection["val1"]) || collection["val1"] == "undefined")
-            {
-                return false;
-            }
-            return true;
-        }
-
-        private void PopulateDropDownlist(out List<SelectListItem> searchColumns, string selectedValue, List<KeyValuePair<int, string>> columns)
-        {
-            searchColumns = new List<SelectListItem>();
-            foreach (var item in columns)
-            {
-                SelectListItem newSelectListItem = new SelectListItem { Text = item.Value, Value = item.Value, Selected = item.Value == selectedValue };
-                searchColumns.Add(newSelectListItem);
-            }
-        }
 
         private void PopulateDropDownlists(FormResponseInfoModel formResponseInfoModel, List<KeyValuePair<int, string>> list)
         {
@@ -688,137 +627,6 @@ namespace Epi.Web.MVC.Controllers
             return FormResponseInfoModel;
         }
 
-        private FormResponseInfoModel GetFormResponseInfoModel(string surveyId, string responseId, int pageNumber, string sort = "", string sortfield = "", int orgid = -1)
-        {
-            // Initialize the Metadata Accessor
-            MetadataAccessor.CurrentFormId = surveyId;
-
-            FormResponseInfoModel formResponseInfoModel = null;
-
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            if (!string.IsNullOrEmpty(surveyId))
-            {
-                formResponseInfoModel = GetFormResponseInfoModel(surveyId, orgid, userId);
-                FormSettingResponse formSettingResponse = formResponseInfoModel.FormSettingResponse;
-                formResponseInfoModel.FormInfoModel.IsShared = formSettingResponse.FormInfo.IsShared;
-                formResponseInfoModel.FormInfoModel.IsShareable = formSettingResponse.FormInfo.IsShareable;
-                formResponseInfoModel.FormInfoModel.FormName = formSettingResponse.FormInfo.FormName;
-                formResponseInfoModel.FormInfoModel.FormNumber = formSettingResponse.FormInfo.FormNumber;
-
-
-                // Set User Role 
-                //if (formResponseInfoModel.FormInfoModel.IsShared)
-                //{
-
-                //    SetUserRole(UserId, orgid);
-                //}
-                //else
-                //{
-                //SetUserRole(UserId, FormSettingResponse.FormInfo.OrganizationId);
-                //}
-                // SetUserRole(userId, orgid);
-
-                SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
-                formResponseReq.Criteria.SurveyId = surveyId.ToString();
-                formResponseReq.Criteria.PageNumber = pageNumber;
-                formResponseReq.Criteria.UserId = userId;
-                formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
-                formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
-                formResponseReq.Criteria.UserOrganizationId = orgid;
-
-                Session[SessionKeys.IsSqlProject] = formSettingResponse.FormInfo.IsSQLProject;
-                Session[SessionKeys.IsOwner] = formSettingResponse.FormInfo.IsOwner;
-                //if (Session[SessionKeys.SearchCriteria] != null)
-                //{
-                //    formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchCriteria];
-                //}
-                // Following code retain search starts
-                if (Session[SessionKeys.SearchCriteria] != null &&
-                    !string.IsNullOrEmpty(Session[SessionKeys.SearchCriteria].ToString()) &&
-                    (Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined"))
-                {
-                    formResponseReq.Criteria.SearchCriteria = Session[SessionKeys.SearchCriteria].ToString();
-                    formResponseInfoModel.SearchModel = (SearchBoxModel)Session[SessionKeys.SearchModel];
-                }
-                else
-                {
-                    formResponseReq.Criteria.SearchCriteria = CreateSearchCriteria(Request.QueryString, formResponseInfoModel.SearchModel, formResponseInfoModel);
-                    Session[SessionKeys.SearchModel] = formResponseInfoModel.SearchModel;
-                    Session[SessionKeys.SearchCriteria] = formResponseReq.Criteria.SearchCriteria;
-                }
-                // Following code retain search ends
-                PopulateDropDownlists(formResponseInfoModel, formSettingResponse.FormSetting.FormControlNameList.ToList());
-
-                //if (sort.Length > 0)
-                //{
-                //    formResponseReq.Criteria.SortOrder = sort;
-                //}
-                //if (sortfield.Length > 0)
-                //{
-                //    formResponseReq.Criteria.Sortfield = sortfield;
-                //}
-
-                if (Sort != null && Sort.Length > 0)
-                {
-                    formResponseReq.Criteria.SortOrder = Sort;
-                }
-
-                if (SortField != null && SortField.Length > 0)
-                {
-                    formResponseReq.Criteria.Sortfield = SortField;
-                }
-
-                formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
-                formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
-                formResponseReq.Criteria.SearchDigestList = ToSearchDigestList(formResponseInfoModel.SearchModel, surveyId);
-                SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
-                //foreach (var item in formResponseList.SurveyResponseList)
-                //{
-                //   SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-                //   surveyAnswer.IsLocked = false;
-                //   surveyAnswer.ResponseId = item.ResponseId;
-                //   //var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
-                //   //if (pageResponseDetail == null)
-                //   //{
-                //   //    pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
-                //   //    surveyAnswer.ResponseDetail.AddPageResponseDetail(pageResponseDetail);
-                //   //}
-                //   //pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
-                //   surveyAnswer.ResponseDetail = item.ResponseDetail;
-                //   formResponseList.SurveyResponseList.Add(surveyAnswer);
-                //}
-
-
-
-
-                //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
-                //Setting Resposes List
-                List<ResponseModel> ResponseList = new List<ResponseModel>();
-                foreach (var item in formResponseList.SurveyResponseList)
-                {
-                    if (item.SqlData != null)
-                    {
-                        ResponseList.Add(ConvertRowToModel(item, Columns, "GlobalRecordId"));
-                    }
-                    else
-                    {
-                        ResponseList.Add(item.ToResponseModel(Columns));
-                    }
-                }
-                formResponseInfoModel.ResponsesList = ResponseList;
-                //Setting Form Info 
-                formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
-                //Setting Additional Data
-                formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
-                formResponseInfoModel.PageSize = ReadPageSize();
-                formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;
-                formResponseInfoModel.sortfield = sortfield;
-                formResponseInfoModel.sortOrder = sort;
-                formResponseInfoModel.CurrentPage = pageNumber;
-            }
-            return formResponseInfoModel;
-        }
-
         private int ReadPageSize()
         {
             return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"].ToString());
@@ -864,26 +672,6 @@ namespace Epi.Web.MVC.Controllers
                 return Json("Erorr");
             }
             return Json("Success");
-        }
-
-        public void SetRelateSession(string ResponseId, int CurrentPage)
-        {
-            var Obj = Session[SessionKeys.RelateButtonPageId];
-            Dictionary<string, int> List = new Dictionary<string, int>();
-            if (Obj == null)
-            {
-                List.Add(ResponseId, CurrentPage);
-                Session[SessionKeys.RelateButtonPageId] = List;
-            }
-            else
-            {
-                List = (Dictionary<string, int>)Session[SessionKeys.RelateButtonPageId];
-                if (!List.ContainsKey(ResponseId))
-                {
-                    List.Add(ResponseId, CurrentPage);
-                    Session[SessionKeys.RelateButtonPageId] = List;
-                }
-            }
         }
     }
 }

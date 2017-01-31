@@ -4,6 +4,9 @@ using System.Web.Mvc;
 using Epi.Core.EnterInterpreter;
 using System.Drawing;
 using Epi.Cloud.Common.Metadata;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace MvcDynamicForms.Fields
 {
@@ -50,7 +53,8 @@ namespace MvcDynamicForms.Fields
             set { _inputHtmlAttributes["multiple"] = value.ToString(); }
         }
 
-        //public int SelectType { get; set; }
+       // public int SelectType { get; set; }
+        public Dictionary<string, List<string>> CodesList { get; set; }
         /// <summary>
         /// The text to be rendered as the first option in the select list when ShowEmptyOption is set to true.
         /// </summary>
@@ -115,6 +119,35 @@ namespace MvcDynamicForms.Fields
             {
 
                 select.Attributes.Add("onfocus", "return " + _key + "_before();"); //Before
+            }
+
+            EnterRule FunctionObjectClick = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=click&identifier=" + _key);
+            if (FunctionObjectClick != null && !FunctionObjectClick.IsNull())
+            {
+                select.Attributes.Add("onclick", "return " + _key + "_click();"); //click
+            }
+            if (!string.IsNullOrEmpty(this.RelateCondition))
+            {
+
+                select.Attributes.Add("onchange", "return SetCodes_Val(this);"); //click
+                var List = RelateCondition.Split(',');
+                StringBuilder NewString = new StringBuilder();
+                int i = 1;
+                foreach (var item in List)
+                {
+                    NewString.Append(item.Remove(item.IndexOf(':')).ToLower());
+                    if (List.Count() > i)
+                    {
+                        i++;
+                        NewString.Append(",");
+                    }
+                }
+                var hidden = new TagBuilder("input");
+                hidden.Attributes.Add("type", "hidden");
+                hidden.Attributes.Add("id", inputName + "_RelateConditionHidden");
+                hidden.Attributes.Add("name", inputName + "_RelateConditionHidden");
+                hidden.Attributes.Add("value", NewString.ToString());
+                html.Append(hidden.ToString(TagRenderMode.SelfClosing));
             }
 
             ////////////Check code end//////////////////
@@ -217,6 +250,38 @@ namespace MvcDynamicForms.Fields
 
             // options
 
+            // Build codes RelateCondition script object 
+
+
+
+            if (this.CodesList.Count() > 0)
+            {
+                string Html = "";
+                var ScriptRelateCondition = new TagBuilder("script");
+                foreach (var code in CodesList)
+                {
+                    Html = "";
+                    Html = "var " + code.Key.ToString() + "=[";
+                    var json1 = JsonConvert.SerializeObject(code.Value);
+                    foreach (var item in code.Value)
+                    {
+                        var values = item.Split('=');
+                        Html = Html + "\"" + values[0] + "," + values[1].ToString().Replace("\"", "") + "\",";
+
+
+                    }
+                    Html = Html + "]; ";
+                    ScriptRelateCondition.InnerHtml = ScriptRelateCondition.InnerHtml + Html.ToString();
+
+                }
+                html.Append(ScriptRelateCondition.ToString(TagRenderMode.Normal));
+                //var JasonObj =
+                // var jsonSerialiser = new JavaScriptSerializer();
+                var json = JsonConvert.SerializeObject(CodesList);
+
+            }
+
+
             switch (this.SelectType.ToString())
             {
                 case "11":
@@ -299,12 +364,12 @@ namespace MvcDynamicForms.Fields
             html.Append(select.ToString(TagRenderMode.EndTag));
 
             // add hidden tag, so that a value always gets sent for select tags
-            var hidden = new TagBuilder("input");
-            hidden.Attributes.Add("type", "hidden");
-            hidden.Attributes.Add("id", inputName + "_hidden");
-            hidden.Attributes.Add("name", inputName);
-            hidden.Attributes.Add("value", string.Empty);
-            html.Append(hidden.ToString(TagRenderMode.SelfClosing));
+            var hidden1 = new TagBuilder("input");
+            hidden1.Attributes.Add("type", "hidden");
+            hidden1.Attributes.Add("id", inputName + "_hidden");
+            hidden1.Attributes.Add("name", inputName);
+            hidden1.Attributes.Add("value", string.Empty);
+            html.Append(hidden1.ToString(TagRenderMode.SelfClosing));
 
             var wrapper = new TagBuilder(_fieldWrapper);
             wrapper.Attributes["class"] = _fieldWrapperClass;

@@ -200,11 +200,11 @@ namespace Epi.Web.BLL
                     Email email = new Email();
                     if (!ShareForm)
                     {
-                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form  to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
                         email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
                         email.From = UserBO.EmailAddress;
                         email.To = UsersEmail;
-                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to You";
+                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to you";
                     }
                     else
                     {
@@ -212,7 +212,7 @@ namespace Epi.Web.BLL
                         email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
                         email.From = UserBO.EmailAddress;
                         email.To = UsersEmail;
-                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shered with your organization.";
+                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shared with your organization.";
                     }
                     EmailHandler.SendMessage(email);
                 }
