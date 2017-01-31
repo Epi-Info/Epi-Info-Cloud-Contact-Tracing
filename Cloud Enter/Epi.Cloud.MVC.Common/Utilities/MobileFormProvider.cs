@@ -1,6 +1,8 @@
 ﻿using MvcDynamicForms;
 using MvcDynamicForms.Fields;
 using Epi.Cloud.Common.Metadata;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -117,7 +119,7 @@ namespace Epi.Web.MVC.Utility
             return RelateButton;
         }
 
-        protected override MvcDynamicForms.Fields.Field GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId)
+        protected override MvcDynamicForms.Fields.Field GetDropDown(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue, string DropDownValues, int FieldTypeId, string RelateCondition = "")
         {
             var select = new MobileSelect(fieldAttributes, formWidth, formHeight)//, DropDownValues, FieldTypeId)
             {
@@ -133,6 +135,29 @@ namespace Epi.Web.MVC.Utility
             if (!string.IsNullOrWhiteSpace(controlValue))
             {
                 select.Choices[controlValue] = true;
+            }
+
+            List<string> CodesItemList1 = new List<string>();
+            select.CodesList = new Dictionary<string, List<string>>();
+            if (!string.IsNullOrEmpty(RelateCondition))
+            {
+                List<string> CodesItemList = RelateCondition.Split(',').ToList();
+
+                foreach (var item in CodesItemList)
+                {
+                    CodesItemList1.Add(item.Remove(item.IndexOf(':')));
+
+                }
+            }
+
+            if (CodesItemList1.Count() > 0)
+            {
+                List<string> List = new List<string>();
+                foreach (var item in CodesItemList1)
+                {
+                    List.Add(item.ToLower().ToString());
+                }
+                select.CodesList.Add(DropDownValues.ToLower().Trim(), List);
             }
 
             return select;

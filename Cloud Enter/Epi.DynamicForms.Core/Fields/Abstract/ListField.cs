@@ -15,10 +15,23 @@ namespace MvcDynamicForms.Fields
         protected string _responseDelimiter = ", ";
         protected float _ControlFontSize = 10;
         protected string _ControlFontStyle = "Regular";
-
+        protected string _RelateCondition;
         /// <summary>
         /// The choices that the end user can choose from.
         /// </summary>
+        ///       
+
+        public string RelateCondition
+        {
+            get
+            {
+                return _RelateCondition;
+            }
+            set
+            {
+                _RelateCondition = value;
+            }
+        }
         public Dictionary<string, bool> Choices
         {
             get
