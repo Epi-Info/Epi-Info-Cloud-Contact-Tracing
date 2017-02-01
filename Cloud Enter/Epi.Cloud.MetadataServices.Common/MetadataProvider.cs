@@ -25,15 +25,14 @@ namespace Epi.Cloud.MetadataServices.Common
             if (metadata == null)
             {
                 metadata = await RetrieveProjectMetadataViaAPI(projectId);
-                SaveMetadata(metadata);
             }
             return metadata;
         }
 
-        private async Task<Template> RetrieveProjectMetadataViaAPI(Guid projectId)
+        public async Task<Template> RetrieveProjectMetadataViaAPI(Guid projectId)
         {
             ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
-            var metadata = await serviceProxy.GetProjectMetadataAsync(projectId.ToString("N"));
+            var metadata = await serviceProxy.GetProjectMetadataAsync(projectId == Guid.Empty ? null : projectId.ToString("N"));
             _projectId = metadata != null ? new Guid(metadata.Project.Id) : Guid.Empty;
 #if CaptureMetadataJson
             var metadataFromService = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
@@ -45,7 +44,7 @@ namespace Epi.Cloud.MetadataServices.Common
 #endif
             PopulateRequiredPageLevelSourceTables(metadata);
             GenerateDigests(metadata);
-
+            SaveMetadata(metadata);
             return metadata;
         }
 
@@ -98,6 +97,7 @@ namespace Epi.Cloud.MetadataServices.Common
             blobMetadataDictionary.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
             blobMetadataDictionary.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
             blobMetadataDictionary.Add(BlobMetadataKeys.Description, string.IsNullOrWhiteSpace(metadata.Project.Description) ? metadata.Project.Name : metadata.Project.Description);
+            blobMetadataDictionary.Add(BlobMetadataKeys.PublishDate, DateTime.UtcNow.ToString());
             StringBuilder sb = new StringBuilder();
             foreach (var form in metadata.Project.FormDigests)
             {

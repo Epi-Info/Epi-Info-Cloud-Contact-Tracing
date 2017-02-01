@@ -541,25 +541,8 @@ namespace Epi.Web.MVC.Controllers
 
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
 
-                //foreach (var item in formResponseList.SurveyResponseList)
-                //{
-                //	SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-                //	surveyAnswer.IsLocked = false;
-                //	surveyAnswer.ResponseId = item.ResponseId;
-                //	//var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
-                //	//if (pageResponseDetail == null)
-                //	//{
-                //	//    pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
-                //	//    surveyAnswer.ResponseDetail.AddPageResponseDetail(pageResponseDetail);
-                //	//}
-                //	//pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
-                //	surveyAnswer.ResponseDetail = item.ResponseDetail;
-                //	formResponseList.SurveyResponseList.Add(surveyAnswer);
-                //}
 
-                //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
-                //Setting Resposes List
-                var surveyResponse = formResponseList.SurveyResponseList.Skip((pageNumber - 1) * 20).Take(20);
+                var surveyResponse = formResponseList.SurveyResponseList;//.Skip((pageNumber - 1) * 20).Take(20);
                 formResponseList.SurveyResponseList = surveyResponse.ToList();
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
                 List<ResponseModel> ResponseListModel = new List<ResponseModel>();
@@ -577,7 +560,7 @@ namespace Epi.Web.MVC.Controllers
                     }
 
                 }
-
+                //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
                 var sortList = ResponseList;
                 sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
@@ -614,7 +597,7 @@ namespace Epi.Web.MVC.Controllers
                             }
                         }
 
-                        formResponseInfoModel.ResponsesList = ResponseListModel;
+                       // formResponseInfoModel.ResponsesList = ResponseListModel;
                     }
                     else
                     {
@@ -646,11 +629,13 @@ namespace Epi.Web.MVC.Controllers
                                 ResponseListModel = sortList.OrderBy(x => x.Column5).ToList();
                                 break;
                             }
-                        }
-                        formResponseInfoModel.ResponsesList = ResponseListModel;
+                        } 
+                       // formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
                     }
-                } 
-                if(string.IsNullOrEmpty(sort))
+                    formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
+
+                }
+                if (string.IsNullOrEmpty(sort))
                 {
                     formResponseInfoModel.ResponsesList = ResponseList;
                 }
