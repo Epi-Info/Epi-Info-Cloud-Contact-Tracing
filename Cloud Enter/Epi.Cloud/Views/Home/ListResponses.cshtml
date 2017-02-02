@@ -160,7 +160,7 @@
     //    canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable"); // Model.SurveyAnswerResponse.pageSize
     //webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses); //Model.SurveyAnswerResponse.pageSize * Model.ResponsesList.Count TBD
 
-    WebGrid webGrid = new WebGrid(rowsPerPage: Model.PageSize, canSort: true, canPage:true, ajaxUpdateContainerId: "recordstable");
+    WebGrid webGrid = new WebGrid(rowsPerPage: Model.PageSize, canSort: false, canPage:true, ajaxUpdateContainerId: "recordstable");
     webGrid.Bind(Model.ResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses);
 }
 <div id="recordscontent" style="margin-top: 20px;">
