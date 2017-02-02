@@ -240,8 +240,8 @@ namespace Epi.Web.MVC
             routes.MapRoute
              (
                  null, // Route name
-                 "Survey/UpDateGrid", // URL with parameters
-                 new { controller = "Survey", action = "UpDateGrid" }
+                 "Survey/UpdateGrid", // URL with parameters
+                 new { controller = "Survey", action = "UpdateGrid" }
              );
             routes.MapRoute
             (

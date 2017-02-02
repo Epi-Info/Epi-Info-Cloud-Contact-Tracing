@@ -63,7 +63,7 @@ namespace Epi.Cloud.DataEntryServices
 				{
 					foreach (var item in formSettingRequest.FormSetting)
 					{
-						formSettingImplementation.UpDateColumnNames(formSettingRequest.FormInfo.IsDraftMode, item);
+						formSettingImplementation.UpdateColumnNames(formSettingRequest.FormInfo.IsDraftMode, item);
 
 					}
 					string Message = formSettingImplementation.SaveSettings(formSettingRequest.FormInfo.IsDraftMode, formSettingRequest.FormSetting[0]);

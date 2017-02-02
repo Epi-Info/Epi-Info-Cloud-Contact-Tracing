@@ -32,101 +32,100 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            int OrgId = -1;
-           int.TryParse((Session[SessionKeys.CurrentOrgId]?? string.Empty).ToString(),out OrgId);           
-            UserOrgModel UserOrgModel = GetUserInfoList(OrgId);
-            UserOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            int orgId = -1;
+           int.TryParse((Session[SessionKeys.CurrentOrgId]?? string.Empty).ToString(),out orgId);           
+            UserOrgModel userOrgModel = GetUserInfoList(orgId);
+            userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             if (Session[SessionKeys.CurrentOrgId] == null)
             {
-                Session[SessionKeys.CurrentOrgId] = UserOrgModel.OrgList[0].OrganizationId;
+                Session[SessionKeys.CurrentOrgId] = userOrgModel.OrgList[0].OrganizationId;
             }
             
-            return View("UserList", UserOrgModel);
+            return View("UserList", userOrgModel);
         }
 
         [HttpGet]
-        public ActionResult UserInfo(int userid, bool iseditmode, int orgid)
+        public ActionResult UserInfo(int userId, bool isEditMode, int orgId)
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            UserModel UserModel = new UserModel();
-            UserRequest Request = new UserRequest();
-            int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(),out orgid);
-            if (iseditmode)
+            UserModel userModel = new UserModel();
+            UserRequest request = new UserRequest();
+            int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out orgId);
+            if (isEditMode)
             {
+                request.Organization = new OrganizationDTO();
+                request.Organization.OrganizationId = orgId;
 
+                request.User = new UserDTO();
+                request.User.UserId = userId;
 
-                Request.Organization = new OrganizationDTO();
-                Request.Organization.OrganizationId = orgid;
-
-                Request.User = new UserDTO();
-                Request.User.UserId = userid;
-
-                UserResponse Response = _securityFacade.GetUserInfo(Request);
-                UserModel = Response.User[0].ToUserModelR();
-                UserModel.IsEditMode = true;
-                return View("UserInfo", UserModel);
+                UserResponse response = _securityFacade.GetUserInfo(request);
+                userModel = response.User[0].ToUserModelR();
+                userModel.IsEditMode = true;
+                return View("UserInfo", userModel);
             }
 
-            UserModel.IsActive = true;
-            return View("UserInfo", UserModel);
+            userModel.IsActive = true;
+            return View("UserInfo", userModel);
         }
+
         [HttpPost]
-        public ActionResult UserInfo(UserModel UserModel)
+        public ActionResult UserInfo(UserModel userModel)
         {
-            UserOrgModel UserOrgModel = new UserOrgModel();
-            UserResponse Response = new UserResponse();
-            UserRequest Request = new UserRequest();
+            UserOrgModel userOrgModel = new UserOrgModel();
+            UserResponse response = new UserResponse();
+            UserRequest request = new UserRequest();
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             try
             {
                 if (ModelState.IsValid)
                 {
-                    if (UserModel.IsEditMode)
+                    if (userModel.IsEditMode)
                     {
-                        Request.Action = "UpDate";
+                        request.Action = "Update";
 
-                        Request.User = UserModel.ToUserDTO();
+                        request.User = userModel.ToUserDTO();
 
-                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
+                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
 
-                        Request.CurrentUser = UserId;
-                        Response = _securityFacade.SetUserInfo(Request);
-                        UserOrgModel = GetUserInfoList(Request.CurrentOrg);
-                        UserOrgModel.Message = "User information for " + UserModel.FirstName + " " + UserModel.LastName + " has been updated. ";
+                        request.CurrentUser = UserId;
+                        response = _securityFacade.SetUserInfo(request);
+                        userOrgModel = GetUserInfoList(request.CurrentOrg);
+                        userOrgModel.Message = "User information for " + userModel.FirstName + " " + userModel.LastName + " has been updated. ";
                     }
                     else
                     {
-                        Request.Action = "";
-                        Request.User = UserModel.ToUserDTO();
+                        request.Action = "";
+                        request.User = userModel.ToUserDTO();
 
-                        int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out Request.CurrentOrg);
+                        int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
 
 
-                        Request.CurrentUser = UserId;
-                        Response = _securityFacade.SetUserInfo(Request);
+                        request.CurrentUser = UserId;
+                        response = _securityFacade.SetUserInfo(request);
 
-                        if (Response.Message.ToUpper() == "EXISTS" )
+                        if (response.Message.ToUpper() == "EXISTS" )
                         {
                             ModelState.AddModelError("Email", "Error occurred. User already exists for this organization.");
-                            return View("UserInfo", UserModel);
+                            return View("UserInfo", userModel);
                         }
 
-                        UserOrgModel = GetUserInfoList(Request.CurrentOrg);
-                        UserOrgModel.Message = "User " + UserModel.FirstName + " " + UserModel.LastName + " has been added. ";
+                        userOrgModel = GetUserInfoList(request.CurrentOrg);
+                        userOrgModel.Message = "User " + userModel.FirstName + " " + userModel.LastName + " has been added. ";
                     }
                 }
                 else
                 {
-                    return View("UserInfo", UserModel);
+                    return View("UserInfo", userModel);
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            UserOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
-            return View("UserList", UserOrgModel);
+            userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            return View("UserList", userOrgModel);
         }
 
         [HttpGet]

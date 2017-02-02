@@ -146,7 +146,7 @@ namespace Epi.Web.EF
 
 
         }
-        public void UpDateColumnNames(FormSettingBO FormSettingBO, string FormId)
+        public void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId)
         {
             Guid Id = new Guid(FormId);
             try
@@ -184,7 +184,7 @@ namespace Epi.Web.EF
 
 
         }
-        public void UpDateFormMode(FormInfoBO FormInfoBO)
+        public void UpdateFormMode(FormInfoBO FormInfoBO)
         {
 
             try
@@ -213,7 +213,7 @@ namespace Epi.Web.EF
             }
 
         }
-        public void UpDateSettingsList(FormSettingBO FormSettingBO, string FormId)
+        public void UpdateSettingsList(FormSettingBO FormSettingBO, string FormId)
         {
 
             Guid Id = new Guid(FormId);

@@ -10,7 +10,6 @@ using Epi.Common.Exception;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.MessageBase;
-using Epi.Cloud.Interfaces.DataInterfaces;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -189,7 +188,7 @@ namespace Epi.Cloud.DataEntryServices
                 {
                     foreach (var item in FormSettingReq.FormSetting)
                     {
-                        formSettingsImplementation.UpDateColumnNames(FormSettingReq.FormInfo.IsDraftMode, item);
+                        formSettingsImplementation.UpdateColumnNames(FormSettingReq.FormInfo.IsDraftMode, item);
 
                     }
                     string Message = formSettingsImplementation.SaveSettings(FormSettingReq.FormInfo.IsDraftMode, FormSettingReq.FormSetting[0]);
@@ -244,9 +243,9 @@ namespace Epi.Cloud.DataEntryServices
                 if (!ValidRequest(request, response, Validate.All))
                     return response;
 
-                List<OrganizationBO> ListOrganizationBO = organizationImplementation.GetOrganizationInfoByUserId(request.UserId, request.UserRole);
+                List<OrganizationBO> listOrganizationBO = organizationImplementation.GetOrganizationInfoByUserId(request.UserId, request.UserRole);
                 response.OrganizationList = new List<OrganizationDTO>();
-                foreach (OrganizationBO Item in ListOrganizationBO)
+                foreach (OrganizationBO Item in listOrganizationBO)
                 {
                     (response.OrganizationList).Add(Item.ToOrganizationDTO());
                 }
@@ -321,34 +320,30 @@ namespace Epi.Cloud.DataEntryServices
 
         public OrganizationResponse SetOrganization(OrganizationRequest request)
         {
-
             try
             {
                 Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
 
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
-                var Organization = request.Organization.ToOrganizationBO();
-                var User = request.OrganizationAdminInfo.ToUserBO();
+                var organization = request.Organization.ToOrganizationBO();
+                var user = request.OrganizationAdminInfo.ToUserBO();
                 var response = new OrganizationResponse();
 
                 if (request.Action.ToUpper() == "UPDATE")
                 {
-
                     if (!ValidRequest(request, response, Validate.All))
                     {
                         response.Message = "Error";
                         return response;
                     }
 
-                    //    Implementation.UpdateOrganizationInfo(Organization);
-                    // response.Message = "Successfully added organization Key";
-                    if (organizationImplementation.OrganizationNameExists(Organization.Organization, Organization.OrganizationKey, "Update"))
+                    if (organizationImplementation.OrganizationNameExists(organization.Organization, organization.OrganizationKey, "Update"))
                     {
                         response.Message = "Exists";
                     }
                     else
                     {
-                        var success = organizationImplementation.UpdateOrganizationInfo(Organization);
+                        var success = organizationImplementation.UpdateOrganizationInfo(organization);
                         if (success)
                         {
                             response.Message = "Successfully added organization Key";
@@ -362,17 +357,17 @@ namespace Epi.Cloud.DataEntryServices
                 }
                 else if (request.Action.ToUpper() == "INSERT")
                 {
-                    Guid OrganizationKey = Guid.NewGuid();
-                    Organization.OrganizationKey = OrganizationKey.ToString();
+                    Guid organizationKey = Guid.NewGuid();
+                    organization.OrganizationKey = organizationKey.ToString();
                     if (!ValidRequest(request, response, Validate.All))
                         return response;
-                    if (organizationImplementation.OrganizationNameExists(Organization.Organization, Organization.OrganizationKey, "Create"))
+                    if (organizationImplementation.OrganizationNameExists(organization.Organization, organization.OrganizationKey, "Create"))
                     {
                         response.Message = "Exists";
                     }
                     else
                     {
-                        organizationImplementation.InsertOrganizationInfo(Organization, User);
+                        organizationImplementation.InsertOrganizationInfo(organization, user);
 
                         response.Message = "Success";
                     }
@@ -397,7 +392,7 @@ namespace Epi.Cloud.DataEntryServices
             {
                 Epi.Web.BLL.User userImplementation = new Epi.Web.BLL.User(_userDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
-                OrganizationBO Organization = request.Organization.ToOrganizationBO();
+                OrganizationBO organization = request.Organization.ToOrganizationBO();
                 var response = new OrganizationResponse();
 
                 if (!ValidRequest(request, response, Validate.All))
@@ -421,29 +416,29 @@ namespace Epi.Cloud.DataEntryServices
         public UserResponse GetUserInfo(UserRequest request)
         {
 
-            UserResponse Response = new UserResponse();
+            UserResponse response = new UserResponse();
 
 			Epi.Web.BLL.User userImplementation = new Epi.Web.BLL.User(_userDao);
 
-            UserBO UserBO = request.User.ToUserBO();
-            OrganizationBO OrgBO = request.Organization.ToOrganizationBO();
+            UserBO userBO = request.User.ToUserBO();
+            OrganizationBO orgBO = request.Organization.ToOrganizationBO();
             UserBO result = new UserBO();
             if (!request.IsAuthenticated)
             {
-                result = userImplementation.GetUserByUserIdAndOrgId(UserBO, OrgBO);
+                result = userImplementation.GetUserByUserIdAndOrgId(userBO, orgBO);
             }
             else
             {
-                result = userImplementation.GetUserByEmail(UserBO);
+                result = userImplementation.GetUserByEmail(userBO);
             }
 
             if (result != null)
             {
-                Response.User = new List<UserDTO>();
-                Response.User.Add(result.ToUserDTO());
+                response.User = new List<UserDTO>();
+                response.User.Add(result.ToUserDTO());
             }
 
-            return Response;
+            return response;
         }
 
 
@@ -456,32 +451,32 @@ namespace Epi.Cloud.DataEntryServices
 				Epi.Web.BLL.Organization organizationImplementation = new Epi.Web.BLL.Organization(_organizationDao);
 
                 Epi.Web.BLL.User userImplementation = new Epi.Web.BLL.User(_userDao);
-                UserBO UserBO = request.User.ToUserBO();
-                OrganizationBO OrgBo = request.Organization.ToOrganizationBO();
+                UserBO userBO = request.User.ToUserBO();
+                OrganizationBO orgBo = request.Organization.ToOrganizationBO();
                 if (request.Action.ToUpper() == "UPDATE")
                 {
-                    OrganizationBO OrganizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
-                    UserBO.Operation = Constant.OperationMode.UpdateUserInfo;
-                    userImplementation.UpdateUser(UserBO, OrganizationBO);
+                    OrganizationBO organizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
+                    userBO.Operation = Constant.OperationMode.UpdateUserInfo;
+                    userImplementation.UpdateUser(userBO, organizationBO);
                 }
                 else
                 {
-                    UserBO ExistingUser = userImplementation.GetUserByEmail(UserBO);//Validate if user is in the system. 
+                    UserBO existingUser = userImplementation.GetUserByEmail(userBO);//Validate if user is in the system. 
                     bool UserExists = false;
-                    if (ExistingUser != null)
+                    if (existingUser != null)
                     {
                         OrganizationBO OrganizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
-                        ExistingUser.Role = UserBO.Role;
-                        ExistingUser.IsActive = UserBO.IsActive;
-                        UserBO = ExistingUser;
-                        UserExists = userImplementation.IsUserExistsInOrganizaion(UserBO, OrganizationBO); //validate if user is part of the organization already. 
+                        existingUser.Role = userBO.Role;
+                        existingUser.IsActive = userBO.IsActive;
+                        userBO = existingUser;
+                        UserExists = userImplementation.IsUserExistsInOrganizaion(userBO, OrganizationBO); //validate if user is part of the organization already. 
                     }
 
                     if (!UserExists)
                     {
                         //OrgBo.OrganizationId = request.CurrentOrg; // User is added to the current organization
-                        OrganizationBO OrganizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
-                        userImplementation.SetUserInfo(UserBO, OrganizationBO);
+                        OrganizationBO organizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
+                        userImplementation.SetUserInfo(userBO, organizationBO);
                         response.Message = "Success";
                     }
                     else

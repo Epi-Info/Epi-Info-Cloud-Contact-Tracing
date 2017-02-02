@@ -269,7 +269,7 @@ namespace Epi.Web.MVC.Controllers
                 //object temp = System.Web.HttpContext.Current.Cache;
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId, FormsHierarchy);
 
-                //////////////////////UpDate Survey Mode//////////////////////////
+                //////////////////////Update Survey Mode//////////////////////////
                 SurveyAnswer.IsDraftMode = surveyInfoModel.IsDraftMode;
                 PreValidationResultEnum ValidationTest = PreValidateResponse(SurveyAnswer.ToSurveyAnswerModel());
 

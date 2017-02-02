@@ -104,11 +104,11 @@ namespace Epi.Web.BLL
             try
             {
                 List<UserBO> FormCurrentUsersList = this.UserDao.GetUserByFormId(FormSettingDTO.FormId);
-                //this.FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-                // this.FormSettingDao.UpDateFormMode(FormInfoBO);
+                //this.FormSettingDao.UpdateColumnNames(FormSettingBO, FormSettingDTO.FormId);
+                // this.FormSettingDao.UpdateFormMode(FormInfoBO);
                 Dictionary<int, string> AssignedOrgAdminList = this.FormSettingDao.GetOrgAdmins(FormSettingDTO.SelectedOrgList);// about to share with
                 List<UserBO> CurrentOrgAdminList = this.FormSettingDao.GetOrgAdminsByFormId(FormSettingDTO.FormId);// shared with 
-                this.FormSettingDao.UpDateSettingsList(FormSettingBO, FormSettingDTO.FormId);
+                this.FormSettingDao.UpdateSettingsList(FormSettingBO, FormSettingDTO.FormId);
 
                 // Clear all Draft records
                 if (FormSettingDTO.DeleteDraftData)
@@ -137,7 +137,7 @@ namespace Epi.Web.BLL
             return Message;
         }
 
-        public void UpDateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO)
+        public void UpdateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO)
         {
             FormSettingBO FormSettingBO = new FormSettingBO();
             FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
@@ -146,8 +146,8 @@ namespace Epi.Web.BLL
             FormInfoBO.IsDraftMode = IsDraftMode;
             FormInfoBO.IsShareable = FormSettingDTO.IsShareable;
             FormInfoBO.DataAccesRuleId = FormSettingDTO.SelectedDataAccessRule;
-            this.FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-            this.FormSettingDao.UpDateFormMode(FormInfoBO);
+            this.FormSettingDao.UpdateColumnNames(FormSettingBO, FormSettingDTO.FormId);
+            this.FormSettingDao.UpdateFormMode(FormInfoBO);
             if (FormSettingDTO.IsDisabled)
             {
                 this.FormSettingDao.SoftDeleteForm(FormSettingDTO.FormId);

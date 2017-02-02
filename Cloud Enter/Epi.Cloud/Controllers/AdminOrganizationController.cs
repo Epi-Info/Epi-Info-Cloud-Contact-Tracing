@@ -31,20 +31,20 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            int UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
-            OrganizationRequest Request = new OrganizationRequest();
-            Request.UserId = UserId;
-            Request.UserRole = UserHighestRole;
-            OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int userHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            OrganizationRequest request = new OrganizationRequest();
+            request.UserId = userId;
+            request.UserRole = userHighestRole;
+            OrganizationResponse organizations = _securityFacade.GetUserOrganizations(request);
 
-            List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
-            OrgListModel OrgListModel = new OrgListModel();
-            OrgListModel.OrganizationList = Model;
+            List<OrganizationModel> model = organizations.OrganizationList.ToOrganizationModelList();
+            OrgListModel orgListModel = new OrgListModel();
+            orgListModel.OrganizationList = model;
 
-            if (UserHighestRole == 3)
+            if (userHighestRole == 3)
             {
-                return View("OrgList", OrgListModel);
+                return View("OrgList", orgListModel);
             }
             else
             {
@@ -56,31 +56,31 @@ namespace Epi.Web.MVC.Controllers
 
 
         [HttpGet]
-        public ActionResult OrgInfo(string orgkey, bool iseditmode)
+        public ActionResult OrgInfo(string orgKey, bool isEditMode)
         {
-            OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
+            OrgAdminInfoModel orgInfo = new OrgAdminInfoModel();
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            if (iseditmode)
+            if (isEditMode)
             {
-                OrganizationRequest Request = new OrganizationRequest();
-                Request.Organization.OrganizationKey = orgkey;
+                OrganizationRequest request = new OrganizationRequest();
+                request.Organization.OrganizationKey = orgKey;
 
-                OrganizationResponse Organizations = _securityFacade.GetOrganizationInfo(Request);
-                OrgInfo = Organizations.ToOrgAdminInfoModel();
-                OrgInfo.IsEditMode = iseditmode;
-                return View("OrgInfo", OrgInfo);
+                OrganizationResponse organizations = _securityFacade.GetOrganizationInfo(request);
+                orgInfo = organizations.ToOrgAdminInfoModel();
+                orgInfo.IsEditMode = isEditMode;
+                return View("OrgInfo", orgInfo);
             }
 
-            OrgInfo.IsEditMode = iseditmode;
-            OrgInfo.IsOrgEnabled = true;
-            return View("OrgInfo", OrgInfo);
+            orgInfo.IsEditMode = isEditMode;
+            orgInfo.IsOrgEnabled = true;
+            return View("OrgInfo", orgInfo);
         }
         [HttpPost]
-        public ActionResult OrgInfo(OrgAdminInfoModel OrgAdminInfoModel)
+        public ActionResult OrgInfo(OrgAdminInfoModel orgAdminInfoModel)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            int UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int userHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             string url = "";
             if (this.Request.UrlReferrer == null)
             {
@@ -91,75 +91,74 @@ namespace Epi.Web.MVC.Controllers
                 url = this.Request.UrlReferrer.ToString();
             }
             //Edit Organization
-            if (OrgAdminInfoModel.IsEditMode)
+            if (orgAdminInfoModel.IsEditMode)
             {
                 ModelState.Remove("AdminFirstName");
                 ModelState.Remove("AdminLastName");
                 ModelState.Remove("ConfirmAdminEmail");
                 ModelState.Remove("AdminEmail");
 
-                OrganizationRequest Request = new OrganizationRequest();
+                OrganizationRequest request = new OrganizationRequest();
 
-				UserDTO AdminInfo = new UserDTO();
+				UserDTO adminInfo = new UserDTO();
 
-                AdminInfo.FirstName = "";
-                AdminInfo.LastName = "";
-                AdminInfo.EmailAddress = "";
-                AdminInfo.Role = 0;
-                AdminInfo.PhoneNumber = "";
-                Request.OrganizationAdminInfo = AdminInfo;
+                adminInfo.FirstName = "";
+                adminInfo.LastName = "";
+                adminInfo.EmailAddress = "";
+                adminInfo.Role = 0;
+                adminInfo.PhoneNumber = "";
+                request.OrganizationAdminInfo = adminInfo;
 
-                Request.Organization.Organization = OrgAdminInfoModel.OrgName;
-                Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
+                request.Organization.Organization = orgAdminInfoModel.OrgName;
+                request.Organization.IsEnabled = orgAdminInfoModel.IsOrgEnabled;
 
-                Request.Organization.OrganizationKey = GetOrgKey(url);
-                Request.UserId = UserId;
-                Request.UserRole = UserHighestRole;
-                Request.Action = "UpDate";
+                request.Organization.OrganizationKey = GetOrgKey(url);
+                request.UserId = userId;
+                request.UserRole = userHighestRole;
+                request.Action = "Update";
                 try
                 {
-                    OrganizationResponse Result = _securityFacade.SetOrganization(Request);
-                    OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
-                    List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
-                    OrgListModel OrgListModel = new OrgListModel();
-                    OrgListModel.OrganizationList = Model;
-                    OrgListModel.Message = "Organization " + OrgAdminInfoModel.OrgName + " has been updated.";
-                    if (Result.Message.ToUpper() != "EXISTS" && Result.Message.ToUpper() != "ERROR")
+                    OrganizationResponse result = _securityFacade.SetOrganization(request);
+                    OrganizationResponse organizations = _securityFacade.GetUserOrganizations(request);
+                    List<OrganizationModel> model = organizations.OrganizationList.ToOrganizationModelList();
+                    OrgListModel orgListModel = new OrgListModel();
+                    orgListModel.OrganizationList = model;
+                    orgListModel.Message = "Organization " + orgAdminInfoModel.OrgName + " has been updated.";
+                    if (result.Message.ToUpper() != "EXISTS" && result.Message.ToUpper() != "ERROR")
                     {
 
-                        OrgListModel.Message = "Organization " + OrgAdminInfoModel.OrgName + " has been updated.";
-                        return View("OrgList", OrgListModel);
+                        orgListModel.Message = "Organization " + orgAdminInfoModel.OrgName + " has been updated.";
+                        return View("OrgList", orgListModel);
                     }
-                    else if (Result.Message.ToUpper() == "ERROR")
+                    else if (result.Message.ToUpper() == "ERROR")
                     {
-                        OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
-                        Request.Organization.OrganizationKey = GetOrgKey(url); ;
+                        OrgAdminInfoModel orgInfo = new OrgAdminInfoModel();
+                        request.Organization.OrganizationKey = GetOrgKey(url); ;
 
-                        Organizations = _securityFacade.GetOrganizationInfo(Request);
-                        OrgInfo = Organizations.ToOrgAdminInfoModel();
-                        OrgInfo.IsEditMode = true;
+                        organizations = _securityFacade.GetOrganizationInfo(request);
+                        orgInfo = organizations.ToOrgAdminInfoModel();
+                        orgInfo.IsEditMode = true;
                         ModelState.AddModelError("IsOrgEnabled", "Organization for the super admin cannot be deactivated.");
-                        return View("OrgInfo", OrgInfo);
+                        return View("OrgInfo", orgInfo);
                     }
                     else
                     {
-                        OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
-                        Request.Organization.OrganizationKey = GetOrgKey(url); ;
+                        OrgAdminInfoModel orgInfo = new OrgAdminInfoModel();
+                        request.Organization.OrganizationKey = GetOrgKey(url); ;
 
-                        Organizations = _securityFacade.GetOrganizationInfo(Request);
-                        OrgInfo = Organizations.ToOrgAdminInfoModel();
-                        OrgInfo.IsEditMode = true;
+                        organizations = _securityFacade.GetOrganizationInfo(request);
+                        orgInfo = organizations.ToOrgAdminInfoModel();
+                        orgInfo.IsEditMode = true;
                         ModelState.AddModelError("OrgName", "The organization name provided already exists.");
-                        return View("OrgInfo", OrgInfo);
+                        return View("OrgInfo", orgInfo);
 
 
 
                     }
-
                 }
                 catch (Exception ex)
                 {
-                    return View(OrgAdminInfoModel);
+                    return View(orgAdminInfoModel);
                 }
             }
             else
@@ -168,78 +167,78 @@ namespace Epi.Web.MVC.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    OrganizationRequest Request = new OrganizationRequest();
-                    Request.Organization.Organization = OrgAdminInfoModel.OrgName;
-                    Request.Organization.IsEnabled = OrgAdminInfoModel.IsOrgEnabled;
-					UserDTO AdminInfo = new UserDTO();
+                    OrganizationRequest request = new OrganizationRequest();
+                    request.Organization.Organization = orgAdminInfoModel.OrgName;
+                    request.Organization.IsEnabled = orgAdminInfoModel.IsOrgEnabled;
+					UserDTO adminInfo = new UserDTO();
 
-                    AdminInfo.FirstName = OrgAdminInfoModel.AdminFirstName;
-                    AdminInfo.LastName = OrgAdminInfoModel.AdminLastName;
-                    AdminInfo.EmailAddress = OrgAdminInfoModel.AdminEmail;
-                    AdminInfo.Role = Roles.OrgAdministrator;
-                    AdminInfo.PhoneNumber = "123456789";
-                    AdminInfo.UGuid = Guid.NewGuid();
-                    Request.OrganizationAdminInfo = AdminInfo;
+                    adminInfo.FirstName = orgAdminInfoModel.AdminFirstName;
+                    adminInfo.LastName = orgAdminInfoModel.AdminLastName;
+                    adminInfo.EmailAddress = orgAdminInfoModel.AdminEmail;
+                    adminInfo.Role = Roles.OrgAdministrator;
+                    adminInfo.PhoneNumber = "123456789";
+                    adminInfo.UGuid = Guid.NewGuid();
+                    request.OrganizationAdminInfo = adminInfo;
 
-                    Request.UserRole = UserHighestRole;
-                    Request.UserId = UserId;
-                    Request.Action = "Insert";
+                    request.UserRole = userHighestRole;
+                    request.UserId = userId;
+                    request.Action = "Insert";
                     try
                     {
-                        OrganizationResponse Result = _securityFacade.SetOrganization(Request);
-                        OrgListModel OrgListModel = new OrgListModel();
-                        OrganizationResponse Organizations = _securityFacade.GetUserOrganizations(Request);
-                        List<OrganizationModel> Model = Organizations.OrganizationList.ToOrganizationModelList();
-                        OrgListModel.OrganizationList = Model;
+                        OrganizationResponse result = _securityFacade.SetOrganization(request);
+                        OrgListModel orgListModel = new OrgListModel();
+                        OrganizationResponse organizations = _securityFacade.GetUserOrganizations(request);
+                        List<OrganizationModel> model = organizations.OrganizationList.ToOrganizationModelList();
+                        orgListModel.OrganizationList = model;
 
-                        if (Result.Message.ToUpper() != "EXISTS")
+                        if (result.Message.ToUpper() != "EXISTS")
                         {
 
-                            OrgListModel.Message = "Organization " + OrgAdminInfoModel.OrgName + " has been created.";
+                            orgListModel.Message = "Organization " + orgAdminInfoModel.OrgName + " has been created.";
                         }
                         else
                         {
                             // OrgListModel.Message = "The organization name provided already exists.";
-                            OrgAdminInfoModel OrgInfo = new OrgAdminInfoModel();
+                            OrgAdminInfoModel orgInfo = new OrgAdminInfoModel();
                             //Request.Organization.OrganizationKey = GetOrgKey(url); ;
 
                             //Organizations = _isurveyFacade.GetOrganizationInfo(Request);
-                            OrgInfo = Organizations.ToOrgAdminInfoModel();
-                            OrgInfo.IsEditMode = false;
+                            orgInfo = organizations.ToOrgAdminInfoModel();
+                            orgInfo.IsEditMode = false;
                             ModelState.AddModelError("OrgName", "The organization name provided already exists.");
-                            return View("OrgInfo", OrgInfo);
+                            return View("OrgInfo", orgInfo);
                         }
-                        return View("OrgList", OrgListModel);
+                        return View("OrgList", orgListModel);
                     }
                     catch (Exception ex)
                     {
-                        return View(OrgAdminInfoModel);
+                        return View(orgAdminInfoModel);
                     }
                 }
                 else
                 {
-                    return View(OrgAdminInfoModel);
+                    return View(orgAdminInfoModel);
                 }
             }
         }
 
         private string GetOrgKey(string url)
         {
-            var Array = url.Split('/');
-            string Orgkey = "";
+            var array = url.Split('/');
+            string orgkey = "";
             Regex guidRegEx = new Regex(@"^(\{{0,1}([0-9a-fA-F]){8}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){4}-([0-9a-fA-F]){12}\}{0,1})$");
 
-            foreach (var item in Array)
+            foreach (var item in array)
             {
 
                 if (guidRegEx.IsMatch(item))
                 {
-                    Orgkey = item;
+                    orgkey = item;
                     break;
                 }
 
             }
-            return Orgkey;
+            return orgkey;
         }
 
         [HttpPost]
@@ -252,21 +251,21 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public JsonResult GetUserInfoAD(string email)
         {
-            UserModel User = new UserModel();
+            UserModel user = new UserModel();
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
             if (authenticationSection.Mode == AuthenticationMode.Windows)
             {
-                var CurrentUserName = System.Web.HttpContext.Current.User.Identity.Name;
-                var Domain = CurrentUserName.Split('\\')[0].ToString();
-                var UserAD = Utility.WindowsAuthentication.GetUserFromAd(email, Domain);
-                if (UserAD != null)
+                var currentUserName = System.Web.HttpContext.Current.User.Identity.Name;
+                var domain = currentUserName.Split('\\')[0].ToString();
+                var userAD = Utility.WindowsAuthentication.GetUserFromAd(email, domain);
+                if (userAD != null)
                 {
-                    User.LastName = UserAD.Surname;
-                    User.FirstName = UserAD.GivenName;
+                    user.LastName = userAD.Surname;
+                    user.FirstName = userAD.GivenName;
                 }
             }
-            return Json(User);
+            return Json(user);
         }
     }
 }
