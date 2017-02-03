@@ -122,10 +122,12 @@ namespace MvcDynamicForms.Fields
 
 
             StringBuilder StyleValues = new StringBuilder();
+            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            prompt.Attributes.Add("style", StyleValues.ToString());
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), null, null, null, null, _IsHidden));
             // prompt.Attributes.Add("style", StyleValues.ToString());
-            prompt.Attributes.Add("style", "display:block !important; ");
+            //prompt.Attributes.Add("style", "display:block !important; ");
             html.Append(prompt.ToString());
 
             var OuterDiv = new TagBuilder("div");
@@ -161,6 +163,7 @@ namespace MvcDynamicForms.Fields
                 select.Attributes.Add("data-role", "none");
                 select.Attributes.Add("data-native-menu", "false");
             }
+            string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
             //select.Attributes.Add("data-mini", "true");
             ////////////Check code start//////////////////
             EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
@@ -250,7 +253,7 @@ namespace MvcDynamicForms.Fields
             //    select.Attributes.Add("disabled", "disabled");
             //}
             //select.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px ; font-size:" + _ControlFontSize + "pt;" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
-            select.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
+            select.Attributes.Add("style", "" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle+ InputFieldStyle);
             select.MergeAttributes(_inputHtmlAttributes);
             html.Append(select.ToString(TagRenderMode.StartTag));
             // If readonly then add the following jquery script to make the field disabled 
@@ -268,6 +271,7 @@ namespace MvcDynamicForms.Fields
                 var opt = new TagBuilder("option");
                 opt.Attributes.Add("value", null);
                 opt.SetInnerText(EmptyOption);
+                opt.Attributes.Add("style", "" + InputFieldStyle);
                 html.Append(opt.ToString());
             }
 
@@ -309,6 +313,7 @@ namespace MvcDynamicForms.Fields
                     foreach (var choice in _choices)
                     {
                         var opt = new TagBuilder("option");
+                        opt.Attributes.Add("style", "" + InputFieldStyle);
                         var optSelectedVale = "";
                         if (!string.IsNullOrEmpty(SelectedValue.ToString()))
                         {
@@ -322,7 +327,7 @@ namespace MvcDynamicForms.Fields
                         }
                         if (choice.Key == "Yes" || choice.Key == "No")
                         {
-                            opt.SetInnerText(choice.Key);
+                            opt.SetInnerText(choice.Key);                          
                             html.Append(opt.ToString());
                         }
 
@@ -335,6 +340,7 @@ namespace MvcDynamicForms.Fields
                         opt.Attributes.Add("value", choice.Key);
                         if (choice.Key == SelectedValue.ToString()) opt.Attributes.Add("selected", "selected");
                         opt.SetInnerText(choice.Key);
+                        opt.Attributes.Add("style", "" + InputFieldStyle);
                         html.Append(opt.ToString());
                     }
 
@@ -346,6 +352,7 @@ namespace MvcDynamicForms.Fields
                         opt.Attributes.Add("value", choice.Key);
                         if (choice.Key == SelectedValue.ToString()) opt.Attributes.Add("selected", "selected");
                         opt.SetInnerText(choice.Key);
+                        opt.Attributes.Add("style", "" + InputFieldStyle);
                         html.Append(opt.ToString());
                     }
 
@@ -365,6 +372,7 @@ namespace MvcDynamicForms.Fields
                             }
                             opt.SetInnerText(choice.Key.Substring(choice.Key.IndexOf("-") + 1));
                         }
+                        opt.Attributes.Add("style", "" + InputFieldStyle);
                         html.Append(opt.ToString());
                     }
                     break;
@@ -435,6 +443,86 @@ namespace MvcDynamicForms.Fields
             }
 
             return Style;
+        }
+
+        public string GetControlStyle(string ControlFontStyle, string Top, string Left, string Width, string Height, bool IsHidden)
+        {
+            StringBuilder FontStyle = new StringBuilder();
+            StringBuilder FontWeight = new StringBuilder();
+            StringBuilder TextDecoration = new StringBuilder();
+            StringBuilder CssStyles = new StringBuilder();
+
+            char[] delimiterChars = { ' ', ',' };
+            string[] Styles = ControlFontStyle.Split(delimiterChars);
+            // CssStyles.Append("width: auto");
+
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Italic":
+                        FontStyle.Append(Style.ToString());
+                        break;
+                    case "Oblique":
+                        FontStyle.Append(Style.ToString());
+                        break;
+                }
+
+            }
+
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Bold":
+                        FontWeight.Append(Style.ToString());
+                        break;
+                    case "Normal":
+                        FontWeight.Append(Style.ToString());
+                        break;
+                }
+            }
+
+            CssStyles.Append(" font:");//1
+
+            if (!string.IsNullOrEmpty(FontStyle.ToString()))
+            {
+                CssStyles.Append(FontStyle);//2
+                CssStyles.Append(" ");//3
+            }
+
+            CssStyles.Append(FontWeight);
+            CssStyles.Append(" ");
+            CssStyles.Append(_fontSize.ToString() + "pt ");
+            CssStyles.Append(" ");
+            CssStyles.Append(_fontfamily.ToString());
+
+            foreach (string Style in Styles)
+            {
+                switch (Style.ToString())
+                {
+                    case "Strikeout":
+                        TextDecoration.Append("line-through");
+                        break;
+                    case "Underline":
+                        TextDecoration.Append(Style.ToString());
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(TextDecoration.ToString()))
+            {
+                CssStyles.Append(";text-decoration:");
+            }
+
+            if (IsHidden)
+            {
+                CssStyles.Append(";display:none");
+            }
+
+            CssStyles.Append(TextDecoration);
+
+            return CssStyles.ToString();
         }
     }
 }
