@@ -124,7 +124,7 @@
     <value>You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n</value>
   </data>
   <data name="PasswordChanged_Subject" xml:space="preserve">
-    <value>"Your Epi Info Cloud Enter Password has been updated"</value>
+    <value>Your Epi Info Cloud Enter Password has been updated</value>
   </data>
   <data name="ResetPassword_Body" xml:space="preserve">
     <value>You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password.</value>
@@ -137,5 +137,8 @@
   </data>
   <data name="UpdateUserInfo_Subject" xml:space="preserve">
     <value>Your Epi Info Cloud Enter Account info has been updated</value>
+  </data>
+  <data name="AMessageForUnitTests" xml:space="preserve">
+    <value>This is a test</value>
   </data>
 </root>
