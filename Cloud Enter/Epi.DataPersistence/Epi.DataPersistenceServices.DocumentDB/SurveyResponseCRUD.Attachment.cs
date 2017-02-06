@@ -104,7 +104,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             try
             {
-                    var test = Client.DeleteAttachmentAsync(attachment.AltLink, null).Result;
+              var DeleteResponse = Client.DeleteAttachmentAsync(attachment.AltLink, null).Result;
             }
             catch (Exception ex)
             {
