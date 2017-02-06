@@ -175,7 +175,7 @@ namespace Epi.Web.MVC.Controllers
                     adminInfo.FirstName = orgAdminInfoModel.AdminFirstName;
                     adminInfo.LastName = orgAdminInfoModel.AdminLastName;
                     adminInfo.EmailAddress = orgAdminInfoModel.AdminEmail;
-                    adminInfo.Role = Roles.OrgAdministrator;
+                    adminInfo.Role = Roles.Administrator;
                     adminInfo.PhoneNumber = "123456789";
                     adminInfo.UGuid = Guid.NewGuid();
                     request.OrganizationAdminInfo = adminInfo;
