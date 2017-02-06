@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Epi.Cloud.Common.BusinessObjects;
-using Epi.Cloud.Common.DTO;
+using System.Linq; 
+using Epi.Cloud.Common.BusinessObjects; 
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
@@ -12,15 +10,18 @@ using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents; 
 using Newtonsoft.Json;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
+using System.Configuration;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
     public class DocumentDBSurveyPersistenceFacade : MetadataAccessor, Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade
     {
+        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private const string FormInfoCollectionName = "FormInfo";
         public DocumentDBSurveyPersistenceFacade()
         {
         }
@@ -50,8 +51,33 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
         {
-            var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
-          
+            Attachment attachment = null;
+           // var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
+
+            switch (responseStatus)
+            {
+                case RecordStatus.Saved:
+                    var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseId, responseStatus);
+                    break;
+                case RecordStatus.Deleted:
+                     var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
+                    break;
+                case RecordStatus.Restore:
+                    attachment = _surveyResponseCRUD.ReadAttachment(responseId, AttachmentId);
+                    if (attachment == null)
+                    {
+                        //Add new record Don't Save
+                        var NewRecordDontSaveResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
+                    }
+                    else
+                    {
+                        //Edit Recrod Don't Save
+                        HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = _surveyResponseCRUD.ConvertAttachmentToHierarchical(attachment);
+                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties, null);
+                    }
+                    break;
+
+            }
             return true;
         }
 

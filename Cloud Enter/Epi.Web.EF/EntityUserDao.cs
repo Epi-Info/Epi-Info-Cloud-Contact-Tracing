@@ -331,7 +331,7 @@ namespace Epi.Web.EF
                 {
                     int OrgId = int.Parse(item.Value);
 
-                    var users = Context.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator && x.OrganizationID == OrgId && x.Active == true);
+                    var users = Context.UserOrganizations.Where(x => x.RoleId == Roles.Administrator && x.OrganizationID == OrgId && x.Active == true);
 
                     foreach (var user in users)
                     {

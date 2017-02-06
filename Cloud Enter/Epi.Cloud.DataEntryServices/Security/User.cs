@@ -4,6 +4,8 @@ using System.Text;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Cloud.Resources;
+using Epi.Cloud.Resources.Constants;
 using Epi.Common.EmailServices;
 using Epi.Common.Security;
 
@@ -138,20 +140,26 @@ namespace Epi.Web.BLL
             switch (combination)
             {
                 case Constant.EmailCombinationEnum.ResetPassword:
-                    email.Subject = "Your Epi Info Cloud Enter Password";
-                    email.Body = string.Format("You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password.", email.Password);
+                    //email.Subject = "Your Epi Info Cloud Enter Password";
+                    //email.Body = string.Format("You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password.", email.Password);
+                    email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.ResetPassword_Subject);
+                    email.Body = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.ResetPassword_Body), email.Password);
                     break;
                 case Constant.EmailCombinationEnum.PasswordChanged:
-                    email.Subject = "Your Epi Info Cloud Enter Password has been updated";
-                    email.Body = "You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n ";
+                    //email.Subject = "Your Epi Info Cloud Enter Password has been updated";
+                    //email.Body = "You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n ";
+                    email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.PasswordChanged_Subject);
+                    email.Body = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.PasswordChanged_Body);
                     break;
                 case Constant.EmailCombinationEnum.UpdateUserInfo:
-                    email.Subject = "Your Epi Info Cloud Enter Account info has been updated";
-                    email.Body = " You account info has been updated in Epi Info™ Cloud Enter system.";
+                    //email.Subject = "Your Epi Info Cloud Enter Account info has been updated";
+                    //email.Body = " You account info has been updated in Epi Info™ Cloud Enter system.";
+                    email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.UpdateUserInfo_Subject);
+                    email.Body = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.UpdateUserInfo_Body);
                     break;
                 case Constant.EmailCombinationEnum.InsertUser:
-                    email.Subject = "An Epi Info Cloud Enter account has been created for your organization.";
-
+                    //email.Subject = "An Epi Info Cloud Enter account has been created for your organization.";
+                    email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.InsertUser_Subject);
                     break;
                 default:
                     break;

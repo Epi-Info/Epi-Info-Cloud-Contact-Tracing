@@ -560,6 +560,17 @@ namespace Epi.Web.MVC.Controllers
                     }
 
                 }
+                string sortFieldcolumn = string.Empty;
+                if (!string.IsNullOrEmpty(sortfield))
+                {
+                    foreach (var Column in Columns)
+                    {
+                        if (Column.Value == sortfield)
+                        {
+                            sortFieldcolumn = "Column" + Column.Key;
+                        }
+                    }
+                }
                 //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
                 var sortList = ResponseList;
                 sortfield = sortfield.ToLower();
@@ -567,77 +578,58 @@ namespace Epi.Web.MVC.Controllers
                 {
                     if(sort != "ASC")
                     {
-                        for (int i = 0; i <= 5; i++)
+                        switch (sortFieldcolumn)
                         {
-                            var key = Columns[i].Value.ToLower();
-                            if (key == sortfield)
-                            {
+                            case "Column1":
                                 ResponseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column2":
                                 ResponseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column3":
                                 ResponseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column4":
                                 ResponseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column5":
                                 ResponseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
                                 break;
-                            }
                         }
 
-                       // formResponseInfoModel.ResponsesList = ResponseListModel;
+                        // formResponseInfoModel.ResponsesList = ResponseListModel;
                     }
                     else
                     {
-                        for (int i = 0; i <= 5; i++)
+                        switch (sortFieldcolumn)
                         {
-                            var key = Columns[i].Value.ToLower();
-                            if (key == sortfield)
-                            {
+                            case "Column1":
                                 ResponseListModel = sortList.OrderBy(x => x.Column1).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column2":
                                 ResponseListModel = sortList.OrderBy(x => x.Column2).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column3":
                                 ResponseListModel = sortList.OrderBy(x => x.Column3).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column4":
                                 ResponseListModel = sortList.OrderBy(x => x.Column4).ToList();
                                 break;
-                            }
-                            if (key == sortfield)
-                            {
+                            case "Column5":
                                 ResponseListModel = sortList.OrderBy(x => x.Column5).ToList();
                                 break;
-                            }
-                        } 
-                       // formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                        }
+
+                        // formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
                     }
                     formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
 
                 }
                 if (string.IsNullOrEmpty(sort))
                 {
-                    formResponseInfoModel.ResponsesList = ResponseList;
+                    formResponseInfoModel.ResponsesList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+
+                    //formResponseInfoModel.ResponsesList = ResponseList;
                 }
 
 

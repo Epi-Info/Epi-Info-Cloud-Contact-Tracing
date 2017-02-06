@@ -34,11 +34,6 @@
   <ItemGroup>
     <Compile Include="DAO\SurveyResponseDao.cs" />
     <Compile Include="DataEntry\DataEntryService.cs" />
-    <Compile Include="EmailMessages.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>EmailMessages.resx</DependentUpon>
-    </Compile>
     <Compile Include="FormSettings\FormSetting.cs" />
     <Compile Include="FormSettings\FormSettingsService.cs" />
     <Compile Include="Security\Organization.cs" />
@@ -95,6 +90,10 @@
       <Project>{77423EA0-9F83-4E77-AD33-7483C36062EE}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Resources\Epi.Cloud.Resources.csproj">
+      <Project>{96bcc2ac-31d3-49ee-902b-09ae7099bcbd}</Project>
+      <Name>Epi.Cloud.Resources</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Cloud.ServiceBus\Epi.Cloud.ServiceBus.csproj">
       <Project>{247f0154-3f6b-409b-beba-1bf9302d3b9e}</Project>
       <Name>Epi.Cloud.ServiceBus</Name>
@@ -149,12 +148,6 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="EmailMessages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>EmailMessages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets')" />

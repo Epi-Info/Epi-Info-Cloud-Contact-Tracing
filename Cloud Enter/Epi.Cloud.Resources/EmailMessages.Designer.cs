@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Epi.Cloud.DataEntryServices {
+namespace Epi.Cloud.Resources.EmailMessages {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Epi.Cloud.DataEntryServices {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Epi.Cloud.DataEntryServices.EmailMessages", typeof(EmailMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Epi.Cloud.Resources.EmailMessages", typeof(EmailMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,15 @@ namespace Epi.Cloud.DataEntryServices {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is a test.
+        /// </summary>
+        internal static string AMessageForUnitTests {
+            get {
+                return ResourceManager.GetString("AMessageForUnitTests", resourceCulture);
             }
         }
         
@@ -79,7 +88,7 @@ namespace Epi.Cloud.DataEntryServices {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &quot;Your Epi Info Cloud Enter Password has been updated&quot;.
+        ///   Looks up a localized string similar to Your Epi Info Cloud Enter Password has been updated.
         /// </summary>
         internal static string PasswordChanged_Subject {
             get {

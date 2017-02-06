@@ -211,7 +211,164 @@ namespace Epi.DataPersistenceServices.DocumentDB
 		}
 
 
+        #region UpdateAttachment
+        public async Task<bool> UpdateAttachment(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
+        {
+            newResponseStatus = responseStatus;
+            Attachment attachment = null;
+            bool isSuccessful = false;
+            bool deleteResponse = false;
+            try
+            {
+                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
+                var formResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
+                if (formResponseProperties != null)
+                {
+                    //Is status is Saved and check if attachment is existed or not.If attachment is null and delete attachment
+                    if (newResponseStatus == RecordStatus.Saved)
+                    {
+                        attachment = ReadAttachment(responseId, AttachmentId);
+                        if (attachment != null)
+                        {
+                            deleteResponse = DeleteAttachment(attachment);
+                        }
+                    }
+                    if (newResponseStatus != formResponseProperties.RecStatus)
+                    {
+                        switch (newResponseStatus)
+                        {
+                            case RecordStatus.Saved:
+                                formResponseProperties.IsNewRecord = false;
+                                formResponseProperties.RecStatus = RecordStatus.Saved;
+                                var formResponseSave = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return isSuccessful;
+        }
 
+        #endregion
+
+        
+
+        #region NewRecordDontSave
+        public bool DeleteAllSurveyData(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
+        {
+            newResponseStatus = responseStatus;
+            bool isSuccessful = false;
+            try
+            {
+                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
+                var existingFormResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
+                if (existingFormResponseProperties != null)
+                {
+                    if (newResponseStatus != existingFormResponseProperties.RecStatus)
+                    {
+                        //Read all survey info by responseId
+                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
+
+                        //Delete FormInfo
+                        if (hierarchialResponse.FormResponseProperties != null)
+                        {
+                            if (hierarchialResponse.FormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
+                            {
+                                var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, existingFormResponseProperties.GlobalRecordID);
+                                var response = Client.DeleteDocumentAsync(docLink).Result;
+                            }
+                        }
+                        //Delete Parent
+                        if (hierarchialResponse.PageResponsePropertiesList != null)
+                        {
+                            foreach (var pageAttachmentResponseProperties in hierarchialResponse.PageResponsePropertiesList)
+                            {
+                                var collectionName = hierarchialResponse.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
+                                try
+                                {
+                                    var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, existingFormResponseProperties.GlobalRecordID);
+                                    var response = Client.DeleteDocumentAsync(docLink).Result;
+                                }
+                                catch (Exception ex)
+                                {
+
+                                }
+                            }
+                        }
+                        //Delete Child
+
+                        if (hierarchialResponse.ChildResponseList != null && hierarchialResponse.ChildResponseList.Count > 0)
+                        {
+                            foreach (var pageAttachmentResponseProperties in hierarchialResponse.ChildResponseList)
+                            {
+                                DeleteChildOfChilds(hierarchialResponse);
+                            }
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return isSuccessful;
+        }
+
+        #endregion
+
+        #region Restore Child of Child
+        public async Task<bool> RestoreAttachment(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties, FormResponseProperties existingFormResponseProperties)
+        {
+            bool isSuccessful = false;
+            if (hierarchicalDocumentResponseProperties.ChildResponseList.Count == 0)
+            {
+                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
+                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
+
+                //Restore Attachment to FormInfo
+                if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
+                {
+                    if (existingFormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
+                    {
+                        existingFormResponseProperties.RecStatus = RecordStatus.Saved;
+                        //var formResponse = Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).Result;
+                        var formResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties);
+                    }
+                }
+                if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList != null)
+                {
+                    foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.PageResponsePropertiesList)
+                    {
+                        var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
+                        Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
+                        try
+                        {
+                            var ParentResponse = Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).Result;
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+            }
+            if (hierarchicalDocumentResponseProperties.ChildResponseList.Count > 0)
+            {
+                HierarchicalDocumentResponseProperties _hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
+                _hierarchicalDocumentResponseProperties.ChildResponseList = hierarchicalDocumentResponseProperties.ChildResponseList;
+                var result = RestoreAttachment(hierarchicalDocumentResponseProperties, existingFormResponseProperties);
+            }
+            return isSuccessful;
+        }
+
+
+        #endregion
 
         #region Delete Child of Child
         public void DeleteChildOfChilds(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
