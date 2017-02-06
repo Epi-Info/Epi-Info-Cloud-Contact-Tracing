@@ -7,9 +7,9 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
     {
         FormSettingBO GetFormSettings(string FormId, int CurrentOrgId);
         FormSettingBO GetFormSettings();
-        void UpDateColumnNames(FormSettingBO FormSettingBO, string FormId);
-        void UpDateFormMode(FormInfoBO FormInfoBO);
-        void UpDateSettingsList(FormSettingBO FormSettingBO, string FormId);
+        void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId);
+        void UpdateFormMode(FormInfoBO FormInfoBO);
+        void UpdateSettingsList(FormSettingBO FormSettingBO, string FormId);
         List<string> GetAllColumnNames(string FormId);
         Dictionary<int, string> GetOrgAdmins(Dictionary<int, string> SelectedOrgList);
         List<UserBO> GetOrgAdminsByFormId(string FormId);

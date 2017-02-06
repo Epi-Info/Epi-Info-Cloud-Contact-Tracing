@@ -22,7 +22,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
                 {
                     User CurrentUser = context.Users.Single(x => x.UserID == userId);
 
-                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == Roles.OrgAdministrator);
+                    var UserOrganizations = CurrentUser.UserOrganizations.Where(x => x.RoleId == Roles.Administrator);
 
                     List<string> Assigned = GetAssignedForms(context, CurrentUser);
 
@@ -196,7 +196,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
                     {
 
 
-                        var userInfo = context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == Roles.OrgAdministrator);
+                        var userInfo = context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == Roles.Administrator);
                         if (userInfo.Count() > 0)
                         {
                             isShared = true;

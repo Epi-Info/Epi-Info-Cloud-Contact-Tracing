@@ -2,8 +2,8 @@
 {
 	public struct Roles
 	{
-		public const int User = 1;
-		public const int OrgAdministrator = 2;
-		public const int Administrator = 3;
+		public const int Analyst = 1;
+		public const int Administrator = 2;
+		public const int SuperAdministrator = 3;
 	}
 }

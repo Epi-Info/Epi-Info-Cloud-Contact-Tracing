@@ -432,7 +432,7 @@ namespace Epi.Web.EF
 
                                     where UserOrganizationTable.OrganizationID == OrganizationTable.OrganizationId &&
                                     UserOrganizationTable.UserID == UserId &&
-                                    UserOrganizationTable.RoleId == Roles.OrgAdministrator &&
+                                    UserOrganizationTable.RoleId == Roles.Administrator &&
                                     UserOrganizationTable.Active == true &&
                                     OrganizationTable.IsEnabled == true
                                     select OrganizationTable;

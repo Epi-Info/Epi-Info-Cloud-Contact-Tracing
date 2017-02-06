@@ -146,7 +146,7 @@ namespace Epi.Web.EF
 
 
         }
-        public void UpDateColumnNames(FormSettingBO FormSettingBO, string FormId)
+        public void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId)
         {
             Guid Id = new Guid(FormId);
             try
@@ -184,7 +184,7 @@ namespace Epi.Web.EF
 
 
         }
-        public void UpDateFormMode(FormInfoBO FormInfoBO)
+        public void UpdateFormMode(FormInfoBO FormInfoBO)
         {
 
             try
@@ -213,7 +213,7 @@ namespace Epi.Web.EF
             }
 
         }
-        public void UpDateSettingsList(FormSettingBO FormSettingBO, string FormId)
+        public void UpdateSettingsList(FormSettingBO FormSettingBO, string FormId)
         {
 
             Guid Id = new Guid(FormId);
@@ -356,7 +356,7 @@ namespace Epi.Web.EF
                     {
                         int OrgId = int.Parse(org.Value);
 
-                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == OrgId && x.RoleId == Roles.OrgAdministrator && x.Active == true).ToList();
+                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == OrgId && x.RoleId == Roles.Administrator && x.Active == true).ToList();
 
                         foreach (var item in AdminList)
                         {
@@ -397,7 +397,7 @@ namespace Epi.Web.EF
                     foreach (var Org in Orgs)
                     {
 
-                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == Org.OrganizationId && x.RoleId == Roles.OrgAdministrator && x.Active == true);
+                        var AdminList = Context.UserOrganizations.Where(x => x.OrganizationID == Org.OrganizationId && x.RoleId == Roles.Administrator && x.Active == true);
                         foreach (var Admin in AdminList)
                         {
                             UserBO UserBO = new UserBO();

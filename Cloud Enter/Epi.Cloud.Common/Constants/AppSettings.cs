@@ -2,39 +2,58 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
-using System.Reflection;
 
 namespace Epi.Cloud.Common.Constants
 {
     public static class AppSettings
     {
-
         public struct Key
         {
+            // No Default Value
             public const string BaseURL = "BaseURL";
+
+            // No Default Value
             public const string URL = "URL";
 
             #region EMail Settings
+
             [DefaultValue(true)]
             public const string EmailUseAuthentication = "EMAIL_USE_AUTHENTICATION";
 
             [DefaultValue(true)]
             public const string EmailSubject = "EMAIL_SUBJECT";
-            public const string EmailFrom = "EMAIL_FROM";
-            public const string EmailPassword = "EMAIL_PASSWORD";
+
+            [DefaultValue(true)]
+            public const string EmailUseSSL = "EMAIL_USE_SSL";
+
+            [DefaultValue(25)]
             public const string SmtpPort = "SMTP_PORT";
+
+            // No Default Value
+            public const string EmailFrom = "EMAIL_FROM";
+
+            // No Default Value
+            public const string EmailPassword = "EMAIL_PASSWORD";
+
             #endregion EMail Settings
 
             #region EMail Body Message Text
+
             [DefaultValue("n/a")]
             public const string EpiInfoDownloadURL = "EPI_INFO_DOWNLOAD_URL";
 
             [DefaultValue("No")]
             public const string WindowAuthentication = "WINDOW_AUTHENTICATION";
 
+            // No Default Value
             public const string EndpointAddress = "ENDPOINT_ADDRESS";
+
+            // No Default Value
             public const string BindingProtocol = "BINDING_PROTOCOL";
+
             #endregion EMail Body Message Text
+
+            #region Settings
 
             [DefaultValue(20)]
             public const string ResponsePageSize = "RESPONSE_PAGE_SIZE";
@@ -54,20 +73,38 @@ namespace Epi.Cloud.Common.Constants
             [DefaultValue(false)]
             public const string IsLocalReleaseBuild = "IsLocalReleaseBuild";
 
+            // No Default Value
             public const string Environment = "Environment";
+
+            // No Default Value
             public const string Environment_API = "Environment.API";
+
+            // No Default Value
             public const string MetadataAccessServiceAPI = "MetadataAccessServiceAPI";
 
+            #endregion Settings
+
             #region Security
+
+            // No Default Value
             public const string KeyForUserPasswordSalt = "KeyForUserPasswordSalt";
+
+            // No Default Value
             public const string KeyForConnectionStringPassPhrase = "KeyForConnectionStringPassphrase";
+
+            // No Default Value
             public const string KeyForConnectionStringSalt = "KeyForConnectionStringSalt";
+
+            // No Default Value
             public const string KeyForConnectionStringVector = "KeyForConnectionStringVector";
+
             #endregion Security
 
             #region DocumentDB
+
             [DefaultValue("ResponseSnapshot")]
             public const string AttachmentId = "AttachmentId";
+
             #endregion DocumentDB
         }
 
