@@ -184,12 +184,6 @@ namespace Epi.Web.MVC.Utility
                     }
                     pageResponseDetail.ResponseQA[fieldName] = fieldsListKvp.Value;
                     pageResponseDetail.HasBeenUpdated = true;
-
-                    //var fieldAttributes = metadataAccessor.GetFieldAttributesByPageId(formId, pageId, fieldName);
-                    //if (fieldAttributes != null)
-                    //{
-                    //    fieldAttributes.Value = fieldsListKvp.Value;
-                    //}
                 }
             }
 

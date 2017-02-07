@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
@@ -31,13 +30,7 @@ namespace Epi.DataPersistence.Common.Interfaces
 
         bool SaveFormResponseProperties(SurveyResponseBO request);
 
-        //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId);
-
-        //SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int UserId);
-
         IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
-
-        FormResponseDetail GetHierarchialResponseIdsByResponseId(string responseId, bool includeDeletedRecords = false);
 
 		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
 
