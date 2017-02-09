@@ -104,7 +104,7 @@ namespace Epi.Web.MVC.Controllers
         {
             SurveyAnswerDTO result = null;
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, rootFormId, userId);
+            var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, userId);
             result = surveyAnswerState.SurveyResponseList[0];
             return result;
         }

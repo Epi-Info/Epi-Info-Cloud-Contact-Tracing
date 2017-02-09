@@ -120,24 +120,29 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// </summary>
         private DocumentCollection GetOrCreateCollection(string databaseLink, string collectionId)
         {
-            DocumentCollection documentCollection;
-            if (!_documentCollections.TryGetValue(collectionId, out documentCollection))
+            lock (this)
             {
-                documentCollection = Client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
-                if (documentCollection == null)
+                DocumentCollection documentCollection;
+                if (!_documentCollections.TryGetValue(collectionId, out documentCollection))
                 {
+                    documentCollection = Client.CreateDocumentCollectionQuery(databaseLink).Where(c => c.Id == collectionId).AsEnumerable().FirstOrDefault();
+                    if (documentCollection == null)
+                    {
 #if ConfigureIndexing
 					DocumentCollection collectionSpec = ConfigureIndexing(collectionId);
 #else
-                    var collectionSpec = new DocumentCollection
-                    {
-                        Id = collectionId,
-                    };
+                        var collectionSpec = new DocumentCollection
+                        {
+                            Id = collectionId,
+                        };
 #endif //ConfigureIndexing
-                    documentCollection = Client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
+                        documentCollection = Client.CreateDocumentCollectionAsync(databaseLink, collectionSpec).Result;
+                        _documentCollections[collectionId] = documentCollection;
+
+                    }
                 }
+                return documentCollection;
             }
-            return documentCollection;
         }
 #endregion
 

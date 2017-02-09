@@ -10,7 +10,6 @@ namespace Epi.Cloud.Common.DTO
             ResponseDetail = new FormResponseDetail();
         }
 
-        public List<SurveyAnswerDTO> ResponseHierarchyIds { get; set; }
 
         public Dictionary<string, string> SqlData { get; set; }
 
