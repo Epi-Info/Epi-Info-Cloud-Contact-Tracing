@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Epi.FormMetadata.DataStructures;
 
@@ -7,11 +8,12 @@ namespace Epi.Cloud.Interfaces.MetadataInterfaces
     public interface IProjectMetadataProvider
     {
         string ProjectId { get; }
-        Task<Template> GetProjectMetadataAsync(ProjectScope scope);
+        Guid ProjectGuid { get; }
+        string GetProjectId_RetrieveProjectIfNecessary();
+
+        Task<Template> GetProjectMetadataAsync();
         //Pass the page id and call the DBAccess API and get the project fileds.
-        Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope);
-        Task<Template> GetProjectMetadataWithPageByPageIdAsync(string formId, int pageId);
-        Task<Template> GetProjectMetadataWithPageByPageNumberAsync(string formId, int? pageNumber);
+        //Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope);
         Task<Page> GetPageMetadataAsync(string formId, int pageId);
         Task<FormDigest[]> GetFormDigestsAsync();
         Task<FormDigest> GetFormDigestAsync(string formId);

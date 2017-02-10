@@ -8,6 +8,7 @@ using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
 using Epi.Cloud.MetadataServices.Common.ProxyService;
 using Epi.FormMetadata.Extensions;
 using Epi.FormMetadata.DataStructures;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Epi.Cloud.MetadataServices.Common
 {
@@ -20,7 +21,6 @@ namespace Epi.Cloud.MetadataServices.Common
 
         public async Task<Template> RetrieveProjectMetadata(Guid projectId)
         {
-
             Template metadata = RetriveMetadataFromBlobStorage(projectId);
             if (metadata == null)
             {
@@ -55,10 +55,12 @@ namespace Epi.Cloud.MetadataServices.Common
             {
                 var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
                 _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobCRUD(containerName);
-                var metadataBlobs = _metadataBlobCRUD.GetBlobList();
+                var metadataBlobs = _metadataBlobCRUD.GetBlobList(BlobListingDetails.Metadata);
                 if (metadataBlobs.Count > 0)
                 {
-                    Guid.TryParse(metadataBlobs.First(), out projectId);
+                    var blobMetadataJson = metadataBlobs.First();
+                    var blobMetadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(blobMetadataJson);
+                    Guid.TryParse(blobMetadata[BlobMetadataKeys.ProjectId], out projectId);
                 }
             }
             if (projectId != Guid.Empty)

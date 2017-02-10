@@ -59,20 +59,20 @@ namespace MetadataTests
         //
         #endregion
 
-        [TestMethod]
-        public void FullProjectTemplateMetadataExists()
-        {
+        //[TestMethod]
+        //public void FullProjectTemplateMetadataExists()
+        //{
 
-            EpiCloudCache metaDataCache = new EpiCloudCache();
+        //    EpiCloudCache metaDataCache = new EpiCloudCache();
 
-            //  Guid projectguid = Guid.NewGuid();// Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
-            Guid projectguid = Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
+        //    //  Guid projectguid = Guid.NewGuid();// Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
+        //    Guid projectguid = Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
 
 
-            bool result = metaDataCache.FullProjectTemplateMetadataExists(projectguid);
-            //  Assert.AreEqual(result, false,"Project does not exist");
+        //    bool result = metaDataCache.FullProjectTemplateMetadataExists(projectguid);
+        //    //  Assert.AreEqual(result, false,"Project does not exist");
 
-            Assert.IsTrue(result, " Metadatacache Doesnot Exists");
-        }
+        //    Assert.IsTrue(result, " Metadatacache Doesnot Exists");
+        //}
     }
 }
