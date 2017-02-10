@@ -13,7 +13,7 @@ namespace Epi.Cloud.SqlServer
     {
         PageDigest[][] PageDigests;
         // string connStr = ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities");
-        string connStr = "Server=tcp:eicsradev.database.windows.net,1433;Database=EICDCDev;User ID=eicsraadmin;Password=hK=JDZNjW@S8!pv;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
+        string connStr = "Server=tcp:eicsraqa.database.windows.net,1433;Database=EICDCQA;User ID=eicsraadmin;Password=+Z18]B/h-1F862v;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;";
         public void PersistToSQLServerDB(FormResponseDetail objFormResponseDetail, PageDigest[][] PageDigestsVal)
         {
             PageDigests = PageDigestsVal;
