@@ -20,7 +20,7 @@ namespace Epi.Cloud.Facades.Interfaces
         List<FormInfoModel> GetFormsInfoModelList(FormsInfoRequest formsInfoRequest);
         SurveyInfoResponse GetChildFormInfo(SurveyInfoRequest SurveyInfoRequest);
         SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, string formId = "", int userId = 0);
-        SurveyAnswerResponse GetSurveyAnswerState(string responseId, string formId = "", int userId = 0);
+        SurveyAnswerResponse GetSurveyAnswerState(string responseId, int userId = 0);
         FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest);
         SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest surveyAnswerRequest);

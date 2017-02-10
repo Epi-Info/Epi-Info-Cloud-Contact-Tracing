@@ -31,7 +31,6 @@ namespace Epi.Cloud.Common.BusinessObjects
         public string UserName { get; set; }
         public string ParentId { get; set; }
         public string RelateParentId { get; set; }
-        public List<SurveyResponseBO> ResponseHierarchyIds { get; set; }
         public int ViewId { get; set; }
         public int LastActiveUserId { get; set; }
         public Dictionary<string, string> SqlData { get; set; }
