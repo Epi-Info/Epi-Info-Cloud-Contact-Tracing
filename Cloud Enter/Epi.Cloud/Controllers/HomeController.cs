@@ -374,25 +374,13 @@ namespace Epi.Web.MVC.Controllers
 				Session[SessionKeys.RootFormId] = formId;
 				Session[SessionKeys.PageNumber] = page.Value;
 
-                lock (MetadataAccessor.StaticCache.Gate)
+                if (Session[SessionKeys.ProjectId] == null)
                 {
-                    if (Session[SessionKeys.ProjectId] == null)
-                    {
-
-                        if (!string.IsNullOrWhiteSpace(_projectMetadataProvider.ProjectId) && Guid.Parse(_projectMetadataProvider.ProjectId) != Guid.Empty)
-                        {
-                            Session[SessionKeys.ProjectId] = _projectMetadataProvider.ProjectId;
-                        }
-                        else
-                        {
-                            // Prime the cache
-                            projectMetadata = _projectMetadataProvider.GetProjectMetadataAsync(ProjectScope.TemplateWithNoPages).Result;
-                            Session[SessionKeys.ProjectId] = projectMetadata.Project.Id;
-                        }
-                    }
+                    // This will prime the cache if the project is not already loaded into cache.
+                    Session[SessionKeys.ProjectId] = _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary();
                 }
-
 			}
+
 			//Code added to retain Search Ends. 
 
             var model = new FormResponseInfoModel();

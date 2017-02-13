@@ -864,13 +864,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
         #endregion Get all page responses by ResponseId
 
-        #region Get hierarchial responses by ResponseId for DataConsisitencyServiceAPI
+        #region Get hierarchial responses by ResponseId
         /// <summary>
         /// GetHierarchialResponsesByResponseId
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="includeDeletedRecords"></param>
         /// <returns></returns>
+        /// <remarks> Used by the DataConsisitencyServiceAPI</remarks>
         public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
         {
             HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
@@ -956,7 +957,31 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return pageResponsePropertiesList;
 		}
 
-		private PageResponseProperties ReadPageResponsePropertiesByResponseId(string responseId, Uri pageCollectionUri, string collectionAlias = "c")
+        private List<DocumentResponseProperties> ReadAllResponsesIdsByExpression(string expression, Uri formInfoCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
+        {
+            var documentResponsePropertiesList = new List<DocumentResponseProperties>();
+            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+            try
+            {
+                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
+                    SELECT + AssembleSelect(collectionAlias, "*")
+                    + FROM + collectionAlias
+                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
+                    , queryOptions);
+
+                documentResponsePropertiesList = query.AsEnumerable()
+                    .Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi })
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return documentResponsePropertiesList;
+        }
+
+        private PageResponseProperties ReadPageResponsePropertiesByResponseId(string responseId, Uri pageCollectionUri, string collectionAlias = "c")
 		{
 			PageResponseProperties pageResponseProperties = null;
 			// Set some common query options
@@ -980,72 +1005,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 			return null;
 		}
 
-        #endregion Get hierarchial responses by ResponseId for DataConsisitencyServiceAPI
-
-
-        #region Get hierarchial response IDs by ResponseId
-        /// <summary>
-        /// GetHierarchialResponsesByResponseId
-        /// </summary>
-        /// <param name="responseId"></param>
-        /// <param name="includeDeletedRecords"></param>
-        /// <returns></returns>
-        public HierarchicalDocumentResponseProperties GetHierarchialResponseIdsByResponseId(string responseId, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
-        {
-            HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var documentResponseProperties = ReadAllResponseIdsByExpression(Expression("GlobalRecordID", EQ, responseId), formInfoCollectionUri, includeDeletedRecords).SingleOrDefault();
-            if (documentResponseProperties != null)
-            {
-                hierarchicalDocumentResponseProperties.FormResponseProperties = documentResponseProperties.FormResponseProperties;
-                hierarchicalDocumentResponseProperties.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
-                hierarchicalDocumentResponseProperties.ChildResponseList = GetChildResponseIds(responseId, formInfoCollectionUri);
-            }
-            return hierarchicalDocumentResponseProperties;
-        }
-
-        private List<HierarchicalDocumentResponseProperties> GetChildResponseIds(string parentResponseId, Uri formInfoCollectionUri, bool includeDeletedRecords = false)
-        {
-            var childResponseList = new List<HierarchicalDocumentResponseProperties>();
-            var documentResponsePropertiesList = ReadAllResponseIdsByExpression(Expression("RelateParentId", EQ, parentResponseId), formInfoCollectionUri, includeDeletedRecords);
-            foreach (var documentResponseProperties in documentResponsePropertiesList)
-            {
-                var childResponse = new HierarchicalDocumentResponseProperties();
-                childResponse.FormResponseProperties = documentResponseProperties.FormResponseProperties;
-                childResponse.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
-                childResponseList.Add(childResponse);
-
-                childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri, includeDeletedRecords);
-            }
-            return childResponseList;
-        }
-
-        private List<DocumentResponseProperties> ReadAllResponseIdsByExpression(string expression, Uri formInfoCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
-        {
-            var documentResponsePropertiesList = new List<DocumentResponseProperties>();
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            try
-            {
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                    SELECT + AssembleSelect(collectionAlias, "GlobalRecordID")
-                    + FROM + collectionAlias
-                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
-                    , queryOptions);
-
-                documentResponsePropertiesList = query.AsEnumerable()
-                    .Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi })
-                    .ToList();
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return documentResponsePropertiesList;
-        }
-
-        #endregion Get hierarchial response IDs by ResponseId
+        #endregion Get hierarchial responses by ResponseId
 
         private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(string formId, string relateParentId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
 		{

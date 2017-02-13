@@ -322,15 +322,6 @@ namespace Epi.PersistenceServices.DocumentDB
         }
         #endregion
 
-        #region Get Hierarchial ResponsesIds
-        public FormResponseDetail GetHierarchialResponseIdsByResponseId(string responseId, bool includeDeletedRecords = false)
-        {
-            var hierarchicalDocumentResponseProperties = _surveyResponseCRUD.GetHierarchialResponseIdsByResponseId(responseId, includeDeletedRecords);
-            var hierarchialFormResponseDetail = hierarchicalDocumentResponseProperties.ToFormResponseDetail();
-            return hierarchialFormResponseDetail;
-        }
-        #endregion
-
         #region Get Hierarchial Responses for DataConsisitencyServiceAPI
         public FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false)
         {

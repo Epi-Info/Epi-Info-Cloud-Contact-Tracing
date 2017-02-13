@@ -9,7 +9,6 @@ namespace Epi.DataPersistence.DataStructures
         public PageResponseDetail()
         {
             ResponseQA = new Dictionary<string, string>();
-            ResponseFieldInfo = new Dictionary<string, FieldInfo>();
         }
 
         public string FormId { get; set; }
@@ -23,13 +22,14 @@ namespace Epi.DataPersistence.DataStructures
 		public bool HasBeenUpdated { get; set; }
 
         public Dictionary<string, string> ResponseQA { get; set; }
-        public Dictionary<string, FieldInfo> ResponseFieldInfo { get; set; }
 
 		public override int GetHashCode()
 		{
-			return FormId != null ? FormId.GetHashCode() : 0
-				+ GlobalRecordID != null ? GlobalRecordID.GetHashCode() : 0 
-				+ ResponseQA.GetHashCode();
+            int hash = 27;
+            hash = (13 * hash) + (this.FormId != null ? this.FormId.GetHashCode() : 0);
+            hash = (13 * hash) + (this.GlobalRecordID != null ? this.GlobalRecordID.GetHashCode() : 0);
+            hash = (13 * hash) + (this.ResponseQA != null ? this.ResponseQA.GetHashCode() : 0);
+            return hash;
 		}
 
 		public override bool Equals(object obj)
@@ -56,14 +56,5 @@ namespace Epi.DataPersistence.DataStructures
 			}
 			return areEqual;
 		}
-    }
-
-    public class FieldInfo
-    {
-        public bool IsHidden { get; set; }
-        public bool IsDisabled { get; set; }
-        public bool IsHighlighted { get; set; }
-        public bool IsRequired { get; set; }
-        public string Value { get; set; }
     }
 }

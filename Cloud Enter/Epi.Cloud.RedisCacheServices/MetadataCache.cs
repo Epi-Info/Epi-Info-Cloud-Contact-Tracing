@@ -18,17 +18,18 @@ namespace Epi.Cloud.CacheServices
         private const string FormSubKey = "@";
         private const string FullSubKey = "!";
 
+        private string ComposePageKey(Guid formId, int pageId)
+        {
+            return FormSubKey + (formId).ToString("N") + PageSubKey + pageId;
+        }
+
+#if CacheFullProjectMetadata
         private static Dictionary<string, Template> _dictionaryProjectMetadataObjectCache = new Dictionary<string, Template>();
 
         private string ComposeFullMetadataKey(Guid projectId)
         {
             return projectId.ToString("N") + FullSubKey;
         }
-        private string ComposePageKey(Guid formId, int pageId)
-        {
-            return FormSubKey + (formId).ToString("N") + PageSubKey + pageId;
-        }
-
         private string ComposePageFieldAttributesKey(Guid formId, int pageNumber)
         {
             return FormSubKey + formId.ToString("N") + PageSubKey + pageNumber;
@@ -109,7 +110,7 @@ namespace Epi.Cloud.CacheServices
             }
             return clonedMetadata;
         }
-
+#endif
         public bool PageMetadataExists(Guid projectId, Guid formId, int pageId)
         {
             var pageKey = ComposePageKey(formId, pageId);
@@ -149,8 +150,10 @@ namespace Epi.Cloud.CacheServices
             {
                 var projectId = new Guid(projectTemplateMetadata.Project.Id);
 
+#if CacheFullProjectMetadata
                 var fullMetadataKey = ComposeFullMetadataKey(projectId);
                 _dictionaryProjectMetadataObjectCache[fullMetadataKey] = projectTemplateMetadata;
+#endif
 
                 // Cache the form digests
                 SetFormDigests(projectId, projectTemplateMetadata.Project.FormDigests);
@@ -198,8 +201,10 @@ namespace Epi.Cloud.CacheServices
         {
             lock (MetadataAccessor.StaticCache.Gate)
             {
+#if CacheFullProjectMetadata
                 _dictionaryProjectMetadataObjectCache.Remove(ComposeFullMetadataKey(projectId));
                 _dictionaryProjectMetadataObjectCache.Remove(projectId.ToString("N"));
+#endif
                 DeleteAllKeys(projectId, MetadataKey);
             }
         }

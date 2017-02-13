@@ -21,6 +21,17 @@ namespace Epi.FormMetadata.DataStructures
             Position = pageDigest.Position;
         }
 
+        public override int GetHashCode()
+        {
+            int hash = 27;
+            hash = (13 * hash) + (this.FormName != null ? this.FormName.GetHashCode() : 0);
+            hash = (13 * hash) + (this.FormId != null ? this.FormId.GetHashCode() : 0);
+            hash = (13 * hash) + this.ViewId.GetHashCode();
+            hash = (13 * hash) + this.PageId.GetHashCode();
+            hash = (13 * hash) + this.Position.GetHashCode();
+            return hash;
+        }
+
         public override bool Equals(object obj)
         {
             var other = obj as FieldDigest;
