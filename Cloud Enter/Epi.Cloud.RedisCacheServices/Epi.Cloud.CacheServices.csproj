@@ -80,6 +80,10 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
       <Name>Epi.FormMetadata</Name>

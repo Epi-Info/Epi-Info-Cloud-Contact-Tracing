@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
 using Epi.Cloud.MetadataServices.Common;
+using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
+using Epi.Common.Constants;
 using EpiInfoProjectMetadataAdmin;
-using System.Collections.Generic;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
 {
@@ -87,7 +87,7 @@ namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
                     break;
                 case "CDCQA":
                     MetadataProvider metadataProvider = new MetadataProvider();
-                    var metaData = metadataProvider.RetrieveProjectMetadataViaAPI(Guid.Empty).Result;
+                    var metaData = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;
                     GetBlobList();
                     lstBlob.Refresh();
                     MessageBox.Show("Blob is updated with Name : " + metaData.Project.Name);

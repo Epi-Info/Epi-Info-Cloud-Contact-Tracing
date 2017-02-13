@@ -126,6 +126,10 @@
       <Project>{57ed7a5a-2b03-4d5c-89dd-1b5e3880eafc}</Project>
       <Name>Epi.Cloud.MetadataServices.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
+      <Project>{F4C81667-C307-4DB4-A727-FD42342799CF}</Project>
+      <Name>Epi.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
       <Project>{8ad159a9-1a48-4593-91e0-23ae415b0bb2}</Project>
       <Name>Epi.FormMetadata</Name>

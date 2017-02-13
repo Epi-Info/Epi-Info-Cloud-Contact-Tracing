@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using Epi.FormMetadata.DataStructures;
+using Epi.Common.Constants;
 
 namespace Epi.Cloud.CacheServices
 {
@@ -187,7 +188,10 @@ namespace Epi.Cloud.CacheServices
                     isSuccessful &= Set(projectId, pageKey, json).Result;
                 }
 
-                json = JsonConvert.SerializeObject(projectTemplateMetadataClone, DontSerializeNulls);
+                var projectProperties = new Dictionary<string, string>();
+                projectProperties.Add(BlobMetadataKeys.ProjectId, projectId.ToString("N"));
+                projectProperties.Add("RootFormName", projectTemplateMetadataClone.Project.FormDigests.First().FormName);
+                json = JsonConvert.SerializeObject(projectProperties, DontSerializeNulls);
                 isSuccessful &= Set(projectId, MetadataKey, json).Result;
             }
             return isSuccessful;

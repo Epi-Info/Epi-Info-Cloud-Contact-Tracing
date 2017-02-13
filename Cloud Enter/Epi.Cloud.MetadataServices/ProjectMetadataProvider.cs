@@ -41,26 +41,33 @@ namespace Epi.Cloud.MetadataServices
             }
         }
 
+        public async Task<Template> RetrieveProjectMetadataAsync(Guid projectId)
+        {
+            var metadataProvider = new MetadataProvider();
+            Template metadata = await metadataProvider.RetrieveProjectMetadataAsync(projectId);
+            return metadata;
+        }
+
 
         //Pass the project id and call the DBAccess API and get the project metadata.
 
-        public async Task<Template> GetProjectMetadataAsync()
-        {
-            lock (ConcurrencyGate)
-            {
-                Template metadata = null;
-                metadata = RefreshCache(ProjectGuid);
-                if (metadata == null)
-                {
-                    Template fullMetadata = null;
-                    fullMetadata = RefreshCache(ProjectGuid);
-                    _projectGuid = new Guid(fullMetadata.Project.Id);
+        //public async Task<Template> GetProjectMetadataAsync()
+        //{
+        //    lock (ConcurrencyGate)
+        //    {
+        //        Template metadata = null;
+        //        metadata = RefreshCache(ProjectGuid);
+        //        if (metadata == null)
+        //        {
+        //            Template fullMetadata = null;
+        //            fullMetadata = RefreshCache(ProjectGuid);
+        //            _projectGuid = new Guid(fullMetadata.Project.Id);
 
-                    metadata = fullMetadata;
-                }
-                return metadata;
-            }
-        }
+        //            metadata = fullMetadata;
+        //        }
+        //        return metadata;
+        //    }
+        //}
 
         //public Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope)
         //{
@@ -195,7 +202,7 @@ namespace Epi.Cloud.MetadataServices
             lock (ConcurrencyGate)
             {
                 var metadataProvider = new MetadataProvider();
-                Template metadata = metadataProvider.RetrieveProjectMetadata(projectId).Result;
+                Template metadata = metadataProvider.RetrieveProjectMetadataAsync(projectId).Result;
                 if (metadata != null) _projectGuid = Guid.Parse(metadata.Project.Id);
                 _epiCloudCache.SetProjectTemplateMetadata(metadata);
                 return metadata;

@@ -3,21 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Text;
 using Epi.Cloud.Common.Configuration;
+using Epi.Common.Constants;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 {
-    public struct BlobMetadataKeys
-    {
-        public const string Id = "Id";
-        public const string ProjectId = "ProjectId";
-        public const string ProjectName = "ProjectName";
-        public const string Description = "Description";
-        public const string PublishDate = "PublishDate";
-        public const string Forms = "Forms";
-    }
-
     public partial class MetadataBlobCRUD
     {
 

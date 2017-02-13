@@ -343,7 +343,9 @@
     <None Include="Properties\PublishProfiles\EICDCApiQA - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCApiQA - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCApiQA - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCMetadataAPIDEV - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCMetadataAPIDEV - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCMetadataAPIDEV - Web Deploy %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCMetadataAPIDEV - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCMetadataAPIQA - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCMetadataAPIQA - Web Deploy.pubxml" />

@@ -326,7 +326,6 @@ namespace Epi.Web.MVC.Controllers
         [Authorize]
         public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
         {
-            Template projectMetadata = null;
             page = page.HasValue ? page.Value : 1;
 
             bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
@@ -337,14 +336,13 @@ namespace Epi.Web.MVC.Controllers
             {
                 Session[SessionKeys.SortOrder] = "";
                 Session[SessionKeys.SortField] = "";
-
-                //// TODO: Temporary clear cache
-                //var sessionProjectId =Session[SessionKeys.ProjectId] as string;
-                //if (!string.IsNullOrWhiteSpace(sessionProjectId))
-                //{
-                //    _cacheServices.ClearAllCache(new Guid(sessionProjectId));
-                //}
 			}
+
+            if (Session[SessionKeys.ProjectId] == null)
+            {
+                // This will prime the cache if the project is not already loaded into cache.
+                Session[SessionKeys.ProjectId] = _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary();
+            }
 
             Session[SessionKeys.SelectedOrgId] = orgId;
             if (Session[SessionKeys.RootFormId] != null && Session[SessionKeys.RootFormId].ToString() == formId)
@@ -374,11 +372,6 @@ namespace Epi.Web.MVC.Controllers
 				Session[SessionKeys.RootFormId] = formId;
 				Session[SessionKeys.PageNumber] = page.Value;
 
-                if (Session[SessionKeys.ProjectId] == null)
-                {
-                    // This will prime the cache if the project is not already loaded into cache.
-                    Session[SessionKeys.ProjectId] = _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary();
-                }
 			}
 
 			//Code added to retain Search Ends. 

@@ -165,7 +165,7 @@ namespace Epi.Cloud.SqlServer
 
 
                         var viewProperties = lstGetViews.Select(v => v.First());
-                        var eweFormIds = viewProperties.Select(vp => new Guid(vp.EWEFormId)).Distinct().ToArray();
+                        var eweFormIds = viewProperties.Where(vp => vp.EWEFormId != null).Select(vp => new Guid(vp.EWEFormId)).Distinct().ToArray();
                         var surveyMetadataProperties = metacontext.SurveyMetaDatas
                             .Where(x => eweFormIds.Contains(x.SurveyId))
                             .Select(x => new
@@ -201,7 +201,7 @@ namespace Epi.Cloud.SqlServer
                             view.EIWSOrganizationKey = viewProp.EIWSOrganizationKey;
                             view.EIWSFormId = viewProp.EIWSFormId != null ? viewProp.EIWSFormId.ToLower() : viewProp.EIWSFormId;
                             view.OrganizationKey = viewProp.EWEOrganizationKey;
-                            view.FormId = viewProp.EWEFormId.ToLower();
+                            view.FormId = viewProp.EWEFormId != null ? viewProp.EWEFormId.ToLower() : Guid.Empty.ToString("N");
                             var eweViewProps = surveyMetadataProperties.Where(x => x.SurveyId == new Guid(viewProp.EWEFormId)).SingleOrDefault();
                             if (eweViewProps != null)
                             {
