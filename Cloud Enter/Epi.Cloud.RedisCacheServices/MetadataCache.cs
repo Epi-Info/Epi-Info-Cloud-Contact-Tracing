@@ -14,7 +14,7 @@ namespace Epi.Cloud.CacheServices
     /// </summary>
     public partial class EpiCloudCache : RedisCache, IEpiCloudCache, IMetadataCache
     {
-        private const string MetadataKey = "Metadata";
+        private const string DeploymentPropertiesKey = "DeploymentProperties";
         private const string PageSubKey = "#";
         private const string FormSubKey = "@";
         private const string FullSubKey = "!";
@@ -24,94 +24,17 @@ namespace Epi.Cloud.CacheServices
             return FormSubKey + (formId).ToString("N") + PageSubKey + pageId;
         }
 
-#if CacheFullProjectMetadata
-        private static Dictionary<string, Template> _dictionaryProjectMetadataObjectCache = new Dictionary<string, Template>();
-
-        private string ComposeFullMetadataKey(Guid projectId)
+        public Dictionary<string, string> GetDeploymentProperties(Guid projectId)
         {
-            return projectId.ToString("N") + FullSubKey;
-        }
-        private string ComposePageFieldAttributesKey(Guid formId, int pageNumber)
-        {
-            return FormSubKey + formId.ToString("N") + PageSubKey + pageNumber;
-        }
-
-        public bool FullProjectTemplateMetadataExists(Guid projectId)
-        {
-            bool keyExists = true;
-            string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
-            Template metadata;
-            lock (MetadataAccessor.StaticCache.Gate)
+            Dictionary<string, string> deploymentProperties = null;
+            var json = Get(projectId, DeploymentPropertiesKey).Result;
+            if (json != null)
             {
-                keyExists = _dictionaryProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata);
+                deploymentProperties = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             }
-            return keyExists;
+            return deploymentProperties;
         }
 
-        public Template GetFullProjectTemplateMetadata(Guid projectId)
-        {
-            string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
-            
-            Template metadata = null;
-
-            lock (MetadataAccessor.StaticCache.Gate)
-            {
-                _dictionaryProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata);
-            }
-            return metadata;
-        }
-
-        /// <summary>
-        /// GetProjectTemplateMetadata
-        /// Get the metadata for the specified project without page level metadata 
-        /// unless an optional page id is provided.
-        /// </summary>
-        /// <param name="projectId"></param>
-        /// <param name="formId"></param>
-        /// <param name="pageId"></param>
-        /// <returns>ProjectTemplateMetadata</returns>
-        public Template GetProjectTemplateMetadata(Guid projectId, Guid formId, int? pageId)
-        {
-            Template metadata = null;
-            Template clonedMetadata = null;
-            string fullProjectMetadataKey = ComposeFullMetadataKey(projectId);
-            _dictionaryProjectMetadataObjectCache.TryGetValue(fullProjectMetadataKey, out metadata);
-
-            if (metadata != null)
-            {
-                clonedMetadata = metadata.Clone();
-                if (formId != Guid.Empty && pageId.HasValue)
-                {
-                    var pageMetadata = GetPageMetadata(projectId, formId, pageId.Value);
-                    clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
-                }
-            }
-            return clonedMetadata;
-        }
-
-        public Template GetProjectTemplateMetadataByPageNumber(Guid projectId, Guid formId, int? pageNumber)
-        {
-            Template metadata = null;
-            Template clonedMetadata = null;
-            var projectMetadataWithOutPagesKey = ComposeFullMetadataKey(projectId);
-            _dictionaryProjectMetadataObjectCache.TryGetValue(projectId.ToString("N"), out metadata);
-
-            if (metadata != null)
-            {
-                clonedMetadata = metadata.Clone();
-                if (pageNumber.HasValue)
-                {
-                    var pageId = metadata.Project.FormPageDigests.PageIdFromPageNumber(formId.ToString("N"), pageNumber.Value);
-                    if (pageId != 0)
-                    {
-                        var pageMetadata = GetPageMetadata(projectId, formId, pageId);
-                        clonedMetadata.Project.Views.Where(v => v.ViewId == pageMetadata.ViewId).Single().Pages = new Page[] { pageMetadata };
-                    }
-                }
-            }
-            return clonedMetadata;
-        }
-#endif
         public bool PageMetadataExists(Guid projectId, Guid formId, int pageId)
         {
             var pageKey = ComposePageKey(formId, pageId);
@@ -151,11 +74,6 @@ namespace Epi.Cloud.CacheServices
             {
                 var projectId = new Guid(projectTemplateMetadata.Project.Id);
 
-#if CacheFullProjectMetadata
-                var fullMetadataKey = ComposeFullMetadataKey(projectId);
-                _dictionaryProjectMetadataObjectCache[fullMetadataKey] = projectTemplateMetadata;
-#endif
-
                 // Cache the form digests
                 SetFormDigests(projectId, projectTemplateMetadata.Project.FormDigests);
                 // Cache the page digests
@@ -188,11 +106,17 @@ namespace Epi.Cloud.CacheServices
                     isSuccessful &= Set(projectId, pageKey, json).Result;
                 }
 
-                var projectProperties = new Dictionary<string, string>();
-                projectProperties.Add(BlobMetadataKeys.ProjectId, projectId.ToString("N"));
-                projectProperties.Add("RootFormName", projectTemplateMetadataClone.Project.FormDigests.First().FormName);
-                json = JsonConvert.SerializeObject(projectProperties, DontSerializeNulls);
-                isSuccessful &= Set(projectId, MetadataKey, json).Result;
+                var projectDeploymentProperties = new Dictionary<string, string>();
+                projectDeploymentProperties.Add(BlobMetadataKeys.ProjectId, projectId.ToString("N"));
+                projectDeploymentProperties.Add(BlobMetadataKeys.RootFormName, projectTemplateMetadataClone.Project.FormDigests.First().FormName);
+                foreach(var deploymentProperty in projectTemplateMetadata.ProjectDeploymentProperties)
+                {
+                    projectDeploymentProperties[deploymentProperty.Key] = deploymentProperty.Value;
+                }
+
+                json = JsonConvert.SerializeObject(projectDeploymentProperties, DontSerializeNulls);
+                isSuccessful &= Set(projectId, DeploymentPropertiesKey, json).Result;
+                isSuccessful &= Set(Guid.Empty, DeploymentPropertiesKey, json).Result;
             }
             return isSuccessful;
         }
@@ -205,11 +129,7 @@ namespace Epi.Cloud.CacheServices
         {
             lock (MetadataAccessor.StaticCache.Gate)
             {
-#if CacheFullProjectMetadata
-                _dictionaryProjectMetadataObjectCache.Remove(ComposeFullMetadataKey(projectId));
-                _dictionaryProjectMetadataObjectCache.Remove(projectId.ToString("N"));
-#endif
-                DeleteAllKeys(projectId, MetadataKey);
+                DeleteAllKeys(projectId, DeploymentPropertiesKey);
             }
         }
 
@@ -217,8 +137,9 @@ namespace Epi.Cloud.CacheServices
         {
             lock (MetadataAccessor.StaticCache.Gate)
             {
+                var deploymentProperties = GetDeploymentProperties(Guid.Empty);
                 var projectId = Guid.Empty;
-                DeleteAllKeys(projectId, MetadataKey);
+                DeleteAllKeys(projectId, DeploymentPropertiesKey);
                 DeleteAllKeys(projectId, FormPageDigestsKey);
                 DeleteAllKeys(projectId, FormDigestsKey);
             }

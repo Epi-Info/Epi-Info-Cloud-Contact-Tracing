@@ -14,8 +14,8 @@ namespace Epi.Cloud.CacheServices
     public abstract class RedisCache
     {
         protected static readonly TimeSpan NoTimeout = TimeSpan.Zero;
-        private static readonly TimeSpan InitialTimeout = new TimeSpan(4, 0, 0); // 4 hours
-        private static readonly TimeSpan RenewTimeout = new TimeSpan(4, 0, 0); // 4 hours
+        private static readonly TimeSpan InitialTimeout = NoTimeout; // new TimeSpan(4, 0, 0); // 4 hours
+        private static readonly TimeSpan RenewTimeout = NoTimeout; // TimeSpan(4, 0, 0); // 4 hours
 
         protected static JsonSerializerSettings DontSerializeNulls = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
 
@@ -235,6 +235,10 @@ namespace Epi.Cloud.CacheServices
                     {
                         var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result ;
                     }
+                    else
+                    {
+                        var isSuccesful = Cache.KeyPersistAsync(cacheKey).Result;
+                    }
                 }
 #endif
                 UpdateStats(cacheKey, exists ? StatType.ExistHit : StatType.ExistMiss);
@@ -275,6 +279,10 @@ namespace Epi.Cloud.CacheServices
                     {
                         Cache.KeyExpire(cacheKey, renewTimeout);
                     }
+                    else
+                    {
+                        Cache.KeyPersist(cacheKey);
+                    }
                     UpdateStats(cacheKey, StatType.Hit);
                 }
 #else
@@ -286,6 +294,11 @@ namespace Epi.Cloud.CacheServices
                     {
                         var isSuccessful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result;
                     }
+                    else
+                    {
+                        var isSuccesful = Cache.KeyPersistAsync(cacheKey).Result;
+                    }
+
                 }
 #endif
                 else
@@ -321,9 +334,21 @@ namespace Epi.Cloud.CacheServices
             {
                 bool isSuccesful = false;
 #if RunSynchronous
-                isSuccesful = _retryStrategy.ExecuteWithRetry(() => timeout == NoTimeout ? Cache.StringSet((RedisKey)cacheKey, value) : Cache.StringSet((RedisKey)cacheKey, value, timeout));
+                if (timeout == NoTimeout)
+                {
+                    isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.StringSet((RedisKey)cacheKey, value) && Cache.KeyPersist((RedisKey)cacheKey));
+                }
+                else
+                {
+                    isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.StringSet((RedisKey)cacheKey, value, timeout));
+                }
 #else
-                isSuccesful =  _retryStrategy.ExecuteWithRetry(() => (timeout == NoTimeout ?  Cache.StringSetAsync(cacheKey, value) : Cache.StringSetAsync(cacheKey, value, timeout))).Result;
+                if (timeout == NoTimeout)
+                {
+                    isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.StringSetAsync(cacheKey, value).Result && Cache.KeyPersistAsync(cacheKey).Result);
+                else
+                {
+                    isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.StringSetAsync(cacheKey, value, timeout).Result);
 #endif
                 UpdateStats(cacheKey, isSuccesful ? StatType.Set : StatType.SetFail);
                 return isSuccesful;

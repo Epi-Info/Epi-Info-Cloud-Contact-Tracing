@@ -7,6 +7,7 @@ using Epi.Cloud.Common;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MetadataServices.Common;
+using Epi.Common.Constants;
 using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.MetadataServices
@@ -17,6 +18,7 @@ namespace Epi.Cloud.MetadataServices
 
         private static Guid _projectGuid;
         private readonly IEpiCloudCache _epiCloudCache;
+
         public ProjectMetadataProvider(IEpiCloudCache epiCloudCache)
         {
             _epiCloudCache = epiCloudCache;
@@ -24,7 +26,7 @@ namespace Epi.Cloud.MetadataServices
 
         public IEpiCloudCache Cache { get { return _epiCloudCache; } }
 
-        public string ProjectId { get { return _projectGuid.ToString("N");  } }
+        public string ProjectId { get { return _projectGuid.ToString("N"); } }
 
         public Guid ProjectGuid { get { return _projectGuid; } }
 
@@ -35,7 +37,10 @@ namespace Epi.Cloud.MetadataServices
             {
                 if (_projectGuid == Guid.Empty)
                 {
-                    var metadata = RefreshCache(Guid.Empty);
+                    if (DoesCacheNeedToBeRefreshed(Guid.Empty, out _projectGuid))
+                    {
+                        var metadata = RefreshCache(Guid.Empty);
+                    }
                 }
                 return ProjectId;
             }
@@ -47,38 +52,6 @@ namespace Epi.Cloud.MetadataServices
             Template metadata = await metadataProvider.RetrieveProjectMetadataAsync(projectId);
             return metadata;
         }
-
-
-        //Pass the project id and call the DBAccess API and get the project metadata.
-
-        //public async Task<Template> GetProjectMetadataAsync()
-        //{
-        //    lock (ConcurrencyGate)
-        //    {
-        //        Template metadata = null;
-        //        metadata = RefreshCache(ProjectGuid);
-        //        if (metadata == null)
-        //        {
-        //            Template fullMetadata = null;
-        //            fullMetadata = RefreshCache(ProjectGuid);
-        //            _projectGuid = new Guid(fullMetadata.Project.Id);
-
-        //            metadata = fullMetadata;
-        //        }
-        //        return metadata;
-        //    }
-        //}
-
-        //public Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope)
-        //{
-        //    var metadataProvider = new MetadataProvider();
-        //    Template metadata = metadataProvider.RetrieveProjectMetadata(ProjectGuid).Result;
-        //    if (scope == ProjectScope.TemplateWithAllPages)
-        //    {
-        //        return GetProjectMetadataAsync();
-        //    }
-        //    return GetProjectMetadataWithPageByPageNumberAsync(formId, null);
-        //}
 
         public async Task<Page> GetPageMetadataAsync(string formId, int pageId)
         {
@@ -108,7 +81,7 @@ namespace Epi.Cloud.MetadataServices
             var formDigests = ProjectId != null ? _epiCloudCache.GetFormDigests(ProjectGuid) : null;
             if (formDigests == null)
             {
-                var fullMetadata =  RefreshCache(ProjectGuid);
+                var fullMetadata = RefreshCache(ProjectGuid);
 
                 formDigests = _epiCloudCache.GetFormDigests(ProjectGuid);
             }
@@ -197,6 +170,29 @@ namespace Epi.Cloud.MetadataServices
             return fieldDigests.ToArray();
         }
 
+        bool DoesCacheNeedToBeRefreshed(Guid projectId, out Guid cachedProjectId)
+        {
+            var cacheIsUpToDate = false;
+            lock (ConcurrencyGate)
+            {
+                var cachedDeploymentProperties = Cache.GetDeploymentProperties(projectId);
+                cachedProjectId = cachedDeploymentProperties != null ? Guid.Parse(cachedDeploymentProperties[BlobMetadataKeys.ProjectId]) : Guid.Empty;
+                string cachedPublishDate;
+                if (cachedDeploymentProperties.TryGetValue(BlobMetadataKeys.PublishDate, out cachedPublishDate))
+                {
+                    var metadataProvider = new MetadataProvider();
+                    var mostRecentDeploymentProperties = metadataProvider.GetMostRecentDeploymentPropertiesAsync().Result;
+                    cacheIsUpToDate = mostRecentDeploymentProperties != null && cachedDeploymentProperties != null
+                        && mostRecentDeploymentProperties[BlobMetadataKeys.PublishDate] == cachedPublishDate;
+                    if (projectId != Guid.Empty)
+                    {
+                        cacheIsUpToDate &= (projectId == Guid.Parse(mostRecentDeploymentProperties[BlobMetadataKeys.ProjectId]));
+                    }
+                }
+                return !cacheIsUpToDate;
+            }
+        }
+
         private Template RefreshCache(Guid projectId)
         {
             lock (ConcurrencyGate)
@@ -208,123 +204,5 @@ namespace Epi.Cloud.MetadataServices
                 return metadata;
             }
         }
-
-        //        private async Task<Template> RetrieveProjectMetadata(Guid projectId)
-        //        {
-
-        //            Template metadata = RetriveMetadataFromBlobStorage(projectId);
-        //            if (metadata == null)
-        //            {
-        //                metadata = await RetrieveProjectMetadataViaAPI(projectId);
-        //                SaveMetadata(metadata);
-        //            }
-        //            return metadata;
-        //        }
-
-        //        private async Task<Template> RetrieveProjectMetadataViaAPI(Guid projectId)
-        //        {
-        //            ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
-        //            var metadata = await serviceProxy.GetProjectMetadataAsync(projectId.ToString("N"));
-        //            _projectGuid = metadata != null ? new Guid(metadata.Project.Id) : Guid.Empty;
-        //#if CaptureMetadataJson
-        //            var metadataFromService = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
-        //            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
-        //            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataFromService.json", metadataFromService);
-
-        //            var json = System.IO.File.ReadAllText(@"C:\Junk\ZikaMetadataFromService.json");
-        //            Template metadataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
-        //#endif
-        //            PopulateRequiredPageLevelSourceTables(metadata);
-        //            GenerateDigests(metadata);
-
-        //            return metadata;
-        //        }
-
-        //        private Template RetriveMetadataFromBlobStorage(Guid projectId)
-        //        {
-        //            Template metadata = null;
-        //            if (projectId == Guid.Empty)
-        //            {
-        //                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
-        //                _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobService.MetadataBlobCRUD(containerName);
-        //                var metadataBlobs = _metadataBlobCRUD.GetBlobList();
-        //                if (metadataBlobs.Count > 0)
-        //                {
-        //                    Guid.TryParse(metadataBlobs.First(), out projectId);
-        //                }
-        //            }
-        //            if (projectId != Guid.Empty)
-        //            {
-        //                var json = _metadataBlobCRUD.DownloadText(projectId.ToString("N"));
-        //                metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
-        //            }
-
-        //            return metadata;
-        //        }
-
-        //        private void SaveMetadata(Template metadata)
-        //        {
-        //            var metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
-
-        //#if CaptureMetadataJson
-        //            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
-        //            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
-        //#endif
-
-        //            SaveMetadataToBlobStorage(metadata, metadataWithDigestsJson);
-        //        }
-
-        //        private void SaveMetadataToBlobStorage(Template metadata, string metadataWithDigestsJson)
-        //        {
-        //            if (_metadataBlobCRUD == null)
-        //            {
-        //                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
-        //                _metadataBlobCRUD = new MetadataBlobService.MetadataBlobCRUD(containerName);
-        //            }
-        //            var projectKey = new Guid(metadata.Project.Id).ToString("N");
-
-        //            _metadataBlobCRUD.DeleteBlob(projectKey);
-
-        //            var blobMetadataDictionary = new Dictionary<string, string>();
-        //            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
-        //            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
-        //            blobMetadataDictionary.Add(BlobMetadataKeys.Description, string.IsNullOrWhiteSpace(metadata.Project.Description) ? metadata.Project.Name : metadata.Project.Description);
-        //            StringBuilder sb = new StringBuilder();
-        //            foreach (var form in metadata.Project.FormDigests)
-        //            {
-        //                if (sb.Length > 0) sb.Append(",");
-        //                sb.AppendFormat("{0}({1} page{2})", form.FormName, form.NumberOfPages, form.NumberOfPages == 1 ? "" : "s");
-        //            }
-        //            string forms = sb.ToString();
-        //            blobMetadataDictionary.Add(BlobMetadataKeys.Forms, forms);
-        //            var isUploadBlobSuccessful = _metadataBlobCRUD.UploadText(metadataWithDigestsJson, projectKey, blobMetadataDictionary);
-        //            var metadataList = _metadataBlobCRUD.GetBlobListWithKeys(BlobMetadataKeys.ProjectName, BlobMetadataKeys.Forms);
-        //            metadataList = _metadataBlobCRUD.GetBlobList(Microsoft.WindowsAzure.Storage.Blob.BlobListingDetails.Metadata);
-        //        }
-
-        //        private void GenerateDigests(Template projectTemplateMetadata)
-        //        {
-        //            projectTemplateMetadata.Project.FormDigests = projectTemplateMetadata.ToFormDigests();
-        //            projectTemplateMetadata.Project.FormPageDigests = projectTemplateMetadata.ToPageDigests();
-        //        }
-
-
-        //        private void PopulateRequiredPageLevelSourceTables(Template metadata)
-        //        {
-        //            foreach (var view in metadata.Project.Views)
-        //            {
-        //                var numberOfPages = view.Pages.Length;
-        //                for (int i = 0; i < numberOfPages; ++i)
-        //                {
-        //                    var pageMetadata = view.Pages[i];
-        //                    var pageId = pageMetadata.PageId.Value;
-        //                    var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
-        //                    foreach (var field in fieldsRequiringSourceTable)
-        //                    {
-        //                        field.SourceTableValues = metadata.SourceTables.Where(st => st.TableName == field.SourceTableName).First().Values;
-        //                    }
-        //                }
-        //            }
-        //        }
     }
- }
+}

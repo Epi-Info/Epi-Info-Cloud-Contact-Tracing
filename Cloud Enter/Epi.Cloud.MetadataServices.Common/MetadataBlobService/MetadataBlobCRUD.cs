@@ -59,6 +59,18 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
             return _cloudBlobContainer;
         }
 
+        private CloudBlob GetBlobReference(string blobName)
+        {
+            var blobReference = GetBlobContainer(_containerName).GetBlobReference(blobName);
+            return blobReference;
+        }
+
+        public IDictionary<string, string> GetBlobMetadata(string blobName)
+        {
+            var blobMetadata = GetBlobReference(blobName).Metadata;
+            return blobMetadata;
+        }
+
         public bool UploadText(string content, string blobName, string description = null)
         {
             try

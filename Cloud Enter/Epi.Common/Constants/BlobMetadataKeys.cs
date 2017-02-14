@@ -7,6 +7,7 @@
         public const string ProjectName = "ProjectName";
         public const string Description = "Description";
         public const string PublishDate = "PublishDate";
+        public const string RootFormName = "RootFormName";
         public const string Forms = "Forms";
     }
 }

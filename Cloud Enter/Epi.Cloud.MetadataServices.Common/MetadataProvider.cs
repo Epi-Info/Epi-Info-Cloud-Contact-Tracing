@@ -20,7 +20,17 @@ namespace Epi.Cloud.MetadataServices.Common
 
         private static Guid _projectId;
 
-        public async Task<Template> RetrieveProjectMetadataAsync(Guid projectId)
+        public async Task<Dictionary<string, string>> GetMostRecentDeploymentPropertiesAsync()
+        {
+            var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+            _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobCRUD(containerName);
+            var metadataBlobs = _metadataBlobCRUD.GetBlobList(BlobListingDetails.Metadata);
+            var mostRecentDeploymentProperties = metadataBlobs.Select(json => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json))
+                                                    .OrderByDescending(p => DateTime.Parse(p[BlobMetadataKeys.PublishDate])).FirstOrDefault();
+            return await Task.FromResult(mostRecentDeploymentProperties);
+        }
+
+        public async Task<Template> RetrieveProjectMetadataAsync(Guid projectId, Dictionary<string, string> deploymentProperties = null)
         {
             Template metadata = RetriveMetadataFromBlobStorage(projectId);
             if (metadata == null)
@@ -45,22 +55,23 @@ namespace Epi.Cloud.MetadataServices.Common
 #endif
             PopulateRequiredPageLevelSourceTables(metadata);
             GenerateDigests(metadata);
-            SaveMetadata(metadata);
+            SaveMetadataToBlobStorage(metadata);
             return metadata;
         }
 
         private Template RetriveMetadataFromBlobStorage(Guid projectId)
         {
             Template metadata = null;
+            Dictionary<string, string> blobMetadata = null;
+            var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+            _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobCRUD(containerName);
             if (projectId == Guid.Empty)
             {
-                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
-                _metadataBlobCRUD = _metadataBlobCRUD ?? new MetadataBlobCRUD(containerName);
                 var metadataBlobs = _metadataBlobCRUD.GetBlobList(BlobListingDetails.Metadata);
                 if (metadataBlobs.Count > 0)
                 {
                     var blobMetadataJson = metadataBlobs.First();
-                    var blobMetadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(blobMetadataJson);
+                    blobMetadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(blobMetadataJson);
                     Guid.TryParse(blobMetadata[BlobMetadataKeys.ProjectId], out projectId);
                 }
             }
@@ -70,35 +81,22 @@ namespace Epi.Cloud.MetadataServices.Common
                 if (!string.IsNullOrWhiteSpace(json))
                 {
                     metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
+                    if (blobMetadata != null)
+                    {
+                        metadata.ProjectDeploymentProperties = blobMetadata;
+                    }
+                    else
+                    {
+                        metadata.ProjectDeploymentProperties = _metadataBlobCRUD.GetBlobMetadata(projectId.ToString("N")) as Dictionary<string, string>;
+                    }
                 }
             }
 
             return metadata;
         }
 
-        private void SaveMetadata(Template metadata)
+        private bool SaveMetadataToBlobStorage(Template metadata)
         {
-            var metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
-
-#if CaptureMetadataJson
-            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
-            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
-#endif
-
-            SaveMetadataToBlobStorage(metadata, metadataWithDigestsJson);
-        }
-
-        private void SaveMetadataToBlobStorage(Template metadata, string metadataWithDigestsJson)
-        {
-            if (_metadataBlobCRUD == null)
-            {
-                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
-                _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
-            }
-            var projectKey = new Guid(metadata.Project.Id).ToString("N");
-
-            _metadataBlobCRUD.DeleteBlob(projectKey);
-
             var blobMetadataDictionary = new Dictionary<string, string>();
             blobMetadataDictionary.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
             blobMetadataDictionary.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
@@ -112,9 +110,26 @@ namespace Epi.Cloud.MetadataServices.Common
             }
             string forms = sb.ToString();
             blobMetadataDictionary.Add(BlobMetadataKeys.Forms, forms);
+
+            metadata.ProjectDeploymentProperties = blobMetadataDictionary;
+
+            string metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+
+#if CaptureMetadataJson
+            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
+            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
+#endif
+            if (_metadataBlobCRUD == null)
+            {
+                var containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+                _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
+            }
+            var projectKey = new Guid(metadata.Project.Id).ToString("N");
+
+            _metadataBlobCRUD.DeleteBlob(projectKey);
+
             var isUploadBlobSuccessful = _metadataBlobCRUD.UploadText(metadataWithDigestsJson, projectKey, blobMetadataDictionary);
-            var metadataList = _metadataBlobCRUD.GetBlobListWithKeys(BlobMetadataKeys.ProjectName, BlobMetadataKeys.Forms);
-            metadataList = _metadataBlobCRUD.GetBlobList(Microsoft.WindowsAzure.Storage.Blob.BlobListingDetails.Metadata);
+            return isUploadBlobSuccessful;
         }
 
         private void GenerateDigests(Template projectTemplateMetadata)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Epi.FormMetadata.DataStructures
@@ -6,8 +7,15 @@ namespace Epi.FormMetadata.DataStructures
     [DesignerCategory("code")]
     public class Template
     {
-        private Template _templateCloneSource;
+        public Template()
+        {
+            ProjectDeploymentProperties = new Dictionary<string, string>();
+        }
+
         private int _templateGeneration;
+        
+        public Dictionary<string, string> ProjectDeploymentProperties { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
         public string CreateDate { get; set; }
@@ -18,7 +26,6 @@ namespace Epi.FormMetadata.DataStructures
         public Template Clone()
         {
             var clone = (Template)MemberwiseClone();
-            clone._templateCloneSource = this;
             clone._templateGeneration++;
             clone.Project = Project != null ? Project.Clone() : null;
             return clone;
@@ -29,7 +36,6 @@ namespace Epi.FormMetadata.DataStructures
     public class Project
     {
         private int _projectGeneration;
-        private Project _projectCloneSource;
         public string MetadataSource { get; set; }
         public string EnterMakeviewInterpreter { get; set; }
         public string Id { get; set; }
@@ -58,7 +64,6 @@ namespace Epi.FormMetadata.DataStructures
         public Project Clone()
         {
             var clone = (Project)MemberwiseClone();
-            clone._projectCloneSource = this;
             clone._projectGeneration++;
             clone.Views = new View[Views != null ? Views.Length : 0];
             for (int i = 0; i < clone.Views.Length; ++i)
@@ -72,7 +77,6 @@ namespace Epi.FormMetadata.DataStructures
     [DesignerCategory("code")]
     public partial class View
     {
-        private View _viewCloneSource;
         private int _viewGeneration;
         public int ViewId { get; set; }
         public string Name { get; set; }
@@ -109,7 +113,6 @@ namespace Epi.FormMetadata.DataStructures
         public View Clone()
         {
             var clone = (View)MemberwiseClone();
-            clone._viewCloneSource = this;
             clone._viewGeneration++;
             clone.Pages = new Page[Pages != null ? Pages.Length : 0];
             for (int i = 0; i < clone.Pages.Length; ++i)
@@ -123,7 +126,6 @@ namespace Epi.FormMetadata.DataStructures
     [DesignerCategory("code")]
     public partial class Page
     {
-        private Page _pageCloneSource;
         private int _pageGeneration;
         public int? PageId { get; set; }
         public string Name { get; set; }
@@ -136,7 +138,6 @@ namespace Epi.FormMetadata.DataStructures
         public Page Clone()
         {
             var clone = (Page)MemberwiseClone();
-            clone._pageCloneSource = this;
             clone._pageGeneration++;
             return clone;
         }
