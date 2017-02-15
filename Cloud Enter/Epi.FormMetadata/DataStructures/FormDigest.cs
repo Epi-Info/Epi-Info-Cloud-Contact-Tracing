@@ -54,5 +54,8 @@ namespace Epi.FormMetadata.DataStructures
 
         public int DataAccessRuleId { get; set; }
         public bool IsDraftMode { get; set; }
+
+        [JsonIgnore]
+        public bool IsRootForm { get { return FormId == RootFormId; } }
     }
 }

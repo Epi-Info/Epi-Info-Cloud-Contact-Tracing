@@ -5,11 +5,11 @@ namespace Epi.Web.MVC.Models
     public class RelateModel
     {
         private string _rootFormId;
-        private string _FormId;
-        private List<SurveyAnswerModel> _ResponseIds;
-        private bool _IsRoot;
-        private int _ViewId;
-        private bool _IsSqlProject;
+        private string _formId;
+        private List<SurveyAnswerModel> _responseIds;
+        private bool _isRoot;
+        private int _viewId;
+        private bool _isSqlProject;
         public string RootFormId
         {
             get { return _rootFormId; }
@@ -17,31 +17,31 @@ namespace Epi.Web.MVC.Models
         }
         public string FormId
         {
-            get { return _FormId; }
-            set { _FormId = value; }
+            get { return _formId; }
+            set { _formId = value; }
         }
 
         public List<SurveyAnswerModel> ResponseIds
         {
-            get { return _ResponseIds; }
-            set { _ResponseIds = value; }
+            get { return _responseIds; }
+            set { _responseIds = value; }
         }
 
         public bool IsRoot
         {
-            get { return _IsRoot; }
-            set { _IsRoot = value; }
+            get { return _isRoot; }
+            set { _isRoot = value; }
         }
 
         public int ViewId
         {
-            get { return _ViewId; }
-            set { _ViewId = value; }
+            get { return _viewId; }
+            set { _viewId = value; }
         }
         public bool IsSqlProject
         {
-            get { return _IsSqlProject; }
-            set { _IsSqlProject = value; }
+            get { return _isSqlProject; }
+            set { _isSqlProject = value; }
         }
     }
 }

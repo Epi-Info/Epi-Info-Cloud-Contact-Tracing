@@ -51,7 +51,7 @@ namespace Epi.Cloud.MetadataServices.Common.Extensions
             formsHierarchyBO.FormId = formDigest.FormId;
             formsHierarchyBO.ViewId = formDigest.ViewId;
             formsHierarchyBO.RootFormId = formDigest.RootFormId;
-            formsHierarchyBO.IsRoot = formDigest.FormId == formDigest.RootFormId;
+            formsHierarchyBO.IsRoot = formDigest.IsRootForm;
             return formsHierarchyBO;
         }
 
@@ -72,7 +72,7 @@ namespace Epi.Cloud.MetadataServices.Common.Extensions
             formsHierarchyDTO.FormId = formDigest.FormId;
             formsHierarchyDTO.ViewId = formDigest.ViewId;
             formsHierarchyDTO.RootFormId = formDigest.RootFormId;
-            formsHierarchyDTO.IsRoot = formDigest.FormId == formDigest.RootFormId;
+            formsHierarchyDTO.IsRoot = formDigest.IsRootForm;
             if (surveyInfoDTO != null) formsHierarchyDTO.SurveyInfo = surveyInfoDTO;
             return formsHierarchyDTO;
         }

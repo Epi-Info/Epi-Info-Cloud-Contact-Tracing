@@ -33,6 +33,7 @@ namespace Epi.Cloud.CacheServices
 
         #region Statistics
 
+#if TrackStats
         private static Dictionary<string, CacheStats> _statistics = new Dictionary<string, CacheStats>();
 
         private enum StatType
@@ -146,6 +147,7 @@ namespace Epi.Cloud.CacheServices
                 }
             }
         }
+#endif //TrackStats
         #endregion // Statistics
 
         #region Connection
@@ -193,7 +195,7 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-        #endregion // Conection
+#endregion // Conection
 
         protected async Task<bool> KeyExists(Guid projectId, string key)
         {
@@ -235,18 +237,18 @@ namespace Epi.Cloud.CacheServices
                     {
                         var isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result ;
                     }
-                    else
-                    {
-                        var isSuccesful = Cache.KeyPersistAsync(cacheKey).Result;
-                    }
                 }
 #endif
+#if TrackStats
                 UpdateStats(cacheKey, exists ? StatType.ExistHit : StatType.ExistMiss);
+#endif //TrackStats
                 return exists;
             }
             catch (Exception ex)
             {
-                UpdateStats(cacheKey, StatType.ExistException, ex);
+#if TrackStats
+               UpdateStats(cacheKey, StatType.ExistException, ex);
+#endif //TrackStats
 
                 if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException))
                     return _transientCache.TryGetValue(cacheKey, out transientTemp);
@@ -279,11 +281,9 @@ namespace Epi.Cloud.CacheServices
                     {
                         Cache.KeyExpire(cacheKey, renewTimeout);
                     }
-                    else
-                    {
-                        Cache.KeyPersist(cacheKey);
-                    }
+#if TrackStats
                     UpdateStats(cacheKey, StatType.Hit);
+#endif //TrackStats
                 }
 #else
                 var redisValue = _retryStrategy.ExecuteWithRetry(() => Cache.StringGetAsync(cacheKey)).Result;
@@ -294,22 +294,21 @@ namespace Epi.Cloud.CacheServices
                     {
                         var isSuccessful = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExpireAsync(cacheKey, renewTimeout)).Result;
                     }
-                    else
-                    {
-                        var isSuccesful = Cache.KeyPersistAsync(cacheKey).Result;
-                    }
-
                 }
 #endif
                 else
                 {
+#if TrackStats
                     UpdateStats(cacheKey, StatType.Miss);
+#endif //TrackStats
                 }
                 return redisValue;
             }
             catch (Exception ex)
             {
-                UpdateStats(cacheKey, StatType.GetException, ex);
+#if TrackStats
+               UpdateStats(cacheKey, StatType.GetException, ex);
+#endif //TrackStats
 
                 if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) || ex.GetType() == typeof(System.NullReferenceException))
                     return _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
@@ -350,12 +349,16 @@ namespace Epi.Cloud.CacheServices
                 {
                     isSuccesful = _retryStrategy.ExecuteWithRetry(() => Cache.StringSetAsync(cacheKey, value, timeout).Result);
 #endif
+#if TrackStats
                 UpdateStats(cacheKey, isSuccesful ? StatType.Set : StatType.SetFail);
+#endif //TrackStats
                 return isSuccesful;
             }
             catch (Exception ex)
             {
+#if TrackStats
                 UpdateStats(cacheKey, StatType.SetException, ex);
+#endif //TrackStats
                 if (ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) || ex.GetType() == typeof(System.NullReferenceException))
                 {
                     _transientCache[cacheKey] = value;

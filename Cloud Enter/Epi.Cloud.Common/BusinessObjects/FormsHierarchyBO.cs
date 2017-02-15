@@ -7,12 +7,12 @@ namespace Epi.Cloud.Common.BusinessObjects
     public class FormsHierarchyBO
     {
         private string _rootFormId;
-        private string _FormId;
-        private List<SurveyResponseBO> _ResponseIds;
-        private bool _IsRoot;
-        private int _ViewId;
-        private bool _IsSqlProject;
-        private SurveyInfoBO _SurveyInfo;
+        private string _formId;
+        private List<SurveyResponseBO> _responseIds;
+        private bool _isRoot;
+        private int _viewId;
+        private bool _isSqlProject;
+        private SurveyInfoBO _surveyInfo;
 
         [DataMember]
         public string RootFormId
@@ -23,39 +23,39 @@ namespace Epi.Cloud.Common.BusinessObjects
         [DataMember]
         public string FormId
         {
-            get { return _FormId; }
-            set { _FormId = value; }
+            get { return _formId; }
+            set { _formId = value; }
         }
         [DataMember]
         public List<SurveyResponseBO> ResponseIds
         {
-            get { return _ResponseIds; }
-            set { _ResponseIds = value; }
+            get { return _responseIds; }
+            set { _responseIds = value; }
         }
         [DataMember]
         public bool IsRoot
         {
-            get { return _IsRoot; }
-            set { _IsRoot = value; }
+            get { return _isRoot; }
+            set { _isRoot = value; }
         }
         [DataMember]
         public int ViewId
         {
-            get { return _ViewId; }
-            set { _ViewId = value; }
+            get { return _viewId; }
+            set { _viewId = value; }
         }
         [DataMember]
         public bool IsSqlProject
         {
-            get { return _IsSqlProject; }
-            set { _IsSqlProject = value; }
+            get { return _isSqlProject; }
+            set { _isSqlProject = value; }
         }
 
         [DataMember]
         public SurveyInfoBO SurveyInfo
         {
-            get { return _SurveyInfo; }
-            set { _SurveyInfo = value; }
+            get { return _surveyInfo; }
+            set { _surveyInfo = value; }
 
         }
     }
