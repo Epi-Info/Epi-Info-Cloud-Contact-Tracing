@@ -19,75 +19,48 @@ namespace MvcDynamicForms
     [ModelBinder(typeof(DynamicFormModelBinder))]
     public class Form
     {
-        private string _formWrapper = "div";
-        private string _formWrapperClass = "MvcDynamicForm";
-        private string _fieldPrefix = "MvcDynamicField_";
-        private FieldList _fields;
-        private SurveyInfoDTO _surveyInfo;
+        public Form()
+        {
+            Fields = new FieldList(this);
+        }
+
         public double Width { get; set; }
         public double Height { get; set; }
         public bool IsMobile { get; set; }
         public string FormValuesHasChanged { get; set; }
-        private string _IsDraftModeStyleClass = "";
-
-        public MetadataAccessor MetadataAccessor { get { return _surveyInfo; } }
 
         /// <summary>
         /// The html element that wraps all rendered html.
         /// </summary>
-        public string FormWrapper
-        {
-            get
-            {
-                return _formWrapper;
-            }
-            set
-            {
-                _formWrapper = value;
-            }
-        }
+        public string FormWrapper { get; set; } = "div";
+
         /// <summary>
         /// The class attribute of the FormWrapper element that wraps all rendered html.
         /// </summary>
-        public string FormWrapperClass
-        {
-            get
-            {
-                return _formWrapperClass;
-            }
-            set
-            {
-                _formWrapperClass = value;
-            }
-        }
-        /// <summary>
-        /// A collection of Field objects.
-        /// </summary>
-        public FieldList Fields
-        {
-            get
-            {
-                return _fields;
-            }
-        }
+        public string FormWrapperClass { get; set; } = "MvcDynamicForm";
+
         /// <summary>
         /// Gets or sets the string that is used to prefix html input elements' id and name attributes.
         /// </summary>
         public string FieldPrefix
         {
-            get
-            {
-                return _fieldPrefix.ToLower();
-            }
-            set
-            {
-                _fieldPrefix = value;
-            }
+            get { return _fieldPrefix.ToLower(); }
+            set { _fieldPrefix = value; }
         }
+        private string _fieldPrefix = "MvcDynamicField_";
+
+        /// <summary>
+        /// A collection of Field objects.
+        /// </summary>
+        public FieldList Fields { get; private set; }
+
+        public MetadataAccessor MetadataAccessor { get { return SurveyInfo; } }
+
         /// <summary>
         /// Gets or sets the boolean value determining if the form should serialize itself into the string returned by the RenderHtml() method.
         /// </summary>
         public bool Serialize { get; set; }
+
         /// <summary>
         /// Returns an enumeration of Field objects that are of type InputField.
         /// </summary>
@@ -95,14 +68,10 @@ namespace MvcDynamicForms
         {
             get
             {
-                return _fields.OfType<InputField>();
+                return Fields.OfType<InputField>();
             }
         }
-        public Form()
-        {
-            _fields = new FieldList(this);
-            PageId = string.Empty;
-        }
+
         /// <summary>
         /// Validates each InputField object contained in the Fields collection. Validation also causes the Error property to be set for each InputField object.
         /// </summary>
@@ -111,31 +80,27 @@ namespace MvcDynamicForms
         {
             bool isValid = true;
 
-
             foreach (var field in InputFields)
             {
                 if (!string.IsNullOrEmpty(RequiredFieldsList))
                 {
                     var RequiredList = RequiredFieldsList.Split(',');
-                    bool _Required = false;
+                    bool isRequired = false;
                     foreach (var item in RequiredList)
                     {
                         if (item == field.Key.ToString())
                         {
-                            _Required = true;
+                            isRequired = true;
                             break;
-
                         }
-
                     }
 
-                    if (_Required)
+                    if (isRequired)
                     {
                         field.Required = true;
                     }
                     else
                     {
-
                         field.Required = false;
                     }
                 }
@@ -160,7 +125,7 @@ namespace MvcDynamicForms
         /// <returns>Returns a string containing the rendered html of every contained Field object.</returns>
         public string RenderHtml(bool formatHtml)
         {
-            var formWrapper = new TagBuilder(_formWrapper);
+            var formWrapper = new TagBuilder(FormWrapper);
             if (IsMobile)
             {
                 formWrapper.Attributes.Add("style", "width:auto;height:auto;");
@@ -171,10 +136,10 @@ namespace MvcDynamicForms
             {
                 formWrapper.Attributes.Add("style", string.Format("width:{0}px;height:{1}px;", this.Width, this.Height + 100));
             }
-            formWrapper.Attributes["class"] = _formWrapperClass;
+            formWrapper.Attributes["class"] = FormWrapperClass;
             var html = new StringBuilder(formWrapper.ToString(TagRenderMode.StartTag));
 
-            foreach (var field in _fields.OrderBy(x => x.DisplayOrder))
+            foreach (var field in Fields.OrderBy(x => x.DisplayOrder))
                 html.Append(field.RenderHtml());
 
             if (Serialize)
@@ -208,8 +173,6 @@ namespace MvcDynamicForms
             return html.ToString();*/
         }
 
-
-
         /// <summary>
         /// Returns a string containing the rendered html of every contained Field object. The html can optionally include the Form object's state serialized into a hidden field.
         /// </summary>
@@ -218,6 +181,7 @@ namespace MvcDynamicForms
         {
             return RenderHtml(false);
         }
+
         /// <summary>
         /// This method clears the Error property of each contained InputField.
         /// </summary>
@@ -226,6 +190,7 @@ namespace MvcDynamicForms
             foreach (var inputField in InputFields)
                 inputField.ClearError();
         }
+
         /// <summary>
         /// This method provides a convenient way of adding multiple Field objects at once.
         /// </summary>
@@ -234,7 +199,7 @@ namespace MvcDynamicForms
         {
             foreach (var field in fields)
             {
-                _fields.Add(field);
+                Fields.Add(field);
                 /*
                 if(field is InputField)
                 {
@@ -256,6 +221,7 @@ namespace MvcDynamicForms
                 }*/
             }
         }
+
         /// <summary>
         /// Provides a convenient way the end users' responses to each InputField
         /// </summary>
@@ -280,7 +246,6 @@ namespace MvcDynamicForms
 
             return responses;
         }
-
 
         /// <summary>
         ///  
@@ -314,51 +279,40 @@ namespace MvcDynamicForms
             {
                 return string.Empty;
             }
-
-
-
         }
 
         public string GetErrorSummaryList(List<ErrorSummary> ErrorSummary)
         {
-
-
             StringBuilder ErrorList = new StringBuilder();
             ErrorList.Append("<Ul>");
             foreach (var Error in ErrorSummary)
             {
-                ErrorList.Append("<li>");
-                ErrorList.Append("<B>");
-                ErrorList.Append(Error.FieldName);
-                ErrorList.Append(":");
-                ErrorList.Append("</B>");
-                ErrorList.Append(" ");
-                ErrorList.Append(Error.ErrorValue);
-                ErrorList.Append("</li>");
+                ErrorList.AppendFormat("<li><B>{0}:</B> {1}</li>", Error.FieldName, Error.ErrorValue);
             }
             ErrorList.Append("</Ul>");
 
             return ErrorList.ToString();
-
-        }
-        public SurveyInfoDTO SurveyInfo
-        {
-            get { return this._surveyInfo; }
-            set { this._surveyInfo = value; }
         }
 
-        public string PageId { get; set; }
+        public SurveyInfoDTO SurveyInfo { get; set; }
+        public string PageId { get; set; } = string.Empty;
         public int NumberOfPages { get; set; }
         public int CurrentPage { get; set; }
+
         /// <summary>
         /// IsSaved is a boolean used to find whether the Save button has been clicked. It hs captured as a hidden variable in Survey/Index.cshtml. Based on the value
         /// we display the modal dialg to send email for survey 
         /// </summary>
         public bool IsSaved { get; set; }
+
         /// <summary>
         /// Response Id is saved with the form object to facilitate generating url that can be sent by e-mail or copy text, so a user can retrieve the unfinished survey
         /// </summary>
         public string ResponseId { get; set; }
+        public string FormJavaScript { get; set; }
+        public string IsDraftModeStyleClass { get; set; } = string.Empty;
+        public bool IsAndroid { get; set; }
+
         public int StatusId { get; set; }
         // To return to survey after exit
         public string PassCode { get; set; }
@@ -379,34 +333,18 @@ namespace MvcDynamicForms
 
             return result;
         }
+
         public Epi.Core.EnterInterpreter.Rule_Context GetRelateCheckCodeObj(List<RelatedFormsInfoDTO> Obj, string formCheckCode)
         {
             Epi.Core.EnterInterpreter.EpiInterpreterParser EIP = new Epi.Core.EnterInterpreter.EpiInterpreterParser(Epi.Core.EnterInterpreter.EpiInterpreterParser.GetEnterCompiledGrammarTable());
             Epi.Core.EnterInterpreter.Rule_Context result = (Epi.Core.EnterInterpreter.Rule_Context)EIP.Context;
             foreach (var item in Obj)
             {
-                //result.LoadTemplate(item.MetaData, item.Response);
                 result.LoadTemplate(item.FieldDigests, item.ResponseDetail.FlattenedResponseQA());
             }
             EIP.Execute(formCheckCode);
 
             return result;
         }
-        public string FormJavaScript { get; set; }
-
-
-        public string IsDraftModeStyleClass
-        {
-            get
-            {
-                return _IsDraftModeStyleClass;
-            }
-            set
-            {
-                _IsDraftModeStyleClass = value;
-            }
-        }
-
-        public bool IsAndroid { get; set; }
     }
 }

@@ -76,7 +76,7 @@ namespace MvcDynamicForms.Fields
 
             if (PromptSize > this.ControlWidth)
             {
-                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _ControlWidth.ToString() + "px");
+                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _controlWidth.ToString() + "px");
             }
             else
             {

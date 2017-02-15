@@ -11,17 +11,17 @@ namespace MvcDynamicForms.Fields
     [Serializable]
     public abstract class InputField : Field
     {
-        protected double _Prompttop;
-        protected double _Promptleft;
-        protected double _PromptWidth;
-        protected double _ControlWidth;
-        protected double _ControlHeight;
+        protected double _promptTop;
+        protected double _promptLeft;
+        protected double _promptWidth;
+        protected double _controlWidth;
+        protected double _controlHeight;
         protected string _key = Guid.NewGuid().ToString();
         protected string _requiredMessage = "Required";
         protected string _promptClass = "MvcDynamicFieldPrompt";
         protected string _errorClass = "MvcDynamicFieldError";
-        protected Boolean _IsRequired;
-        protected Boolean _IsReadOnly;
+        protected Boolean _isRequired;
+        protected Boolean _isReadOnly;
         protected int _MaxLength;
         protected string _InputFieldfontstyle;
         protected double _InputFieldfontSize;
@@ -34,28 +34,12 @@ namespace MvcDynamicForms.Fields
         /// Used to identify each InputField when performing model binding.
         /// </summary>
         /// 
-        public int FieldTypeId
-        {
-            get
-            {
-                return _FieldTypeId;
-            }
-            set
-            {
-                _FieldTypeId = value;
-            }
-        }
+        public int FieldTypeId { get; set; }
 
         public string Key
         {
-            get
-            {
-                return _key;
-            }
-            set
-            {
-                _key = value.ToLower();
-            }
+            get { return _key; }
+            set { _key = value.ToLower(); }
         }
         /// <summary>
         /// Used to identify InputFields when working with end users' responses.
@@ -186,15 +170,15 @@ namespace MvcDynamicForms.Fields
             Error = null;
         }
 
-        public double PromptTop { get { return this._Prompttop; } set { this._Prompttop = value; } }
-        public double PromptLeft { get { return this._Promptleft; } set { this._Promptleft = value; } }
+        public double PromptTop { get { return this._promptTop; } set { this._promptTop = value; } }
+        public double PromptLeft { get { return this._promptLeft; } set { this._promptLeft = value; } }
 
-        public double PromptWidth { get { return this._PromptWidth; } set { this._PromptWidth = value; } }
-        public double ControlWidth { get { return System.Math.Truncate(this._ControlWidth); } set { this._ControlWidth = System.Math.Truncate(value); } }
+        public double PromptWidth { get { return this._promptWidth; } set { this._promptWidth = value; } }
+        public double ControlWidth { get { return System.Math.Truncate(this._controlWidth); } set { this._controlWidth = System.Math.Truncate(value); } }
 
-        public double ControlHeight { get { return System.Math.Truncate(this._ControlHeight); } set { this._ControlHeight = System.Math.Truncate(value); } }
-        public Boolean IsRequired { get { return this._IsRequired; } set { this._IsRequired = value; } }
-        public Boolean IsReadOnly { get { return this._IsReadOnly; } set { this._IsReadOnly = value; } }
+        public double ControlHeight { get { return System.Math.Truncate(this._controlHeight); } set { this._controlHeight = System.Math.Truncate(value); } }
+        public Boolean IsRequired { get { return this._isRequired; } set { this._isRequired = value; } }
+        public Boolean IsReadOnly { get { return this._isReadOnly; } set { this._isReadOnly = value; } }
         public int MaxLength { get { return this._MaxLength; } set { this._MaxLength = value; } }
 
         //  protected string InputFieldfontstyle;

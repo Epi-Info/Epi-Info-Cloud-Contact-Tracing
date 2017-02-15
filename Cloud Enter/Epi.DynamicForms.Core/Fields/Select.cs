@@ -89,7 +89,7 @@ namespace MvcDynamicForms.Fields
 
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -181,9 +181,9 @@ namespace MvcDynamicForms.Fields
             // stringSize = (int) Graphics.MeasureString(measureString.ToString(), stringFont).Width;
 
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
-                if ((size.Width) > _ControlWidth)
+                if ((size.Width) > _controlWidth)
                 {
                     // select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
                     select.Attributes.Add("class", GetControlClass() + "fix-me");
@@ -198,7 +198,7 @@ namespace MvcDynamicForms.Fields
             else
             {
                 //select.Attributes.Add("class", GetControlClass() + "text-input fix-me");
-                if ((size.Width) > _ControlWidth)
+                if ((size.Width) > _controlWidth)
                 {
                     select.Attributes.Add("class", GetControlClass() + "fix-me ");
                 }
@@ -227,7 +227,7 @@ namespace MvcDynamicForms.Fields
             //}
 
             string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
-            select.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px ; font-size:" + _ControlFontSize + "pt;" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
+            select.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _controlWidth.ToString() + "px ; font-size:" + _ControlFontSize + "pt;" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
             select.MergeAttributes(_inputHtmlAttributes);
             html.Append(select.ToString(TagRenderMode.StartTag));
 
@@ -390,7 +390,7 @@ namespace MvcDynamicForms.Fields
             ControlClass.Append("validate[");
 
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
 
                 ControlClass.Append("required");

@@ -173,24 +173,28 @@ namespace Epi.Cloud.MetadataServices
         bool DoesCacheNeedToBeRefreshed(Guid projectId, out Guid cachedProjectId)
         {
             var cacheIsUpToDate = false;
+            cachedProjectId = Guid.Empty;
             lock (ConcurrencyGate)
             {
                 var cachedDeploymentProperties = Cache.GetDeploymentProperties(projectId);
-                cachedProjectId = cachedDeploymentProperties != null ? Guid.Parse(cachedDeploymentProperties[BlobMetadataKeys.ProjectId]) : Guid.Empty;
-                string cachedPublishDate;
-                if (cachedDeploymentProperties.TryGetValue(BlobMetadataKeys.PublishDate, out cachedPublishDate))
+                if (cachedDeploymentProperties != null)
                 {
-                    var metadataProvider = new MetadataProvider();
-                    var mostRecentDeploymentProperties = metadataProvider.GetMostRecentDeploymentPropertiesAsync().Result;
-                    cacheIsUpToDate = mostRecentDeploymentProperties != null && cachedDeploymentProperties != null
-                        && mostRecentDeploymentProperties[BlobMetadataKeys.PublishDate] == cachedPublishDate;
-                    if (projectId != Guid.Empty)
+                    cachedProjectId = Guid.Parse(cachedDeploymentProperties[BlobMetadataKeys.ProjectId]);
+                    string cachedPublishDate;
+                    if (cachedDeploymentProperties.TryGetValue(BlobMetadataKeys.PublishDate, out cachedPublishDate))
                     {
-                        cacheIsUpToDate &= (projectId == Guid.Parse(mostRecentDeploymentProperties[BlobMetadataKeys.ProjectId]));
+                        var metadataProvider = new MetadataProvider();
+                        var mostRecentDeploymentProperties = metadataProvider.GetMostRecentDeploymentPropertiesAsync().Result;
+                        cacheIsUpToDate = mostRecentDeploymentProperties != null && cachedDeploymentProperties != null
+                            && mostRecentDeploymentProperties[BlobMetadataKeys.PublishDate] == cachedPublishDate;
+                        if (projectId != Guid.Empty)
+                        {
+                            cacheIsUpToDate &= (projectId == Guid.Parse(mostRecentDeploymentProperties[BlobMetadataKeys.ProjectId]));
+                        }
                     }
                 }
-                return !cacheIsUpToDate;
             }
+            return !cacheIsUpToDate;
         }
 
         private Template RefreshCache(Guid projectId)

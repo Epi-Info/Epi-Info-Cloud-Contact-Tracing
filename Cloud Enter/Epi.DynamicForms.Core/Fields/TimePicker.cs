@@ -68,7 +68,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -76,7 +76,6 @@ namespace MvcDynamicForms.Fields
             if (!IsValid)
             {
                 ErrorStyle = ";border-color: red";
-
             }
 
             // input element
@@ -85,6 +84,7 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("id", inputName);
             txt.Attributes.Add("type", "text");
             txt.Attributes.Add("value", Value);
+
             ////////////Check code start//////////////////
             EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
             //if Pattern is empty and the control has after event then treat it like a text box
@@ -125,7 +125,7 @@ namespace MvcDynamicForms.Fields
             //todo: add validation
             //txt.Attributes.Add("class", GetControlClass(Value));
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
                 //txt.Attributes.Add("class", "validate[custom[time],required] text-input datepicker");
                 //txt.Attributes.Add("class", "validate[required,custom[time]] text-input datepicker");
@@ -142,7 +142,7 @@ namespace MvcDynamicForms.Fields
 
             string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
 
-            txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
+            txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _controlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
 
             txt.MergeAttributes(_inputHtmlAttributes);
             html.Append(txt.ToString(TagRenderMode.SelfClosing));
@@ -229,7 +229,7 @@ namespace MvcDynamicForms.Fields
                 //dateRange
                 ControlClass.Append("customDate[date],datePickerRange, " + GetRightDateFormat(Lower).ToString() + "," + GetRightDateFormat(Upper).ToString() + ",");
             }
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
 
                 ControlClass.Append("required"); // working fine

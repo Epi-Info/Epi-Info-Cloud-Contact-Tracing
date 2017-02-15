@@ -100,10 +100,10 @@ namespace Epi.Web.MVC.Utility
 												SurveyAnswerResponse surveyAnswerResponse,
 												string responseId,
 												SurveyAnswerDTO surveyAnswerDTO,
-												bool IsSubmited,
-												bool IsSaved,
-												int PageNumber,
-												int UserId)
+												bool isSubmited,
+												bool isSaved,
+												int pageNumber,
+												int userId)
 		{
 			// 1 Get the record for the current survey response
 			// 2 update the current survey response
@@ -111,7 +111,7 @@ namespace Epi.Web.MVC.Utility
 
 			var savedResponseDetail = surveyAnswerDTO.ResponseDetail;
 
-			if (!IsSubmited)
+			if (!isSubmited)
 			{
 				// 2 a. update the current survey answer request
 				surveyAnswerRequest.SurveyAnswerList = surveyAnswerResponse.SurveyResponseList;
@@ -144,7 +144,7 @@ namespace Epi.Web.MVC.Utility
 			////Update page number before saving response 
 			if (surveyAnswerRequest.SurveyAnswerList[0].CurrentPageNumber != 0)
 			{
-				updatedFromResponseDetail.LastPageVisited = PageNumber;
+				updatedFromResponseDetail.LastPageVisited = pageNumber;
 			}
 			if (form.HiddenFieldsList != null)
 			{
@@ -187,7 +187,7 @@ namespace Epi.Web.MVC.Utility
                 }
             }
 
-			if (IsSaved)
+			if (isSaved)
 			{
 				surveyAnswerRequest.SurveyAnswerList[0].Status = RecordStatus.Saved;
 				surveyAnswerRequest.SurveyAnswerList[0].ReasonForStatusChange = RecordStatusChangeReason.Update;

@@ -94,7 +94,7 @@ namespace MvcDynamicForms.Fields
                 var Div = new TagBuilder("Div");
                 Div.Attributes.Add("class", _orientation == Orientation.Vertical ? _verticalClass : _horizontalClass);
                 Div.Attributes["class"] += " " + _listClass;
-                Div.Attributes.Add("style", "position:absolute; left:" + (_left + innerLeft) + "px;top:" + (_top + innerTop) + "px" + ";width:" + _ControlWidth.ToString() + "px" + ";height:" + _ControlHeight.ToString() + "px");
+                Div.Attributes.Add("style", "position:absolute; left:" + (_left + innerLeft) + "px;top:" + (_top + innerTop) + "px" + ";width:" + _controlWidth.ToString() + "px" + ";height:" + _controlHeight.ToString() + "px");
                 html.Append(Div.ToString(TagRenderMode.StartTag));
 
                 if (!_showTextOnRight)

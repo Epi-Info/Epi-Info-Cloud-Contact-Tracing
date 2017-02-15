@@ -34,7 +34,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
             prompt.Attributes.Add("Id", "label" + inputName);
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), IsHidden));
 
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
@@ -67,7 +67,7 @@ namespace MvcDynamicForms.Fields
 
             ////////////Check code end//////////////////
             txt.SetInnerText(Value);
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
                 txt.Attributes.Add("class", "validate[required] text-input");
                 txt.Attributes.Add("data-prompt-position", "topRight:15");

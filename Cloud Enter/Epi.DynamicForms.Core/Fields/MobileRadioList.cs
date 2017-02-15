@@ -84,7 +84,7 @@ namespace MvcDynamicForms.Fields
             legend.SetInnerText(Prompt);
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), IsHidden));
+            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), IsHidden));
             legend.Attributes.Add("style", StyleValues.ToString());
             html.Append(legend.ToString());
 

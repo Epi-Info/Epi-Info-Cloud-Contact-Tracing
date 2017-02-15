@@ -65,7 +65,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -131,7 +131,7 @@ namespace MvcDynamicForms.Fields
             //todo: add validation
             //txt.Attributes.Add("class", GetControlClass(Value));
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
                 //txt.Attributes.Add("class", "validate[custom[time],required] text-input datepicker");
                 txt.Attributes.Add("class", "validate[required,custom[time]] text-input datepicker");
@@ -252,7 +252,7 @@ namespace MvcDynamicForms.Fields
                 //dateRange
                 ControlClass.Append("customDate[date],datePickerRange, " + GetRightDateFormat(Lower).ToString() + "," + GetRightDateFormat(Upper).ToString() + ",");
             }
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
 
                 ControlClass.Append("required"); // working fine

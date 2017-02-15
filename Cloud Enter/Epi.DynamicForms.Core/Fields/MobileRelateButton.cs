@@ -72,7 +72,7 @@ namespace MvcDynamicForms.Fields
             commandButtonTag.Attributes.Add("type", "button");
             commandButtonTag.Attributes.Add("data-theme", "submit2");
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             commandButtonTag.Attributes.Add("style", StyleValues.ToString());
 
             commandButtonTag.Attributes.Add("onclick", "NavigateToChild(" + RelatedViewId + "); ");

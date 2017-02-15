@@ -65,7 +65,7 @@ namespace MvcDynamicForms.Fields
 
             if (PromptSize > this.ControlWidth)
             {
-                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _ControlWidth.ToString() + "px");
+                prompt.Attributes.Add("style", StyleValues.ToString() + ";width:" + _controlWidth.ToString() + "px");
             }
             else
             {
@@ -88,8 +88,8 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("style", "position:absolute;left:"
                 + _left.ToString() + "px;top:"
                 + _top.ToString() + "px" + ";width:"
-                + _ControlWidth.ToString() + "px"
-                + ";height:" + _ControlHeight.ToString() + "px;"
+                + _controlWidth.ToString() + "px"
+                + ";height:" + _controlHeight.ToString() + "px;"
                 + "background:" + _BackgroundColor
                 );// + IsHiddenStyle);
 

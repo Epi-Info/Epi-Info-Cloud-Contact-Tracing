@@ -30,7 +30,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
             prompt.Attributes.Add("Id", "label" + inputName);
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -66,7 +66,7 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("value", Value);
             //txt.Attributes.Add("class", GetControlClass() + "text-input");
             txt.Attributes.Add("class", GetControlClass());
-            if (_IsRequired)
+            if (_isRequired)
             {
                 //  txt.Attributes.Add("class",   GetControlClass() + "text-input");
                 txt.Attributes.Add("data-prompt-position", "topRight:15");
@@ -102,7 +102,7 @@ namespace MvcDynamicForms.Fields
             //}
 
             string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
-            txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
+            txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _controlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle + ";" + InputFieldStyle);
 
             txt.MergeAttributes(_inputHtmlAttributes);
             html.Append(txt.ToString(TagRenderMode.SelfClosing));
@@ -142,7 +142,7 @@ namespace MvcDynamicForms.Fields
             ControlClass.Append("validate[");
 
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
 
                 ControlClass.Append("required");

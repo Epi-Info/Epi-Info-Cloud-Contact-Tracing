@@ -37,7 +37,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
 
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), _PromptWidth.ToString(), Height.ToString()));
@@ -189,7 +189,7 @@ namespace MvcDynamicForms.Fields
 
                 ControlClass.Append("min[" + Lower + "],max[" + Upper + "],");
             }
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
 
                 ControlClass.Append("required");

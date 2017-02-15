@@ -122,7 +122,7 @@ namespace MvcDynamicForms.Fields
 
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), null, null, null, null, _IsHidden));
@@ -216,9 +216,9 @@ namespace MvcDynamicForms.Fields
             // stringSize = (int) Graphics.MeasureString(measureString.ToString(), stringFont).Width;
 
 
-            if (_IsRequired == true)
+            if (_isRequired == true)
             {
-                if ((size.Width) > _ControlWidth)
+                if ((size.Width) > _controlWidth)
                 {
                     select.Attributes.Add("class", "validate[required] text-input fix-me");
                 }
@@ -231,7 +231,7 @@ namespace MvcDynamicForms.Fields
             else
             {
 
-                if ((size.Width) > _ControlWidth)
+                if ((size.Width) > _controlWidth)
                 {
                     select.Attributes.Add("class", "fix-me");
                 }

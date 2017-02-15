@@ -34,7 +34,7 @@ namespace MvcDynamicForms.Fields
             prompt.Attributes.Add("class", "EpiLabel");
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
+            StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
             prompt.Attributes.Add("style", StyleValues.ToString());
             html.Append(prompt.ToString());
 
@@ -94,7 +94,7 @@ namespace MvcDynamicForms.Fields
             txt.Attributes.Add("data-prompt-position", "topLeft:15");
             //txt.Attributes.Add("style", "position:absolute;left:" + _left.ToString() + "px;top:" + _top.ToString() + "px" + ";width:" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle);
 
-            txt.Attributes.Add("style", "" + _ControlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle+ InputFieldStyle);
+            txt.Attributes.Add("style", "" + _controlWidth.ToString() + "px" + ErrorStyle + ";" + IsHiddenStyle + ";" + IsHighlightedStyle+ InputFieldStyle);
             //if (ReadOnly)
             //    {
 
@@ -177,7 +177,7 @@ namespace MvcDynamicForms.Fields
                 //dateRange
                 ControlClass.Append("customDate[date],datePickerRange, " + GetRightDateFormat(Lower, Pattern).ToString() + "," + GetRightDateFormat(Upper, Pattern).ToString() + ",");
 
-                if (_IsRequired == true)
+                if (_isRequired == true)
                 {
 
                     ControlClass.Append("required"); // working fine
@@ -190,7 +190,7 @@ namespace MvcDynamicForms.Fields
             }
             else
             {
-                if (_IsRequired == true)
+                if (_isRequired == true)
                 {
                     ControlClass.Append("required,custom[date]] text-input datepicker({onClose:function(){setTimeout(" + _key + "_after,100);},changeMonth:true,changeYear:true});");
                 }
