@@ -133,8 +133,8 @@ namespace Epi.Web.MVC.Utility
 					var mergedResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail);
 					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageIds = mergedResponseDetail.PageIds;
 					// keep only the pages that have updates
-					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.Where(p => p.HasBeenUpdated).ToList();
-					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
+					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.ToList();    
+                    surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
 					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.AddRange(updatedPageResponseDetailList);
 				}
 			}

@@ -39,177 +39,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             get { return _database ?? GetOrCreateDatabase(DatabaseName); }
         }
-
-        /// <summary>
-        /// UpdateResponseStatus
-        /// </summary>
-        /// <param name="responseId"></param>
-        /// <param name="newResponseStatus"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<bool> UpdateResponseStatus(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
-        {
-            newResponseStatus = responseStatus;
-            Attachment attachment = null;
-            bool isSuccessful = false;
-            bool deleteResponse = false;
-            try
-            {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-
-                var formResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
-                if (formResponseProperties != null)
-                {
-                    //Is status is Saved and check if attachment is existed or not.If attachment is null and delete attachment
-                    if (newResponseStatus == RecordStatus.Saved)
-                    {
-                        attachment = ReadAttachment(responseId, AttachmentId);
-                        // formResponseProperties.RecStatus = responseStatus;
-                        if (attachment != null)
-                        {
-                            deleteResponse = DeleteAttachment(attachment);
-                        }
-                    }
-
-                    if (newResponseStatus != formResponseProperties.RecStatus)
-                    {
-                        FormResponseProperties existingFormResponseProperties = null;
-                        switch (newResponseStatus)
-                        {
-                            case RecordStatus.Saved:
-                                formResponseProperties.IsNewRecord = false;
-                                formResponseProperties.RecStatus = RecordStatus.Saved;
-                                var formResponseSave = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
-                                break;
-                            case RecordStatus.Deleted:
-                                existingFormResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
-
-                                //Restore Attachment to FormInfo
-                                if (existingFormResponseProperties != null)
-                                {
-                                    if (existingFormResponseProperties.GlobalRecordID == formResponseProperties.GlobalRecordID)
-                                    {
-                                        existingFormResponseProperties.IsNewRecord = false;
-                                        existingFormResponseProperties.RecStatus = RecordStatus.Deleted;
-                                        var formResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, existingFormResponseProperties).ConfigureAwait(false);
-                                    }
-                                }
-                                break;
-                            case RecordStatus.Restore:
-                                attachment = ReadAttachment(responseId, AttachmentId);
-                                if (attachment == null)
-                                {
-                                    //Delete FormInfo
-                                    var hierarchialResponse = GetHierarchialResponsesByResponseId(formResponseProperties.GlobalRecordID, true);
-
-                                    //Delete FormInfo
-                                    if (hierarchialResponse.FormResponseProperties != null)
-                                    {
-                                        if (hierarchialResponse.FormResponseProperties.GlobalRecordID == formResponseProperties.GlobalRecordID)
-                                        {
-                                            var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, formResponseProperties.GlobalRecordID);
-                                            var response = Client.DeleteDocumentAsync(docLink).Result;
-                                        }
-                                    }
-                                    //Delete Parent
-                                    if (hierarchialResponse.PageResponsePropertiesList != null)
-                                    {
-                                        foreach (var pageAttachmentResponseProperties in hierarchialResponse.PageResponsePropertiesList)
-                                        {
-                                            var collectionName = hierarchialResponse.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                                            try
-                                            {
-                                                var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, formResponseProperties.GlobalRecordID);
-                                                var response = Client.DeleteDocumentAsync(docLink).Result;
-                                            }
-                                            catch (Exception ex)
-                                            {
-
-                                            }
-                                        }
-                                    }
-                                    //Delete Child
-
-                                    if (hierarchialResponse.ChildResponseList != null && hierarchialResponse.ChildResponseList.Count > 0)
-                                    {
-                                        foreach (var pageAttachmentResponseProperties in hierarchialResponse.ChildResponseList)
-                                        {
-                                            DeleteChildOfChilds(hierarchialResponse);
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = ConvertAttachmentToHierarchical(attachment);
-                                    existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
-
-                                    //Restore Attachment to FormInfo
-                                    if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
-                                    {
-                                        if (existingFormResponseProperties.GlobalRecordID == formResponseProperties.GlobalRecordID)
-                                        {
-                                            formResponseProperties.RecStatus = RecordStatus.Saved;
-                                            var formResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).ConfigureAwait(false);
-                                        }
-                                    }
-                                    //Restore Attachment to Parent
-                                    if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList != null)
-                                    {
-                                        foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.PageResponsePropertiesList)
-                                        {
-                                            var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                                            Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                                            try
-                                            {
-                                                var ParentResponse = await Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties);
-                                            }
-                                            catch (Exception ex)
-                                            {
-
-                                            }
-                                        }
-                                    }
-                                    //Restore Attachment to Child
-                                    if (hierarchicalDocumentResponseProperties.ChildResponseList != null && hierarchicalDocumentResponseProperties.ChildResponseList.Count > 0)
-                                    {
-                                        foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
-                                        {
-                                            //RestoreChildOfChilds(pageAttachmentResponseProperties);
-                                           
-
-                                        }
-                                    }
-                                    //Delete new survey data in Document DB
-                                    if (hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds != null && hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds.Count > 0)
-                                    {
-                                        var RemovePages = existingFormResponseProperties.PageIds.Except(hierarchicalDocumentResponseProperties.FormResponseProperties.PageIds).ToList();
-                                        if (RemovePages.Count > 0)
-                                        {
-                                            deleteResponse = DeleteSurveyDataInDocumentDB(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, hierarchicalDocumentResponseProperties.FormResponseProperties.FormName, RemovePages);
-                                        }
-                                    }
-
-                                    //Delete Attachment
-                                    Uri collectionUri = UriFactory.CreateAttachmentUri(DatabaseName, FormInfoCollectionName, hierarchicalDocumentResponseProperties.FormResponseProperties.Id, AttachmentId);
-                                    deleteResponse = DeleteAttachment(attachment);
-                                }
-
-                                break;
-                            default:
-                                break;
-                        }
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-			return isSuccessful;
-		}
-
+        
 
         #region UpdateAttachment
         public async Task<bool> UpdateAttachment(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
@@ -278,36 +108,39 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         {
                             if (hierarchialResponse.FormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
                             {
-                                var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, existingFormResponseProperties.GlobalRecordID);
-                                var response = Client.DeleteDocumentAsync(docLink).Result;
-                            }
-                        }
-                        //Delete Parent
-                        if (hierarchialResponse.PageResponsePropertiesList != null)
-                        {
-                            foreach (var pageAttachmentResponseProperties in hierarchialResponse.PageResponsePropertiesList)
-                            {
-                                var collectionName = hierarchialResponse.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                                try
-                                {
-                                    var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, existingFormResponseProperties.GlobalRecordID);
-                                    var response = Client.DeleteDocumentAsync(docLink).Result;
-                                }
-                                catch (Exception ex)
-                                {
+                                existingFormResponseProperties.RecStatus = RecordStatus.Deleted;
+                                //var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, existingFormResponseProperties.GlobalRecordID);
+                                var response = Client.UpsertDocumentAsync(formInfoCollectionUri, existingFormResponseProperties, null).ConfigureAwait(false);
 
-                                }
+                                //var response = Client.DeleteDocumentAsync(docLink).Result;
                             }
                         }
-                        //Delete Child
+                        ////Delete Parent
+                        //if (hierarchialResponse.PageResponsePropertiesList != null)
+                        //{
+                        //    foreach (var pageAttachmentResponseProperties in hierarchialResponse.PageResponsePropertiesList)
+                        //    {
+                        //        var collectionName = hierarchialResponse.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
+                        //        try
+                        //        {
+                        //            var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, existingFormResponseProperties.GlobalRecordID);
+                        //            var response = Client.DeleteDocumentAsync(docLink).Result;
+                        //        }
+                        //        catch (Exception ex)
+                        //        {
 
-                        if (hierarchialResponse.ChildResponseList != null && hierarchialResponse.ChildResponseList.Count > 0)
-                        {
-                            foreach (var pageAttachmentResponseProperties in hierarchialResponse.ChildResponseList)
-                            {
-                                DeleteChildOfChilds(hierarchialResponse);
-                            }
-                        }
+                        //        }
+                        //    }
+                        //}
+                        ////Delete Child
+
+                        //if (hierarchialResponse.ChildResponseList != null && hierarchialResponse.ChildResponseList.Count > 0)
+                        //{
+                        //    foreach (var pageAttachmentResponseProperties in hierarchialResponse.ChildResponseList)
+                        //    {
+                        //        DeleteChildOfChilds(hierarchialResponse);
+                        //    }
+                        //}
 
                     }
                 }
@@ -326,7 +159,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         public async Task<bool> RestoreAttachment(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties, FormResponseProperties existingFormResponseProperties)
         {
             bool isSuccessful = false;
-            if (hierarchicalDocumentResponseProperties.ChildResponseList.Count == 0)
+            if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList.Count!= 0)
             {
                 Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
                 existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
@@ -338,7 +171,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     {
                         existingFormResponseProperties.RecStatus = RecordStatus.Saved;
                         //var formResponse = Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).Result;
-                        var formResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties);
+                        var formResponse = await Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).ConfigureAwait(false);
                     }
                 }
                 if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList != null)
@@ -349,7 +182,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
                         try
                         {
-                            var ParentResponse = Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).Result;
+                            var ParentResponse = await Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
@@ -357,13 +190,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         }
                     }
                 }
+
             }
-            if (hierarchicalDocumentResponseProperties.ChildResponseList.Count > 0)
-            {
-                HierarchicalDocumentResponseProperties _hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
-                _hierarchicalDocumentResponseProperties.ChildResponseList = hierarchicalDocumentResponseProperties.ChildResponseList;
-                var result = RestoreAttachment(hierarchicalDocumentResponseProperties, existingFormResponseProperties);
-            }
+            //if (hierarchicalDocumentResponseProperties.ChildResponseList.Count > 0)
+            //{
+            //    HierarchicalDocumentResponseProperties _hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
+            //    _hierarchicalDocumentResponseProperties.ChildResponseList = hierarchicalDocumentResponseProperties.ChildResponseList;
+            //    var result = RestoreAttachment(hierarchicalDocumentResponseProperties, existingFormResponseProperties);
+            //}
             return isSuccessful;
         }
 
@@ -572,14 +406,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 var existingFormResponseProperties = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, formInfoCollectionUri);
                 if (existingFormResponseProperties == null)
                 {
+                    formResponseProperties.FirstSaveTime = DateTime.UtcNow;
                     formResponseProperties.Id = formResponseProperties.GlobalRecordID;
                     formResponseProperties.PageIds = formResponseProperties.PageIds ?? new List<int>();
                     result = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
                 }
                 else
                 {
+                    formResponseProperties.FirstSaveTime = existingFormResponseProperties.FirstSaveTime;
                     //Create attachment
-                    if (existingFormResponseProperties.RecStatus == RecordStatus.Saved)
+                    if (existingFormResponseProperties.IsRootForm && existingFormResponseProperties.RecStatus==RecordStatus.Saved && formResponseProperties.RecStatus == RecordStatus.InProcess)
                     {
                         Attachment attachment = null;
                         var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
