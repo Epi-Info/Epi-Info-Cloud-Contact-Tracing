@@ -23,7 +23,7 @@ namespace Epi.Cloud.Common.BusinessObjects
 
 		public int Role { get; set; }
 
-		public Constant.OperationMode Operation { get; set; }
+		public OperationMode Operation { get; set; }
 
 		public bool IsActive { get; set; }
 

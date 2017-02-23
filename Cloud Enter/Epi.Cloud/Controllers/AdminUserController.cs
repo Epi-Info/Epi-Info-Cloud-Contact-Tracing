@@ -4,19 +4,19 @@ using System.Reflection;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Cloud.Common.Message;
+using Epi.Cloud.Resources;
+using Epi.Cloud.Resources.Constants;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
-using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC.Controllers
 {
     public class AdminUserController : Controller
     {
-        //
-        // GET: /Organization/
         private readonly ISurveyFacade _surveyFacade;
         private readonly ISecurityFacade _securityFacade;
 
@@ -33,7 +33,7 @@ namespace Epi.Web.MVC.Controllers
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
             int orgId = -1;
-           int.TryParse((Session[SessionKeys.CurrentOrgId]?? string.Empty).ToString(),out orgId);           
+            int.TryParse((Session[SessionKeys.CurrentOrgId] ?? string.Empty).ToString(),out orgId);           
             UserOrgModel userOrgModel = GetUserInfoList(orgId);
             userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
             if (Session[SessionKeys.CurrentOrgId] == null)
@@ -41,7 +41,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.CurrentOrgId] = userOrgModel.OrgList[0].OrganizationId;
             }
             
-            return View("UserList", userOrgModel);
+            return View(ViewActions.UserList, userOrgModel);
         }
 
         [HttpGet]
@@ -63,11 +63,11 @@ namespace Epi.Web.MVC.Controllers
                 UserResponse response = _securityFacade.GetUserInfo(request);
                 userModel = response.User[0].ToUserModelR();
                 userModel.IsEditMode = true;
-                return View("UserInfo", userModel);
+                return View(ViewActions.UserInfo, userModel);
             }
 
             userModel.IsActive = true;
-            return View("UserInfo", userModel);
+            return View(ViewActions.UserInfo, userModel);
         }
 
         [HttpPost]
@@ -76,48 +76,56 @@ namespace Epi.Web.MVC.Controllers
             UserOrgModel userOrgModel = new UserOrgModel();
             UserResponse response = new UserResponse();
             UserRequest request = new UserRequest();
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string messageTemplate;
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             try
             {
                 if (ModelState.IsValid)
                 {
                     if (userModel.IsEditMode)
                     {
-                        request.Action = "Update";
+                        request.Action = RequestAction.Update;
 
                         request.User = userModel.ToUserDTO();
 
                          int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
 
-                        request.CurrentUser = UserId;
+                        request.CurrentUser = userId;
                         response = _securityFacade.SetUserInfo(request);
                         userOrgModel = GetUserInfoList(request.CurrentOrg);
-                        userOrgModel.Message = "User information for " + userModel.FirstName + " " + userModel.LastName + " has been updated. ";
+
+                        // "User information for {0} {1} has been updated."
+                        messageTemplate = ResourceProvider.GetResourceString(ResourceNamespaces.UserAdminMessages, UserAdminResourceKeys.UserInformationUpdated);
+                        userOrgModel.Message = string.Format(messageTemplate, userModel.FirstName, userModel.LastName);
                     }
                     else
                     {
-                        request.Action = "";
+                        request.Action = RequestAction.None;
                         request.User = userModel.ToUserDTO();
 
                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
 
-
-                        request.CurrentUser = UserId;
+                        request.CurrentUser = userId;
                         response = _securityFacade.SetUserInfo(request);
 
                         if (response.Message.ToUpper() == "EXISTS" )
                         {
-                            ModelState.AddModelError("Email", "Error occurred. User already exists for this organization.");
-                            return View("UserInfo", userModel);
+                            // "Error occurred. User already exists for this organization."
+                            messageTemplate = ResourceProvider.GetResourceString(ResourceNamespaces.UserAdminMessages, UserAdminResourceKeys.UserAlreadyExists);
+                            ModelState.AddModelError("Email", messageTemplate);
+                            return View(ViewActions.UserInfo, userModel);
                         }
 
                         userOrgModel = GetUserInfoList(request.CurrentOrg);
-                        userOrgModel.Message = "User " + userModel.FirstName + " " + userModel.LastName + " has been added. ";
+
+                        // "User {0} {1} has been added."
+                        messageTemplate = ResourceProvider.GetResourceString(ResourceNamespaces.UserAdminMessages, UserAdminResourceKeys.UserAdded);
+                        userOrgModel.Message = string.Format(messageTemplate, userModel.FirstName, userModel.LastName);
                     }
                 }
                 else
                 {
-                    return View("UserInfo", userModel);
+                    return View(ViewActions.UserInfo, userModel);
                 }
             }
             catch (Exception ex)
@@ -125,7 +133,7 @@ namespace Epi.Web.MVC.Controllers
                 throw ex;
             }
             userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
-            return View("UserList", userOrgModel);
+            return View(ViewActions.UserList, userOrgModel);
         }
 
         [HttpGet]
@@ -133,72 +141,69 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            OrganizationRequest Request = new OrganizationRequest();
-            Request.Organization.OrganizationId = orgid;
-            OrganizationResponse OrganizationUsers = _securityFacade.GetOrganizationUsers(Request);
-            List<UserModel> UserModel = OrganizationUsers.OrganizationUsersList.ToUserModelList();
+            OrganizationRequest request = new OrganizationRequest();
+            request.Organization.OrganizationId = orgid;
+            OrganizationResponse organizationUsers = _securityFacade.GetOrganizationUsers(request);
+            List<UserModel> userModel = organizationUsers.OrganizationUsersList.ToUserModelList();
             ViewBag.SelectedOrg = orgid;
             Session[SessionKeys.CurrentOrgId] = orgid;
 
-            return PartialView("PartialUserList", UserModel);
+            return PartialView("PartialUserList", userModel);
         }
 
-        private UserOrgModel GetUserInfoList(int OrgId = -1)
+        private UserOrgModel GetUserInfoList(int orgId = -1)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            UserOrgModel UserOrgModel = new UserOrgModel();
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            UserOrgModel userOrgModel = new UserOrgModel();
             try
             {
-                OrganizationRequest Request = new OrganizationRequest();
-                Request.UserId = UserId;
-                Request.UserRole = Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString());
-                OrganizationResponse Organizations = _securityFacade.GetAdminOrganizations(Request);
-                List<OrganizationModel> OrgListModel = Organizations.OrganizationList.ToOrganizationModelList();
-                UserOrgModel.OrgList = OrgListModel;
-                if (OrgId != -1)
+                OrganizationRequest request = new OrganizationRequest();
+                request.UserId = userId;
+                request.UserRole = Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString());
+                OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
+                List<OrganizationModel> orgListModel = organizations.OrganizationList.ToOrganizationModelList();
+                userOrgModel.OrgList = orgListModel;
+                if (orgId != -1)
                 {
-                    Request.Organization.OrganizationId = OrgId;
-                    ViewBag.SelectedOrg = OrgId;
+                    request.Organization.OrganizationId = orgId;
+                    ViewBag.SelectedOrg = orgId;
                 }
                 else
                 {
-                    Request.Organization.OrganizationId = Organizations.OrganizationList[0].OrganizationId;
-                    ViewBag.SelectedOrg = Organizations.OrganizationList[0].OrganizationId;
+                    request.Organization.OrganizationId = organizations.OrganizationList[0].OrganizationId;
+                    ViewBag.SelectedOrg = organizations.OrganizationList[0].OrganizationId;
                 }
-                OrganizationResponse OrganizationUsers = _securityFacade.GetOrganizationUsers(Request);
-                List<UserModel> UserModel = OrganizationUsers.OrganizationUsersList.ToUserModelList();
+                OrganizationResponse organizationUsers = _securityFacade.GetOrganizationUsers(request);
+                List<UserModel> userModel = organizationUsers.OrganizationUsersList.ToUserModelList();
 
-                UserOrgModel.UserList = UserModel;
+                userOrgModel.UserList = userModel;
 
             }
-            catch (Exception Ex)
+            catch (Exception ex)
             {
-                throw Ex;
-
+                throw ex;
             }
-            return UserOrgModel;
+            return userOrgModel;
         }
+
         [HttpPost]
         public JsonResult GetUserInfoAD(string email)
         {
-
-            UserModel User = new UserModel();
+            UserModel user = new UserModel();
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
             if (authenticationSection.Mode == AuthenticationMode.Windows)
             {
-                var CurrentUserName = System.Web.HttpContext.Current.User.Identity.Name;
-                var Domain = CurrentUserName.Split('\\')[0].ToString();
-                var UserAD = Utility.WindowsAuthentication.GetUserFromAd(email,Domain );
-                if (UserAD != null)
+                var currentUserName = System.Web.HttpContext.Current.User.Identity.Name;
+                var domain = currentUserName.Split('\\')[0].ToString();
+                var userAD = Utility.WindowsAuthentication.GetUserFromAd(email,domain );
+                if (userAD != null)
                 {
-                User.LastName = UserAD.Surname;
-                User.FirstName = UserAD.GivenName;
+                    user.LastName = userAD.Surname;
+                    user.FirstName = userAD.GivenName;
                 }
             }
-            return Json(User);
-
-
+            return Json(user);
         }
     }
 }

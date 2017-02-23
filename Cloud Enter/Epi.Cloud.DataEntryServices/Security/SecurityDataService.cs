@@ -456,7 +456,7 @@ namespace Epi.Cloud.DataEntryServices
                 if (request.Action.ToUpper() == "UPDATE")
                 {
                     OrganizationBO organizationBO = organizationImplementation.GetOrganizationByOrgId(request.CurrentOrg);
-                    userBO.Operation = Constant.OperationMode.UpdateUserInfo;
+                    userBO.Operation = OperationMode.UpdateUserInfo;
                     userImplementation.UpdateUser(userBO, organizationBO);
                 }
                 else

@@ -77,9 +77,9 @@ namespace Epi.Cloud.Common.DTO
             set { _Role = value; }
         }
 
-        private Constant.OperationMode updateMode;
+        private OperationMode updateMode;
 
-        public Constant.OperationMode Operation
+        public OperationMode Operation
         {
             get { return updateMode; }
             set { updateMode = value; }

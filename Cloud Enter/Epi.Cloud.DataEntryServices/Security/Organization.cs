@@ -154,7 +154,7 @@ namespace Epi.Web.BLL
                 email.To = new List<string>();
                 email.To.Add(UserBO.EmailAddress);
 
-                success = SendEmail(email, Constant.EmailCombinationEnum.InsertOrganization);
+                success = SendEmail(email, EmailCombinationEnum.InsertOrganization);
 
 
             }
@@ -255,7 +255,7 @@ namespace Epi.Web.BLL
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationInfoForAdmin(UserId, UserRole);
             return result;
         }
-        private bool SendEmail(Email email, Constant.EmailCombinationEnum Combination)
+        private bool SendEmail(Email email, EmailCombinationEnum Combination)
         {
 
 
@@ -263,7 +263,7 @@ namespace Epi.Web.BLL
             switch (Combination)
             {
 
-                case Constant.EmailCombinationEnum.InsertOrganization:
+                case EmailCombinationEnum.InsertOrganization:
                     email.Subject = "An Epi Info Cloud Enter account has been created for your organization.";
 
                     break;

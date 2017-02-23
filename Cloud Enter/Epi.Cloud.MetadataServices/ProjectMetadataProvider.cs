@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.CacheServices;
 using Epi.Cloud.Common;
-using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MetadataServices.Common;
 using Epi.Common.Constants;

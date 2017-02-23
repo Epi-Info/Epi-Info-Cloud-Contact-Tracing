@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Reflection;
 using System.Web.Mvc;
 using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Common.EmailServices;
 using Epi.Common.Security;
@@ -13,8 +14,8 @@ namespace Epi.Web.MVC.Controllers
 {
     public class EIWSTController : Controller
     {
-       //declare  SurveyFacade
-        private ISurveyFacade _isurveyFacade;
+        private readonly ISurveyFacade _isurveyFacade;
+
         /// <summary>
         /// injecting surveyFacade to the constructor 
         /// </summary>
@@ -23,34 +24,29 @@ namespace Epi.Web.MVC.Controllers
         {
             _isurveyFacade = isurveyFacade;
         }
+
         private enum TestResultEnum
         {
             Success,
             Error
         }
 
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
         [HttpGet]
         public ActionResult Index(string surveyid)
-            {
+        {
             EIWSTModel TestModel = new EIWSTModel();
             try
-                {
-
+            {
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 ViewBag.Version = version;
-               
-               // string _connectionString = ConfigurationManager.AppSettings["TEST_CONNECTION_STRING"];
+
+                // string _connectionString = ConfigurationManager.AppSettings["TEST_CONNECTION_STRING"];
                 //string connectionStringName = "EIWSADO";
                 string connectionStringName = "EWEADO";
                 //Decrypt connection string here
                 string _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString);
-          
-               // string _connectionString ="Data Source=ETIDHAP56-SQL;Initial Catalog=OSELS_EIWS;User ID=SA;Password=put6uQ";
+
+                // string _connectionString ="Data Source=ETIDHAP56-SQL;Initial Catalog=OSELS_EIWS;User ID=SA;Password=put6uQ";
                 using (var conn = new System.Data.SqlClient.SqlConnection(_connectionString))
                 using (var cmd = conn.CreateCommand())
                 {
@@ -66,83 +62,47 @@ namespace Epi.Web.MVC.Controllers
                             return null;
                         }
                         var TestValue = reader.GetString(reader.GetOrdinal("Status"));
-                     }
-                      TestModel.DBTestStatus = TestResultEnum.Success.ToString();
-                  }
-                 
-                
+                    }
+                    TestModel.DBTestStatus = TestResultEnum.Success.ToString();
                 }
+            }
             catch (Exception ex)
-                {
-              
+            {
+
                 TestModel.DBTestStatus = TestResultEnum.Error.ToString();
                 TestModel.STestStatus = "Incomplete";
                 TestModel.EFTestStatus = "Incomplete";
-                TempData["exc" ] = ex.Message.ToString();
-                TempData["exc1"] = ex.Source.ToString();
-                TempData["exc2"] = ex.StackTrace.ToString();
-              
+                TempData[TempDataKeys.ExceptionMessage] = ex.Message.ToString();
+                TempData[TempDataKeys.ExceptionSource] = ex.Source.ToString();
+                TempData[TempDataKeys.ExceptionStackTrace] = ex.StackTrace.ToString();
 
-                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
-                }
-
+                return View(ViewActions.Index, TestModel);
+            }
 
             try
-                {
+            {
                 Epi.Web.EF.EntityOrganizationDao NewEntity = new Epi.Web.EF.EntityOrganizationDao();
                 List<OrganizationBO> OrganizationBO = new List<OrganizationBO>();
                 OrganizationBO = NewEntity.GetOrganizationNames();
                 if (OrganizationBO != null)
-                    {
-                    TestModel.EFTestStatus = TestResultEnum.Success.ToString();
-                    }
-
-            
-                }
-            catch (Exception ex)
                 {
-
-
+                    TestModel.EFTestStatus = TestResultEnum.Success.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
                 TestModel.EFTestStatus = TestResultEnum.Error.ToString();
                 TestModel.STestStatus = "Incomplete";
-                TempData["exc"] = ex.Message.ToString();
-                TempData["exc1"] = ex.Source.ToString();
-                TempData["exc2"] = ex.StackTrace.ToString();
+                TempData[TempDataKeys.ExceptionMessage] = ex.Message.ToString();
+                TempData[TempDataKeys.ExceptionSource] = ex.Source.ToString();
+                TempData[TempDataKeys.ExceptionStackTrace] = ex.StackTrace.ToString();
 
-                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
-                }
-
-
-            //try
-            //    {
-
-             
-             
-            //    SurveyInfoModel surveyInfoModel = _isurveyFacade.GetSurveyInfoModel(surveyid);
-            //    if (surveyInfoModel != null)
-            //        {
-            //        TestModel.STestStatus = TestResultEnum.Success.ToString();
-            //        }
-            //       return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
-            //     }
-            //catch (Exception ex)  
-            //    {
-                
-               
-            //    TestModel.STestStatus = TestResultEnum.Error.ToString();
-                
-            //    TempData["exc"] = ex.Message.ToString();
-            //    TempData["exc1"] = ex.Source.ToString();
-            //    TempData["exc2"] = ex.StackTrace.ToString();
-
-            //    return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
-            //    }
-            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, TestModel);
-
-
-          
-
+                return View(ViewActions.Index, TestModel);
             }
+
+            return View(ViewActions.Index, TestModel);
+        }
+
         // [AcceptVerbs(HttpVerbs.Post)]
         //[ValidateAntiForgeryToken]
         [HttpPost]
@@ -175,5 +135,4 @@ namespace Epi.Web.MVC.Controllers
             }
         }
     }
-     
 }

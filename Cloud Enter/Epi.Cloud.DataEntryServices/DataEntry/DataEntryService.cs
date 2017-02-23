@@ -151,7 +151,7 @@ namespace Epi.Cloud.DataEntryServices
 
             // Validate SurveyResponse business rules
 
-            if (surveyAnswerRequest.Action != "Delete")
+            if (!surveyAnswerRequest.Action.Equals(RequestAction.Delete, StringComparison.OrdinalIgnoreCase))
             {
                 //if (!SurveyResponse.Validate())
                 //{
@@ -163,12 +163,12 @@ namespace Epi.Cloud.DataEntryServices
                 //}
             }
 
-            if (surveyAnswerRequest.Action.Equals("Create", StringComparison.OrdinalIgnoreCase))
+            if (surveyAnswerRequest.Action.Equals(RequestAction.Create, StringComparison.OrdinalIgnoreCase))
             {
                 _surveyResponseProvider.InsertSurveyResponse(surveyResponseBO);
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
             }
-            else if (surveyAnswerRequest.Action.Equals("CreateMulti", StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.CreateMulti, StringComparison.OrdinalIgnoreCase))
             {
                 if (surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId != null)
                 {
@@ -216,13 +216,13 @@ namespace Epi.Cloud.DataEntryServices
                     }
                 }
             }
-            else if (surveyAnswerRequest.Action.Equals(Constant.UPDATE, StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.Update, StringComparison.OrdinalIgnoreCase))
             {
                 _surveyResponseProvider.UpdateSurveyResponse(surveyResponseBO);
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
             }
 
-            else if (surveyAnswerRequest.Action.Equals(Constant.CREATECHILD, StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.CreateChild, StringComparison.OrdinalIgnoreCase))
             {
                 SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildId(surveyResponseBO.SurveyId);
 
@@ -233,11 +233,11 @@ namespace Epi.Cloud.DataEntryServices
                 List.Add(surveyResponseBO);
                 _surveyResponseProvider.InsertSurveyResponse(List, surveyAnswerRequest.Criteria.UserId, true);
             }
-            else if (surveyAnswerRequest.Action.Equals(Constant.UpdateMulti, StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.UpdateMulti, StringComparison.OrdinalIgnoreCase))
             {
-                throw new NotImplementedException(Constant.UpdateMulti);
+                throw new NotImplementedException(RequestAction.UpdateMulti);
             }
-            else if (surveyAnswerRequest.Action.Equals(Constant.DELETE, StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.Delete, StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
@@ -258,7 +258,7 @@ namespace Epi.Cloud.DataEntryServices
                     Console.WriteLine("DeleteResponse: " + ex.ToString());
                 }
             }
-            else if (surveyAnswerRequest.Action.Equals("DoNotSaveAction", StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.DontSave, StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
@@ -279,7 +279,7 @@ namespace Epi.Cloud.DataEntryServices
                     Console.WriteLine("DeleteResponse: " + ex.ToString());
                 }
             }
-            else if (surveyAnswerRequest.Action.Equals(Constant.DELETERESPONSE, StringComparison.OrdinalIgnoreCase))
+            else if (surveyAnswerRequest.Action.Equals(RequestAction.DeleteResponse, StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
@@ -351,7 +351,7 @@ namespace Epi.Cloud.DataEntryServices
                     else
                     {
 
-                        if (surveyAnswerRequest.Action != null && surveyAnswerRequest.Action.Equals("DoNotSaveAction", StringComparison.OrdinalIgnoreCase))
+                        if (surveyAnswerRequest.Action != null && surveyAnswerRequest.Action.Equals(RequestAction.DontSave, StringComparison.OrdinalIgnoreCase))
                         {
                             surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.Restore);
                         }

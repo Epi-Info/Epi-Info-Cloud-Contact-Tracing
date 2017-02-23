@@ -98,7 +98,6 @@ namespace Epi.Cloud.Metadata.Tests
             var surveyFacade = new Mock<ISurveyFacade>();
             var securityFacade = new Mock<ISecurityFacade>();
             var projectMetadataProvider = new Mock<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>();
-            var iCacheServices = new Mock<Epi.Cloud.CacheServices.IEpiCloudCache>();
             var surveyResponseDao = new Mock<ISurveyResponseDao>();
             var mockControllerContext = new Mock<ControllerContext>();
             var mockSession = new Mock<HttpSessionStateBase>();
@@ -109,7 +108,7 @@ namespace Epi.Cloud.Metadata.Tests
             //formid=63035d12-0386-4e52-a16e-afcadd1d1d7c //257b05f2-dab2-c8e3-caed-92f0f6a88169
             mockSession.SetupGet(s => s[SessionKeys.ProjectId]).Returns("257b05f2-dab2-c8e3-caed-92f0f6a88169"); //somevalue
             mockControllerContext.Setup(p => p.HttpContext.Session).Returns(mockSession.Object);
-            HomeController hmc = new HomeController(surveyFacade.Object, securityFacade.Object, projectMetadataProvider.Object, iCacheServices.Object, surveyResponseDao.Object);
+            HomeController hmc = new HomeController(surveyFacade.Object, securityFacade.Object, projectMetadataProvider.Object, surveyResponseDao.Object);
             hmc.ControllerContext = mockControllerContext.Object;
             // Create fake Controller Context
             //var sessionItems = new SessionStateItemCollection();

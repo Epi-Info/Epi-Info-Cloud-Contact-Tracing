@@ -21,7 +21,7 @@ namespace Epi.Cloud.Common.Extensions
                 ResetPassword = result.ResetPassword,
                 Role = result.Role,
                 UserHighestRole = result.UserHighestRole,
-                Operation = Constant.OperationMode.NoChange,
+                Operation = OperationMode.NoChange,
                 EmailAddress = result.EmailAddress,
                 IsActive = result.IsActive,
                 UGuid = result.UGuid

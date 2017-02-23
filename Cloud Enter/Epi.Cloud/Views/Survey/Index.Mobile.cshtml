@@ -55,7 +55,7 @@
     function DoNotSave() {
 
 
-        $("#myform")[0].Do_Not_Save_action.value = 'true';
+        $("#myform")[0].DontSave.value = 'true';
 
         $("#myform")[0].action = window.location.href;
 
@@ -864,7 +864,7 @@ function SaveForm() {
             <input type="hidden"  name="Read_Response_action" value="false" />
             <input type="hidden"  name="Go_Home_action" value="false" />
             <input type="hidden"  name="Go_One_Level_Up_action" value="false" />
-            <input type="hidden"  name="Do_Not_Save_action" value="false" />
+            <input type="hidden"  name="DontSave" value="false" />
 	        <input type="hidden"  id="RelateButtonWasClicked"  name="Requested_View_Id" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" /> 
             <input type="hidden"  id="RelateButtonWasClicked_Temp"  name="Requested_View_Id_Temp" value="@HttpContext.Current.Session[SessionKeys.RequestedViewId]" /> 
             <input type="hidden"  name="HiddenStatusId" id="HiddenStatusId" value="false" />
