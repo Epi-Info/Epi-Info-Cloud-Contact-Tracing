@@ -45,6 +45,7 @@ namespace Epi.PersistenceServices.DocumentDB
                 RecStatus = RecordStatus.InProcess;
                 PageIds = new List<int>();
             }
+            public bool IsRootForm { get; set; }
             public string GlobalRecordID { get; set; }
             public string FormId { get; set; }
             public string FormName { get; set; }

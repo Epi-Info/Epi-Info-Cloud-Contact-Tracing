@@ -836,7 +836,7 @@ namespace Epi.Web.MVC.Controllers
             int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
             string ChildResponseId = CreateResponse(surveyId, responseId);
-            this.UpdateStatus(responseId, surveyId, RecordStatus.Saved, RecordStatusChangeReason.NewChild);
+            //this.UpdateStatus(responseId, surveyId, RecordStatus.InProcess, RecordStatusChangeReason.NewChild);
 
             return ChildResponseId;
         }
