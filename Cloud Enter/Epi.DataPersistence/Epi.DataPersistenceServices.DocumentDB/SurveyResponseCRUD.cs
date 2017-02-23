@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Epi.Common.Utilities;
 using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
@@ -590,13 +591,27 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                 var searchValue = searchQuery.Value;
                                 string responseValue;
                                 bool responseExists = pageResponseQA.TryGetValue(fieldName, out responseValue);
-                                if ((!responseExists && searchValue != null) || !String.Equals(responseValue, searchValue, StringComparison.OrdinalIgnoreCase))
+                                if (searchValue.Contains("*") || searchValue.Contains("?"))
                                 {
-                                    formResponseDetail.RecStatus = FailedSearchStatus;
-                                    break;
+                                    if ((!responseExists && searchValue != null) || !responseValue.WildCardCompare(searchValue))
+                                    {
+                                        formResponseDetail.RecStatus = FailedSearchStatus;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                    }
                                 }
                                 else
                                 {
+                                    if ((!responseExists && searchValue != null) || !String.Equals(responseValue, searchValue, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        formResponseDetail.RecStatus = FailedSearchStatus;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                    }
                                 }
                             }
 

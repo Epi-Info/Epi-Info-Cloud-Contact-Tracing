@@ -52,6 +52,7 @@
     <Compile Include="Security\Cryptography.cs" />
     <Compile Include="Security\PasswordGenerator.cs" />
     <Compile Include="Security\PasswordHasher.cs" />
+    <Compile Include="Utilities\WildcardExtension.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
