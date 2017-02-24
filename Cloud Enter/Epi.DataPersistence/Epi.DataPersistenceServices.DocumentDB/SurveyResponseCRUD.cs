@@ -519,7 +519,19 @@ namespace Epi.DataPersistenceServices.DocumentDB
             try
 			{
                 // Build a composit of both the grid display field digests and the search field digests
-                var compositeFieldDigestList = fieldDigestList.Values.Select(x => x).Union(searchFields.Values.Select(x => x.Key)).Distinct();
+                var compositeFieldDigestList = fieldDigestList.Values.Select(x => x).ToList();
+                var fieldNames = compositeFieldDigestList.Select(x => x.Field.FieldName).ToList();
+
+                foreach (var searchField in searchFields)
+                {
+                    var searchFieldDigest = searchField.Value.Key;
+                    var searchFieldName = searchFieldDigest.FieldName;
+                    if (!fieldNames.Contains(searchFieldName))
+                    {
+                        fieldNames.Add(searchFieldName);
+                        compositeFieldDigestList.Add(searchFieldDigest);
+                    }
+                }
 
 				// One SurveyResponse per GlobalRecordId
 				Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
