@@ -5,8 +5,8 @@
 <div id="formtitle">
     <h2 class="surveyTitle" style="line-height: 120%;">
         @Model.FormInfoModel.FormName
-</h2>
-<!--<hr class="hr1" />-->
+    </h2>
+    <!--<hr class="hr1" />-->
 </div>
 <script>
     $(document).ready(function () {
@@ -28,6 +28,11 @@
     }
 
 </script>
+<style>
+    #recordstable tfoot{display: none}
+    #recordstable td{vertical-align: middle}
+   
+</style>
 <div id="editsettings">
     @if (Model.FormInfoModel.IsSQLProject)
     {
@@ -243,16 +248,15 @@
                                                                             {
 
                                                                                 <div id='pager'>
-                                                                                    @*@Html.Partial("PagerPartial", Model)*@
+                                                                                    @Html.Partial("PagerPartial", Model)
                                                                                 </div>
                                                                             }
 
 
                                                                         }
                                                                     </div>
-                                                                    <div style="clear: both; margin-bottom: 10px;">
-                                                                    </div>
-                                                                    <div id="recordstable">
+                 
+                                                                        <div id="recordstable">
                                                                         @{
 
                                                                             <div>
@@ -265,8 +269,7 @@
                                                                                     {
                                                                                         @*<span >Showing</span>*@
                                                                                         <span class="boldlabel" style="font-size: 14pt;">
-                                                                                            @(
- Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
+                                                                                            @( Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
                                                                                             -
                                                                                             @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
                                                                                             {
@@ -307,17 +310,24 @@
                                                                                     if (Model.Columns.Count >= 4)
                                                                                     {
                                                                                         gridColumns.Add(webGrid.Column("Column4", (Model.Columns.Count >= 4) ? Model.Columns[3].Value : ""));
+
                                                                                     }
-                                                                                    @webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)
+                                                                                    if (Model.Columns.Count >= 5)
+                                                                                    {
+                                                                                        gridColumns.Add(webGrid.Column("Column5", (Model.Columns.Count >= 5) ? Model.Columns[4].Value : ""));
+                                                                                    }
+
+                                                                                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
 
                                                                                     @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
 
-                                                                                    @webGrid.GetHtml(columns: gridColumns, mode: WebGridPagerModes.All, numericLinksCount: 3);
+                                                                                    @*@webGrid.GetHtml(columns: gridColumns, mode: WebGridPagerModes.All);*@
 
-
+                                                                                    @webGrid.GetHtml(columns: gridColumns,  numericLinksCount: 0);
+                                                                                    // mode: WebGridPagerModes.Numeric, numericLinksCount: 0
                                                                         }
                                                                         @Html.Hidden("hidFormId", @Model.FormInfoModel.FormId)
-                                                                        @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
+                                                                        @Html.Hidden("hidPageNumber", @Model.CurrentPage)
                                                                         @{
                                                                             if (Model.NumberOfPages == 0)
                                                                             {
@@ -329,18 +339,19 @@
                                                                     </div>
                                                                     <div id="paging">
 
-                                                                        @*@{
+                                                                        @{
 
                                                                                 if (Model.NumberOfPages > 1)
                                                                                 {
                                                                                 <div id='pager2'>
-                                                                                    @Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)
+                                                                                    @*@Html.Partial("~\\views\\shared\\PagerPartial.cshtml", Model)*@
                                                                                     @Html.Partial("PagerPartial", Model)
+                                                                                    
                                                                                 </div>
                                                                                 }
 
 
-                                                                            }*@
+                                                                            }
                                                                     </div>
                                                                 </div>
                                                             </div>
