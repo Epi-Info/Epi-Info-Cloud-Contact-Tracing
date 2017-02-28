@@ -23,6 +23,19 @@ namespace Epi.Cloud.CacheServices
             return FormSubKey + (formId).ToString("N") + PageSubKey + pageId;
         }
 
+        public Guid GetDeployedProjectId()
+        {
+            Guid projectId = Guid.Empty;
+
+            string projectIdString;
+            var deploymentProperties = GetDeploymentProperties(Guid.Empty);
+            if (deploymentProperties.TryGetValue(BlobMetadataKeys.ProjectId, out projectIdString))
+            {
+                projectId = Guid.Parse(projectIdString);
+            }
+            return projectId;
+        }
+
         public Dictionary<string, string> GetDeploymentProperties(Guid projectId)
         {
             Dictionary<string, string> deploymentProperties = null;
@@ -32,6 +45,22 @@ namespace Epi.Cloud.CacheServices
                 deploymentProperties = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
             }
             return deploymentProperties;
+        }
+
+        public bool SetDeploymentProperties(Dictionary<string, string> deploymentProperties)
+        {
+            bool isSuccessful = false;
+            Guid projectId = Guid.Empty;
+            string projectIdString;
+            if (deploymentProperties.TryGetValue(BlobMetadataKeys.ProjectId, out projectIdString))
+            {
+                projectId = Guid.Parse(projectIdString);
+            }
+
+            var json = JsonConvert.SerializeObject(deploymentProperties, DontSerializeNulls);
+            isSuccessful &= Set(projectId, DeploymentPropertiesKey, json).Result;
+            isSuccessful &= Set(Guid.Empty, DeploymentPropertiesKey, json).Result;
+            return isSuccessful;
         }
 
         public bool PageMetadataExists(Guid projectId, Guid formId, int pageId)
@@ -112,10 +141,7 @@ namespace Epi.Cloud.CacheServices
                 {
                     projectDeploymentProperties[deploymentProperty.Key] = deploymentProperty.Value;
                 }
-
-                json = JsonConvert.SerializeObject(projectDeploymentProperties, DontSerializeNulls);
-                isSuccessful &= Set(projectId, DeploymentPropertiesKey, json).Result;
-                isSuccessful &= Set(Guid.Empty, DeploymentPropertiesKey, json).Result;
+                isSuccessful = SetDeploymentProperties(projectDeploymentProperties);
             }
             return isSuccessful;
         }
@@ -136,11 +162,12 @@ namespace Epi.Cloud.CacheServices
         {
             lock (MetadataAccessor.StaticCache.Gate)
             {
-                var deploymentProperties = GetDeploymentProperties(Guid.Empty);
-                var projectId = Guid.Empty;
-                DeleteAllKeys(projectId, DeploymentPropertiesKey);
+                var projectId = GetDeployedProjectId();
                 DeleteAllKeys(projectId, FormPageDigestsKey);
                 DeleteAllKeys(projectId, FormDigestsKey);
+
+                Delete(projectId, DeploymentPropertiesKey);
+                Delete(Guid.Empty, DeploymentPropertiesKey);
             }
         }
     }
