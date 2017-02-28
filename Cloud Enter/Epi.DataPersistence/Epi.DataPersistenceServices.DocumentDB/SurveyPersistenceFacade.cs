@@ -73,7 +73,7 @@ namespace Epi.PersistenceServices.DocumentDB
                     {
                         //Edit Recrod Don't Save
                         HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = _surveyResponseCRUD.ConvertAttachmentToHierarchical(attachment);
-                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties, null);
+                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties);
                         
                         //Delete Attachment                         
                         var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
