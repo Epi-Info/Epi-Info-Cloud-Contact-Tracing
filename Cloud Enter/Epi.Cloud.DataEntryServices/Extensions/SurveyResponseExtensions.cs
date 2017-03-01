@@ -7,7 +7,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class SurveyResponseExtensions
     {
-        public static SurveyResponseBO ToSurveyResponseBO(this SurveyResponse surveyResponse, Web.EF.User user = null, int lastActiveUseerId = -1)
+        public static SurveyResponseBO ToSurveyResponseBO(this SurveyResponse surveyResponse, Web.EF.User user = null, int lastActiveUserId = -1)
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             if (surveyResponseBO != null)
@@ -21,7 +21,7 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 surveyResponseBO.DateCreated = surveyResponse.DateCreated;
                 surveyResponseBO.IsDraftMode = surveyResponse.IsDraftMode;
                 surveyResponseBO.IsLocked = surveyResponse.IsLocked;
-                surveyResponseBO.LastActiveUserId = lastActiveUseerId;
+                surveyResponseBO.LastActiveUserId = lastActiveUserId;
 
                 var metadataAccessor = new Epi.Cloud.Common.Metadata.MetadataAccessor(surveyId);
                 surveyResponseBO.ViewId = metadataAccessor.GetFormDigest(surveyId).ViewId;
