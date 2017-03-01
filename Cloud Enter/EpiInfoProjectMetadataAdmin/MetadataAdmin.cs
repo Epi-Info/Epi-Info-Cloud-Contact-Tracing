@@ -35,7 +35,6 @@ namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
 
                 lstBlob.Items.Add(string.Format("Publish Date : {0} | Project Name : {1} | Project Id : {2}", metaProp[BlobMetadataKeys.PublishDate], metaProp[BlobMetadataKeys.ProjectName], metaProp[BlobMetadataKeys.ProjectId]));
             }
-
         }
         private void deleteBlob_Click(object sender, EventArgs e)
         {

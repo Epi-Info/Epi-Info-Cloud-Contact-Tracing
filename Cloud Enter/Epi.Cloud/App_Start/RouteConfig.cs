@@ -91,6 +91,27 @@ namespace Epi.Web.MVC
         new { controller = "Home", action = "CheckForConcurrency", responseid = UrlParameter.Optional }
     ); // Param
 
+            routes.MapRoute
+       (
+           null, // Route name
+           "MetadataAdmin/Index", ///{formid}/{page}/{sort}/{sortfield} URL with parameters
+                  new { controller = "MetadataAdmin", action = "Index", Id = UrlParameter.Optional }
+       ); // Parameter defaults
+
+            routes.MapRoute
+(
+null, // Route name
+"MetadataAdmin/ClearMetadaCache", // URL with parameters
+new { controller = "MetadataAdmin", action = "ClearMetadaCache", Cache = UrlParameter.Optional }
+); // Param
+
+            routes.MapRoute
+(
+null, // Route name
+"MetadataAdmin/DeleteBlob", // URL with parameters
+new { controller = "MetadataAdmin", action = "DeleteBlob", blobname = UrlParameter.Optional }
+); // Param
+
 
             routes.MapRoute
             (
@@ -384,6 +405,7 @@ namespace Epi.Web.MVC
                "{*url}", // URL with parameters
                new { controller = "Login", action = "Index", id = UrlParameter.Optional }
               );
+
 
         }
     }

@@ -1,0 +1,125 @@
+﻿@using Epi.Web.MVC.Constants
+@model Epi.Web.MVC.Models.MetadataAdmin
+@{
+    ViewBag.Title = "Epi Info™ Cloud Enter - Home";// + " - "+
+                                                   // Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/jscript">
+    function ClearMetadaCache() {
+      
+      
+        var ActionUrl = '@Url.Action("ClearMetadaCache", "MetadataAdmin")';
+        $.ajax({
+            url: ActionUrl,
+            type: 'POST',
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            //data: JSON.stringify(model),
+            success: successFunc1,
+            Error: errorFunc1
+        });
+        function successFunc1(data, status) {
+            if (data == "Success") {
+                alert('Cache has been Cleared');
+            }
+            else {
+
+                alert('Cannot Delete Records in Inprogress State');
+            }
+        }
+
+        function errorFunc1() {
+            alert('error');
+        }
+    }
+</script>
+<div>
+
+
+    <h3>Clear Cache</h3>
+    @* <label for="Email" style="display: block; font-weight: bold;margin-top:10px;">Email:</label>*@
+    <br />
+    <button id="btnClearCache" onclick="ClearMetadaCache(this)" type="button" class='default edit'>
+        Clear
+    </button>
+
+    @{
+        WebGrid webGrid = new WebGrid(rowsPerPage: Model.PageSize, canSort: false, canPage: true, ajaxUpdateContainerId: "recordstable");
+        webGrid.Bind(Model.BlobResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses);
+    }
+    <div id="recordstable">
+        @{
+
+            <div>
+                @{
+                    if (Model.MetadataAdminModel.NumberOfPages == 0)
+                    {
+                        <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
+                    }
+                    else
+                    {
+                        @*<span >Showing</span>*@
+                        <span class="boldlabel" style="font-size: 14pt;">
+                            @(
+                                Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
+                            -
+                            @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
+                            {
+                                @(Model.CurrentPage * Model.PageSize)
+                            }
+                            else
+                            {
+                                @Model.NumberOfResponses
+                            }
+                        </span>
+                        <span>of </span><span class="boldlabel" style="font-size: 14pt;">
+                            @Model.NumberOfResponses
+                        </span>
+                    }
+                }
+            </div>
+            <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;"></div>
+                    var gridColumns = new List<WebGridColumn>
+                        ();
+                    gridColumns.Add(webGrid.Column(header: "",
+                    format: (item) => new HtmlString("<button name='ViewBlob' type='button' onclick='ViewBlob(this)' class='default edit' id='" + item.Column0 + "' value='" + item.Column0 + "'>Open</button> " +
+                    "<button name='DeleteButton' type='submit' class='default edit' onclick='DeleteBlob(this)' id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+                    )));
+
+                    if (Model.Columns.Count >= 1)
+                    {
+                        gridColumns.Add(webGrid.Column("Column0", (Model.Columns.Count >= 1) ? Model.Columns[0] : ""));
+                    }
+                    if (Model.Columns.Count >= 2)
+                    {
+                        gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 2) ? Model.Columns[1] : ""));
+                    }
+                    if (Model.Columns.Count >= 3)
+                    {
+                        gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 3) ? Model.Columns[2] : ""));
+                    }
+
+                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
+
+                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
+
+                    @webGrid.GetHtml(columns: gridColumns);
+
+
+        }
+
+
+        @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
+        @{
+            if (Model.NumberOfPages == 0)
+            {
+                <div class="zerorec">
+                    No records found.
+                </div>
+            }
+        }
+    </div>
+
+</div>
