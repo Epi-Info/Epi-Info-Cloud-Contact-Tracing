@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-//using Epi.Cloud.Common.Metadata;
 using Epi.FormMetadata.DataStructures;
 
 namespace Epi.FormMetadata.Extensions
@@ -82,35 +81,5 @@ namespace Epi.FormMetadata.Extensions
 
 			return projectPageDigests.ToArray();
 		}
-#if false
-        public static FieldAttributes[][] ToFlattenedFieldAttributes(this Template projectTemplateMetadata)
-        {
-            List<PageDigest[]> projectPageDigests = new List<PageDigest[]>();
-            var viewIdToViewMap = new Dictionary<int, View>();
-            foreach (var view in projectTemplateMetadata.Project.Views)
-            {
-                viewIdToViewMap[view.ViewId] = view;
-                var pages = new Page[0];
-                pages = pages.Union(view.Pages).ToArray();
-                int numberOfPages = pages.Length;
-                var pageDigests = new PageDigest[numberOfPages];
-                for (int i = 0; i < numberOfPages; ++i)
-                {
-                    var pageMetadata = pages[i];
-                    string pageName = pageMetadata.Name;
-                    int pageId = pageMetadata.PageId.Value;
-                    int position = pageMetadata.Position;
-                    int viewId = pageMetadata.ViewId;
-                    bool isRelatedView = viewIdToViewMap[viewId].IsRelatedView;
-                    string formId = viewIdToViewMap[viewId].FormId;
-                    string formName = viewIdToViewMap[viewId].Name;
-                    pageDigests[i] = new PageDigest(pageName, pageId, position, formId, formName, viewId, isRelatedView, pageMetadata.Fields);
-                }
-                projectPageDigests.Add(pageDigests);
-            }
-
-            return projectPageDigests.ToArray();
-        }
-#endif
     }
 }

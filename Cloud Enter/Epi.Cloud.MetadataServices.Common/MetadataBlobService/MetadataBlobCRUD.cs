@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Text;
 using Epi.Cloud.Common.Configuration;
 using Epi.Common.Constants;
+using Epi.FormMetadata.DataStructures;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
@@ -70,6 +72,15 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
             var blobMetadata = GetBlobReference(blobName).Metadata;
             return blobMetadata;
         }
+
+        public Dictionary<string, string> GetMostRecentDeploymentProperties()
+        {
+            var metadataBlobs = GetBlobList(BlobListingDetails.Metadata);
+            var mostRecentDeploymentProperties = metadataBlobs.Select(json => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json))
+                                                    .OrderByDescending(p => DateTime.Parse(p[BlobMetadataKeys.PublishDate])).FirstOrDefault();
+            return mostRecentDeploymentProperties;
+        }
+
 
         public bool UploadText(string content, string blobName, string description = null)
         {
@@ -236,6 +247,43 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
                 listOfBlobs.Add(blobMetadata);
             }
             return listOfBlobs;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="metadata"></param>
+        /// <returns></returns>
+        public bool SaveMetadataToBlobStorage(Template metadata)
+        {
+            var blobMetadataDictionary = new Dictionary<string, string>();
+            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
+            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
+            blobMetadataDictionary.Add(BlobMetadataKeys.Description, string.IsNullOrWhiteSpace(metadata.Project.Description) ? metadata.Project.Name : metadata.Project.Description);
+            blobMetadataDictionary.Add(BlobMetadataKeys.PublishDate, DateTime.UtcNow.ToString());
+            StringBuilder sb = new StringBuilder();
+            foreach (var form in metadata.Project.FormDigests)
+            {
+                if (sb.Length > 0) sb.Append(",");
+                sb.AppendFormat("{0}({1} page{2})", form.FormName, form.NumberOfPages, form.NumberOfPages == 1 ? "" : "s");
+            }
+            string forms = sb.ToString();
+            blobMetadataDictionary.Add(BlobMetadataKeys.Forms, forms);
+
+            metadata.ProjectDeploymentProperties = blobMetadataDictionary;
+
+            string metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
+
+#if CaptureMetadataJson
+            if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
+            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
+#endif
+            var projectKey = new Guid(metadata.Project.Id).ToString("N");
+
+            DeleteBlob(projectKey);
+
+            var isUploadBlobSuccessful = UploadText(metadataWithDigestsJson, projectKey, blobMetadataDictionary);
+            return isUploadBlobSuccessful;
         }
     }
 }

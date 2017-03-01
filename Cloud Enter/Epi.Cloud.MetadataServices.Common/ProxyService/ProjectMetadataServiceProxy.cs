@@ -8,7 +8,10 @@ using Epi.Cloud.MetadataServices.Common.ProxyService.Interfaces;
 using Epi.Cloud.MetadataServices.Common.DataTypes;
 using Epi.FormMetadata.DataStructures;
 using Newtonsoft.Json;
+using Epi.FormMetadata.Extensions;
+
 using static Epi.Cloud.MetadataServices.Common.DataTypes.Constants;
+using System.Linq;
 
 namespace Epi.Cloud.MetadataServices.Common.ProxyService
 {
@@ -24,14 +27,55 @@ namespace Epi.Cloud.MetadataServices.Common.ProxyService
         //Forming url to call the Metadata Access API
         public async Task<Template> GetProjectMetadataAsync(string projectId)
         {
-            Template projectResponse= new Template();
+            Template projectTemplateMetadata = new Template();
             string url = string.Format("{0}?ID={1}", ApiEndPoints.Project, projectId ?? "0");
             if (url != null)
             {
-                projectResponse = GetData<Template>(url);
+                projectTemplateMetadata = GetData<Template>(url);
+
+                if (projectTemplateMetadata != null)
+                {
+                    PopulateRequiredPageLevelSourceTables(projectTemplateMetadata);
+                    GenerateDigests(projectTemplateMetadata);
+                }
             }
-            return await Task.FromResult(projectResponse);
+            return await Task.FromResult(projectTemplateMetadata);
         }
+
+        /// <summary>
+        /// GenerateDigests
+        /// </summary>
+        /// <param name="projectTemplateMetadata"></param>
+        /// <remarks>The Form and Page digests are generated.</remarks>
+        private void GenerateDigests(Template projectTemplateMetadata)
+        {
+            projectTemplateMetadata.Project.FormDigests = projectTemplateMetadata.ToFormDigests();
+            projectTemplateMetadata.Project.FormPageDigests = projectTemplateMetadata.ToPageDigests();
+        }
+
+        /// <summary>
+        /// PopulateRequiredPageLevelSourceTables
+        /// </summary>
+        /// <param name="projectTemplateMetadata"></param>
+        /// <remarks>Field specific Source Tables are moved to the corresponding Field object.</remarks>
+        private void PopulateRequiredPageLevelSourceTables(Template projectTemplateMetadata)
+        {
+            foreach (var view in projectTemplateMetadata.Project.Views)
+            {
+                var numberOfPages = view.Pages.Length;
+                for (int i = 0; i < numberOfPages; ++i)
+                {
+                    var pageMetadata = view.Pages[i];
+                    var pageId = pageMetadata.PageId.Value;
+                    var fieldsRequiringSourceTable = pageMetadata.Fields.Where(f => !string.IsNullOrEmpty(f.SourceTableName));
+                    foreach (var field in fieldsRequiringSourceTable)
+                    {
+                        field.SourceTableValues = projectTemplateMetadata.SourceTables.Where(st => st.TableName == field.SourceTableName).First().Values;
+                    }
+                }
+            }
+        }
+
 
         //Forming url to call the API for pageDigest
         public async Task<PageDigest[][]> GetPageDigestMetadataAsync()

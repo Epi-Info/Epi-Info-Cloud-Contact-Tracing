@@ -169,7 +169,7 @@ namespace Epi.Cloud.MetadataServices
             return fieldDigests.ToArray();
         }
 
-        bool DoesCacheNeedToBeRefreshed(Guid projectId, out Guid cachedProjectId)
+        private bool DoesCacheNeedToBeRefreshed(Guid projectId, out Guid cachedProjectId)
         {
             var cacheIsUpToDate = false;
             cachedProjectId = Guid.Empty;
@@ -183,7 +183,7 @@ namespace Epi.Cloud.MetadataServices
                     if (cachedDeploymentProperties.TryGetValue(BlobMetadataKeys.PublishDate, out cachedPublishDate))
                     {
                         var metadataProvider = new MetadataProvider();
-                        var mostRecentDeploymentProperties = metadataProvider.GetMostRecentDeploymentPropertiesAsync().Result;
+                        var mostRecentDeploymentProperties = metadataProvider.GetMostRecentBlobDeploymentPropertiesAsync().Result;
                         cacheIsUpToDate = mostRecentDeploymentProperties != null && cachedDeploymentProperties != null
                             && mostRecentDeploymentProperties[BlobMetadataKeys.PublishDate] == cachedPublishDate;
                         if (projectId != Guid.Empty)

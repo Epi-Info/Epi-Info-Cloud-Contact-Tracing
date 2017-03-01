@@ -5,6 +5,7 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MetadataServices.Common;
 using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
 using Epi.Common.Constants;
+using Epi.FormMetadata.DataStructures;
 using EpiInfoProjectMetadataAdmin;
 
 namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
@@ -87,10 +88,12 @@ namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
                     break;
                 case "CDCQA":
                     MetadataProvider metadataProvider = new MetadataProvider();
-                    var metaData = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;
+                    var metadata = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;
+                    SaveMetadataToBlob(metadata);
+
                     GetBlobList();
                     lstBlob.Refresh();
-                    MessageBox.Show("Blob is updated with Name : " + metaData.Project.Name);
+                    MessageBox.Show("Blob is updated with Name : " + metadata.Project.Name);
                     break;
                 case "Ananth":
                     MessageBox.Show("You have Select Ananth");
@@ -142,6 +145,11 @@ namespace Epi.Cloud.EpiInfoProjectMetadataAdmin
         {
             var metadataView = _metadataBlobCRUD.GetBlobList(Microsoft.WindowsAzure.Storage.Blob.BlobListingDetails.Metadata);
             return metadataView;
+        }
+
+        private bool SaveMetadataToBlob(Template metadata)
+        {
+            return _metadataBlobCRUD.SaveMetadataToBlobStorage(metadata);
         }
     }
 }
