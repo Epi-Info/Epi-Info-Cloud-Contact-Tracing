@@ -6,10 +6,12 @@ namespace Epi.Cloud.CacheServices
 {
     public interface IMetadataCache
     {
-        Dictionary<string, string> GetDeploymentProperties(Guid projectId);
         bool PageMetadataExists(Guid projectId, Guid formId, int pageId);
         Page GetPageMetadata(Guid projectId, Guid Guid, int pageId);
         bool SetProjectTemplateMetadata(Template projectTemplateMetadata);
         void ClearProjectTemplateMetadataFromCache(Guid projectId);
+        Guid GetDeployedProjectId();
+        Dictionary<string, string> GetDeploymentProperties(Guid projectId);
+        bool SetDeploymentProperties(Dictionary<string, string> deploymentProperties);
     }
 }

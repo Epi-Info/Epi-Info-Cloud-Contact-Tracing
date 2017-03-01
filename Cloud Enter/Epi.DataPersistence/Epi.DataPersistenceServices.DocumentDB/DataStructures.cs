@@ -44,7 +44,12 @@ namespace Epi.PersistenceServices.DocumentDB
                 IsNewRecord = true;
                 RecStatus = RecordStatus.InProcess;
                 PageIds = new List<int>();
+#if DocDbV2
+                ResponseQA = new Dictionary<string, string>();
+                ChildFormResponseProperties = new Dictionary<string, FormResponseProperties>();
+#endif
             }
+            public bool IsRootForm { get; set; }
             public string GlobalRecordID { get; set; }
             public string FormId { get; set; }
             public string FormName { get; set; }
@@ -64,7 +69,10 @@ namespace Epi.PersistenceServices.DocumentDB
             public string HiddenFieldsList { get; set; }
             public string HighlightedFieldsList { get; set; }
             public string DisabledFieldsList { get; set; }
-
+#if DocDbV2
+            public Dictionary<string, string> ResponseQA { get; set; }
+            public Dictionary<string, FormResponseProperties> ChildFormResponseProperties { get; set; }
+#endif
         }
 
         public class PageResponseProperties : Resource

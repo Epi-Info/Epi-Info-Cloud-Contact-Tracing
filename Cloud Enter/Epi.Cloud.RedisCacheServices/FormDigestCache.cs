@@ -28,7 +28,7 @@ namespace Epi.Cloud.CacheServices
         public bool SetFormDigests(Guid projectId, FormDigest[] formDigests)
         {
             var json = JsonConvert.SerializeObject(formDigests, DontSerializeNulls);
-            return Set(projectId, FormDigestsKey, json).Result;
+            return Set(projectId, FormDigestsKey, json, NoTimeout).Result;
         }
 
         public void ClearFormDigests(Guid projectId)

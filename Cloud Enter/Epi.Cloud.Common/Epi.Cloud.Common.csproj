@@ -70,6 +70,7 @@
     <Compile Include="BusinessRules\ValidateRequired.cs" />
     <Compile Include="BusinessRules\ValidationDataType.cs" />
     <Compile Include="BusinessRules\ValidationOperator.cs" />
+    <Compile Include="Constants\ControllerNames.cs" />
     <Compile Include="Constants\AppSettings.cs" />
     <Compile Include="BusinessObjects\PageInfoBO.cs" />
     <Compile Include="BusinessObjects\SurveyRequestBO.cs" />
@@ -79,9 +80,12 @@
     <Compile Include="Constants\Constant.cs" />
     <Compile Include="Constants\EmailCombinationEnum.cs" />
     <Compile Include="Constants\OperationMode.cs" />
+    <Compile Include="Constants\RequestAction.cs" />
     <Compile Include="Constants\Roles.cs" />
     <Compile Include="Constants\SessionKeys.cs" />
     <Compile Include="Constants\SurveyTypes.cs" />
+    <Compile Include="Constants\TempDataKeys.cs" />
+    <Compile Include="Constants\ViewActions.cs" />
     <Compile Include="Criteria\Criteria.cs" />
     <Compile Include="Criteria\FormInfoCriteria.cs" />
     <Compile Include="Criteria\OrganizationCriteria.cs" />

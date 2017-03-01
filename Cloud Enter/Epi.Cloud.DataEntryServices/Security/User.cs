@@ -71,7 +71,7 @@ namespace Epi.Web.BLL
             bool success = false;
             switch (user.Operation)
             {
-                case Constant.OperationMode.UpdatePassword:
+                case OperationMode.UpdatePassword:
                     string password = string.Empty;
 
                     if (user.ResetPassword)
@@ -105,16 +105,16 @@ namespace Epi.Web.BLL
 
                         if (user.ResetPassword)
                         {
-                            success = SendEmail(email, Constant.EmailCombinationEnum.ResetPassword);
+                            success = SendEmail(email, EmailCombinationEnum.ResetPassword);
                         }
                         else
                         {
-                            success = SendEmail(email, Constant.EmailCombinationEnum.PasswordChanged);
+                            success = SendEmail(email, EmailCombinationEnum.PasswordChanged);
                         }
                     }
                     return success;
 
-                case Constant.OperationMode.UpdateUserInfo:
+                case OperationMode.UpdateUserInfo:
                     success = _userDao.UpdateUserInfo(user, orgBO);
                     //if (success)
                     //{
@@ -123,7 +123,7 @@ namespace Epi.Web.BLL
                     //    Email email = new Email();
                     //    email.To = new List<string>();
                     //    email.To.Add(User.EmailAddress);
-                    //    success = SendEmail(email, Constant.EmailCombinationEnum.UpdateUserInfo);
+                    //    success = SendEmail(email, EmailCombinationEnum.UpdateUserInfo);
                     //}
                     return success;
 
@@ -133,31 +133,31 @@ namespace Epi.Web.BLL
             return false;
         }
 
-        private bool SendEmail(Email email, Constant.EmailCombinationEnum combination)
+        private bool SendEmail(Email email, EmailCombinationEnum combination)
         {
             //   Epi.Common.Email.Email Email = new Web.Common.Email.Email();
 
             switch (combination)
             {
-                case Constant.EmailCombinationEnum.ResetPassword:
+                case EmailCombinationEnum.ResetPassword:
                     //email.Subject = "Your Epi Info Cloud Enter Password";
                     //email.Body = string.Format("You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password.", email.Password);
                     email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.ResetPassword_Subject);
                     email.Body = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.ResetPassword_Body), email.Password);
                     break;
-                case Constant.EmailCombinationEnum.PasswordChanged:
+                case EmailCombinationEnum.PasswordChanged:
                     //email.Subject = "Your Epi Info Cloud Enter Password has been updated";
                     //email.Body = "You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n ";
                     email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.PasswordChanged_Subject);
                     email.Body = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.PasswordChanged_Body);
                     break;
-                case Constant.EmailCombinationEnum.UpdateUserInfo:
+                case EmailCombinationEnum.UpdateUserInfo:
                     //email.Subject = "Your Epi Info Cloud Enter Account info has been updated";
                     //email.Body = " You account info has been updated in Epi Info™ Cloud Enter system.";
                     email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.UpdateUserInfo_Subject);
                     email.Body = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.UpdateUserInfo_Body);
                     break;
-                case Constant.EmailCombinationEnum.InsertUser:
+                case EmailCombinationEnum.InsertUser:
                     //email.Subject = "An Epi Info Cloud Enter account has been created for your organization.";
                     email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.InsertUser_Subject);
                     break;
@@ -243,7 +243,7 @@ namespace Epi.Web.BLL
                     email.To = new List<string>();
                     email.To.Add(userBO.EmailAddress);
                     email.Body = body.ToString();
-                    success = SendEmail(email, Constant.EmailCombinationEnum.InsertUser);
+                    success = SendEmail(email, EmailCombinationEnum.InsertUser);
                 }
             }
             else
@@ -266,7 +266,7 @@ namespace Epi.Web.BLL
                     email.To = new List<string>();
                     email.To.Add(userBO.EmailAddress);
 
-                    success = SendEmail(email, Constant.EmailCombinationEnum.InsertUser);
+                    success = SendEmail(email, EmailCombinationEnum.InsertUser);
                 }
             }
             return success;

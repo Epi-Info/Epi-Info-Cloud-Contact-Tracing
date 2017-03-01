@@ -31,11 +31,21 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private void ParseConnectionString()
         {
             var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("CollectedDataConnectionString");
-            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString.Trim();
 
-            var parts = connectionString.Split(',');
-            _serviceEndpoint = parts[0].Trim();
-            for (var i = 1; i < parts.Length; ++i)
+            string[] parts;
+
+            if (connectionString.StartsWith("AccountEndpoint="))
+            {
+                parts = connectionString.Split(';');
+            }
+            else
+            {
+                connectionString = string.Concat("AccountEndpoint=", connectionString);
+                parts = connectionString.Split(',');
+            }
+
+            for (var i = 0; i < parts.Length; ++i)
             {
                 var nvp = parts[i];
                 var eqSignIndex = nvp.IndexOf('=');
@@ -43,6 +53,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 var value = nvp.Substring(eqSignIndex + 1).Trim();
                 switch (name)
                 {
+                    case "accountendpoint":
+                        _serviceEndpoint = value.Trim();
+                        break;
+                    case "accountkey":
+                        _authKey = value;
+                        break;
                     case "authkey":
                         _authKey = value;
                         break;

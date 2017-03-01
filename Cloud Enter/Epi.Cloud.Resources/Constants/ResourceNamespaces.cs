@@ -3,5 +3,6 @@
     public struct ResourceNamespaces
     {
         public const string EmailMessages = "Epi.Cloud.Resources.EmailMessages";
+        public const string UserAdminMessages = "Epi.Cloud.Resources.UserAdminMessages";
     }
 }

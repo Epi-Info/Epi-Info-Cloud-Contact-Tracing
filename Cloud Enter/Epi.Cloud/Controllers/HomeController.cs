@@ -44,13 +44,11 @@ namespace Epi.Web.MVC.Controllers
         public HomeController(ISurveyFacade surveyFacade,
                               ISecurityFacade securityFacade,
                               Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider projectMetadataProvider,
-                              Epi.Cloud.CacheServices.IEpiCloudCache iCacheServices,
                               ISurveyResponseDao surveyResponseDao)
         {
             _surveyFacade = surveyFacade;
             _securityFacade = securityFacade;
             _projectMetadataProvider = projectMetadataProvider;
-            _cacheServices = iCacheServices;
             _surveyResponseDao = surveyResponseDao;
         }
 
@@ -85,9 +83,9 @@ namespace Epi.Web.MVC.Controllers
 
 
 
-                bool IsMobileDevice = false;
-                IsMobileDevice = this.Request.Browser.IsMobileDevice;
-                if (IsMobileDevice) // Because mobile doesn't need RootFormId until button click. 
+                bool isMobileDevice = false;
+                isMobileDevice = this.Request.Browser.IsMobileDevice;
+                if (isMobileDevice) // Because mobile doesn't need RootFormId until button click. 
                 {
                     Session[SessionKeys.RootFormId] = null;
                     Session[SessionKeys.PageNumber] = null;
@@ -98,13 +96,13 @@ namespace Epi.Web.MVC.Controllers
                 }
 
                 string surveyMode = "";
-                Omniture OmnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, IsMobileDevice);
-                ViewBag.Omniture = OmnitureObj;
+                Omniture omnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, isMobileDevice);
+                ViewBag.Omniture = omnitureObj;
 
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 ViewBag.Version = version;
 
-                return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE, formModel);
+                return View(ViewActions.Index, formModel);
             }
             catch (Exception ex)
             {
@@ -112,7 +110,7 @@ namespace Epi.Web.MVC.Controllers
                 ExceptionModel ExModel = new ExceptionModel();
                 ExModel.ExceptionDetail = ex.StackTrace;
                 ExModel.Message = ex.Message;
-                return View(Epi.Cloud.Common.Constants.Constant.EXCEPTION_PAGE, ExModel);
+                return View(ViewActions.Exception, ExModel);
             }
         }
 
@@ -147,7 +145,7 @@ namespace Epi.Web.MVC.Controllers
         public ActionResult Index(string surveyId, string addNewFormId, string editForm)
         {
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string UserName = Session[SessionKeys.UserName].ToString();
+            string userName = Session[SessionKeys.UserName].ToString();
             Session[SessionKeys.FormValuesHasChanged] = "";
 
             if (string.IsNullOrEmpty(editForm) && Session[SessionKeys.EditForm] != null)
@@ -170,7 +168,7 @@ namespace Epi.Web.MVC.Controllers
                 }
                 string childRecordId = GetChildRecordId(surveyAnswerDTO);
                 Session[SessionKeys.RecoverLastRecordVersion] = false;
-                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, Epi.Cloud.Common.Constants.Constant.SURVEY_CONTROLLER, new { responseid = childRecordId, PageNumber = 1, surveyid = surveyAnswerDTO.SurveyId, Edit = "Edit" });
+                return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = childRecordId, PageNumber = 1, surveyid = surveyAnswerDTO.SurveyId, Edit = "Edit" });
             }
             else
             {
@@ -188,7 +186,7 @@ namespace Epi.Web.MVC.Controllers
 
             //create the responseid
             Guid responseId = Guid.NewGuid();
-            TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID] = responseId.ToString();
+            TempData[TempDataKeys.ResponseId] = responseId.ToString();
 
             // create the first survey response
             // Epi.Cloud.Common.DTO.SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
@@ -198,7 +196,7 @@ namespace Epi.Web.MVC.Controllers
             int currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
 
             SurveyAnswerDTO surveyAnswer = _surveyFacade.CreateSurveyAnswer(addNewFormId, responseId.ToString(), userId, false, "", false, currentOrgId);
-            surveyId = surveyId ?? surveyAnswer.SurveyId;
+            surveyId = /*FromURL*/surveyId ?? surveyAnswer.SurveyId;
 
             // Initialize the Metadata Accessor
             MetadataAccessor.CurrentFormId = surveyId;
@@ -211,7 +209,7 @@ namespace Epi.Web.MVC.Controllers
             // set the survey answer to be production or test 
             surveyAnswer.IsDraftMode = form.SurveyInfo.IsDraftMode;
 
-            TempData["Width"] = form.Width + 100;
+            TempData[TempDataKeys.Width] = form.Width + 100;
 
             string checkcode = metadataAccessor.GetFormDigest(surveyId).CheckCode;
             form.FormCheckCodeObj = form.GetCheckCodeObj(metadataAccessor.GetFieldDigests(surveyId), surveyAnswer.ResponseDetail, checkcode);
@@ -229,8 +227,8 @@ namespace Epi.Web.MVC.Controllers
 
                     responseDetail = surveyResponseHelper.CreateResponseDocument(pageDigests);
                     Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
-                    this._requiredList = surveyResponseHelper.RequiredList;
-                    form.RequiredFieldsList = this._requiredList;
+                    _requiredList = surveyResponseHelper.RequiredList;
+                    form.RequiredFieldsList = _requiredList;
                     functionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
                     functionObject_B.Context.HighlightedFieldList = form.HighlightedFieldsList;
                     functionObject_B.Context.DisabledFieldList = form.DisabledFieldsList;
@@ -255,7 +253,7 @@ namespace Epi.Web.MVC.Controllers
                                                         false,
                                                         false,
                                                         0,
-                                                        SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), UserName);
+                                                        SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), userName);
                 }
                 catch (Exception ex)
                 {
@@ -269,14 +267,14 @@ namespace Epi.Web.MVC.Controllers
 
                 surveyAnswer.ResponseDetail = surveyResponseHelper.CreateResponseDocument(pageDigestArray);
 
-                this._requiredList = surveyResponseHelper.RequiredList;
+                _requiredList = surveyResponseHelper.RequiredList;
                 Session[SessionKeys.RequiredList] = surveyResponseHelper.RequiredList;
                 form.RequiredFieldsList = _requiredList;
                 //_surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 0, SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()));
             }
 
             ///////////////////////////// Execute - Record Before - End//////////////////////
-            return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, Epi.Cloud.Common.Constants.Constant.SURVEY_CONTROLLER, new { responseid = responseId, PageNumber = 1, surveyid = surveyInfoModel.SurveyId });
+            return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = responseId, PageNumber = 1, surveyid = surveyInfoModel.SurveyId });
         }
 
         private string GetChildRecordId(SurveyAnswerDTO surveyAnswerDTO)
@@ -291,11 +289,11 @@ namespace Epi.Web.MVC.Controllers
             surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
             string result;
 
-            //responseId = TempData[Epi.Cloud.Common.Constants.Constant.RESPONSE_ID].ToString();
+            //responseId = TempData[TempDataKeys.ResponseId].ToString();
             string userId = Session[SessionKeys.UserId].ToString();
             surveyAnswerRequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(userId);
             surveyAnswerRequest.RequestId = childResponseId;
-            surveyAnswerRequest.Action = "CreateMulti";
+            surveyAnswerRequest.Action = RequestAction.CreateMulti;
             surveyAnswerResponse = _surveyFacade.SetChildRecord(surveyAnswerRequest);
             result = surveyAnswerResponse.SurveyResponseList[0].ResponseId;
             return result;
@@ -328,7 +326,7 @@ namespace Epi.Web.MVC.Controllers
         {
             page = page.HasValue ? page.Value : 1;
 
-            bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
+            bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
             //Code added to retain Search Starts
 
@@ -379,7 +377,7 @@ namespace Epi.Web.MVC.Controllers
             var model = new FormResponseInfoModel();
             model = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
 
-            if (IsMobileDevice == false)
+            if (isMobileDevice == false)
             {
                 return PartialView("ListResponses", model);
             }
@@ -391,7 +389,7 @@ namespace Epi.Web.MVC.Controllers
 
 		[HttpPost]
 		[AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult ResetSort(string formid)
+		public ActionResult ResetSort(string formId)
 		{
 			Session[SessionKeys.SortOrder] = null;
 			Session[SessionKeys.SortField] = null;
@@ -415,7 +413,7 @@ namespace Epi.Web.MVC.Controllers
             surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
             surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
             surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
-            surveyAnswerRequest.Action = "Delete";
+            surveyAnswerRequest.Action = RequestAction.Delete;
             SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
             return Json(string.Empty);
         }
@@ -445,14 +443,14 @@ namespace Epi.Web.MVC.Controllers
         public FormResponseInfoModel GetFormResponseInfoModel(string surveyId, int pageNumber, string sort = "", string sortfield = "", int orgid = -1)
         {
             // Initialize the Metadata Accessor
-            MetadataAccessor.CurrentFormId = surveyId;
+            MetadataAccessor.CurrentFormId = /*FromURL*/surveyId;
 
             FormResponseInfoModel formResponseInfoModel = null;
 
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            if (!string.IsNullOrEmpty(surveyId))
+            if (!string.IsNullOrEmpty(/*FromURL*/surveyId))
             {
-                formResponseInfoModel = GetFormResponseInfoModel(surveyId, orgid, userId);
+                formResponseInfoModel = GetFormResponseInfoModel(/*FromURL*/surveyId, orgid, userId);
                 FormSettingResponse formSettingResponse = formResponseInfoModel.FormSettingResponse;
 
                 var surveyResponseHelper = new SurveyResponseHelper();
@@ -476,7 +474,7 @@ namespace Epi.Web.MVC.Controllers
                 SetUserRole(userId, orgid);
 
                 SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest();
-                formResponseReq.Criteria.SurveyId = surveyId.ToString();
+                formResponseReq.Criteria.SurveyId = /*FromURL*/surveyId.ToString();
                 formResponseReq.Criteria.PageNumber = pageNumber;
                 formResponseReq.Criteria.UserId = userId;
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
@@ -515,9 +513,9 @@ namespace Epi.Web.MVC.Controllers
                     formResponseReq.Criteria.Sortfield = sortfield;
                 }
 
-                formResponseReq.Criteria.SurveyQAList = Columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
+                formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
-                formResponseReq.Criteria.SearchDigestList = ToSearchDigestList(formResponseInfoModel.SearchModel, surveyId);
+                formResponseReq.Criteria.SearchDigestList = ToSearchDigestList(formResponseInfoModel.SearchModel, /*FromURL*/surveyId);
 
 
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
@@ -525,35 +523,35 @@ namespace Epi.Web.MVC.Controllers
 
                 var surveyResponse = formResponseList.SurveyResponseList;//.Skip((pageNumber - 1) * 20).Take(20);
                 formResponseList.SurveyResponseList = surveyResponse.ToList();
-                List<ResponseModel> ResponseList = new List<ResponseModel>();
-                List<ResponseModel> ResponseListModel = new List<ResponseModel>();
+                List<ResponseModel> responseList = new List<ResponseModel>();
+                List<ResponseModel> responseListModel = new List<ResponseModel>();
                 Dictionary<string, string> dictory = new Dictionary<string, string>();
                 List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>(); ;
                 foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, Columns, "GlobalRecordId"));
+                        responseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
                     }
                     else
                     {
-                        ResponseList.Add(item.ToResponseModel(Columns));
+                        responseList.Add(item.ToResponseModel(_columns));
                     }
 
                 }
                 string sortFieldcolumn = string.Empty;
                 if (!string.IsNullOrEmpty(sortfield))
                 {
-                    foreach (var Column in Columns)
+                    foreach (var column in _columns)
                     {
-                        if (Column.Value == sortfield)
+                        if (column.Value == sortfield)
                         {
-                            sortFieldcolumn = "Column" + Column.Key;
+                            sortFieldcolumn = "Column" + column.Key;
                         }
                     }
                 }
                 //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
-                var sortList = ResponseList;
+                var sortList = responseList;
                 sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
                 {
@@ -562,19 +560,19 @@ namespace Epi.Web.MVC.Controllers
                         switch (sortFieldcolumn)
                         {
                             case "Column1":
-                                ResponseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
+                                responseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
                                 break;
                             case "Column2":
-                                ResponseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
+                                responseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
                                 break;
                             case "Column3":
-                                ResponseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
+                                responseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
                                 break;
                             case "Column4":
-                                ResponseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
+                                responseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
                                 break;
                             case "Column5":
-                                ResponseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
+                                responseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
                                 break;
                         }
 
@@ -585,30 +583,30 @@ namespace Epi.Web.MVC.Controllers
                         switch (sortFieldcolumn)
                         {
                             case "Column1":
-                                ResponseListModel = sortList.OrderBy(x => x.Column1).ToList();
+                                responseListModel = sortList.OrderBy(x => x.Column1).ToList();
                                 break;
                             case "Column2":
-                                ResponseListModel = sortList.OrderBy(x => x.Column2).ToList();
+                                responseListModel = sortList.OrderBy(x => x.Column2).ToList();
                                 break;
                             case "Column3":
-                                ResponseListModel = sortList.OrderBy(x => x.Column3).ToList();
+                                responseListModel = sortList.OrderBy(x => x.Column3).ToList();
                                 break;
                             case "Column4":
-                                ResponseListModel = sortList.OrderBy(x => x.Column4).ToList();
+                                responseListModel = sortList.OrderBy(x => x.Column4).ToList();
                                 break;
                             case "Column5":
-                                ResponseListModel = sortList.OrderBy(x => x.Column5).ToList();
+                                responseListModel = sortList.OrderBy(x => x.Column5).ToList();
                                 break;
                         }
 
                         // formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
                     }
-                    formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                    formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
 
                 }
                 if (string.IsNullOrEmpty(sort))
                 {
-                    formResponseInfoModel.ResponsesList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                    formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
 
                     //formResponseInfoModel.ResponsesList = ResponseList;
                 }
@@ -628,25 +626,25 @@ namespace Epi.Web.MVC.Controllers
             return formResponseInfoModel;
         }
 
-        private void SetUserRole(int UserId, int OrgId)
+        private void SetUserRole(int userId, int orgId)
         {
-            UserRequest UserRequest = new UserRequest();
-            UserRequest.Organization.OrganizationId = OrgId;
-            UserRequest.User.UserId = UserId;
-            var UserRes = _securityFacade.GetUserInfo(UserRequest);
-            if (UserRes.User.Count() > 0)
+            UserRequest userRequest = new UserRequest();
+            userRequest.Organization.OrganizationId = orgId;
+            userRequest.User.UserId = userId;
+            var userResponse = _securityFacade.GetUserInfo(userRequest);
+            if (userResponse.User.Count() > 0)
             {
-                Session[SessionKeys.UsertRole] = UserRes.User[0].Role;
+                Session[SessionKeys.UsertRole] = userResponse.User[0].Role;
             }
         }
 
-        private void PopulateDropDownlists(FormResponseInfoModel FormResponseInfoModel, List<KeyValuePair<int, string>> list)
+        private void PopulateDropDownlists(FormResponseInfoModel formResponseInfoModel, List<KeyValuePair<int, string>> list)
         {
-            PopulateDropDownlist(out FormResponseInfoModel.SearchColumns1, FormResponseInfoModel.SearchModel.SearchCol1, list);
-            PopulateDropDownlist(out FormResponseInfoModel.SearchColumns2, FormResponseInfoModel.SearchModel.SearchCol2, list);
-            PopulateDropDownlist(out FormResponseInfoModel.SearchColumns3, FormResponseInfoModel.SearchModel.SearchCol3, list);
-            PopulateDropDownlist(out FormResponseInfoModel.SearchColumns4, FormResponseInfoModel.SearchModel.SearchCol4, list);
-            PopulateDropDownlist(out FormResponseInfoModel.SearchColumns5, FormResponseInfoModel.SearchModel.SearchCol5, list);
+            PopulateDropDownlist(out formResponseInfoModel.SearchColumns1, formResponseInfoModel.SearchModel.SearchCol1, list);
+            PopulateDropDownlist(out formResponseInfoModel.SearchColumns2, formResponseInfoModel.SearchModel.SearchCol2, list);
+            PopulateDropDownlist(out formResponseInfoModel.SearchColumns3, formResponseInfoModel.SearchModel.SearchCol3, list);
+            PopulateDropDownlist(out formResponseInfoModel.SearchColumns4, formResponseInfoModel.SearchModel.SearchCol4, list);
+            PopulateDropDownlist(out formResponseInfoModel.SearchColumns5, formResponseInfoModel.SearchModel.SearchCol5, list);
         }
 
         private int ReadPageSize()
@@ -658,9 +656,9 @@ namespace Epi.Web.MVC.Controllers
         {
             SurveyAnswerDTO result = null;
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            var SurveyAnswerResponse = _surveyFacade.GetSurveyAnswerResponse(responseId, formId, userId);
-            result = SurveyAnswerResponse.SurveyResponseList[0];
-            result.FormOwnerId = SurveyAnswerResponse.FormInfo.OwnerId;
+            var surveyAnswerResponse = _surveyFacade.GetSurveyAnswerResponse(responseId, formId, userId);
+            result = surveyAnswerResponse.SurveyResponseList[0];
+            result.FormOwnerId = surveyAnswerResponse.FormInfo.OwnerId;
             return result;
         }
 
@@ -670,113 +668,107 @@ namespace Epi.Web.MVC.Controllers
 
             FormsAuthentication.SignOut();
             this.Session.Clear();
-            return RedirectToAction("Index", "Login");
+            return RedirectToAction(ViewActions.Index, ControllerNames.Login);
         }
 
         [HttpGet]
-        public ActionResult GetSettings(string formid)//List<FormInfoModel> ModelList, string formid)
+        public ActionResult GetSettings(string formId)//List<FormInfoModel> ModelList, string formid)
         {
-            FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
-            List<KeyValuePair<int, string>> TempColumns = new List<KeyValuePair<int, string>>();
+            FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            List<KeyValuePair<int, string>> tempColumns = new List<KeyValuePair<int, string>>();
             //Get All forms
-            List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy(formid);
-            // List<FormSettingResponse> FormSettingResponseList = new List<FormSettingResponse>();
-            List<SettingsInfoModel> ModelList = new List<SettingsInfoModel>();
-            foreach (var Item in FormsHierarchy)
+            List<FormsHierarchyDTO> formsHierarchy = GetFormsHierarchy(/*FromURL*/formId);
+            List<SettingsInfoModel> modelList = new List<SettingsInfoModel>();
+            foreach (var Item in formsHierarchy)
             {
-                FormSettingReq.GetMetadata = true;
-                FormSettingReq.FormInfo.FormId = new Guid(Item.FormId).ToString();
-                FormSettingReq.FormInfo.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-                FormSettingReq.CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
+                formSettingReq.GetMetadata = true;
+                formSettingReq.FormInfo.FormId = new Guid(Item.FormId).ToString();
+                formSettingReq.FormInfo.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+                formSettingReq.CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
                 //Getting Column Name  List
 
-                FormSettingResponse FormSettingResponse = _surveyFacade.GetFormSettings(FormSettingReq);
+                FormSettingResponse formSettingResponse = _surveyFacade.GetFormSettings(formSettingReq);
                 //  FormSettingResponseList.Add(FormSettingResponse);
 
                 // FormSettingResponse FormSettingResponse = _isurveyFacade.GetFormSettings(FormSettingReq);
-                Columns = FormSettingResponse.FormSetting.ColumnNameList.ToList();
-                TempColumns = Columns;
-                Columns.Sort(Compare);
+                _columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
+                tempColumns = _columns;
+                _columns.Sort(Compare);
 
-                Dictionary<int, string> dictionary = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
-                SettingsInfoModel Model = new SettingsInfoModel();
-                Model.SelectedControlNameList = dictionary;
+                Dictionary<int, string> dictionary = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                SettingsInfoModel model = new SettingsInfoModel();
+                model.SelectedControlNameList = dictionary;
 
-                Columns = FormSettingResponse.FormSetting.FormControlNameList.ToList();
+                _columns = formSettingResponse.FormSetting.FormControlNameList.ToList();
+
                 // Get Additional Metadata columns 
-                if (!FormSettingResponse.FormInfo.IsSQLProject)
-                {
-                    var MetaDataColumns = Epi.Cloud.Common.Constants.Constant.MetaDaTaColumnNames();
-                    Dictionary<int, string> Columndictionary = TempColumns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
+                Dictionary<int, string> columnDictionary = tempColumns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                    foreach (var item in MetaDataColumns)
+                foreach (var item in metadataColumns)
+                {
+                    if (!columnDictionary.ContainsValue(item))
                     {
-
-                        if (!Columndictionary.ContainsValue(item))
-                        {
-                            Columns.Add(new KeyValuePair<int, string>(Columns.Count() + 1, item));
-                        }
-
+                        _columns.Add(new KeyValuePair<int, string>(_columns.Count() + 1, item));
                     }
-
-                    Columns.Sort(Compare);
                 }
 
-                Dictionary<int, string> dictionary1 = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                _columns.Sort(Compare);
 
-                Model.FormControlNameList = dictionary1;
+                Dictionary<int, string> dictionary1 = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                Columns = FormSettingResponse.FormSetting.AssignedUserList.ToList();
-                if (Columns.Exists(col => col.Value == Session[SessionKeys.UserEmailAddress].ToString()))
+                model.FormControlNameList = dictionary1;
+
+                _columns = formSettingResponse.FormSetting.AssignedUserList.ToList();
+                if (_columns.Exists(col => col.Value == Session[SessionKeys.UserEmailAddress].ToString()))
                 {
-                    Columns.Remove(Columns.First(u => u.Value == Session[SessionKeys.UserEmailAddress].ToString()));
+                    _columns.Remove(_columns.First(u => u.Value == Session[SessionKeys.UserEmailAddress].ToString()));
                 }
 
                 //Columns.Sort(Compare);
 
-                Dictionary<int, string> dictionary2 = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                Dictionary<int, string> dictionary2 = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                Model.AssignedUserList = dictionary2;
+                model.AssignedUserList = dictionary2;
 
-                Columns = FormSettingResponse.FormSetting.UserList.ToList();
+                _columns = formSettingResponse.FormSetting.UserList.ToList();
 
-                if (Columns.Exists(col => col.Value == Session[SessionKeys.UserEmailAddress].ToString()))
+                if (_columns.Exists(col => col.Value == Session[SessionKeys.UserEmailAddress].ToString()))
                 {
-                    Columns.Remove(Columns.First(u => u.Value == Session[SessionKeys.UserEmailAddress].ToString()));
+                    _columns.Remove(_columns.First(u => u.Value == Session[SessionKeys.UserEmailAddress].ToString()));
                 }
-                //Columns.Sort(Compare);
 
-                Dictionary<int, string> dictionary3 = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                Dictionary<int, string> dictionary3 = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                Model.UserList = dictionary3;
+                model.UserList = dictionary3;
 
-                Columns = FormSettingResponse.FormSetting.AvailableOrgList.ToList();
-                Dictionary<int, string> dictionary4 = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
-                Model.AvailableOrgList = dictionary4;
+                _columns = formSettingResponse.FormSetting.AvailableOrgList.ToList();
+                Dictionary<int, string> dictionary4 = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                model.AvailableOrgList = dictionary4;
 
-                Columns = FormSettingResponse.FormSetting.SelectedOrgList.ToList();
-                Dictionary<int, string> dictionary5 = Columns.ToDictionary(pair => pair.Key, pair => pair.Value);
-                Model.SelectedOrgList = dictionary5;
+                _columns = formSettingResponse.FormSetting.SelectedOrgList.ToList();
+                Dictionary<int, string> dictionary5 = _columns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                model.SelectedOrgList = dictionary5;
 
-                Model.IsShareable = FormSettingResponse.FormInfo.IsShareable;
-                Model.IsDraftMode = FormSettingResponse.FormInfo.IsDraftMode;
-                Model.FormOwnerFirstName = FormSettingResponse.FormInfo.OwnerFName;
-                Model.FormOwnerLastName = FormSettingResponse.FormInfo.OwnerLName;
-                Model.FormName = FormSettingResponse.FormInfo.FormName;
-                Model.FormId = Item.FormId;
-                Model.DataAccessRuleIds = FormSettingResponse.FormSetting.DataAccessRuleIds;
-                Model.SelectedDataAccessRule = FormSettingResponse.FormSetting.SelectedDataAccessRule;
-                Model.HasDraftModeData = FormSettingResponse.FormInfo.HasDraftModeData;
+                model.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                model.IsDraftMode = formSettingResponse.FormInfo.IsDraftMode;
+                model.FormOwnerFirstName = formSettingResponse.FormInfo.OwnerFName;
+                model.FormOwnerLastName = formSettingResponse.FormInfo.OwnerLName;
+                model.FormName = formSettingResponse.FormInfo.FormName;
+                model.FormId = Item.FormId;
+                model.DataAccessRuleIds = formSettingResponse.FormSetting.DataAccessRuleIds;
+                model.SelectedDataAccessRule = formSettingResponse.FormSetting.SelectedDataAccessRule;
+                model.HasDraftModeData = formSettingResponse.FormInfo.HasDraftModeData;
                 var DataAccessRuleDescription = "";
-                foreach (var item in FormSettingResponse.FormSetting.DataAccessRuleDescription)
+                foreach (var item in formSettingResponse.FormSetting.DataAccessRuleDescription)
                 {
                     DataAccessRuleDescription = DataAccessRuleDescription + item.Key.ToString() + " : " + item.Value + "\n";
                 }
 
-                Model.DataAccessRuleDescription = DataAccessRuleDescription;
-                ModelList.Add(Model);
+                model.DataAccessRuleDescription = DataAccessRuleDescription;
+                modelList.Add(model);
             }
-            return PartialView("Settings", ModelList);
+            return PartialView("Settings", modelList);
         }
 
         [HttpPost]
@@ -796,15 +788,15 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Notify(String ResponseId)
+        public ActionResult Notify(String responseId)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
             //Get current user info
             int CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-            var UserInfo = _securityFacade.GetUserInfo(UserId);
+            var UserInfo = _securityFacade.GetUserInfo(userId);
             //Get Organization admin info 
-            var surveyAnswerDTO = GetSurveyAnswer(ResponseId, Session[SessionKeys.RootFormId].ToString());
+            var surveyAnswerDTO = GetSurveyAnswer(responseId, Session[SessionKeys.RootFormId].ToString());
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswerDTO.SurveyId);
 
             var OwnerInfo = _securityFacade.GetUserInfo(surveyAnswerDTO.FormOwnerId);
@@ -813,7 +805,7 @@ namespace Epi.Web.MVC.Controllers
             //ResponseId;
 
             email.Subject = "Record locked notification.";
-            email.Body = " A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + ResponseId + "\n\n User email: " + UserInfo.User.EmailAddress + "\n\n";
+            email.Body = " A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + responseId + "\n\n User email: " + UserInfo.User.EmailAddress + "\n\n";
             email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
             email.To = new List<string>();
             email.To.Add(OwnerInfo.User.EmailAddress);

@@ -25,7 +25,7 @@ namespace Epi.PersistenceServices.DocumentDB
         public DocumentDBSurveyPersistenceFacade()
         {
         }
-
+        
         SurveyResponseCRUD _surveyResponseCRUD = new SurveyResponseCRUD();
 
         public bool DoesResponseExist(string childFormId, string parentResponseId)
@@ -73,7 +73,10 @@ namespace Epi.PersistenceServices.DocumentDB
                     {
                         //Edit Recrod Don't Save
                         HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = _surveyResponseCRUD.ConvertAttachmentToHierarchical(attachment);
-                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties, null);
+                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties);
+                        
+                        //Delete Attachment                         
+                        var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
                     }
                     break;
 
@@ -84,12 +87,14 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
+            var metadataaccer = new MetadataAccessor();
+            var formDigest=metadataaccer.GetFormDigest(surveyResponseBO.SurveyId); 
             // Both SaveFormProperties and InsertResponse perform Task.Run
-            bool saveFormPropertiesIsSuccessful = SaveFormResponseProperties(surveyResponseBO);
+            bool saveFormPropertiesIsSuccessful = SaveFormResponseProperties(surveyResponseBO, formDigest.IsRootForm);
             bool savePagePropertiesIsSuccessful = SavePageResponseProperties(surveyResponseBO);
             if (surveyResponseBO.Status == RecordStatus.Saved)
             {
-                NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status,RecordStatusChangeReason.SubmitOrClose);
+                //NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status,RecordStatusChangeReason.SubmitOrClose);
             }
             return saveFormPropertiesIsSuccessful && savePagePropertiesIsSuccessful;
         }
@@ -100,7 +105,7 @@ namespace Epi.PersistenceServices.DocumentDB
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public bool SaveFormResponseProperties(SurveyResponseBO request)
+        public bool SaveFormResponseProperties(SurveyResponseBO request,bool IsRootForm)
         {
             //if(request.IsDeleteMode)
             //{
@@ -120,7 +125,8 @@ namespace Epi.PersistenceServices.DocumentDB
                 FormName = formName,
                 RelateParentId = request.RelateParentId,
                 IsRelatedView = request.RelateParentId != null,
-                FirstSaveTime = request.ResponseDetail.FirstSaveTime,
+                IsRootForm = IsRootForm,
+                //FirstSaveTime = request.ResponseDetail.FirstSaveTime,
                 LastSaveTime = now,
                 FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
                 UserId = request.UserId,
@@ -209,25 +215,7 @@ namespace Epi.PersistenceServices.DocumentDB
 #endif
         #endregion
 
-        //      #region Insert Child Survey Response
-        //      public Task<bool> InsertChildResponseAsync(SurveyResponseBO surveyResponseBO)
-        //{
-        //	var pageResponseDetail = surveyResponseBO.ResponseDetail.PageResponseDetailList.SingleOrDefault();
-        //	var formId = surveyResponseBO.SurveyId;
-        //	var pageId = pageResponseDetail != null ? pageResponseDetail.PageId : 0;
-
-        //	var parentRecordId = surveyResponseBO.ParentRecordId;
-        //	var relateParentId = surveyResponseBO.RelateParentId;
-
-        //	DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
-        //	documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
-        //	if (pageResponseDetail != null && pageResponseDetail.PageId > 0)
-        //	{
-        //		documentResponseProperties.PageResponsePropertiesList.Add(pageResponseDetail.ToPageResponseProperties());
-        //	}
-        //	return Task.FromResult(true);
-        //}
-        //#endregion
+      
 
         #region ReadSurveyAnswerByResponseID,PageId 
         public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
@@ -246,8 +234,8 @@ namespace Epi.PersistenceServices.DocumentDB
         #region DeleteSurveyByResponseId
         public SurveyAnswerResponse DeleteResponse(string responseId, int userId)
         {
-            bool deleteStatus = _surveyResponseCRUD.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId).Result;
-
+            //bool deleteStatus = _surveyResponseCRUD.UpdateResponseStatus(responseId, RecordStatus.Deleted, userId).Result;
+            bool deleteStatus = UpdateResponseStatus(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
             SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
             //var tasks = _surveyResponse.DeleteDocumentByIdAsync(SARequest);
             //var result = tasks.Result;
@@ -256,57 +244,7 @@ namespace Epi.PersistenceServices.DocumentDB
 
         #endregion
 
-        //public FormsHierarchyDTO GetChildRecordByChildFormId(string childFormId, string relateParentId, IDictionary<int, FieldDigest> fields)
-        //{
-        //	FormsHierarchyDTO formHierarchyDTO = new FormsHierarchyDTO();
-        //	var childRecords = _surveyResponse.GetAllResponsesWithFieldNames(fields, relateParentId);
-        //	formHierarchyDTO.ResponseIds = new List<SurveyAnswerDTO>();
-        //	foreach (var item in childRecords)
-        //	{
-        //		SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-        //		surveyAnswer.ResponseId = item.ResponseId.ToString();
-        //		surveyAnswer.SqlData = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
-        //		formHierarchyDTO.ResponseIds.Add(surveyAnswer);
-        //	}
-
-        //	return formHierarchyDTO;
-        //}
-
-
-        //#region Get the Record by GlobalRecordID
-        //		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId)
-        //		{
-        //			// TODO Implement GetSurveyAnswerResponse
-        //			return null;
-        //		}
-        //#endregion
-
-        //#region Get Survey Answer Response
-        //		public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, int userId)
-        //		{
-        //			SurveyAnswerResponse _surveyAnswerResponse = new SurveyAnswerResponse();
-        //			_surveyAnswerResponse.SurveyResponseList = new List<SurveyAnswerDTO>();
-
-        //			var formDocumentDbEntity = _surveyResponseCRUD.GetAllPageResponsesByResponseId(responseId);
-        //			List<SurveyAnswerDTO> surveyResponseList = new List<SurveyAnswerDTO>();
-        //			SurveyAnswerDTO surveyAnswerDTO = new SurveyAnswerDTO();
-        //			surveyAnswerDTO.ResponseId = responseId;
-        //			surveyAnswerDTO.SurveyId = formDocumentDbEntity.FormResponseProperties.FormId;
-
-        //			surveyAnswerDTO.ResponseDetail = formDocumentDbEntity.ToFormResponseDetail();
-
-        //			surveyAnswerDTO.DateCreated = formDocumentDbEntity.FormResponseProperties.FirstSaveTime;
-        //			surveyAnswerDTO.DateUpdated = formDocumentDbEntity.FormResponseProperties.LastSaveTime;
-        //			surveyAnswerDTO.RelateParentId = formDocumentDbEntity.FormResponseProperties.RelateParentId;
-        //			surveyAnswerDTO.LastActiveUserId = formDocumentDbEntity.FormResponseProperties.UserId;
-        //			surveyAnswerDTO.Status = RecordStatus.Saved;
-        //			surveyAnswerDTO.ReasonForStatusChange = RecordStatusChangeReason.Unknown;
-
-        //			surveyResponseList.Add(surveyAnswerDTO);
-        //			_surveyAnswerResponse.SurveyResponseList = surveyResponseList;
-        //			return _surveyAnswerResponse;
-        //		}
-        //#endregion
+       
 
         #region Read All Records By SurveyID
         public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)

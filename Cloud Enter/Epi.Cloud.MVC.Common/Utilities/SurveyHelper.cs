@@ -11,6 +11,7 @@ using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -73,7 +74,7 @@ namespace Epi.Web.MVC.Utility
 			surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
 			if (!IsChild)
 			{
-				surveyAnswerRequest.Action = Epi.Cloud.Common.Constants.Constant.CREATE;
+				surveyAnswerRequest.Action = RequestAction.Create;
 			}
 			else
 			{
@@ -83,7 +84,7 @@ namespace Epi.Web.MVC.Utility
 					surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId = null;
 				}
 
-				surveyAnswerRequest.Action = Epi.Cloud.Common.Constants.Constant.CREATECHILD;
+				surveyAnswerRequest.Action = RequestAction.CreateChild;
 
 			}
 
@@ -123,7 +124,7 @@ namespace Epi.Web.MVC.Utility
 
 				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
 				// 2 b. save the current survey response
-				surveyAnswerRequest.Action = Epi.Cloud.Common.Constants.Constant.UPDATE;
+				surveyAnswerRequest.Action = RequestAction.Update;
 
 				var currentPageNumber = form.CurrentPage;
 				FormResponseDetail currentFormResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
@@ -133,8 +134,8 @@ namespace Epi.Web.MVC.Utility
 					var mergedResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail);
 					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageIds = mergedResponseDetail.PageIds;
 					// keep only the pages that have updates
-					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.Where(p => p.HasBeenUpdated).ToList();
-					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
+					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.ToList();    
+                    surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
 					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.AddRange(updatedPageResponseDetailList);
 				}
 			}

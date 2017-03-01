@@ -49,12 +49,21 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constants\ResourceNamespaces.cs" />
     <Compile Include="ResourceProvider.cs" />
+    <Compile Include="UserAdminMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UserAdminMessages.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EmailMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>EmailMessages.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Epi.Cloud.Resources.EmailMessages</CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserAdminMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>UserAdminMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

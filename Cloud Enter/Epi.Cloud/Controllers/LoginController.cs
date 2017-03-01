@@ -60,7 +60,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.UserFirstName] = "John";
                 Session[SessionKeys.UserLastName]= "Doe";
                 Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
-                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+                return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
             }
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
             var authenticationSection = (AuthenticationSection)configuration.GetSection("system.web/authentication");
@@ -94,7 +94,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
                         Session[SessionKeys.UserLastName] = result.User[0].LastName;
                         Session[SessionKeys.UGuid] = result.User[0].UGuid;
-                        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+                        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
                     }
                     else
                     {
@@ -138,7 +138,7 @@ namespace Epi.Web.MVC.Controllers
             //        FormsAuthentication.SetAuthCookie(Model.UserName, false);
             //        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
             //        Session[SessionKeys.UserId] = UserId;
-            //        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = "" });
+            //        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
             //    }
             //}
             //else
@@ -189,7 +189,7 @@ namespace Epi.Web.MVC.Controllers
             switch (Action.ToUpper())
             {
                 case "CANCEL":
-                    return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
+                    return RedirectToAction(ViewActions.Index, ControllerNames.Login);
                 default:
                     break;
             }
@@ -207,10 +207,10 @@ namespace Epi.Web.MVC.Controllers
                 return View("ForgotPassword", Model);
             }
 
-            bool success = _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, Operation = Constant.OperationMode.UpdatePassword });
+            bool success = _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, Operation = OperationMode.UpdatePassword });
             if (success)
             {
-                return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
+                return RedirectToAction(ViewActions.Index, ControllerNames.Login);
             }
             else
             {
@@ -231,7 +231,7 @@ namespace Epi.Web.MVC.Controllers
             switch (Action.ToUpper())
             {
                 case "CANCEL":
-                    return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Login");
+                    return RedirectToAction(ViewActions.Index, ControllerNames.Login);
                 default:
                     break;
             }
@@ -252,7 +252,7 @@ namespace Epi.Web.MVC.Controllers
                 return View("ResetPassword", Model);
             }
 
-            _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = Constant.OperationMode.UpdatePassword, ResetPassword = true });
+            _securityFacade.UpdateUser(new UserDTO() { UserName = Model.UserName, PasswordHash = Model.Password, Operation = OperationMode.UpdatePassword, ResetPassword = true });
             UserLoginModel UserLoginModel = new UserLoginModel();
             UserLoginModel.Password = Model.Password;
             UserLoginModel.UserName = Model.UserName;
@@ -301,7 +301,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserLastName] = result.User.LastName;
                         Session[SessionKeys.UserName] = result.User.UserName;
                         Session[SessionKeys.UGuid] = result.User.UGuid;
-                        return RedirectToAction(Epi.Cloud.Common.Constants.Constant.INDEX, "Home", new { surveyid = formId });
+                        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = formId });
                         //return Redirect(ReturnUrl);
                     }
                 }

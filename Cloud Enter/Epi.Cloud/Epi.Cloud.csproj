@@ -632,6 +632,8 @@
     <None Include="Properties\PublishProfiles\CloudEnterDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterQA - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterQA - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCCSRADEV - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCCSRADEV - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %284%29.pubxml" />
@@ -825,6 +827,10 @@
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Resources\Epi.Cloud.Resources.csproj">
+      <Project>{96BCC2AC-31D3-49EE-902B-09AE7099BCBD}</Project>
+      <Name>Epi.Cloud.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
       <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>

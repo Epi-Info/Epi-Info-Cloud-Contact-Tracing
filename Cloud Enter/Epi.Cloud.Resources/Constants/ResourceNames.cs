@@ -11,4 +11,12 @@ namespace Epi.Cloud.Resources.Constants
         public const string UpdateUserInfo_Body = "UpdateUserInfo_Body";
         public const string UpdateUserInfo_Subject = "UpdateUserInfo_Subject";
     }
+
+    public struct UserAdminResourceKeys
+    {
+        public const string UserInformationUpdated = "UserInformationUpdated";
+        public const string UserAlreadyExists = "UserAlreadyExists";
+        public const string UserAdded = "UserAdded";
+    }
+
 }

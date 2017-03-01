@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.DTO;
-using Epi.Cloud.Common.Message;
-using Epi.Cloud.Common.Constants;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
-using System;
-using System.Text;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -19,8 +19,8 @@ namespace Epi.Web.MVC.Controllers
         protected ISurveyFacade _surveyFacade;
         protected Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider _projectMetadataProvider;
 
-        protected List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
-        protected List<KeyValuePair<int, FieldDigest>> ColumnDigests = new List<KeyValuePair<int, FieldDigest>>();
+        protected List<KeyValuePair<int, string>> _columns = new List<KeyValuePair<int, string>>();
+        protected List<KeyValuePair<int, FieldDigest>> _columnDigests = new List<KeyValuePair<int, FieldDigest>>();
 
         private MetadataAccessor _metadataAccessor;
         protected MetadataAccessor MetadataAccessor { get { return _metadataAccessor = _metadataAccessor ?? new MetadataAccessor(); } }
@@ -34,29 +34,29 @@ namespace Epi.Web.MVC.Controllers
             return a.Key.CompareTo(b.Key);
         }
 
-        protected FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, int orgid, int userId)
+        protected FormResponseInfoModel GetFormResponseInfoModel(string surveyId, int orgId, int userId)
         {
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
             var surveyResponseHelper = new SurveyResponseHelper();
-            FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            FormSettingRequest formSettingRequest = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
             //Populating the request
 
-            formSettingReq.FormInfo.FormId = SurveyId;
-            formSettingReq.FormInfo.UserId = userId;
+            formSettingRequest.FormInfo.FormId = surveyId;
+            formSettingRequest.FormInfo.UserId = userId;
             //Getting Column Name  List
-            formSettingReq.CurrentOrgId = orgid;
-            var formSettingResponse = formResponseInfoModel.FormSettingResponse = _surveyFacade.GetFormSettings(formSettingReq);
-            formSettingResponse.FormSetting.FormId = SurveyId;
-            Columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
-            Columns.Sort(Compare);
-            ColumnDigests = formSettingResponse.FormSetting.ColumnDigestList.ToList();
-            ColumnDigests.Sort(Compare);
+            formSettingRequest.CurrentOrgId = orgId;
+            var formSettingResponse = formResponseInfoModel.FormSettingResponse = _surveyFacade.GetFormSettings(formSettingRequest);
+            formSettingResponse.FormSetting.FormId = surveyId;
+            _columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
+            _columns.Sort(Compare);
+            _columnDigests = formSettingResponse.FormSetting.ColumnDigestList.ToList();
+            _columnDigests.Sort(Compare);
 
             // Setting  Column Name  List
-            formResponseInfoModel.Columns = Columns;
-            formResponseInfoModel.ColumnDigests = ColumnDigests;
+            formResponseInfoModel.Columns = _columns;
+            formResponseInfoModel.ColumnDigests = _columnDigests;
 
             return formResponseInfoModel;
         }
@@ -140,7 +140,7 @@ namespace Epi.Web.MVC.Controllers
             return searchDigestList;
         }
 
-        protected string CreateSearchCriteria(System.Collections.Specialized.NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
+        protected string CreateSearchCriteria(NameValueCollection nameValueCollection, SearchBoxModel searchModel, FormResponseInfoModel model)
         {
             FormCollection formCollection = new FormCollection(nameValueCollection);
 

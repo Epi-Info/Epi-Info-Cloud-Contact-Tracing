@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using Epi.Cloud.Common.Message;
-using Epi.Web.MVC.Utility;
-using Epi.Cloud.Facades.Interfaces;
-using System.Web.Configuration;
-using Epi.Web.MVC.Models;
-using System.Text.RegularExpressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Web.Configuration;
+using System.Web.Mvc;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.MVC.Extensions;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Extensions;
+using Epi.Web.MVC.Models;
+using Epi.Web.MVC.Utility;
 
 namespace Epi.Web.MVC.Controllers
 {
     public class AdminOrganizationController : Controller
     {
-
         private ISurveyFacade _surveyFacade;
         private ISecurityFacade _securityFacade;
 
@@ -26,6 +25,7 @@ namespace Epi.Web.MVC.Controllers
             _surveyFacade = isurveyFacade;
             _securityFacade = isecurityFacade;
         }
+
         [HttpGet]
         public ActionResult OrgList()
         {
@@ -44,16 +44,13 @@ namespace Epi.Web.MVC.Controllers
 
             if (userHighestRole == 3)
             {
-                return View("OrgList", orgListModel);
+                return View(ViewActions.OrgList, orgListModel);
             }
             else
             {
-
-                return RedirectToAction("UserList", "AdminUser");
+                return RedirectToAction(ViewActions.UserList, ControllerNames.AdminUser);
             }
-
         }
-
 
         [HttpGet]
         public ActionResult OrgInfo(string orgKey, bool isEditMode)
@@ -69,13 +66,14 @@ namespace Epi.Web.MVC.Controllers
                 OrganizationResponse organizations = _securityFacade.GetOrganizationInfo(request);
                 orgInfo = organizations.ToOrgAdminInfoModel();
                 orgInfo.IsEditMode = isEditMode;
-                return View("OrgInfo", orgInfo);
+                return View(ViewActions.OrgInfo, orgInfo);
             }
 
             orgInfo.IsEditMode = isEditMode;
             orgInfo.IsOrgEnabled = true;
-            return View("OrgInfo", orgInfo);
+            return View(ViewActions.OrgInfo, orgInfo);
         }
+
         [HttpPost]
         public ActionResult OrgInfo(OrgAdminInfoModel orgAdminInfoModel)
         {
@@ -115,7 +113,7 @@ namespace Epi.Web.MVC.Controllers
                 request.Organization.OrganizationKey = GetOrgKey(url);
                 request.UserId = userId;
                 request.UserRole = userHighestRole;
-                request.Action = "Update";
+                request.Action = RequestAction.Update;
                 try
                 {
                     OrganizationResponse result = _securityFacade.SetOrganization(request);
@@ -128,7 +126,7 @@ namespace Epi.Web.MVC.Controllers
                     {
 
                         orgListModel.Message = "Organization " + orgAdminInfoModel.OrgName + " has been updated.";
-                        return View("OrgList", orgListModel);
+                        return View(ViewActions.OrgList, orgListModel);
                     }
                     else if (result.Message.ToUpper() == "ERROR")
                     {
@@ -139,7 +137,7 @@ namespace Epi.Web.MVC.Controllers
                         orgInfo = organizations.ToOrgAdminInfoModel();
                         orgInfo.IsEditMode = true;
                         ModelState.AddModelError("IsOrgEnabled", "Organization for the super admin cannot be deactivated.");
-                        return View("OrgInfo", orgInfo);
+                        return View(ViewActions.OrgInfo, orgInfo);
                     }
                     else
                     {
@@ -150,10 +148,7 @@ namespace Epi.Web.MVC.Controllers
                         orgInfo = organizations.ToOrgAdminInfoModel();
                         orgInfo.IsEditMode = true;
                         ModelState.AddModelError("OrgName", "The organization name provided already exists.");
-                        return View("OrgInfo", orgInfo);
-
-
-
+                        return View(ViewActions.OrgInfo, orgInfo);
                     }
                 }
                 catch (Exception ex)
@@ -182,7 +177,7 @@ namespace Epi.Web.MVC.Controllers
 
                     request.UserRole = userHighestRole;
                     request.UserId = userId;
-                    request.Action = "Insert";
+                    request.Action = RequestAction.Insert;
                     try
                     {
                         OrganizationResponse result = _securityFacade.SetOrganization(request);
@@ -206,9 +201,9 @@ namespace Epi.Web.MVC.Controllers
                             orgInfo = organizations.ToOrgAdminInfoModel();
                             orgInfo.IsEditMode = false;
                             ModelState.AddModelError("OrgName", "The organization name provided already exists.");
-                            return View("OrgInfo", orgInfo);
+                            return View(ViewActions.OrgInfo, orgInfo);
                         }
-                        return View("OrgList", orgListModel);
+                        return View(ViewActions.OrgList, orgListModel);
                     }
                     catch (Exception ex)
                     {

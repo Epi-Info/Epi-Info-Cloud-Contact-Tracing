@@ -73,7 +73,7 @@ namespace Epi.Cloud.MVC.Extensions
         {
             ResponseModel ResponseModel = new ResponseModel();
 
-            var MetaDataColumns = Epi.Cloud.Common.Constants.Constant.MetaDaTaColumnNames();
+            var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
 
             try
             {
@@ -92,7 +92,7 @@ namespace Epi.Cloud.MVC.Extensions
                         // set value to empty string for unspecified columns
                         value = string.Empty;
                     }
-                    else if (MetaDataColumns.Contains(Columns[i].Value))
+                    else if (metadataColumns.Contains(Columns[i].Value))
                     {
                         // set value to value of special column
                         value = GetColumnValue(item, Columns[i].Value);

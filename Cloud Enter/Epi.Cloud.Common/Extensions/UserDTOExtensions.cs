@@ -21,7 +21,7 @@ namespace Epi.Cloud.Common.Extensions
                 Role = User.Role,
                 UserHighestRole = User.UserHighestRole,
                 IsActive = User.IsActive,
-                Operation = (Constant.OperationMode)User.Operation,
+                Operation = (OperationMode)User.Operation,
                 UGuid = User.UGuid
             };
         }
