@@ -21,6 +21,7 @@ namespace Epi.Web.MVC.Models
         public string sortOrder;
         public string sortfield;
         public List<ResponseModel> BlobResponsesList;
+        public string ViewDetail;
 
         public MetadataAdmin()
         {

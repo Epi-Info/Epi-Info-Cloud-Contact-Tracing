@@ -102,14 +102,27 @@ namespace Epi.Web.MVC
 (
 null, // Route name
 "MetadataAdmin/ClearMetadaCache", // URL with parameters
-new { controller = "MetadataAdmin", action = "ClearMetadaCache", Cache = UrlParameter.Optional }
+new { controller = "MetadataAdmin", action = "ClearMetadaCache" }
 ); // Param
 
             routes.MapRoute
 (
 null, // Route name
 "MetadataAdmin/DeleteBlob", // URL with parameters
-new { controller = "MetadataAdmin", action = "DeleteBlob", blobname = UrlParameter.Optional }
+new { controller = "MetadataAdmin", action = "DeleteBlob", ProjectId = UrlParameter.Optional }
+); // Param
+            routes.MapRoute
+(
+null, // Route name
+"MetadataAdmin/ViewBlob", // URL with parameters
+new { controller = "MetadataAdmin", action = "ViewBlob", ProjectId = UrlParameter.Optional }
+); // Param
+
+            routes.MapRoute
+(
+null, // Route name
+"MetadataAdmin/UploadBlob", // URL with parameters
+new { controller = "MetadataAdmin", action = "UploadBlob", ProjectId = UrlParameter.Optional }
 ); // Param
 
 

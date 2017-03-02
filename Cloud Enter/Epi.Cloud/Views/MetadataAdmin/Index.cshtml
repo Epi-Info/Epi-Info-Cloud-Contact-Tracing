@@ -8,8 +8,8 @@
 
 <script type="text/jscript">
     function ClearMetadaCache() {
-      
-      
+
+
         var ActionUrl = '@Url.Action("ClearMetadaCache", "MetadataAdmin")';
         $.ajax({
             url: ActionUrl,
@@ -22,11 +22,14 @@
         });
         function successFunc1(data, status) {
             if (data == "Success") {
-                alert('Cache has been Cleared');
+                alert('Cache has been cleared Successfully');
+            }
+            else if (data == "UnSuccess") {
+                alert('Cache has not been cleared Successfully');
             }
             else {
 
-                alert('Cannot Delete Records in Inprogress State');
+                alert('Error while clearing Cache');
             }
         }
 
@@ -34,15 +37,95 @@
             alert('error');
         }
     }
+
+    function UploadBlob() {
+
+
+        var ActionUrl = '@Url.Action("UploadBlob", "MetadataAdmin")';
+        $.ajax({
+            url: ActionUrl,
+            type: 'POST',
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            //data: JSON.stringify(model),
+            success: successFunc1,
+            Error: errorFunc1
+        });
+        function successFunc1(data, status) {
+            if (data == "Success") {
+                alert('Cache has been cleared Successfully');
+            }
+            else if (data == "UnSuccess") {
+                alert('Cache has not been cleared Successfully');
+            }
+            else {
+
+                alert('Error while clearing Cache');
+            }
+        }
+
+        function errorFunc1() {
+            alert('error');
+        }
+    }
+
+    function DeleteBlob(ProjectId) {
+
+
+        var ActionUrl = '@Url.Action("DeleteBlob", "MetadataAdmin")' + '?ProjectId=' + ProjectId;
+        $.ajax({
+            url: ActionUrl,
+            type: 'POST',
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            //data: JSON.stringify(model),
+            success: successFunc1,
+            Error: errorFunc1
+        });
+        function successFunc1(data, status) {
+            if (data == "Success") {
+                alert('Blob has been Deleted Successfully');
+            }
+            else if (data == "UnSuccess") {
+                alert('Blob has not been Deleted Successfully');
+            }
+            else {
+
+                alert('Error while Deleting Blob');
+            }
+        }
+
+        function errorFunc1() {
+            alert('error');
+        }
+    }
+
+
+    function ViewBlob(ProjectId) {
+
+        var ActionUrl = '@Url.Action("ViewBlob", "MetadataAdmin")' + '?ProjectId=' + ProjectId;
+        $.ajax({
+            url: ActionUrl,
+            type: 'POST',
+            cache: false,
+            contentType: 'application/json; charset=utf-8'
+        });
+    }
+
 </script>
+
 <div>
 
 
     <h3>Clear Cache</h3>
     @* <label for="Email" style="display: block; font-weight: bold;margin-top:10px;">Email:</label>*@
     <br />
-    <button id="btnClearCache" onclick="ClearMetadaCache(this)" type="button" class='default edit'>
+    <button id="btnClearCache" onclick="ClearMetadaCache()" type="button" class='default edit'>
         Clear
+    </button>
+
+    <button id="btnUploadCache" onclick="UploadBlob()" type="button" class='default edit'>
+        Upload Blob
     </button>
 
     @{
@@ -84,8 +167,8 @@
                     var gridColumns = new List<WebGridColumn>
                         ();
                     gridColumns.Add(webGrid.Column(header: "",
-                    format: (item) => new HtmlString("<button name='ViewBlob' type='button' onclick='ViewBlob(this)' class='default edit' id='" + item.Column0 + "' value='" + item.Column0 + "'>Open</button> " +
-                    "<button name='DeleteButton' type='submit' class='default edit' onclick='DeleteBlob(this)' id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+                    format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
+                    "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
                     )));
 
                     if (Model.Columns.Count >= 1)

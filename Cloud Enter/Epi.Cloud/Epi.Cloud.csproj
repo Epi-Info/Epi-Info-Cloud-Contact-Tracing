@@ -784,6 +784,7 @@
     <Content Include="Views\AdminUser\PartialUserList.cshtml" />
     <Content Include="Views\Shared\_ViewSwitcher.cshtml" />
     <Content Include="Views\MetadataAdmin\Index.cshtml" />
+    <Content Include="Views\MetadataAdmin\ViewBlob.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

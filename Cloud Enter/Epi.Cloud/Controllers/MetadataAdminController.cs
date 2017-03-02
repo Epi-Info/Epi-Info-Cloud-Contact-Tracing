@@ -73,34 +73,77 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult Index(string id)
         {
-
-
-            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE);
-        }
-
-        [HttpGet]
-        public ActionResult ClearMetadaCache(Guid ProjectId)
-        {            
-            _epiCloudCache.ClearAllCache(ProjectId);
-            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE);
+            return View("MetadataAdmin", "Index");
         }
 
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult DeleteBlob(Guid blobname)
+        public ActionResult ClearMetadaCache()
         {
-            bool IsDeleted = _metadataBlobCRUD.DeleteBlob(blobname.ToString("N"));
-            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE);
+            try
+            {
+                Guid ProjectId = _epiCloudCache.GetDeployedProjectId();
+                _epiCloudCache.ClearAllCache(ProjectId);
+            }
+            catch (Exception ex)
+            {
+                return Json("Erorr");
+            }
+            return Json("Success");
         }
+
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult DeleteBlob(string ProjectId)
+        {
+            try
+            {
+                Guid BlobName = new Guid(ProjectId);
+                bool IsDeleted = _metadataBlobCRUD.DeleteBlob(BlobName.ToString("N"));
+                if (!IsDeleted)
+                {
+                    return Json("UnSuccess");
+
+                }
+            }
+            catch
+            { return Json("Erorr"); }
+
+            return Json("Success");
+        }
+
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ViewBlob(string ProjectId)
+        {
+            //MetadataAdmin metaadmin = new MetadataAdmin();
+            try
+            {
+                Guid BlobName = new Guid(ProjectId);
+                //metaadmin.ViewDetail= _metadataBlobCRUD.DownloadText(BlobName.ToString("N"));
+                ViewBag.ViewDetail = _metadataBlobCRUD.DownloadText(BlobName.ToString("N"));
+            }
+            catch
+            { return Json("Erorr"); }
+
+            return PartialView(ViewActions.ViewBlob);
+        }
+
 
 
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult UploadBlob(string Cache)
         {
-            MetadataProvider metadataProvider = new MetadataProvider();
-            var metaData = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;
-            return View(Epi.Cloud.Common.Constants.Constant.INDEX_PAGE);
+            try
+            {
+                MetadataProvider metadataProvider = new MetadataProvider();
+                var metaData = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;               
+            }
+            catch
+            { return Json("Erorr"); }
+
+            return Json("Success");
         }
 
     }
