@@ -486,7 +486,7 @@ namespace Epi.Web.MVC.Utility
             }
 
 
-            List<string> CodesItemList1 = new List<string>();
+           /* List<string> CodesItemList1 = new List<string>();
             select.CodesList = new Dictionary<string, List<string>>();
             if (!string.IsNullOrEmpty(RelateCondition))
             {
@@ -494,7 +494,7 @@ namespace Epi.Web.MVC.Utility
 
                 foreach (var item in CodesItemList)
                 {
-                    CodesItemList1.Add(item.Remove(item.IndexOf(':')));
+                   // CodesItemList1.Add(item.Remove(item.IndexOf(':')));
 
                 }
             }
@@ -506,11 +506,11 @@ namespace Epi.Web.MVC.Utility
                 {
                     List.Add(item.ToString());
                 }
-                if (!select.CodesList.ContainsKey(controlValue.ToString()))
+                if (!select.CodesList.ContainsKey(DropDownValues.ToString()))
                 {
-                    select.CodesList.Add(controlValue.Trim(), List);
+                    select.CodesList.Add(DropDownValues.Trim(), List);
                 }
-            }
+            }*/ //TOBEDONE
 
 
             return select;

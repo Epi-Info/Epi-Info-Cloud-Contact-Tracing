@@ -137,7 +137,7 @@ namespace Epi.Web.MVC.Utility
                 select.Choices[controlValue] = true;
             }
 
-            List<string> CodesItemList1 = new List<string>();
+            /*List<string> CodesItemList1 = new List<string>();
             select.CodesList = new Dictionary<string, List<string>>();
             if (!string.IsNullOrEmpty(RelateCondition))
             {
@@ -158,7 +158,7 @@ namespace Epi.Web.MVC.Utility
                     List.Add(item.ToLower().ToString());
                 }
                 select.CodesList.Add(DropDownValues.ToLower().Trim(), List);
-            }
+            }*/ //TOBEDone
 
             return select;
         }
