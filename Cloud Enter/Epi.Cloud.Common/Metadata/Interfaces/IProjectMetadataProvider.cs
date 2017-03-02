@@ -13,9 +13,6 @@ namespace Epi.Cloud.Interfaces.MetadataInterfaces
 
         Task<Template> RetrieveProjectMetadataAsync(Guid projectId);
 
-        //Task<Template> GetProjectMetadataAsync();
-        //Pass the page id and call the DBAccess API and get the project fileds.
-        //Task<Template> GetProjectMetadataAsync(string formId, ProjectScope scope);
         Task<Page> GetPageMetadataAsync(string formId, int pageId);
         Task<FormDigest[]> GetFormDigestsAsync();
         Task<FormDigest> GetFormDigestAsync(string formId);

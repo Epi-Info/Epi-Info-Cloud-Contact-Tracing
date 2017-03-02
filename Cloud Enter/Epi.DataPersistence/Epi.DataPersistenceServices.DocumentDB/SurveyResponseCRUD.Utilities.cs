@@ -87,11 +87,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
 #else
                     if (AppSettings.GetBoolValue(AppSettings.Key.IsLocalReleaseBuild))
                     {
-                        _client = new DocumentClient(new Uri(_serviceEndpoint), _authkey);
+                        _client = new DocumentClient(new Uri(_serviceEndpoint), _authKey);
                     }
                     else
                     {
-                        _client = new DocumentClient(new Uri(_serviceEndpoint), _authkey,
+                        _client = new DocumentClient(new Uri(_serviceEndpoint), _authKey,
                             new ConnectionPolicy
                             {
                                 ConnectionMode = ConnectionMode.Direct,

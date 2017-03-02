@@ -126,7 +126,7 @@ namespace MvcDynamicForms.Fields
             {
                 select.Attributes.Add("onclick", "return " + _key + "_click();"); //click
             }
-            if (!string.IsNullOrEmpty(this.RelateCondition))
+          /*  if (!string.IsNullOrEmpty(this.RelateCondition))
             {
 
                 select.Attributes.Add("onchange", "return SetCodes_Val(this);"); //click
@@ -148,7 +148,7 @@ namespace MvcDynamicForms.Fields
                 hidden.Attributes.Add("name", inputName + "_RelateConditionHidden");
                 hidden.Attributes.Add("value", NewString.ToString());
                 html.Append(hidden.ToString(TagRenderMode.SelfClosing));
-            }
+            }*///To BE Done
 
             ////////////Check code end//////////////////
             int LargestChoiseLength = 0;
@@ -254,7 +254,7 @@ namespace MvcDynamicForms.Fields
 
 
 
-            if (this.CodesList.Count() > 0)
+            /*if (this.CodesList.Count() > 0)
             {
                 string Html = "";
                 var ScriptRelateCondition = new TagBuilder("script");
@@ -279,7 +279,7 @@ namespace MvcDynamicForms.Fields
                 // var jsonSerialiser = new JavaScriptSerializer();
                 var json = JsonConvert.SerializeObject(CodesList);
 
-            }
+            }*/ //ToBEDONE
 
 
             switch (this.SelectType.ToString())

@@ -69,6 +69,7 @@
     <Compile Include="Models\FormResponseInfoModel.cs" />
     <Compile Include="Extensions\OrganizationDTOExtensions.cs" />
     <Compile Include="Models\Message.cs" />
+    <Compile Include="Models\MetadataAdmin.cs" />
     <Compile Include="Models\Omniture.cs" />
     <Compile Include="Models\OrgAdminInfoModel.cs" />
     <Compile Include="Models\OrganizationModel.cs" />
