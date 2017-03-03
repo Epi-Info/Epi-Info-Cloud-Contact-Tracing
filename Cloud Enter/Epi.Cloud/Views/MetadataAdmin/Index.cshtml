@@ -193,8 +193,8 @@
             var gridColumns = new List<WebGridColumn>
                 ();
             gridColumns.Add(webGrid.Column(header: "",
-            format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ShowSppiner();ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
-            "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+            format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ShowSppiner();ViewBlob('" + item.Column2 + "')  value='" + item.Column2 + "'> View</button> " +
+            "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column2 + "') id='" + item.Column2 + "' value='" + item.Column2 + "'> Delete</button>"
             )));
 
             if (Model.Columns.Count >= 1)
