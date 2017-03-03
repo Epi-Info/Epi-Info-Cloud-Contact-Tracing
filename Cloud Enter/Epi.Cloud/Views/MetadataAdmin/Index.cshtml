@@ -61,7 +61,7 @@
         });
         function successFunc1(data, status) {
             if (data == "Success") {
-                alert('Cache has been cleared Successfully');               
+                alert('Cache has been cleared Successfully');
 
             }
             else if (data == "UnSuccess") {
@@ -169,7 +169,7 @@
 
     <h3>Clear Cache</h3>
     @* <label for="Email" style="display: block; font-weight: bold;margin-top:10px;">Email:</label>*@
-   
+
     <button id="btnClearCache" onclick="ClearMetadaCache()" type="button" class='default edit'>
         Clear
     </button>
@@ -188,33 +188,33 @@
     }
     <div id="recordstable">
         @{
-           
+
             <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;"></div>
-                    var gridColumns = new List<WebGridColumn>
-                        ();
-                    gridColumns.Add(webGrid.Column(header: "",
-                    format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ShowSppiner();ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
-                    "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
-                    )));
+            var gridColumns = new List<WebGridColumn>
+                ();
+            gridColumns.Add(webGrid.Column(header: "",
+            format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ShowSppiner();ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
+            "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+            )));
 
-                    if (Model.Columns.Count >= 1)
-                    {
-                        gridColumns.Add(webGrid.Column("Column0", (Model.Columns.Count >= 1) ? Model.Columns[0] : ""));
-                    }
-                    if (Model.Columns.Count >= 2)
-                    {
-                        gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 2) ? Model.Columns[1] : ""));
-                    }
-                    if (Model.Columns.Count >= 3)
-                    {
-                        gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 3) ? Model.Columns[2] : ""));
-                    }
+            if (Model.Columns.Count >= 1)
+            {
+                gridColumns.Add(webGrid.Column("Column0", (Model.Columns.Count >= 1) ? Model.Columns[0] : ""));
+            }
+            if (Model.Columns.Count >= 2)
+            {
+                gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 2) ? Model.Columns[1] : ""));
+            }
+            if (Model.Columns.Count >= 3)
+            {
+                gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 3) ? Model.Columns[2] : ""));
+            }
 
-                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
+            @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
 
-                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
+            @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
 
-                    @webGrid.GetHtml(columns: gridColumns);
+            @webGrid.GetHtml(columns: gridColumns);
 
 
         }
