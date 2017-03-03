@@ -772,6 +772,13 @@ namespace Epi.Web.MVC.Controllers
         }
 
         [HttpPost]
+        public ActionResult GotoMetaadmin()//List<FormInfoModel> ModelList, string formid)
+        {
+            return RedirectToAction("Index", "MetadataAdmin");
+        }
+
+
+        [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult CheckForConcurrency(String responseId)
         {

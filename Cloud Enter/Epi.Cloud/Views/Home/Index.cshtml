@@ -682,6 +682,30 @@
         }
 
     }
+
+    function GotoMetaadmin() {
+        var ActionUrl = '@Url.Action("GotoMetaadmin", "Home")';
+        $.ajax({
+            url: ActionUrl,
+            type: 'POST',
+            cache: false,
+            contentType: 'application/json; charset=utf-8',
+            //data: JSON.stringify(model),
+            success: successFunc,
+            Error: errorFunc
+        });
+        //		 $.ajaxSetup({ cache: false });
+
+        function successFunc(data, status) {
+            $('#right').html(data);
+
+        }
+
+        function errorFunc() {
+            alert('error');
+        }
+
+    }
     function SaveSettings() {
 
         var validation = true;

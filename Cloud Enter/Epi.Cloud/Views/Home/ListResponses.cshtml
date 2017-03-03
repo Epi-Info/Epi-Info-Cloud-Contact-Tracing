@@ -53,6 +53,12 @@
         <button id="btneditsettings" onclick="GetSettings()" class="default settings" type="button">
             Settings
         </button>
+
+        @*@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, null);*@
+
+        <button id="btnmetaadmin" onclick="location.href='@Url.Action("Index", "MetadataAdmin")';return false;" class="default" type="button" style="height: 35px;">
+            Admin
+        </button>
     }
 </div>
 <div style="clear: both">
