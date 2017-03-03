@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq; 
-using Epi.Cloud.Common.BusinessObjects; 
+using System.Linq;
+using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
@@ -10,7 +10,7 @@ using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
-using Microsoft.Azure.Documents; 
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 using System.Configuration;
@@ -25,7 +25,7 @@ namespace Epi.PersistenceServices.DocumentDB
         public DocumentDBSurveyPersistenceFacade()
         {
         }
-        
+
         SurveyResponseCRUD _surveyResponseCRUD = new SurveyResponseCRUD();
 
         public bool DoesResponseExist(string childFormId, string parentResponseId)
@@ -52,34 +52,40 @@ namespace Epi.PersistenceServices.DocumentDB
         public bool UpdateResponseStatus(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
         {
             Attachment attachment = null;
-           // var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
-
-            switch (responseStatus)
+            // var result = _surveyResponseCRUD.UpdateResponseStatus(responseId, responseStatus);
+            try
             {
-                case RecordStatus.Saved:
-                    var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseId, responseStatus);
-                    break;
-                case RecordStatus.Deleted:
-                     var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
-                    break;
-                case RecordStatus.Restore:
-                    attachment = _surveyResponseCRUD.ReadAttachment(responseId, AttachmentId);
-                    if (attachment == null)
-                    {
-                        //Add new record Don't Save
-                        var NewRecordDontSaveResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
-                    }
-                    else
-                    {
-                        //Edit Recrod Don't Save
-                        HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = _surveyResponseCRUD.ConvertAttachmentToHierarchical(attachment);
-                        var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties);
-                        
-                        //Delete Attachment                         
-                        var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
-                    }
-                    break;
+                switch (responseStatus)
+                {
+                    case RecordStatus.Saved:
+                        var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseId, responseStatus);
+                        break;
+                    case RecordStatus.Deleted:
+                        NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
+                        var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
+                        break;
+                    case RecordStatus.Restore:
+                        attachment = _surveyResponseCRUD.ReadAttachment(responseId, AttachmentId);
+                        if (attachment == null)
+                        {
+                            //Add new record Don't Save
+                            var NewRecordDontSaveResult = _surveyResponseCRUD.DeleteAllSurveyData(responseId, responseStatus);
+                        }
+                        else
+                        {
+                            //Edit Recrod Don't Save
+                            HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = _surveyResponseCRUD.ConvertAttachmentToHierarchical(attachment);
+                            var EditRecordDontSaveResult = _surveyResponseCRUD.RestoreAttachment(hierarchicalDocumentResponseProperties);
 
+                            //Delete Attachment                         
+                            var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
             return true;
         }
@@ -88,13 +94,13 @@ namespace Epi.PersistenceServices.DocumentDB
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
             var metadataaccer = new MetadataAccessor();
-            var formDigest=metadataaccer.GetFormDigest(surveyResponseBO.SurveyId); 
+            var formDigest = metadataaccer.GetFormDigest(surveyResponseBO.SurveyId);
             // Both SaveFormProperties and InsertResponse perform Task.Run
             bool saveFormPropertiesIsSuccessful = SaveFormResponseProperties(surveyResponseBO, formDigest.IsRootForm);
             bool savePagePropertiesIsSuccessful = SavePageResponseProperties(surveyResponseBO);
             if (surveyResponseBO.Status == RecordStatus.Saved)
             {
-                //NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status,RecordStatusChangeReason.SubmitOrClose);
+                NotifyConsistencyService(surveyResponseBO.ResponseId, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
             }
             return saveFormPropertiesIsSuccessful && savePagePropertiesIsSuccessful;
         }
@@ -105,7 +111,7 @@ namespace Epi.PersistenceServices.DocumentDB
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public bool SaveFormResponseProperties(SurveyResponseBO request,bool IsRootForm)
+        public bool SaveFormResponseProperties(SurveyResponseBO request, bool IsRootForm)
         {
             //if(request.IsDeleteMode)
             //{
@@ -130,7 +136,7 @@ namespace Epi.PersistenceServices.DocumentDB
                 LastSaveTime = now,
                 FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
                 UserId = request.UserId,
-                UserName=request.UserName,
+                UserName = request.UserName,
                 IsDraftMode = request.IsDraftMode,
                 PageIds = request.ResponseDetail.PageIds != null ? request.ResponseDetail.PageIds.Where(pid => pid != 0).ToList() : new List<int>(),
                 RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
@@ -215,7 +221,7 @@ namespace Epi.PersistenceServices.DocumentDB
 #endif
         #endregion
 
-      
+
 
         #region ReadSurveyAnswerByResponseID,PageId 
         public PageResponseDetail ReadSurveyAnswerByResponseID(string formId, string responseId, int pageId)
@@ -244,12 +250,12 @@ namespace Epi.PersistenceServices.DocumentDB
 
         #endregion
 
-       
+
 
         #region Read All Records By SurveyID
         public IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
         {
-            return _surveyResponseCRUD.GetAllResponsesWithCriteria(gridFields, searchFields, null,pageSize, pageNumber);
+            return _surveyResponseCRUD.GetAllResponsesWithCriteria(gridFields, searchFields, null, pageSize, pageNumber);
         }
 
         public FormResponseDetail GetFormResponseByResponseId(string responseId)
@@ -285,14 +291,22 @@ namespace Epi.PersistenceServices.DocumentDB
             {
                 try
                 {
+
+                    var serviceBusCRUD = new ServiceBusCRUD();
+                    var hierarchialResponse = GetHierarchialResponsesByResponseId(responseId, true);
                     switch (reasonForStatusChange)
                     {
                         case RecordStatusChangeReason.SubmitOrClose:
 
-                            var serviceBusCRUD = new ServiceBusCRUD();
                             //send notification to ServiceBus
-                            var hierarchialResponse = GetHierarchialResponsesByResponseId(responseId, true);
                             var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
+                            serviceBusCRUD.SendMessagesToTopic(responseId, hierarchialResponseJson);
+                            //ConsistencyHack(hierarchialResponse);
+                            break;
+                        case RecordStatusChangeReason.DeleteResponse:
+                            //Update status and send notification to ServiceBus 
+                            hierarchialResponse.RecStatus = RecordStatus.Deleted;
+                            hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
                             serviceBusCRUD.SendMessagesToTopic(responseId, hierarchialResponseJson);
                             //ConsistencyHack(hierarchialResponse);
                             break;
