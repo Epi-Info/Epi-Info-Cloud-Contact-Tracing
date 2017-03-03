@@ -92,6 +92,13 @@ namespace Epi.Web.MVC
     ); // Param
 
             routes.MapRoute
+(
+null, // Route name
+"Home/GotoMetaadmin", // URL with parameters
+new { controller = "Home", action = "GotoMetaadmin" }
+); // Param
+
+            routes.MapRoute
        (
            null, // Route name
            "MetadataAdmin/Index", ///{formid}/{page}/{sort}/{sortfield} URL with parameters

@@ -7,6 +7,43 @@
 }
 
 <script type="text/jscript">
+
+    $(document).ready(function () {
+        CloseSppiner();
+        $("#result").dialog({
+            autoOpen: false,
+            title: 'Details',
+            width: '700',
+            height: '550',
+            position: 'center',
+            resizable: 'false',
+            modal: true
+
+        });
+    });
+
+    function ShowSppiner() {
+        var validate = $('#recordstable').validationEngine('validate');
+        if (validate) {
+            if (open) {
+                $('BODY').jLoadingOverlay('close');
+                open = false;
+            }
+            else {
+                $('BODY').jLoadingOverlay('');
+                open = true;
+            }
+        }
+        $("#parent-selector :input").attr("disabled", true);
+    }
+    function CloseSppiner() {
+
+        $('BODY').jLoadingOverlay('close');
+        open = false;
+
+        $("#parent-selector :input").attr("disabled", false);
+    }
+
     function ClearMetadaCache() {
 
 
@@ -15,27 +52,28 @@
             url: ActionUrl,
             type: 'POST',
             cache: false,
-            contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
-            success: successFunc1,
-            Error: errorFunc1
+            contentType: 'application/json; charset=utf-8'
+            //,
+            ////data: JSON.stringify(model),
+            //success: successFunc1,
+            //Error: errorFunc1
         });
-        function successFunc1(data, status) {
-            if (data == "Success") {
-                alert('Cache has been cleared Successfully');
-            }
-            else if (data == "UnSuccess") {
-                alert('Cache has not been cleared Successfully');
-            }
-            else {
+        //function successFunc1(data, status) {
+        //    if (data == "Success") {
+        //        alert('Cache has been cleared Successfully');
+        //    }
+        //    else if (data == "UnSuccess") {
+        //        alert('Cache has not been cleared Successfully');
+        //    }
+        //    else {
 
-                alert('Error while clearing Cache');
-            }
-        }
+        //        alert('Error while clearing Cache');
+        //    }
+        //}
 
-        function errorFunc1() {
-            alert('error');
-        }
+        //function errorFunc1() {
+        //    alert('error');
+        //}
     }
 
     function UploadBlob() {
@@ -46,58 +84,40 @@
             url: ActionUrl,
             type: 'POST',
             cache: false,
-            contentType: 'application/json; charset=utf-8',
+            contentType: 'application/json; charset=utf-8'
             //data: JSON.stringify(model),
-            success: successFunc1,
-            Error: errorFunc1
+            //success: successFunc1,
+            //Error: errorFunc1
         });
-        function successFunc1(data, status) {
-            if (data == "Success") {
-                alert('Cache has been cleared Successfully');
-            }
-            else if (data == "UnSuccess") {
-                alert('Cache has not been cleared Successfully');
-            }
-            else {
+        //function successFunc1(data, status) {
+        //    if (data == "Success") {
+        //        alert('Cache has been cleared Successfully');
+        //    }
+        //    else if (data == "UnSuccess") {
+        //        alert('Cache has not been cleared Successfully');
+        //    }
+        //    else {
 
-                alert('Error while clearing Cache');
-            }
-        }
+        //        alert('Error while clearing Cache');
+        //    }
+        //}
 
-        function errorFunc1() {
-            alert('error');
-        }
+        //function errorFunc1() {
+        //    alert('error');
+        //}
     }
 
     function DeleteBlob(ProjectId) {
-
 
         var ActionUrl = '@Url.Action("DeleteBlob", "MetadataAdmin")' + '?ProjectId=' + ProjectId;
         $.ajax({
             url: ActionUrl,
             type: 'POST',
             cache: false,
-            contentType: 'application/json; charset=utf-8',
+            contentType: 'application/json; charset=utf-8'
             //data: JSON.stringify(model),
-            success: successFunc1,
-            Error: errorFunc1
+
         });
-        function successFunc1(data, status) {
-            if (data == "Success") {
-                alert('Blob has been Deleted Successfully');
-            }
-            else if (data == "UnSuccess") {
-                alert('Blob has not been Deleted Successfully');
-            }
-            else {
-
-                alert('Error while Deleting Blob');
-            }
-        }
-
-        function errorFunc1() {
-            alert('error');
-        }
     }
 
 
@@ -106,89 +126,75 @@
         var ActionUrl = '@Url.Action("ViewBlob", "MetadataAdmin")' + '?ProjectId=' + ProjectId;
         $.ajax({
             url: ActionUrl,
-            type: 'POST',
+            type: 'GET',
             cache: false,
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                $("#result").html(response.val).dialog("open");
+                CloseSppiner();
+            }
         });
     }
 
 </script>
 
-<div>
+@if (TempData["Message"]!=null)
+{
+    <div id="successContent" class="success"><img src="@Url.Content("~/Content/images/button_check.png")" style="vertical-align:middle; padding-right: 10px;" alt="" />@TempData["Message"].ToString()</div>
+}
 
+<div>
 
     <h3>Clear Cache</h3>
     @* <label for="Email" style="display: block; font-weight: bold;margin-top:10px;">Email:</label>*@
     <br />
-    <button id="btnClearCache" onclick="ClearMetadaCache()" type="button" class='default edit'>
+    <button id="btnClearCache" onclick="ClearMetadaCache()" type="submit" class='default edit'>
         Clear
     </button>
 
-    <button id="btnUploadCache" onclick="UploadBlob()" type="button" class='default edit'>
+
+    <br />
+
+    <h3>Blob</h3>
+
+    <button id="btnUploadCache" onclick="UploadBlob()" type="submit" class='default edit' style="width:100px">
         Upload Blob
     </button>
 
+    <br />
     @{
-        WebGrid webGrid = new WebGrid(rowsPerPage: Model.PageSize, canSort: false, canPage: true, ajaxUpdateContainerId: "recordstable");
-        webGrid.Bind(Model.BlobResponsesList, autoSortAndPage: false, rowCount: Model.NumberOfResponses);
+        WebGrid webGrid = new WebGrid(rowsPerPage: Model.PageSize, canSort: false, canPage: false, ajaxUpdateContainerId: "recordstable");
+        webGrid.Bind(Model.BlobResponsesList, autoSortAndPage: false);
     }
     <div id="recordstable">
         @{
 
-            <div>
-                @{
-                    if (Model.MetadataAdminModel.NumberOfPages == 0)
-                    {
-                        <span class="boldlabel" style="font-size: 14pt;">0 Records </span>
-                    }
-                    else
-                    {
-                        @*<span >Showing</span>*@
-                        <span class="boldlabel" style="font-size: 14pt;">
-                            @(
-                                Model.CurrentPage * Model.PageSize - (Model.PageSize - 1))
-                            -
-                            @if (Model.CurrentPage * Model.PageSize < Model.NumberOfResponses)
-                            {
-                                @(Model.CurrentPage * Model.PageSize)
-                            }
-                            else
-                            {
-                                @Model.NumberOfResponses
-                            }
-                        </span>
-                        <span>of </span><span class="boldlabel" style="font-size: 14pt;">
-                            @Model.NumberOfResponses
-                        </span>
-                    }
-                }
-            </div>
             <div style="clear: both; margin-bottom: 10px; padding: 10px 0 0;"></div>
-                    var gridColumns = new List<WebGridColumn>
-                        ();
-                    gridColumns.Add(webGrid.Column(header: "",
-                    format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
-                    "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
-                    )));
+            var gridColumns = new List<WebGridColumn>
+                ();
+            gridColumns.Add(webGrid.Column(header: "",
+            format: (item) => new HtmlString("<button name='ViewButton' type='button' class='default edit' onclick=ShowSppiner(); ViewBlob('" + item.Column0 + "')  value='" + item.Column0 + "'> View</button> " +
+            "<button name='DeleteButton' type='submit' class='default edit' onclick=DeleteBlob('" + item.Column0 + "') id='" + item.Column0 + "' value='" + item.Column0 + "'> Delete</button>"
+            )));
 
-                    if (Model.Columns.Count >= 1)
-                    {
-                        gridColumns.Add(webGrid.Column("Column0", (Model.Columns.Count >= 1) ? Model.Columns[0] : ""));
-                    }
-                    if (Model.Columns.Count >= 2)
-                    {
-                        gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 2) ? Model.Columns[1] : ""));
-                    }
-                    if (Model.Columns.Count >= 3)
-                    {
-                        gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 3) ? Model.Columns[2] : ""));
-                    }
+            if (Model.Columns.Count >= 1)
+            {
+                gridColumns.Add(webGrid.Column("Column0", (Model.Columns.Count >= 1) ? Model.Columns[0] : ""));
+            }
+            if (Model.Columns.Count >= 2)
+            {
+                gridColumns.Add(webGrid.Column("Column1", (Model.Columns.Count >= 2) ? Model.Columns[1] : ""));
+            }
+            if (Model.Columns.Count >= 3)
+            {
+                gridColumns.Add(webGrid.Column("Column2", (Model.Columns.Count >= 3) ? Model.Columns[2] : ""));
+            }
 
-                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
+            @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3)*@
 
-                    @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
+            @*@webGrid.Pager(mode: WebGridPagerModes.All, numericLinksCount: 3, firstText: "First", lastText: "Last")*@
 
-                    @webGrid.GetHtml(columns: gridColumns);
+            @webGrid.GetHtml(columns: gridColumns);
 
 
         }
@@ -203,6 +209,15 @@
                 </div>
             }
         }
+    </div>
+
+
+    <div id="result" style="display:none;">
+
+        <div id="result1">
+            <span>
+            </span>
+        </div>
     </div>
 
 </div>
