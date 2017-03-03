@@ -54,7 +54,9 @@
             Settings
         </button>
 
-        <button id="btnmetaadmin" onclick="GotoMetaadmin()" class="default" type="button" style="height: 35px;">
+        @*@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, null);*@
+
+        <button id="btnmetaadmin" onclick="location.href='@Url.Action("Index", "MetadataAdmin")';return false;" class="default" type="button" style="height: 35px;">
             Admin
         </button>
     }
