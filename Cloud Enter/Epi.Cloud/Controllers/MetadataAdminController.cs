@@ -11,6 +11,7 @@ using System.Configuration;
 using Epi.Cloud.Common.Constants;
 using Epi.Common.Constants;
 using Epi.Cloud.CacheServices;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -30,11 +31,7 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpGet]
         public ActionResult Index()
-        {
-            if (TempData["Message"] != null)
-            {
-                TempData.Keep("Message");
-            }
+        {          
 
             MetadataAdmin metaadmin = new MetadataAdmin();
 
@@ -76,11 +73,7 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpPost]
         public ActionResult Index(string id)
-        {
-            if (!string.IsNullOrEmpty(TempData["Message"].ToString()))
-            {
-                TempData.Keep("Message");
-            }
+        {            
 
             MetadataAdmin metaadmin = new MetadataAdmin();
 
@@ -129,12 +122,12 @@ namespace Epi.Web.MVC.Controllers
                 Guid ProjectId = _epiCloudCache.GetDeployedProjectId();
                 _epiCloudCache.ClearAllCache(ProjectId);
             }
-            catch (Exception ex)
+            catch
             {
-                TempData["Message"] = "Error while Clearing Cache";
+                return Json("Erorr");
             }
-            TempData["Message"] = "Cache has been Cleared Successfully";
-            return RedirectToAction(ViewActions.Index);
+
+            return Json("Success");
         }
 
         [HttpPost]
@@ -153,11 +146,10 @@ namespace Epi.Web.MVC.Controllers
             }
             catch
             {
-                TempData["Message"] = "Error while deleting Blob";
+                return Json("Erorr");
             }
 
-            TempData["Message"] = "Blob Deleted Sucessfully";
-            return RedirectToAction(ViewActions.Index);
+            return Json("Success");
         }
 
         [HttpGet]
@@ -187,15 +179,22 @@ namespace Epi.Web.MVC.Controllers
             {
                 MetadataProvider metadataProvider = new MetadataProvider();
                 var metaData = metadataProvider.RetrieveProjectMetadataViaAPIAsync(Guid.Empty).Result;
+                SaveMetadataToBlob(metaData);
                 TempData["Message"] = "Blob has been uploded sucessfully";
             }
             catch
             {
-                TempData["Message"] = "Error while Uploading Blob";
+                return Json("Erorr");
             }
 
-            return RedirectToAction(ViewActions.Index);
+            return Json("Success");
         }
 
+        private bool SaveMetadataToBlob(Template metadata)
+        {
+            return _metadataBlobCRUD.SaveMetadataToBlobStorage(metadata);
+        }
+
+       
     }
 }

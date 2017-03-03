@@ -774,7 +774,7 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult GotoMetaadmin()//List<FormInfoModel> ModelList, string formid)
         {
-            return RedirectToActionPermanent("Index", "MetadataAdmin");
+            return RedirectToAction("Index", "MetadataAdmin");
         }
 
 
