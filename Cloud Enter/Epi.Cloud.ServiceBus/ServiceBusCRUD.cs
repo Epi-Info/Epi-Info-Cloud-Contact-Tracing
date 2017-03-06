@@ -12,6 +12,7 @@ namespace Epi.Cloud.ServiceBus
 
         public TopicClient topicClient;
         public string TopicName = ConfigurationManager.AppSettings["ServiceBusTopicName"];
+        public string SubscriptionName = ConfigurationManager.AppSettings["ServiceBusSubscriptionName"];
         const Int16 maxTrials = 4;
 
         public ServiceBusCRUD()
@@ -47,7 +48,7 @@ namespace Epi.Cloud.ServiceBus
                 else
                 {
                     TopicDescription myTopic = namespaceManager.CreateTopic(TopicName);
-                    SubscriptionDescription subscription = namespaceManager.CreateSubscription(myTopic.Path, "ReadFormInfoSubscription");
+                    SubscriptionDescription subscription = namespaceManager.CreateSubscription(myTopic.Path, SubscriptionName);
                     return true;
                 }
               
@@ -81,7 +82,7 @@ namespace Epi.Cloud.ServiceBus
         public string ReceiveMessages()
         {
             // For PeekLock mode (default) where applications require "at least once" delivery of messages 
-            SubscriptionClient agentSubscriptionClient = SubscriptionClient.Create(TopicName, "ReadFormInfoSubscription");
+            SubscriptionClient agentSubscriptionClient = SubscriptionClient.Create(TopicName, SubscriptionName);
             BrokeredMessage message = null;
             string msg = string.Empty;
 
