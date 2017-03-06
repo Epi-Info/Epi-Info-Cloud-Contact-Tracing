@@ -25,11 +25,11 @@ namespace Epi.Cloud.WebJobs
                 {
                     //Convert to FormResponseDetails
                     FormResponseDetail formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(surveyData);
-                    PageDigest[][] pagedigetst = GetPageDigest();
+                    PageDigest[][] pagedigest = GetPageDigest();
 
                     //Send to SQL Server
                     Epi.Cloud.SqlServer.PersistToSqlServer objPersistResponse = new Cloud.SqlServer.PersistToSqlServer();
-                    objPersistResponse.PersistToSQLServerDB(formResponseDetail, pagedigetst);
+                    objPersistResponse.PersistToSQLServerDB(formResponseDetail, pagedigest);
                 }
             }
             catch(Exception ex)
