@@ -384,6 +384,7 @@ namespace Epi.Web.MVC.Controllers
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
+        
                 foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)
@@ -396,7 +397,12 @@ namespace Epi.Web.MVC.Controllers
                     }
                 }
 
-                formResponseInfoModel.ResponsesList = ResponseList;
+                if (string.IsNullOrEmpty(sort))
+                {
+                    formResponseInfoModel.ResponsesList = ResponseList.Skip((pageNumber - 1) * 10).Take(10).ToList();
+
+                    //formResponseInfoModel.ResponsesList = ResponseList;
+                }
                 //Setting Form Info 
                 formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
                 //Setting Additional Data
@@ -587,6 +593,7 @@ namespace Epi.Web.MVC.Controllers
 
                 //Setting Resposes List
                 List<ResponseModel> ResponseList = new List<ResponseModel>();
+               
                 foreach (var item in ResponseListDTO)
                 {
                     if (item.RelateParentId == responseId)
@@ -606,6 +613,8 @@ namespace Epi.Web.MVC.Controllers
 
                 formResponseInfoModel.PageSize = ReadPageSize();
 
+                var xyz = WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"].ToString();
+
                 formResponseInfoModel.CurrentPage = 1;
             }
             return formResponseInfoModel;
@@ -613,7 +622,7 @@ namespace Epi.Web.MVC.Controllers
 
         private int ReadPageSize()
         {
-            return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"].ToString());
+            return Convert.ToInt16(WebConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"].ToString());
         }
 
         [HttpGet]
