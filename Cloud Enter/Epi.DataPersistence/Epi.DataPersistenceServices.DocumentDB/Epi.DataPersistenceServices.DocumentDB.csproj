@@ -79,8 +79,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStructures_v2.cs" />
     <Compile Include="DataStructures.cs" />
     <Compile Include="SurveyPersistenceFacade.cs" />
+    <Compile Include="SurveyResponseCRUD_v2.cs" />
     <Compile Include="SurveyResponseCRUD.Attachment.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="SurveyResponseCRUD.cs" />

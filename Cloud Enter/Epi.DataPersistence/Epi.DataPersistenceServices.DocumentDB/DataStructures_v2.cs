@@ -7,9 +7,9 @@ namespace Epi.PersistenceServices.DocumentDB
 {
     public partial class DataStructures
     {
-#if !DocDbV2
         public class HierarchicalDocumentResponseProperties
         {
+#if DocDbV2
             public HierarchicalDocumentResponseProperties()
             {
                 ChildResponseList = new List<HierarchicalDocumentResponseProperties>();
@@ -25,12 +25,10 @@ namespace Epi.PersistenceServices.DocumentDB
         {
             public DocumentResponseProperties()
             {
-                PageResponsePropertiesList = new List<PageResponseProperties>();
             }
 
             public string GlobalRecordID { get; set; }
             public FormResponseProperties FormResponseProperties { get; set; }
-            public List<PageResponseProperties> PageResponsePropertiesList { get; set; }
             public bool IsChildForm { get; set; }
             public string FormName { get; set; }
 
@@ -38,13 +36,47 @@ namespace Epi.PersistenceServices.DocumentDB
             public string UserName { get; set; }
         }
 
-        public class FormResponseProperties : Resource
+        public class FormResponseResource : Resource
+        {
+            public FormResponseProperties FormResponse { get; set; }
+        }
+
+        public interface IFormResponseProperties
+        {
+            bool IsRootForm { get; set; }
+            string GlobalRecordID { get; set; }
+            string FormId { get; set; }
+            string FormName { get; set; }
+            bool IsNewRecord { get; set; }
+            int RecStatus { get; set; }
+            string ParentResponseId { get; set; }
+            string UserName { get; set; }
+            string FirstSaveLogonName { get; set; }
+            string LastSaveLogonName { get; set; }
+            DateTime FirstSaveTime { get; set; }
+            DateTime LastSaveTime { get; set; }
+            int UserId { get; set; }
+            bool IsRelatedView { get; set; }
+            bool IsDraftMode { get; set; }
+            List<int> PageIds { get; set; }
+            string RequiredFieldsList { get; set; }
+            string HiddenFieldsList { get; set; }
+            string HighlightedFieldsList { get; set; }
+            string DisabledFieldsList { get; set; }
+
+            Dictionary<string, string> ResponseQA { get; set; }
+            Dictionary<string, FormResponseProperties> ChildFormResponseProperties { get; set; }
+        }
+
+        public partial class FormResponseProperties : IFormResponseProperties
         {
             public FormResponseProperties()
             {
                 IsNewRecord = true;
                 RecStatus = RecordStatus.InProcess;
                 PageIds = new List<int>();
+                ResponseQA = new Dictionary<string, string>();
+                ChildFormResponseProperties = new Dictionary<string, FormResponseProperties>();
             }
             public bool IsRootForm { get; set; }
             public string GlobalRecordID { get; set; }
@@ -52,7 +84,7 @@ namespace Epi.PersistenceServices.DocumentDB
             public string FormName { get; set; }
             public bool IsNewRecord { get; set; }
             public int RecStatus { get; set; }
-            public string RelateParentId { get; set; }
+            public string ParentResponseId { get; set; }
             public string UserName { get; set; }
             public string FirstSaveLogonName { get; set; }
             public string LastSaveLogonName { get; set; }
@@ -66,19 +98,9 @@ namespace Epi.PersistenceServices.DocumentDB
             public string HiddenFieldsList { get; set; }
             public string HighlightedFieldsList { get; set; }
             public string DisabledFieldsList { get; set; }
-        }
-
-        public class PageResponseProperties : Resource
-        {
-            public string GlobalRecordID { get; set; }
-            public int PageId { get; set; }
             public Dictionary<string, string> ResponseQA { get; set; }
-
-			public string ToColectionName(string formName)
-			{
-				return formName + PageId;
-			}
-        }
+            public Dictionary<string, FormResponseProperties> ChildFormResponseProperties { get; set; }
 #endif
+        }
     }
 }

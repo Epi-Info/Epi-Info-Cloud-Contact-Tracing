@@ -118,6 +118,16 @@ namespace Epi.Cloud.Common.Metadata
             }
         }
 
+        public string GetRootFormId(string formId)
+        {
+            return FormDigests.Single(d => d.FormId == formId).RootFormId;
+        }
+
+        public string GetParentFormId(string formId)
+        {
+            return FormDigests.Single(d => d.FormId == formId).ParentFormId;
+        }
+
         public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)
         {
             lock (StaticCache.Gate)

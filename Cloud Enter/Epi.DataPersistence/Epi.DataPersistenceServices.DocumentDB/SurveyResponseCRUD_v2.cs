@@ -22,26 +22,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
 {
     public partial class SurveyResponseCRUD
     {
-        private string DatabaseName;
-        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
-        private const string FormInfoCollectionName = "FormInfo";
-
-        public SurveyResponseCRUD()
-        {
-            Initialize();
-        }
-
-        private DocumentClient Client
-        {
-            get { return _client ?? GetOrCreateClient(); }
-        }
-
-        private Microsoft.Azure.Documents.Database ResponseDatabase
-        {
-            get { return _database ?? GetOrCreateDatabase(DatabaseName); }
-        }
-
-
         #region UpdateAttachment
         public async Task<bool> UpdateAttachment(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
         {

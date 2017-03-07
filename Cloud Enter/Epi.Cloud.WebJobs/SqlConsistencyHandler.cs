@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Epi.Cloud.WebJobs
 {
-    class Program
+    class SqlConsistencyHandler
     {
         static void Main(string[] args)
         {
