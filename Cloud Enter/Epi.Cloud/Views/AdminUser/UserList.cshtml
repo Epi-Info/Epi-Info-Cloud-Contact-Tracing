@@ -26,9 +26,15 @@
         @if (Model.UserHighestRole == 3)
         {
             <h2 class="adminnav">@Html.ActionLink("Organizations", "OrgList", "AdminOrganization", null, new { @class = "orgbtn" })</h2>
-            <span>&nbsp;&nbsp;</span>
+            <span>&nbsp;&nbsp;</span>      
         }
         <h2 class="adminnav">@Html.ActionLink("Users", "UserList", "AdminUser", null, new { @class = "userbtn" })</h2>
+
+        @if (Model.UserHighestRole == 3)
+        {    
+            <h2 class="adminnav">@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, new { @class = "userbtn" })</h2>
+            <span>&nbsp;&nbsp;</span>
+        }
     </div>
     <script type="text/javascript">
 

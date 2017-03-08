@@ -219,7 +219,24 @@
 
         }
 
+        @*@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, null);*@
 
+        <div>
+            @if (Session[SessionKeys.UserHighestRole].ToString() == "3")
+            {
+                <button id="btnmetaadmin" onclick="location.href='@Url.Action("OrgList", "AdminOrganization")';return false;" class="default" type="button" style="height: 35px;">
+                    Back
+                </button>                
+            }
+
+            @if (Session[SessionKeys.UserHighestRole].ToString() == "2")
+            {
+                <button id="btnmetaadmin" onclick="location.href='@Url.Action("UserList", "AdminUser")';return false;" class="default" type="button" style="height: 35px;">
+                    Back
+                </button>              
+            }
+           
+        </div>
         @*@Html.Hidden("hidPageNumber", @Model.CurrentPage)*@
         @{
             if (Model.NumberOfPages == 0)
