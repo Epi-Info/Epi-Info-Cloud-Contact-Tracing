@@ -540,11 +540,12 @@ namespace Epi.Web.MVC.Controllers
 
                 }
                 string sortFieldcolumn = string.Empty;
+                sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
                 {
                     foreach (var column in _columns)
                     {
-                        if (column.Value == sortfield)
+                        if (column.Value.ToLower() == sortfield)
                         {
                             sortFieldcolumn = "Column" + column.Key;
                         }
@@ -552,7 +553,7 @@ namespace Epi.Web.MVC.Controllers
                 }
                 //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
                 var sortList = responseList;
-                sortfield = sortfield.ToLower();
+                //sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
                 {
                     if(sort != "ASC")
