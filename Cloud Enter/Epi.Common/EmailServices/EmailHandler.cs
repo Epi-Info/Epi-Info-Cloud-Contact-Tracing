@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Configuration;
+using System.Net.Mail;
 
 namespace Epi.Common.EmailServices
 {
@@ -65,6 +66,7 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
+               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString(), Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
                 smtp.Port = SMTPPort;
@@ -148,6 +150,7 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
+               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
 
