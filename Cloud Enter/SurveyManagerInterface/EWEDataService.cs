@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.ServiceModel;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
+using System.Text;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
+using Epi.Web.Enter.Common.Criteria;
 using Epi.Web.Enter.Common.ObjectMapping;
-using Epi.Web.Enter.Interfaces.DataInterfaces;
-
+using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.Exception;
+using System.Collections;
+using Epi.Web.Enter.Interfaces.DataInterface;
+using System.Configuration;
 namespace Epi.Web.WCF.SurveyService
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class EWEDataService : IDataService
+    [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
+    public class EWEDataService : IEWEDataService
     {
 
         // Session state variables 
         private string _accessToken;
+        //private ShoppingCart _shoppingCart;
         private string _userName;
 
-		public EWEDataService()
-		{
-		}
 
         /// <summary>
         /// 
@@ -35,8 +36,10 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
+                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EFwcf.EntitySurveyInfoDao();
+                //Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
                 Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
@@ -54,7 +57,26 @@ namespace Epi.Web.WCF.SurveyService
                     SurveyIdList.Add(id.ToUpper());
                 }
 
+
+                //if (request.LoadOptions.Contains("SurveyInfos"))
+                //{
+                //    IEnumerable<SurveyInfoDTO> SurveyInfos;
+                //    if (!criteria.IncludeOrderStatistics)
+                //    {
+                //        SurveyInfos = Implementation.GetSurveyInfos(sort);
+                //    }
+                //    else
+                //    {
+                //        SurveyInfos = Implementation.GetSurveyInfosWithOrderStatistics(sort);
+                //    }
+
+                //    response.SurveyInfos = SurveyInfos.Select(c => Mapper.ToDataTransferObject(c)).ToList();
+                //}
+
+                //if (pRequest.LoadOptions.Contains("SurveyInfo"))
+                //{
                 result.SurveyInfoList = Mapper.ToDataTransferObject(implementation.GetSurveyInfoById(SurveyIdList));
+                //}
 
                 return result;
             }
@@ -77,17 +99,20 @@ namespace Epi.Web.WCF.SurveyService
         public FormsInfoResponse GetFormsInfo(FormsInfoRequest pRequest)
         {
             FormsInfoResponse result = new FormsInfoResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
             Epi.Web.BLL.FormInfo implementation = new Epi.Web.BLL.FormInfo(FormInfoDao);
             try
             {
                 List<FormInfoBO> FormInfoBOList = implementation.GetFormsInfo(pRequest.Criteria.UserId, pRequest.Criteria.CurrentOrgId);
+                //  result.SurveyInfoList = FormInfoBOList;
 
                 foreach (FormInfoBO item in FormInfoBOList)
                 {
                     result.FormInfoList.Add(Mapper.ToFormInfoDTO(item));
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -108,7 +133,7 @@ namespace Epi.Web.WCF.SurveyService
         {
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EFwcf.EntitySurveyInfoDao();
                 Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
 
@@ -186,7 +211,16 @@ namespace Epi.Web.WCF.SurveyService
             }
         }
 
-
+        /// <summary>
+        /// Test Wcf Service
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public bool TestWCFService(int a,int b)
+        {
+            return true;
+        }
 
         /// <summary>
         /// 
@@ -198,10 +232,10 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
-                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyInfoDao = new EF.EntitySurveyResponseDao();
+                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao surveyInfoDao = new EFwcf.EntitySurveyResponseDao();
                 //Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(surveyInfoDao);
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
@@ -234,7 +268,7 @@ namespace Epi.Web.WCF.SurveyService
                 //{
                 //result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetSurveyResponseById(pRequest.Criteria.SurveyAnswerIdList, pRequest.Criteria.UserPublishKey));
                 //}
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EFwcf.EntitySurveyInfoDao();
                 Epi.Web.BLL.SurveyInfo Implementation1 = new Epi.Web.BLL.SurveyInfo(SurveyInfoDao);
                 SurveyInfoBO SurveyInfoBO = Implementation1.GetSurveyInfoById(pRequest.Criteria.SurveyId);
                 List<SurveyInfoBO> SurveyInfoBOList = new List<SurveyInfoBO>();
@@ -276,11 +310,9 @@ namespace Epi.Web.WCF.SurveyService
         /// <returns>SurveyResponse response message.</returns>
         public SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest request)
         {
-			throw new NotImplementedException("EWEDataService.SetSurveyAnswer");
-#if false
-			try
+            try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EFwcf.EntitySurveyResponseDao();
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
 
 
@@ -332,7 +364,7 @@ namespace Epi.Web.WCF.SurveyService
                         if (!request.SurveyAnswerList[0].RecoverLastRecordVersion)
                         // if we are not keeping the version of xml found currently in the SurveyResponse table (meaning getting the original copy form the ResponseXml table)
                         {
-                            //check if any orphan records exists 
+                        //check if any orphan records exists 
                             foreach (var item in SurveyResponseBOList)
                             {
 
@@ -342,19 +374,19 @@ namespace Epi.Web.WCF.SurveyService
                                 if (!string.IsNullOrEmpty(SurveyResponseBO.ResponseId))
                                 {
                                     SurveyResponseBO.UserId = request.Criteria.UserId;
-                                    ResponseBO ResponseXmlBO = new ResponseBO();
+                                    ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
                                     ResponseXmlBO.ResponseId = SurveyResponseBO.ResponseId;
                                     // During the delete process below: 
                                     //  1) Delete the record from ResponseXml table.
                                     //  2) Update Record status in the SurveyResponse table which fires database triggers.
-                                    Implementation.DeleteResponseXml(ResponseXmlBO);
-                                    Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), RecordStatus.Saved, RecordStatusChangeReason.DeleteInEditMode);
+                                     Implementation.DeleteResponseXml(ResponseXmlBO);
+                                     Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2); 
 
                                     //This will handle the status update and the swapping of the Xml
                                     // but for this scenario I will keep the status unchanged 
-                                    // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
-
-
+                                   // Implementation.DeleteSurveyResponseInEditMode(SurveyResponseBO);
+                                   
+                                  
                                 }
                             }
 
@@ -364,14 +396,14 @@ namespace Epi.Web.WCF.SurveyService
                         }
                         else
                         {
-                            // load the version curently found the SurveyResponse table 
-
-                            response.SurveyResponseList = Mapper.ToDataTransferObject(SurveyResponseBOList);
+                        // load the version curently found the SurveyResponse table 
+                        
+                           response.SurveyResponseList=  Mapper.ToDataTransferObject(SurveyResponseBOList);
                         }
                     }
                     else if (request.Action.Equals("CreateChild", StringComparison.OrdinalIgnoreCase))
                     {
-                        Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EF.EntitySurveyInfoDao();
+                        Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EFwcf.EntitySurveyInfoDao();
                         Epi.Web.BLL.SurveyInfo Implementation1 = new Epi.Web.BLL.SurveyInfo(SurveyInfoDao);
                         SurveyInfoBO SurveyInfoBO = Implementation1.GetParentInfoByChildId(SurveyResponse.SurveyId);
 
@@ -397,7 +429,7 @@ namespace Epi.Web.WCF.SurveyService
                         List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetResponsesHierarchyIdsByRootId(request.SurveyAnswerList[0].ResponseId);
 
 
-                        List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status, RecordStatusChangeReason.Update);
+                        List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, SurveyResponse.Status);
                         foreach (var Obj in ResultList)
                         {
 
@@ -429,17 +461,17 @@ namespace Epi.Web.WCF.SurveyService
                             }
                         }
                     }
-                    else if (request.Action.Equals("DeleteResponse", StringComparison.OrdinalIgnoreCase))
+                    else if (request.Action.Equals("DeleteResponseXml", StringComparison.OrdinalIgnoreCase))
                     {
 
                         foreach (var item in request.SurveyAnswerList)
                         {
                             try
                             {
-                                ResponseBO ResponseXmlBO = new ResponseBO();
+                                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
                                 ResponseXmlBO.ResponseId = item.ResponseId;
                                 Implementation.DeleteResponseXml(ResponseXmlBO);
-                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
+                                Implementation.UpdateRecordStatus(ResponseXmlBO.ResponseId.ToString(), 2); 
 
                             }
                             catch
@@ -461,7 +493,6 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
-#endif
         }
 
         /// <summary>
@@ -514,7 +545,7 @@ namespace Epi.Web.WCF.SurveyService
         public UserAuthenticationResponse PassCodeLogin(UserAuthenticationRequest request)
         {
             var response = new UserAuthenticationResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
@@ -544,7 +575,7 @@ namespace Epi.Web.WCF.SurveyService
 
 
             var response = new UserAuthenticationResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
@@ -576,7 +607,7 @@ namespace Epi.Web.WCF.SurveyService
 
         public bool UpdateUser(UserAuthenticationRequest request)
         {
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
@@ -590,7 +621,7 @@ namespace Epi.Web.WCF.SurveyService
         public UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest pRequest)
         {
             UserAuthenticationResponse response = new UserAuthenticationResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
@@ -611,7 +642,7 @@ namespace Epi.Web.WCF.SurveyService
 
 
             var response = new UserAuthenticationResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
@@ -731,14 +762,13 @@ namespace Epi.Web.WCF.SurveyService
                 SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
 
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
 
                 SurveyAnswerCriteria criteria = pRequest.Criteria;
                 //result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(pRequest.Criteria.SurveyId, pRequest.Criteria.PageNumber, pRequest.Criteria.IsMobile));
                 result.SurveyResponseList = Mapper.ToDataTransferObject(Implementation.GetFormResponseListById(criteria));
-                pRequest.Criteria.FormResponseCount = result.SurveyResponseList.Count;
                 //Query The number of records
 
                 //result.NumberOfPages = Implementation.GetNumberOfPages(pRequest.Criteria.SurveyId, pRequest.Criteria.IsMobile);
@@ -748,7 +778,7 @@ namespace Epi.Web.WCF.SurveyService
                 result.NumberOfResponses = Implementation.GetNumberOfResponses(pRequest.Criteria);
 
                 //Get form info 
-                Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao surveyInfoDao = new EF.EntityFormInfoDao();
+                Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao surveyInfoDao = new EFwcf.EntityFormInfoDao();
                 Epi.Web.BLL.FormInfo ImplementationFormInfo = new Epi.Web.BLL.FormInfo(surveyInfoDao);
                 result.FormInfo = Mapper.ToFormInfoDTO(ImplementationFormInfo.GetFormInfoByFormId(pRequest.Criteria.SurveyId, false, pRequest.Criteria.UserId));
 
@@ -773,12 +803,12 @@ namespace Epi.Web.WCF.SurveyService
             FormSettingResponse Response = new FormSettingResponse();
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
 
 
                 IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormInfo FormInfoImplementation = new Epi.Web.BLL.FormInfo(FormInfoDao);
-                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetMetadata, pRequest.FormInfo.UserId);
+                FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetXml, pRequest.FormInfo.UserId);
                 Response.FormInfo = Mapper.ToFormInfoDTO(FormInfoBO);
 
 
@@ -786,7 +816,7 @@ namespace Epi.Web.WCF.SurveyService
                 Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
                 Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao, IUserDao, IFormInfoDao);
-                Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml, pRequest.CurrentOrgId));
+          Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml,pRequest.CurrentOrgId));
 
 
 
@@ -807,50 +837,52 @@ namespace Epi.Web.WCF.SurveyService
         }
 
 
-        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)
+        public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest pRequest)
         {
+
             try
             {
-                SurveyAnswerResponse result = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
+                SurveyAnswerResponse result = new SurveyAnswerResponse(pRequest.RequestId);
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao ISurveyResponseDao = entityDaoFactory.SurveyResponseDao;
-                Epi.Web.BLL.SurveyResponse surveyResponseDao = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
-                foreach (var response in surveyAnswerRequest.SurveyAnswerList)
+                Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(ISurveyResponseDao);
+                foreach (var response in pRequest.SurveyAnswerList)
                 {
-                    if (surveyAnswerRequest.Criteria.IsSqlProject)
+                    if (pRequest.Criteria.IsSqlProject)
                     {
-                        if (surveyAnswerRequest.Criteria.IsEditMode)
+                        if (pRequest.Criteria.IsEditMode)
                         {
-                            surveyResponseDao.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), 2);
+                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId),2);
                         }
                         else
                         {
-                            if (surveyAnswerRequest.Criteria.IsDeleteMode)
+                            if (pRequest.Criteria.IsDeleteMode)
                             {
-                                surveyResponseDao.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
+                                Implementation.DeleteSurveyResponse(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId));
                             }
                             else
                             {
                                 //do status Update
-                                var obj = Mapper.ToSurveyResponseBO(response, surveyAnswerRequest.Criteria.UserId, surveyAnswerRequest.Criteria.StatusChangeReason);
-                                obj.SurveyId = surveyAnswerRequest.Criteria.SurveyId;
+                                var obj = Mapper.ToBusinessObject(response, pRequest.Criteria.UserId);
+                                obj.SurveyId = pRequest.Criteria.SurveyId;
                                 obj.Status = 0;
-                                surveyResponseDao.UpdateRecordStatus(obj);
+                                Implementation.UpdateRecordStatus(obj);
                             }
 
                         }
                     }
                     else
                     {
-                        if (surveyAnswerRequest.Criteria.IsEditMode)
+                        if (pRequest.Criteria.IsEditMode)
                         {
-                            surveyResponseDao.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), 2);
+                            Implementation.DeleteSurveyResponseInEditMode(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId),2);
                         }
                         else
                         {
 
-                            surveyResponseDao.DeleteSurveyResponse(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId));
+                            Implementation.DeleteSurveyResponse(Mapper.ToBusinessObject(response, pRequest.Criteria.UserId));
                         }
 
 
@@ -877,7 +909,7 @@ namespace Epi.Web.WCF.SurveyService
         {
 
             var response = new UserAuthenticationResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
@@ -904,12 +936,12 @@ namespace Epi.Web.WCF.SurveyService
             FormSettingResponse Response = new FormSettingResponse();
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
 
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
-                Epi.Web.Enter.Interfaces.DataInterfaces.IUserDao IUserDao = entityDaoFactory.UserDao;
-                Epi.Web.Enter.Interfaces.DataInterfaces.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
+                Epi.Web.Enter.Interfaces.DataInterface.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
+                Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+                Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao IFormInfoDao = entityDaoFactory.FormInfoDao;
                 Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao, IUserDao, IFormInfoDao);
                 if (FormSettingReq.FormSetting.Count() > 0)
                 {
@@ -945,7 +977,7 @@ namespace Epi.Web.WCF.SurveyService
                 SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
 
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
                 Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
                 Dictionary<string, int> ParentIdList = new Dictionary<string, int>();
@@ -976,7 +1008,7 @@ namespace Epi.Web.WCF.SurveyService
             FormsHierarchyResponse FormsHierarchyResponse = new FormsHierarchyResponse();
             List<SurveyResponseBO> AllResponsesIDsList = new List<SurveyResponseBO>();
             //1- Get All form  ID's
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
             Epi.Web.BLL.SurveyInfo Implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
 
@@ -998,7 +1030,7 @@ namespace Epi.Web.WCF.SurveyService
                 AllResponsesIDsList = null;
             }
             //3 Combining the lists.
-            // AllResponsesIDsList[0].SurveyId = RelatedFormIDsList[0].FormId;//Suma-Settings Page error fix
+
             FormsHierarchyResponse.FormsHierarchy = Mapper.ToFormHierarchyDTO(CombineLists(RelatedFormIDsList, AllResponsesIDsList));
 
             return FormsHierarchyResponse;
@@ -1015,7 +1047,6 @@ namespace Epi.Web.WCF.SurveyService
             foreach (var Item in RelatedFormIDsList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
-                FormsHierarchyBO.RootFormId = Item.RootFormId;
                 FormsHierarchyBO.FormId = Item.FormId;
                 FormsHierarchyBO.ViewId = Item.ViewId;
                 FormsHierarchyBO.IsSqlProject = Item.IsSqlProject;
@@ -1033,7 +1064,7 @@ namespace Epi.Web.WCF.SurveyService
 
         public SurveyAnswerResponse GetSurveyAnswerHierarchy(SurveyAnswerRequest pRequest)
         {
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -1046,7 +1077,7 @@ namespace Epi.Web.WCF.SurveyService
 
         public SurveyAnswerResponse GetAncestorResponseIdsByChildId(SurveyAnswerRequest pRequest)
         {
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -1058,7 +1089,7 @@ namespace Epi.Web.WCF.SurveyService
         }
         public SurveyAnswerResponse GetResponsesByRelatedFormId(SurveyAnswerRequest pRequest)
         {
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             SurveyAnswerResponse SurveyAnswerResponse = new Enter.Common.Message.SurveyAnswerResponse();
             Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = entityDaoFactory.SurveyResponseDao;
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
@@ -1084,7 +1115,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
@@ -1121,7 +1152,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
@@ -1159,7 +1190,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
@@ -1196,7 +1227,7 @@ namespace Epi.Web.WCF.SurveyService
         {
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
@@ -1234,7 +1265,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation = new Epi.Web.BLL.Organization(IOrganizationDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 var Organization = Mapper.ToOrgBusinessObject(request.Organization);
@@ -1313,7 +1344,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                var IUserDao = new EF.EntityUserDao();
+                var IUserDao = new EFwcf.EntityUserDao();
                 Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
                 // Transform SurveyInfo data transfer object to SurveyInfo business object
                 OrganizationBO Organization = Mapper.ToBusinessObject(request.Organization);
@@ -1350,20 +1381,20 @@ namespace Epi.Web.WCF.SurveyService
         {
 
             UserResponse Response = new UserResponse();
-            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
             Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
             Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
 
             UserBO UserBO = Mapper.ToUserBO(request.User);
             OrganizationBO OrgBO = Mapper.ToOrgBusinessObject(request.Organization);
             UserBO result = new UserBO();
-            if (!request.IsAuthenticated)
+           if (!request.IsAuthenticated)
             {
-                result = Implementation.GetUserByUserIdAndOrgId(UserBO, OrgBO);
-            }
+              result = Implementation.GetUserByUserIdAndOrgId(UserBO, OrgBO);
+           }
             else
             {
-                result = Implementation.GetUserByEmail(UserBO);
+               result = Implementation.GetUserByEmail(UserBO);
             }
 
 
@@ -1386,10 +1417,10 @@ namespace Epi.Web.WCF.SurveyService
             try
             {
                 UserResponse response = new UserResponse();
-                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EF.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
                 Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
 
-                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EF.EntityOrganizationDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao IOrganizationDao = new EFwcf.EntityOrganizationDao();
                 Epi.Web.BLL.Organization Implementation1 = new Epi.Web.BLL.Organization(IOrganizationDao);
 
                 Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
@@ -1438,15 +1469,14 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
+
         }
 
         public void UpdateResponseStatus(SurveyAnswerRequest request)
         {
-			throw new NotImplementedException("EWEDataService.UpdateResponseStatus");
-#if false
-			try
+            try
             {
-                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EFwcf.EntitySurveyResponseDao();
                 Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
 
 
@@ -1462,7 +1492,7 @@ namespace Epi.Web.WCF.SurveyService
 
                 List<SurveyResponseBO> SurveyResponseBOList = Implementation1.GetSurveyResponseById(request.Criteria);
 
-                List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, request.Criteria.StatusId, request.Criteria.StatusChangeReason);
+                List<SurveyResponseBO> ResultList = Implementation.UpdateSurveyResponse(SurveyResponseBOList, request.Criteria.StatusId);
 
             }
             catch (Exception ex)
@@ -1474,18 +1504,19 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
             }
-#endif
+
+
+
+
         }
 
         public bool HasResponse(string SurveyId, string ResponseId)
         {
-			throw new NotImplementedException("EWEDataService.HasResponse");
-#if false
-			Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EF.EntitySurveyResponseDao();
+            Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyResponseDao SurveyResponseDao = new EFwcf.EntitySurveyResponseDao();
             Epi.Web.BLL.SurveyResponse Implementation = new Epi.Web.BLL.SurveyResponse(SurveyResponseDao);
 
             return Implementation.HasResponse(SurveyId, ResponseId);
-#endif
+
         }
     }
 }

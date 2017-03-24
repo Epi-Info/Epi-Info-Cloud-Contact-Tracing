@@ -1,6 +1,12 @@
-﻿namespace Epi.Web.Enter.Common.BusinessObject
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Runtime.Serialization;
+
+namespace Epi.Web.Enter.Common.BusinessObject
 {
-    public class UserAuthenticationResponseBO
+   public  class UserAuthenticationResponseBO
     {
         private string _ResponseId;
         private string _PassCode;

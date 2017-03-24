@@ -1,4 +1,9 @@
-﻿namespace Epi.Web.Enter.Common.BusinessRule
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.Web.Enter.Common.BusinessRule
 {
     /// <summary>
     /// Identity validation rule. 

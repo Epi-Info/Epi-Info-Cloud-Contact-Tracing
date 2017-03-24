@@ -1,6 +1,11 @@
-﻿namespace Epi.Web.Enter.Common.BusinessObject
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.Web.Enter.Common.BusinessObject
 {
-    public class PageInfoBO
+   public class PageInfoBO
     {
         private int _numberOfPages;
         private int _pageSize;
