@@ -1,13 +1,18 @@
-﻿namespace Epi.Web.Enter.Common.BusinessRule
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Epi.Web.Enter.Common.BusinessRule
 {
     /// <summary>
     /// Datatype enum of types to be used in validation rules.
     /// </summary>
     public enum ValidationDataType
     {
-        String,
+        String, 
         Integer,
-        Double,
+        Double, 
         Decimal,
         Date
     }

@@ -17,7 +17,7 @@ namespace Epi.Web.Enter.Common.MessageBase
         /// Default Constructor for ResponseBase.
         /// </summary>
         public ResponseBase() { }
-
+        
         /// <summary>
         /// Overloaded Constructor for ResponseBase. 
         /// Sets CorrelationId from incoming Request.

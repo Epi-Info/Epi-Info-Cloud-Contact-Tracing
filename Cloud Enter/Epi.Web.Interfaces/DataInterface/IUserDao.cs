@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
 
-namespace Epi.Web.Enter.Interfaces.DataInterfaces
+namespace Epi.Web.Enter.Interfaces.DataInterface
 {
     public interface IUserDao
     {
@@ -19,8 +22,11 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         UserBO GetUserByEmail(UserBO User);
         bool IsUserExistsInOrganizaion(UserBO User, OrganizationBO OrgBO);
         List<UserBO> GetUserByOrgId(int OrgId);
+
         UserBO GetUserByUserIdAndOrgId(UserBO UserBO, OrganizationBO OrgBO);
+
         int GetUserHighestRole(int UserId);
+
         List<UserBO> GetAdminsBySelectedOrgs(FormSettingBO FormSettingBO, string p);
     }
 }

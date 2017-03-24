@@ -87,5 +87,9 @@ namespace Epi.Web.Enter.Common.Criteria
         [DataMember]
         public DateTime StartDate { get; set; }
 
+        
+
+
+
     }
 }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Epi.Web.Enter.Common.BusinessObject;
 
 namespace Epi.Web.Enter.Interfaces.DataInterfaces
@@ -12,59 +14,62 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
     /// </remarks>
     public interface ISurveyInfoDao
     {
-		/// <summary>
-		/// Gets SurveyInfo
-		/// </summary>
-		/// <param name="surveyId"></param>
-		/// <returns></returns>
-		SurveyInfoBO GetSurveyInfo(string surveyId);
-
         /// <summary>
         /// Gets SurveyInfo based on a list of ids
         /// </summary>
         /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, int gridPageNumber = -1, int gridPageSize = -1);
+        List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, int PageNumber = -1, int PageSize = -1);
 
-		List<SurveyInfoBO> GetSurveyInfoByOrgKeyAndPublishKey(string SurveyId, string pOrganizationKey, Guid publishKey);
+
+
+        List<SurveyInfoBO> GetSurveyInfoByOrgKeyAndPublishKey(string SurveyId, string pOrganizationKey, Guid publishKey,int UserId =-1);
 
         List<SurveyInfoBO> GetSurveyInfoByOrgKey(string SurveyId, string pOrganizationKey);
-
+        
+        
+        
         /// <summary>
         /// Gets SurveyInfo Size data based on a list of ids
         /// </summary>
-        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
+        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>PageInfoBO.</returns>
-        List<SurveyInfoBO> GetSurveySizeInfo(List<string> surveyInfoIdList, int gridPageNumber = -1, int gridPageSize = -1, int ResponsesTotalsize = -1);
+        List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList,  int PageNumber = -1, int PageSize = -1, int ResponsesTotalsize = -1);
+
 
 
         /// <summary>
         /// Gets SurveyInfo based on criteria
         /// </summary>
-        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
+        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        List<SurveyInfoBO> GetSurveyInfo(List<string> surveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int gridPageNumber = -1, int gridPageSize = -1);
+        List<SurveyInfoBO> GetSurveyInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int PageNumber = -1, int PageSize = -1);
+
+
+
 
         /// <summary>
         /// Gets SurveyInfo Size data based on a list of ids
         /// </summary>
-        /// <param name="surveyInfoIdList">List of unique SurveyInfo identifiers.</param>
+        /// <param name="SurveyInfoId">Unique SurveyInfo identifier.</param>
         /// <returns>PageInfoBO.</returns>
-        List<SurveyInfoBO> GetSurveySizeInfo(List<string> surveyInfoIdList, DateTime pClosingDate, string Okey, int pSurveyType = -1, int gridPageNumber = -1, int gridPageSize = -1, int ResponsesTotalsize = -1);
+        List<SurveyInfoBO> GetSurveySizeInfo(List<string> SurveyInfoIdList, DateTime pClosingDate, string Okey,  int pSurveyType = -1, int PageNumber = -1, int PageSize = -1, int ResponsesTotalsize = -1);
+
+
 
         /// <summary>
         /// Gets a sorted list of all SurveyInfos.
         /// </summary>
         /// <param name="sortExpression">Sort order.</param>
         /// <returns>Sorted list of SurveyInfos.</returns>
-        // List<SurveyInfoBO> GetSurveyInfos(string sortExpression = "SurveyInfoId ASC");
-
+       // List<SurveyInfoBO> GetSurveyInfos(string sortExpression = "SurveyInfoId ASC");
+        
         /// <summary>
         /// Gets SurveyInfo given an order.
         /// </summary>
         /// <param name="orderId">Unique order identifier.</param>
         /// <returns>SurveyInfo.</returns>
-        // SurveyInfoBO GetSurveyInfoByOrder(int orderId);
+       // SurveyInfoBO GetSurveyInfoByOrder(int orderId);
 
         /// <summary>
         /// Gets SurveyInfos with order statistics in given sort order.
@@ -72,7 +77,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <param name="SurveyInfos">SurveyInfo list.</param>
         /// <param name="sortExpression">Sort order.</param>
         /// <returns>Sorted list of SurveyInfos with order statistics.</returns>
-        //   List<SurveyInfoBO> GetSurveyInfosWithOrderStatistics(string sortExpression);
+     //   List<SurveyInfoBO> GetSurveyInfosWithOrderStatistics(string sortExpression);
 
         /// <summary>
         /// Inserts a new SurveyInfo. 
@@ -81,7 +86,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// Following insert, SurveyInfo object will contain the new identifier.
         /// </remarks>
         /// <param name="SurveyInfo">SurveyInfo.</param>
-        void InsertSurveyInfo(SurveyInfoBO SurveyInfo);
+       void InsertSurveyInfo(SurveyInfoBO SurveyInfo);
 
         /// <summary>
         /// Updates a SurveyInfo.
@@ -93,17 +98,25 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// Deletes a SurveyInfo
         /// </summary>
         /// <param name="SurveyInfo">SurveyInfo.</param>
-        void DeleteSurveyInfo(SurveyInfoBO SurveyInfo);
+         void DeleteSurveyInfo(SurveyInfoBO SurveyInfo);
 
-        /// <summary>
-        /// Deletes a SurveyInfo
-        /// </summary>
-        /// <param name="SurveyInfo">SurveyInfo.</param>
-        List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId);
-        List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId);
-        void InsertFormDefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList);
-        void UpdateParentId(string SurveyId, int ViewId, string ParentId);
-        void InsertConnectionString(DbConnectionStringBO ConnectionString);
-        void UpdateConnectionString(DbConnectionStringBO ConnectionString);
+
+
+         /// <summary>
+         /// Deletes a SurveyInfo
+         /// </summary>
+         /// <param name="SurveyInfo">SurveyInfo.</param>
+         List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId , int ViewId);
+
+         SurveyInfoBO GetParentInfoByChildId(string ChildId);
+
+
+
+         List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId);
+         void InsertFormdefaultSettings(string FormId,bool  IsSqlProject,List<string> ControlsNameList);
+         void UpdateParentId(string SurveyId, int ViewId, string ParentId);
+         void InsertConnectionString(DbConnectionStringBO ConnectionString);
+         void UpdateConnectionString(DbConnectionStringBO ConnectionString);
+         void ValidateServername(SurveyInfoBO pRequestMessage);
     }
 }

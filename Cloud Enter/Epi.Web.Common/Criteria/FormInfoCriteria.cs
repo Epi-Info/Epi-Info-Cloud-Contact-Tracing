@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
 
 namespace Epi.Web.Enter.Common.Criteria
-{
-    public class FormInfoCriteria : Criteria
     {
-
+    public class FormInfoCriteria : Criteria
+        {
+        
         [DataMember]
         public Guid OrganizationKey { get; set; }
 
         [DataMember]
-        public int UserId { get; set; }
+        public int UserId { get; set; } 
 
         [DataMember]
         public DateTime DateCreatedMin { get; set; }
@@ -22,5 +23,7 @@ namespace Epi.Web.Enter.Common.Criteria
 
         [DataMember]
         public int CurrentOrgId { get; set; }
+
+
+        }
     }
-}

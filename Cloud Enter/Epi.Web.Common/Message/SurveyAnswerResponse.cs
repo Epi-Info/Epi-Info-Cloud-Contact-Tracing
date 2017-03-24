@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+
 using Epi.Web.Enter.Common.MessageBase;
-using Epi.Cloud.Common.DTO;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Message
 {
@@ -22,7 +23,7 @@ namespace Epi.Web.Enter.Common.Message
         /// <param name="correlationId"></param>
         public SurveyAnswerResponse(string correlationId) : base(correlationId) { this.SurveyResponseList = new List<SurveyAnswerDTO>(); }
 
-        /// <summary>
+           /// <summary>
         /// Single SurveyInfo
         /// </summary>
         [DataMember]

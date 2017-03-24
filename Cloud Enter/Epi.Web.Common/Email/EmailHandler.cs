@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Net.Mail;
+using System.Net;
 using System.Configuration;
 namespace Epi.Web.Enter.Common.Email
 {
     public class EmailHandler
-    {
+    { 
 
         /// <summary>
         /// the following method takes email and responseUrl as argument and email redirection url to the user 
@@ -13,9 +18,9 @@ namespace Epi.Web.Enter.Common.Email
         /// <param name="surveyName">Name of the survey</param>
         /// <param name="passCode"> Code for accessing an unfinished survey </param>
         /// <returns></returns>
-
-
-        public static bool SendMessage(Email Email)
+     
+        
+        public static bool SendMessage( Email Email)
         {
             try
             {
@@ -63,9 +68,9 @@ namespace Epi.Web.Enter.Common.Email
                 }
 
                 message.Subject = Email.Subject;
-                message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
-                message.Body = Email.Body;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString(), Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
+                message.From =  new System.Net.Mail.MailAddress(Email.From.ToString());
+                message.Body = Email.Body;  
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
                 smtp.Port = SMTPPort;
 
                 if (isAuthenticated)
@@ -74,15 +79,7 @@ namespace Epi.Web.Enter.Common.Email
                 }
 
 
-                //smtp.EnableSsl = isUsingSSL;
-
                 smtp.EnableSsl = isUsingSSL;
-                smtp.UseDefaultCredentials = false;
-                smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                if (isAuthenticated)
-                {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
-                }
 
 
                 smtp.Send(message);
@@ -149,6 +146,7 @@ namespace Epi.Web.Enter.Common.Email
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
                 message.Body = Email.Body;
                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
+                smtp.Port = SMTPPort;
 
                 if (isAuthenticated)
                 {
@@ -169,7 +167,7 @@ namespace Epi.Web.Enter.Common.Email
                 return ex.InnerException.ToString();
             }
         }
+       }
     }
-}
 
-
+   
