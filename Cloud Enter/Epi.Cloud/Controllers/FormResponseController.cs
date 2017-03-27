@@ -41,7 +41,7 @@ namespace Epi.Web.MVC.Controllers
         [HttpGet]
         //string responseid,string SurveyId, int ViewId, string CurrentPage
         // View =0 Root form
-        public ActionResult Index(string formid, string responseid, int pagenumber = 1, int viewId = 0)
+        public ActionResult Index(string formid, string sort, string sortField, string responseid, int pagenumber = 1, int viewId = 0)
         {
             bool reset = false;
             bool.TryParse(Request.QueryString["reset"], out reset);
@@ -65,6 +65,22 @@ namespace Epi.Web.MVC.Controllers
                     Session[SessionKeys.RootFormId].ToString() == formid)
                 {
                     _isNewRequest = false;
+                    if (Session[SessionKeys.SortOrder] != null &&
+                    !string.IsNullOrEmpty(Session[SessionKeys.SortOrder].ToString()) &&
+                    string.IsNullOrEmpty(sort))
+                    {
+                        sort = Session[SessionKeys.SortOrder].ToString();
+                    }
+
+                    if (Session[SessionKeys.SortField] != null &&
+                        !string.IsNullOrEmpty(Session[SessionKeys.SortField].ToString()) &&
+                        string.IsNullOrEmpty(sortField))
+                    {
+                        sortField = Session[SessionKeys.SortField].ToString();
+                    }
+
+                    Session[SessionKeys.SortOrder] = sort;
+                    Session[SessionKeys.SortField] = sortField;
                 }
 
                 Session[SessionKeys.RootFormId] = formid;
@@ -74,7 +90,7 @@ namespace Epi.Web.MVC.Controllers
 
                 var model = new FormResponseInfoModel();
                 model.ViewId = viewId;
-                model = GetSurveyResponseInfoModel(formid, pagenumber, null, null, -1);
+                model = GetSurveyResponseInfoModel(formid, pagenumber, sort, sortField, -1);
                 Session[SessionKeys.SelectedOrgId] = model.FormInfoModel.OrganizationId;
                 return View("Index", model);
             }
@@ -349,14 +365,15 @@ namespace Epi.Web.MVC.Controllers
                 }
                 // Following code retain search ends
                 PopulateDropDownlists(formResponseInfoModel, formSettingResponse.FormSetting.FormControlNameList.ToList());
-
+                
                 if (!string.IsNullOrWhiteSpace(/*FromURL*/sort))
                 {
                     formResponseReq.Criteria.SortOrder = sort;
                 }
+              //  sortfield = sortfield.ToLower();
                 if (!string.IsNullOrWhiteSpace(/*FromURL*/sortfield))
                 {
-                    formResponseReq.Criteria.Sortfield = /*FromURL*/sortfield;
+                    formResponseReq.Criteria.Sortfield= /*FromURL*/sortfield;
                 }
                 formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
@@ -383,23 +400,94 @@ namespace Epi.Web.MVC.Controllers
 
                 //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
                 //Setting Resposes List
-                List<ResponseModel> ResponseList = new List<ResponseModel>();
-        
+                //List<ResponseModel> ResponseList = new List<ResponseModel>();
+
+                List<ResponseModel> responseList = new List<ResponseModel>();
+                List<ResponseModel> responseListModel = new List<ResponseModel>();
+                Dictionary<string, string> dictory = new Dictionary<string, string>();
+                List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>();
+
+
                 foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
+                        responseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
                     }
                     else
                     {
-                        ResponseList.Add(item.ToResponseModel(_columns));
+                        responseList.Add(item.ToResponseModel(_columns));
                     }
                 }
 
+                string sortFieldcolumn = string.Empty;
+                
+                if (!string.IsNullOrEmpty(sortfield))
+                {
+                    sortfield = sortfield.ToLower();
+                    foreach (var column in _columns)
+                    {
+                        if (column.Value.ToLower() == sortfield)
+                        {
+                            sortFieldcolumn = "Column" + column.Key;
+                        }
+                    }
+                }
+                //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                var sortList = responseList;
+                //sortfield = sortfield.ToLower();
+                if (!string.IsNullOrEmpty(sortfield))
+                {
+                    if (sort != "ASC")
+                    {
+                        switch (sortFieldcolumn)
+                        {
+                            case "Column1":
+                                responseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
+                                break;
+                            case "Column2":
+                                responseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
+                                break;
+                            case "Column3":
+                                responseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
+                                break;
+                            case "Column4":
+                                responseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
+                                break;
+                            case "Column5":
+                                responseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
+                                break;
+                        }
+
+                        // formResponseInfoModel.ResponsesList = ResponseListModel;
+                    }
+                    else
+                    {
+                        switch (sortFieldcolumn)
+                        {
+                            case "Column1":
+                                responseListModel = sortList.OrderBy(x => x.Column1).ToList();
+                                break;
+                            case "Column2":
+                                responseListModel = sortList.OrderBy(x => x.Column2).ToList();
+                                break;
+                            case "Column3":
+                                responseListModel = sortList.OrderBy(x => x.Column3).ToList();
+                                break;
+                            case "Column4":
+                                responseListModel = sortList.OrderBy(x => x.Column4).ToList();
+                                break;
+                            case "Column5":
+                                responseListModel = sortList.OrderBy(x => x.Column5).ToList();
+                                break;
+                        }
+                    }
+
+                    formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 10).Take(10).ToList();
+                }
                 if (string.IsNullOrEmpty(sort))
                 {
-                    formResponseInfoModel.ResponsesList = ResponseList.Skip((pageNumber - 1) * 10).Take(10).ToList();
+                    formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 10).Take(10).ToList();
 
                     //formResponseInfoModel.ResponsesList = ResponseList;
                 }
@@ -410,7 +498,8 @@ namespace Epi.Web.MVC.Controllers
                 formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
                 formResponseInfoModel.PageSize = ReadPageSize();
                 formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;
-                formResponseInfoModel.sortfield = /*FromURL*/sortfield;
+                formResponseInfoModel.sortfield= /*FromURL*/sortfield;
+            
                 formResponseInfoModel.sortOrder = /*FromURL*/sort;
                 formResponseInfoModel.CurrentPage = /*FromURL*/pageNumber;
             }
@@ -610,6 +699,7 @@ namespace Epi.Web.MVC.Controllers
                 }
 
                 formResponseInfoModel.ResponsesList = ResponseList;
+                
 
                 formResponseInfoModel.PageSize = ReadPageSize();
 
