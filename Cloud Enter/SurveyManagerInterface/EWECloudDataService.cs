@@ -17,7 +17,7 @@ using System.Configuration;
 namespace Epi.Web.WCF.SurveyService
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
-    public class EWEDataService : IEWEDataService
+    public class EWECloudDataService : IEWECloudDataService
     {
 
         // Session state variables 

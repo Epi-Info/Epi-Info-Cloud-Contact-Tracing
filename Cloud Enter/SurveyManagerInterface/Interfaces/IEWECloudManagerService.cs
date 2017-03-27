@@ -10,7 +10,7 @@ using Epi.Web.Enter.Common.Exception;
 namespace Epi.Web.WCF.SurveyService
 {
     [ServiceContract]
-    public interface IEWEManagerService
+    public interface IEWECloudManagerService
     {
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
@@ -88,5 +88,10 @@ namespace Epi.Web.WCF.SurveyService
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         FormSettingResponse GetSettings(FormSettingRequest Request);
+
+        //Publish MetaData To Cloud
+        [OperationContract]
+        [FaultContract(typeof(CustomFaultException))]
+        PublishResponse MetaDataToCloud(PublishRequest pRequestMessage,bool pCloud);
     }
 }

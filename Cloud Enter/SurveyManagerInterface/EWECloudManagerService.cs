@@ -18,7 +18,7 @@ using Epi.Web.Enter.Common.Security;
  
 namespace Epi.Web.WCF.SurveyService
 {
-    public class EWEManagerService : IEWEManagerService
+    public class EWECloudManagerService : IEWECloudManagerService
     {
 
         // Session state variables
@@ -59,7 +59,42 @@ namespace Epi.Web.WCF.SurveyService
         }
 
 
-       
+        /// <summary>
+        /// Publish MetaData to Cloud
+        /// </summary>
+        /// <param name="pRequestMessage"></param>
+        /// <returns></returns>
+        public PublishResponse MetaDataToCloud(PublishRequest pRequest,bool pCloud)
+        {
+            try
+            {
+
+                PublishResponse result = new PublishResponse(pRequest.RequestId);
+                if (pCloud)
+                {
+                    Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao = new EFwcf.EntitySurveyInfoDao();
+                    Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao = new EFwcf.EntityOrganizationDao();
+                    Epi.Web.BLL.Publisher Implementation = new Epi.Web.BLL.Publisher(SurveyInfoDao, OrganizationDao);
+                    SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
+                    SurveyRequestResultBO surveyRequestResultBO = Implementation.PublishSurvey(surveyInfoBO);
+                    result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);                    
+                }
+                else
+                {
+                    
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
 
 
         /// <summary>

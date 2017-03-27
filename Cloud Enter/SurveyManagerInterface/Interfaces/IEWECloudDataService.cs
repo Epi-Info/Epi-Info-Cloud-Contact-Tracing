@@ -12,7 +12,7 @@ using Epi.Web.WCF.SurveyService;
 namespace Epi.Web.WCF.SurveyService
 {
     [ServiceContract]
-    public interface IEWEDataService
+    public interface IEWECloudDataService
     {
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
