@@ -112,10 +112,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
          void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse);
 
          SurveyResponseBO  GetResponseXml(string ResponseId);
-
-        
-
-         void InsertResponseXml(ResponseXmlBO item);
+         
          bool ISResponseExists(Guid ResponseId);
 
         //bool ISResponseExists(SurveyAnswerCriteria Criteria);

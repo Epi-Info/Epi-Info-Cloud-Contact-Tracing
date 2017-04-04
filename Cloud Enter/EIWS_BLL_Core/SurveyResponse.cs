@@ -222,22 +222,7 @@ namespace Epi.Web.BLL
             this.SurveyResponseDao.InsertSurveyResponse(pValue);
             return result;
         }
-        public List<SurveyResponseBO> InsertSurveyResponse(List<SurveyResponseBO> pValue, int UserId, bool IsNewRecord = false)
-        {
-
-            foreach (var item in pValue)
-            {
-                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
-                ResponseXmlBO.User = UserId;
-                ResponseXmlBO.ResponseId = item.ResponseId;
-                ResponseXmlBO.Xml = item.XML;
-                ResponseXmlBO.IsNewRecord = IsNewRecord;
-                this.SurveyResponseDao.InsertResponseXml(ResponseXmlBO);
-
-            }
-
-            return pValue;
-        }
+       
 
 
 
