@@ -24,5 +24,11 @@ namespace Epi.Web.Enter.Common.Constants
             UpdateOrganization =5,
             InsertOrganization = 6
         }
+
+        public struct WebJob
+        {
+            public const string Start = "start";
+            public const string Stop = "stop"; 
+        }
     }
 }

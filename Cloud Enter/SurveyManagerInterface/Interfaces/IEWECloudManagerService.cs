@@ -14,16 +14,11 @@ namespace Epi.Web.WCF.SurveyService
     {
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse PublishSurvey(PublishRequest pRequestMessage);
-
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest);
+        PublishResponse PublishSurvey(PublishRequest pRequestMessage);  
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse GetOrganization(OrganizationRequest pRequest);
-
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
@@ -37,19 +32,7 @@ namespace Epi.Web.WCF.SurveyService
         OrganizationResponse GetOrganizationByKey(OrganizationRequest pRequest);
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        SurveyInfoResponse SetSurveyInfo(SurveyInfoRequest pRequest);
-
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest pRequest);
-
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        OrganizationResponse SetOrganization(OrganizationRequest pRequest);
-         
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        OrganizationResponse UpdateOrganizationInfo(OrganizationRequest pRequest);
+        SurveyInfoResponse SetSurveyInfo(SurveyInfoRequest pRequest);           
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
@@ -57,41 +40,27 @@ namespace Epi.Web.WCF.SurveyService
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse RePublishSurvey(PublishRequest pRequestMessage);
-        //[OperationContract]
-        //[FaultContract(typeof(CustomFaultException))]
-        //AdminResponse GetOrganizationAdmins(AdminRequest request); 
+        PublishResponse RePublishSurvey(PublishRequest pRequestMessage);   
 
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        UserAuthenticationResponse UserLogin(UserAuthenticationRequest request);
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        bool UpdateUser(UserAuthenticationRequest request);
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         UserAuthenticationResponse GetUser(UserAuthenticationRequest request);
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        PreFilledAnswerResponse SetSurveyAnswer(PreFilledAnswerRequest pRequestMessage);
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        bool PingManagerService();
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        void SetSurveyAnswerStatus(SurveyAnswerRequest pRequestMessage);
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        void UpdateRecordStatus(SurveyAnswerRequest pRequestMessage);
-        [OperationContract]
-        [FaultContract(typeof(CustomFaultException))]
-        FormSettingResponse GetSettings(FormSettingRequest Request);
+        bool PingManagerService();   
+       
 
         //Publish MetaData To Cloud
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse MetaDataToCloud(PublishRequest pRequestMessage,bool pCloud);
+        PublishResponse MetaDataToCloud(PublishRequest pRequest);
+
+
+        [OperationContract]
+        [FaultContract(typeof(CustomFaultException))]
+        PublishResponse RePublishMetaDataToCloud(PublishRequest pRequestMessage);
+        
     }
 }
