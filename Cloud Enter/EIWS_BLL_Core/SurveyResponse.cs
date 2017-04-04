@@ -348,41 +348,41 @@ namespace Epi.Web.BLL
 
             return result;
         }
-        public bool DeleteSurveyResponseInEditMode(SurveyResponseBO pValue,int Status = -1)
-        {
-            bool result = false;
-            List<SurveyResponseBO> Children = this.GetResponsesHierarchyIdsByRootId(pValue.ResponseId);
+        //public bool DeleteSurveyResponseInEditMode(SurveyResponseBO pValue,int Status = -1)
+        //{
+        //    bool result = false;
+        //    List<SurveyResponseBO> Children = this.GetResponsesHierarchyIdsByRootId(pValue.ResponseId);
 
-            foreach (var child in Children)
-            {
-                //Get the original copy of the xml
-                SurveyResponseBO ResponseXml = this.SurveyResponseDao.GetResponseXml(child.ResponseId);
-                if (!ResponseXml.IsNewRecord)
-                {
-                    child.XML = ResponseXml.XML;
-                    this.SurveyResponseDao.UpdateSurveyResponse(child);
-                }
-                else
-                {
-                    child.UserId = pValue.UserId;
-                    this.SurveyResponseDao.DeleteSurveyResponse(child);
+        //    foreach (var child in Children)
+        //    {
+        //        //Get the original copy of the xml
+        //        SurveyResponseBO ResponseXml = this.SurveyResponseDao.GetResponseXml(child.ResponseId);
+        //        if (!ResponseXml.IsNewRecord)
+        //        {
+        //            child.XML = ResponseXml.XML;
+        //            this.SurveyResponseDao.UpdateSurveyResponse(child);
+        //        }
+        //        else
+        //        {
+        //            child.UserId = pValue.UserId;
+        //            this.SurveyResponseDao.DeleteSurveyResponse(child);
 
-                }
-                // delete record from ResponseXml Table
+        //        }
+        //        // delete record from ResponseXml Table
 
-                ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
-                ResponseXmlBO.ResponseId = child.ResponseId;
-                this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
-                if (Status > -1)
-                {
-                    this.SurveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
-                }
-            }
+        //        ResponseXmlBO ResponseXmlBO = new ResponseXmlBO();
+        //        ResponseXmlBO.ResponseId = child.ResponseId;
+        //        this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
+        //        if (Status > -1)
+        //        {
+        //            this.SurveyResponseDao.UpdateRecordStatus(ResponseXmlBO.ResponseId, Status);
+        //        }
+        //    }
 
-            result = true;
+        //    result = true;
 
-            return result;
-        }
+        //    return result;
+        //}
         public bool DeleteSingleSurveyResponse(SurveyResponseBO pValue)
         {
             bool result = false;
@@ -501,11 +501,11 @@ namespace Epi.Web.BLL
             return SurveyResponseBO;
         }
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
-        {
+        //public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        //{
 
-            this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
-        }
+        //    this.SurveyResponseDao.DeleteResponseXml(ResponseXmlBO);
+        //}
         public void UpdateRecordStatus(string ResponseId, int StatusId)
         {
 

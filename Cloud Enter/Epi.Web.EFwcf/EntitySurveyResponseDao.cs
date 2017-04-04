@@ -2280,35 +2280,35 @@ namespace Epi.Web.EFwcf
         }
 
 
-        public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
-        {
+        //public void DeleteResponseXml(ResponseXmlBO ResponseXmlBO)
+        //{
 
 
-            Guid Id = new Guid(ResponseXmlBO.ResponseId);
+        //    Guid Id = new Guid(ResponseXmlBO.ResponseId);
 
-            using (var Context = DataObjectFactory.CreateContext())
-            {
+        //    using (var Context = DataObjectFactory.CreateContext())
+        //    {
 
-                ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
+        //        ResponseXml Response = Context.ResponseXmls.FirstOrDefault(x => x.ResponseId == Id);
 
-                if (Response != null)
-                {
-                    Context.ResponseXmls.DeleteObject(Response);
-                    Context.SaveChanges();
-                }
-                //Update Status
-                //var Query = from response in Context.SurveyResponses
-                //            where response.ResponseId == Id
-                //            select response;
-                //if (Query.Count() > 0)
-                //    {
-                //      var DataRow = Query.Single();
-                //      DataRow.StatusId = 2;
-                //      Context.SaveChanges();
-                //    }
-            }
+        //        if (Response != null)
+        //        {
+        //            Context.ResponseXmls.DeleteObject(Response);
+        //            Context.SaveChanges();
+        //        }
+        //        //Update Status
+        //        //var Query = from response in Context.SurveyResponses
+        //        //            where response.ResponseId == Id
+        //        //            select response;
+        //        //if (Query.Count() > 0)
+        //        //    {
+        //        //      var DataRow = Query.Single();
+        //        //      DataRow.StatusId = 2;
+        //        //      Context.SaveChanges();
+        //        //    }
+        //    }
 
-        }
+        //}
 
         public void UpdateRecordStatus(string ResponseId, int Status) 
         {
