@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.Message
 {
     [DataContract]
-    public class SurveyRequest
+    public class SurveyRequest  
     {
         DateTime closingDate;
         string surveyName;

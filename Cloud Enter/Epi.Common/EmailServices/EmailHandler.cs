@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Configuration;
+using System.Net.Mail;
+using Epi.Common.Security;
 
 namespace Epi.Common.EmailServices
 {
@@ -57,33 +59,37 @@ namespace Epi.Common.EmailServices
                     SMTPPort = 25;
                 }
 
-                System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
+                MailMessage message = new  MailMessage();
                 foreach (string item in Email.To)
                 {
                     message.To.Add(item);
                 }
 
                 message.Subject = Email.Subject;
-                message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
+
+                var EmailFrom = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString());
+                message.From = new MailAddress(EmailFrom);
+                var SmtpHost = Cryptography.Decrypt(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
+               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString(), Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
+                SmtpClient smtp = new SmtpClient(SmtpHost, Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
                 smtp.Port = SMTPPort;
+               
+                
+                var PassWord = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                    smtp.Credentials = new System.Net.NetworkCredential(EmailFrom, PassWord);
                 }
 
 
                 //smtp.EnableSsl = isUsingSSL;
 
                 smtp.EnableSsl = isUsingSSL;
-                smtp.UseDefaultCredentials = false;
-                smtp.DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network;
-                if (isAuthenticated)
-                {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
-                }
+                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+              
 
 
                 smtp.Send(message);
@@ -148,6 +154,7 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
+               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
 

@@ -47,18 +47,13 @@
                 Launch Analytics
             </button>
         }*@
-    @if (Model.FormInfoModel.IsOwner || (Session[SessionKeys.UsertRole].ToString() == "2" && Model.FormInfoModel.IsShared))
+    @if (Model.FormInfoModel.IsOwner  || (Session[SessionKeys.UsertRole].ToString() == "2" && Model.FormInfoModel.IsShared || (Session[SessionKeys.UsertRole].ToString() == "2")))
     {
         <span>&nbsp;&nbsp;</span>
         <button id="btneditsettings" onclick="GetSettings()" class="default settings" type="button">
             Settings
         </button>
-
-        @*@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, null);*@
-
-        <button id="btnmetaadmin" onclick="location.href='@Url.Action("Index", "MetadataAdmin")';return false;" class="default" type="button" style="height: 35px;">
-            Admin
-        </button>
+      
     }
 </div>
 <div style="clear: both">

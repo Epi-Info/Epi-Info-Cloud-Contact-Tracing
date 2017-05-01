@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Epi.Cloud.Common.Configuration;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using System;
 using System.Collections.Concurrent;
 using System.Configuration;
 using System.Linq;
-using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Common.Constants;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
     public partial class SurveyResponseCRUD
     {
-		private string _serviceEndpoint;
-		private string _authKey;
+        private string _serviceEndpoint;
+        private string _authKey;
         private DocumentClient _client;
-		private Microsoft.Azure.Documents.Database _database;
-		private ConcurrentDictionary<string, DocumentCollection> _documentCollections = new ConcurrentDictionary<string, DocumentCollection>();
+        private Microsoft.Azure.Documents.Database _database;
+        private ConcurrentDictionary<string, DocumentCollection> _documentCollections = new ConcurrentDictionary<string, DocumentCollection>();
 
         private void Initialize()
         {
@@ -30,8 +30,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         private void ParseConnectionString()
         {
-            var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("CollectedDataConnectionString");
-            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString.Trim();
+            var connectionString = ConfigurationHelper.GetEnvironmentResourceKey("CollectedDataConnectionString");
 
             string[] parts;
 
@@ -103,13 +102,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 return _client;
             }
         }
-#endregion
+        #endregion
 
-#region GetOrCreateDabase
+        #region GetOrCreateDabase
         /// <summary>
         ///If DB is not avaliable in Document Db create DB
         /// </summary>
-        private Microsoft.Azure.Documents.Database GetOrCreateDatabase(string databaseName)
+        private Database GetOrCreateDatabase(string databaseName)
         {
             var client = GetOrCreateClient();
 
@@ -128,9 +127,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-#endregion
+        #endregion
 
-#region GetOrCreateCollection 
+        #region GetOrCreateCollection 
         /// <summary>
         /// Get or Create Collection in Document DB
         /// </summary>
@@ -160,9 +159,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 return documentCollection;
             }
         }
-#endregion
+        #endregion
 
-#region GetCollectionReference
+        #region GetCollectionReference
         private DocumentCollection GetCollectionReference(string collectionId)
         {
 
@@ -170,16 +169,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
             var collection = GetOrCreateCollection(ResponseDatabase.SelfLink, collectionId);
             return collection;
         }
-#endregion
+        #endregion
 
-
-#region GetCollectionUri
+        #region GetCollectionUri
         private Uri GetCollectionUri(string collectionId)
         {
             GetCollectionReference(collectionId);
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
             return collectionUri;
         }
-#endregion
+        #endregion
+
     }
 }

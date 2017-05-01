@@ -66,6 +66,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EpiCloudWebJob.cs" />
+    <Compile Include="Interface\IEpiCloudWebJob.cs" />
     <Compile Include="SqlConsistencyHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

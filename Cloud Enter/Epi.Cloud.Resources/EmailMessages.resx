@@ -121,13 +121,13 @@
     <value>An Epi Info Cloud Enter account has been created for your organization.</value>
   </data>
   <data name="PasswordChanged_Body" xml:space="preserve">
-    <value>You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n</value>
+    <value>You recently updated your password for Epi Info™ Cloud Enter. If you have not accessed password help, please contact the administrator for you organization. </value>
   </data>
   <data name="PasswordChanged_Subject" xml:space="preserve">
     <value>Your Epi Info Cloud Enter Password has been updated</value>
   </data>
   <data name="ResetPassword_Body" xml:space="preserve">
-    <value>You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password.</value>
+    <value>You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. Your new temporary password is: {0} If you have not accessed password help, please contact the administrator. Log in with your temporary password. You will then be asked to create a new password.</value>
   </data>
   <data name="ResetPassword_Subject" xml:space="preserve">
     <value>Your Epi Info Cloud Enter Password</value>

@@ -174,7 +174,7 @@ namespace Epi.Web.MVC.Controllers
 
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult UploadBlob(string Cache)
+        public ActionResult UploadBlob()
         {
             try
             {

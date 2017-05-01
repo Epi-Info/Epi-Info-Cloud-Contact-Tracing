@@ -41,6 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\ResourceNames.cs" />
+    <Compile Include="DocumentDbSp.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DocumentDbSp.resx</DependentUpon>
+    </Compile>
     <Compile Include="EmailMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -56,6 +61,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DocumentDbSp.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DocumentDbSp.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="EmailMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>EmailMessages.Designer.cs</LastGenOutput>

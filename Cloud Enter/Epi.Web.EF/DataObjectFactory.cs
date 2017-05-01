@@ -22,15 +22,10 @@ namespace Epi.Web.EF
             try
             {
                 // Connection strings here
-                string EWEEntitiesConnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEEntities");
-                string EWEADOconnectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("EWEADO");
+                _connectionString = ConfigurationHelper.GetEnvironmentResourceKey("EWEEntities");
+                _eweAdoConnectionString = ConfigurationHelper.GetEnvironmentResourceKey("EWEADO");
 
-                //Decrypt connection string here
-                var connectionInfo = ConfigurationManager.ConnectionStrings[EWEEntitiesConnectionStringName];
-                _connectionString = connectionInfo != null ?Cryptography.Decrypt(connectionInfo.ConnectionString) : null;
 
-                connectionInfo = ConfigurationManager.ConnectionStrings[EWEADOconnectionStringName];
-                _eweAdoConnectionString = connectionInfo != null ? Cryptography.Decrypt(connectionInfo.ConnectionString) : null;
             }
             catch (Exception ex)
             {

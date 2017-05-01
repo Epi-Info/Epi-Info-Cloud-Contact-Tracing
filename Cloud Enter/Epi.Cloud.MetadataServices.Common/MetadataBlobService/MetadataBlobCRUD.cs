@@ -29,18 +29,15 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 
         private CloudBlobClient BlobClient { get { return _cloudBlobClient ?? GetBlobClient(); } }
 
-        private CloudBlobContainer  BlobContainer { get { return _cloudBlobContainer ?? GetBlobContainer(_containerName); } }
+        private CloudBlobContainer BlobContainer { get { return _cloudBlobContainer ?? GetBlobContainer(_containerName); } }
 
         private void Initialize(string containerName)
         {
             lock (this)
             {
-                var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("MetadataBlobStorage.ConnectionString");
-                var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
-
-                _cloudStorageAccount = CloudStorageAccount.Parse(connectionString);
+                _cloudStorageAccount = CloudStorageAccount.Parse(ConfigurationHelper.GetEnvironmentResourceKey("MetadataBlobStorage.ConnectionString"));
                 _containerName = containerName.ToLower();
-           }
+            }
         }
 
         private CloudBlobClient GetBlobClient()

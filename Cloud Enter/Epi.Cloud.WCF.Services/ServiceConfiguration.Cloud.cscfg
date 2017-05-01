@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="Epi.Cloud.WCF.Services" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="WebEenterCloudWCFService">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=wcferror;AccountKey=$(_wcferror.key_)" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.Enabled" value="true" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountUsername" value="ananth.raja" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountEncryptedPassword" value="MIIBnQYJKoZIhvcNAQcDoIIBjjCCAYoCAQAxggFOMIIBSgIBADAyMB4xHDAaBgNVBAMME1dpbmRvd3MgQXp1cmUgVG9vbHMCEBnr3cJ8nmeMRx/avM8dbsMwDQYJKoZIhvcNAQEBBQAEggEAPiEJyanj07upWb3DFlTKddm5+Eqc8X6V8yyN/SPEnjKUAWoXsa18CLDwr3E2aU9pV0hFcLnoUgt4B89YqE8Ruy49BsLGsUe/r5gQug2coyEfhkN2Ayd9G1tM3MbbeRpUi45fEH5qIvC7u0SRBmX4KBd9uk6A1AOfjJuA2iiFX7pjpEZtv6zwzGEBbc3ZWynZLuqrFunFOxIc4FR6Z1Uy5rlFE0672KF2l63ackVpJqbMs2hFmtzsd/IMydKovjOJzCAiCp094ht16Ou9FMreNhkN43gdqumMb9I6RRoYjFdkFhFMBRrC4kc4+J2ZBgOMVOAXP1DQPL5aRtMfnSu8BDAzBgkqhkiG9w0BBwEwFAYIKoZIhvcNAwcECFaSzxr6cKoNgBDM0AmXDe84BPPJff2zOqqz" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteAccess.AccountExpiration" value="2018-03-29T23:59:59.0000000-04:00" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.RemoteForwarder.Enabled" value="true" />
+      <Setting name="APPINSIGHTS_INSTRUMENTATIONKEY" value="b8af587f-1785-420d-a278-13ca17a54684" />
+    </ConfigurationSettings>
+    <Certificates>
+      <Certificate name="Microsoft.WindowsAzure.Plugins.RemoteAccess.PasswordEncryption" thumbprint="1FBF515E5E4C0E7903E066DC30AC1B3A31287F17" thumbprintAlgorithm="sha1" />
+    </Certificates>
+  </Role>
+</ServiceConfiguration>

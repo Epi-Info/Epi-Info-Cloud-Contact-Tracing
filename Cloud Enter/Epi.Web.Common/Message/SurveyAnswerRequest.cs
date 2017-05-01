@@ -2,8 +2,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 using Epi.Web.Enter.Common.MessageBase;
 using Epi.Web.Enter.Common.Criteria;
-using Epi.Cloud.Common.DTO;
-using Epi.DataPersistence.DataStructures;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Message
 {
@@ -23,15 +22,12 @@ namespace Epi.Web.Enter.Common.Message
         /// Selection criteria and sort order
         /// </summary>
         [DataMember]
-        public SurveyAnswerCriteria Criteria { get; set; }
+        public SurveyAnswerCriteria Criteria;
 
         /// <summary>
         /// SurveyInfo object.
         /// </summary>
         [DataMember]
-        public List<SurveyAnswerDTO> SurveyAnswerList { get; set; }
-
-        [DataMember]
-        public FormResponseDetail ResponseDetail { get; set; }
+        public List<SurveyAnswerDTO> SurveyAnswerList;
     }
 }

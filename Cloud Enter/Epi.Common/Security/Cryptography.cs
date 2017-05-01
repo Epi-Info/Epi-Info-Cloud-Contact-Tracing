@@ -16,6 +16,9 @@ namespace Epi.Common.Security
         /// </summary>
 
 
+        //public static readonly string passPhrase = Environment.GetEnvironmentVariable("KeyForConnectionStringPassphrase");// ConfigurationManager.AppSettings["KeyForConnectionStringPassphrase"]; //"80787d6053694493be171dd712e51c61";
+        //public static readonly string saltValue = Environment.GetEnvironmentVariable("KeyForConnectionStringSalt");// ConfigurationManager.AppSettings["KeyForConnectionStringSalt"]; //;"476ba16073764022bc7f262c6d67ebef";
+        //public static readonly string initVector = Environment.GetEnvironmentVariable("KeyForConnectionStringVector");
         public static readonly string passPhrase = ConfigurationManager.AppSettings["KeyForConnectionStringPassphrase"]; //"80787d6053694493be171dd712e51c61";
         public static readonly string saltValue = ConfigurationManager.AppSettings["KeyForConnectionStringSalt"]; //;"476ba16073764022bc7f262c6d67ebef";
         public static readonly string initVector = ConfigurationManager.AppSettings["KeyForConnectionStringVector"];// "0f8f*d5bd&cb4~9f";

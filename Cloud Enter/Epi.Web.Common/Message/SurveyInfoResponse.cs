@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+
 using Epi.Web.Enter.Common.MessageBase;
-using Epi.Cloud.Common.DTO;
+using Epi.Web.Enter.Common.DTO;
 
 namespace Epi.Web.Enter.Common.Message
 {
@@ -14,17 +15,10 @@ namespace Epi.Web.Enter.Common.Message
         /// <summary>
         /// Default Constructor for SurveyInfoResponse.
         /// </summary>
-        public SurveyInfoResponse()
-        {
-            this.SurveyInfoList = new List<SurveyInfoDTO>();
+        public SurveyInfoResponse() 
+        { 
+            this.SurveyInfoList = new List<SurveyInfoDTO>(); 
         }
-
-
-        /// <summary>
-        /// Overloaded Constructor for SurveyInfoResponse. Sets CorrelationId.
-        /// </summary>
-        /// <param name="correlationId"></param>
-        public SurveyInfoResponse(string correlationId) : base(correlationId) { this.SurveyInfoList = new List<SurveyInfoDTO>(); }
 
         /// <summary>
         /// Total number of pages for query
@@ -37,6 +31,13 @@ namespace Epi.Web.Enter.Common.Message
         /// </summary>
         [DataMember]
         public int PageSize { get; set; }
+
+
+        /// <summary>
+        /// Overloaded Constructor for SurveyInfoResponse. Sets CorrelationId.
+        /// </summary>
+        /// <param name="correlationId"></param>
+        public SurveyInfoResponse(string correlationId) : base(correlationId) { this.SurveyInfoList = new List<SurveyInfoDTO>(); }
 
 
         /// <summary>

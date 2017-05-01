@@ -1,4 +1,8 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.Exception
 {
@@ -9,7 +13,7 @@ namespace Epi.Web.Enter.Common.Exception
         private string _source;
         private string _stackTrace;
         private string _helpLink;
-
+        
         [DataMember]
         public string CustomMessage
         {

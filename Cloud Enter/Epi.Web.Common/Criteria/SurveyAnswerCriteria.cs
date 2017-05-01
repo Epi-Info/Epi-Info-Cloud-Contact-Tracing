@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Epi.FormMetadata.DataStructures;
-using Epi.DataPersistence.Constants;
 
 namespace Epi.Web.Enter.Common.Criteria
 {
@@ -21,6 +19,7 @@ namespace Epi.Web.Enter.Common.Criteria
             this.DateCompleted = DateTime.MinValue;
         }
 
+
         /// <summary>
         /// Which page to retrieve
         /// </summary>
@@ -31,7 +30,7 @@ namespace Epi.Web.Enter.Common.Criteria
         /// Number of Records per page
         /// </summary>
         [DataMember]
-        public int GridPageSize { get; set; }
+        public int PageSize { get; set; }
 
         /// <summary>
         /// Number of Records per page
@@ -52,6 +51,7 @@ namespace Epi.Web.Enter.Common.Criteria
         [DataMember]
         public string SurveyId { get; set; }
 
+
         /// <summary>
         /// Complete / Inprogress indicator
         /// </summary>
@@ -71,34 +71,34 @@ namespace Epi.Web.Enter.Common.Criteria
         [DataMember]
         public bool IncludeOrderStatistics { get; set; }
 
-
-        [DataMember]
+        
+       [DataMember]
         public Guid UserPublishKey { get; set; }
 
-        [DataMember]
-        public Guid OrganizationKey { get; set; }
+       [DataMember]
+       public Guid OrganizationKey { get; set; }
+         
+       [DataMember]
+       public bool IsMobile { get; set; }
+       [DataMember]
+       public int UserId { get; set; }
+       [DataMember]
+       public bool IsEditMode { get; set; }
+
+       [DataMember]
+       public string SortOrder { get; set; }
+
+       [DataMember]
+       public string Sortfield { get; set; }
+
+       [DataMember]
+       public bool GetAllColumns { get; set; }
+
+       [DataMember]
+       public string SearchCriteria { get; set; }
 
         [DataMember]
-        public bool IsMobile { get; set; }
-        [DataMember]
-        public int UserId { get; set; }
-        [DataMember]
-        public bool IsEditMode { get; set; }
-
-        [DataMember]
-        public string SortOrder { get; set; }
-
-        [DataMember]
-        public string Sortfield { get; set; }
-
-        [DataMember]
-        public bool GetAllColumns { get; set; }
-
-        [DataMember]
-        public string SearchCriteria { get; set; }
-
-        [DataMember]
-        public bool IsSqlProject { get; set; }
+       public bool IsSqlProject { get; set; }
         [DataMember]
         public bool IsDeleteMode { get; set; }
         [DataMember]
@@ -115,11 +115,6 @@ namespace Epi.Web.Enter.Common.Criteria
             get;
             set;
         }
-
-        public int? FormResponseCount { get; set; }
-
-        public IDictionary<string, string> SurveyQAList { get; set; }
-        public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
-		public RecordStatusChangeReason StatusChangeReason { get; set; }
-	}
+         
+    }
 }

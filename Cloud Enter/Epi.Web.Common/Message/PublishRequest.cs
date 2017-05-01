@@ -1,4 +1,8 @@
-﻿using Epi.Cloud.Common.DTO;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi.Web.Enter.Common.DTO;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.Message

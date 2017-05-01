@@ -1,20 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Epi.Web.Enter.Common.Email
 {
     public class Email
     {
 
-        private List<string> _To;
+        private  List<string> _To;
         private string _From;
         private string _Body;
         private string _Subject;
 
-        public List<string> To
+        public   List<string> To 
         {
             get { return _To; }
             set { _To = value; }
-
+        
         }
         public string From
         {
@@ -42,6 +45,6 @@ namespace Epi.Web.Enter.Common.Email
             get { return password; }
             set { password = value; }
         }
-
+        
     }
 }

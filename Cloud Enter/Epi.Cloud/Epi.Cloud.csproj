@@ -632,6 +632,10 @@
     <None Include="Properties\PublishProfiles\CloudEnterDev - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterQA - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\CloudEnterQA - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCApp - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCApp - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCApp - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\EICDCApp - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCCSRADEV - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCCSRADEV - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\EICDCDev - FTP %282%29.pubxml" />
@@ -730,6 +734,7 @@
     <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
+    <Content Include="SP_Script\spGetAllRecordsBySurveyID.js" />
     <Content Include="Unity.Mvc3.README.txt" />
     <Content Include="Views\Home\ListResponses.cshtml" />
     <Content Include="Views\Shared\footer.htm" />
@@ -739,6 +744,7 @@
     </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>

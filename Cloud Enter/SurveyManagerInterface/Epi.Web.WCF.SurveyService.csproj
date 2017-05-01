@@ -19,6 +19,8 @@
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,12 +42,15 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Epi.Cloud.CacheServices, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Epi.Cloud.RedisCacheServices\bin\Debug\Epi.Cloud.CacheServices.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -56,33 +61,34 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EWEDataService.cs" />
+    <Compile Include="Interfaces\IEWECloudManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EWECloudManagerService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EIWS_BLL_Core\Epi.Web.BLL.csproj">
-      <Project>{d49b7a21-644b-49d7-9a5d-387bf31eafe5}</Project>
+      <Project>{D49B7A21-644B-49D7-9A5D-387BF31EAFE5}</Project>
       <Name>Epi.Web.BLL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
-      <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
-      <Name>Epi.Cloud.Common</Name>
+    <ProjectReference Include="..\Epi.Cloud.PublishMetaData\Epi.Cloud.PublishMetaData.csproj">
+      <Project>{50ce0fc1-d4c8-45cc-ab84-ae34013a7186}</Project>
+      <Name>Epi.Cloud.PublishMetaData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
       <Project>{6e2f059b-c1cd-401f-8a63-dc2933cfb0d8}</Project>
       <Name>Epi.Web.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.EF\Epi.Web.EF.csproj">
-      <Project>{05a484ab-a555-4200-936b-bec573285bcc}</Project>
-      <Name>Epi.Web.EF</Name>
+    <ProjectReference Include="..\Epi.Web.EFwcf\Epi.Web.EFwcf.csproj">
+      <Project>{bf84e169-79d5-4b52-89df-58d50a8fec07}</Project>
+      <Name>Epi.Web.EFwcf</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Interfaces\Epi.Web.Interfaces.csproj">
-      <Project>{B8AF69BD-3CE1-4AA5-875D-3FB87C7FCE44}</Project>
+      <Project>{b8af69bd-3ce1-4aa5-875d-3fb87c7fce44}</Project>
       <Name>Epi.Web.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
@@ -94,6 +100,13 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

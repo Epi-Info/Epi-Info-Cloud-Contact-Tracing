@@ -1,5 +1,8 @@
 ﻿using System;
-using Epi.Cloud.Common.DTO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Epi.Web.Enter.Common.DTO;
 using System.Runtime.Serialization;
 
 namespace Epi.Web.Enter.Common.Message
@@ -25,7 +28,9 @@ namespace Epi.Web.Enter.Common.Message
         [DataMember]
         public int UserRole;
         [DataMember]
+        public string Action;
+        [DataMember]
         public UserDTO OrganizationAdminInfo;
-
+         
     }
 }
