@@ -28,9 +28,9 @@ namespace Epi.Web.MVC
             // e.g. container.RegisterType<ITestService, TestService>();            
 
 
-			container.RegisterType<SurveyResponseHelper, SurveyResponseHelper>()
+			container.RegisterType<SurveyResponseBuilder, SurveyResponseBuilder>()
                 .Configure<InjectedMembers>()
-                .ConfigureInjectionFor<SurveyResponseHelper>(new InjectionConstructor());
+                .ConfigureInjectionFor<SurveyResponseBuilder>(new InjectionConstructor());
 
 			// Logger
 			container.RegisterType<Epi.Common.Diagnostics.ILogger, Epi.Common.Diagnostics.Logger>();

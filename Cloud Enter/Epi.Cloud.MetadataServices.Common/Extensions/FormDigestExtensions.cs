@@ -27,7 +27,7 @@ namespace Epi.Cloud.MetadataServices.Common.Extensions
             surveyInfoBO.SurveyName = formDigest.FormName;
             surveyInfoBO.OrganizationName = formDigest.OrganizationName;
             surveyInfoBO.OwnerId = formDigest.OwnerUserId;
-            surveyInfoBO.ParentId = formDigest.ParentFormId;
+            surveyInfoBO.ParentFormId = formDigest.ParentFormId;
             surveyInfoBO.ViewId = formDigest.ViewId;
             surveyInfoBO.DataAccessRuleId = formDigest.DataAccessRuleId;
             surveyInfoBO.IsDraftMode = formDigest.IsDraftMode;

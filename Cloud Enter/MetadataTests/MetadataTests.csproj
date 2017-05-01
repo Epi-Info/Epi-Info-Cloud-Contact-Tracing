@@ -82,14 +82,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Controllers\TestFormResponseInfo.cs" />
     <Compile Include="DAO\SurveyResponseDaoTests.cs" />
     <Compile Include="FullProjectTemplateMetadata.cs" />
     <Compile Include="TestProjectTemplateMetadata.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestSurveyResponseExtension.cs" />
     <Compile Include="TestFormResponseDetailExtension.cs" />
-    <Compile Include="TestFormExtension.cs" />
     <Compile Include="TestOrganizationBOExtension.cs" />
     <Compile Include="TestOrganizationExtension.cs" />
     <Compile Include="TestUserBOExtensions.cs" />
@@ -169,6 +166,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

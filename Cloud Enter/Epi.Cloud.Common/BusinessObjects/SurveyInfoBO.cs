@@ -36,7 +36,7 @@ namespace Epi.Cloud.Common.BusinessObjects
 
         public DateTime StartDate { get; set; }
 
-        public string ParentId { get; set; }
+        public string ParentFormId { get; set; }
 
         public int ViewId { get; set; }
 

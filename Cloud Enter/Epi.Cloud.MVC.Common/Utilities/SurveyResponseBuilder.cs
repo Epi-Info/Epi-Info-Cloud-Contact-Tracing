@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
+using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.MVC.Utility
 {
-    public class SurveyResponseHelper
+    public class SurveyResponseBuilder
     {
         private IEnumerable<AbridgedFieldInfo> _pageFields;
         private string _requiredList = "";
@@ -27,13 +30,13 @@ namespace Epi.Web.MVC.Utility
             set { _requiredList = value; }
         }
 
-        public SurveyResponseHelper(IEnumerable<AbridgedFieldInfo> pageFields, string requiredList)
+        public SurveyResponseBuilder(IEnumerable<AbridgedFieldInfo> pageFields, string requiredList)
         {
             _pageFields = pageFields;
             _requiredList = requiredList;
         }
 
-        public SurveyResponseHelper()
+        public SurveyResponseBuilder()
         {
         }
 
@@ -49,34 +52,46 @@ namespace Epi.Web.MVC.Utility
             }
         }
 
-        public FormResponseDetail CreateResponseDetail(string formId, bool addRoot, int currentPage, string pageId, string responseId)
+        /// <summary>
+        /// Deprecated
+        /// </summary>
+        /// <param name="formId"></param>
+        /// <param name="addRoot"></param>
+        /// <param name="currentPage"></param>
+        /// <param name="pageId"></param>
+        /// <param name="responseId"></param>
+        /// <returns></returns>
+        public FormResponseDetail UpdateResponseDetail(FormResponseDetail formResponseDetail, int currentPage, string pageId)
         {
-            var formName = MetadataAccessor.GetFormDigest(formId).FormName;
-            var formResponseDetail = new FormResponseDetail
+            if (formResponseDetail.PageResponseDetailList.Count() == 0)
             {
-                GlobalRecordID = responseId,
-                IsNewRecord = true,
-				RecStatus = RecordStatus.InProcess,
-                FormId = formId,
-                FormName = formName,
-                LastPageVisited = currentPage == 0 ? 1 : currentPage
-            };
-
+                formResponseDetail.IsNewRecord = true;
+                formResponseDetail.RecStatus = RecordStatus.InProcess;
+                formResponseDetail.LastPageVisited = currentPage == 0 ? 1 : currentPage;
+            }
             if (!String.IsNullOrWhiteSpace(pageId))
             {
-                var pageResponseDetail = new PageResponseDetail
+                var pageResponseDetail = formResponseDetail.PageResponseDetailList.SingleOrDefault(p => p.PageId == Convert.ToInt32(pageId));
+                if (pageResponseDetail == null)
                 {
-                    PageId = Convert.ToInt32(pageId),
-                    PageNumber = currentPage,
-                    ResponseQA = _responseQA
-                };
-                formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+                    pageResponseDetail = new PageResponseDetail
+                    {
+                        PageId = Convert.ToInt32(pageId),
+                        PageNumber = currentPage,
+                        ResponseQA = _responseQA
+                    };
+                    formResponseDetail.AddPageResponseDetail(pageResponseDetail);
+                }
+                else
+                {
+                    pageResponseDetail.ResponseQA = _responseQA;
+                }
             }
 
             return formResponseDetail;
         }
 
-        public FormResponseDetail CreateResponseDocument(PageDigest[] pageDigests)
+        public FormResponseDetail CreateResponseDocument(IResponseContext responseContext, PageDigest[] pageDigests)
         {
             int numberOfPages = pageDigests.Length;
 
@@ -84,7 +99,9 @@ namespace Epi.Web.MVC.Utility
             var formId = firstPageDigest.FormId;
             var formName = firstPageDigest.FormName;
 
-            FormResponseDetail formResponseDetail = new FormResponseDetail { FormId = formId, FormName = formName, LastPageVisited = 1 };
+            FormResponseDetail formResponseDetail = responseContext.ToFormResponseDetail();
+            formResponseDetail.LastPageVisited = 1;
+
             foreach (var pageDigest in pageDigests)
             {
                 var fieldNames = pageDigest.FieldNames;

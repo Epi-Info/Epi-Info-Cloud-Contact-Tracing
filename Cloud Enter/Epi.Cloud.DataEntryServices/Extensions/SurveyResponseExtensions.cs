@@ -22,32 +22,25 @@ namespace Epi.Cloud.DataEntryServices.Extensions
                 surveyResponseBO.IsDraftMode = surveyResponse.IsDraftMode;
                 surveyResponseBO.IsLocked = surveyResponse.IsLocked;
                 surveyResponseBO.LastActiveUserId = lastActiveUserId;
+                surveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
 
                 var metadataAccessor = new Epi.Cloud.Common.Metadata.MetadataAccessor(surveyId);
                 surveyResponseBO.ViewId = metadataAccessor.GetFormDigest(surveyId).ViewId;
 
-                if (surveyResponse.ParentRecordId != null)
+                if (surveyResponse.ParentResponseId != null)
                 {
-                    surveyResponseBO.ParentRecordId = surveyResponse.ParentRecordId.ToString();
+                    surveyResponseBO.ParentResponseId = surveyResponse.ParentResponseId.ToString();
                 }
                 if (surveyResponse.RelateParentId != null)
                 {
-                    surveyResponseBO.RelateParentId = surveyResponse.RelateParentId.ToString();
+                    surveyResponseBO.ParentResponseId = surveyResponse.RelateParentId.ToString();
                 }
                 if (user != null)
                 {
                     surveyResponseBO.UserEmail = user == null ? string.Empty : user.EmailAddress;
                 }
-                surveyResponseBO.ResponseDetail = surveyResponse.ResponseDetail;
             }
             return surveyResponseBO;
         }
-
-        public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<SurveyResponse> surveyResponses)
-        {
-            List<SurveyResponseBO> surveyResponseBOList = surveyResponses.Select(surveyResponse => surveyResponse.ToSurveyResponseBO()).ToList();
-            return surveyResponseBOList;
-        }
-
     }
 }

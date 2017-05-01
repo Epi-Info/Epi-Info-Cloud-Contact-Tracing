@@ -5,8 +5,10 @@ using System.Web.Mvc;
 using System.Web.Security;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Common.Core.DataStructures;
 using Epi.Web.MVC.Models;
 
 namespace Epi.Web.MVC.Controllers
@@ -76,7 +78,16 @@ namespace Epi.Web.MVC.Controllers
 
                 FormsAuthentication.SetAuthCookie("BeginSurvey", false);
                 Guid responseId = Guid.NewGuid();
-                SurveyAnswerDTO surveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyId, responseId.ToString(), 0);
+                string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
+
+                var responseContext = new ResponseContext
+                {
+                    FormId = surveyId,
+                    ResponseId = responseId.ToString(),
+                    RootResponseId = rootResponseId
+                }.ResolveMetadataDependencies() as ResponseContext;
+
+                SurveyAnswerDTO surveyAnswer = _isurveyFacade.CreateSurveyAnswer(responseContext);
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswer.SurveyId);
 
                 MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(surveyAnswer.SurveyId, 1, surveyAnswer, isMobileDevice);

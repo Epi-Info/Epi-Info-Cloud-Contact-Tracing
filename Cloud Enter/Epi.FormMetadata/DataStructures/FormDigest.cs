@@ -57,5 +57,6 @@ namespace Epi.FormMetadata.DataStructures
 
         [JsonIgnore]
         public bool IsRootForm { get { return FormId == RootFormId; } }
+        public bool IsChildForm { get { return FormId != RootFormId; } }
     }
 }

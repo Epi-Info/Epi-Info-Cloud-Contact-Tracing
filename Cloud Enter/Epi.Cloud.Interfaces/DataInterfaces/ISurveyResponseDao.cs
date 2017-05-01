@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Criteria;
+using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
@@ -17,16 +18,16 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// <summary>
         /// Gets a specific SurveyResponse.
         /// </summary>
-        /// <param name="surveyResponseId">Unique SurveyResponse identifier.</param>
+        /// <param name="responseContext"></param>
         /// <returns>SurveyResponse.</returns>
-        List<SurveyResponseBO> GetSurveyResponse(List<string> surveyResponseIdList, Guid userPublishKey, int pageNumber = -1, int pageSize = -1);
-       
+        List<SurveyResponseBO> GetSurveyResponse(IResponseContext responseContext, int pageNumber = -1, int pageSize = -1);
+
         /// <summary>
         /// GetSurveyResponseState
         /// </summary>
-        /// <param name="responseId"></param>
+        /// <param name="responseContext"></param>
         /// <returns></returns>
-        SurveyResponseBO GetSurveyResponseState(string responseId);
+        SurveyResponseBO GetSurveyResponseState(IResponseContext responseContext);
 
         /// <summary>
         /// Inserts a new SurveyResponse. 
@@ -61,7 +62,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria);
+        List<SurveyResponseBO> GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria);
 
         /// <summary>
         /// GetFormResponseCount
@@ -80,31 +81,31 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// <summary>
         /// GetResponsesHierarchyIdsByRootId
         /// </summary>
-        /// <param name="rootId"></param>
+        /// <param name="responceContext"></param>
         /// <returns></returns>
-        List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string rootId);
+        List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(IResponseContext responceContext);
 
         /// <summary>
         /// GetResponse
         /// </summary>
-        /// <param name="responseId"></param>
+        /// <param name="responceContext"></param>
         /// <returns></returns>
-        SurveyResponseBO GetResponse(string responseId);
+        SurveyResponseBO GetResponse(IResponseContext responceContext);
 
         /// <summary>
         /// HasResponse
         /// </summary>
-        /// <param name="criteria"></param>
+        /// <param name="responseContext"></param>
         /// <returns></returns>
-        bool HasResponse(SurveyAnswerCriteria criteria);
+        bool HasResponse(IResponseContext responseContext);
 
         /// <summary>
         /// UpdateRecordStatus
         /// </summary>
-        /// <param name="responseId"></param>
+        /// <param name="responseContext"></param>
         /// <param name="status"></param>
         /// <param name="reasonForStatusChange"></param>
-        void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange);
+        void UpdateRecordStatus(IResponseContext responseContext, int status, RecordStatusChangeReason reasonForStatusChange);
 
         /// <summary>
         /// GetDataAccessRule

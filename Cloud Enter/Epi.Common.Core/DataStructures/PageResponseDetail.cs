@@ -11,13 +11,12 @@ namespace Epi.DataPersistence.DataStructures
             ResponseQA = new Dictionary<string, string>();
         }
 
+        public string ResponseId { get; set; }
         public string FormId { get; set; }
         public string FormName { get; set; }
 
         public int PageId { get; set; }
         public int PageNumber { get; set; }
-
-        public string GlobalRecordID { get; set; }
 
 		public bool HasBeenUpdated { get; set; }
 
@@ -27,7 +26,7 @@ namespace Epi.DataPersistence.DataStructures
 		{
             int hash = 27;
             hash = (13 * hash) + (this.FormId != null ? this.FormId.GetHashCode() : 0);
-            hash = (13 * hash) + (this.GlobalRecordID != null ? this.GlobalRecordID.GetHashCode() : 0);
+            hash = (13 * hash) + (this.ResponseId != null ? this.ResponseId.GetHashCode() : 0);
             hash = (13 * hash) + (this.ResponseQA != null ? this.ResponseQA.GetHashCode() : 0);
             return hash;
 		}
@@ -40,7 +39,7 @@ namespace Epi.DataPersistence.DataStructures
 			{
 				areEqual = true;
 				areEqual &= FormId == other.FormId;
-				areEqual &= GlobalRecordID == other.GlobalRecordID;
+				areEqual &= ResponseId == other.ResponseId;
 				areEqual &= ResponseQA.Count == other.ResponseQA.Count;
 				if (areEqual)
 				{

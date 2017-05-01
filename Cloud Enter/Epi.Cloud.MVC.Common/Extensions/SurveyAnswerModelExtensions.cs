@@ -19,7 +19,7 @@ namespace Epi.Cloud.MVC.Extensions
                 DateUpdated = surveyAnswerModel.DateUpdated,
                 DateCompleted = surveyAnswerModel.DateCompleted,
                 Status = surveyAnswerModel.Status,
-                RelateParentId = surveyAnswerModel.RelateParentId,
+                ParentResponseId = surveyAnswerModel.ParentResponseId,
             };
         }
     }

@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DocDbV2</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -79,14 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataStructures_v2.cs" />
+    <Compile Include="DataStructures.Methods.cs" />
     <Compile Include="DataStructures.cs" />
-    <Compile Include="SurveyPersistenceFacade.cs" />
-    <Compile Include="SurveyResponseCRUD_v2.cs" />
-    <Compile Include="SurveyResponseCRUD.Attachment.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
+    <Compile Include="SurveyPersistenceFacade.cs" />
+    <Compile Include="SurveyResponseCRUD.Attachment.cs" />
     <Compile Include="SurveyResponseCRUD.cs" />
-    <Compile Include="SurveyResponseCRUD.Indexing.cs" />
     <Compile Include="SurveyResponseCRUD.QueryHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SurveyResponseCRUD.Utilities.cs" />

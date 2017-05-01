@@ -25,8 +25,7 @@ namespace Epi.Data.EF
         public System.DateTime DateCreated { get; set; }
         public bool IsDraftMode { get; set; }
         public bool IsLocked { get; set; }
-        public Nullable<System.Guid> ParentRecordId { get; set; }
-        public Nullable<System.Guid> RelateParentId { get; set; }
+        public Nullable<System.Guid> ParentResponseId { get; set; }
         public Nullable<int> RecordSourceId { get; set; }
         public Nullable<int> OrganizationId { get; set; }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.FormMetadata.DataStructures;
@@ -43,6 +42,9 @@ namespace Epi.Cloud.Common.Metadata
 
             // FieldAttributes[FormId][PageId][FieldName]
             public static Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>> PageFieldAttributes = null;
+
+            public static Dictionary<string, string[]> FormIdPathFromRoot = new Dictionary<string, string[]>();
+            public static Dictionary<string, string[]> FormNamePathFromRoot = new Dictionary<string, string[]>();
         }
 
         [ThreadStatic]
@@ -56,6 +58,11 @@ namespace Epi.Cloud.Common.Metadata
         public MetadataAccessor(string surveyId)
         {
             _formId = surveyId;
+        }
+
+        public static void ClearStaticCache()
+        {
+            StaticCache.ClearAll();
         }
 
         public string CurrentFormId { get { return _formId; } set { _formId = value; } }
@@ -90,6 +97,9 @@ namespace Epi.Cloud.Common.Metadata
                 lock (StaticCache.Gate)
                 {
                     if (StaticCache.FormDigests == null) StaticCache.FormDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
+
+                    GenerateFormPaths();
+
                     return StaticCache.FormDigests;
                 }
             }
@@ -118,14 +128,90 @@ namespace Epi.Cloud.Common.Metadata
             }
         }
 
+        private void GenerateFormPaths()
+        {
+            lock (StaticCache.Gate)
+            {
+                foreach (var fd in StaticCache.FormDigests)
+                {
+                    var formIdPathFromRoot = new List<string>();
+                    var formNamePathFromRoot = new List<string>();
+                    var fdx = fd;
+                    do
+                    {
+                        formIdPathFromRoot.Insert(0, fdx.FormId);
+                        formNamePathFromRoot.Insert(0, fdx.FormName);
+                        var isRootForm = fdx.IsRootForm;
+                        fdx = isRootForm ? null : StaticCache.FormDigests.Where(x => x.FormId == fdx.ParentFormId).SingleOrDefault();
+                    } while (fdx != null);
+
+                    StaticCache.FormIdPathFromRoot[fd.FormId] = formIdPathFromRoot.ToArray();
+                    StaticCache.FormNamePathFromRoot[fd.FormId] = formNamePathFromRoot.ToArray();
+                }
+            }
+        }
+
+        public string GetFormIdByViewId(int viewId)
+        {
+            var formDigest = FormDigests.SingleOrDefault(d => d.ViewId == viewId);
+            return formDigest != null ? formDigest.FormId : null;
+        }
+
+        public string GetRootFormIdByViewId(int viewId)
+        {
+            var formDigest = FormDigests.SingleOrDefault(d => d.ViewId == viewId);
+            return formDigest != null ? formDigest.RootFormId : null;
+        }
+        public string GetParentFormIdByViewId(int viewId)
+        {
+            var formDigest = FormDigests.SingleOrDefault(d => d.ViewId == viewId);
+            return formDigest != null ? formDigest.ParentFormId : null;
+        }
+
         public string GetRootFormId(string formId)
         {
-            return FormDigests.Single(d => d.FormId == formId).RootFormId;
+            var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
+            return formDigest != null ? formDigest.RootFormId : null;
+        }
+        public string GetRootFormName(string formId)
+        {
+            string rootFormName = null;
+            var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
+            if (formDigest != null)
+            {
+                if (formDigest.IsRootForm)
+                    rootFormName = formDigest.FormName;
+                else
+                {
+                    var rootFormDigest = GetFormDigest(formDigest.RootFormId);
+                    rootFormName = rootFormDigest != null ? rootFormDigest.FormName : null;
+                }
+            }
+            return rootFormName;
         }
 
         public string GetParentFormId(string formId)
         {
-            return FormDigests.Single(d => d.FormId == formId).ParentFormId;
+            var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
+            return formDigest != null ? formDigest.ParentFormId : null;
+        }
+
+        public string GetParentFormName(string formId)
+        {
+            string parentFormName = null;
+            var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
+            if (formDigest != null && formDigest.IsChildForm)
+            {
+                var parentFormDigest = GetFormDigest(formDigest.ParentFormId);
+                parentFormName = parentFormDigest != null ? parentFormDigest.FormName : null;
+            }
+            return parentFormName;
+        }
+
+        public string GetFormName(string formId)
+        {
+            var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
+            return formDigest != null ? formDigest.FormName : null;
         }
 
         public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)
@@ -190,26 +276,28 @@ namespace Epi.Cloud.Common.Metadata
         public int PageIdFromPageNumber(string formId, int pageNumber)
         {
             PageDigest pageDigest = GetPageDigestByPageNumber(formId, pageNumber);
-            var pageId = pageDigest.PageId;
+            var pageId = pageDigest != null ? pageDigest.PageId : 0;
             return pageId;
         }
 
         public int GetFormPageCount(string formId)
         {
-            return GetPageDigests(formId).Count();
+            var pageDigests = GetPageDigests(formId);
+            return pageDigests != null ? pageDigests.Count() : 0;
         }
 
         public int[] GetFormPageIds(string formId)
         {
-            return GetPageDigests(formId).Select(pd => pd.PageId).ToArray();
+            var pageDigests = GetPageDigests(formId);
+            return pageDigests != null ? pageDigests.Select(pd => pd.PageId).ToArray() : null;
         }
 
         public FieldDigest GetFieldDigestByFieldName(string formId, string fieldName)
         {
             fieldName = fieldName.ToLower();
             var fieldDigests = GetFieldDigests(formId);
-            FieldDigest fieldDigest;
-            fieldDigest = fieldDigests.Where(fd => fd.FieldName == fieldName).SingleOrDefault();
+            FieldDigest fieldDigest = null;
+            fieldDigest = fieldDigests != null ? fieldDigests.Where(fd => fd.FieldName == fieldName).SingleOrDefault() : null;
             return fieldDigest;
         }
 
@@ -218,7 +306,7 @@ namespace Epi.Cloud.Common.Metadata
 			formId = formId.ToLower();
 			var fieldNameList = fieldNames.Select(n => n.ToLower()).ToArray();
 			var fieldDigests = GetFieldDigests(formId).Where(fd => fieldNameList.Contains(fd.FieldName));
-			return fieldDigests.ToArray();
+			return fieldDigests != null ? fieldDigests.ToArray() : null;
 		}
 
         public Page GetCurrentFormPageMetadataByPageId(int pageId)
@@ -255,15 +343,19 @@ namespace Epi.Cloud.Common.Metadata
 
         public PageDigest GetPageDigestByPageNumber(string formId, int pageNumber)
         {
-            var pageDigests = PageDigests.Single(d => d[0].FormId == formId);
-            var pageDigest = pageDigests.Single(d => d.PageNumber == pageNumber);
+            var pageDigests = PageDigests.SingleOrDefault(d => d[0].FormId == formId);
+            var pageDigest = pageDigests != null ? pageDigests.Single(d => d.PageNumber == pageNumber) : null;
             return pageDigest;
         }
 
         public PageDigest GetPageDigestByPageId(string formId, int pageId)
         {
-            var pageDigests = PageDigests.Single(d => d[0].FormId == formId);
-            var pageDigest = pageId > 0 ? pageDigests.Single(d => d.PageId == pageId) : pageDigests.FirstOrDefault();
+            PageDigest pageDigest = null;
+            var pageDigests = PageDigests.SingleOrDefault(d => d[0].FormId == formId);
+            if (pageDigests != null)
+            {
+                pageDigest = pageId > 0 ? pageDigests.Single(d => d.PageId == pageId) : pageDigests.FirstOrDefault();
+            }
             return pageDigest;
         }
 

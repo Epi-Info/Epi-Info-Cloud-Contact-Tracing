@@ -41,7 +41,7 @@ namespace Epi.Cloud.Common.BusinessObjects
         public string Xml { get; set; }
 
 		[DataMember]
-        public string ParentId { get; set; }
+        public string ParentFormId { get; set; }
 
 		public bool IsSQLProject { get; set; }
 

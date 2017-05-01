@@ -1379,7 +1379,6 @@ FROM [dbo].[ErrorLogSorted] AS [ErrorLogSorted]</DefiningQuery>
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="7" />
           <Property Type="Boolean" Name="IsDraftMode" Nullable="false" />
           <Property Type="Boolean" Name="IsLocked" Nullable="false" />
-          <Property Type="Guid" Name="ParentRecordId" />
           <Property Type="Guid" Name="RelateParentId" />
           <Property Type="Int32" Name="RecordSourceId" />
           <NavigationProperty Name="lk_Status" Relationship="OSELS_EWEModel.FK_SurveyResponse_lk_Status" FromRole="SurveyResponse" ToRole="lk_Status" />
@@ -1822,7 +1821,6 @@ FROM [dbo].[ErrorLogSorted] AS [ErrorLogSorted]</DefiningQuery>
                 <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
                 <ScalarProperty Name="RecordSourceId" ColumnName="RecordSourceId" />
                 <ScalarProperty Name="RelateParentId" ColumnName="RelateParentId" />
-                <ScalarProperty Name="ParentRecordId" ColumnName="ParentRecordId" />
                 <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
                 <ScalarProperty Name="IsDraftMode" ColumnName="IsDraftMode" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />

@@ -46,15 +46,16 @@
     <Compile Include="DataStructures\FormResponseDetail.cs" />
     <Compile Include="DataStructures\FormResponseDetailMethods.cs" />
     <Compile Include="DataStructures\PageResponseDetail.cs" />
-    <Compile Include="DataStructures\SurveyResponse.cs" />
+    <Compile Include="DataStructures\ResponseContext.cs" />
     <Compile Include="DTO\FormInfoDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
-    <Compile Include="DTO\SurveyAnswerStateDTO.cs" />
+    <Compile Include="Interfaces\IResponseContext.cs" />
     <Compile Include="Message\Base\RequestBase.cs" />
     <Compile Include="Message\Base\ResponseBase.cs" />
     <Compile Include="Message\SurveyAnswerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

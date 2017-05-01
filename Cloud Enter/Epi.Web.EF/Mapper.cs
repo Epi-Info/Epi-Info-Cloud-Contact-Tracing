@@ -38,7 +38,7 @@ namespace Epi.Web.EF
                 result.UserPublishKey = entity.UserPublishKey;
             }
             result.SurveyType = entity.SurveyTypeId;
-            result.ParentId = entity.ParentId.ToString();
+            result.ParentFormId = entity.ParentId.ToString();
             if (entity.ViewId != null)
             {
                 result.ViewId = (int)entity.ViewId;
@@ -59,7 +59,7 @@ namespace Epi.Web.EF
                 OrganizationId = entity.OrganizationId,
                 IsDraftMode = entity.IsDraftMode,
                 UserId = entity.OwnerId,
-                ParentId = (entity.ParentId != null) ? entity.ParentId.ToString() : ""
+                ParentFormId = (entity.ParentId != null) ? entity.ParentId.ToString() : ""
 
             };
         }
@@ -114,7 +114,7 @@ namespace Epi.Web.EF
             }
             result.OwnerFName = UserEntity.FirstName;
             result.OwnerLName = UserEntity.LastName;
-            result.ParentId = entity.ParentId.ToString();
+            result.ParentFormId = entity.ParentId.ToString();
             return result;
         }
 

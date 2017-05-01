@@ -5777,30 +5777,6 @@ namespace Epi.Web.EF
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Guid> ParentRecordId
-        {
-            get
-            {
-                return _ParentRecordId;
-            }
-            set
-            {
-                OnParentRecordIdChanging(value);
-                ReportPropertyChanging("ParentRecordId");
-                _ParentRecordId = StructuralObject.SetValidValue(value, "ParentRecordId");
-                ReportPropertyChanged("ParentRecordId");
-                OnParentRecordIdChanged();
-            }
-        }
-        private Nullable<global::System.Guid> _ParentRecordId;
-        partial void OnParentRecordIdChanging(Nullable<global::System.Guid> value);
-        partial void OnParentRecordIdChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
         public Nullable<global::System.Guid> RelateParentId
         {
             get

@@ -7,9 +7,12 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Common.Core.DataStructures;
+using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.FormMetadata.DataStructures;
+using Epi.Cloud.Common.Extensions;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -34,21 +37,15 @@ namespace Epi.Cloud.DataEntryServices.DAO
         /// </summary>
         /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
         /// <returns>SurveyResponse.</returns>
-        public List<SurveyResponseBO> GetSurveyResponse(List<string> surveyResponseIdList, Guid userPublishKey, int gridgridPageNumber = -1, int gridgridPageSize = -1)
+        public List<SurveyResponseBO> GetSurveyResponse(IResponseContext responseContext, int gridPageNumber = -1, int gridPageSize = -1)
         {
 
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-            if (surveyResponseIdList.Count > 0)
+            var formResponseDetail = _surveyPersistenceFacade.GetFormResponseByResponseId(responseContext);
+            if (formResponseDetail != null)
             {
-                foreach (string responseId in surveyResponseIdList.Distinct())
-                {
-                    var formResponseDetail = _surveyPersistenceFacade.GetFormResponseByResponseId(responseId);
-                    if (formResponseDetail != null)
-                    {
-                        var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
-                        result.Add(surveyResponseBO);
-                    }
-                }
+                var surveyResponseBO = formResponseDetail.ToSurveyResponseBO();
+                result.Add(surveyResponseBO);
             }
             else
             {
@@ -61,27 +58,18 @@ namespace Epi.Cloud.DataEntryServices.DAO
                 //}
             }
 
-            if (gridgridPageNumber > 0 && gridgridPageSize > 0)
+            if (gridPageNumber > 0 && gridPageSize > 0)
             {
                 result.Sort(CompareByDateCreated);
-                // remove the items to skip
-                if (gridgridPageNumber * gridgridPageSize - gridgridPageSize > 0)
-                {
-                    result.RemoveRange(0, gridgridPageSize);
-                }
-
-                if (gridgridPageNumber * gridgridPageSize < result.Count)
-                {
-                    result.RemoveRange(gridgridPageNumber * gridgridPageSize, result.Count - gridgridPageNumber * gridgridPageSize);
-                }
+                result.Skip((gridPageNumber * gridPageSize) - gridPageSize).Take(gridPageSize);
             }
 
             return result;
         }
 
-        public SurveyResponseBO GetSurveyResponseState(string responseId)
+        public SurveyResponseBO GetSurveyResponseState(IResponseContext responseContext)
         {
-            var formResponseDetail =_surveyPersistenceFacade.GetFormResponseState(responseId);
+            var formResponseDetail =_surveyPersistenceFacade.GetFormResponseState(responseContext);
             return formResponseDetail != null ? formResponseDetail.ToSurveyResponseBO() : null;
         }
 
@@ -183,7 +171,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return x.DateCreated.CompareTo(y.DateCreated);
         }
 
-        public List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria)
+        public List<SurveyResponseBO> GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
 
@@ -208,7 +196,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
                             case 1: //   Organization users can only access the data of there organization
                                 SurveyResponseList = Context.SurveyResponses.Where(
                                     x => x.SurveyId == Id
-                                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
                                         && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                         && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
                                         .OrderByDescending(x => x.DateUpdated);
@@ -222,7 +209,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
                                 {
                                     SurveyResponseList = Context.SurveyResponses.Where(
                                         x => x.SurveyId == Id
-                                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
                                             && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                             && x.StatusId >= 1)
                                             .OrderByDescending(x => x.DateUpdated);
@@ -232,7 +218,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
                                     SurveyResponseList = Context.SurveyResponses.Where(
                                        x => x.SurveyId == Id
-                                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
                                             && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                             && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
                                             .OrderByDescending(x => x.DateUpdated);
@@ -241,7 +226,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
                             case 3: // All users of all organizations can access all data 
                                 SurveyResponseList = Context.SurveyResponses.Where(
                                    x => x.SurveyId == Id
-                                        && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
                                         && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                         && x.StatusId >= 1)
                                         .OrderByDescending(x => x.DateUpdated);
@@ -249,7 +233,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
                             default:
                                 SurveyResponseList = Context.SurveyResponses.Where(
                               x => x.SurveyId == Id
-                                    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
                                     && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
                                     && x.StatusId >= 1 && x.OrganizationId == criteria.UserOrganizationId)
                                     .OrderByDescending(x => x.DateUpdated);
@@ -263,7 +246,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
                     var searchFields = criteria.SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>();
 
-                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesContainingFields(gridFields, searchFields, criteria.GridPageSize,criteria.PageNumber);
+                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, criteria.GridPageSize, criteria.PageNumber);
                     if (surveyResponses != null)
                     {
                         var responseList = surveyResponses;
@@ -1106,8 +1089,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     using (var Context = DataObjectFactory.CreateContext())
                     {
                         IQueryable<SurveyResponse> SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-                            // && string.IsNullOrEmpty(x.ParentRecordId.ToString()) == true 
-                            && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+                            // && string.IsNullOrEmpty(x.RelateParentId.ToString()) == true 
+                            && (x.RelateParentId == null || x.RelateParentId == Guid.Empty)
 
                             && x.StatusId > 1);
                         ResponseCount = SurveyResponseList.Count();
@@ -1122,19 +1105,21 @@ namespace Epi.Cloud.DataEntryServices.DAO
         }
 #endif //IncludeEpi7Compatibilty
 
-        public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string rootResponseId)
+        public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(IResponseContext responceContext)
         {
             List<SurveyResponseBO> result = null;
 
             List<string> list = new List<string>();
             try
             {
-                var formResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(rootResponseId);
+                var formResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(responceContext);
 
-				//var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
-				//var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);
-
-				result = formResponseDetail.FlattenHierarchy().Select(d => d.ToSurveyResponseBO()).ToList();
+                //var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
+                //var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);
+                if (formResponseDetail != null)
+                {
+                    result = formResponseDetail.FlattenHierarchy().Select(d => d.ToSurveyResponseBO()).ToList();
+                }
             }
             catch (Exception ex)
             {
@@ -1143,8 +1128,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
             return result;
         }
-
-        public SurveyResponseBO GetResponse(string responseId)
+        public SurveyResponseBO GetResponse(IResponseContext responseContext)
         {
             // TODO: DocumentDB implementation required
             SurveyResponseBO result = new SurveyResponseBO();
@@ -1170,10 +1154,10 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return result;
         }
 
-        public void UpdateRecordStatus(string responseId, int status, RecordStatusChangeReason reasonForStatusChange)
+        public void UpdateRecordStatus(IResponseContext responseContext, int status, RecordStatusChangeReason reasonForStatusChange)
         {
-			bool isSuccessful = _surveyPersistenceFacade.UpdateResponseStatus(responseId, status, reasonForStatusChange);
-		}
+            bool isSuccessful = _surveyPersistenceFacade.UpdateResponseStatus(responseContext, status, reasonForStatusChange);
+        }
 
         public int GetFormResponseCount(SurveyAnswerCriteria criteria)
         {
@@ -1225,14 +1209,14 @@ namespace Epi.Cloud.DataEntryServices.DAO
             //            if (Criteria.IsShareable && _dataAccessRuleId == 1)
             //            {
             //                SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-            //                    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+            //                    && (x.ParentResponseId == null || x.ParentResponseId == Guid.Empty)
             //                    && x.StatusId >= 1
             //                    && x.OrganizationId == Criteria.UserOrganizationId);
             //            }
             //            else
             //            {
             //                SurveyResponseList = Context.SurveyResponses.Where(x => x.SurveyId == Id
-            //                    && (x.ParentRecordId == null || x.ParentRecordId == Guid.Empty)
+            //                    && (x.ParentResponseId == null || x.ParentResponseId == Guid.Empty)
             //                    && x.StatusId >= 1);
             //            }
             //            ResponseCount = SurveyResponseList.Count();
@@ -1259,11 +1243,11 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return _surveyPersistenceFacade.GetFormResponseCount(formId);
         }
 
-        public bool HasResponse(SurveyAnswerCriteria criteria)
+        public bool HasResponse(IResponseContext responseContext)
         {
-            var childFormId = criteria.SurveyId;
-            var parentReponseId = criteria.SurveyAnswerIdList[0];
-            var responseExists = _surveyPersistenceFacade.DoesResponseExist(childFormId, parentReponseId);
+            //var formId = criteria.SurveyId;
+            //var parentReponseId = criteria.SurveyAnswerIdList[0];
+            var responseExists = _surveyPersistenceFacade.DoChildResponsesExist(responseContext); // formId, parentReponseId);
             return responseExists;
         }
 

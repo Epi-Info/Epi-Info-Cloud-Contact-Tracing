@@ -5,9 +5,12 @@ using System.Text;
 using System.Web.Mvc;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Common.Core.DataStructures;
+using Epi.Common.Core.Interfaces;
 using Epi.FormMetadata.DataStructures;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
@@ -29,6 +32,24 @@ namespace Epi.Web.MVC.Controllers
             return a.Key.CompareTo(b.Key);
         }
 
+        protected ResponseContext GetSetResponseContext(string responseId)
+        {
+            ResponseContext responseContext = Session[SessionKeys.ResponseContext] as ResponseContext;
+            if (responseContext == null)
+            {
+                responseContext = (ResponseContext)new ResponseContext
+                {
+                    RootFormId = Session[SessionKeys.RootFormId].ToString(),
+                    UserName = Session[SessionKeys.UserName].ToString()
+                }.ResolveMetadataDependencies();
+            }
+            responseContext.ResponseId = responseId;
+            Session[SessionKeys.ResponseContext] = responseContext;
+
+            responseContext.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            return responseContext;
+        }
+
         protected int Compare(KeyValuePair<int, FieldDigest> a, KeyValuePair<int, FieldDigest> b)
         {
             return a.Key.CompareTo(b.Key);
@@ -38,7 +59,7 @@ namespace Epi.Web.MVC.Controllers
         {
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
-            var surveyResponseHelper = new SurveyResponseHelper();
+            var surveyResponseBuilder = new SurveyResponseBuilder();
             FormSettingRequest formSettingRequest = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
 
             //Populating the request
@@ -98,14 +119,36 @@ namespace Epi.Web.MVC.Controllers
             return responseModel;
         }
 
+        protected SurveyAnswerDTO GetSurveyAnswerState(IResponseContext responseContext)
+        {
+            var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext.Clone() };
+            SurveyAnswerDTO result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
+            return result;
+        }
 
-
-        protected SurveyAnswerStateDTO GetSurveyAnswerState(string responseId, string rootFormId = "", int userId = 0)
+        protected SurveyAnswerDTO GetSurveyAnswer(string responseId, string formId = "")
         {
             SurveyAnswerDTO result = null;
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            var surveyAnswerState = _surveyFacade.GetSurveyAnswerState(responseId, userId);
-            result = surveyAnswerState.SurveyResponseList[0];
+
+            string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
+            string rootFormId = Session[SessionKeys.RootFormId].ToString();
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            string userName = Session[SessionKeys.UserName].ToString();
+
+            ResponseContext responseContext = (ResponseContext)new ResponseContext
+            {
+                RootFormId = rootFormId,
+                FormId = !string.IsNullOrEmpty(formId) ? formId : null,
+                ResponseId = responseId,
+                RootResponseId = rootResponseId,
+                UserId = userId,
+                UserName = userName
+            }.ResolveMetadataDependencies();
+
+            var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
+
+            result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
+
             return result;
         }
 

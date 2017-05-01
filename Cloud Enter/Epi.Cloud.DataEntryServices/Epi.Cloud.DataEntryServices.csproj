@@ -42,7 +42,6 @@
     <Compile Include="Extensions\FormResponseDetailExtensions.cs" />
     <Compile Include="Extensions\OrganizationBOExtensions.cs" />
     <Compile Include="Extensions\OrganizationExtensions.cs" />
-    <Compile Include="Extensions\SurveyResponseExtensions.cs" />
     <Compile Include="Extensions\UserBOExtensions.cs" />
     <Compile Include="Extensions\UserExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

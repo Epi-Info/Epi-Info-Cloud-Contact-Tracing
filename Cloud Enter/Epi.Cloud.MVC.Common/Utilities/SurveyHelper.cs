@@ -12,6 +12,9 @@ using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Common.Constants;
+using Epi.Common.Core.DataStructures;
+using Epi.Cloud.Common.Extensions;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.Web.MVC.Utility
 {
@@ -20,69 +23,60 @@ namespace Epi.Web.MVC.Utility
         /// <summary>
         /// Creates the first survey response in the response table
         /// </summary>
-        /// <param name="surveyId"></param>
-        /// <param name="responseId"></param>
+        /// <param name="responseContext"></param>
         /// <param name="surveyAnswerRequest1"></param>
         /// <param name="surveyAnswerDTO"></param>
-        /// <param name="surveyResponseHelper"></param>
+        /// <param name="surveyResponseBuilder"></param>
         /// <param name="dataEntryService"></param>
-        /// <param name="UserId"></param>
-        /// <param name="IsChild"></param>
-        /// <param name="RelateResponseId"></param>
-        /// <param name="IsEditMode"></param>
-        /// <param name="CurrentOrgId"></param>
+        /// <param name="isEditMode"></param>
+        /// <param name="currentOrgId"></param>
         /// <returns></returns>
-		public static SurveyAnswerDTO CreateSurveyResponse(string surveyId,
-														string responseId, 
+		public static SurveyAnswerDTO CreateSurveyResponse(IResponseContext responseContext,
 														SurveyAnswerRequest surveyAnswerRequest1,
 														SurveyAnswerDTO surveyAnswerDTO,
-														SurveyResponseHelper surveyResponseHelper,
+														SurveyResponseBuilder surveyResponseBuilder,
 														IDataEntryService dataEntryService,
-														int UserId,
-														bool IsChild = false,
-														string RelateResponseId = "",
-														bool IsEditMode = false,
-														int CurrentOrgId = -1)
+														bool isEditMode = false,
+														int currentOrgId = -1)
 		{
 			bool AddRoot = false;
 			SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
-			surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
-			surveyAnswerDTO.ResponseId = responseId;
+			surveyAnswerRequest.ResponseContext = responseContext;
+
+            responseContext.ToSurveyAnswerDTO(surveyAnswerDTO);
 			surveyAnswerDTO.DateCreated = DateTime.UtcNow;
-			surveyAnswerDTO.SurveyId = surveyId;
+			surveyAnswerDTO.SurveyId = responseContext.FormId;
 			surveyAnswerDTO.Status = RecordStatus.InProcess;
-			surveyAnswerDTO.RecordSourceId = RecordSource.WebEnter;
-			if (IsEditMode)
-			{
-				surveyAnswerDTO.ParentRecordId = RelateResponseId;
-			}
-			//if (IsEditMode)
-			//    {
-			//    surveyAnswerDTO.Status = RecordStatus.Complete;
-			//    }
-			//else
-			//    {
-			//    surveyAnswerDTO.Status = RecordStatus.InProcess;
-			//    }
+            surveyAnswerDTO.LastActiveUserId = responseContext.UserId;
+            surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
+			surveyAnswerDTO.RecordSourceId = RecordSource.CloudEnter;
+			//if (isEditMode)
+			//{
+			//	surveyAnswerDTO.ParentResponseId = responseContext.ParentResponseId;
+			//}
 
-			FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyId, AddRoot, 0, "", responseId);
-			surveyAnswerDTO.ResponseDetail = responseDetail;
 
-			surveyAnswerDTO.RelateParentId = RelateResponseId;
-			surveyAnswerRequest.Criteria.UserId = UserId;
-			surveyAnswerRequest.Criteria.UserOrganizationId = CurrentOrgId;
+            FormResponseDetail responseDetail = responseContext.ToFormResponseDetail();
+            surveyAnswerDTO.ResponseDetail = responseDetail;
+
+			surveyAnswerDTO.ParentResponseId = responseContext.ParentResponseId;
+			surveyAnswerRequest.Criteria.UserId = responseContext.UserId;
+            surveyAnswerRequest.Criteria.UserName = responseContext.UserName;
+
+            surveyAnswerRequest.Criteria.UserOrganizationId = currentOrgId;
 			surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
-			if (!IsChild)
+
+			if (!responseContext.IsChildResponse)
 			{
 				surveyAnswerRequest.Action = RequestAction.Create;
 			}
 			else
 			{
-				if (IsEditMode)
-				{
+				//if (isEditMode)
+				//{
 
-					surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId = null;
-				}
+				//	surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId = null;
+				//}
 
 				surveyAnswerRequest.Action = RequestAction.CreateChild;
 
@@ -96,7 +90,7 @@ namespace Epi.Web.MVC.Utility
 		public static void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel,
 												MvcDynamicForms.Form form,
 												SurveyAnswerRequest surveyAnswerRequest,
-												SurveyResponseHelper surveyResponseHelper,
+												SurveyResponseBuilder surveyResponseBuilder,
 												IDataEntryService dataEntryService,
 												SurveyAnswerResponse surveyAnswerResponse,
 												string responseId,
@@ -117,30 +111,28 @@ namespace Epi.Web.MVC.Utility
 				// 2 a. update the current survey answer request
 				surveyAnswerRequest.SurveyAnswerList = surveyAnswerResponse.SurveyResponseList;
 
-				surveyResponseHelper.Add(form);
-				bool addRoot = false;
+				surveyResponseBuilder.Add(form);
 
-				FormResponseDetail responseDetail = surveyResponseHelper.CreateResponseDetail(surveyInfoModel.SurveyId, addRoot, form.CurrentPage, form.PageId, responseId);
+				FormResponseDetail formResponseDetail = surveyResponseBuilder.UpdateResponseDetail(savedResponseDetail, form.CurrentPage, form.PageId);
 
-				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = responseDetail;
+                surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail = formResponseDetail;
 				// 2 b. save the current survey response
 				surveyAnswerRequest.Action = RequestAction.Update;
 
 				var currentPageNumber = form.CurrentPage;
 				FormResponseDetail currentFormResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
 				PageResponseDetail currentPageResponseDetail = currentFormResponseDetail.GetPageResponseDetailByPageNumber(currentPageNumber);
-				if (addRoot == false)
-				{
-					var mergedResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail);
-					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageIds = mergedResponseDetail.PageIds;
-					// keep only the pages that have updates
-					var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.ToList();    
-                    surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
-					surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.AddRange(updatedPageResponseDetailList);
-				}
+
+				var mergedResponseDetail = MergeResponseDetail(savedResponseDetail, currentPageResponseDetail);
+				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageIds = mergedResponseDetail.PageIds;
+				// keep only the pages that have updates
+				var updatedPageResponseDetailList = mergedResponseDetail.PageResponseDetailList.ToList();    
+                surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.Clear();
+				surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail.PageResponseDetailList.AddRange(updatedPageResponseDetailList);
 			}
 
 			var updatedFromResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
+            updatedFromResponseDetail.UserId = userId;
 
 			////Update page number before saving response 
 			if (surveyAnswerRequest.SurveyAnswerList[0].CurrentPageNumber != 0)
@@ -196,8 +188,11 @@ namespace Epi.Web.MVC.Utility
 
 			/////Update Survey Mode ////////////////////
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
-			//surveyAnswerRequest.Criteria.UserId = UserId;
-			dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
+            //surveyAnswerRequest.Criteria.UserId = UserId;
+            ResponseContext responseContext = ((IResponseContext)updatedFromResponseDetail).Clone();
+            responseContext.UserId = userId;
+
+            dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
 		}
 
         /// <summary>

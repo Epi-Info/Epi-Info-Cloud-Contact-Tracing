@@ -20,20 +20,20 @@ namespace Epi.Cloud.SqlServer
             //TODO: Insert data for formInfo
             string ColumnNames = "RECSTATUS,GlobalRecordId,FirstSaveLogonName,FirstSaveTime,LastSaveLogonName,LastSaveTime,FKEY";
 
-            string ColumnValues = objFormResponseDetail.RecStatus + ",'" + objFormResponseDetail.GlobalRecordID + "','" + objFormResponseDetail.FirstSaveLogonName + "','" + objFormResponseDetail.LastSaveTime + "','" +
-                objFormResponseDetail.LastSaveLogonName + "','" + objFormResponseDetail.LastSaveTime + "'," + (objFormResponseDetail.RelateParentResponseId != null ? "'" + objFormResponseDetail.RelateParentResponseId + "'" : "NULL");
+            string ColumnValues = objFormResponseDetail.RecStatus + ",'" + objFormResponseDetail.ResponseId + "','" + objFormResponseDetail.FirstSaveLogonName + "','" + objFormResponseDetail.LastSaveTime + "','" +
+                objFormResponseDetail.LastSaveLogonName + "','" + objFormResponseDetail.LastSaveTime + "'," + (objFormResponseDetail.ParentResponseId != null ? "'" + objFormResponseDetail.ParentResponseId + "'" : "NULL");
 
             objFormResponseDetail.FirstSaveLogonName = objFormResponseDetail.LastSaveLogonName = "SRANT\\Patelh";
 
             string UpdateColumnQuery = "RECSTATUS = '" + objFormResponseDetail.RecStatus +
-                "', GlobalRecordId ='" + objFormResponseDetail.GlobalRecordID +
+                "', GlobalRecordId ='" + objFormResponseDetail.ResponseId +
                 "', FirstSaveLogonName ='" + objFormResponseDetail.FirstSaveLogonName +
                 "', FirstSaveTime ='" + objFormResponseDetail.LastSaveTime +
                 "', LastSaveLogonName ='" + objFormResponseDetail.LastSaveLogonName +
                 "', LastSaveTime ='" + objFormResponseDetail.LastSaveTime +
-                 "', FKEY ='" + (objFormResponseDetail.RelateParentResponseId != null ? objFormResponseDetail.RelateParentResponseId : "NULL") + "'";
+                 "', FKEY ='" + (objFormResponseDetail.ParentResponseId != null ? objFormResponseDetail.ParentResponseId : "NULL") + "'";
 
-            PersistToSql(objFormResponseDetail.GlobalRecordID, objFormResponseDetail.FormName, ColumnNames, ColumnValues, UpdateColumnQuery);
+            PersistToSql(objFormResponseDetail.ResponseId, objFormResponseDetail.FormName, ColumnNames, ColumnValues, UpdateColumnQuery);
 
 
             // PageDigests = this.GetPageDigest(); 
@@ -47,7 +47,7 @@ namespace Epi.Cloud.SqlServer
                     {
                         string childFormName = objPageResoponse.FormName + objPageResoponse.PageId;
                         string ChildcolumnNames = "GlobalRecordId";
-                        string ChildColumnValues = "'" + objFormResponseDetail.GlobalRecordID + "'";
+                        string ChildColumnValues = "'" + objFormResponseDetail.ResponseId + "'";
                         string ChildColumnUpdateColumnQuery = string.Empty;
 
                         foreach (var responseQA in objPageResoponse.ResponseQA)
@@ -111,7 +111,7 @@ namespace Epi.Cloud.SqlServer
                         }
 
 
-                        PersistToSql(objPageResoponse.GlobalRecordID, childFormName, ChildcolumnNames, ChildColumnValues, ChildColumnUpdateColumnQuery);
+                        PersistToSql(objPageResoponse.ResponseId, childFormName, ChildcolumnNames, ChildColumnValues, ChildColumnUpdateColumnQuery);
                     }
                 }
             }

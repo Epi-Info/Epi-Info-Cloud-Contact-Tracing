@@ -4,6 +4,7 @@ using System.Linq;
 using Epi.Web.EF;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
 
 namespace Epi.Cloud.SurveyInfoServices.Extensions
 {
@@ -31,9 +32,9 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             surveyMetaData.IsSQLProject = surveyInfoBO.IsSqlProject;
             surveyMetaData.IsShareable = surveyInfoBO.IsShareable;
             surveyMetaData.DataAccessRuleId = surveyInfoBO.DataAccessRuleId;
-            if (!string.IsNullOrEmpty(surveyInfoBO.ParentId))
+            if (!string.IsNullOrEmpty(surveyInfoBO.ParentFormId))
             {
-                surveyMetaData.ParentId = new Guid(surveyInfoBO.ParentId);
+                surveyMetaData.ParentId = new Guid(surveyInfoBO.ParentFormId);
             }
 
             return surveyMetaData;
@@ -56,34 +57,34 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             return surveyMetadata;
         }
 
-		public static SurveyInfoDTO ToSurveyInfoDTO(this SurveyInfoBO surveyInfoBO)
-		{
-			return new SurveyInfoDTO
-			{
-				ClosingDate = surveyInfoBO.ClosingDate,
-				DataAccessRuleId = surveyInfoBO.DataAccessRuleId,
-				DBConnectionString = surveyInfoBO.DBConnectionString,
-				DepartmentName = surveyInfoBO.DepartmentName,
-				ExitText = surveyInfoBO.ExitText,
-				IntroductionText = surveyInfoBO.IntroductionText,
-				IsDraftMode = surveyInfoBO.IsDraftMode,
-				IsShareable = surveyInfoBO.IsShareable,
-				IsShared = surveyInfoBO.IsShared,
-				IsSqlProject = surveyInfoBO.IsSqlProject,
-				OrganizationKey = surveyInfoBO.OrganizationKey,
-				OrganizationName = surveyInfoBO.OrganizationName,
-				OwnerId = surveyInfoBO.OwnerId,
-				ParentId = surveyInfoBO.ParentId,
-				StartDate = surveyInfoBO.StartDate,
-				SurveyId = surveyInfoBO.SurveyId,
-				SurveyName = surveyInfoBO.SurveyName,
-				SurveyNumber = surveyInfoBO.SurveyNumber,
-				SurveyType = surveyInfoBO.SurveyType,
-				UserPublishKey = surveyInfoBO.UserPublishKey,
-				ViewId = surveyInfoBO.ViewId,
-				HasDraftModeData = surveyInfoBO.HasDraftModeData,
-			};
-		}
+		//public static SurveyInfoDTO ToSurveyInfoDTO(this SurveyInfoBO surveyInfoBO)
+		//{
+		//	return new SurveyInfoDTO
+		//	{
+		//		ClosingDate = surveyInfoBO.ClosingDate,
+		//		DataAccessRuleId = surveyInfoBO.DataAccessRuleId,
+		//		DBConnectionString = surveyInfoBO.DBConnectionString,
+		//		DepartmentName = surveyInfoBO.DepartmentName,
+		//		ExitText = surveyInfoBO.ExitText,
+		//		IntroductionText = surveyInfoBO.IntroductionText,
+		//		IsDraftMode = surveyInfoBO.IsDraftMode,
+		//		IsShareable = surveyInfoBO.IsShareable,
+		//		IsShared = surveyInfoBO.IsShared,
+		//		IsSqlProject = surveyInfoBO.IsSqlProject,
+		//		OrganizationKey = surveyInfoBO.OrganizationKey,
+		//		OrganizationName = surveyInfoBO.OrganizationName,
+		//		OwnerId = surveyInfoBO.OwnerId,
+		//		ParentId = surveyInfoBO.ParentId,
+		//		StartDate = surveyInfoBO.StartDate,
+		//		SurveyId = surveyInfoBO.SurveyId,
+		//		SurveyName = surveyInfoBO.SurveyName,
+		//		SurveyNumber = surveyInfoBO.SurveyNumber,
+		//		SurveyType = surveyInfoBO.SurveyType,
+		//		UserPublishKey = surveyInfoBO.UserPublishKey,
+		//		ViewId = surveyInfoBO.ViewId,
+		//		HasDraftModeData = surveyInfoBO.HasDraftModeData,
+		//	};
+		//}
 
 		public static List<SurveyInfoDTO> ToSurveyInfoDTOList(this IEnumerable<SurveyInfoBO> surveyInfoBOs)
 		{

@@ -159,7 +159,7 @@ namespace Epi.Web.BLL
             try
             {
                 FormInfoBO FormInfoBO = this.FormInfoDao.GetFormByFormId(FormId);
-                if (!string.IsNullOrEmpty(FormInfoBO.ParentId))
+                if (!string.IsNullOrEmpty(FormInfoBO.ParentFormId))
                 {
                     return;
                 }

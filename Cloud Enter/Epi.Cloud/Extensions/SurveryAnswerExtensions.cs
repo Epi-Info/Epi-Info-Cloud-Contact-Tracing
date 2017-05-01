@@ -8,9 +8,10 @@ namespace Epi.Cloud.MVC.Extensions
 {
     public static class SurveryAnswerExtensions
     {
-        public static SurveyAnswerStateDTO ToSurveyAnswerStateDTO(this SurveyAnswerDTO surveyAnswerDTO)
+#if false
+        public static SurveyAnswerDTO ToSurveyAnswerStateDTO(this SurveyAnswerDTO surveyAnswerDTO)
         {
-            var surveyAnswerStateDTO = new SurveyAnswerStateDTO
+            var surveyAnswerDTO = new SurveyAnswerDTO
             {
                 ResponseId = surveyAnswerDTO.ResponseId,
                 SurveyId = surveyAnswerDTO.SurveyId,
@@ -22,10 +23,9 @@ namespace Epi.Cloud.MVC.Extensions
                 UserPublishKey = surveyAnswerDTO.UserPublishKey,
                 IsDraftMode = surveyAnswerDTO.IsDraftMode,
                 IsLocked = surveyAnswerDTO.IsLocked,
-                ParentRecordId = surveyAnswerDTO.ParentRecordId,
+                ParentResponseId = surveyAnswerDTO.ParentResponseId,
                 UserEmail = surveyAnswerDTO.UserEmail,
                 LastActiveUserId = surveyAnswerDTO.LastActiveUserId,
-                RelateParentId = surveyAnswerDTO.RelateParentId,
                 RecordSourceId = surveyAnswerDTO.RecordSourceId,
                 ViewId = surveyAnswerDTO.ViewId,
                 FormOwnerId = surveyAnswerDTO.FormOwnerId,
@@ -55,10 +55,10 @@ namespace Epi.Cloud.MVC.Extensions
             surveyAnswerDTO.UserPublishKey = surveyAnswerStateDTO.UserPublishKey;
             surveyAnswerDTO.IsDraftMode = surveyAnswerStateDTO.IsDraftMode;
             surveyAnswerDTO.IsLocked = surveyAnswerStateDTO.IsLocked;
-            surveyAnswerDTO.ParentRecordId = surveyAnswerStateDTO.ParentRecordId;
+            surveyAnswerDTO.ParentResponseId = surveyAnswerStateDTO.ParentResponseId;
             surveyAnswerDTO.UserEmail = surveyAnswerStateDTO.UserEmail;
             surveyAnswerDTO.LastActiveUserId = surveyAnswerStateDTO.LastActiveUserId;
-            surveyAnswerDTO.RelateParentId = surveyAnswerStateDTO.RelateParentId;
+            surveyAnswerDTO.ParentResponseId = surveyAnswerStateDTO.ParentResponseId;
             surveyAnswerDTO.RecordSourceId = surveyAnswerStateDTO.RecordSourceId;
             surveyAnswerDTO.ViewId = surveyAnswerStateDTO.ViewId;
             surveyAnswerDTO.FormOwnerId = surveyAnswerStateDTO.FormOwnerId;
@@ -68,7 +68,7 @@ namespace Epi.Cloud.MVC.Extensions
             surveyAnswerDTO.CurrentPageNumber = surveyAnswerStateDTO.CurrentPageNumber;
             return surveyAnswerDTO;
         }
-
+#endif
         public static Epi.Web.MVC.Models.ResponseModel ToResponseModel(this SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
         {
             ResponseModel ResponseModel = new ResponseModel();
@@ -80,7 +80,7 @@ namespace Epi.Cloud.MVC.Extensions
                 ResponseModel.Column0 = item.ResponseId;
                 ResponseModel.IsLocked = item.IsLocked;
 
-                var responseQA = item.ResponseDetail.FlattenedResponseQA(key => key.ToLower());
+                var responseQA = item.ResponseDetail.FlattenedResponseQA(key => key.ToLowerInvariant());
                 string value;
                 string _key = string.Empty;
                 var columnsCount = Columns.Count;

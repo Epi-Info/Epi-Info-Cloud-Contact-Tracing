@@ -102,7 +102,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 		List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId);
 		List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId);
 		void InsertFormDefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList);
-		void UpdateParentId(string SurveyId, int ViewId, string ParentId);
+		void UpdateParentId(string SurveyId, int ViewId, string ParentFormId);
 		void InsertConnectionString(DbConnectionStringBO ConnectionString);
 		void UpdateConnectionString(DbConnectionStringBO ConnectionString);
 	}

@@ -31,5 +31,6 @@
 		public const string UserLastName = "UserLastName";
 		public const string UsertRole = "UsertRole";
         public const string UserName = "UserName";
+        public const string ResponseContext = "ResponseContext";
     }
 }

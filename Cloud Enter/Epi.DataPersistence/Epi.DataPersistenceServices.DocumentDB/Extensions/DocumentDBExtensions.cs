@@ -1,53 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Metadata;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
-using static Epi.PersistenceServices.DocumentDB.DataStructures;
+using Epi.PersistenceServices.DocumentDB;
 
 namespace Epi.DataPersistence.Extensions
 {
     public static class DocumentDBExtensions
     {
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, FormResponseDetail formResponseDetail, MetadataAccessor metadataAccessor = null)
+        static MetadataAccessor _metadataAccessor = new MetadataAccessor();
+
+        static DocumentDBExtensions()
         {
-            return pageResponseProperties.ToPageResponseDetail(formResponseDetail.FormId, formResponseDetail.FormName, metadataAccessor);
         }
 
-        public static PageResponseDetail ToPageResponseDetail(this PageResponseProperties pageResponseProperties, string formId, string formName, MetadataAccessor metadataAccessor = null)
+        public static FormResponseDetail ToFormResponseDetail(this FormResponseResource formResponseResource)
         {
-			metadataAccessor = metadataAccessor ?? new MetadataAccessor();
-			var pageResponseDetail = new PageResponseDetail
-			{
-				GlobalRecordID = pageResponseProperties.GlobalRecordID,
-				FormId = formId,
-				FormName = formName,
-				PageId = pageResponseProperties.PageId,
-				PageNumber = metadataAccessor.GetPageDigestByPageId(formId, pageResponseProperties.PageId).PageNumber,
-                ResponseQA = pageResponseProperties.ResponseQA
-            };
-            return pageResponseDetail;
-        }
-
-        public static FormResponseDetail ToFormResponseDetail(this HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
-        {
-            var formResponseProperties = hierarchicalDocumentResponseProperties.FormResponseProperties;
-            var pageResponsePropertiesList = hierarchicalDocumentResponseProperties.PageResponsePropertiesList;
-
-            var formResponseDetail = formResponseProperties.ToFormResponseDetail(pageResponsePropertiesList);
-            formResponseDetail.AddFormResponseDetailChildren(hierarchicalDocumentResponseProperties);
-
+            var formResponseProperties = formResponseResource.FormResponseProperties;
+            var formResponseDetail = formResponseProperties.ToFormResponseDetail();
             return formResponseDetail;
-        }
-
-        private static void AddFormResponseDetailChildren(this FormResponseDetail formResponseDetail, HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
-        {
-            foreach (var childHierarchicalDocumentResponseProperties in hierarchicalDocumentResponseProperties.ChildResponseList)
-            {
-                var childFormResponseDetail = childHierarchicalDocumentResponseProperties.ToFormResponseDetail();
-				childFormResponseDetail.ParentFormId = formResponseDetail.FormId;
-                formResponseDetail.AddChildFormResponseDetail(childFormResponseDetail);
-            }
         }
 
         public static FormResponseDetail ToFormResponseDetail(this DocumentResponseProperties documentResponseProperties)
@@ -58,109 +31,209 @@ namespace Epi.DataPersistence.Extensions
             if (formResponseProperties != null)
             {
                 formResponseDetail = formResponseProperties.ToFormResponseDetail();
-                if (documentResponseProperties.PageResponsePropertiesList != null && documentResponseProperties.PageResponsePropertiesList.Count > 0)
-                {
-					MetadataAccessor metadataAccessor = new MetadataAccessor();
-                    foreach (var pageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
-                    {
-						if (pageResponseProperties != null)
-						{
-							var pageResponseDetail = pageResponseProperties.ToPageResponseDetail(formResponseDetail, metadataAccessor);
-							formResponseDetail.AddPageResponseDetail(pageResponseDetail);
-						}
-                    }
-                }
             }
 
             return formResponseDetail;
         }
 
-        public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties, List<PageResponseProperties> pageResponsePropertiesList = null)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="formResponseProperties"></param>
+        /// <param name="formResponseResource"></param>
+        /// <returns></returns>
+        public static FormResponseDetail ToHierarchialFormResponseDetail(this FormResponseProperties formResponseProperties, FormResponseResource formResponseResource)
         {
-            var formResponseDetail = new FormResponseDetail
-            {
-                GlobalRecordID = formResponseProperties.GlobalRecordID,
+            FormResponseDetail formResponseDetail = formResponseProperties.ToFormResponseDetail();
+            formResponseResource.CascadeThroughChildren(formResponseProperties.ResponseId,
+                frp =>
+                {
+                    var frd = frp.ToFormResponseDetail();
+                });
 
+            return null;
+        }
+
+        public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties)
+        {
+            if (formResponseProperties == null) return null;
+
+            FormResponseDetail formResponseDetail = new FormResponseDetail
+            {
+                ResponseId = formResponseProperties.ResponseId,
                 FormId = formResponseProperties.FormId,
                 FormName = formResponseProperties.FormName,
+
+                ParentResponseId = formResponseProperties.ParentResponseId,
+                ParentFormId = formResponseProperties.ParentFormId,
+                ParentFormName = formResponseProperties.ParentFormName,
+
+                RootResponseId = formResponseProperties.RootResponseId,
+                RootFormId = formResponseProperties.RootFormId,
+                RootFormName = formResponseProperties.RootFormName,
+
                 IsNewRecord = formResponseProperties.IsNewRecord,
+
                 RecStatus = formResponseProperties.RecStatus,
-                RelateParentResponseId = formResponseProperties.RelateParentId,
+                LastPageVisited = formResponseProperties.LastPageVisited,
+
                 FirstSaveLogonName = formResponseProperties.FirstSaveLogonName,
                 LastSaveLogonName = formResponseProperties.LastSaveLogonName,
                 FirstSaveTime = formResponseProperties.FirstSaveTime,
                 LastSaveTime = formResponseProperties.LastSaveTime,
 
-                LastActiveUserId = formResponseProperties.UserId,
+                UserId = formResponseProperties.UserId,
+                UserName = formResponseProperties.UserName,
+
                 IsRelatedView = formResponseProperties.IsRelatedView,
                 IsDraftMode = formResponseProperties.IsDraftMode,
-                PageIds = formResponseProperties.PageIds,
+                IsLocked = formResponseProperties.IsLocked,
                 RequiredFieldsList = formResponseProperties.RequiredFieldsList,
                 HiddenFieldsList = formResponseProperties.HiddenFieldsList,
                 HighlightedFieldsList = formResponseProperties.HighlightedFieldsList,
-                DisabledFieldsList = formResponseProperties.DisabledFieldsList
-            };
+                DisabledFieldsList = formResponseProperties.DisabledFieldsList,
+            }.ResolveMetadataDependencies() as FormResponseDetail;
 
-            if (pageResponsePropertiesList != null && pageResponsePropertiesList.Count > 0)
+            var formDigest = _metadataAccessor.GetFormDigest(formResponseProperties.FormId);
+            foreach (var qaFieldKVP in formResponseProperties.ResponseQA)
             {
-                foreach (var pageResponseProperties in pageResponsePropertiesList)
-                {
-					if (pageResponseProperties != null)
-					{
-						formResponseDetail.AddPageResponseDetail(pageResponseProperties.ToPageResponseDetail(formResponseDetail));
-					}
-                }
+                var fieldName = qaFieldKVP.Key;
+                var pageId = formDigest.FieldNameToPageIdDirectory[fieldName];
+                var pageResponseDetail = formResponseDetail
+                    .PageResponseDetailList
+                    .Where(prd => prd.PageId == pageId)
+                    .SingleOrDefault() ?? new PageResponseDetail
+                    {
+                        PageId = pageId,
+                        PageNumber = _metadataAccessor.GetPageDigestByPageId(formDigest.FormId, pageId).PageNumber,
+                        FormId = formDigest.FormId,
+                        FormName = formDigest.FormName,
+                        ResponseId = formResponseProperties.ResponseId,
+                    };
+                pageResponseDetail.ResponseQA[fieldName] = qaFieldKVP.Value;
+                formResponseDetail.AddPageResponseDetail(pageResponseDetail);
             }
 
             return formResponseDetail;
         }
 
-		public static FormResponseProperties ToFormResponseProperties(this FormResponseDetail formResponseDetail)
-		{
-			var formResponseProperties = new FormResponseProperties
-			{
-				Id = formResponseDetail.GlobalRecordID,
-				GlobalRecordID = formResponseDetail.GlobalRecordID,
+        public static FormResponseDetail ToHierarchialFormResponseDetail(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
+        {
+            FormResponseDetail formResponseDetail = null;
+            if (formResponsePropertiesList != null)
+            {
+                foreach (var formResponseProperties in formResponsePropertiesList)
+                {
+                    if (formResponseDetail == null)
+                    {
+                        // verify that the first entry is the root response.
+                        if (formResponseProperties.IsRootResponse)
+                        {
+                            formResponseDetail = formResponseProperties.ToFormResponseDetail();
+                        }
+                        else
+                        {
+                            // break out if the first entry is not the root response
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        var parentFormResponseDetail = formResponseDetail.FindParentFormResponseDetail(formResponseProperties.ParentResponseId);
+                        if (parentFormResponseDetail != null)
+                        {
+                            parentFormResponseDetail.ChildFormResponseDetailList.Add(formResponseProperties.ToFormResponseDetail());
+                        }
+                    }
+                }
+            }
+            return formResponseDetail;    
+        }
 
-				FormId = formResponseDetail.FormId,
-				FormName = formResponseDetail.FormName,
+        public static List<FormResponseDetail> ToFormResponseDetailList(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
+        {
+            List<FormResponseDetail> formResonseDetailList = formResponsePropertiesList.Select(p => p.ToFormResponseDetail()).ToList();
+            return formResonseDetailList;
+        }
+
+        public static List<PageResponseDetail> ToPageResponseDetailList(this FormResponseProperties formResponseProperties, List<PageResponseDetail> pageResponseDetailList)
+        {
+            var responseId = formResponseProperties.ResponseId;
+            var formId = formResponseProperties.FormId;
+            var formName = formResponseProperties.FormName;
+            var responseQA = formResponseProperties.ResponseQA;
+            var formDigest = _metadataAccessor.GetFormDigest(formId);
+            PageResponseDetail pageResponseDetail = null;
+            foreach (var kvp in responseQA)
+            {
+                var pageId = formDigest.FieldNameToPageId(kvp.Key);
+                pageResponseDetail = pageResponseDetailList.Where(p => p.PageId == pageId).SingleOrDefault();
+                if (pageResponseDetail == null)
+                { 
+                    pageResponseDetail = new PageResponseDetail();
+                    pageResponseDetailList.Add(pageResponseDetail);
+                    pageResponseDetail.ResponseId = responseId;
+                    pageResponseDetail.FormId = formId;
+                    pageResponseDetail.FormName = formName;
+                    pageResponseDetail.PageId = pageId;
+                    var pageDigest = _metadataAccessor.GetPageDigestByPageId(formId, pageId);
+                    pageResponseDetail.PageNumber = pageDigest.PageNumber;
+                }
+                pageResponseDetail.ResponseQA[kvp.Key] = kvp.Value;
+            }
+            return pageResponseDetailList;
+        }
+
+        public static FormResponseResource ToFormResponseResource(this FormResponseDetail formResponseDetail)
+        {
+            var formResponseResource = new FormResponseResource
+            {
+                Id = formResponseDetail.ResponseId,
+                FormResponseProperties = formResponseDetail.ToFormResponseProperties()
+            };
+            return formResponseResource;
+        }
+
+        public static FormResponseProperties ToFormResponseProperties(this FormResponseDetail formResponseDetail)
+        {
+            var formResponseProperties = new FormResponseProperties
+            {
+                ResponseId = formResponseDetail.ResponseId,
+                FormId = formResponseDetail.FormId,
+                FormName = formResponseDetail.FormName,
+
+                ParentResponseId = formResponseDetail.ParentResponseId,
+                ParentFormId = formResponseDetail.ParentFormId,
+                ParentFormName = formResponseDetail.ParentFormName,
+
+                RootResponseId = formResponseDetail.RootResponseId,
+                RootFormId = formResponseDetail.RootFormId,
+                RootFormName = formResponseDetail.RootFormName,
+
                 IsNewRecord = formResponseDetail.RecStatus == RecordStatus.InProcess ? formResponseDetail.IsNewRecord : false,
-				RecStatus = formResponseDetail.RecStatus,
-				RelateParentId = formResponseDetail.RelateParentResponseId,
-				FirstSaveLogonName = formResponseDetail.FirstSaveLogonName,
-				LastSaveLogonName = formResponseDetail.LastSaveLogonName,
-				FirstSaveTime = formResponseDetail.FirstSaveTime,
-				LastSaveTime = formResponseDetail.LastSaveTime,
 
-				UserId = formResponseDetail.LastActiveUserId,
-				IsRelatedView = formResponseDetail.IsRelatedView,
-				IsDraftMode = formResponseDetail.IsDraftMode,
+                RecStatus = formResponseDetail.RecStatus,
+                LastPageVisited = formResponseDetail.LastPageVisited,
+                FirstSaveLogonName = formResponseDetail.FirstSaveLogonName,
+                LastSaveLogonName = formResponseDetail.LastSaveLogonName,
+                FirstSaveTime = formResponseDetail.FirstSaveTime,
+                LastSaveTime = formResponseDetail.LastSaveTime,
 
-				PageIds = formResponseDetail.PageIds,
+                UserId = formResponseDetail.UserId,
+                UserName = formResponseDetail.UserName,
+
+                IsDraftMode = formResponseDetail.IsDraftMode,
+                IsLocked = formResponseDetail.IsLocked,
 
                 HiddenFieldsList = formResponseDetail.HiddenFieldsList,
                 HighlightedFieldsList = formResponseDetail.HighlightedFieldsList,
                 DisabledFieldsList = formResponseDetail.DisabledFieldsList,
-                RequiredFieldsList = formResponseDetail.RequiredFieldsList
-			};
+                RequiredFieldsList = formResponseDetail.RequiredFieldsList,
 
+                ResponseQA = formResponseDetail.FlattenedResponseQA(key => key.ToLowerInvariant()),
+            };
 
-			formResponseProperties.PageIds.AddRange(formResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
-			formResponseProperties.PageIds = formResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
-
-			return formResponseProperties;
-		}
-
-		public static PageResponseProperties ToPageResponseProperties(this PageResponseDetail pageResponseDetail)
-		{
-			var pageResponseProperties = new PageResponseProperties
-			{
-				Id = pageResponseDetail.GlobalRecordID,
-				GlobalRecordID = pageResponseDetail.GlobalRecordID,
-				PageId = pageResponseDetail.PageId,
-				ResponseQA = pageResponseDetail.ResponseQA
-			};
-			return pageResponseProperties;
-		}
+            return formResponseProperties;
+        }
     }
 }

@@ -94,7 +94,7 @@
     <Compile Include="Utilities\MobileFormProvider.cs" />
     <Compile Include="Utilities\OmnitureHelper.cs" />
     <Compile Include="Utilities\SurveyHelper.cs" />
-    <Compile Include="Utilities\SurveyResponseHelper.cs" />
+    <Compile Include="Utilities\SurveyResponseBuilder.cs" />
     <Compile Include="Utilities\ValidateResponse.cs" />
     <Compile Include="Utilities\WindowsAuthentication.cs" />
   </ItemGroup>

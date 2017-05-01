@@ -4,36 +4,33 @@ using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Message;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.DataPersistence.Common.Interfaces
 {
     public interface ISurveyPersistenceFacade
     {
-        bool DoesResponseExist(string childFormId, string parentResponseId);
+        FormResponseDetail GetFormResponseState(IResponseContext responseContext);
 
-        bool DoChildrenExistForResponseId(string parentResponseId);
+        bool DoChildResponsesExist(IResponseContext responseContext); //string rootFormId, string parentResponseId);
 
-        bool UpdateResponseStatus(string responseId, int recordStatus, RecordStatusChangeReason reasonForStatusChange);
+        bool UpdateResponseStatus(IResponseContext responseContext, int recordStatus, RecordStatusChangeReason reasonForStatusChange);
 
-		int GetFormResponseCount(string formId, bool includeDeletedRecords = false);
-
-        FormResponseDetail GetFormResponseState(string responseId);
-
-        FormResponseDetail GetFormResponseByResponseId(string responseId);
+        int GetFormResponseCount(string formId, bool includeDeletedRecords = false);
+        FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext);
 
         bool SaveResponse(SurveyResponseBO surveyResponseBO);
-		bool SavePageResponseProperties(SurveyResponseBO surveyResponseBO);
 
-        PageResponseDetail ReadSurveyAnswerByResponseID(string surveyId, string responseId, int pageId);
 
-        SurveyAnswerResponse DeleteResponse(string responseId, int userId);
+        SurveyAnswerResponse DeleteResponse(IResponseContext responseContext);
 
-        bool SaveFormResponseProperties(SurveyResponseBO request,bool IsRootForm);
+        bool SaveFormResponseProperties(SurveyResponseBO request);
 
-        IEnumerable<SurveyResponse> GetAllResponsesContainingFields(IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
+        //IEnumerable<SurveyResponse> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
+        IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
 
-		FormResponseDetail GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false);
+        FormResponseDetail GetHierarchialResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
 
-        void NotifyConsistencyService(string responseId, int responseStatus, RecordStatusChangeReason reasonForStatusChange);
-	}
+        void NotifyConsistencyService(IResponseContext responceContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange);
+    }
 }

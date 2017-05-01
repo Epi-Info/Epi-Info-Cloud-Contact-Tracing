@@ -27,12 +27,24 @@ namespace Epi.DataPersistence.DataStructures
 			FormName = FormName ?? pageResponseDetail.FormName;
 			pageResponseDetail.FormId = FormId;
 			pageResponseDetail.FormName = FormName;
-            pageResponseDetail.GlobalRecordID = GlobalRecordID;
+            pageResponseDetail.ResponseId = ResponseId;
 			PageResponseDetailList.Add(pageResponseDetail);
             PageIds = PageResponseDetailList.Select(p => p.PageId).OrderBy(pid => pid).ToList();
 		}
 
-		public void AddChildFormResponseDetail(FormResponseDetail childFormResponseDetail)
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="parentResponsId"></param>
+        /// <returns></returns>
+        public FormResponseDetail FindParentFormResponseDetail(string parentResponsId)
+        {
+            var flattenedResponses = FlattenHierarchy();
+            var parentItem = flattenedResponses.SingleOrDefault(f => f.ResponseId == parentResponsId);
+            return parentItem;
+        }
+
+        public void AddChildFormResponseDetail(FormResponseDetail childFormResponseDetail)
 		{
 			var existingItem = ChildFormResponseDetailList.Any(f => f.FormId == childFormResponseDetail.FormId);
 			if (existingItem) ChildFormResponseDetailList.Remove(childFormResponseDetail);

@@ -20,7 +20,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 						};
 			switch (collectionId)
 			{
-				case FormInfoCollectionName:
+				case "FormInfo":
 					// FormInfo collection indexing here.                           
 					indexingPolicy.IncludedPaths = new Collection<IncludedPath>
 					   {

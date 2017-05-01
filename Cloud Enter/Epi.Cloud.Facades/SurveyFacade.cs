@@ -11,6 +11,8 @@ using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
+using Epi.Common.Core.DataStructures;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.Cloud.Facades
 {
@@ -28,7 +30,7 @@ namespace Epi.Cloud.Facades
 
         private SurveyAnswerDTO _surveyAnswerDTO;
 
-        private SurveyResponseHelper _surveyResponseHelper;
+        private SurveyResponseBuilder _surveyResponseBuilder;
 			
 
         private FormInfoDTO _formInfoDTO;
@@ -40,7 +42,7 @@ namespace Epi.Cloud.Facades
 							IFormSettingsService formSettingsService,
 							ISecurityFacade securityFacade,
 
-                            SurveyResponseHelper surveyResponseHelper, 
+                            SurveyResponseBuilder surveyResponseBuilder, 
                             IProjectMetadataProvider projectMetadataProvider,
 
                             Epi.Cloud.Common.Message.SurveyInfoRequest surveyInfoRequest,
@@ -54,7 +56,7 @@ namespace Epi.Cloud.Facades
             _surveyInfoService = surveyInfoService;
 			_formSettingsService = formSettingsService;
 			_securityFacade = securityFacade;
-            _surveyResponseHelper = surveyResponseHelper;
+            _surveyResponseBuilder = surveyResponseBuilder;
             _projectMetadataProvider = projectMetadataProvider;
 
             _surveyInfoRequest = surveyInfoRequest;
@@ -114,7 +116,7 @@ namespace Epi.Cloud.Facades
                 {
                     if (item.ResponseIds.Count() > 0)
                     {
-                        var DTO = item.ResponseIds.FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.RelateParentId);
+                        var DTO = item.ResponseIds.FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.ParentResponseId);
                         if (DTO != null && !surveyAnswerDTOList.Contains(DTO))
 
                             surveyAnswerDTOList.Add(DTO);
@@ -141,25 +143,17 @@ namespace Epi.Cloud.Facades
         /// <summary>
         /// This method accepts a surveyId and responseId and creates the first survey response entry
         /// </summary>
-        /// <param name="SurveyId"></param>
+        /// <param name="responseContext"></param>
+        /// <param name="isEditMode"></param>
+        /// <param name="currentOrgId"></param>
         /// <returns></returns>
-        public SurveyAnswerDTO CreateSurveyAnswer(string surveyId,
-                                                  string responseId, 
-                                                  int userId, 
-                                                  bool isChild = false, 
-                                                  string relateResponseId = "", 
-                                                  bool isEditMode = false,
-												  int currentOrgId = -1)
+        public SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext, bool isEditMode = false, int currentOrgId = -1)
         {
-            return SurveyHelper.CreateSurveyResponse(surveyId,
-													 responseId, 
+            return SurveyHelper.CreateSurveyResponse(responseContext,
 													 _surveyAnswerRequest, 
 													 _surveyAnswerDTO, 
-													 _surveyResponseHelper, 
+													 _surveyResponseBuilder, 
 													 _dataEntryService, 
-													 userId, 
-													 isChild, 
-													 relateResponseId, 
 													 isEditMode, 
 													 currentOrgId);
         }
@@ -178,7 +172,7 @@ namespace Epi.Cloud.Facades
             // 2 update the current survey response and save the response
 
             //// 1 Get the record for the current survey response
-            SurveyAnswerResponse surveyAnswerResponse = new SurveyAnswerResponse();//GetSurveyAnswerResponse(responseId, surveyInfoModel.SurveyId.ToString());
+            SurveyAnswerResponse surveyAnswerResponse = new SurveyAnswerResponse();
             surveyAnswerResponse.SurveyResponseList.Add(surveyAnswerDTO);
             ///2 Update the current survey response and save it
             _surveyAnswerRequest.Criteria.UserId = userId;
@@ -186,7 +180,7 @@ namespace Epi.Cloud.Facades
             SurveyHelper.UpdateSurveyResponse(surveyInfoModel, 
                                               form, 
                                               _surveyAnswerRequest, 
-                                              _surveyResponseHelper, 
+                                              _surveyResponseBuilder, 
                                               _dataEntryService, 
                                               surveyAnswerResponse, 
                                               responseId, 
@@ -211,22 +205,15 @@ namespace Epi.Cloud.Facades
         /// </summary>
         /// <param name="ResponseId"></param>
         /// <returns></returns>
-        public SurveyAnswerResponse GetSurveyAnswerResponse(string responseId, string formId = "", int userId = 0)
+        public SurveyAnswerDTO GetSurveyAnswerDTO(SurveyAnswerRequest surveyAnswerRequest)
         {
-            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Clear();
-            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
-            _surveyAnswerRequest.Criteria.SurveyId = formId;
-            _surveyAnswerRequest.Criteria.UserId = userId;
-            SurveyAnswerResponse surveyAnswerResponse = _dataEntryService.GetSurveyAnswer(_surveyAnswerRequest);
-            return surveyAnswerResponse;
+            SurveyAnswerResponse surveyAnswerResponse = _dataEntryService.GetSurveyAnswer(surveyAnswerRequest);
+            return surveyAnswerResponse.SurveyResponseList[0];
         }
 
-        public SurveyAnswerResponse GetSurveyAnswerState(string responseId, int userId = 0)
+        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest)
         {
-            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Clear();
-            _surveyAnswerRequest.Criteria.SurveyAnswerIdList.Add(responseId);
-            _surveyAnswerRequest.Criteria.UserId = userId;
-            SurveyAnswerResponse surveyAnswerResponse = _dataEntryService.GetSurveyAnswerState(_surveyAnswerRequest);
+            SurveyAnswerResponse surveyAnswerResponse = _dataEntryService.GetSurveyAnswerState(surveyAnswerRequest);
             return surveyAnswerResponse;
         }
 
@@ -238,7 +225,6 @@ namespace Epi.Cloud.Facades
         public List<FormInfoModel> GetFormsInfoModelList(FormsInfoRequest formsInfoRequest)
         {
 			FormsInfoResponse formInfoResponse = _dataEntryService.GetFormsInfo(formsInfoRequest);
-
 
 			List<FormInfoModel> listOfForms = new List<FormInfoModel>();
 
@@ -305,14 +291,14 @@ namespace Epi.Cloud.Facades
 
         }
 
-        public bool HasResponse(string childFormId, string parentReponseId)
+        public bool HasResponse(SurveyAnswerRequest surveyAnswerRequest)
         {
-            return _dataEntryService.HasResponse(childFormId, parentReponseId);
+            return _dataEntryService.HasResponse(surveyAnswerRequest);
         }
 
-		public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest FormsHierarchyRequest)
+		public FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest)
 		{
-			FormsHierarchyResponse FormsHierarchyResponse = _dataEntryService.GetFormsHierarchy(FormsHierarchyRequest);
+			FormsHierarchyResponse FormsHierarchyResponse = _dataEntryService.GetFormsHierarchy(formsHierarchyRequest);
 			return FormsHierarchyResponse;
 		}
     }

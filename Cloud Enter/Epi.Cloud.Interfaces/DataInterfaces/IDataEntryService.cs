@@ -1,15 +1,14 @@
 ﻿using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Message;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {
 	public interface IDataEntryService
 	{
-		bool HasResponse(string childFormId, string parentResponseId);
+		bool HasResponse(SurveyAnswerRequest surveyAnswerRequest);
 
 		void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
-
-		UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
 
 		SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest);
 
@@ -26,5 +25,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 		FormsInfoResponse GetFormsInfo(FormsInfoRequest formsInfoRequest);
 
 		FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest);
+
+		UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
 	}
 }

@@ -12,19 +12,21 @@ using Epi.Cloud.Common.Constants;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
+using Epi.Cloud.Common.Metadata;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
-using static Epi.PersistenceServices.DocumentDB.DataStructures;
+using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Extensions;
+using Epi.PersistenceServices.DocumentDB;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+    public partial class SurveyResponseCRUD : MetadataAccessor
     {
         private string DatabaseName;
         private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
-        private const string FormInfoCollectionName = "FormInfo";
 
         public SurveyResponseCRUD()
         {
@@ -41,24 +43,142 @@ namespace Epi.DataPersistenceServices.DocumentDB
             get { return _database ?? GetOrCreateDatabase(DatabaseName); }
         }
 
+        /// <summary>
+        /// GetFormResponseState
+        /// </summary>
+        /// <param name="responseContext"></param>
+        /// <returns></returns>
+        public FormResponseProperties GetFormResponseState(IResponseContext responseContext)
+        {
+            var rootResponseResource = ReadRootResponseResource(responseContext);
+            FormResponseProperties formResponseProperties = null;
+            if (responseContext.IsRootResponse)
+            {
+                formResponseProperties = rootResponseResource.FormResponseProperties;
+            }
+            else
+            {
+                formResponseProperties = rootResponseResource.GetChildResponse(responseContext);
+            }
+
+            // Only return the basic state information (no field values or children)
+            formResponseProperties.ResponseQA = new Dictionary<string, string>();
+            return formResponseProperties;
+        }
+
+        private FormResponseResource ReadRootResponseResource(IResponseContext responseContext)
+        {
+            try
+            {
+                var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
+                var rootFormCollectionName = responseContext.RootFormName ?? GetRootFormName(responseContext.RootFormId);
+                var rootFormCollectionUri = GetCollectionUri(rootFormCollectionName);
+                // Set some common query options
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 1 };
+
+                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
+                    SELECT
+                    + AssembleSelect(rootFormCollectionName, "*")
+                    + FROM + rootFormCollectionName
+                    + WHERE
+                    + AssembleWhere(rootFormCollectionName, Expression("id", EQ, rootResponseId),
+                                                            And_Expression(RecStatus, NE, RecordStatus.Deleted))
+                    , queryOptions);
+
+                FormResponseResource formResponseResource = query.AsEnumerable().FirstOrDefault();
+                return formResponseResource;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return null;
+        }
+
+
+
+
+        #region Delete
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="responseContext"></param>
+        /// <param name="deleteType"></param>
+        /// <returns></returns>
+        public async Task<FormResponseResource> Delete(IResponseContext responseContext, int deleteType)
+        {
+            var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
+            var rootFormName = responseContext.RootFormName ?? GetRootFormName(responseContext.RootFormId);
+            
+
+            bool isSuccessful = false;
+            try
+            {
+                var formResponseResource = ReadRootResponseResource(responseContext, false);
+                if (formResponseResource != null)
+                {
+                    var formResponseProperties = formResponseResource.FormResponseProperties;
+
+                    // Determine if the ResponseId parameter is the root responseId or a child responseId
+                    if (responseContext.IsRootResponse)
+                    {
+                        if (deleteType == RecordStatus.PhysicalDelete)
+                        {
+                            PhysicallyDeleteResponse(formResponseResource);
+                            return formResponseResource;
+                        }
+                    }
+                    else if (formResponseProperties.RecStatus != RecordStatus.Deleted)
+                    {
+                        formResponseResource.LogicalCascadeDelete(formResponseProperties);
+                        var result = await Client.UpsertDocumentAsync(formResponseResource.SelfLink, formResponseResource, null).ConfigureAwait(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return null;
+        }
+
+        private void PhysicallyDeleteResponse(FormResponseResource formResponseResource)
+        {
+            Client.DeleteDocumentAsync(formResponseResource.SelfLink).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        #endregion
 
         #region UpdateAttachment
-        public async Task<bool> UpdateAttachment(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
+        /// <summary>
+        /// UpdateAttachment
+        /// </summary>
+        /// <param name="responseContext"></param>
+        /// <param name="responseStatus"></param>
+        /// <param name="userId"></param>
+        /// <param name="newResponseStatus"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateAttachment(IResponseContext responseContext, int responseStatus, int userId = 0, int newResponseStatus = 0)
         {
+            var responseId = responseContext.ResponseId;
+            var rootFormName = responseContext.RootFormName;
+
             newResponseStatus = responseStatus;
             Attachment attachment = null;
             bool isSuccessful = false;
             bool deleteResponse = false;
             try
             {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                var formResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
-                if (formResponseProperties != null)
+                Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
+                FormResponseResource formResponseResource = ReadRootResponseResource(responseContext);
+                if (formResponseResource != null)
                 {
+                    var formResponseProperties = formResponseResource.FormResponseProperties;
                     //Is status is Saved and check if attachment is existed or not.If attachment is null and delete attachment
                     if (newResponseStatus == RecordStatus.Saved)
                     {
-                        attachment = ReadAttachment(responseId, AttachmentId);
+                        attachment = ReadAttachment(rootFormName, responseId, AttachmentId);
                         if (attachment != null)
                         {
                             deleteResponse = DeleteAttachment(attachment);
@@ -71,7 +191,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                             case RecordStatus.Saved:
                                 formResponseProperties.IsNewRecord = false;
                                 formResponseProperties.RecStatus = RecordStatus.Saved;
-                                var formResponseSave = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties);
+                                var formResponseSave = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource);
                                 break;
                         }
                     }
@@ -88,283 +208,19 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 
-        #region NewRecordDontSave
-        public bool DeleteAllSurveyData(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
-        {
-            newResponseStatus = responseStatus;
-            bool isSuccessful = false;
-            try
-            {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                var existingFormResponseProperties = ReadFormInfoByResponseId(responseId, formInfoCollectionUri);
-                if (existingFormResponseProperties != null)
-                {
-                    if (newResponseStatus != existingFormResponseProperties.RecStatus)
-                    {
-                        //Read all survey info by responseId
-                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
-
-                        //Delete FormInfo
-                        if (hierarchialResponse.FormResponseProperties != null)
-                        {
-                            if (hierarchialResponse.FormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
-                            {
-                                existingFormResponseProperties.RecStatus = RecordStatus.Deleted;
-                                //var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, existingFormResponseProperties.GlobalRecordID);
-                                var response = Client.UpsertDocumentAsync(formInfoCollectionUri, existingFormResponseProperties, null).ConfigureAwait(false);
-
-                                //var response = Client.DeleteDocumentAsync(docLink).Result;
-                            }
-                        }
-                        ////Delete Parent
-                        //if (hierarchialResponse.PageResponsePropertiesList != null)
-                        //{
-                        //    foreach (var pageAttachmentResponseProperties in hierarchialResponse.PageResponsePropertiesList)
-                        //    {
-                        //        var collectionName = hierarchialResponse.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                        //        try
-                        //        {
-                        //            var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, existingFormResponseProperties.GlobalRecordID);
-                        //            var response = Client.DeleteDocumentAsync(docLink).Result;
-                        //        }
-                        //        catch (Exception ex)
-                        //        {
-
-                        //        }
-                        //    }
-                        //}
-                        ////Delete Child
-
-                        //if (hierarchialResponse.ChildResponseList != null && hierarchialResponse.ChildResponseList.Count > 0)
-                        //{
-                        //    foreach (var pageAttachmentResponseProperties in hierarchialResponse.ChildResponseList)
-                        //    {
-                        //        DeleteChildOfChilds(hierarchialResponse);
-                        //    }
-                        //}
-
-                    }
-                }
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            return isSuccessful;
-        }
-
-        #endregion
-
-        #region Restore Child of Child
-        public bool RestoreAttachment(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
-        {
-            FormResponseProperties existingFormResponseProperties = null;
-            bool isSuccessful = true;
-            bool restoreStatus = false;
-            if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList.Count != 0)
-            {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
-
-                //Restore Attachment to FormInfo
-                if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
-                {
-                    if (existingFormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
-                    {
-                        restoreStatus = RestoreChild(hierarchicalDocumentResponseProperties);
-                    }
-                }
-            }
-            return isSuccessful;
-        }
-
-        public bool RestoreChild(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
-        {
-            FormResponseProperties existingFormResponseProperties = null;
-            bool isSuccessful = false;
-            if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList.Count != 0)
-            {
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
-
-                //Restore Attachment to FormInfo
-                if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
-                {
-                    if (existingFormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
-                    {
-                        existingFormResponseProperties.RecStatus = RecordStatus.Saved;
-                        //var formResponse = Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).Result;
-                        var formResponse = Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).ConfigureAwait(false);
-                    }
-                }
-                if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList != null)
-                {
-                    foreach (var pageAttachmentResponseProperties in hierarchicalDocumentResponseProperties.PageResponsePropertiesList)
-                    {
-                        var collectionName = hierarchicalDocumentResponseProperties.FormResponseProperties.FormName + pageAttachmentResponseProperties.PageId;
-                        Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-                        try
-                        {
-                            var ParentResponse = Client.UpsertDocumentAsync(pageCollectionUri, pageAttachmentResponseProperties).ConfigureAwait(false);
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-                    }
-                }
-                if (hierarchicalDocumentResponseProperties.ChildResponseList.Count > 0)
-                {
-                    foreach (var childRestore in hierarchicalDocumentResponseProperties.ChildResponseList)
-                    {
-                        isSuccessful = RestoreChild(childRestore);
-                    }
-                }
-
-            }
-            return true;
-        }
-
-        #endregion
-
-        #region Delete Child of Child
-        public void DeleteChildOfChilds(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
-        {
-            //Delete FormInfo   
-            foreach (var child in hierarchicalDocumentResponseProperties.ChildResponseList)
-            {
-
-                foreach (var _page in child.FormResponseProperties.PageIds)
-                {
-                    //Delete document in Document DB Child collection
-                    var collectionName = child.FormResponseProperties.FormName + _page;
-                    try
-                    {
-                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, child.FormResponseProperties.GlobalRecordID);
-                        var response = Client.DeleteDocumentAsync(docLink).Result;
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                    //Delete document in Document DB FormInfo collection
-                    collectionName = child.FormResponseProperties.FormName + _page;
-                    try
-                    {
-                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, child.FormResponseProperties.GlobalRecordID);
-                        var response = Client.DeleteDocumentAsync(docLink).Result;
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-
-                }
-
-                if (child.ChildResponseList.Count > 0)
-                {
-                    DeleteChildOfChilds(child);
-                }
-            }
-        }
-
-        #endregion
-
-        
-
-        #region Save Page Response Properties Async
+        #region Restore Last Response Snapshot
         /// <summary>
-        /// Created instance of DocumentClient and Getting reference to database and Document collections
+        /// RestoreLastResponseSnapshot
         /// </summary>
-        public async Task<bool> SavePageResponsePropertiesAsync(DocumentResponseProperties documentResponseProperties)
+        /// <param name="snapshotFormResponseResource"></param>
+        /// <returns></returns>
+        public bool RestoreLastResponseSnapshot(FormResponseResource snapshotFormResponseResource)
         {
-            bool tasksRanToCompletion = false;
-            try
-            {
-                var numberOfPages = documentResponseProperties.PageResponsePropertiesList.Count();
-                if (numberOfPages == 0) return true;
-
-                using (BlockingCollection<Task<ResourceResponse<Document>>> pendingTasksBC = new BlockingCollection<Task<ResourceResponse<Document>>>(numberOfPages))
-                {
-                    int numberOfPagesInitiated = 0;
-                    int numberOfPagesCompleted = 0;
-
-                    var globalRecordId = documentResponseProperties.FormResponseProperties.GlobalRecordID;
-
-                    foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
-                    {
-                        bool isUpdated = false;
-                        var pageId = newPageResponseProperties.PageId;
-                        Uri pageCollectionUri = GetCollectionUri(newPageResponseProperties.ToColectionName(documentResponseProperties.FormResponseProperties.FormName));
-                        var pageResponseProperties = ReadPageResponsePropertiesByResponseId(globalRecordId, pageCollectionUri);
-                        if (pageResponseProperties != null)
-                        {
-                            foreach (var newFieldKvp in newPageResponseProperties.ResponseQA)
-                            {
-                                if (newFieldKvp.Value != null)
-                                {
-                                    var responseQA = pageResponseProperties.ResponseQA;
-                                    string existingValue;
-                                    var existingFieldExists = responseQA.TryGetValue(newFieldKvp.Key, out existingValue);
-                                    {
-                                        if (!existingFieldExists || existingValue != newFieldKvp.Value)
-                                        {
-                                            responseQA[newFieldKvp.Key] = newFieldKvp.Value;
-                                            isUpdated = true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            pageResponseProperties = newPageResponseProperties;
-                            isUpdated = true;
-                        }
-                        if (isUpdated)
-                        {
-                            var task = Client.UpsertDocumentAsync(pageCollectionUri, pageResponseProperties);
-                            var success = pendingTasksBC.TryAdd(task, 100);
-                            if (success)
-                            {
-                                Interlocked.Increment(ref numberOfPagesInitiated);
-                            }
-                            else
-                            {
-                                throw new TimeoutException("Unable to add task");
-                            }
-                        }
-                        else
-                        {
-                            Interlocked.Decrement(ref numberOfPages);
-                        }
-                    }
-
-                    pendingTasksBC.CompleteAdding();
-
-                    while (numberOfPages != numberOfPagesCompleted)
-                    {
-                        Task<ResourceResponse<Document>> task;
-                        if (pendingTasksBC.TryTake(out task, 100))
-                        {
-                            Interlocked.Increment(ref numberOfPagesCompleted);
-                            var result = await task.ConfigureAwait(false);
-                        }
-                        else
-                        {
-                            throw new TimeoutException("Unable to take task");
-                        }
-                    }
-
-                    tasksRanToCompletion = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex);
-            }
-            return await Task.FromResult(tasksRanToCompletion);
+            var snapshotFormResponseProperties = snapshotFormResponseResource.FormResponseProperties;
+            string rootFormName = snapshotFormResponseProperties.FormName;
+            Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
+            var resourceResponse = Client.UpsertDocumentAsync(rootFormCollectionUri, snapshotFormResponseResource).ConfigureAwait(false).GetAwaiter().GetResult();
+            return true;
         }
 
         #endregion
@@ -377,64 +233,82 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// </summary>
         /// <param name="formResponseProperties"></param>
         /// <returns></returns>
-        public async Task<ResourceResponse<Document>> SaveFormResponsePropertiesAsync(FormResponseProperties formResponseProperties)
+        public async Task<ResourceResponse<Document>> SaveFormResponsePropertiesAsync(IResponseContext responseContext, FormResponseProperties formResponseProperties)
         {
+            var now = DateTime.UtcNow;
+
             ResourceResponse<Document> result = null;
+            var formResponseResource = new FormResponseResource();
+            var rootFormCollectionUri = GetCollectionUri(responseContext.RootFormName);
+            var isUpdated = false;
             try
             {
-                //Instance of DocumentClient"
-                var formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-
-                //Verify Response Id is exist or Not
-                var existingFormResponseProperties = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, formInfoCollectionUri);
-                if (existingFormResponseProperties == null)
+                //Verify Response Id exists or not
+                formResponseResource = ReadRootResponseResource(responseContext, true);
+                if (formResponseResource == null)
                 {
-                    formResponseProperties.FirstSaveTime = DateTime.UtcNow;
-                    formResponseProperties.Id = formResponseProperties.GlobalRecordID;
-                    formResponseProperties.PageIds = formResponseProperties.PageIds ?? new List<int>();
-                    result = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
+                    if (responseContext.IsRootResponse)
+                    {
+                        formResponseProperties.IsNewRecord = true;
+                        formResponseProperties.FirstSaveTime = now;
+                        formResponseProperties.LastSaveTime = now;
+
+                        formResponseResource = new FormResponseResource
+                        {
+                            Id = responseContext.RootResponseId,
+                            FormResponseProperties = formResponseProperties
+                        };
+                        result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+                    }
+                    else // if (responseContext.IsChildResponse)
+                    {
+                    }
                 }
                 else
                 {
-                    formResponseProperties.FirstSaveTime = existingFormResponseProperties.FirstSaveTime;
-                    //Create attachment
-                    if (existingFormResponseProperties.IsRootForm && existingFormResponseProperties.RecStatus == RecordStatus.Saved && formResponseProperties.RecStatus == RecordStatus.InProcess)
+                    var existingFormResponseProperties = formResponseResource.FormResponseProperties;
+                    if (responseContext.IsRootResponse)
                     {
-                        Attachment attachment = null;
-                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
-                        var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
-                        attachment = CreateAttachment(existingFormResponseProperties.SelfLink, AttachmentId, existingFormResponseProperties.GlobalRecordID, hierarchialResponseJson);
+                        formResponseProperties.FirstSaveTime = existingFormResponseProperties.FirstSaveTime;
+                        formResponseProperties.FirstSaveLogonName = existingFormResponseProperties.FirstSaveLogonName;
 
-                    }
-
-                    var pageIdsUpdated = false;
-                    formResponseProperties.ParentResponseId = existingFormResponseProperties.ParentResponseId;
-                    if (formResponseProperties.PageIds != null && formResponseProperties.PageIds.Count > 0)
-                    {
-                        var newPageIds = formResponseProperties.PageIds.ToList();
-                        formResponseProperties.PageIds = existingFormResponseProperties.PageIds;
-                        foreach (var pageId in newPageIds)
+                        //Create attachment if transitioning from Saved to InProcess
+                        if (existingFormResponseProperties.RecStatus == RecordStatus.Saved && formResponseProperties.RecStatus == RecordStatus.InProcess)
                         {
-                            if (!existingFormResponseProperties.PageIds.Contains(pageId))
-                            {
-                                formResponseProperties.PageIds.Add(pageId);
-                                pageIdsUpdated = true;
-                            }
+                            Attachment attachment = null;
+                            var existingResponseJson = JsonConvert.SerializeObject(formResponseResource);
+                            attachment = CreateAttachment(formResponseResource.SelfLink, AttachmentId, responseContext.RootFormName, existingFormResponseProperties.ResponseId, existingResponseJson);
                         }
-                        formResponseProperties.PageIds.Sort();
+
+                        formResponseResource.FormResponseProperties = formResponseProperties;
+                        // Update the root response and its children.
+                        result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+                    }
+                    else /* if (responseContext.IsChildResponse) */
+                    {
+                        var childFormResponseProperties = formResponseResource.GetChildResponse(responseContext);
+                        if (childFormResponseProperties == null)
+                        {
+                            formResponseResource.AddOrReplaceChildResponse(formResponseProperties);
+                            isUpdated = true;
+                        }
+                        else
+                        {
+                            formResponseResource.AddOrReplaceChildResponse(formResponseProperties);
+                            isUpdated = true;
+                        }
                     }
 
-                    var isUpdated = pageIdsUpdated
-                        || existingFormResponseProperties.LastSaveTime != formResponseProperties.LastSaveTime
-                        || existingFormResponseProperties.RecStatus != formResponseProperties.RecStatus
-                        || existingFormResponseProperties.HiddenFieldsList != formResponseProperties.HiddenFieldsList
-                        || existingFormResponseProperties.DisabledFieldsList != formResponseProperties.DisabledFieldsList
-                        || existingFormResponseProperties.HighlightedFieldsList != formResponseProperties.HighlightedFieldsList
-                        || existingFormResponseProperties.RequiredFieldsList != formResponseProperties.RequiredFieldsList;
+                        //|| existingFormResponseProperties.LastSaveTime != formResponseProperties.LastSaveTime
+                        //|| existingFormResponseProperties.RecStatus != formResponseProperties.RecStatus
+                        //|| existingFormResponseProperties.HiddenFieldsList != formResponseProperties.HiddenFieldsList
+                        //|| existingFormResponseProperties.DisabledFieldsList != formResponseProperties.DisabledFieldsList
+                        //|| existingFormResponseProperties.HighlightedFieldsList != formResponseProperties.HighlightedFieldsList
+                        //|| existingFormResponseProperties.RequiredFieldsList != formResponseProperties.RequiredFieldsList;
 
                     if (isUpdated)
                     {
-                        result = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties, null).ConfigureAwait(false);
+                        result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource, null).ConfigureAwait(false);
                     }
                 }
             }
@@ -447,306 +321,94 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
         #endregion
 
-        #region Get PageResponseProperties By ResponseId, FormId, and PageId
-        public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formName, int pageId)
-        {
-            PageResponseProperties pageResponseProperties = null;
-            try
-            {
-                //Instance of DocumentClient"
-                var collectionName = formName + pageId;
-                Uri pageCollectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName);
-
-                //Read collection and store data  
-                pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, pageCollectionUri);
-                return pageResponseProperties;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-            return null;
-        }
-
-        #endregion Get PageResponseProperties By ResponseId, FormId, and PageId
-
 
         #region Get All Responses With FieldNames 
-        public List<SurveyResponse> GetAllResponsesWithCriteria(IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string relateParentId = null, int pageSize = 0, int pageNumber = 0)
+        /// <summary>
+        /// GetAllResponsesWithCriteria
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <param name="searchFields"></param>
+        /// <param name="parentResponseId"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="pageNumber"></param>
+        /// <returns></returns>
+        public List<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string parentResponseId = null, int pageSize = 0, int pageNumber = 0)
         {
-
-            List<SurveyResponse> surveyResponse = null;
+            List<FormResponseDetail> formResponseDetailList = null;
 
             try
             {
-                var surveyResponses = ReadAllResponsesWithCriteria(fields, searchFields, relateParentId, pageSize, pageNumber);
-                return surveyResponses;
+                formResponseDetailList = ReadAllResponsesWithCriteria(responseContext, fields, searchFields, parentResponseId, pageSize, pageNumber);
             }
             catch (DocumentQueryException ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-            return surveyResponse;
+            return formResponseDetailList;
         }
 
-        private List<SurveyResponse> ReadAllResponsesWithCriteria(IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string relateParentId, int pageSize = 0, int pageNumber = 0)
+        private List<FormResponseDetail> ReadAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchQualifiers, string parentResponseId, int pageSize = 0, int pageNumber = 0)
         {
-            // Set some common query options
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            List<SurveyResponse> surveyList = new List<SurveyResponse>();
-            int FailedSearchStatus = int.MaxValue;
-            int WentThroughSearch = int.MaxValue - 1;
+            List<FormResponseDetail> formResponseDetailList = new List<FormResponseDetail>();
+            List<FormResponseProperties> formResponsePropertiesList;
 
-
-            try
+            if (responseContext.IsChildResponse)
             {
-                // Build a composit of both the grid display field digests and the search field digests
-                var compositeFieldDigestList = fieldDigestList.Values.Select(x => x).ToList();
-                var fieldNames = compositeFieldDigestList.Select(x => x.Field.FieldName).ToList();
-
-                foreach (var searchField in searchFields)
-                {
-                    var searchFieldDigest = searchField.Value.Key;
-                    var searchFieldName = searchFieldDigest.FieldName;
-                    if (!fieldNames.Contains(searchFieldName))
-                    {
-                        fieldNames.Add(searchFieldName);
-                        compositeFieldDigestList.Add(searchFieldDigest);
-                    }
-                }
-
-                // One SurveyResponse per GlobalRecordId
-                Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
-
-                List<FormResponseProperties> parentGlobalIdList = ReadAllResponsesByRelateParentResponseId(relateParentId, fieldDigestList.FirstOrDefault().Value.FormId, pageSize, pageNumber);
-                string parentGlobalRecordIds = string.Empty;
-
-                if (parentGlobalIdList != null)
-                {
-                    parentGlobalRecordIds = "'" + string.Join("','", parentGlobalIdList.Select(p => p.GlobalRecordID)) + "'";
-                }
-
-                // Query DocumentDB one page at a time. Only query pages that contain a specified field.
-                var pageGroups = compositeFieldDigestList.GroupBy(d => d.PageId);
-                foreach (var pageGroup in pageGroups)
-                {
-                    var pageId = pageGroup.Key;
-                    var firstPageGroup = pageGroup.First();
-                    var formId = firstPageGroup.FormId;
-                    var formName = firstPageGroup.FormName;
-                    var collectionName = formName + pageId;
-                    var columnList = AssembleSelect(collectionName, pageGroup.Select(g => "ResponseQA." + g.FieldName.ToLower()).ToArray())
-                        + ","
-                        + AssembleSelect(collectionName, "GlobalRecordID", "_ts");
-                    Uri pageCollectionUri = GetCollectionUri(collectionName);
-                    var pageQuery = Client.CreateDocumentQuery(pageCollectionUri,
-                        SELECT + columnList
-                        + FROM + collectionName
-                        + WHERE + collectionName + ".GlobalRecordID in (" + parentGlobalRecordIds + ")", queryOptions);
-
-                    var searchQueries = searchFields.Values.Where(kvp => kvp.Key.PageId == pageId).ToArray();
-
-                    foreach (var items in pageQuery.AsQueryable())
-                    {
-                        bool wentThroughSearch = false;
-                        var json = JsonConvert.SerializeObject(items);
-                        var pageResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-
-
-                        string globalRecordId = pageResponseQA["GlobalRecordID"];
-                        SurveyResponse surveyResponse;
-                        FormResponseDetail formResponseDetail;
-                        if (!responsesByGlobalRecordId.TryGetValue(globalRecordId, out surveyResponse))
-                        {
-                            surveyResponse = new SurveyResponse { SurveyId = new Guid(formId), ResponseId = new Guid(globalRecordId) };
-                            responsesByGlobalRecordId.Add(globalRecordId, surveyResponse);
-                        }
-
-                        formResponseDetail = surveyResponse.ResponseDetail;
-                        formResponseDetail.FormId = formId;
-                        formResponseDetail.FormName = formName;
-
-                        // If this particular record has already failed the search criteria
-                        // then we can skip additional tests.
-                        if (formResponseDetail.RecStatus != FailedSearchStatus)
-                        {
-                            Dictionary<string, string> aggregatePageResponseQA;
-                            PageResponseDetail pageResponseDetail = formResponseDetail.PageResponseDetailList.SingleOrDefault(p => p.PageId == pageId);
-                            if (pageResponseDetail == null)
-                            {
-                                pageResponseDetail = new PageResponseDetail { FormId = formId, FormName = formName, PageId = pageId };
-                                formResponseDetail.AddPageResponseDetail(pageResponseDetail);
-                            }
-
-                            foreach (var searchQuery in searchQueries)
-                            {
-                                if (formResponseDetail.RecStatus != FailedSearchStatus) formResponseDetail.RecStatus = WentThroughSearch;
-                                var fieldName = searchQuery.Key.FieldName;
-                                var searchValue = searchQuery.Value;
-                                string responseValue;
-                                bool responseExists = pageResponseQA.TryGetValue(fieldName, out responseValue);
-                                if (searchValue.Contains("*") || searchValue.Contains("?"))
-                                {
-                                    if ((!responseExists && searchValue != null) || !responseValue.WildCardCompare(searchValue))
-                                    {
-                                        formResponseDetail.RecStatus = FailedSearchStatus;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                                else
-                                {
-                                    if ((!responseExists && searchValue != null) || !String.Equals(responseValue, searchValue, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        formResponseDetail.RecStatus = FailedSearchStatus;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                    }
-                                }
-                            }
-
-                            // If the current record just failed the search criteria 
-                            // then we can skip the remaining code.
-                            if (formResponseDetail.RecStatus != FailedSearchStatus)
-                            {
-                                aggregatePageResponseQA = pageResponseDetail.ResponseQA;
-
-                                foreach (dynamic qa in pageResponseQA)
-                                {
-                                    string key = qa.Key;
-                                    switch (key)
-                                    {
-                                        case "_ts":
-                                            var newTimestamp = Int64.Parse(qa.Value);
-
-                                            string _ts;
-                                            var existingPageTimestamp = aggregatePageResponseQA.TryGetValue("_ts", out _ts) ? Int64.Parse(_ts) : 0;
-                                            if (newTimestamp > existingPageTimestamp) aggregatePageResponseQA["_ts"] = qa.Value;
-
-                                            if (newTimestamp > surveyResponse.Timestamp)
-                                            {
-                                                surveyResponse.Timestamp = newTimestamp;
-                                                surveyResponse.DateUpdated = new DateTime(1970, 1, 1) + TimeSpan.FromSeconds(newTimestamp);
-                                            }
-                                            break;
-
-                                        default:
-                                            aggregatePageResponseQA[key] = qa.Value;
-                                            break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (searchFields.Count > 0)
-                {
-                    surveyList = responsesByGlobalRecordId.Values
-                        .Where(s => s.ResponseDetail.RecStatus == WentThroughSearch)
-                        .OrderByDescending(v => v.Timestamp).ToList();
-                }
-                else
-                {
-                    surveyList = responsesByGlobalRecordId.Values
-                        .OrderByDescending(v => v.Timestamp).ToList();
-                }
+                if (searchQualifiers != null && searchQualifiers.Count > 0) throw new ArgumentException("Search not available on child forms");
+                formResponsePropertiesList = ReadAllChildResponses(responseContext, pageSize, pageNumber, /*includeChildrenOfChild*/false);
+                formResponseDetailList = formResponsePropertiesList.ToFormResponseDetailList();
             }
-            catch (DocumentQueryException ex)
+            else
             {
-                Console.WriteLine(ex.ToString());
+                try
+                {
+                    var searchFieldNameValueQualifiers = searchQualifiers != null && searchQualifiers.Count > 0 
+                        ? searchQualifiers.Values.ToArray() 
+                        : null;
+
+                    formResponseDetailList = ReadAllRootResponses(responseContext, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
+                }
+                catch (DocumentQueryException ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+
             }
-            return surveyList;
+            return formResponseDetailList;
         }
         #endregion Get All Responses With FieldNames
 
-
-        #region Get form response properties by ResponseId
-        public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
-        {
-            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
-
-            //Read all global record Id
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var formResponseProperties = ReadFormPropertiesByResponseId(formInfoCollectionUri, responseId);
-            documentResponseProperties.FormResponseProperties = formResponseProperties;
-            return documentResponseProperties;
-        }
-        #endregion Get form response properties by ResponseId
-
-        #region Get all page responses by ResponseId
-        /// <summary>
-        /// GetAllPageResponsesByResponseId
-        /// </summary>
-        /// <param name="responseId"></param>
-        /// <returns></returns>
-        public DocumentResponseProperties GetAllPageResponsesByResponseId(string responseId)
-        {
-            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
-            //Read all global record Id
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var formResponseProperties = ReadFormPropertiesByResponseId(formInfoCollectionUri, responseId);
-            documentResponseProperties.FormResponseProperties = formResponseProperties;
-
-            if (formResponseProperties != null)
-            {
-                foreach (var pageId in formResponseProperties.PageIds)
-                {
-                    if (pageId != 0)
-                    {
-                        string collectionName = formResponseProperties.FormName + pageId;
-                        var pageCollectionUri = GetCollectionUri(collectionName);
-                        var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, pageCollectionUri);
-                        documentResponseProperties.PageResponsePropertiesList.Add(pageResponseProperties);
-                    }
-                }
-            }
-            return documentResponseProperties;
-        }
-        #endregion Get all page responses by ResponseId
-
         #region Get hierarchial responses by ResponseId
         /// <summary>
-        /// GetHierarchialResponsesByResponseId
+        /// GetHierarchialResponseListByResponseId
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="includeDeletedRecords"></param>
+        /// <param name="excludeInProcessRecords"></param>
         /// <returns></returns>
         /// <remarks> Used by the DataConsisitencyServiceAPI</remarks>
-        public HierarchicalDocumentResponseProperties GetHierarchialResponsesByResponseId(string responseId, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
+        public List<FormResponseProperties> GetHierarchialResponseListByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
         {
-            HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = new HierarchicalDocumentResponseProperties();
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var documentResponseProperties = ReadAllResponsesByExpression(Expression("GlobalRecordID", EQ, responseId), formInfoCollectionUri, includeDeletedRecords).SingleOrDefault();
-            if (documentResponseProperties != null)
+            var rootResponseResource = ReadRootResponseResource(responseContext, includeDeletedRecords);
+            var rootformResponseProperties = rootResponseResource.FormResponseProperties;
+            var formResponsePropertiesList = new List<FormResponseProperties>();
+            if (includeDeletedRecords ? true : rootformResponseProperties.RecStatus != RecordStatus.Deleted && excludeInProcessRecords ? rootformResponseProperties.RecStatus != RecordStatus.InProcess : true)
             {
-                hierarchicalDocumentResponseProperties.FormResponseProperties = documentResponseProperties.FormResponseProperties;
-                hierarchicalDocumentResponseProperties.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
-                hierarchicalDocumentResponseProperties.ChildResponseList = GetChildResponses(responseId, formInfoCollectionUri);
+                formResponsePropertiesList.Add(rootResponseResource.FormResponseProperties);
+                foreach (var childResponse in rootResponseResource.ChildResponses.Values)
+                {
+                    var responseDictionary = childResponse.Values;
+                    foreach (var responses in responseDictionary)
+                    {
+                        formResponsePropertiesList.AddRange(responses.Where(r => includeDeletedRecords ? true : r.RecStatus != RecordStatus.Deleted && excludeInProcessRecords ? r.RecStatus != RecordStatus.InProcess : true));
+                    }
+                }
             }
-            return hierarchicalDocumentResponseProperties;
+
+            return formResponsePropertiesList;
         }
 
-        private List<HierarchicalDocumentResponseProperties> GetChildResponses(string parentResponseId, Uri formInfoCollectionUri, bool includeDeletedRecords = false)
-        {
-            var childResponseList = new List<HierarchicalDocumentResponseProperties>();
-            var documentResponsePropertiesList = ReadAllResponsesByExpression(Expression("RelateParentId", EQ, parentResponseId), formInfoCollectionUri, includeDeletedRecords);
-            foreach (var documentResponseProperties in documentResponsePropertiesList)
-            {
-                var childResponse = new HierarchicalDocumentResponseProperties();
-                childResponse.FormResponseProperties = documentResponseProperties.FormResponseProperties;
-                childResponse.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
-                childResponseList.Add(childResponse);
-
-                childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri, includeDeletedRecords);
-            }
-            return childResponseList;
-        }
-
+#if false
         private List<DocumentResponseProperties> ReadAllResponsesByExpression(string expression, Uri formInfoCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
         {
             var documentResponsePropertiesList = new List<DocumentResponseProperties>();
@@ -756,22 +418,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 var query = Client.CreateDocumentQuery(formInfoCollectionUri,
                     SELECT + AssembleSelect(collectionAlias, "*")
                     + FROM + collectionAlias
-                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
+                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression(RecStatus, NE, RecordStatus.Deleted, includeDeletedRecords))
                     , queryOptions);
 
                 documentResponsePropertiesList = query.AsEnumerable()
                     .Select(fi => new DocumentResponseProperties { FormResponseProperties = (FormResponseProperties)fi })
                     .ToList();
-
-                // Iterate through the list of form responses to get the associated page responses.
-                foreach (var documentResponseProperties in documentResponsePropertiesList)
-                {
-                    var formResponseProperties = documentResponseProperties.FormResponseProperties;
-                    if (formResponseProperties != null)
-                    {
-                        documentResponseProperties.PageResponsePropertiesList = ReadAllPages(formResponseProperties);
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -781,37 +433,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return documentResponsePropertiesList;
         }
 
-        private List<PageResponseProperties> ReadAllPages(FormResponseProperties formResponseProperties)
-        {
-            List<PageResponseProperties> pageResponsePropertiesList = new List<PageResponseProperties>();
-            var responseId = formResponseProperties.GlobalRecordID;
-            foreach (var pageId in formResponseProperties.PageIds)
-            {
-                if (pageId != 0)
-                {
-                    string collectionName = formResponseProperties.FormName + pageId;
-                    var pageCollectionUri = GetCollectionUri(collectionName);
-                    var pageResponseProperties = ReadPageResponsePropertiesByResponseId(responseId, pageCollectionUri);
-                    if (pageResponseProperties != null)
-                    {
-                        pageResponsePropertiesList.Add(pageResponseProperties);
-                    }
-                }
-            }
-
-            return pageResponsePropertiesList;
-        }
-
-        private List<DocumentResponseProperties> ReadAllResponsesIdsByExpression(string expression, Uri formInfoCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
+        private List<DocumentResponseProperties> ReadAllResponsesIdsByExpression(string expression, Uri rootFormCollectionUri, bool includeDeletedRecords, string collectionAlias = "c")
         {
             var documentResponsePropertiesList = new List<DocumentResponseProperties>();
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
             try
             {
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
+                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
                     SELECT + AssembleSelect(collectionAlias, "*")
                     + FROM + collectionAlias
-                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
+                    + WHERE + AssembleWhere(collectionAlias, expression, And_Expression(RecStatus, NE, RecordStatus.Deleted, includeDeletedRecords))
                     , queryOptions);
 
                 documentResponsePropertiesList = query.AsEnumerable()
@@ -825,34 +456,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return documentResponsePropertiesList;
         }
-
-        private PageResponseProperties ReadPageResponsePropertiesByResponseId(string responseId, Uri pageCollectionUri, string collectionAlias = "c")
-        {
-            PageResponseProperties pageResponseProperties = null;
-            // Set some common query options
-            FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-            try
-            {
-                var query = Client.CreateDocumentQuery(pageCollectionUri,
-                    SELECT + AssembleSelect(collectionAlias, "*")
-                    + FROM + collectionAlias
-                    + WHERE + AssembleWhere(collectionAlias, Expression("GlobalRecordID", EQ, responseId))
-                    , queryOptions);
-
-                pageResponseProperties = (PageResponseProperties)query.AsEnumerable().FirstOrDefault();
-                return pageResponseProperties;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return null;
-        }
+#endif
 
         #endregion Get hierarchial responses by ResponseId
 
-        private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(string formId, string relateParentId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
+#if false
+        private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(string formId, string parentResponseId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
         {
             // Set some common query options
             FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
@@ -862,8 +471,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 // One SurveyResponse per GlobalRecordId
                 Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
 
-                List<FormResponseProperties> childResponses = ReadAllResponsesByRelateParentResponseId(relateParentId, formId);
-                string childCSVResponseIds = childResponses.Count > 0 ? ("'" + string.Join("','", childResponses.Select(r => r.GlobalRecordID)) + "'") : string.Empty;
+                List<FormResponseProperties> childResponses = ReadAllResponsesByRelateParentResponseId(parentResponseId, formId);
+                string childCSVResponseIds = childResponses.Count > 0 ? ("'" + string.Join("','", childResponses.Select(r => r.ResponseId)) + "'") : string.Empty;
 
                 // Query DocumentDB one page at a time. Only query pages that contain a specified field.
                 var pageGroups = fieldDigestList.Values.GroupBy(d => d.PageId);
@@ -874,7 +483,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     var pageColectionName = collectionName + pageId;
                     var columnList = AssembleSelect(pageColectionName, pageGroup.Select(g => "ResponseQA." + g.FieldName.ToLower()).ToArray())
                         + ","
-                        + AssembleSelect(pageColectionName, "GlobalRecordID", "_ts");
+                        + AssembleSelect(pageColectionName, "ResponseId", "_ts");
                     Uri docUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionName + pageId);
 
                     var pageQuery = Client.CreateDocumentQuery(docUri, SELECT + columnList + " FROM  " + collectionName + pageId + WHERE + collectionName + pageId + ".GlobalRecordID in ( " + childCSVResponseIds + ")", queryOptions);
@@ -884,7 +493,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         var json = JsonConvert.SerializeObject(items);
                         var pageResponseQA = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
 
-                        string globalRecordId = pageResponseQA["GlobalRecordID"];
+                        string globalRecordId = pageResponseQA["ResponseId"];
                         SurveyResponse surveyResponse;
                         FormResponseDetail formResponseDetail;
                         if (!responsesByGlobalRecordId.TryGetValue(globalRecordId, out surveyResponse))
@@ -940,143 +549,38 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             return surveyList;
         }
+#endif
 
-        #region Does response exist
+        public bool DoChildResponsesExist(IResponseContext responseContext)
+        {
+            var rootResponseResource = ReadRootResponseResource(responseContext);
+            var childResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext);
+            return childResponsePropertiesList != null && childResponsePropertiesList.Count > 0;
+        }
+
         /// <summary>
-        /// 
+        /// GetFormResponseCount
         /// </summary>
-        /// <param name="childFormId"></param>
-        /// <param name="parentResponseId"></param>
+        /// <param name="formId"></param>
+        /// <param name="includeDeletedRecords"></param>
         /// <returns></returns>
-        public bool DoesResponseExist(string childFormId, string parentResponseId)
-        {
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var count = CountResponses(parentResponseId, childFormId, formInfoCollectionUri);
-            return count != 0;
-        }
-
-        private int CountResponses(string parentResponseId, string childFormId, Uri formInfoCollectionUri)
-        {
-            var collectionAlias = FormInfoCollectionName;
-
-            try
-            {
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                    SELECT
-                    + AssembleSelect(collectionAlias, "GlobalRecordID")
-                    + FROM + collectionAlias
-                    + WHERE
-                    + AssembleWhere(collectionAlias, Expression("FormId", EQ, childFormId),
-                                                And_Expression("RelateParentId", EQ, parentResponseId),
-                                                And_Expression("RecStatus", NE, RecordStatus.Deleted))
-                    , queryOptions);
-                var count = query.AsEnumerable().Count();
-                return count;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return 0;
-        }
-        #endregion Does response exist
-
-
-        #region Do children exist for responseId
-        /// <summary>
-        /// DoChildrenExistForResponseId
-        /// </summary>
-        /// <param name="responseId"></param>
-        /// <returns></returns>
-        public bool DoChildrenExistForResponseId(string responseId)
-        {
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var count = CountRelatedResponses(responseId, formInfoCollectionUri);
-            return count != 0;
-        }
-
-        private int CountRelatedResponses(string responseId, Uri formInfoCollectionUri)
-        {
-            var collectionAlias = FormInfoCollectionName;
-
-            try
-            {
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                    SELECT
-                    + AssembleSelect(collectionAlias, "GlobalRecordID")
-                    + FROM + collectionAlias
-                    + WHERE
-                    + AssembleWhere(collectionAlias, Expression("RelateParentId", EQ, responseId),
-                                                And_Expression("RecStatus", NE, RecordStatus.Deleted))
-                    , queryOptions);
-                var count = query.AsEnumerable().Count();
-                return count;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return 0;
-        }
-        #endregion Do children exist for responseId
-
-        private FormResponseProperties ReadFormInfoByResponseId(string responseId, Uri formInfoCollectionUri)
-        {
-            var collectionAlias = FormInfoCollectionName;
-
-            try
-            {
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
-
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                    SELECT
-                    + AssembleSelect(collectionAlias, "*")
-                    + FROM + collectionAlias
-                    + WHERE
-                    + AssembleWhere(collectionAlias, Expression("GlobalRecordID", EQ, responseId),
-                                                And_Expression("RecStatus", NE, RecordStatus.Deleted))
-                    , queryOptions);
-                var surveyDataFromDocumentDB = (FormResponseProperties)query.AsEnumerable().FirstOrDefault();
-                return surveyDataFromDocumentDB;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return null;
-        }
-
         public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
         {
-            Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var formResponseCount = GetFormResponseCount(formInfoCollectionUri, formId, includeDeletedRecords);
-            return formResponseCount;
-        }
-
-        private int GetFormResponseCount(Uri formInfoCollectionUri, string formId, bool includeDeletedRecords)
-        {
+            var rootFormId = GetRootFormId(formId);
+            var rootFormName = GetRootFormName(formId);
+            Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
             try
             {
                 // Set some common query options
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
+                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
                     SELECT
-                    + AssembleSelect(FormInfoCollectionName, "GlobalRecordID")
-                    + FROM + FormInfoCollectionName
-                    + WHERE
-                    + AssembleWhere(FormInfoCollectionName, Expression("FormId", EQ, formId),
-                                                And_Expression("RecStatus", NE, RecordStatus.Deleted, includeDeletedRecords))
+                    + AssembleSelect(rootFormName, "id")
+                    + FROM + rootFormName
+                    + (includeDeletedRecords
+                        ? string.Empty 
+                        : WHERE + AssembleWhere(rootFormName, Expression(RecStatus, NE, RecordStatus.Deleted)))
                     , queryOptions);
                 var formResponseCount = query.AsEnumerable().Count();
                 return formResponseCount;
@@ -1089,35 +593,47 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return 0;
         }
 
-        #region Get Form Response State
+#region Get Response
         /// <summary>
         ///	GetFormResponseState
         /// </summary>
-        /// <param name="responseId"></param>
+        /// <param name="responseContext"></param>
         /// <returns></returns>
-        public FormResponseProperties GetFormResponseState(string responseId)
+        public FormResponseProperties GetResponse(IResponseContext responseContext, bool includeDeleted = false)
         {
-            var formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-            var formResponseProperties = ReadFormResponseState(responseId, formInfoCollectionUri);
+            var formResponseProperties = ReadResponse(responseContext, includeDeleted);
             return formResponseProperties;
         }
 
-        private FormResponseProperties ReadFormResponseState(string responseId, Uri formInfoCollectionUri)
+        private FormResponseProperties ReadResponse(IResponseContext responseContext, bool includeDeleted)
         {
+            FormResponseProperties formResponseProperties = null;
             try
             {
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                FormResponseResource formResponseResource = ReadRootResponseResource(responseContext, includeDeleted);
+                if (formResponseResource != null)
+                {
+                    formResponseProperties = formResponseResource.FormResponseProperties;
+                    if (!includeDeleted && formResponseProperties.RecStatus == RecordStatus.Deleted)
+                    {
+                        formResponseProperties = null;
+                    }
+                    else
+                    {
+                        var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
+                        var responseId = responseContext.ResponseId;
 
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                    SELECT
-                    + AssembleSelect(FormInfoCollectionName, "*")
-                    + FROM + FormInfoCollectionName
-                    + WHERE
-                    + AssembleWhere(FormInfoCollectionName, Expression("GlobalRecordID", EQ, responseId),
-                                                And_Expression("RecStatus", NE, RecordStatus.Deleted))
-                    , queryOptions);
-                var formResponseProperties = (FormResponseProperties)query.AsEnumerable().FirstOrDefault();
+                        if (responseId != rootResponseId)
+                        {
+                            formResponseProperties = formResponseResource.GetChildResponse(responseContext);
+                            if (formResponseProperties != null && !includeDeleted && formResponseProperties.RecStatus == RecordStatus.Deleted)
+                            {
+                                formResponseProperties = null;
+                            }
+                        }
+                    }
+                }
+
                 return formResponseProperties;
             }
             catch (Exception ex)
@@ -1127,87 +643,30 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return null;
         }
-        #endregion GetFormResponseState
 
-        #region Read All Responses By RelateParentResponseId
-        private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(string relateParentId, string formId, int pageSize = 0, int pageNumber = 0)
+        private FormResponseResource ReadRootResponseResource(IResponseContext responseContext, bool includeDeleted)
         {
             try
             {
-                List<FormResponseProperties> globalRecordIdList = new List<FormResponseProperties>();
+                var rootFormName = responseContext.RootFormName ?? this.GetRootFormName(responseContext.RootFormId);
+                var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
 
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 100 };
-                IQueryable<dynamic> query;
+                var collectionAlias = rootFormName;
+                var rootFormCollectionUri = GetCollectionUri(rootFormName);
 
-                Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                bool skipAnd = formId == null;
-                if (relateParentId != null)
-                {
-                    query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                        SELECT
-                        + AssembleSelect(FormInfoCollectionName, "*")
-                        + FROM + FormInfoCollectionName
-                        + WHERE
-                        + AssembleWhere(FormInfoCollectionName, Expression("RelateParentId", EQ, relateParentId),
-                                                               And_Expression("RecStatus", NE, RecordStatus.Deleted),
-                                                               And_Expression("FormId", EQ, formId, skipAnd))
-                        , queryOptions);
-                }
-                else
-                {
-                    query = Client.CreateDocumentQuery(formInfoCollectionUri,
-                       SELECT
-                       + AssembleSelect(FormInfoCollectionName, "*")
-                       + FROM + FormInfoCollectionName
-                       + WHERE
-                       + AssembleWhere(FormInfoCollectionName, Expression("RecStatus", NE, 0),
-                                                            And_Expression("FormId", EQ, formId, skipAnd))
-                       , queryOptions);
-                }
-                if (pageSize == 0 && pageNumber == 0)
-                {
-                    globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
-                }
-                else
-                {
-                    //globalRecordIdList = query.AsEnumerable<dynamic>().Skip(pageNumber).Take(pageSize).OrderByDescending(x => x._ts).Select(x => (FormResponseProperties)x).ToList();
-                    globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
-                    //globalRecordIdList = query.AsEnumerable<dynamic>().Skip(pageNumber).Take(pageSize).Select(x => (FormResponseProperties)x).ToList();
-                }
-                return globalRecordIdList;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
-
-            return null;
-        }
-
-        #endregion
-
-        #region Read List of all GlobalRecordId by FormId, RecStatus
-        private FormResponseProperties ReadFormPropertiesByResponseId(Uri formInfoCollectionUri, string responseId)
-        {
-            // tell server we only want 25 record
-            FeedOptions options = new FeedOptions { MaxItemCount = 25, EnableCrossPartitionQuery = true };
-            try
-            {
                 // Set some common query options
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
-                var query = Client.CreateDocumentQuery(formInfoCollectionUri,
+                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
                     SELECT
-                    + AssembleSelect(FormInfoCollectionName, "*")
-                    + FROM + FormInfoCollectionName
+                    + AssembleSelect(collectionAlias, "*")
+                    + FROM + collectionAlias
                     + WHERE
-                    + AssembleWhere(FormInfoCollectionName, Expression("GlobalRecordID", EQ, responseId),
-                                                            And_Expression("RecStatus", NE, RecordStatus.Deleted))
+                    + AssembleWhere(collectionAlias, Expression("id", EQ, rootResponseId),
+                                                And_Expression(RecStatus, NE, RecordStatus.Deleted, includeDeleted))
                     , queryOptions);
-
-                FormResponseProperties formResponseProperties = query.AsEnumerable().FirstOrDefault();
-                return formResponseProperties;
+                var formResponseResource = (FormResponseResource)query.AsEnumerable().FirstOrDefault();
+                return formResponseResource;
             }
             catch (Exception ex)
             {
@@ -1216,6 +675,110 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return null;
         }
-        #endregion
+
+        #endregion GetResponse
+
+        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, KeyValuePair<FieldDigest, string>[] searchQualifiers = null,  int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
+        {
+            try
+            {
+                var rootFormName = responseContext.RootFormName ?? this.GetRootFormName(responseContext.RootFormId);
+
+                var collectionAlias = rootFormName;
+                var rootFormCollectionUri = GetCollectionUri(rootFormName);
+                var nonWildSearchQualifiers = searchQualifiers != null
+                    ? searchQualifiers.Where(q => !(q.Value.Contains('*') || q.Value.Contains('?'))).ToArray()
+                    : null; 
+                // Set some common query options
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+
+                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
+                    SELECT
+                    + AssembleSelect(collectionAlias, "*")
+                    + FROM + collectionAlias
+                    + WHERE
+                    + (nonWildSearchQualifiers != null && nonWildSearchQualifiers.Length > 0
+                        ? AssembleWhere(collectionAlias, Expression(RecStatus, NE, RecordStatus.Deleted), And_SearchExpressions(nonWildSearchQualifiers))
+                        : AssembleWhere(collectionAlias, Expression(RecStatus, NE, RecordStatus.Deleted)))
+                    , queryOptions);
+
+                var formResponsePropertiesList = query.AsEnumerable().Select(r => ((FormResponseResource)r).FormResponseProperties).ToArray();
+                var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return null;
+        }
+
+        private List<FormResponseProperties> FilterQueryResponseByWildCardQualifiers(IEnumerable<FormResponseProperties> enumerableFormResponseProperties, KeyValuePair<FieldDigest, string>[] searchQualifiers)
+        {
+            if (searchQualifiers != null)
+            {
+                var wildQualifiers = searchQualifiers.Where(search => search.Value.Contains("*") || search.Value.Contains("?")).ToArray();
+                if (wildQualifiers.Length > 0)
+                {
+                    List<FormResponseProperties> filteredFormResponsePropertiesList = new List<FormResponseProperties>();
+
+                    foreach (var formReponseProperties in enumerableFormResponseProperties)
+                    {
+                        bool isQuailfied = true;
+                        foreach (var searchQuery in wildQualifiers)
+                        {
+                            var fieldName = searchQuery.Key.FieldName;
+                            var searchValue = searchQuery.Value;
+                            string responseValue;
+                            bool responseExists = formReponseProperties.ResponseQA.TryGetValue(fieldName, out responseValue);
+                            if (!responseValue.WildcardCompare(searchValue))
+                            {
+                                isQuailfied = false;
+                                break;
+                            }
+                        }
+                        if (isQuailfied) filteredFormResponsePropertiesList.Add(formReponseProperties);
+                    }
+                    return filteredFormResponsePropertiesList;
+                }
+            }
+            return enumerableFormResponseProperties.ToList();
+        }
+
+        #region Read All Child Responses
+        private List<FormResponseProperties> ReadAllChildResponses(IResponseContext responseContext, int pageSize = 0, int pageNumber = 0, bool includeChildrenOfChild = false)
+        {
+            try
+            {
+                List<FormResponseProperties> childResponses = new List<FormResponseProperties>();
+
+                var rootFormName = responseContext.RootFormName;
+                var rootResponseResource = ReadRootResponseResource(responseContext, false);
+                var formResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext);
+
+                if (formResponsePropertiesList != null && formResponsePropertiesList.Count > 0)
+                {
+                    childResponses = formResponsePropertiesList
+                        .OrderByDescending(r => r.LastSaveTime)
+                        .ToList();
+                    if (pageSize > 0)
+                    {
+                        childResponses = childResponses.Skip((pageNumber * pageSize) - pageSize).Take(pageSize).ToList();
+                    }
+                }
+
+                return childResponses;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+            return null;
+        }
+
+#endregion
+
     }
 }

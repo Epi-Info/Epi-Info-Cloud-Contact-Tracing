@@ -49,8 +49,7 @@ namespace Epi.FormMetadata.Extensions
                 }
                 formDigests.Add(formDigest);
 			}
-
-			return formDigests.ToArray();
+            return formDigests.ToArray();
 		}
 
 		public static PageDigest[][] ToPageDigests(this Template projectTemplateMetadata)

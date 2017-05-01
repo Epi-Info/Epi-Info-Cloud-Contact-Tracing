@@ -1,6 +1,7 @@
 ﻿using Epi.Cloud.DataConsistencyServices.Common;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Common.Interfaces;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.Cloud.DataConsistencyServices
 {
@@ -13,9 +14,9 @@ namespace Epi.Cloud.DataConsistencyServices
 			_surveyPersistenceFacade = surveyPersistenceFacade;
 		}
 
-		public FormResponseDetail GetHierarchialResponse(string responseId)
+		public FormResponseDetail GetHierarchialResponse(IResponseContext responceContext)
 		{
-			var hierarchialFormResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(responseId);
+			var hierarchialFormResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(responceContext);
 			return hierarchialFormResponseDetail;
 		}
 	}

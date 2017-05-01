@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common;
+using Epi.PersistenceServices.DocumentDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
-using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
@@ -12,7 +12,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
     {
         private const int HResult_AttachmentAlreadyExists = -2146233088;
 
-        public Attachment CreateAttachment(string documentSelfLink, string attachmentId, string globalRecordId, string surveyData)
+        public Attachment CreateAttachment(string documentSelfLink, string attachmentId, string formName, string responseId, string surveyData)
         {
             int maxRetries = 2;
             TimeSpan interval = TimeSpan.FromMilliseconds(100);
@@ -20,19 +20,19 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             var attachment = retryStrategy.ExecuteWithRetry<Attachment>(() => 
 
-                Client.CreateAttachmentAsync(documentSelfLink, new { id = attachmentId, contentType = "text/plain", media = "link to your media", GlobalRecordID = globalRecordId, SurveyDocument = surveyData }).Result,
+                Client.CreateAttachmentAsync(documentSelfLink, new { id = attachmentId, contentType = "text/plain", media = "link to your media", GlobalRecordID = responseId, SurveyDocument = surveyData }).Result,
                        
-                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateAttachment(ex, consumedRetries, remainingRetries, attachmentId, globalRecordId)
+                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateAttachment(ex, consumedRetries, remainingRetries, attachmentId, formName, responseId)
             );
             return attachment;
         }
 
-        private RetryResponse<Attachment> RetryHandlerForCreateAttachment(Exception ex, int consumedRetries, int remainingRetries, string attachmentId, string globalRecordId)
+        private RetryResponse<Attachment> RetryHandlerForCreateAttachment(Exception ex, int consumedRetries, int remainingRetries, string attachmentId, string formName, string responseId)
         {
             var baseException = ex.GetBaseException();
             if (baseException as DocumentClientException != null && baseException.HResult == HResult_AttachmentAlreadyExists)
             {
-                var existingAttachment = ReadAttachment(globalRecordId, attachmentId);
+                var existingAttachment = ReadAttachment(formName, responseId, attachmentId);
                 DeleteAttachment(existingAttachment);
                 return new RetryResponse<Attachment> { Action = RetryAction.ContinueRetrying };
             }
@@ -43,13 +43,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 
 
-        public Attachment ReadAttachment(string globalRecordId, string attachmentId)
+        public Attachment ReadAttachment(string formName, string responseId, string attachmentId)
         {
 
             Attachment attachment = null;
             try
             {
-                var attachmentUri = UriFactory.CreateAttachmentUri(DatabaseName, FormInfoCollectionName, globalRecordId, attachmentId);
+                var attachmentUri = UriFactory.CreateAttachmentUri(DatabaseName, formName, responseId, attachmentId);
                 attachment = Client.ReadAttachmentAsync(attachmentUri).Result;
                 return attachment;
             }
@@ -59,24 +59,22 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 return attachment;
             }
         }
-
-       
-        public HierarchicalDocumentResponseProperties ConvertAttachmentToHierarchical(Attachment attachmentInfo)
+   
+        public FormResponseResource RetrieveAttachment(Attachment attachmentInfo)
         {
-            var attachmentResponse = attachmentInfo.GetPropertyValue<string>("SurveyDocument") ?? attachmentInfo.GetPropertyValue<string>("SurveyDocumnet");
-
-            HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties = JsonConvert.DeserializeObject<HierarchicalDocumentResponseProperties>(attachmentResponse);
-            if (hierarchicalDocumentResponseProperties != null)
+            try
             {
-                if (hierarchicalDocumentResponseProperties.FormResponseProperties != null && hierarchicalDocumentResponseProperties.PageResponsePropertiesList!=null)
-                {
-                    Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                    //var newformResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, client, formInfoCollectionUri);
-                    return hierarchicalDocumentResponseProperties;
-                }
-                
+                var attachmentResponse = attachmentInfo.GetPropertyValue<string>("SurveyDocument") ?? attachmentInfo.GetPropertyValue<string>("SurveyDocumnet");
+
+                FormResponseResource formResponseResource = attachmentResponse != null
+                    ? JsonConvert.DeserializeObject<FormResponseResource>(attachmentResponse)
+                    : null;
+                return formResponseResource;
             }
-            return null;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
         public bool DeleteSurveyDataInDocumentDB(string globalId, string collectionName, List<int> pageIds)
         {

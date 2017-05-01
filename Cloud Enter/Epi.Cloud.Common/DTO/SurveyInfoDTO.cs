@@ -5,7 +5,7 @@ namespace Epi.Cloud.Common.DTO
 {
     public class SurveyInfoDTO : MetadataAccessor
     {
-        public string ParentId { get; set; }
+        public string ParentFormId { get; set; }
 
         public int DataAccessRuleId { get; set; }
 

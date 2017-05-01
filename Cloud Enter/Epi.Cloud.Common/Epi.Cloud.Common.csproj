@@ -98,7 +98,6 @@
     <Compile Include="DTO\FormsHierarchyDTO.cs" />
     <Compile Include="DTO\PageInfoDTO.cs" />
     <Compile Include="DTO\PassCodeDTO.cs" />
-    <Compile Include="DTO\PreFilledAnswerDTO.cs" />
     <Compile Include="DTO\PublishInfoDTO.cs" />
     <Compile Include="DTO\RelatedFormsInfoDTO.cs" />
     <Compile Include="DTO\ResponseDTO.cs" />
@@ -124,22 +123,13 @@
     <Compile Include="Message.WebEnter\FormsHierarchyResponse.cs" />
     <Compile Include="Message.WebEnter\FormsInfoRequest.cs" />
     <Compile Include="Message.WebEnter\FormsInfoResponse.cs" />
-    <Compile Include="Message.WebEnter\LoginRequest.cs" />
-    <Compile Include="Message.WebEnter\LoginResponse.cs" />
-    <Compile Include="Message.WebEnter\LogoutRequest.cs" />
-    <Compile Include="Message.WebEnter\LogoutResponse.cs" />
     <Compile Include="Message.WebEnter\OrganizationRequest.cs" />
     <Compile Include="Message.WebEnter\OrganizationResponse.cs" />
-    <Compile Include="Message.WebEnter\PreFilledAnswerRequest.cs" />
-    <Compile Include="Message.WebEnter\PreFilledAnswerResponse.cs" />
     <Compile Include="Message.WebEnter\PublishRequest.cs" />
     <Compile Include="Message.WebEnter\PublishResponse.cs" />
     <Compile Include="Message.WebEnter\SurveyAnswerRequest.cs" />
     <Compile Include="Message.WebEnter\SurveyInfoRequest.cs" />
     <Compile Include="Message.WebEnter\SurveyInfoResponse.cs" />
-    <Compile Include="Message.WebEnter\SurveyRequest.cs" />
-    <Compile Include="Message.WebEnter\TokenRequest.cs" />
-    <Compile Include="Message.WebEnter\TokenResponse.cs" />
     <Compile Include="Message.WebEnter\UserAuthenticationRequest.cs" />
     <Compile Include="Message.WebEnter\UserAuthenticationResponse.cs" />
     <Compile Include="Message.WebEnter\UserRequest.cs" />
@@ -151,6 +141,7 @@
     <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RetryStrategies.cs" />
+    <Compile Include="Extensions\ResponseContextExtensions.cs" />
     <Compile Include="Utilities\StringCompressor.cs" />
   </ItemGroup>
   <ItemGroup />

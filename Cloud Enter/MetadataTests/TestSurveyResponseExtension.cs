@@ -36,7 +36,7 @@ namespace MetadataTests
                 DateUpdated = DateTime.UtcNow,
                 IsDraftMode = false,
                 IsLocked = false,
-                ParentRecordId = new Guid("00000000-0000-0000-0000-000000000000"),
+                ParentResponseId = new Guid("00000000-0000-0000-0000-000000000000"),
                 RelateParentId = new Guid("00000000-0000-0000-0000-000000000000"),
                 DateCompleted=null,
                 DateCreated=DateTime.UtcNow
@@ -48,11 +48,11 @@ namespace MetadataTests
             {
                 SurveyId = "2e1d01d4-f50d-4f23-888b-cd4b7fc9884b",
                 ResponseId = "66ddfe0b-1a0b-4497-98c1-81ca51046b5a",                
+                RootResponseId = "66ddfe0b-1a0b-4497-98c1-81ca51046b5a",
                 DateUpdated = DateTime.UtcNow,
                 IsDraftMode = false,
                 IsLocked = false,
-                ParentRecordId = "00000000-0000-0000-0000-000000000000",
-                RelateParentId = "00000000-0000-0000-0000-000000000000",
+                ParentResponseId = "00000000-0000-0000-0000-000000000000",
                 DateCompleted = null,
                 DateCreated = DateTime.UtcNow,
                 ViewId=1

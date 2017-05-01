@@ -69,7 +69,7 @@ namespace Epi.Cloud.MVC.Extensions
                 IsSqlProject = formInfoDTO.IsSQLProject,
                 DBConnectionString = null,
 
-                ParentId = null
+                ParentFormId = null
             };
         }
 
@@ -103,7 +103,7 @@ namespace Epi.Cloud.MVC.Extensions
                 IsSqlProject = formInfoDTO.IsSQLProject,
                 DBConnectionString = null,
 
-                ParentId = null
+                ParentFormId = null
             };
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Epi.Common.Core.Interfaces;
 
 namespace Epi.DataPersistence.DataStructures
 {
@@ -18,7 +19,7 @@ namespace Epi.DataPersistence.DataStructures
         public Guid ResponseId { get; set; }
         public Guid SurveyId { get; set; }
         public int PageId { get; set; }
-        public Guid ParentRecordId { get; set; }
+        public Guid ParentResponseId { get; set; }
         public Guid RelateParentId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

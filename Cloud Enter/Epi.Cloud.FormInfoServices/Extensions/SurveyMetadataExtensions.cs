@@ -28,7 +28,7 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
                 surveyMetadata.UserPublishKey = surveyMetadata.UserPublishKey;
             }
             surveyInfoBO.SurveyType = surveyMetadata.SurveyTypeId;
-            surveyInfoBO.ParentId = surveyMetadata.ParentId.ToString(); ;
+            surveyInfoBO.ParentFormId = surveyMetadata.ParentId.ToString(); ;
             if (surveyMetadata.ViewId != null)
             {
                 surveyInfoBO.ViewId = (int)surveyMetadata.ViewId;
@@ -59,7 +59,7 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             formInfoBO.OrganizationId = surveyMetadata.OrganizationId;
             formInfoBO.IsDraftMode = surveyMetadata.IsDraftMode;
             formInfoBO.UserId = surveyMetadata.OwnerId;
-            formInfoBO.ParentId = (surveyMetadata.ParentId != null) ? surveyMetadata.ParentId.ToString() : "";
+            formInfoBO.ParentFormId = (surveyMetadata.ParentId != null) ? surveyMetadata.ParentId.ToString() : "";
 
             return formInfoBO;
         }
@@ -87,7 +87,7 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             formInfoBO.OwnerFName = UserEntity.FirstName;
             formInfoBO.OwnerLName = UserEntity.LastName;
 
-            formInfoBO.ParentId = surveyMetadata.ParentId.ToString();
+            formInfoBO.ParentFormId = surveyMetadata.ParentId.ToString();
 
             return formInfoBO;
         }

@@ -2,6 +2,7 @@
 using System.Linq;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
+using Epi.Common.Core.DataStructures;
 
 namespace Epi.Cloud.Common.Extensions
 {
@@ -41,26 +42,30 @@ namespace Epi.Cloud.Common.Extensions
 
         public static SurveyInfoDTO ToSurveyInfoDTO(this SurveyInfoBO surveyInfoBO)
         {
-            return new Epi.Cloud.Common.DTO.SurveyInfoDTO
+            return new SurveyInfoDTO
             {
-                SurveyId = surveyInfoBO.SurveyId,
-                SurveyNumber = surveyInfoBO.SurveyNumber,
-                SurveyName = surveyInfoBO.SurveyName,
-                OrganizationName = surveyInfoBO.OrganizationName,
+                ClosingDate = surveyInfoBO.ClosingDate,
+                DataAccessRuleId = surveyInfoBO.DataAccessRuleId,
+                DBConnectionString = surveyInfoBO.DBConnectionString,
                 DepartmentName = surveyInfoBO.DepartmentName,
-                IntroductionText = surveyInfoBO.IntroductionText,
                 ExitText = surveyInfoBO.ExitText,
+                IntroductionText = surveyInfoBO.IntroductionText,
+                IsDraftMode = surveyInfoBO.IsDraftMode,
                 IsShareable = surveyInfoBO.IsShareable,
                 IsShared = surveyInfoBO.IsShared,
                 IsSqlProject = surveyInfoBO.IsSqlProject,
-                ClosingDate = surveyInfoBO.ClosingDate,
-                UserPublishKey = surveyInfoBO.UserPublishKey,
-                IsDraftMode = surveyInfoBO.IsDraftMode,
-                StartDate = surveyInfoBO.StartDate,
-                ViewId = surveyInfoBO.ViewId,
+                OrganizationKey = surveyInfoBO.OrganizationKey,
+                OrganizationName = surveyInfoBO.OrganizationName,
                 OwnerId = surveyInfoBO.OwnerId,
-                ParentId = surveyInfoBO.ParentId,
-                HasDraftModeData = surveyInfoBO.HasDraftModeData
+                ParentFormId = surveyInfoBO.ParentFormId,
+                StartDate = surveyInfoBO.StartDate,
+                SurveyId = surveyInfoBO.SurveyId,
+                SurveyName = surveyInfoBO.SurveyName,
+                SurveyNumber = surveyInfoBO.SurveyNumber,
+                SurveyType = surveyInfoBO.SurveyType,
+                UserPublishKey = surveyInfoBO.UserPublishKey,
+                ViewId = surveyInfoBO.ViewId,
+                HasDraftModeData = surveyInfoBO.HasDraftModeData,
             };
         }
 
@@ -69,5 +74,12 @@ namespace Epi.Cloud.Common.Extensions
             return surveyInfoBOList.Select(surveyInfoBO => surveyInfoBO.ToSurveyInfoDTO()).ToList();
         }
 
+        //public static ResponseContext ToResponseContext(this SurveyInfoBO surveyInfoBO, ResponseContext mergeInto = null)
+        //{
+        //    var responseContext = mergeInto != null ? mergeInto : new ResponseContext();
+        //    responseContext.FormId = surveyInfoBO.SurveyId;
+        //    responseContext.ParentFormId = surveyInfoBO.ParentFormId;
+        //    return responseContext.ResolveMetadataDependencies();
+        //}
     }
 }

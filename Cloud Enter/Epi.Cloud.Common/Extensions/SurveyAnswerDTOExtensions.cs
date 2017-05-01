@@ -3,6 +3,9 @@ using System.Linq;
 using Epi.DataPersistence.Constants;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
+using Epi.Common.Core.DataStructures;
+using Epi.Cloud.Common.Metadata;
+using System;
 
 namespace Epi.Cloud.Common.Extensions
 {
@@ -13,15 +16,18 @@ namespace Epi.Cloud.Common.Extensions
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             surveyResponseBO.SurveyId = surveyAnswerDTO.SurveyId;
             surveyResponseBO.ResponseId = surveyAnswerDTO.ResponseId;
+            surveyResponseBO.ParentResponseId = surveyAnswerDTO.ParentResponseId;
             surveyResponseBO.Status = surveyAnswerDTO.Status;
             surveyResponseBO.ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange;
             surveyResponseBO.UserPublishKey = surveyAnswerDTO.UserPublishKey;
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
+            surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
 
             surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
             surveyResponseBO.ResponseDetail.PageIds = surveyResponseBO.ResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
+
 
             if (userId.HasValue) surveyResponseBO.UserId = userId.Value;
             return surveyResponseBO;
@@ -31,6 +37,33 @@ namespace Epi.Cloud.Common.Extensions
         {
             List<SurveyResponseBO> result = surveyAnswerDTOList.Select(dto => dto.ToSurveyResponseBO(userId)).ToList();
             return result;
+        }
+
+
+        public static ResponseContext ToResponseContext(this SurveyAnswerDTO surveyAnswerDTO)
+        {
+            MetadataAccessor metadataAccessor = new MetadataAccessor();
+            var responseContext = new ResponseContext
+            {
+                ResponseId = surveyAnswerDTO.ResponseId,
+                ParentResponseId = surveyAnswerDTO.ParentResponseId,
+                RootResponseId = surveyAnswerDTO.RootResponseId,
+                FormId = surveyAnswerDTO.SurveyId,
+                FormName = metadataAccessor.GetFormName(surveyAnswerDTO.SurveyId),
+                ParentFormId = metadataAccessor.GetParentFormId(surveyAnswerDTO.SurveyId),
+                ParentFormName = metadataAccessor.GetParentFormName(surveyAnswerDTO.SurveyId),
+                RootFormId = metadataAccessor.GetRootFormId(surveyAnswerDTO.SurveyId),
+                RootFormName = metadataAccessor.GetRootFormName(surveyAnswerDTO.SurveyId),
+                IsNewRecord = surveyAnswerDTO.IsNewRecord,
+                UserId = surveyAnswerDTO.LoggedInUserId,
+                UserName = surveyAnswerDTO.UserName
+            }.ResolveMetadataDependencies() as ResponseContext;
+
+            //if (responseContext.FormId != metadataAccessor.GetFormIdByViewId(surveyAnswerDTO.ViewId))
+            //    throw new ArgumentException("ViewId not in agreement with FormId", string.Format("FormId={0}, ViewId=>{1}",
+            //        responseContext.FormId, metadataAccessor.GetFormIdByViewId(surveyAnswerDTO.ViewId)));
+
+            return responseContext;
         }
     }
 }

@@ -309,6 +309,18 @@ namespace MvcDynamicForms
         /// Response Id is saved with the form object to facilitate generating url that can be sent by e-mail or copy text, so a user can retrieve the unfinished survey
         /// </summary>
         public string ResponseId { get; set; }
+        public string FormName { get; set; }
+        public string FormId { get; set; }
+
+        public string ParentResponseId { get; set; }
+        public string ParentFormName { get; set; }
+        public string ParentFormId { get; set; }
+
+        public string RootResponseId { get; set; }
+        public string RootFormName { get; set; }
+        public string RootFormId { get; set; }
+
+
         public string FormJavaScript { get; set; }
         public string IsDraftModeStyleClass { get; set; } = string.Empty;
         public bool IsAndroid { get; set; }

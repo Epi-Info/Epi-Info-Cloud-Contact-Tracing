@@ -36,7 +36,7 @@ namespace Epi.Web.MVC.Utility
             return GetForm(surveyInfo, pageNumber, surveyAnswer, SurveyAnswerList, SurveyInfoList, isAndroid);
         }
         public virtual Form GetForm(SurveyInfoDTO surveyInfo, int pageNumber, SurveyAnswerDTO surveyAnswer, List<SurveyAnswerDTO> surveyAnswerList, List<SurveyInfoDTO> surveyInfoList, bool isAndroid)
-        {
+         {
             // Save last values for subsequent calls from ValidateAll in SurveyController
             SurveyAnswerList = surveyAnswerList;
             SurveyInfoList = surveyInfoList;
@@ -59,7 +59,18 @@ namespace Epi.Web.MVC.Utility
             var form = new Form();
             form.PageId = pageId.ToString();
             form.IsAndroid = isAndroid;
+
             form.ResponseId = surveyAnswer.ResponseId;
+            form.FormName = surveyAnswer.FormName;
+            form.FormId = surveyAnswer.FormId;
+
+            form.ParentResponseId = surveyAnswer.ParentResponseId;
+            form.ParentFormName = surveyAnswer.ParentFormName;
+            form.ParentFormId = surveyAnswer.ParentFormId;
+
+            form.RootResponseId = surveyAnswer.RootResponseId;
+            form.RootFormName = surveyAnswer.RootFormName;
+            form.RootFormId = surveyAnswer.RootFormId;
 
             form.SurveyInfo = surveyInfo;
 

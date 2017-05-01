@@ -13,6 +13,8 @@ using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MetadataServices.Common.Extensions;
 using Epi.Cloud.MVC.Extensions;
+using Epi.Common.Core.DataStructures;
+using Epi.Common.Core.Interfaces;
 using Epi.Common.Exception;
 using Epi.DataPersistence.Constants;
 
@@ -85,15 +87,11 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
                 Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
 
+                var responseContext = request.ResponseContext;
                 var criteria = request.Criteria as SurveyAnswerCriteria;
-                string sort = criteria.SortExpression;
-
-                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoById(request.Criteria.SurveyId);
-                List<SurveyInfoBO> surveyInfoBOList = new List<SurveyInfoBO>();
-                surveyInfoBOList.Add(surveyInfoBO);
-
-                List<SurveyResponseBO> surveyResponseList = surveyResponseProvider.GetSurveyResponseById(request.Criteria, surveyInfoBOList);
+                List<SurveyResponseBO> surveyResponseList = surveyResponseProvider.GetSurveyResponseById(responseContext, request.Criteria);
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoById(request.FormId ?? request.RootFormId);
                 result.FormInfo = surveyInfoBO.ToFormInfoDTO();
 
                 return result;
@@ -117,11 +115,12 @@ namespace Epi.Cloud.DataEntryServices
         {
             try
             {
-                SurveyAnswerResponse result = new SurveyAnswerResponse(request.RequestId);
+                SurveyAnswerResponse result = new SurveyAnswerResponse();
 
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-                SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(request.Criteria);
+                var responseContext = request.ResponseContext;
+                SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(responseContext);
                 SurveyAnswerDTO surveyAnswerDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerDTO() : null;
                 result.SurveyResponseList = new List<SurveyAnswerDTO>();
                 if (surveyAnswerDTO != null) result.SurveyResponseList.Add(surveyAnswerDTO);
@@ -142,8 +141,12 @@ namespace Epi.Cloud.DataEntryServices
         {
             SurveyAnswerResponse response = new SurveyAnswerResponse(surveyAnswerRequest.RequestId);
 
+            var responseContext = surveyAnswerRequest.ResponseContext;
+
             // Transform SurveyResponse data transfer object to SurveyResponse business object
             SurveyResponseBO surveyResponseBO = surveyAnswerRequest.SurveyAnswerList[0].ToSurveyResponseBO();
+
+            surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
 
             surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
             surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
@@ -170,10 +173,16 @@ namespace Epi.Cloud.DataEntryServices
             }
             else if (surveyAnswerRequest.Action.Equals(RequestAction.CreateMulti, StringComparison.OrdinalIgnoreCase))
             {
-                if (surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId != null)
+                if (surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId != null)
                 {
 
-                    List<SurveyResponseBO> _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
+                    var parentResponseId = surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId;
+                    var viewId = surveyAnswerRequest.SurveyAnswerList[0].ViewId;
+                    var metadataAccessor = new MetadataAccessor();
+                    var formId = metadataAccessor.GetFormIdByViewId(viewId);
+                    var formName = metadataAccessor.GetFormName(formId);
+                    responseContext = surveyAnswerRequest.SurveyAnswerList[0].Clone();
+                    List<SurveyResponseBO> surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(responseContext); //formId, parentResponseId);
 
                     //if (!surveyAnswerRequest.SurveyAnswerList[0].RecoverLastRecordVersion)
                     //// if we are not keeping the version of xml found currently in the SurveyResponse table (meaning getting the original copy form the ResponseXml table)
@@ -204,7 +213,7 @@ namespace Epi.Cloud.DataEntryServices
                     //        }
                     //    }
 
-                    //    _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentRecordId);
+                    //    _surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId);
                     //    // Inserting a temp xml to the ResponseXml table
                     //    response.SurveyResponseList = _surveyResponseProvider.InsertSurveyResponse(_surveyResponseBOList, surveyAnswerRequest.Criteria.UserId).ToSurveyAnswerDTOList();
                     //}
@@ -212,7 +221,7 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         // load the version curently found the SurveyResponse table 
 
-                        response.SurveyResponseList = _surveyResponseBOList.ToSurveyAnswerDTOList();
+                        response.SurveyResponseList = surveyResponseBOList.ToSurveyAnswerDTOList();
                     }
                 }
             }
@@ -226,7 +235,7 @@ namespace Epi.Cloud.DataEntryServices
             {
                 SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildId(surveyResponseBO.SurveyId);
 
-                _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].RelateParentId);
+                _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId);
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
 
                 List<SurveyResponseBO> List = new List<SurveyResponseBO>();
@@ -245,7 +254,7 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         try
                         {
-                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
+                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
                         }
                         catch
                         {
@@ -266,7 +275,7 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         try
                         {
-                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Restore, RecordStatusChangeReason.Restore);
+                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.Restore, RecordStatusChangeReason.Restore);
                         }
                         catch
                         {
@@ -287,7 +296,7 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         try
                         {
-                            _surveyResponseProvider.UpdateRecordStatus(item.ResponseId, RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
+                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.Saved, RecordStatusChangeReason.DeleteResponse);
                         }
                         catch
                         {
@@ -311,9 +320,11 @@ namespace Epi.Cloud.DataEntryServices
             {
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-                List<SurveyResponseBO> surveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(surveyAnswerRequest.Criteria);
+                var responseContext = surveyAnswerRequest.ResponseContext;
+                List<SurveyResponseBO> surveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(responseContext, surveyAnswerRequest.Criteria);
                 foreach (var surveyResponseBO in surveyResponseBOList)
                 {
+                    surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
                     surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
                     surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
@@ -385,7 +396,7 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
                 SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
-                List<SurveyResponseBO> surveyResponseBo = surveyResponseImplementation.GetFormResponseListById(criteria);
+                List<SurveyResponseBO> surveyResponseBo = surveyResponseImplementation.GetFormResponseListById(surveyAnswerRequest.ResponseContext, criteria);
 
                 //Query The number of records
                 result.NumberOfResponses = surveyResponseBo.Count;
@@ -420,9 +431,9 @@ namespace Epi.Cloud.DataEntryServices
         {
             try
             {
-                var rootId = formsHierarchyRequest.SurveyInfo.FormId;
-                var metadatAccessor = new MetadataAccessor(rootId);
-                var viewId = metadatAccessor.GetCurrentFormDigest().ViewId;
+                var rootFormId = formsHierarchyRequest.SurveyInfo.FormId;
+                var metadatAccessor = new MetadataAccessor();
+                var viewId = metadatAccessor.GetFormDigest(rootFormId).ViewId;
                 var formDigests = metadatAccessor.FormDigests;
                 var formInfoDTO = formsHierarchyRequest.SurveyInfo;
                 var surveyInfoBO = formInfoDTO.ToSurveyInfoBO(viewId);
@@ -433,13 +444,19 @@ namespace Epi.Cloud.DataEntryServices
                 List<SurveyResponseBO> allResponsesIDsList = new List<SurveyResponseBO>();
 
                 //1- Get All form  ID's
-                List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootId(rootId);
+                List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootId(rootFormId);
 
                 //2- Get all Responses ID's
-                Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProviderImplementation1 = new SurveyResponseProvider(_surveyResponseDao);
+                Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
                 if (!string.IsNullOrEmpty(formsHierarchyRequest.SurveyResponseInfo.ResponseId))
                 {
-                    allResponsesIDsList = surveyResponseProviderImplementation1.GetResponsesHierarchyIdsByRootId(formsHierarchyRequest.SurveyResponseInfo.ResponseId);
+                    var responseId = formsHierarchyRequest.SurveyResponseInfo.ResponseId;
+                    var responseContext = new ResponseContext
+                    {
+                        RootFormId = rootFormId, FormId = rootFormId,
+                        RootResponseId = responseId, ResponseId = responseId
+                    }.ResolveMetadataDependencies();
+                    allResponsesIDsList = surveyResponseProvider.GetResponsesHierarchyIdsByRootId(responseContext); //rootFormId, formsHierarchyRequest.SurveyResponseInfo.ResponseId);
                 }
                 else
                 {
@@ -518,11 +535,11 @@ namespace Epi.Cloud.DataEntryServices
             return result;
         }
 
-        public bool HasResponse(string childFormId, string parentResponseId)
+        public bool HasResponse(SurveyAnswerRequest surveyAnswerRequest)
         {
             try
             {
-                var hasResponse = _surveyResponseProvider.HasResponse(childFormId, parentResponseId);
+                var hasResponse = _surveyResponseProvider.HasResponse(surveyAnswerRequest.ResponseContext);
                 return hasResponse;
             }
             catch (Exception ex)

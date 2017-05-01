@@ -20,9 +20,30 @@ using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+#if !DocDbV2
+    public partial class SurveyResponseCRUD : 
     {
-        #region UpdateAttachment
+        private string DatabaseName;
+        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private const string FormInfoCollectionName = "FormInfo";
+
+        public SurveyResponseCRUD()
+        {
+            Initialize();
+        }
+
+        private DocumentClient Client
+        {
+            get { return _client ?? GetOrCreateClient(); }
+        }
+
+        private Microsoft.Azure.Documents.Database ResponseDatabase
+        {
+            get { return _database ?? GetOrCreateDatabase(DatabaseName); }
+        }
+
+
+#region UpdateAttachment
         public async Task<bool> UpdateAttachment(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
         {
             newResponseStatus = responseStatus;
@@ -64,11 +85,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return isSuccessful;
         }
 
-        #endregion
+#endregion
 
 
 
-        #region NewRecordDontSave
+#region NewRecordDontSave
         public bool DeleteAllSurveyData(string responseId, int responseStatus, int userId = 0, int newResponseStatus = 0)
         {
             newResponseStatus = responseStatus;
@@ -82,12 +103,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     if (newResponseStatus != existingFormResponseProperties.RecStatus)
                     {
                         //Read all survey info by responseId
-                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
+                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.ResponseId, true);
 
                         //Delete FormInfo
                         if (hierarchialResponse.FormResponseProperties != null)
                         {
-                            if (hierarchialResponse.FormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
+                            if (hierarchialResponse.FormResponseProperties.ResponseId == existingFormResponseProperties.ResponseId)
                             {
                                 existingFormResponseProperties.RecStatus = RecordStatus.Deleted;
                                 //var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, existingFormResponseProperties.GlobalRecordID);
@@ -134,9 +155,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return isSuccessful;
         }
 
-        #endregion
+#endregion
 
-        #region Restore Child of Child
+#region Restore Child of Child
         public bool RestoreAttachment(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
             FormResponseProperties existingFormResponseProperties = null;
@@ -145,12 +166,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
             if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList.Count != 0)
             {
                 Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
+                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.ResponseId, formInfoCollectionUri);
 
                 //Restore Attachment to FormInfo
                 if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
                 {
-                    if (existingFormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
+                    if (existingFormResponseProperties.ResponseId == existingFormResponseProperties.ResponseId)
                     {
                         restoreStatus = RestoreChild(hierarchicalDocumentResponseProperties);
                     }
@@ -166,12 +187,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
             if (hierarchicalDocumentResponseProperties.PageResponsePropertiesList.Count != 0)
             {
                 Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
-                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri);
+                existingFormResponseProperties = ReadFormInfoByResponseId(hierarchicalDocumentResponseProperties.FormResponseProperties.ResponseId, formInfoCollectionUri);
 
                 //Restore Attachment to FormInfo
                 if (hierarchicalDocumentResponseProperties.FormResponseProperties != null)
                 {
-                    if (existingFormResponseProperties.GlobalRecordID == existingFormResponseProperties.GlobalRecordID)
+                    if (existingFormResponseProperties.ResponseId == existingFormResponseProperties.ResponseId)
                     {
                         existingFormResponseProperties.RecStatus = RecordStatus.Saved;
                         //var formResponse = Client.UpsertDocumentAsync(formInfoCollectionUri, hierarchicalDocumentResponseProperties.FormResponseProperties).Result;
@@ -206,9 +227,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return true;
         }
 
-        #endregion
+#endregion
 
-        #region Delete Child of Child
+#region Delete Child of Child
         public void DeleteChildOfChilds(HierarchicalDocumentResponseProperties hierarchicalDocumentResponseProperties)
         {
             //Delete FormInfo   
@@ -221,7 +242,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     var collectionName = child.FormResponseProperties.FormName + _page;
                     try
                     {
-                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, child.FormResponseProperties.GlobalRecordID);
+                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName, child.FormResponseProperties.ResponseId);
                         var response = Client.DeleteDocumentAsync(docLink).Result;
                     }
                     catch (Exception ex)
@@ -232,7 +253,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     collectionName = child.FormResponseProperties.FormName + _page;
                     try
                     {
-                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, child.FormResponseProperties.GlobalRecordID);
+                        var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, FormInfoCollectionName, child.FormResponseProperties.ResponseId);
                         var response = Client.DeleteDocumentAsync(docLink).Result;
                     }
                     catch (Exception ex)
@@ -249,11 +270,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-        #endregion
+#endregion
 
         
 
-        #region Save Page Response Properties Async
+#region Save Page Response Properties Async
         /// <summary>
         /// Created instance of DocumentClient and Getting reference to database and Document collections
         /// </summary>
@@ -270,7 +291,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     int numberOfPagesInitiated = 0;
                     int numberOfPagesCompleted = 0;
 
-                    var globalRecordId = documentResponseProperties.FormResponseProperties.GlobalRecordID;
+                    var globalRecordId = documentResponseProperties.FormResponseProperties.ResponseId;
 
                     foreach (var newPageResponseProperties in documentResponseProperties.PageResponsePropertiesList)
                     {
@@ -347,9 +368,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return await Task.FromResult(tasksRanToCompletion);
         }
 
-        #endregion
+#endregion
 
-        #region Save Form Response Properties Async
+#region Save Form Response Properties Async
 
         /// <summary>
         /// This method help to save form properties 
@@ -366,11 +387,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 var formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
 
                 //Verify Response Id is exist or Not
-                var existingFormResponseProperties = ReadFormInfoByResponseId(formResponseProperties.GlobalRecordID, formInfoCollectionUri);
+                var existingFormResponseProperties = ReadFormInfoByResponseId(formResponseProperties.ResponseId, formInfoCollectionUri);
                 if (existingFormResponseProperties == null)
                 {
                     formResponseProperties.FirstSaveTime = DateTime.UtcNow;
-                    formResponseProperties.Id = formResponseProperties.GlobalRecordID;
+                    formResponseProperties.Id = formResponseProperties.ResponseId;
                     formResponseProperties.PageIds = formResponseProperties.PageIds ?? new List<int>();
                     result = await Client.UpsertDocumentAsync(formInfoCollectionUri, formResponseProperties).ConfigureAwait(false);
                 }
@@ -381,14 +402,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     if (existingFormResponseProperties.IsRootForm && existingFormResponseProperties.RecStatus == RecordStatus.Saved && formResponseProperties.RecStatus == RecordStatus.InProcess)
                     {
                         Attachment attachment = null;
-                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.GlobalRecordID, true);
+                        var hierarchialResponse = GetHierarchialResponsesByResponseId(existingFormResponseProperties.ResponseId, true);
                         var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
-                        attachment = CreateAttachment(existingFormResponseProperties.SelfLink, AttachmentId, existingFormResponseProperties.GlobalRecordID, hierarchialResponseJson);
+                        attachment = CreateAttachment(existingFormResponseProperties.SelfLink, AttachmentId, existingFormResponseProperties.ResponseId, hierarchialResponseJson);
 
                     }
 
                     var pageIdsUpdated = false;
-                    formResponseProperties.ParentResponseId = existingFormResponseProperties.ParentResponseId;
+                    formResponseProperties.RelateParentResponseId = existingFormResponseProperties.RelateParentResponseId;
                     if (formResponseProperties.PageIds != null && formResponseProperties.PageIds.Count > 0)
                     {
                         var newPageIds = formResponseProperties.PageIds.ToList();
@@ -425,9 +446,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return result;
         }
-        #endregion
+#endregion
 
-        #region Get PageResponseProperties By ResponseId, FormId, and PageId
+#region Get PageResponseProperties By ResponseId, FormId, and PageId
         public PageResponseProperties GetPageResponsePropertiesByResponseId(string responseId, string formName, int pageId)
         {
             PageResponseProperties pageResponseProperties = null;
@@ -448,10 +469,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
 
-        #endregion Get PageResponseProperties By ResponseId, FormId, and PageId
+#endregion Get PageResponseProperties By ResponseId, FormId, and PageId
 
 
-        #region Get All Responses With FieldNames 
+#region Get All Responses With FieldNames 
         public List<SurveyResponse> GetAllResponsesWithCriteria(IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string relateParentId = null, int pageSize = 0, int pageNumber = 0)
         {
 
@@ -503,7 +524,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
                 if (parentGlobalIdList != null)
                 {
-                    parentGlobalRecordIds = "'" + string.Join("','", parentGlobalIdList.Select(p => p.GlobalRecordID)) + "'";
+                    parentGlobalRecordIds = "'" + string.Join("','", parentGlobalIdList.Select(p => p.ResponseId)) + "'";
                 }
 
                 // Query DocumentDB one page at a time. Only query pages that contain a specified field.
@@ -642,13 +663,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             return surveyList;
         }
-        #endregion Get All Responses With FieldNames
+#endregion Get All Responses With FieldNames
 
 
-        #region Get form response properties by ResponseId
+#region Get form response properties by ResponseId
         public DocumentResponseProperties GetFormResponsePropertiesByResponseId(string responseId)
         {
-            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
+            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { ResponseId = responseId };
 
             //Read all global record Id
             Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
@@ -656,9 +677,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             documentResponseProperties.FormResponseProperties = formResponseProperties;
             return documentResponseProperties;
         }
-        #endregion Get form response properties by ResponseId
+#endregion Get form response properties by ResponseId
 
-        #region Get all page responses by ResponseId
+#region Get all page responses by ResponseId
         /// <summary>
         /// GetAllPageResponsesByResponseId
         /// </summary>
@@ -666,7 +687,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <returns></returns>
         public DocumentResponseProperties GetAllPageResponsesByResponseId(string responseId)
         {
-            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { GlobalRecordID = responseId };
+            DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties { ResponseId = responseId };
             //Read all global record Id
             Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
             var formResponseProperties = ReadFormPropertiesByResponseId(formInfoCollectionUri, responseId);
@@ -687,9 +708,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             return documentResponseProperties;
         }
-        #endregion Get all page responses by ResponseId
+#endregion Get all page responses by ResponseId
 
-        #region Get hierarchial responses by ResponseId
+#region Get hierarchial responses by ResponseId
         /// <summary>
         /// GetHierarchialResponsesByResponseId
         /// </summary>
@@ -722,7 +743,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 childResponse.PageResponsePropertiesList = documentResponseProperties.PageResponsePropertiesList;
                 childResponseList.Add(childResponse);
 
-                childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.GlobalRecordID, formInfoCollectionUri, includeDeletedRecords);
+                childResponse.ChildResponseList = GetChildResponses(documentResponseProperties.FormResponseProperties.ResponseId, formInfoCollectionUri, includeDeletedRecords);
             }
             return childResponseList;
         }
@@ -764,7 +785,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private List<PageResponseProperties> ReadAllPages(FormResponseProperties formResponseProperties)
         {
             List<PageResponseProperties> pageResponsePropertiesList = new List<PageResponseProperties>();
-            var responseId = formResponseProperties.GlobalRecordID;
+            var responseId = formResponseProperties.ResponseId;
             foreach (var pageId in formResponseProperties.PageIds)
             {
                 if (pageId != 0)
@@ -830,7 +851,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
 
-        #endregion Get hierarchial responses by ResponseId
+#endregion Get hierarchial responses by ResponseId
 
         private List<SurveyResponse> GetAllDataByChildFormIdByRelateId(string formId, string relateParentId, Dictionary<int, FieldDigest> fieldDigestList, string collectionName)
         {
@@ -843,7 +864,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 Dictionary<string, SurveyResponse> responsesByGlobalRecordId = new Dictionary<string, SurveyResponse>();
 
                 List<FormResponseProperties> childResponses = ReadAllResponsesByRelateParentResponseId(relateParentId, formId);
-                string childCSVResponseIds = childResponses.Count > 0 ? ("'" + string.Join("','", childResponses.Select(r => r.GlobalRecordID)) + "'") : string.Empty;
+                string childCSVResponseIds = childResponses.Count > 0 ? ("'" + string.Join("','", childResponses.Select(r => r.ResponseId)) + "'") : string.Empty;
 
                 // Query DocumentDB one page at a time. Only query pages that contain a specified field.
                 var pageGroups = fieldDigestList.Values.GroupBy(d => d.PageId);
@@ -921,7 +942,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return surveyList;
         }
 
-        #region Does response exist
+#region Does response exist
         /// <summary>
         /// 
         /// </summary>
@@ -963,10 +984,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return 0;
         }
-        #endregion Does response exist
+#endregion Does response exist
 
 
-        #region Do children exist for responseId
+#region Do children exist for responseId
         /// <summary>
         /// DoChildrenExistForResponseId
         /// </summary>
@@ -1006,7 +1027,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return 0;
         }
-        #endregion Do children exist for responseId
+#endregion Do children exist for responseId
 
         private FormResponseProperties ReadFormInfoByResponseId(string responseId, Uri formInfoCollectionUri)
         {
@@ -1069,7 +1090,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return 0;
         }
 
-        #region Get Form Response State
+#region Get Form Response State
         /// <summary>
         ///	GetFormResponseState
         /// </summary>
@@ -1107,9 +1128,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return null;
         }
-        #endregion GetFormResponseState
+#endregion GetFormResponseState
 
-        #region Read All Responses By RelateParentResponseId
+#region Read All Responses By RelateParentResponseId
         private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(string relateParentId, string formId, int pageSize = 0, int pageNumber = 0)
         {
             try
@@ -1165,9 +1186,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
 
-        #endregion
+#endregion
 
-        #region Read List of all GlobalRecordId by FormId, RecStatus
+#region Read List of all GlobalRecordId by FormId, RecStatus
         private FormResponseProperties ReadFormPropertiesByResponseId(Uri formInfoCollectionUri, string responseId)
         {
             // tell server we only want 25 record
@@ -1196,6 +1217,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return null;
         }
-        #endregion
+#endregion
     }
+#endif
 }
