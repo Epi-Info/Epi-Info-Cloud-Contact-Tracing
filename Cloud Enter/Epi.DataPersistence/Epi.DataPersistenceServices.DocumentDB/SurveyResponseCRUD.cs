@@ -1,14 +1,7 @@
 ﻿#define ConfigureIndexing
 
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Epi.Common.Utilities;
 using Epi.Cloud.Common.Constants;
+using Epi.Common.Utilities;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
@@ -16,6 +9,13 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using static Epi.PersistenceServices.DocumentDB.DataStructures;
 
 namespace Epi.DataPersistenceServices.DocumentDB
@@ -271,7 +271,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         #endregion
 
-        
+
 
         #region Save Page Response Properties Async
         /// <summary>
@@ -1034,6 +1034,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             try
             {
+                // var surveyData = GetAllRecordsBySurveyId("FormInfo","GetAllRecordsBySurveyID", responseId);
                 // Set some common query options
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
 
@@ -1132,16 +1133,31 @@ namespace Epi.DataPersistenceServices.DocumentDB
         #region Read All Responses By RelateParentResponseId
         private List<FormResponseProperties> ReadAllResponsesByRelateParentResponseId(string relateParentId, string formId, int pageSize = 0, int pageNumber = 0)
         {
+
+
             try
             {
                 List<FormResponseProperties> globalRecordIdList = new List<FormResponseProperties>();
 
                 // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 100 };
-                IQueryable<dynamic> query;
+                FeedOptions queryOptions = new FeedOptions
+                {
+                    MaxItemCount = 20
+                };
+
 
                 Uri formInfoCollectionUri = GetCollectionUri(FormInfoCollectionName);
                 bool skipAnd = formId == null;
+
+                string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, "FormInfo", "OrderBy").ToString();
+
+                //globalRecordIdList = GetAllRecordsBySurveyId("FormInfo", "OrderBy", relateParentId, formId, RecordStatus.Deleted.ToString());
+
+
+
+                IQueryable<dynamic> query;
+
+
                 if (relateParentId != null)
                 {
                     query = Client.CreateDocumentQuery(formInfoCollectionUri,
@@ -1175,6 +1191,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     globalRecordIdList = query.AsEnumerable<dynamic>().Select(x => (FormResponseProperties)x).ToList();
                     //globalRecordIdList = query.AsEnumerable<dynamic>().Skip(pageNumber).Take(pageSize).Select(x => (FormResponseProperties)x).ToList();
                 }
+
+                //var asdf = query.AsEnumerable<dynamic>();
+
                 return globalRecordIdList;
             }
             catch (Exception ex)

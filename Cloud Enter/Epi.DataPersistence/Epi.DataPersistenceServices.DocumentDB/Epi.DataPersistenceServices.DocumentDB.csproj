@@ -71,6 +71,7 @@
       <HintPath>..\..\packages\System.Spatial.5.6.4\lib\net40\System.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -87,6 +88,7 @@
     <Compile Include="SurveyResponseCRUD.Indexing.cs" />
     <Compile Include="SurveyResponseCRUD.QueryHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SurveyResponseCRUD.StoreProcedures.cs" />
     <Compile Include="SurveyResponseCRUD.Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +101,10 @@
     <ProjectReference Include="..\..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Cloud.Resources\Epi.Cloud.Resources.csproj">
+      <Project>{96BCC2AC-31D3-49EE-902B-09AE7099BCBD}</Project>
+      <Name>Epi.Cloud.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.ServiceBus\Epi.Cloud.ServiceBus.csproj">
       <Project>{247f0154-3f6b-409b-beba-1bf9302d3b9e}</Project>

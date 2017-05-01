@@ -1,5 +1,4 @@
-﻿using System;
-namespace Epi.Cloud.Resources.Constants
+﻿namespace Epi.Cloud.Resources.Constants
 {
     public struct EmailResourceKeys
     {
@@ -17,6 +16,12 @@ namespace Epi.Cloud.Resources.Constants
         public const string UserInformationUpdated = "UserInformationUpdated";
         public const string UserAlreadyExists = "UserAlreadyExists";
         public const string UserAdded = "UserAdded";
+    }
+
+    public struct DocumentDBSPKeys
+    {
+        public const string GetAllRecordsBySurveyID = "GetAllRecordsBySurveyID";
+        public const string OrderBy = "OrderBy";
     }
 
 }

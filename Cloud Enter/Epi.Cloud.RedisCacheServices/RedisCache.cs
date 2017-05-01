@@ -156,9 +156,7 @@ namespace Epi.Cloud.CacheServices
 
         private static string CacheConnectionString()
         {
-            var cacheConnectionStringKey = ConfigurationHelper.GetEnvironmentResourceKey("CacheConnectionString");
-            _cacheConnectionString = ConfigurationManager.ConnectionStrings[cacheConnectionStringKey].ConnectionString;
-            return _cacheConnectionString;
+            return ConfigurationHelper.GetEnvironmentResourceKey("CacheConnectionString");
         }
 
         private static IDatabase Cache
@@ -195,7 +193,7 @@ namespace Epi.Cloud.CacheServices
             }
         }
 
-#endregion // Conection
+        #endregion // Conection
 
         protected async Task<bool> KeyExists(Guid projectId, string key)
         {
@@ -215,11 +213,11 @@ namespace Epi.Cloud.CacheServices
                 }
                 else
                 {
-                    exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExists(cacheKey), 
-                        (ex, numberOfRetries, remainingRetries) => 
-                            ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException) 
-                            ? new RetryResponse<bool> { Action = RetryAction.ReturnResult, Result = false } 
-                            : new RetryResponse<bool> { Action = RetryAction.ContinueRetrying } );
+                    exists = _retryStrategy.ExecuteWithRetry(() => Cache.KeyExists(cacheKey),
+                        (ex, numberOfRetries, remainingRetries) =>
+                            ex.GetType() == typeof(StackExchange.Redis.RedisConnectionException)
+                            ? new RetryResponse<bool> { Action = RetryAction.ReturnResult, Result = false }
+                            : new RetryResponse<bool> { Action = RetryAction.ContinueRetrying });
 
                     if (exists)
                     {
@@ -267,7 +265,7 @@ namespace Epi.Cloud.CacheServices
             var cacheKey = CacheExtenstions.ToCacheKey(projectId, key);
             if (_transientCache.Count > 0)
             {
-                var value =  _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
+                var value = _transientCache.TryGetValue(cacheKey, out transientTemp) ? (string)transientTemp : (string)null;
                 return value;
             }
 
