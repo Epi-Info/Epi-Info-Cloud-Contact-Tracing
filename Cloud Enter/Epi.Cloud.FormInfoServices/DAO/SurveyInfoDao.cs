@@ -458,13 +458,13 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             return surveyInfoBOs;
         }
 
-        public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string rootId)
+        public List<SurveyInfoBO> GetFormsHierarchyIdsByRootFormId(string rootFormId)
         {
             List<SurveyInfoBO> result = new List<SurveyInfoBO>();
 
             try
             {
-                var metadatAccessor = new MetadataAccessor(rootId);
+                var metadatAccessor = new MetadataAccessor(rootFormId);
                 var formDigests = metadatAccessor.FormDigests;
                 result = formDigests.ToSurveyInfoBOList();
             }

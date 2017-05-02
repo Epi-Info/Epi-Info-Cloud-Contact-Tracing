@@ -38,16 +38,16 @@ namespace Epi.Cloud.SurveyInfoServices
 			All = ClientTag | AccessToken | UserCredentials
 		}
 
-		public SurveyInfoBO GetSurveyInfoById(string surveyId)
+		public SurveyInfoBO GetSurveyInfoByFormId(string formId)
 		{
-			return _surveyInfoDao.GetSurveyInfo(surveyId);
+			return _surveyInfoDao.GetSurveyInfo(formId);
 		}
 
-		public SurveyInfoBO GetParentInfoByChildId(string childSurveyId)
+		public SurveyInfoBO GetParentInfoByChildFormId(string childFormId)
 		{
 			SurveyInfoBO result = new SurveyInfoBO();
 
-			result = _surveyInfoDao.GetParentInfoByChildId(childSurveyId);
+			result = _surveyInfoDao.GetParentInfoByChildId(childFormId);
 
 			return result;
 		}
@@ -90,20 +90,20 @@ namespace Epi.Cloud.SurveyInfoServices
             return result;
         }
 
-        public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId)
+        public List<FormsHierarchyBO> GetFormsHierarchyIdsByRootFormId(string rootFormId)
         {
             List<SurveyInfoBO> SurveyInfoBOList = new List<SurveyInfoBO>();
             List<FormsHierarchyBO> result = new List<FormsHierarchyBO>();
 
-            SurveyInfoBOList = _surveyInfoDao.GetFormsHierarchyIdsByRootId(rootId);
+            SurveyInfoBOList = _surveyInfoDao.GetFormsHierarchyIdsByRootFormId(rootFormId);
             foreach (var item in SurveyInfoBOList)
             {
                 FormsHierarchyBO FormsHierarchyBO = new FormsHierarchyBO();
-                FormsHierarchyBO.RootFormId = rootId;
+                FormsHierarchyBO.RootFormId = rootFormId;
                 FormsHierarchyBO.FormId = item.SurveyId;
                 FormsHierarchyBO.ViewId = item.ViewId;
                 FormsHierarchyBO.SurveyInfo = item;
-                if (item.SurveyId == rootId)
+                if (item.SurveyId == rootFormId)
                 {
                     FormsHierarchyBO.IsRoot = true;
                 }

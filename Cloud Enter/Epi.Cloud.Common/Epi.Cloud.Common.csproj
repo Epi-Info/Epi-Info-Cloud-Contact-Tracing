@@ -116,7 +116,6 @@
     <Compile Include="Extensions\UserBOExtensions.cs" />
     <Compile Include="Extensions\UserDTOExtensions.cs" />
     <Compile Include="Message.WebEnter\FormResponseInfoRequest.cs" />
-    <Compile Include="Message.WebEnter\FormResponseInfoResponse.cs" />
     <Compile Include="Message.WebEnter\FormSettingRequest.cs" />
     <Compile Include="Message.WebEnter\FormSettingResponse.cs" />
     <Compile Include="Message.WebEnter\FormsHierarchyRequest.cs" />

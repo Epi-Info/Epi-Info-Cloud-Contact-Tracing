@@ -99,8 +99,8 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 		/// Deletes a SurveyInfo
 		/// </summary>
 		/// <param name="SurveyInfo">SurveyInfo.</param>
-		List<SurveyInfoBO> GetChildInfoByParentId(string ParentFormId, int ViewId);
-		List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId);
+		List<SurveyInfoBO> GetChildInfoByParentId(string parentFormId, int viewId);
+		List<SurveyInfoBO> GetFormsHierarchyIdsByRootFormId(string rootFormId);
 		void InsertFormDefaultSettings(string FormId, bool IsSqlProject, List<string> ControlsNameList);
 		void UpdateParentId(string SurveyId, int ViewId, string ParentFormId);
 		void InsertConnectionString(DbConnectionStringBO ConnectionString);

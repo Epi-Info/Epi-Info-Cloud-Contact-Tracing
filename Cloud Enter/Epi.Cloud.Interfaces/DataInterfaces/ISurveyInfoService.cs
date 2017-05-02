@@ -6,11 +6,11 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 {
 	public interface ISurveyInfoService
 	{
-		SurveyInfoBO GetSurveyInfoById(string surveyId);
-		SurveyInfoBO GetParentInfoByChildId(string childSurveyId);
+		SurveyInfoBO GetSurveyInfoByFormId(string formId);
+		SurveyInfoBO GetParentInfoByChildFormId(string childFormId);
 
 		SurveyInfoResponse GetFormChildInfo(SurveyInfoRequest pRequest);
 
-		List<FormsHierarchyBO> GetFormsHierarchyIdsByRootId(string rootId);
+		List<FormsHierarchyBO> GetFormsHierarchyIdsByRootFormId(string rootFormId);
 	}
 }

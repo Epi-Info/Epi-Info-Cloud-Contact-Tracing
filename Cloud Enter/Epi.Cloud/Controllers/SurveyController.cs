@@ -608,7 +608,10 @@ namespace Epi.Web.MVC.Controllers
             if (rootFormId != null && rootResponseId != null)
             {
                 formsHierarchyRequest.SurveyInfo.FormId = rootFormId.ToString();
+
+                formsHierarchyRequest.SurveyResponseInfo.RootFormId = rootFormId.ToString();
                 formsHierarchyRequest.SurveyResponseInfo.ResponseId = rootResponseId.ToString();
+                formsHierarchyRequest.SurveyResponseInfo.ResolveMetadataDependencies();
                 formsHierarchyResponse = _surveyFacade.GetFormsHierarchy(formsHierarchyRequest);
             }
 
@@ -1256,6 +1259,7 @@ namespace Epi.Web.MVC.Controllers
                     surveyAnswerDTO.FormId = SurveyId;
                     surveyAnswerDTO.CurrentPageNumber = 1;
                     surveyAnswerDTO.DateUpdated = DateTime.UtcNow;
+                    surveyAnswerDTO.RootResponseId = Session[SessionKeys.RootResponseId].ToString();
                     surveyAnswerDTO.ParentResponseId = ResponseId;
                     surveyAnswerDTO.ResponseId = Guid.NewGuid().ToString();
                     var responseContext = surveyAnswerDTO.ToResponseContext();

@@ -91,7 +91,7 @@ namespace Epi.Cloud.DataEntryServices
                 var criteria = request.Criteria as SurveyAnswerCriteria;
                 List<SurveyResponseBO> surveyResponseList = surveyResponseProvider.GetSurveyResponseById(responseContext, request.Criteria);
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
-                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoById(request.FormId ?? request.RootFormId);
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetSurveyInfoByFormId(request.FormId ?? request.RootFormId);
                 result.FormInfo = surveyInfoBO.ToFormInfoDTO();
 
                 return result;
@@ -233,7 +233,7 @@ namespace Epi.Cloud.DataEntryServices
 
             else if (surveyAnswerRequest.Action.Equals(RequestAction.CreateChild, StringComparison.OrdinalIgnoreCase))
             {
-                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildId(surveyResponseBO.SurveyId);
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildFormId(surveyResponseBO.SurveyId);
 
                 _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId);
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
@@ -444,19 +444,14 @@ namespace Epi.Cloud.DataEntryServices
                 List<SurveyResponseBO> allResponsesIDsList = new List<SurveyResponseBO>();
 
                 //1- Get All form  ID's
-                List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootId(rootFormId);
+                List<FormsHierarchyBO> relatedFormIDsList = _surveyInfoService.GetFormsHierarchyIdsByRootFormId(rootFormId);
 
                 //2- Get all Responses ID's
                 Epi.Cloud.DataEntryServices.SurveyResponseProvider surveyResponseProvider = new SurveyResponseProvider(_surveyResponseDao);
                 if (!string.IsNullOrEmpty(formsHierarchyRequest.SurveyResponseInfo.ResponseId))
                 {
-                    var responseId = formsHierarchyRequest.SurveyResponseInfo.ResponseId;
-                    var responseContext = new ResponseContext
-                    {
-                        RootFormId = rootFormId, FormId = rootFormId,
-                        RootResponseId = responseId, ResponseId = responseId
-                    }.ResolveMetadataDependencies();
-                    allResponsesIDsList = surveyResponseProvider.GetResponsesHierarchyIdsByRootId(responseContext); //rootFormId, formsHierarchyRequest.SurveyResponseInfo.ResponseId);
+                    IResponseContext responseContext = formsHierarchyRequest.SurveyResponseInfo.ResponseContext.ResolveMetadataDependencies();
+                    allResponsesIDsList = surveyResponseProvider.GetResponsesHierarchyIdsByRootId(responseContext);
                 }
                 else
                 {
@@ -529,7 +524,7 @@ namespace Epi.Cloud.DataEntryServices
             }
 
             var surveyId = SurveyIdList.FirstOrDefault();
-            var surveyInfoBO = _surveyInfoService.GetSurveyInfoById(surveyId);
+            var surveyInfoBO = _surveyInfoService.GetSurveyInfoByFormId(surveyId);
             var result = new SurveyInfoResponse();
             result.SurveyInfoList.Add(surveyInfoBO.ToSurveyInfoDTO());
             return result;

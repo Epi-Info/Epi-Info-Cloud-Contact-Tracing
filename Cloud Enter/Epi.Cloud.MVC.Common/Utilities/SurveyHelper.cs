@@ -209,7 +209,7 @@ namespace Epi.Web.MVC.Utility
 			surveyInfoRequest.Criteria.SurveyIdList.Add(surveyId);
 			try
 			{
-				SurveyInfoDTO result = surveyInfoService.GetSurveyInfoById(surveyId).ToSurveyInfoDTO();
+				SurveyInfoDTO result = surveyInfoService.GetSurveyInfoByFormId(surveyId).ToSurveyInfoDTO();
 				return result;
 			}
 			catch (Exception ex)

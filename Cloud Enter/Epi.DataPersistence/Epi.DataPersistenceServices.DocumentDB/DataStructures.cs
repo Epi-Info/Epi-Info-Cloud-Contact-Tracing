@@ -122,12 +122,11 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public Dictionary<string, string> ResponseQA { get; set; }
 
-        public bool IsRootForm { get { return ParentResponseId == null; } }
-        public bool IsRelatedView { get { return ParentResponseId != null; } }
-
-        public bool IsChildResponse { get { return ResponseId != RootResponseId; } }
-        public bool IsRootResponse { get { return ResponseId == RootResponseId; } }
-
+        public bool IsRootForm { get { return (!string.IsNullOrEmpty(FormId) && FormId == RootFormId)
+                                           || (string.IsNullOrEmpty(FormId) && string.IsNullOrEmpty(ParentFormId)); } }
+        public bool IsRelatedView { get { return !IsRootForm; } }
+        public bool IsRootResponse { get { return ResponseId == RootResponseId || IsRootForm; } }
+        public bool IsChildResponse { get { return !IsRootResponse; } }
     }
 }
 

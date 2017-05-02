@@ -5,7 +5,7 @@ using Microsoft.Azure.Documents.Client;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using static Epi.PersistenceServices.DocumentDB.DataStructures;
+using Epi.PersistenceServices.DocumentDB;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {

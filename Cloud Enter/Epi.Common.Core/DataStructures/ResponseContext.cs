@@ -22,18 +22,15 @@ namespace Epi.Common.Core.DataStructures
 
         public int UserId { get; set; }
         public string UserName { get; set; }
-
-        public bool IsChildResponse
+        public bool IsRootForm
         {
             get
             {
-                return (!string.IsNullOrEmpty(FormId) && FormId != RootFormId) 
-                    || (!string.IsNullOrEmpty(ParentFormId) && ParentFormId != RootFormId);
+                return (!string.IsNullOrEmpty(FormId) && FormId == RootFormId)
+                    || (string.IsNullOrEmpty(FormId) && string.IsNullOrEmpty(ParentFormId));
             }
         }
-        public bool IsRootResponse
-        {
-            get { return !IsChildResponse; }
-        }
+        public bool IsRootResponse { get { return ResponseId == RootResponseId || IsRootForm; } }
+        public bool IsChildResponse { get { return !IsRootResponse; } }
     }
 }

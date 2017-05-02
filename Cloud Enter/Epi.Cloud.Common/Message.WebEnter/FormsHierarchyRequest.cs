@@ -14,8 +14,8 @@ namespace Epi.Cloud.Common.Message
         /// <summary>
         /// SurveyInfo object.
         /// </summary>
-        public FormInfoDTO SurveyInfo;
+        public FormInfoDTO SurveyInfo { get; set; }
 
-        public FormResponseInfoDTO SurveyResponseInfo;
+        public FormResponseInfoDTO SurveyResponseInfo { get; set; }
     }
 }
