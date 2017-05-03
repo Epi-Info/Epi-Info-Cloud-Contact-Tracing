@@ -145,6 +145,7 @@ namespace Epi.PersistenceServices.DocumentDB
             };
 
             bool isSuccessful = false;
+            // TODO: This must await to prevent the caller from running!!!!!!
             var result = _surveyResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties); // .ConfigureAwait(false).GetAwaiter().GetResult();
             return isSuccessful;
         }

@@ -408,9 +408,10 @@ namespace Epi.Web.MVC.Controllers
 
                             SetRelateSession(responseId, pageNumber);
                             RequestedViewId = int.Parse(this.Request.Form["Requested_View_Id"]);
-                            surveyAnswer.ParentResponseId = responseId;
                             surveyAnswer.RootResponseId = Session[SessionKeys.RootResponseId].ToString();
                             form = SaveCurrentForm(form, surveyInfoModel, surveyAnswer, responseId, userId, userName, isSubmited, isSaved, isMobileDevice, formValuesHasChanged, pageNumber, FormsHierarchy);
+
+                            // After this point we are dealing with child of child
                             form = SetLists(form);
                             TempData[TempDataKeys.Width] = form.Width + 5;
                             Session[SessionKeys.RequestedViewId] = RequestedViewId;

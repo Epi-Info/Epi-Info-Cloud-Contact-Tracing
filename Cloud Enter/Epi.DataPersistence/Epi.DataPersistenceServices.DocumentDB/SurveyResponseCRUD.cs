@@ -649,7 +649,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             try
             {
                 var rootFormName = responseContext.RootFormName ?? this.GetRootFormName(responseContext.RootFormId);
-                var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
+                var rootResponseId = responseContext.RootResponseId;
 
                 var collectionAlias = rootFormName;
                 var rootFormCollectionUri = GetCollectionUri(rootFormName);
