@@ -12,7 +12,7 @@ namespace Epi.DataPersistence.Common.Interfaces
     {
         FormResponseDetail GetFormResponseState(IResponseContext responseContext);
 
-        bool DoChildResponsesExist(IResponseContext responseContext); //string rootFormId, string parentResponseId);
+        bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false);
 
         bool UpdateResponseStatus(IResponseContext responseContext, int recordStatus, RecordStatusChangeReason reasonForStatusChange);
 

@@ -74,17 +74,23 @@ namespace Epi.Cloud.Common.Extensions
         public static ResponseContext ToResponseContext(this SurveyResponseBO surveyResponseBO)
         {
             MetadataAccessor metadataAccessor = new MetadataAccessor();
+            var formId = surveyResponseBO.FormId ?? surveyResponseBO.SurveyId;
+            var formName = surveyResponseBO.FormName ?? metadataAccessor.GetFormName(formId);
+            var parentFormId = surveyResponseBO.ParentFormId ?? metadataAccessor.GetParentFormId(formId);
+            var parentFormName = surveyResponseBO.ParentFormName ?? metadataAccessor.GetParentFormName(formId);
+            var rootFormId = surveyResponseBO.RootFormId ?? formId;
+            var rootFormName = surveyResponseBO.RootFormName ?? formName;
             var responseContext = new ResponseContext
             {
                 ResponseId = surveyResponseBO.ResponseId,
                 ParentResponseId = surveyResponseBO.ParentResponseId,
                 RootResponseId = surveyResponseBO.RootResponseId,
-                FormId = surveyResponseBO.SurveyId,
-                FormName = metadataAccessor.GetFormName(surveyResponseBO.SurveyId),
-                ParentFormId = metadataAccessor.GetParentFormId(surveyResponseBO.SurveyId),
-                ParentFormName = metadataAccessor.GetParentFormName(surveyResponseBO.SurveyId),
-                RootFormId = metadataAccessor.GetRootFormId(surveyResponseBO.SurveyId),
-                RootFormName = metadataAccessor.GetRootFormName(surveyResponseBO.SurveyId),
+                FormId = formId,
+                FormName = formName,
+                ParentFormId = parentFormId,
+                ParentFormName = parentFormName,
+                RootFormId = rootFormId,
+                RootFormName = rootFormName,
                 IsNewRecord = surveyResponseBO.IsNewRecord,
                 UserId = surveyResponseBO.UserId,
                 UserName = surveyResponseBO.UserName

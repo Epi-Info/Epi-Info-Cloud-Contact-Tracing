@@ -45,12 +45,12 @@ namespace Epi.DataPersistence.Extensions
         public static FormResponseDetail ToHierarchialFormResponseDetail(this FormResponseProperties formResponseProperties, FormResponseResource formResponseResource)
         {
             FormResponseDetail formResponseDetail = formResponseProperties.ToFormResponseDetail();
-            formResponseResource.CascadeThroughChildren(formResponseProperties.ResponseId,
+            formResponseResource.CascadeThroughChildren(formResponseProperties,
                 frp =>
                 {
                     var frd = frp.ToFormResponseDetail();
                 });
-
+            // ToDo:ToHierarchialFormResponseDetail
             return null;
         }
 

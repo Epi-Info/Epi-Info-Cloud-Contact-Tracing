@@ -854,7 +854,12 @@ namespace Epi.Web.MVC.Controllers
         {
 
             SurveyAnswerRequest SARequest = new SurveyAnswerRequest();
-            SARequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = ResponseId });
+            SARequest.SurveyAnswerList.Add(new SurveyAnswerDTO()
+            {
+                ResponseId = ResponseId,
+                RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
+                RootFormId = Session[SessionKeys.RootFormId].ToString()
+            }.ResolveMetadataDependencies() as SurveyAnswerDTO);
             SARequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             SARequest.Criteria.IsEditMode = false;
             SARequest.Criteria.IsDeleteMode = true;

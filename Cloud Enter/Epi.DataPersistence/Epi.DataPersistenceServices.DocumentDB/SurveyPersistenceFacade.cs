@@ -36,9 +36,9 @@ namespace Epi.PersistenceServices.DocumentDB
 			return formResponseProperties != null ? formResponseProperties.ToFormResponseDetail() : null;
 		}
 
-        public bool DoChildResponsesExist(IResponseContext responseContext) // string childFormId, string parentResponseId)
+        public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false) // string childFormId, string parentResponseId)
         {
-			return _surveyResponseCRUD.DoChildResponsesExist(responseContext);
+			return _surveyResponseCRUD.DoChildResponsesExist(responseContext, includeDeletedRecords);
 		}
 
 		public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)

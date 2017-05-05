@@ -26,7 +26,8 @@ namespace Epi.PersistenceServices.DocumentDB
             childResponseList.Add(childResponse);
 
             // Add the response to the response index if it doesn't alread exist.
-            if (index < 0)
+            ResponseDirectory existingResponseDirectory = null;
+            if (!ChildResponseIndex.TryGetValue(childResponse.ResponseId, out existingResponseDirectory))
             {
                 ChildResponseIndex.Add(childResponse.ResponseId, new ResponseDirectory(childResponse));
             }
@@ -34,12 +35,12 @@ namespace Epi.PersistenceServices.DocumentDB
             return childResponse;
         }
 
-        public List<FormResponseProperties> GetChildResponseList(IResponseContext responseContext, bool addIfNoList = false)
+        public List<FormResponseProperties> GetChildResponseList(IResponseContext responseContext, bool addIfNoList = false, bool includeDeletedRecords = false)
         {
-            return GetChildResponseList(responseContext.ParentResponseId, responseContext.FormName);
+            return GetChildResponseList(responseContext.ParentResponseId, responseContext.FormName, addIfNoList, includeDeletedRecords);
         }
 
-        public List<FormResponseProperties> GetChildResponseList(string parentResponseId, string childFormName, bool addIfNoList = false)
+        public List<FormResponseProperties> GetChildResponseList(string parentResponseId, string childFormName, bool addIfNoList = false, bool includeDeletedRecords = false)
         {
             Dictionary<string/*ChildFormId*/, List<FormResponseProperties>> childResponsesByChildFormId = null;
             childResponsesByChildFormId = (ChildResponses.TryGetValue(parentResponseId, out childResponsesByChildFormId)) ? childResponsesByChildFormId : null;
@@ -57,6 +58,10 @@ namespace Epi.PersistenceServices.DocumentDB
                     childResponsesByChildFormId.Add(childFormName, childResponseList = new List<FormResponseProperties>());
                 }
             }
+            if (childResponseList != null && childResponseList.Count > 0 && includeDeletedRecords == false)
+            {
+                childResponseList = childResponseList.Where(r => r.RecStatus != RecordStatus.Deleted).ToList();
+            }
             return childResponseList;
         }
 
@@ -72,27 +77,28 @@ namespace Epi.PersistenceServices.DocumentDB
             return childResponse;
         }
 
-        public void LogicalCascadeDelete(FormResponseProperties formResponseProperties)
+        public void LogicalCascadeDeleteChildren(FormResponseProperties formResponseProperties)
         {
-            CascadeThroughChildren(formResponseProperties.ResponseId, frp => frp.RecStatus = RecordStatus.Deleted);
+            if (formResponseProperties.RecStatus != RecordStatus.Deleted)
+            {
+                formResponseProperties.RecStatus = RecordStatus.Deleted;
+                CascadeThroughChildren(formResponseProperties, frp => frp.RecStatus = RecordStatus.Deleted);
+            }
         }
 
-        public void CascadeThroughChildren(string parentResponseId, Action<FormResponseProperties> action)
+        public void CascadeThroughChildren(FormResponseProperties formResponseProperties, Action<FormResponseProperties> action)
         {
-            Dictionary<string/*ChildFormName*/, List<FormResponseProperties>> children = null;
-            if (ChildResponses.TryGetValue(parentResponseId, out children))
+            Dictionary<string/*ChildFormName*/, List<FormResponseProperties>> childFormResponses = null;
+            if (ChildResponses.TryGetValue(formResponseProperties.ResponseId, out childFormResponses))
             {
                 // interate over list child forms
-                foreach (var childFormId_Dictionary in ChildResponses.Values)
+                foreach (var childFormResponseList in childFormResponses.Values)
                 {
                     // iterate over list of child responses
-                    foreach (var formResponsePropertiesList in childFormId_Dictionary.Values)
+                    foreach (var childFormResponseProperties in childFormResponseList)
                     {
-                        foreach (var formResponseProperties in formResponsePropertiesList)
-                        {
-                            action(formResponseProperties);
-                            CascadeThroughChildren(formResponseProperties.ResponseId, action);
-                        }
+                        action(childFormResponseProperties);
+                        CascadeThroughChildren(childFormResponseProperties, action);
                     }
                 }
             }

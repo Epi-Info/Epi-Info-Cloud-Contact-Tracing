@@ -115,24 +115,48 @@ namespace Epi.DataPersistenceServices.DocumentDB
             bool isSuccessful = false;
             try
             {
+                Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
+
+                FormResponseDetail hierarchialFormResponseDetail = null;
+
                 var formResponseResource = ReadRootResponseResource(responseContext, false);
                 if (formResponseResource != null)
                 {
+                    FormResponseDetail formResponseDetail = null;
+
                     var formResponseProperties = formResponseResource.FormResponseProperties;
 
                     // Determine if the ResponseId parameter is the root responseId or a child responseId
                     if (responseContext.IsRootResponse)
                     {
+                        // First logically delete the root and child responses
+                        isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                        formResponseProperties.RecStatus = RecordStatus.Deleted;
+
+                        hierarchialFormResponseDetail = formResponseProperties.ToHierarchialFormResponseDetail(formResponseResource);
+
                         if (deleteType == RecordStatus.PhysicalDelete)
                         {
-                            PhysicallyDeleteResponse(formResponseResource);
-                            return formResponseResource;
+                            isSuccessful = await PhysicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
                         }
                     }
-                    else if (formResponseProperties.RecStatus != RecordStatus.Deleted)
+                    else // if (responseContext.IsChildResponse)
                     {
-                        formResponseResource.LogicalCascadeDelete(formResponseProperties);
-                        var result = await Client.UpsertDocumentAsync(formResponseResource.SelfLink, formResponseResource, null).ConfigureAwait(false);
+                        formResponseProperties = formResponseResource.GetChildResponse(responseContext);
+
+                        // only logically delete child responses
+                        isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+
+                        hierarchialFormResponseDetail = formResponseProperties.ToHierarchialFormResponseDetail(formResponseResource);
+                    }
+
+                    // TODO: send hierarchialFormResponseDetail to consistency service 
+
+                    if (deleteType != RecordStatus.PhysicalDelete)
+                    {
+                        var result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+
+                        return formResponseResource;
                     }
                 }
             }
@@ -140,12 +164,42 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 Console.WriteLine(ex.ToString());
             }
+
             return null;
         }
 
-        private void PhysicallyDeleteResponse(FormResponseResource formResponseResource)
+        private async Task<bool> PhysicallyDeleteResponse(FormResponseResource formResponseResource, FormResponseProperties formResponseProperties)
         {
-            Client.DeleteDocumentAsync(formResponseResource.SelfLink).ConfigureAwait(false).GetAwaiter().GetResult();
+            if (formResponseProperties.IsRootResponse)
+            {
+                var result = await Client.DeleteDocumentAsync(formResponseResource.SelfLink).ConfigureAwait(false);
+            }
+            else // if (formResponseProperties.IsChildResponse)
+            {
+                var result = await Client.UpsertDocumentAsync(formResponseResource.SelfLink, formResponseResource, null).ConfigureAwait(false);
+            }
+            return await Task.FromResult<bool>(false).ConfigureAwait(false);
+        }
+
+        private async Task<bool> LogicallyDeleteResponse(FormResponseResource formResponseResource, FormResponseProperties formResponseProperties)
+        {
+            if (formResponseProperties.IsRootResponse)
+            {
+                formResponseResource.LogicalCascadeDeleteChildren(formResponseProperties);
+            }
+            else // if (formResponseProperties.IsChildResponse)
+            {
+                formResponseResource.LogicalCascadeDeleteChildren(formResponseProperties);
+            }
+
+
+            return await Task.FromResult<bool>(true).ConfigureAwait(false);
+
+            //if (formResponseProperties.RecStatus != RecordStatus.Deleted)
+            //{
+            //    formResponseResource.LogicalCascadeDelete(formResponseProperties);
+            //    var result = await Client.UpsertDocumentAsync(formResponseResource.SelfLink, formResponseResource, null).ConfigureAwait(false);
+            //}
         }
 
         #endregion
@@ -191,7 +245,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                             case RecordStatus.Saved:
                                 formResponseProperties.IsNewRecord = false;
                                 formResponseProperties.RecStatus = RecordStatus.Saved;
-                                var formResponseSave = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource);
+                                var formResponseSave = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
                                 break;
                         }
                     }
@@ -400,7 +454,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     var responseDictionary = childResponse.Values;
                     foreach (var responses in responseDictionary)
                     {
-                        formResponsePropertiesList.AddRange(responses.Where(r => includeDeletedRecords ? true : r.RecStatus != RecordStatus.Deleted && excludeInProcessRecords ? r.RecStatus != RecordStatus.InProcess : true));
+                        formResponsePropertiesList.AddRange(responses.Where(r => (includeDeletedRecords ? true : (r.RecStatus != RecordStatus.Deleted)) && (excludeInProcessRecords ? (r.RecStatus != RecordStatus.InProcess) : true)));
                     }
                 }
             }
@@ -551,10 +605,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 #endif
 
-        public bool DoChildResponsesExist(IResponseContext responseContext)
+        public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false)
         {
             var rootResponseResource = ReadRootResponseResource(responseContext);
             var childResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext);
+            if (!includeDeletedRecords)
+            {
+                childResponsePropertiesList = childResponsePropertiesList.Where(r => r.RecStatus != RecordStatus.Deleted).ToList();
+            }
             return childResponsePropertiesList != null && childResponsePropertiesList.Count > 0;
         }
 
@@ -666,6 +724,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                                 And_Expression(RecStatus, NE, RecordStatus.Deleted, includeDeleted))
                     , queryOptions);
                 var formResponseResource = (FormResponseResource)query.AsEnumerable().FirstOrDefault();
+                if (formResponseResource != null)
+                {
+                    ResolveMissingContext(formResponseResource, responseContext);
+                }
                 return formResponseResource;
             }
             catch (Exception ex)
@@ -675,6 +737,21 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return null;
         }
+
+        private static void ResolveMissingContext(FormResponseResource formResponseResource, IResponseContext responseContext)
+        {
+            // verify that the response context is fully resolved.
+            FormResponseResource.ResponseDirectory responseDirectory = null;
+            if (formResponseResource.ChildResponseIndex.TryGetValue(responseContext.ResponseId, out responseDirectory))
+            {
+                responseContext.FormId = responseDirectory.FormId;
+                responseContext.FormName = responseDirectory.FormName;
+                responseContext.ParentFormId = responseDirectory.ParentFormId;
+                responseContext.ParentFormName = responseDirectory.ParentFormName;
+                responseContext.ParentResponseId = responseDirectory.ParentResponseId;
+            }
+        }
+
 
         #endregion GetResponse
 
@@ -755,7 +832,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
                 var rootFormName = responseContext.RootFormName;
                 var rootResponseResource = ReadRootResponseResource(responseContext, false);
-                var formResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext);
+                var formResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext)
+                    .Where(r => r.RecStatus != RecordStatus.Deleted).ToList();
 
                 if (formResponsePropertiesList != null && formResponsePropertiesList.Count > 0)
                 {
