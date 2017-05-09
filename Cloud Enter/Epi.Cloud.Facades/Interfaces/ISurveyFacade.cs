@@ -1,9 +1,7 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
-using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.Web.MVC.Models;
 
@@ -31,7 +29,6 @@ namespace Epi.Cloud.Facades.Interfaces
         FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest);
         bool HasResponse(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerDTO GetSurveyAnswerDTO(SurveyAnswerRequest surveyAnswerRequest);
-        //SurveyAnswerResponse GetSurveyAnswerResponse(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest);
     }
 }

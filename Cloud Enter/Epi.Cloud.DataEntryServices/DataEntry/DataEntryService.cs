@@ -181,7 +181,7 @@ namespace Epi.Cloud.DataEntryServices
                     var metadataAccessor = new MetadataAccessor();
                     var formId = metadataAccessor.GetFormIdByViewId(viewId);
                     var formName = metadataAccessor.GetFormName(formId);
-                    responseContext = surveyAnswerRequest.SurveyAnswerList[0].Clone();
+                    responseContext = surveyAnswerRequest.SurveyAnswerList[0].CloneResponseContext();
                     List<SurveyResponseBO> surveyResponseBOList = _surveyResponseProvider.GetResponsesHierarchyIdsByRootId(responseContext); //formId, parentResponseId);
 
                     //if (!surveyAnswerRequest.SurveyAnswerList[0].RecoverLastRecordVersion)

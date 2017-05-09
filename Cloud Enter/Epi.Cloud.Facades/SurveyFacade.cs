@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Cloud.Common.DTO;
-using Epi.Cloud.Common.Message;
-using Epi.Cloud.Common.Model;
+using Epi.Common.Core.Interfaces;
 using Epi.Web.MVC.Models;
 using Epi.Web.MVC.Utility;
-using Epi.Common.Core.DataStructures;
-using Epi.Common.Core.Interfaces;
 
 namespace Epi.Cloud.Facades
 {
     public class SurveyFacade : ISurveyFacade
     {
-
         private readonly IDataEntryService _dataEntryService;
 		private readonly ISurveyInfoService _surveyInfoService;
 		private readonly IFormSettingsService _formSettingsService;

@@ -623,7 +623,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false)
         {
             var rootResponseResource = ReadRootResponseResource(responseContext);
-            var childResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext);
+            var childResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext, /*addIfNoList*/true);
             if (!includeDeletedRecords)
             {
                 childResponsePropertiesList = childResponsePropertiesList.Where(r => r.RecStatus != RecordStatus.Deleted).ToList();

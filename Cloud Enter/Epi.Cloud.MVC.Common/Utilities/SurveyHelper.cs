@@ -189,7 +189,7 @@ namespace Epi.Web.MVC.Utility
 			/////Update Survey Mode ////////////////////
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
             //surveyAnswerRequest.Criteria.UserId = UserId;
-            ResponseContext responseContext = ((IResponseContext)updatedFromResponseDetail).Clone();
+            ResponseContext responseContext = ((IResponseContext)updatedFromResponseDetail).CloneResponseContext();
             responseContext.UserId = userId;
 
             dataEntryService.SetSurveyAnswer(surveyAnswerRequest);

@@ -24,7 +24,7 @@ namespace Epi.DataPersistence.Common.Interfaces
 
         SurveyAnswerResponse DeleteResponse(IResponseContext responseContext);
 
-        bool SaveFormResponseProperties(SurveyResponseBO request);
+        //bool SaveFormResponseProperties(SurveyResponseBO request);
 
         //IEnumerable<SurveyResponse> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
         IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);

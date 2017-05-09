@@ -45,13 +45,61 @@ namespace Epi.DataPersistence.Extensions
         public static FormResponseDetail ToHierarchialFormResponseDetail(this FormResponseProperties formResponseProperties, FormResponseResource formResponseResource)
         {
             FormResponseDetail formResponseDetail = formResponseProperties.ToFormResponseDetail();
+            List<FormResponseDetail> flattened = formResponseDetail.FlattenHierarchy();
             formResponseResource.CascadeThroughChildren(formResponseProperties,
                 frp =>
                 {
                     var frd = frp.ToFormResponseDetail();
+                    var parent = flattened.Where(f => f.ResponseId == frp.ParentResponseId).SingleOrDefault();
+                    if (parent != null)
+                    {
+                        parent.ChildFormResponseDetailList.Add(frd);
+                    }
+                    else
+                    {
+                        throw new KeyNotFoundException();
+                    }
+                    flattened.Add(frd);
                 });
-            // ToDo:ToHierarchialFormResponseDetail
-            return null;
+            return formResponseDetail;
+        }
+
+        public static FormResponseProperties CopyTo(this FormResponseProperties source, FormResponseProperties target)
+        {
+            target.ResponseId = source.ResponseId;
+            target.FormId = source.FormId;
+            target.FormName = source.FormName;
+
+            target.ParentResponseId = source.ParentResponseId;
+            target.ParentFormId = source.ParentFormId;
+            target.ParentFormName = source.ParentFormName;
+
+            target.RootResponseId = source.RootResponseId;
+            target.RootFormId = source.RootFormId;
+            target.RootFormName = source.RootFormName;
+
+            target.IsNewRecord = source.IsNewRecord;
+
+            target.RecStatus = source.RecStatus;
+            target.LastPageVisited = source.LastPageVisited;
+
+            target.FirstSaveLogonName = source.FirstSaveLogonName;
+            target.LastSaveLogonName = source.LastSaveLogonName;
+            target.FirstSaveTime = source.FirstSaveTime;
+            target.LastSaveTime = source.LastSaveTime;
+
+            target.UserId = source.UserId;
+            target.UserName = source.UserName;
+
+            target.IsDraftMode = source.IsDraftMode;
+            target.IsLocked = source.IsLocked;
+            target.RequiredFieldsList = source.RequiredFieldsList;
+            target.HiddenFieldsList = source.HiddenFieldsList;
+            target.HighlightedFieldsList = source.HighlightedFieldsList;
+            target.DisabledFieldsList = source.DisabledFieldsList;
+
+            target.ResponseQA = source.ResponseQA;
+            return target;
         }
 
         public static FormResponseDetail ToFormResponseDetail(this FormResponseProperties formResponseProperties)

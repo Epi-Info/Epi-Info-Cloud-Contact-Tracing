@@ -1,9 +1,7 @@
 using System.Web.Mvc;
+using Epi.Web.MVC.Utility;
 using Microsoft.Practices.Unity;
 using Unity.Mvc3;
-using Epi.Web.MVC.Utility;
-using System.Configuration;
-using Epi.Cloud.Common.DTO;
 
 namespace Epi.Web.MVC
 {
