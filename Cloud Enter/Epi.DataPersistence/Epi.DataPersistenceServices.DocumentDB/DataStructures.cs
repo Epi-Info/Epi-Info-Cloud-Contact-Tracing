@@ -8,30 +8,15 @@ using Microsoft.Azure.Documents;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
-    public partial class DocumentResponseProperties
-    {
-        public DocumentResponseProperties()
-        {
-        }
-
-        public string ResponseId { get; set; }
-        public FormResponseProperties FormResponseProperties { get; set; }
-        public bool IsChildForm { get; set; }
-        public string FormName { get; set; }
-
-        public int UserId { get; set; }
-        public string UserName { get; set; }
-    }
-
     public partial class FormResponseResource : Resource
     {
-        public class ResponseDirectory
+        public class ChildResponseContext
         {
-            public ResponseDirectory()
+            public ChildResponseContext()
             {
             }
 
-            public ResponseDirectory(FormResponseProperties formResponseProperties)
+            public ChildResponseContext(FormResponseProperties formResponseProperties)
             {
                 FormId = formResponseProperties.FormId;
                 FormName = formResponseProperties.FormName;
@@ -45,43 +30,17 @@ namespace Epi.PersistenceServices.DocumentDB
             public string ParentFormName { get; set; }
             public string ParentResponseId { get; set; }
         }
+
         public FormResponseResource()
         {
             ChildResponses = new Dictionary<string/*ParentResponseId*/, Dictionary<string/*ChildFormName*/, List<FormResponseProperties>>>();
-            ChildResponseIndex = new Dictionary<string/*ResponseId*/, ResponseDirectory>();
+            ChildResponseContexts = new Dictionary<string/*ResponseId*/, ChildResponseContext>();
         }
 
         public FormResponseProperties FormResponseProperties { get; set; }
 
         public Dictionary<string/*ParentResponseId*/, Dictionary<string/*ChildFormName*/, List<FormResponseProperties>>> ChildResponses { get; set; }
-        public Dictionary<string/*ResponseId*/, ResponseDirectory> ChildResponseIndex { get; set; }
-
-        public interface IFormResponseProperties
-        {
-            string ResponseId { get; set; }
-            string FormId { get; set; }
-            string FormName { get; set; }
-            bool IsNewRecord { get; set; }
-            int RecStatus { get; set; }
-            string RelateParentResponseId { get; set; }
-            string UserName { get; set; }
-            string FirstSaveLogonName { get; set; }
-            string LastSaveLogonName { get; set; }
-            DateTime FirstSaveTime { get; set; }
-            DateTime LastSaveTime { get; set; }
-            int UserId { get; set; }
-            bool IsDraftMode { get; set; }
-            List<int> PageIds { get; set; }
-            string RequiredFieldsList { get; set; }
-            string HiddenFieldsList { get; set; }
-            string HighlightedFieldsList { get; set; }
-            string DisabledFieldsList { get; set; }
-
-            Dictionary<string, string> ResponseQA { get; set; }
-
-            bool IsRootForm { get; }
-            bool IsRelatedView { get; }
-        }
+        public Dictionary<string/*ResponseId*/, ChildResponseContext> ChildResponseContexts { get; set; }
     }
 
     public partial class FormResponseProperties : IResponseContext
@@ -89,7 +48,7 @@ namespace Epi.PersistenceServices.DocumentDB
         public FormResponseProperties()
         {
             IsNewRecord = true;
-            RecStatus = 0;
+            RecStatus = RecordStatus.InProcess;
             ResponseQA = new Dictionary<string, string>();
         }
         public string ResponseId { get; set; }

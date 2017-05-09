@@ -78,7 +78,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
         public bool DeleteSurveyDataInDocumentDB(string globalId, string collectionName, List<int> pageIds)
         {
-            bool deleteStatus = false;
             try
             {
                 foreach (var pageId in pageIds)

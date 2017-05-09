@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
-	public partial class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
+    public partial class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
 	{
 		private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
 
@@ -183,45 +183,6 @@ namespace Epi.PersistenceServices.DocumentDB
 
 		#endregion
 
-
-		#region Insert Survey Response
-#if false
-		public bool InsertResponse(Form form, SurveyResponseBO surveyResponseBO)
-		{
-				bool isSuccessful = false;
-				var formId = form.SurveyInfo.SurveyId;
-				var pageId = Convert.ToInt32(form.PageId);
-
-				DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
-				documentResponseProperties.GlobalRecordID = surveyResponseBO.ResponseId;
-				documentResponseProperties.UserId = surveyResponseBO.UserId;
-				documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(surveyResponseBO.ResponseId));
-				//isSuccessful = _surveyResponseCRUD.InsertResponseAsync(documentResponseProperties).Result;
-				return isSuccessful;
-		}
-#endif
-		#endregion
-
-		#region Insert Survey Response // Garry
-#if false
-		public async Task<bool> InsertResponseAsync(SurveyInfoModel surveyInfoModel, string responseId, Form form, SurveyAnswerDTO surveyAnswerDTO, bool IsSubmited, bool IsSaved, int PageNumber, int userId)
-		{
-			var formId = form.SurveyInfo.SurveyId;
-			var pageId = Convert.ToInt32(form.PageId);
-			var formDigest = GetFormDigest(formId);
-
-			DocumentResponseProperties documentResponseProperties = CreateResponseDocumentInfo(formId, pageId);
-			documentResponseProperties.GlobalRecordID = responseId;
-			documentResponseProperties.UserId = surveyResponseBO.UserId;
-			documentResponseProperties.PageResponsePropertiesList.Add(form.ToPageResponseProperties(responseId));
-
-			bool isSuccessful = await _surveyResponse.InsertResponseAsync(documentResponseProperties, formDigest, userId);
-			return isSuccessful;
-		}
-#endif
-		#endregion
-
-
 		#region DeleteSurveyByResponseId
 		public SurveyAnswerResponse DeleteResponse(IResponseContext responseContext)
 		{
@@ -230,15 +191,9 @@ namespace Epi.PersistenceServices.DocumentDB
 			return surveyAnsResponse;
 		}
 
-		#endregion
+        #endregion
 
-
-		#region Read All Records By SurveyID
-		//public IEnumerable<SurveyResponse> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
-		//{
-		//	return _surveyResponseCRUD.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, null, pageSize, pageNumber);
-		//}
-
+        #region Get All Responses With Criteria
         public IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
         {
             return _surveyResponseCRUD.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, null, pageSize, pageNumber);
@@ -261,14 +216,6 @@ namespace Epi.PersistenceServices.DocumentDB
 		}
 		#endregion
 
-
-		#region Create Resonse Document Info
-		private DocumentResponseProperties CreateResponseDocumentInfo(string formId, int pageId)
-		{
-			DocumentResponseProperties documentResponseProperties = new DocumentResponseProperties();
-			return documentResponseProperties;
-		}
-		#endregion
 
 		#region Notify Consistency Service
 		public void NotifyConsistencyService(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)

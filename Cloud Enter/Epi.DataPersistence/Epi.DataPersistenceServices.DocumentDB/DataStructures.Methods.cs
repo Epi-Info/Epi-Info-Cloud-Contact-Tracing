@@ -28,10 +28,10 @@ namespace Epi.PersistenceServices.DocumentDB
             }
 
             // Add the response to the response index if it doesn't alread exist.
-            ResponseDirectory existingResponseDirectory = null;
-            if (!ChildResponseIndex.TryGetValue(childResponse.ResponseId, out existingResponseDirectory))
+            ChildResponseContext existingChildResponseContext = null;
+            if (!ChildResponseContexts.TryGetValue(childResponse.ResponseId, out existingChildResponseContext))
             {
-                ChildResponseIndex.Add(childResponse.ResponseId, new ResponseDirectory(childResponse));
+                ChildResponseContexts.Add(childResponse.ResponseId, new ChildResponseContext(childResponse));
             }
 
             return childResponse;
