@@ -52,7 +52,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 // recStatus="0";
                 do
                 {
-                    string orderByFieldName = "_ts";
+
                     var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
 
                     //continuationToken = spResponse.Response.Continuation;
@@ -94,13 +94,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
             try
             {
                 StoredProcedure sproc = new StoredProcedure();
-                var sprocBody = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"SP_Script\" + spId + ".js");
+                var sprocBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, DocumentDBSPKeys.GetAllRecordsBySurveyID);
                 var sprocDefinition = new StoredProcedure
                 {
                     Id = spId,
                     Body = sprocBody
                 };
-                var sdfs = Client.CreateStoredProcedureAsync(spSelfLink, sprocDefinition).Result;
+                var result = Client.CreateStoredProcedureAsync(spSelfLink, sprocDefinition).Result;
                 return sproc;
             }
             catch (Exception ex)

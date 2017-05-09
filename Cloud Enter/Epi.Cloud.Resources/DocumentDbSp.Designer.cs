@@ -61,20 +61,21 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to // Get All Recrods by Survey Id
-        ///function sample(surveyId) {
-        ///    var collection = getContext().getCollection();
-        ///    //prefix = &apos;5c4a07f5-3868-4b8e-a526-70b1d281f26e&apos;
-        ///    var findobject = &quot;SELECT * FROM Objects o&quot;;
-        ///    // Query documents and take 1st item.
-        ///    var isAccepted = collection.queryDocuments(
-        ///        collection.getSelfLink(),
-        ///        findobject,
-        ///        function (err, feed, options) {
-        ///            if (err) throw err;
+        ///   Looks up a localized string similar to function orderBy(filterQuery) {
+        ///    // HTTP error codes sent to our callback funciton by DocDB server.
+        ///    var ErrorCode = {
+        ///        REQUEST_ENTITY_TOO_LARGE: 413,
+        ///    }
         ///
-        ///            // Check the feed and if empty, set the body to &apos;no docs found&apos;, 
-        ///   [rest of string was truncated]&quot;;.
+        ///    var collection = getContext().getCollection();
+        ///    var collectionLink = collection.getSelfLink();
+        ///    var result = new Array(); 
+        ///    tryQuery({});
+        ///
+        ///    function tryQuery(options) {
+        ///        var isAccepted = (filterQuery &amp;&amp; filterQuery.length) ?
+        ///            collection.queryDocuments(collectionLink, filterQuery, options, callback) :
+        ///      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetAllRecordsBySurveyID {
             get {
