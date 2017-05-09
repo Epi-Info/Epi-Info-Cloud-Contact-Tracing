@@ -20,23 +20,15 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spId"></param>
         /// <param name="surveyID"></param>
         /// <returns></returns>
-        private FormResponseProperties GetAllRecordsBySurveyId(string collectionId, string spId, string surveyID)
+        private List<FormResponseProperties> GetAllRecordsBySurveyId(string collectionId, string spId, string query, string continuationToken)
         {
-            FormResponseProperties asdf = new FormResponseProperties();
-            return asdf;
-            // return ExecuteSPAsync(collectionId, spId, surveyID).RE;
+            return ExecuteSPAsync(collectionId, spId, query, continuationToken);
         }
 
         internal class OrderByResult
         {
             public Document[] Result { get; set; }
             public int? Continuation { get; set; }
-        }
-
-        private List<FormResponseProperties> GetAllRecordsBySurveyId(string collectionId, string spId, string rootParentId, string formId, string recStatus)
-        {
-            //string testString = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, "DocumentDbSp");
-            return ExecuteSPAsync(collectionId, spId, rootParentId, formId, recStatus);
         }
 
         /// <summary>
@@ -47,23 +39,23 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="surveyId"></param>
         /// <returns></returns>
 
-        private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string rootParentId, string formId, string recStatus)
+        private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string query, string continuationToken)
         {
             RequestOptions option = new RequestOptions();
             var formResponseList = new List<FormResponseProperties>();
             var formResponse = new FormResponseProperties();
             // Create SP Uri
             string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId).ToString();
-            var relateParentId = rootParentId;
             try
             {
                 //formId="2e1d01d4-f50d-4f23-888b-cd4b7fc9884b";
                 // recStatus="0";
                 do
                 {
-                    var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, relateParentId, formId, recStatus, continuationToken).Result;
+                    string orderByFieldName = "_ts";
+                    var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
 
-                    continuationToken = spResponse.Response.Continuation;
+                    //continuationToken = spResponse.Response.Continuation;
 
                     foreach (var doc in spResponse.Response.Result)
                     {
