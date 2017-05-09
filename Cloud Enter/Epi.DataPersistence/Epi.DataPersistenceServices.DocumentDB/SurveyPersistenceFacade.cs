@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading;
+using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Extensions;
@@ -89,18 +91,47 @@ namespace Epi.PersistenceServices.DocumentDB
 			return true;
 		}
 
+        public bool SaveResponse(SurveyResponseBO surveyResponseBO)
+        {
+            using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+            {
+                bool isSuccessful = false;
+                var responseContext = ResponseContextExtensions.CloneResponseContext(surveyResponseBO);
+                Task<bool> isSuccessfulTask = null;
 
-		public bool SaveResponse(SurveyResponseBO surveyResponseBO)
-		{
-            var responseContext = ResponseContextExtensions.Clone(surveyResponseBO);
+                var backgroundTask = Task.Run(() =>
+                {
+                    isSuccessfulTask = SaveFormResponseProperties(surveyResponseBO);
+                });
 
-			bool saveFormPropertiesIsSuccessful = SaveFormResponseProperties(surveyResponseBO);
-			if (surveyResponseBO.Status == RecordStatus.Saved)
-			{
-				NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
-			}
-			return saveFormPropertiesIsSuccessful;
-		}
+                var millisecondsToSleep = 100;
+                var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
+                bool isCompleted = false;
+                while (retries > 0)
+                {
+                    if (isSuccessfulTask == null) { Thread.Sleep(10); continue; }
+                    isCompleted = isSuccessfulTask.IsCompleted;
+                    if (isCompleted) break;
+                    Thread.Sleep(millisecondsToSleep);
+                    retries -= 1;
+                }
+                isSuccessful = isCompleted;
+                var awaiter = isSuccessfulTask.ContinueWith(t =>
+                {
+                    if (surveyResponseBO.Status == RecordStatus.Saved)
+                    {
+                        NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
+                    }
+                    completionEvent.Set();
+                }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+
+                isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+                awaiter.GetAwaiter().GetResult();
+                isSuccessful &= isSuccessfulTask.Result;
+                isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+                return isSuccessful;
+            }
+        }
 
         #region Save Form Response Properties
         /// <summary>
@@ -108,7 +139,7 @@ namespace Epi.PersistenceServices.DocumentDB
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public bool SaveFormResponseProperties(SurveyResponseBO request)
+        private async Task<bool> SaveFormResponseProperties(SurveyResponseBO request)
         {
             ResponseContext responseContext = request.ToResponseContext();
             var formName = responseContext.FormName;
@@ -145,8 +176,8 @@ namespace Epi.PersistenceServices.DocumentDB
             };
 
             bool isSuccessful = false;
-            // TODO: This must await to prevent the caller from running!!!!!!
-            var result = _surveyResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties); // .ConfigureAwait(false).GetAwaiter().GetResult();
+            var result = await _surveyResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties).ConfigureAwait(false);
+            isSuccessful = result.Resource != null;
             return isSuccessful;
         }
 

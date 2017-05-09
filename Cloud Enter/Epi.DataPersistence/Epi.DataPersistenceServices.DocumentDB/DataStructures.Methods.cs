@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
-using Microsoft.Azure.Documents;
+using Epi.DataPersistence.Extensions;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
@@ -18,12 +17,15 @@ namespace Epi.PersistenceServices.DocumentDB
 
             var childResponseList = GetChildResponseList(parentResponseId, childFormName, /*addIfNoList=*/true);
             var existingResponse = childResponseList.SingleOrDefault(r => r.ResponseId == childResponseId);
-            var index = childResponseList.FindIndex(r => r.ResponseId == childResponseId);
-            if (index >= 0)
+
+            if (existingResponse != null)
             {
-                childResponseList.RemoveAt(index);
+                childResponse.CopyTo(existingResponse);
             }
-            childResponseList.Add(childResponse);
+            else
+            {
+                childResponseList.Add(childResponse);
+            }
 
             // Add the response to the response index if it doesn't alread exist.
             ResponseDirectory existingResponseDirectory = null;

@@ -59,7 +59,7 @@ namespace Epi.Cloud.Common.Extensions
             return responseContext;
         }
 
-        public static ResponseContext Clone(this IResponseContext responseContext)
+        public static ResponseContext CloneResponseContext(this IResponseContext responseContext)
         {
             return new ResponseContext
             {

@@ -121,7 +121,7 @@ namespace Epi.Web.MVC.Controllers
 
         protected SurveyAnswerDTO GetSurveyAnswerState(IResponseContext responseContext)
         {
-            var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext.Clone() };
+            var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext.CloneResponseContext() };
             SurveyAnswerDTO result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
             return result;
         }
