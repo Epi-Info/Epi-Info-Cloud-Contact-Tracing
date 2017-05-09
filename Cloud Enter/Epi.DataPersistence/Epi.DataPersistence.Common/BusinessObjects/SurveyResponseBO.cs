@@ -7,13 +7,11 @@ namespace Epi.Cloud.Common.BusinessObjects
 {
     public class SurveyResponseBO : ICloneable, IResponseContext
     {
-
         public SurveyResponseBO()
         {
             ResponseDetail = new FormResponseDetail();
             DateUpdated = DateTime.Now;
             Status = RecordStatus.InProcess;
-
         }
 
         public string SurveyId { get { return ResponseDetail.FormId; } set { ResponseDetail.FormId = value; } }

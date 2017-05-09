@@ -15,7 +15,6 @@ using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Extensions;
 using Epi.Common.Core.DataStructures;
-using Epi.Common.Core.Interfaces;
 using Epi.Common.EmailServices;
 using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.Constants;

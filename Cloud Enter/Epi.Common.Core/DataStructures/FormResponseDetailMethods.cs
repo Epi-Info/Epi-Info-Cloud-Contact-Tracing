@@ -33,7 +33,7 @@ namespace Epi.DataPersistence.DataStructures
 		}
 
         /// <summary>
-        /// TODO
+        /// FindParentFormResponseDetail
         /// </summary>
         /// <param name="parentResponsId"></param>
         /// <returns></returns>
@@ -43,14 +43,6 @@ namespace Epi.DataPersistence.DataStructures
             var parentItem = flattenedResponses.SingleOrDefault(f => f.ResponseId == parentResponsId);
             return parentItem;
         }
-
-        public void AddChildFormResponseDetail(FormResponseDetail childFormResponseDetail)
-		{
-			var existingItem = ChildFormResponseDetailList.Any(f => f.FormId == childFormResponseDetail.FormId);
-			if (existingItem) ChildFormResponseDetailList.Remove(childFormResponseDetail);
-			childFormResponseDetail.ParentFormId = FormId;
-			ChildFormResponseDetailList.Add(childFormResponseDetail);
-		}
 
 		public List<FormResponseDetail> FlattenHierarchy()
 		{
@@ -89,6 +81,7 @@ namespace Epi.DataPersistence.DataStructures
 			var pageResponseDetail = PageResponseDetailList.SingleOrDefault(p => p.PageId == pageId);
 			return pageResponseDetail;
 		}
+
 		public PageResponseDetail GetPageResponseDetailByPageNumber(int pageNumber)
 		{
 			var pageResponseDetail = PageResponseDetailList.SingleOrDefault(p => p.PageNumber == pageNumber);

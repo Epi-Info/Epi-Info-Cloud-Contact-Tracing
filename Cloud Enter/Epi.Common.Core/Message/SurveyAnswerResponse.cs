@@ -23,7 +23,7 @@ namespace Epi.Cloud.Common.Message
         /// <summary>
         /// Single SurveyInfo
         /// </summary>
-        public List<SurveyAnswerDTO> SurveyResponseList;
+        public List<SurveyAnswerDTO> SurveyResponseList { get; set; }
 
         /// <summary>
         /// Total number of pages for query
@@ -37,6 +37,6 @@ namespace Epi.Cloud.Common.Message
 
         public int NumberOfResponses { get; set; }
 
-        public FormInfoDTO FormInfo;
+        public FormInfoDTO FormInfo { get; set; }
     }
 }
