@@ -823,13 +823,15 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult Delete(string responseid)//List<FormInfoModel> ModelList, string formid)
         {
+            var rootFormId = Session[SessionKeys.RootFormId].ToString();
             var formId = Session[SessionKeys.CurrentFormId];
+
             var responseContext = new ResponseContext
             {
                 RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
+                RootFormId = rootFormId,
                 ResponseId = responseid,
-                FormId = formId != null ? formId.ToString() : null,
-                RootFormId = Session[SessionKeys.RootFormId].ToString(),
+                FormId = formId != null ? formId.ToString() : rootFormId,
                 UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()),
                 UserName = Session[SessionKeys.UserName].ToString()
             }.ResolveMetadataDependencies() as ResponseContext;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common;
+using Epi.Common.Core.Interfaces;
 using Epi.PersistenceServices.DocumentDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -12,7 +13,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
     {
         private const int HResult_AttachmentAlreadyExists = -2146233088;
 
-        public Attachment CreateAttachment(string documentSelfLink, string attachmentId, string formName, string responseId, string surveyData)
+        public Attachment CreateAttachment(string documentSelfLink, IResponseContext responseContext, string attachmentId, string surveyData)
         {
             int maxRetries = 2;
             TimeSpan interval = TimeSpan.FromMilliseconds(100);
@@ -20,19 +21,19 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             var attachment = retryStrategy.ExecuteWithRetry<Attachment>(() => 
 
-                Client.CreateAttachmentAsync(documentSelfLink, new { id = attachmentId, contentType = "text/plain", media = "link to your media", GlobalRecordID = responseId, SurveyDocument = surveyData }).Result,
+                Client.CreateAttachmentAsync(documentSelfLink, new { id = attachmentId, contentType = "text/plain", media = "link to your media", RootResponseId = responseContext.RootResponseId, SurveyDocument = surveyData }).Result,
                        
-                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateAttachment(ex, consumedRetries, remainingRetries, attachmentId, formName, responseId)
+                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateAttachment(ex, consumedRetries, remainingRetries, responseContext, attachmentId)
             );
             return attachment;
         }
 
-        private RetryResponse<Attachment> RetryHandlerForCreateAttachment(Exception ex, int consumedRetries, int remainingRetries, string attachmentId, string formName, string responseId)
+        private RetryResponse<Attachment> RetryHandlerForCreateAttachment(Exception ex, int consumedRetries, int remainingRetries, IResponseContext responseContext, string attachmentId)
         {
             var baseException = ex.GetBaseException();
             if (baseException as DocumentClientException != null && baseException.HResult == HResult_AttachmentAlreadyExists)
             {
-                var existingAttachment = ReadAttachment(formName, responseId, attachmentId);
+                var existingAttachment = ReadAttachment(responseContext, attachmentId);
                 DeleteAttachment(existingAttachment);
                 return new RetryResponse<Attachment> { Action = RetryAction.ContinueRetrying };
             }
@@ -43,13 +44,15 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 
 
-        public Attachment ReadAttachment(string formName, string responseId, string attachmentId)
+        public Attachment ReadAttachment(IResponseContext responseContext, string attachmentId)
         {
 
             Attachment attachment = null;
             try
             {
-                var attachmentUri = UriFactory.CreateAttachmentUri(DatabaseName, formName, responseId, attachmentId);
+                var rootFormName = responseContext.RootFormName;
+                var rootResponseId = responseContext.RootResponseId;
+                var attachmentUri = UriFactory.CreateAttachmentUri(DatabaseName, rootFormName, rootResponseId, attachmentId);
                 attachment = Client.ReadAttachmentAsync(attachmentUri).Result;
                 return attachment;
             }
