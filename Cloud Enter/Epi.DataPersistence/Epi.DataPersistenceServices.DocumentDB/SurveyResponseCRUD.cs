@@ -262,7 +262,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             var snapshotFormResponseProperties = snapshotFormResponseResource.FormResponseProperties;
             string rootFormName = snapshotFormResponseProperties.FormName;
             Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
-            var documentResponse = ExecuteAsync(() => Client.UpsertDocumentAsync(rootFormCollectionUri, snapshotFormResponseResource));
+            var documentResponse = ExecuteWithFollowOnAction(() => Client.UpsertDocumentAsync(rootFormCollectionUri, snapshotFormResponseResource));
             var isSuccessful = documentResponse != null;
             return isSuccessful;
         }

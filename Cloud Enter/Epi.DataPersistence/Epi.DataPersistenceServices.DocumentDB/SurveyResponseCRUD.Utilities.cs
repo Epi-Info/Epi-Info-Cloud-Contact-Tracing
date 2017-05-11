@@ -1,13 +1,13 @@
-﻿using Epi.Cloud.Common.Configuration;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Configuration;
 using System.Linq;
-using Epi.Cloud.Common.Constants;
 using System.Threading;
 using System.Threading.Tasks;
+using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
@@ -182,104 +182,129 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
         #endregion
 
-        public ResourceResponse<Document> ExecuteAsync(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+        public bool ExecuteWithFollowOnAction(Func<Task<bool>> asyncFunc, Action followOnAction = null)
         {
-            using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+            Task<bool> boolTask = null;
+            bool isSuccessful = ExecuteFollowOn(asyncFunc, followOnAction, out boolTask);
+            bool result = boolTask.Result;
+            isSuccessful &= result;
+            return isSuccessful;
+        }
+
+        public ResourceResponse<Document> ExecuteWithFollowOnAction(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+        {
+            Task<ResourceResponse<Document>> documentTask = null;
+            bool isSuccessful = ExecuteFollowOn(asyncFunc, followOnAction, out documentTask);
+            ResourceResponse<Document> result = documentTask.Result;
+            return result;
+        }
+
+        private static bool ExecuteFollowOn<T>(Func<T> asyncFunc, Action followOnAction, out T task) where T : Task
+        {
+            bool isSuccessful = false;
+            T asyncTask = null;
+
+            using (var backgroundTask = Task.Run(() =>
             {
-                ResourceResponse<Document> result = null;
+                // Start the async task running.
+                asyncTask = asyncFunc();
 
-                Task<ResourceResponse<Document>> documentTask = null;
-
-                var backgroundTask = Task.Run(() =>
-                {
-                    documentTask = asyncFunc();
-                });
-
-                var millisecondsToSleep = 100;
+                // Retry for a maximum of 5 seconds for the async task to complete
+                var millisecondsToSleep = 10;
                 var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
+
                 bool isCompleted = false;
                 while (retries > 0)
                 {
-                    if (documentTask == null) { Thread.Sleep(10); continue; }
-                    isCompleted = documentTask.IsCompleted;
-                    if (isCompleted) break;
-                    Thread.Sleep(millisecondsToSleep);
-                    retries -= 1;
-                }
-                bool isSuccessful = isCompleted;
-
-                var awaiter = documentTask.ContinueWith(t =>
-                {
-                    if (followOnAction != null)
+                    isCompleted = asyncTask.IsCompleted;
+                    if (!isCompleted)
                     {
-                        followOnAction();
+                        // Sleep for a few milliseconds
+                        Thread.Sleep(millisecondsToSleep);
+                        retries -= 1;
                     }
-                    completionEvent.Set();
-                }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+                    else
+                    {
+                        break;
+                    }
+                }
 
-                isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+                isSuccessful = isCompleted;
 
-                awaiter.GetAwaiter().GetResult();
+                using (var completionEvent = new ManualResetEvent(false))
+                {
+                    var awaiter = asyncTask.ContinueWith(t =>
+                    {
+                        if (followOnAction != null)
+                        {
+                            followOnAction();
+                        }
+                        completionEvent.Set();
+                    }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+                    
+                    // Wait for the follow on action to complete
+                    isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
 
-                result = documentTask.Result;
-
-                isSuccessful &= (result != null);
-
-                isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
-
-                return result;
-            }
-        }
-
-
-        public bool ExecuteAsync(Func<Task<bool>> asyncFunc, Action followOnAction = null)
-        {
-            using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+                    awaiter.GetAwaiter().GetResult();
+                }
+            }))
             {
-                bool result = false;
-
-                Task<bool> boolTask = null;
-
-                var backgroundTask = Task.Run(() =>
-                {
-                    boolTask = asyncFunc();
-                });
-
-                var millisecondsToSleep = 100;
-                var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
-                bool isCompleted = false;
-                while (retries > 0)
-                {
-                    if (boolTask == null) { Thread.Sleep(10); continue; }
-                    isCompleted = boolTask.IsCompleted;
-                    if (isCompleted) break;
-                    Thread.Sleep(millisecondsToSleep);
-                    retries -= 1;
-                }
-                bool isSuccessful = isCompleted;
-
-                var awaiter = boolTask.ContinueWith(t =>
-                {
-                    if (followOnAction != null)
-                    {
-                        followOnAction();
-                    }
-                    completionEvent.Set();
-                }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
-
-                isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
-
-                awaiter.GetAwaiter().GetResult();
-
-                result = boolTask.Result;
-
-                isSuccessful &= result;
-
                 isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+            };
 
-                return isSuccessful;
-            }
+            task = asyncTask;
+
+            return isSuccessful;
         }
-
     }
+
+    //public ResourceResponse<Document> ExecuteAsync(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+    //{
+    //    using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+    //    {
+    //        ResourceResponse<Document> result = null;
+
+    //        Task<ResourceResponse<Document>> documentTask = null;
+
+    //        var backgroundTask = Task.Run(() =>
+    //        {
+    //            documentTask = asyncFunc();
+    //        });
+
+    //        var millisecondsToSleep = 100;
+    //        var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
+    //        bool isCompleted = false;
+    //        while (retries > 0)
+    //        {
+    //            if (documentTask == null) { Thread.Sleep(10); continue; }
+    //            isCompleted = documentTask.IsCompleted;
+    //            if (isCompleted) break;
+    //            Thread.Sleep(millisecondsToSleep);
+    //            retries -= 1;
+    //        }
+    //        bool isSuccessful = isCompleted;
+
+    //        var awaiter = documentTask.ContinueWith(t =>
+    //        {
+    //            if (followOnAction != null)
+    //            {
+    //                followOnAction();
+    //            }
+    //            completionEvent.Set();
+    //        }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+
+    //        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+
+    //        awaiter.GetAwaiter().GetResult();
+
+    //        result = documentTask.Result;
+
+    //        isSuccessful &= (result != null);
+
+    //        isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+
+    //        return result;
+    //    }
+    //}
+
 }

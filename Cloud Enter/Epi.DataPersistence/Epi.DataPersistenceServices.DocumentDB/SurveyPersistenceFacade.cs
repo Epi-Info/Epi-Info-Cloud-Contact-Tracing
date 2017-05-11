@@ -93,7 +93,7 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
-            var isSuccessful = _surveyResponseCRUD.ExecuteAsync(
+            var isSuccessful = _surveyResponseCRUD.ExecuteWithFollowOnAction(
                 () => SaveFormResponseProperties(surveyResponseBO),
                 () => {
                         if (surveyResponseBO.Status == RecordStatus.Saved)
