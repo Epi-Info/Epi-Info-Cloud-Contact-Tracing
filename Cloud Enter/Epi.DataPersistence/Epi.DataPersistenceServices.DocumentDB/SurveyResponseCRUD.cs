@@ -208,16 +208,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <returns></returns>
         public async Task<bool> UpdateAttachment(IResponseContext responseContext, int responseStatus, int userId = 0, int newResponseStatus = 0)
         {
-            var responseId = responseContext.ResponseId;
-            var rootFormName = responseContext.RootFormName;
-
             newResponseStatus = responseStatus;
-            Attachment attachment = null;
             bool isSuccessful = false;
             bool deleteResponse = false;
             try
             {
-                Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
+                Uri rootFormCollectionUri = GetCollectionUri(responseContext.RootFormName);
                 FormResponseResource formResponseResource = ReadRootResponseResource(responseContext);
                 if (formResponseResource != null)
                 {
@@ -225,7 +221,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     //Is status is Saved and check if attachment is existed or not.If attachment is null and delete attachment
                     if (newResponseStatus == RecordStatus.Saved)
                     {
-                        attachment = ReadAttachment(rootFormName, responseId, AttachmentId);
+                        Attachment attachment = ReadAttachment(responseContext, AttachmentId);
                         if (attachment != null)
                         {
                             deleteResponse = DeleteAttachment(attachment);
@@ -266,8 +262,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             var snapshotFormResponseProperties = snapshotFormResponseResource.FormResponseProperties;
             string rootFormName = snapshotFormResponseProperties.FormName;
             Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
-            var resourceResponse = Client.UpsertDocumentAsync(rootFormCollectionUri, snapshotFormResponseResource).ConfigureAwait(false).GetAwaiter().GetResult();
-            return true;
+            var documentResponse = ExecuteWithFollowOnAction(() => Client.UpsertDocumentAsync(rootFormCollectionUri, snapshotFormResponseResource));
+            var isSuccessful = documentResponse != null;
+            return isSuccessful;
         }
 
         #endregion
@@ -323,7 +320,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         {
                             Attachment attachment = null;
                             var existingResponseJson = JsonConvert.SerializeObject(formResponseResource);
-                            attachment = CreateAttachment(formResponseResource.SelfLink, AttachmentId, responseContext.RootFormName, existingFormResponseProperties.ResponseId, existingResponseJson);
+                            attachment = CreateAttachment(formResponseResource.SelfLink, responseContext, AttachmentId, existingResponseJson);
                         }
 
                         formResponseResource.FormResponseProperties = formResponseProperties;

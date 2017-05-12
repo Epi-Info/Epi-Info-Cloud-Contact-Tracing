@@ -23,80 +23,92 @@ using Newtonsoft.Json;
 namespace Epi.PersistenceServices.DocumentDB
 {
     public partial class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
-	{
-		private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+    {
+        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
 
-		public DocumentDBSurveyPersistenceFacade()
-		{
-		}
+        public DocumentDBSurveyPersistenceFacade()
+        {
+        }
 
-		SurveyResponseCRUD _surveyResponseCRUD = new SurveyResponseCRUD();
+        SurveyResponseCRUD _surveyResponseCRUD = new SurveyResponseCRUD();
 
-		public FormResponseDetail GetFormResponseState(IResponseContext responseContext)
-		{
-			var formResponseProperties = _surveyResponseCRUD.GetFormResponseState(responseContext);
-			return formResponseProperties != null ? formResponseProperties.ToFormResponseDetail() : null;
-		}
+        public FormResponseDetail GetFormResponseState(IResponseContext responseContext)
+        {
+            var formResponseProperties = _surveyResponseCRUD.GetFormResponseState(responseContext);
+            return formResponseProperties != null ? formResponseProperties.ToFormResponseDetail() : null;
+        }
 
         public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false) // string childFormId, string parentResponseId)
         {
-			return _surveyResponseCRUD.DoChildResponsesExist(responseContext, includeDeletedRecords);
-		}
+            return _surveyResponseCRUD.DoChildResponsesExist(responseContext, includeDeletedRecords);
+        }
 
-		public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
-		{
-			return _surveyResponseCRUD.GetFormResponseCount(formId, includeDeletedRecords);
-		}
+        public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
+        {
+            return _surveyResponseCRUD.GetFormResponseCount(formId, includeDeletedRecords);
+        }
 
-		public bool UpdateResponseStatus(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
-		{
-			var formId = responseContext.FormId;
-			var responseId = responseContext.ResponseId;
+        public bool UpdateResponseStatus(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
+        {
+            var formId = responseContext.FormId;
+            var responseId = responseContext.ResponseId;
 
-			Attachment attachment = null;
-			try
-			{
-				switch (responseStatus)
-				{
-					case RecordStatus.Saved:
-						var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseContext, responseStatus);
-						break;
-					case RecordStatus.Deleted:
-						var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.Deleted);
-						//NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
-						break;
-					case RecordStatus.Restore:
-						attachment = _surveyResponseCRUD.ReadAttachment(formId, responseId, AttachmentId);
-						if (attachment == null)
-						{
-							//Add new record Don't Save
-							var NewRecordDontSaveResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.PhysicalDelete);
-						}
-						else
-						{
-							//Edit Record Don't Save
-							FormResponseResource formResonseResource = _surveyResponseCRUD.RetrieveAttachment(attachment);
-							var editRecordDontSaveResult = _surveyResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
+            Attachment attachment = null;
+            try
+            {
+                switch (responseStatus)
+                {
+                    case RecordStatus.Saved:
+                        var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseContext, responseStatus);
+                        break;
+                    case RecordStatus.Deleted:
+                        var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.Deleted);
+                        //NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
+                        break;
+                    case RecordStatus.Restore:
+                        attachment = _surveyResponseCRUD.ReadAttachment(responseContext, AttachmentId);
+                        if (attachment == null)
+                        {
+                            //Add new record Don't Save
+                            var NewRecordDontSaveResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.PhysicalDelete);
+                        }
+                        else
+                        {
+                            //Edit Record Don't Save
+                            FormResponseResource formResonseResource = _surveyResponseCRUD.RetrieveAttachment(attachment);
+                            var editRecordDontSaveResult = _surveyResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
 
-							//Delete Attachment                         
-							var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
-						}
-						break;
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex.ToString());
-			}
-			return true;
-		}
+                            //Delete Attachment                         
+                            var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
+                        }
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return true;
+        }
 
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
+        {
+            var isSuccessful = _surveyResponseCRUD.ExecuteWithFollowOnAction(
+                () => SaveFormResponseProperties(surveyResponseBO),
+                () => {
+                        if (surveyResponseBO.Status == RecordStatus.Saved)
+                        {
+                            NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
+                        }
+                      });
+            return isSuccessful;
+        }
+
+        public bool SaveResponsexxx(SurveyResponseBO surveyResponseBO)
         {
             using (ManualResetEvent completionEvent = new ManualResetEvent(false))
             {
                 bool isSuccessful = false;
-                var responseContext = ResponseContextExtensions.CloneResponseContext(surveyResponseBO);
                 Task<bool> isSuccessfulTask = null;
 
                 var backgroundTask = Task.Run(() =>

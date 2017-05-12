@@ -30,15 +30,11 @@ namespace Epi.MetadataAccessService.Handlers
             _controller = controller;
         }
 
-        //public Task<HttpResponseMessage>ExecuteAsync(CancellationToken cancellationToken)
-        //{
-        //    return Task.FormResult(Execute()); 
-        //}
-
         public Task<HttpResponseMessage> ExecuteAsync(CancellationToken cancellationToken)
         {
             return Task.FromResult(Execute());
         }
+
         public HttpResponseMessage Execute()
         {
             HttpResponseMessage message = null;
