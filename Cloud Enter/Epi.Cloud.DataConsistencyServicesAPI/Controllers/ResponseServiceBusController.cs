@@ -1,6 +1,7 @@
 ﻿using System.Web.Http;
 using Epi.Cloud.DataConsistencyServices.Proxy;
 using Epi.Cloud.DataConsistencyServices.Services.ServiceBusService;
+using Epi.Cloud.ServiceBus;
 using Epi.MetadataAccessService.Handlers;
 
 namespace Epi.Cloud.DataConsistencyServices.Controllers
@@ -17,7 +18,7 @@ namespace Epi.Cloud.DataConsistencyServices.Controllers
 		// GET: api/ResponseServiceBus
 		public IHttpActionResult Get()
 		{
-			return new ServiceResult<string>(_responseInfoServiceBus.GetResponseInfoMessageFromServiceBus(), this);
+			return new ServiceResult<MessagePayload>(_responseInfoServiceBus.GetResponseInfoMessageFromServiceBus(), this);
 		}
 
 		//// GET: api/FormServiceBus/{responseId}

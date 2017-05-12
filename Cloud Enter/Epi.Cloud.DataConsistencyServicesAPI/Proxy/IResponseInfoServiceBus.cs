@@ -1,7 +1,9 @@
-﻿namespace Epi.Cloud.DataConsistencyServices.Proxy
+﻿using Epi.Cloud.ServiceBus;
+
+namespace Epi.Cloud.DataConsistencyServices.Proxy
 {
     public interface IResponseInfoServiceBus
     {
-        string GetResponseInfoMessageFromServiceBus();
+        MessagePayload GetResponseInfoMessageFromServiceBus();
     }
 }

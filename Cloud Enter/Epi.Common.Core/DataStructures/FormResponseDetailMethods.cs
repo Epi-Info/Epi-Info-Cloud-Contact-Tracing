@@ -6,19 +6,6 @@ namespace Epi.DataPersistence.DataStructures
 {
 	public partial class FormResponseDetail
 	{
-		//private MetadataAccessor _metadataAccessor;
-
-		public FormResponseDetail()
-		{
-			RequiredFieldsList = string.Empty;
-			HiddenFieldsList = string.Empty;
-			HighlightedFieldsList = string.Empty;
-			DisabledFieldsList = string.Empty;
-			PageResponseDetailList = new List<PageResponseDetail>();
-			ChildFormResponseDetailList = new List<FormResponseDetail>();
-			PageIds = new List<int>();
-		}
-
 		public void AddPageResponseDetail(PageResponseDetail pageResponseDetail)
 		{
 			var existingItem = PageResponseDetailList.SingleOrDefault(p => p.PageId == pageResponseDetail.PageId);

@@ -4,8 +4,19 @@ using Epi.Common.Core.Interfaces;
 
 namespace Epi.DataPersistence.DataStructures
 {
+    [Serializable]
     public partial class FormResponseDetail : IResponseContext
     {
+        public FormResponseDetail()
+        {
+            RequiredFieldsList = string.Empty;
+            HiddenFieldsList = string.Empty;
+            HighlightedFieldsList = string.Empty;
+            DisabledFieldsList = string.Empty;
+            PageResponseDetailList = new List<PageResponseDetail>();
+            ChildFormResponseDetailList = new List<FormResponseDetail>();
+            PageIds = new List<int>();
+        }
 
         public string ResponseId { get; set; }
         public string FormId { get; set; }
@@ -38,6 +49,7 @@ namespace Epi.DataPersistence.DataStructures
         public string HiddenFieldsList { get; set; }
         public string HighlightedFieldsList { get; set; }
         public string DisabledFieldsList { get; set; }
+
         public List<PageResponseDetail> PageResponseDetailList { get; private set; }
 
         public List<FormResponseDetail> ChildFormResponseDetailList { get; private set; }
@@ -45,6 +57,5 @@ namespace Epi.DataPersistence.DataStructures
         public bool IsChildResponse { get { return IsRelatedView; } }
 
         public bool IsRootResponse { get { return !IsRelatedView; } }
-
     }
 }

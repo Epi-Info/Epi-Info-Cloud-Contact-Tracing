@@ -11,11 +11,11 @@ namespace Epi.Cloud.DataConsistencyServices.Services.ServiceBusService
 
         }
 
-        public string GetResponseInfoMessageFromServiceBus()
+        public MessagePayload GetResponseInfoMessageFromServiceBus()
         {
             ServiceBusCRUD crudServiceBus = new ServiceBusCRUD();
-            var responseInfoMessage = crudServiceBus.ReceiveMessages();
-            return responseInfoMessage;
+            var messagePayload = crudServiceBus.ReceiveMessages();
+            return messagePayload;
         }
     }
 }

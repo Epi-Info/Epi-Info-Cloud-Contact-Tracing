@@ -237,24 +237,15 @@ namespace Epi.PersistenceServices.DocumentDB
 				try
 				{
 					var serviceBusCRUD = new ServiceBusCRUD();
-					var hierarchialResponse = GetHierarchialResponsesByResponseId(responseContext, true);
-                    var messageHeader = string.Format("{0},{1},{2}", responseContext.RootFormName, responseContext.RootFormId, responseContext.RootResponseId ?? responseContext.ResponseId);
+					var hierarchialResponse = GetHierarchialResponsesByResponseId(responseContext,includeDeletedRecords: true);
+                    var messageHeader = string.Format("{0},{1},{2}", responseContext.RootFormName, responseContext.RootFormId, responseContext.RootResponseId);
 					switch (reasonForStatusChange)
 					{
 						case RecordStatusChangeReason.SubmitOrClose:
+						case RecordStatusChangeReason.DeleteResponse:
 
                             //send notification to ServiceBus
-                            var messageHeaderJson = JsonConvert.SerializeObject(messageHeader);
-                            var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
-							serviceBusCRUD.SendMessagesToTopic(messageHeaderJson, hierarchialResponseJson);
-							//ConsistencyHack(hierarchialResponse);
-							break;
-						case RecordStatusChangeReason.DeleteResponse:
-							//Update status and send notification to ServiceBus 
-							hierarchialResponse.RecStatus = RecordStatus.Deleted;
-                            messageHeaderJson = JsonConvert.SerializeObject(messageHeader);
-                            hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse);
-							serviceBusCRUD.SendMessagesToTopic(messageHeaderJson, hierarchialResponseJson);
+							serviceBusCRUD.SendMessagesToTopic(hierarchialResponse);
 							//ConsistencyHack(hierarchialResponse);
 							break;
 					}

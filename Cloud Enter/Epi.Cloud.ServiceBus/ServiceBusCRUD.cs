@@ -4,6 +4,9 @@ using System.Configuration;
 using System.Threading;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.ServiceBus
 {
@@ -40,7 +43,6 @@ namespace Epi.Cloud.ServiceBus
             NamespaceManager namespaceManager = NamespaceManager.Create();
             try
             {
-                // Delete if exists
                 if (namespaceManager.TopicExists(TopicName))
                 {
                     return true;
@@ -63,15 +65,23 @@ namespace Epi.Cloud.ServiceBus
 		#endregion
 
 		#region Send message to Topic
-		public bool SendMessagesToTopic(string id, string responseProperties)
+		public bool SendMessagesToTopic(FormResponseDetail hierarchialResponse)
         {
             var connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
 
             //Create Topic
             CreateTopic();
 
+            var responseProperties = new Dictionary<string, object>();
+            responseProperties.Add("ResponseId", hierarchialResponse.RootResponseId);
+            responseProperties.Add("FormId", hierarchialResponse.RootFormId);
+            responseProperties.Add("FormName", hierarchialResponse.RootFormName);
+
+            var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+
+
             //Send message
-            SendMessages(id, responseProperties);
+            SendMessage(hierarchialResponseJson, responseProperties);
 
             return false;
 
@@ -79,22 +89,24 @@ namespace Epi.Cloud.ServiceBus
         #endregion
 
         #region Read Message from Topic
-        public string ReceiveMessages()
+        public MessagePayload ReceiveMessages()
         {
             // For PeekLock mode (default) where applications require "at least once" delivery of messages 
             SubscriptionClient agentSubscriptionClient = SubscriptionClient.Create(TopicName, SubscriptionName);
-            BrokeredMessage message = null;
-            string msg = string.Empty;
-
+            MessagePayload messagePayload = null;
             try
             {
                 //receive messages from Agent Subscription
-                message = agentSubscriptionClient.Receive(TimeSpan.FromSeconds(5));
+                var message = agentSubscriptionClient.Receive(TimeSpan.FromSeconds(5));
                 if (message != null)
                 {
                     //Console.WriteLine(string.Format("Message received: Id = {0}, Body = {1}", message.MessageId, message.GetBody<string>()));
-                    msg = message.GetBody<string>();
-                    
+                    messagePayload = new MessagePayload
+                    {
+                        Properties = message.Properties,
+                        Body = message.GetBody<string>()
+                    };
+
                     message.Complete();
                 }
                 else
@@ -115,17 +127,16 @@ namespace Epi.Cloud.ServiceBus
                 }
             }
 
-            return msg;
+            return messagePayload;
 
         }
         #endregion
 
         #region Created message and send message to queue
-        public void SendMessages(string id, string body)
+        public void SendMessage(string body, IDictionary<string, object> responseProperties = null)
         {
             topicClient = TopicClient.Create(TopicName);
-            BrokeredMessage message = new BrokeredMessage();
-            message = CreateMessage(id, body);
+            BrokeredMessage message = CreateMessage(body, responseProperties);
             try
             {
                 topicClient.Send(message);
@@ -149,10 +160,16 @@ namespace Epi.Cloud.ServiceBus
         #endregion
 
         #region Create message
-        public BrokeredMessage CreateMessage(string messageId, string messageBody)
+        public BrokeredMessage CreateMessage(string messageBody, IDictionary<string, object> responseProperties = null)
         {
             BrokeredMessage message = new BrokeredMessage(messageBody);
-            message.MessageId = messageId;
+            if (responseProperties != null)
+            {
+                foreach (var kvp in responseProperties)
+                {
+                    message.Properties.Add(kvp);
+                }
+            }
             return message;
         }
         #endregion

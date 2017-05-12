@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace Epi.DataPersistence.DataStructures
 {
+    [Serializable]
     public partial class PageResponseDetail
     {
         public PageResponseDetail()

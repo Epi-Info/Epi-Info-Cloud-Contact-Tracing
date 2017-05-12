@@ -15,16 +15,16 @@ namespace Epi.Cloud.WebJobs
             {
                 //Read Message from Service Bus
                 var serviceBusCRUD = new ServiceBusCRUD();
-                var surveyData = serviceBusCRUD.ReceiveMessages();
+                var messagePayload = serviceBusCRUD.ReceiveMessages();
 
-                if (surveyData == null)
+                if (messagePayload == null)
                 {
-                    Console.WriteLine("SurveyData is not available in the Service Bus");
+                    Console.WriteLine("MessagePayload is not available in the Service Bus");
                 }
                 else
                 {
                     //Convert to FormResponseDetails
-                    FormResponseDetail formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(surveyData);
+                    FormResponseDetail formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(messagePayload.Body);
                     PageDigest[][] pagedigest = GetPageDigest();
 
                     //Send to SQL Server
