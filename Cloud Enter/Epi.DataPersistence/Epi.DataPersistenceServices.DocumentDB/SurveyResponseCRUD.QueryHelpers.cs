@@ -14,6 +14,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string GT = ">";
         private const string GE = ">=";
         private const string SELECT = "SELECT ";
+        private const string ORDERBY = " ORDER BY ";
+        private const string DESC = " DESC ";
         private const string FROM = " FROM ";
         private const string WHERE = " WHERE ";
         private const string AND = " AND ";
@@ -151,7 +153,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             if (columnlist != null && columnlist.Count > 0)
             {
-                // convert column list to this format ex:patientname1: Zika.FormResponseProperties.ResponseQA.patientname1
+                // convert column list to this format {patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist);
 
             }
@@ -163,10 +165,44 @@ namespace Epi.DataPersistenceServices.DocumentDB
                            + SelectColumnList
                            + WHERE
                            + AssembleWhere(collectionAlias, Expression(FRP + "FormId", EQ, formId)
-                           + And_Expression(FRP + "RecStatus", NE, RecordStatus.Deleted));
+                           + And_Expression(FRP + "RecStatus", NE, RecordStatus.Deleted))
+                           + ORDERBY
+                           + AssembleSelect(collectionAlias, "_ts")
+                           + DESC;
 
             return query;
         }
+
+        private string SearchByFiledNames(string collectionAlias, string formId, List<string> formPoperties, KeyValuePair<FieldDigest, string>[] columnlist)
+        {
+            string SelectColumnList = string.Empty;
+
+            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP + g).ToArray());
+            if (columnlist != null)
+            {
+                // convert column list to this format ex:{patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
+                SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist.Select(x => x.Key.FieldName).ToList());
+            }
+
+
+            var fieldKeyList = columnlist.Select(x => collectionAlias + "." + ResponseQA + x.Key.FieldName + "=\"" + x.Value + "\"" + AND).ToArray();
+
+            var expersion = collectionAlias + FRP + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + FRP + "RecStatus" + NE + RecordStatus.Deleted;
+            var query = SELECT
+                           + SelectFormPoperties + ","
+                           + AssembleSelect(collectionAlias, "_ts,")
+                           + SelectColumnList
+                           + WHERE
+                           + AssembleWhere(collectionAlias, fieldKeyList)
+                           + expersion
+                           + ORDERBY
+                           + AssembleSelect(collectionAlias, "_ts")
+                           + DESC;
+            //query = query.do.DocumentNode.SelectSingleNode("//h1").InnerText;
+            //query = query.Trim();
+            return query;
+        }
+
 
     }
 }

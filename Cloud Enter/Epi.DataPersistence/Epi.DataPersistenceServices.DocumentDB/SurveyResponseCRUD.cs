@@ -105,7 +105,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
             var rootFormName = responseContext.RootFormName ?? GetRootFormName(responseContext.RootFormId);
-            
+
 
             bool isSuccessful = false;
             try
@@ -376,7 +376,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             List<FormResponseDetail> formResponseDetailList = new List<FormResponseDetail>();
             List<FormResponseProperties> formResponsePropertiesList;
-
+            List<string> columnNames = new List<string>();
             if (responseContext.IsChildResponse)
             {
                 if (searchQualifiers != null && searchQualifiers.Count > 0) throw new ArgumentException("Search not available on child forms");
@@ -387,11 +387,27 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 try
                 {
-                    var searchFieldNameValueQualifiers = searchQualifiers != null && searchQualifiers.Count > 0 
-                        ? searchQualifiers.Values.ToArray() 
+                    var searchFieldNameValueQualifiers = searchQualifiers != null && searchQualifiers.Count > 0
+                        ? searchQualifiers.Values.ToArray()
                         : null;
+                    if (searchFieldNameValueQualifiers == null)
+                    {
+                        foreach (var fildname in fieldDigestList)
+                        {
+                            columnNames.Add(fildname.Value.TrueCaseFieldName);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var fildname in searchFieldNameValueQualifiers)
+                        {
+                            columnNames.Add(fildname.Value);
+                        }
+                    }
 
-                    formResponseDetailList = ReadAllRootResponses(responseContext, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
+
+                    formResponseDetailList = ReadAllRootResponses(responseContext, columnNames, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
+
                 }
                 catch (DocumentQueryException ex)
                 {
@@ -467,7 +483,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     + AssembleSelect(rootFormName, "id")
                     + FROM + rootFormName
                     + (includeDeletedRecords
-                        ? string.Empty 
+                        ? string.Empty
                         : WHERE + AssembleWhere(rootFormName, Expression(RecStatus, NE, RecordStatus.Deleted)))
                     , queryOptions);
                 var formResponseCount = query.AsEnumerable().Count();
@@ -533,31 +549,36 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, KeyValuePair<FieldDigest, string>[] searchQualifiers = null,  int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
+        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null, int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
         {
             try
             {
                 var rootFormName = responseContext.RootFormName ?? this.GetRootFormName(responseContext.RootFormId);
-
+                string query;
                 var collectionAlias = rootFormName;
                 var rootFormCollectionUri = GetCollectionUri(rootFormName);
                 var nonWildSearchQualifiers = searchQualifiers != null
                     ? searchQualifiers.Where(q => !(q.Value.Contains('*') || q.Value.Contains('?'))).ToArray()
-                    : null; 
+                    : null;
                 // Set some common query options
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                List<string> formProperties = new List<string>
+                {
+                    "FormId",
+                    "LastSaveTime",
+                    "ResponseId"
+                };
+                if(nonWildSearchQualifiers !=null)
+                {
+                    query = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
+                }
+                else
+                {
+                     query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
+                }
+                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, "GetRecordsBySurveyId", query);
 
-                var query = Client.CreateDocumentQuery(rootFormCollectionUri,
-                    SELECT
-                    + AssembleSelect(collectionAlias, "*")
-                    + FROM + collectionAlias
-                    + WHERE
-                    + (nonWildSearchQualifiers != null && nonWildSearchQualifiers.Length > 0
-                        ? AssembleWhere(collectionAlias, Expression(RecStatus, NE, RecordStatus.Deleted), And_SearchExpressions(nonWildSearchQualifiers))
-                        : AssembleWhere(collectionAlias, Expression(RecStatus, NE, RecordStatus.Deleted)))
-                    , queryOptions);
 
-                var formResponsePropertiesList = query.AsEnumerable().Select(r => ((FormResponseResource)r).FormResponseProperties).ToArray();
                 var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);
                 return response;
             }
@@ -577,24 +598,25 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 if (wildQualifiers.Length > 0)
                 {
                     List<FormResponseProperties> filteredFormResponsePropertiesList = new List<FormResponseProperties>();
+                    //var search = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, columnlist);
 
-                    foreach (var formReponseProperties in enumerableFormResponseProperties)
-                    {
-                        bool isQuailfied = true;
-                        foreach (var searchQuery in wildQualifiers)
-                        {
-                            var fieldName = searchQuery.Key.FieldName;
-                            var searchValue = searchQuery.Value;
-                            string responseValue;
-                            bool responseExists = formReponseProperties.ResponseQA.TryGetValue(fieldName, out responseValue);
-                            if (!responseValue.WildcardCompare(searchValue))
-                            {
-                                isQuailfied = false;
-                                break;
-                            }
-                        }
-                        if (isQuailfied) filteredFormResponsePropertiesList.Add(formReponseProperties);
-                    }
+                    //foreach (var formReponseProperties in enumerableFormResponseProperties)
+                    //{
+                    //    bool isQuailfied = true;
+                    //    foreach (var searchQuery in wildQualifiers)
+                    //    {
+                    //        var fieldName = searchQuery.Key.FieldName;
+                    //        var searchValue = searchQuery.Value;
+                    //        string responseValue;
+                    //        bool responseExists = formReponseProperties.ResponseQA.TryGetValue(fieldName, out responseValue);
+                    //        if (!responseValue.WildcardCompare(searchValue))
+                    //        {
+                    //            isQuailfied = false;
+                    //            break;
+                    //        }
+                    //    }
+                    //    if (isQuailfied) filteredFormResponsePropertiesList.Add(formReponseProperties);
+                    //}
                     return filteredFormResponsePropertiesList;
                 }
             }
@@ -634,7 +656,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
 
-#endregion
+        #endregion
 
     }
 }

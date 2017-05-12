@@ -20,9 +20,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spId"></param>
         /// <param name="surveyID"></param>
         /// <returns></returns>
-        private List<FormResponseProperties> GetAllRecordsBySurveyId(string collectionId, string spId, string query, string continuationToken)
+        private List<FormResponseProperties> GetAllRecordsBySurveyId(string collectionId, string spId, string query)
         {
-            return ExecuteSPAsync(collectionId, spId, query, continuationToken);
+            return ExecuteSPAsync(collectionId, spId, query);
         }
 
         internal class OrderByResult
@@ -39,7 +39,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="surveyId"></param>
         /// <returns></returns>
 
-        private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string query, string continuationToken)
+        private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string query)
         {
             RequestOptions option = new RequestOptions();
             var formResponseList = new List<FormResponseProperties>();
@@ -48,24 +48,17 @@ namespace Epi.DataPersistenceServices.DocumentDB
             string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId).ToString();
             try
             {
-                //formId="2e1d01d4-f50d-4f23-888b-cd4b7fc9884b";
-                // recStatus="0";
+
                 do
                 {
 
                     var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
-
-                    //continuationToken = spResponse.Response.Continuation;
-
                     foreach (var doc in spResponse.Response.Result)
                     {
                         formResponse = (dynamic)doc;
                         formResponseList.Add(formResponse);
                     }
                 } while (continuationToken != null);
-
-                // Execute stored procedure 
-                //var FormResponse = JsonConvert.DeserializeObject<FormResponseProperties>(SPResponse.Response);
 
                 return formResponseList;
             }
@@ -76,7 +69,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 {
                     spUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId).ToString();
                     var CreateSPResponse = CreateSPAsync(spUri, spId);
-                    //ExecuteSPAsync(collectionId, spId, surveyId);
+
+                    //Execute SP 
+                    ExecuteSPAsync(collectionId, spId, query);
                 }
             }
             return null;
@@ -90,7 +85,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private StoredProcedure CreateSPAsync(string spSelfLink, string spId)
         {
 
-            string testString = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, "DocumentDbSp");
             try
             {
                 StoredProcedure sproc = new StoredProcedure();

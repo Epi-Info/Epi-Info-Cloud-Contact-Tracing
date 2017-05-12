@@ -69,7 +69,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             if (string.IsNullOrWhiteSpace(_serviceEndpoint) || string.IsNullOrWhiteSpace(_authKey))
             {
-                throw new ConfigurationException("SurveyResponse ConnectionString is invalid. Service Endpoint and AuthKey must be specified.");
+                //throw new ConfigurationException("SurveyResponse ConnectionString is invalid. Service Endpoint and AuthKey must be specified.");
             }
         }
 
