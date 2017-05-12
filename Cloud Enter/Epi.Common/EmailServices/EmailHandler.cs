@@ -67,10 +67,10 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
 
-                var EmailFrom = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString());
-                message.From = new MailAddress(EmailFrom);
+                var userName = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString()); 
+                message.From = new MailAddress(ConfigurationManager.AppSettings["LOGGING_ADMIN_EMAIL_ADDRESS"].ToString());
                 var SmtpHost = Cryptography.Decrypt(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
-               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
+                //message.From = new MailAddress("ananthwin@gmail.com", "CloudEnter");
                 message.Body = Email.Body;
                 SmtpClient smtp = new SmtpClient(SmtpHost, Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
                 smtp.Port = SMTPPort;
@@ -80,7 +80,7 @@ namespace Epi.Common.EmailServices
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(EmailFrom, PassWord);
+                    smtp.Credentials = new System.Net.NetworkCredential(userName, PassWord);
                 }
 
 
