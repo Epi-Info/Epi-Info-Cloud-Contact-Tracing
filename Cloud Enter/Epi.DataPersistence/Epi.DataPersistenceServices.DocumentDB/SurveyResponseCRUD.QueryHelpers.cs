@@ -184,10 +184,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist.Select(x => x.Key.FieldName).ToList());
             }
 
+            
+            var fieldKeyList = columnlist.Select(x=> collectionAlias + "." + ResponseQA + x.Key.FieldName +EQ +'"'+x.Value+'"' + AND).ToArray();
 
-            var fieldKeyList = columnlist.Select(x => collectionAlias + "." + ResponseQA + x.Key.FieldName + "=\"" + x.Value + "\"" + AND).ToArray();
-
-            var expersion = collectionAlias + FRP + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + FRP + "RecStatus" + NE + RecordStatus.Deleted;
+            var expersion = collectionAlias +"."+ FRP + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP + "RecStatus" + NE + RecordStatus.Deleted;
             var query = SELECT
                            + SelectFormPoperties + ","
                            + AssembleSelect(collectionAlias, "_ts,")
@@ -198,8 +198,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
                            + ORDERBY
                            + AssembleSelect(collectionAlias, "_ts")
                            + DESC;
-            //query = query.do.DocumentNode.SelectSingleNode("//h1").InnerText;
-            //query = query.Trim();
             return query;
         }
 

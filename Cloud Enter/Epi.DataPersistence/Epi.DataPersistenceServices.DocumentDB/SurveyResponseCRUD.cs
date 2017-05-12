@@ -561,23 +561,21 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
                 List<string> formProperties = new List<string>
                 {
-                    "FormId",
-                    "LastSaveTime",
-                    "ResponseId"
+                    "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"
                 };
-                if(nonWildSearchQualifiers !=null)
+                if (nonWildSearchQualifiers != null)
                 {
                     query = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
                 }
                 else
                 {
-                     query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
+                    query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
                 }
-                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, "GetRecordsBySurveyId", query);
+                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, SPGetRecordsBySurveyId, query);
 
 
-                var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);
-                return response;
+                //var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);
+                return formResponsePropertiesList;
             }
             catch (Exception ex)
             {

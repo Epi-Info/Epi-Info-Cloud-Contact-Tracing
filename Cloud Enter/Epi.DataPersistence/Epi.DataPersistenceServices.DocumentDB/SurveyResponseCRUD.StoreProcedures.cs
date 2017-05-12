@@ -12,7 +12,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
     public partial class SurveyResponseCRUD
     {
         public int? continuationToken = null;
-
+        private const string SPGetRecordsBySurveyId = "GetRecordsBySurveyId";
         /// <summary>
         /// Execute DB SP-Get all records by surveyID 
         /// </summary>
