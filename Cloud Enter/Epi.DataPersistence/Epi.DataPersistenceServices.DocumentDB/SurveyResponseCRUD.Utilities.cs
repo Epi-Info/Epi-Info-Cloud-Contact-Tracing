@@ -203,56 +203,61 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             bool isSuccessful = false;
             T asyncTask = null;
-
-            using (var backgroundTask = Task.Run(() =>
+            using (var startedEvent = new ManualResetEvent(false))
             {
-                // Start the async task running.
-                asyncTask = asyncFunc();
-
-                // Retry for a maximum of 5 seconds for the async task to complete
-                var millisecondsToSleep = 10;
-                var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
-
-                bool isCompleted = false;
-                while (retries > 0)
+                using (var backgroundTask = Task.Run(() =>
                 {
-                    isCompleted = asyncTask.IsCompleted;
-                    if (!isCompleted)
-                    {
-                        // Sleep for a few milliseconds
-                        Thread.Sleep(millisecondsToSleep);
-                        retries -= 1;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+                    // Start the async task running.
+                    asyncTask = asyncFunc();
 
-                isSuccessful = isCompleted;
+                    // Retry for a maximum of 5 seconds for the async task to complete
+                    var millisecondsToSleep = 10;
+                    var retries = (Int32)TimeSpan.FromSeconds(15).TotalMilliseconds / millisecondsToSleep;
 
-                using (var completionEvent = new ManualResetEvent(false))
-                {
-                    var awaiter = asyncTask.ContinueWith(t =>
+                    bool isCompleted = false;
+                    while (retries > 0)
                     {
-                        if (followOnAction != null)
+                        isCompleted = asyncTask.IsCompleted;
+                        if (!isCompleted)
                         {
-                            followOnAction();
+                            // Sleep for a few milliseconds
+                            Thread.Sleep(millisecondsToSleep);
+                            retries -= 1;
                         }
-                        completionEvent.Set();
-                    }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
-                    
-                    // Wait for the follow on action to complete
-                    isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+                        else
+                        {
+                            break;
+                        }
+                    }
 
-                    awaiter.GetAwaiter().GetResult();
-                }
-            }))
-            {
-                isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
-            };
+                    isSuccessful = isCompleted;
 
-            task = asyncTask;
+                    using (var completionEvent = new ManualResetEvent(false))
+                    {
+                        var awaiter = asyncTask.ContinueWith(t =>
+                        {
+                            if (followOnAction != null)
+                            {
+                                followOnAction();
+                            }
+                            completionEvent.Set();
+                        }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+
+                        // Wait for the follow on action to complete
+                        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(10));
+
+
+                        awaiter.GetAwaiter().GetResult();
+                        startedEvent.Set();
+                    }
+                }))
+                {
+                    startedEvent.WaitOne(TimeSpan.FromSeconds(10));
+                    task = asyncTask;
+                    isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+                };
+            }
+
 
             return isSuccessful;
         }

@@ -98,9 +98,6 @@
     <Compile Include="ErrorLog.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
-    <Compile Include="familyset.cs">
-      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
-    </Compile>
     <Compile Include="lk_RecordSource.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
@@ -184,9 +181,6 @@
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
     <Compile Include="SurveyMetaDataView.cs">
-      <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SurveyResponse.cs">
       <DependentUpon>EpiInfo-Metatables.tt</DependentUpon>
     </Compile>
     <Compile Include="SurveyResponseTracking.cs">

@@ -1,4 +1,4 @@
-﻿// T4 code generation is enabled for model 'C:\Users\PatelH\Source\Repos\Epi-Info-Cloud-Contact-Tracing\Cloud Enter\Epi.FormMetadataServices\Epi.Cloud.EF\EpiInfo-Metatables.edmx'. 
+﻿// T4 code generation is enabled for model 'C:\Projects\Epi Info Cloud Contact Tracing\Cloud Enter\Epi.Cloud.EF\EpiInfo-Metatables.edmx'. 
 // To enable legacy code generation, change the value of the 'Code Generation Strategy' designer
 // property to 'Legacy ObjectContext'. This property is available in the Properties Window when the model
 // is open in the designer.

@@ -56,13 +56,11 @@ namespace Epi.Data.EF
         public virtual DbSet<SharedCanvas> SharedCanvases { get; set; }
         public virtual DbSet<SurveyMetaData> SurveyMetaDatas { get; set; }
         public virtual DbSet<SurveyMetaDataView> SurveyMetaDataViews { get; set; }
-        public virtual DbSet<SurveyResponse> SurveyResponses { get; set; }
         public virtual DbSet<SurveyResponseTracking> SurveyResponseTrackings { get; set; }
         public virtual DbSet<SurveyResponseUser> SurveyResponseUsers { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserOrganization> UserOrganizations { get; set; }
         public virtual DbSet<ErrorLog> ErrorLogs { get; set; }
-        public virtual DbSet<familyset> familysets { get; set; }
         public virtual DbSet<SurveyMetaDataTransform> SurveyMetaDataTransforms { get; set; }
     }
 }

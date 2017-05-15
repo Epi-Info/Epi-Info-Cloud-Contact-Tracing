@@ -91,42 +91,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.ErrorLog' does not have a primary key
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'EPIInfo7.dbo.familyset' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
-        <EntityType Name="familyset">
-          <Key>
-            <PropertyRef Name="SurveyId" />
-            <PropertyRef Name="OwnerId" />
-            <PropertyRef Name="SurveyTypeId" />
-            <PropertyRef Name="ClosingDate" />
-            <PropertyRef Name="SurveyName" />
-            <PropertyRef Name="TemplateXML" />
-            <PropertyRef Name="UserPublishKey" />
-            <PropertyRef Name="TemplateXMLSize" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="OrganizationId" />
-            <PropertyRef Name="IsDraftMode" />
-            <PropertyRef Name="StartDate" />
-          </Key>
-          <Property Name="SurveyId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="OwnerId" Type="int" Nullable="false" />
-          <Property Name="SurveyNumber" Type="nvarchar" MaxLength="50" />
-          <Property Name="SurveyTypeId" Type="int" Nullable="false" />
-          <Property Name="ClosingDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="SurveyName" Type="nvarchar" MaxLength="500" Nullable="false" />
-          <Property Name="OrganizationName" Type="nvarchar" MaxLength="500" />
-          <Property Name="DepartmentName" Type="nvarchar" MaxLength="500" />
-          <Property Name="IntroductionText" Type="nvarchar(max)" />
-          <Property Name="TemplateXML" Type="xml" Nullable="false" />
-          <Property Name="ExitText" Type="nvarchar(max)" />
-          <Property Name="UserPublishKey" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="TemplateXMLSize" Type="bigint" Nullable="false" />
-          <Property Name="DateCreated" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="OrganizationId" Type="int" Nullable="false" />
-          <Property Name="IsDraftMode" Type="bit" Nullable="false" />
-          <Property Name="StartDate" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="ParentId" Type="uniqueidentifier" />
-          <Property Name="ViewId" Type="int" />
-          <Property Name="IsSQLProject" Type="bit" />
-        </EntityType>
         <EntityType Name="lk_RecordSource">
           <Key>
             <PropertyRef Name="RecordSourceId" />
@@ -522,26 +486,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
           </Key>
           <Property Name="SurveyId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ViewTableName" Type="varchar" MaxLength="50" Nullable="false" />
-        </EntityType>
-        <EntityType Name="SurveyResponse">
-          <Key>
-            <PropertyRef Name="ResponseId" />
-          </Key>
-          <Property Name="ResponseId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="SurveyId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="DateUpdated" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="DateCompleted" Type="datetime2" Precision="7" />
-          <Property Name="StatusId" Type="int" Nullable="false" />
-          <Property Name="ResponseXML" Type="xml" Nullable="false" />
-          <Property Name="ResponsePasscode" Type="nvarchar" MaxLength="30" />
-          <Property Name="ResponseXMLSize" Type="bigint" />
-          <Property Name="DateCreated" Type="datetime2" Precision="7" Nullable="false" />
-          <Property Name="IsDraftMode" Type="bit" Nullable="false" />
-          <Property Name="IsLocked" Type="bit" Nullable="false" />
-          <Property Name="ParentRecordId" Type="uniqueidentifier" />
-          <Property Name="RelateParentId" Type="uniqueidentifier" />
-          <Property Name="RecordSourceId" Type="int" />
-          <Property Name="OrganizationId" Type="int" />
         </EntityType>
         <EntityType Name="SurveyResponseTracking">
           <Key>
@@ -955,7 +899,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
           <EntitySet Name="SurveyMetadataOrganization" EntityType="Self.SurveyMetadataOrganization" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SurveyMetaDataUser" EntityType="Self.SurveyMetaDataUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SurveyMetaDataView" EntityType="Self.SurveyMetaDataView" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="SurveyResponse" EntityType="Self.SurveyResponse" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SurveyResponseTracking" EntityType="Self.SurveyResponseTracking" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SurveyResponseUser" EntityType="Self.SurveyResponseUser" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -976,30 +919,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
     [ErrorLog].[ErrorText2] AS [ErrorText2], 
     [ErrorLog].[XML] AS [XML]
     FROM [dbo].[ErrorLog] AS [ErrorLog]</DefiningQuery>
-          </EntitySet>
-          <EntitySet Name="familyset" EntityType="Self.familyset" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [familyset].[SurveyId] AS [SurveyId], 
-    [familyset].[OwnerId] AS [OwnerId], 
-    [familyset].[SurveyNumber] AS [SurveyNumber], 
-    [familyset].[SurveyTypeId] AS [SurveyTypeId], 
-    [familyset].[ClosingDate] AS [ClosingDate], 
-    [familyset].[SurveyName] AS [SurveyName], 
-    [familyset].[OrganizationName] AS [OrganizationName], 
-    [familyset].[DepartmentName] AS [DepartmentName], 
-    [familyset].[IntroductionText] AS [IntroductionText], 
-    [familyset].[TemplateXML] AS [TemplateXML], 
-    [familyset].[ExitText] AS [ExitText], 
-    [familyset].[UserPublishKey] AS [UserPublishKey], 
-    [familyset].[TemplateXMLSize] AS [TemplateXMLSize], 
-    [familyset].[DateCreated] AS [DateCreated], 
-    [familyset].[OrganizationId] AS [OrganizationId], 
-    [familyset].[IsDraftMode] AS [IsDraftMode], 
-    [familyset].[StartDate] AS [StartDate], 
-    [familyset].[ParentId] AS [ParentId], 
-    [familyset].[ViewId] AS [ViewId], 
-    [familyset].[IsSQLProject] AS [IsSQLProject]
-    FROM [dbo].[familyset] AS [familyset]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="metaDbInfo" EntityType="Self.metaDbInfo" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -1627,13 +1546,11 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
           <EntitySet Name="SharedCanvases" EntityType="EPIInfo7Model.SharedCanvas" />
           <EntitySet Name="SurveyMetaDatas" EntityType="EPIInfo7Model.SurveyMetaData" />
           <EntitySet Name="SurveyMetaDataViews" EntityType="EPIInfo7Model.SurveyMetaDataView" />
-          <EntitySet Name="SurveyResponses" EntityType="EPIInfo7Model.SurveyResponse" />
           <EntitySet Name="SurveyResponseTrackings" EntityType="EPIInfo7Model.SurveyResponseTracking" />
           <EntitySet Name="SurveyResponseUsers" EntityType="EPIInfo7Model.SurveyResponseUser" />
           <EntitySet Name="Users" EntityType="EPIInfo7Model.User" />
           <EntitySet Name="UserOrganizations" EntityType="EPIInfo7Model.UserOrganization" />
           <EntitySet Name="ErrorLogs" EntityType="EPIInfo7Model.ErrorLog" />
-          <EntitySet Name="familysets" EntityType="EPIInfo7Model.familyset" />
           <EntitySet Name="SurveyMetaDataTransforms" EntityType="EPIInfo7Model.SurveyMetaDataTransform" />
           <AssociationSet Name="FK_Canvas__Datasource" Association="EPIInfo7Model.FK_Canvas__Datasource">
             <End Role="Datasource" EntitySet="Datasources" />
@@ -1863,26 +1780,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
           <Property Name="SurveyId" Type="Guid" Nullable="false" />
           <Property Name="ViewTableName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="SurveyResponse">
-          <Key>
-            <PropertyRef Name="ResponseId" />
-          </Key>
-          <Property Name="ResponseId" Type="Guid" Nullable="false" />
-          <Property Name="SurveyId" Type="Guid" Nullable="false" />
-          <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="DateCompleted" Type="DateTime" Precision="7" />
-          <Property Name="StatusId" Type="Int32" Nullable="false" />
-          <Property Name="ResponseXML" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ResponsePasscode" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
-          <Property Name="ResponseXMLSize" Type="Int64" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="IsDraftMode" Type="Boolean" Nullable="false" />
-          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
-          <Property Name="ParentRecordId" Type="Guid" />
-          <Property Name="RelateParentId" Type="Guid" />
-          <Property Name="RecordSourceId" Type="Int32" />
-          <Property Name="OrganizationId" Type="Int32" />
-        </EntityType>
         <EntityType Name="SurveyResponseTracking">
           <Key>
             <PropertyRef Name="ResponseId" />
@@ -1948,42 +1845,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
           <Property Name="ErrorText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ErrorText2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="XML" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="familyset">
-          <Key>
-            <PropertyRef Name="SurveyId" />
-            <PropertyRef Name="OwnerId" />
-            <PropertyRef Name="SurveyTypeId" />
-            <PropertyRef Name="ClosingDate" />
-            <PropertyRef Name="SurveyName" />
-            <PropertyRef Name="TemplateXML" />
-            <PropertyRef Name="UserPublishKey" />
-            <PropertyRef Name="TemplateXMLSize" />
-            <PropertyRef Name="DateCreated" />
-            <PropertyRef Name="OrganizationId" />
-            <PropertyRef Name="IsDraftMode" />
-            <PropertyRef Name="StartDate" />
-          </Key>
-          <Property Name="SurveyId" Type="Guid" Nullable="false" />
-          <Property Name="OwnerId" Type="Int32" Nullable="false" />
-          <Property Name="SurveyNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="SurveyTypeId" Type="Int32" Nullable="false" />
-          <Property Name="ClosingDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="SurveyName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="OrganizationName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="DepartmentName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="IntroductionText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="TemplateXML" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ExitText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="UserPublishKey" Type="Guid" Nullable="false" />
-          <Property Name="TemplateXMLSize" Type="Int64" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="OrganizationId" Type="Int32" Nullable="false" />
-          <Property Name="IsDraftMode" Type="Boolean" Nullable="false" />
-          <Property Name="StartDate" Type="DateTime" Nullable="false" Precision="7" />
-          <Property Name="ParentId" Type="Guid" />
-          <Property Name="ViewId" Type="Int32" />
-          <Property Name="IsSQLProject" Type="Boolean" />
         </EntityType>
         <EntityType Name="SurveyMetaDataTransform">
           <Key>
@@ -2589,27 +2450,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="SurveyResponses">
-            <EntityTypeMapping TypeName="EPIInfo7Model.SurveyResponse">
-              <MappingFragment StoreEntitySet="SurveyResponse">
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="RecordSourceId" ColumnName="RecordSourceId" />
-                <ScalarProperty Name="RelateParentId" ColumnName="RelateParentId" />
-                <ScalarProperty Name="ParentRecordId" ColumnName="ParentRecordId" />
-                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
-                <ScalarProperty Name="IsDraftMode" ColumnName="IsDraftMode" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="ResponseXMLSize" ColumnName="ResponseXMLSize" />
-                <ScalarProperty Name="ResponsePasscode" ColumnName="ResponsePasscode" />
-                <ScalarProperty Name="ResponseXML" ColumnName="ResponseXML" />
-                <ScalarProperty Name="StatusId" ColumnName="StatusId" />
-                <ScalarProperty Name="DateCompleted" ColumnName="DateCompleted" />
-                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
-                <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
-                <ScalarProperty Name="ResponseId" ColumnName="ResponseId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="SurveyResponseTrackings">
             <EntityTypeMapping TypeName="EPIInfo7Model.SurveyResponseTracking">
               <MappingFragment StoreEntitySet="SurveyResponseTracking">
@@ -2668,32 +2508,6 @@ warning 6002: The table/view 'EPIInfo7.dbo.SurveyMetaDataTransform' does not hav
                 <ScalarProperty Name="ResponseId" ColumnName="ResponseId" />
                 <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
                 <ScalarProperty Name="ErrorDate" ColumnName="ErrorDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="familysets">
-            <EntityTypeMapping TypeName="EPIInfo7Model.familyset">
-              <MappingFragment StoreEntitySet="familyset">
-                <ScalarProperty Name="IsSQLProject" ColumnName="IsSQLProject" />
-                <ScalarProperty Name="ViewId" ColumnName="ViewId" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="IsDraftMode" ColumnName="IsDraftMode" />
-                <ScalarProperty Name="OrganizationId" ColumnName="OrganizationId" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="TemplateXMLSize" ColumnName="TemplateXMLSize" />
-                <ScalarProperty Name="UserPublishKey" ColumnName="UserPublishKey" />
-                <ScalarProperty Name="ExitText" ColumnName="ExitText" />
-                <ScalarProperty Name="TemplateXML" ColumnName="TemplateXML" />
-                <ScalarProperty Name="IntroductionText" ColumnName="IntroductionText" />
-                <ScalarProperty Name="DepartmentName" ColumnName="DepartmentName" />
-                <ScalarProperty Name="OrganizationName" ColumnName="OrganizationName" />
-                <ScalarProperty Name="SurveyName" ColumnName="SurveyName" />
-                <ScalarProperty Name="ClosingDate" ColumnName="ClosingDate" />
-                <ScalarProperty Name="SurveyTypeId" ColumnName="SurveyTypeId" />
-                <ScalarProperty Name="SurveyNumber" ColumnName="SurveyNumber" />
-                <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
-                <ScalarProperty Name="SurveyId" ColumnName="SurveyId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

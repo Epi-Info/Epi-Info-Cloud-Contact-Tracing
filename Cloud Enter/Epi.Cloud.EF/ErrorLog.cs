@@ -26,5 +26,6 @@ namespace Epi.Data.EF
         public Nullable<int> ERROR_LINE { get; set; }
         public string ErrorText { get; set; }
         public string ErrorText2 { get; set; }
+        public string XML { get; set; }
     }
 }
