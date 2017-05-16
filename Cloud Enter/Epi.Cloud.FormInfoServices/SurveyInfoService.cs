@@ -71,14 +71,9 @@ namespace Epi.Cloud.SurveyInfoServices
 			}
 			catch (Exception ex)
 			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
-			}
-		}
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
+            }
+        }
 
         private List<SurveyInfoBO> GetChildInfoByParentId(Dictionary<string, int> parentIdList)
         {

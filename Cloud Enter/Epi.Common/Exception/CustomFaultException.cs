@@ -10,6 +10,18 @@ namespace Epi.Common.Exception
         private string _stackTrace;
         private string _helpLink;
 
+        public CustomFaultException()
+        {
+        }
+
+        public CustomFaultException(System.Exception ex)
+        {
+            CustomMessage = ex.Message;
+            Source = ex.Source;
+            StackTrace = ex.StackTrace;
+            HelpLink = ex.HelpLink;
+        }
+
         [DataMember]
         public string CustomMessage
         {

@@ -98,12 +98,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
         /// <summary>
@@ -128,12 +123,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -233,7 +223,7 @@ namespace Epi.Cloud.DataEntryServices
 
             else if (surveyAnswerRequest.Action.Equals(RequestAction.CreateChild, StringComparison.OrdinalIgnoreCase))
             {
-                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildFormId(surveyResponseBO.SurveyId);
+                SurveyInfoBO surveyInfoBO = _surveyInfoService.GetParentInfoByChildFormId(surveyResponseBO.FormId);
 
                 _surveyResponseProvider.InsertChildSurveyResponse(surveyResponseBO, surveyInfoBO, surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId);
                 response.SurveyResponseList.Add(surveyResponseBO.ToSurveyAnswerDTO());
@@ -336,12 +326,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -378,12 +363,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -485,7 +465,7 @@ namespace Epi.Cloud.DataEntryServices
                 formsHierarchyBO.SurveyInfo = item.SurveyInfo;
                 if (allResponsesIDsList != null)
                 {
-                    formsHierarchyBO.ResponseIds = allResponsesIDsList.Where(x => x.SurveyId == item.FormId).ToList();
+                    formsHierarchyBO.ResponseIds = allResponsesIDsList.Where(x => x.FormId == item.FormId).ToList();
                 }
                 List.Add(formsHierarchyBO);
             }

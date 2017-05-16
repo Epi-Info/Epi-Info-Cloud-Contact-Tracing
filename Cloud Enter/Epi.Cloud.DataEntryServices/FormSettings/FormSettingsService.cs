@@ -2,16 +2,15 @@
 using System.Linq;
 using System.ServiceModel;
 using Epi.Cloud.BLL;
-using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Cloud.MVC.Extensions;
-using Epi.Common.Exception;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Cloud.MVC.Extensions;
+using Epi.Common.Exception;
 
 namespace Epi.Cloud.DataEntryServices
 {
-	public class FormSettingsService : IFormSettingsService
+    public class FormSettingsService : IFormSettingsService
 	{
 		private readonly IFormInfoDao _formInfoDao;
 		private readonly IFormSettingDao _formSettingDao;
@@ -44,12 +43,7 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			catch (Exception ex)
 			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
+				throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
 			}
 		}
 
@@ -73,12 +67,7 @@ namespace Epi.Cloud.DataEntryServices
 			}
 			catch (Exception ex)
 			{
-				CustomFaultException customFaultException = new CustomFaultException();
-				customFaultException.CustomMessage = ex.Message;
-				customFaultException.Source = ex.Source;
-				customFaultException.StackTrace = ex.StackTrace;
-				customFaultException.HelpLink = ex.HelpLink;
-				throw new FaultException<CustomFaultException>(customFaultException);
+				throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
 			}
 		}
 	}

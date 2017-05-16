@@ -18,7 +18,7 @@ namespace Epi.Cloud.Common.Extensions
                 ResponseId = surveyResponseBO.ResponseId,
                 ParentResponseId = surveyResponseBO.ParentResponseId,
                 RootResponseId = surveyResponseBO.RootResponseId,
-                SurveyId = surveyResponseBO.SurveyId,
+                SurveyId = surveyResponseBO.FormId,
                 DateUpdated = surveyResponseBO.DateUpdated,
                 DateCompleted = surveyResponseBO.DateCompleted,
                 DateCreated = surveyResponseBO.DateCreated,
@@ -74,7 +74,7 @@ namespace Epi.Cloud.Common.Extensions
         public static ResponseContext ToResponseContext(this SurveyResponseBO surveyResponseBO)
         {
             MetadataAccessor metadataAccessor = new MetadataAccessor();
-            var formId = surveyResponseBO.FormId ?? surveyResponseBO.SurveyId;
+            var formId = surveyResponseBO.FormId ?? surveyResponseBO.FormId;
             var formName = surveyResponseBO.FormName ?? metadataAccessor.GetFormName(formId);
             var parentFormId = surveyResponseBO.ParentFormId ?? metadataAccessor.GetParentFormId(formId);
             var parentFormName = surveyResponseBO.ParentFormName ?? metadataAccessor.GetParentFormName(formId);

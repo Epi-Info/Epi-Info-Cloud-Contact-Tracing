@@ -7,15 +7,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
     {
         public static SurveyResponseBO ToSurveyResponseBO(this FormResponseDetail formResponseDetail)
         {
-            var surveyResponseBO = new SurveyResponseBO
-            {
-                ResponseDetail = formResponseDetail,
-                IsDraftMode = formResponseDetail.IsDraftMode,
-                LastActiveUserId = formResponseDetail.UserId,
-                IsNewRecord = formResponseDetail.IsNewRecord,
-                Status = formResponseDetail.RecStatus,
-                ViewId = new Common.Metadata.MetadataAccessor().GetFormDigest(formResponseDetail.FormId).ViewId
-            };
+            var surveyResponseBO = new SurveyResponseBO();
+            surveyResponseBO.ResponseDetail = formResponseDetail;
+            surveyResponseBO.ViewId = new Common.Metadata.MetadataAccessor().GetFormDigest(formResponseDetail.FormId).ViewId;
             return surveyResponseBO;
         }
 	}

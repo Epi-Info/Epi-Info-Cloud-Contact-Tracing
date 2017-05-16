@@ -28,7 +28,7 @@ namespace MetadataTests
             var formResponseDetail = new FormResponseDetail() { FormId = "2e1d01d4-f50d-4f23-888b-cd4b7fc9884b", FormName = "Zika", RecStatus = 1, ResponseId = "cb07a6bc-d7e2-4f78-a3b0-de194227d351", UserId = 1014, LastSaveTime = DateTime.UtcNow };
             var surveyResponse = formResponseDetail.ToSurveyResponseBO();
             Assert.AreEqual(formResponseDetail.RecStatus, surveyResponse.Status);
-            Assert.AreEqual(formResponseDetail.FormId, surveyResponse.SurveyId);
+            Assert.AreEqual(formResponseDetail.FormId, surveyResponse.FormId);
 
         }
     }

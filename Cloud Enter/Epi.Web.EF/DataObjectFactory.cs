@@ -49,11 +49,6 @@ namespace Epi.Web.EF
             return new Epi.Web.EF.SurveyMetaData();
         }
 
-        public static Epi.Web.EF.SurveyResponse CreateSurveyResponse()
-        {
-            return new Epi.Web.EF.SurveyResponse();
-        }
-
         /// <summary>
         /// Property to read connection string without meta information
         /// </summary>

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
-using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF
@@ -444,80 +443,10 @@ namespace Epi.Web.EF
             }
 
         }
-        public List<SurveyInfoBO> GetFormsHierarchyIdsByRootId(string RootId)
-        {
-
-            List<SurveyInfoBO> result = new List<SurveyInfoBO>();
-
-            List<string> list = new List<string>();
-            try
-            {
-
-                Guid Id = new Guid(RootId);
-
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-                    IQueryable<SurveyMetaData> Query = Context.SurveyMetaDatas.Where(x => x.SurveyId == Id).Traverse(x => x.SurveyMetaData1).AsQueryable();
-                    result = Mapper.Map(Query);
-
-
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-            return result;
-
-        }
 
         public void DeleteDraftRecords(string FormId)
         {
-            Guid NewId = new Guid(FormId);
-            try
-            {
-                using (var Context = DataObjectFactory.CreateContext())
-                {
-
-                    List<string> Ids = new List<string>();
-
-
-                    List<SurveyInfoBO> result = GetFormsHierarchyIdsByRootId(FormId);
-                    foreach (var item in result)
-                    {
-
-                        Ids.Add(item.SurveyId);
-                    }
-
-                    Ids.Reverse();
-
-
-                    //Get Root
-
-
-                    foreach (var Id in Ids)
-                    {
-
-
-
-                        Guid _Id = new Guid(Id);
-                        Context.SurveyResponses.Where(x => x.SurveyId == _Id && x.IsDraftMode == true).ToList().ForEach(Context.SurveyResponses.DeleteObject);
-
-                        Context.SaveChanges();
-                    }
-
-                }
-
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-
+            throw new NotImplementedException("DeleteDraftRecords");
         }
-
-
     }
 }

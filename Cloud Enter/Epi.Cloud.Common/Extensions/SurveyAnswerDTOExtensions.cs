@@ -14,7 +14,7 @@ namespace Epi.Cloud.Common.Extensions
         public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO surveyAnswerDTO, int? userId = null)
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
-            surveyResponseBO.SurveyId = surveyAnswerDTO.SurveyId;
+            surveyResponseBO.FormId = surveyAnswerDTO.SurveyId;
             surveyResponseBO.ResponseId = surveyAnswerDTO.ResponseId;
             surveyResponseBO.ParentResponseId = surveyAnswerDTO.ParentResponseId;
             surveyResponseBO.Status = surveyAnswerDTO.Status;

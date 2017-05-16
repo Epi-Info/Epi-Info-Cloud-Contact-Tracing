@@ -198,12 +198,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -224,12 +219,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -253,12 +243,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -280,12 +265,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -309,12 +289,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -377,12 +352,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -404,12 +374,8 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 
@@ -489,12 +455,7 @@ namespace Epi.Cloud.DataEntryServices
             }
             catch (Exception ex)
             {
-                CustomFaultException customFaultException = new CustomFaultException();
-                customFaultException.CustomMessage = ex.Message;
-                customFaultException.Source = ex.Source;
-                customFaultException.StackTrace = ex.StackTrace;
-                customFaultException.HelpLink = ex.HelpLink;
-                throw new FaultException<CustomFaultException>(customFaultException);
+                throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
         }
 	}
