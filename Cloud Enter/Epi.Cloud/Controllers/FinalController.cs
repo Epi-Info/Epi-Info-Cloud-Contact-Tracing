@@ -52,9 +52,6 @@ namespace Epi.Web.MVC.Controllers
                 bool isMobileDevice = false;
                 isMobileDevice = this.Request.Browser.IsMobileDevice;
 
-                Omniture omnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, isMobileDevice);
-                ViewBag.Omniture = omnitureObj;
-
                 return View(ViewActions.Index, surveyInfoModel);
             }
             catch (Exception ex)

@@ -70,7 +70,6 @@
     <Compile Include="Extensions\OrganizationDTOExtensions.cs" />
     <Compile Include="Models\Message.cs" />
     <Compile Include="Models\MetadataAdmin.cs" />
-    <Compile Include="Models\Omniture.cs" />
     <Compile Include="Models\OrgAdminInfoModel.cs" />
     <Compile Include="Models\OrganizationModel.cs" />
     <Compile Include="Models\OrgListModel.cs" />
@@ -92,7 +91,6 @@
     <Compile Include="Utilities\ExceptionMessage.cs" />
     <Compile Include="Utilities\FormProvider.cs" />
     <Compile Include="Utilities\MobileFormProvider.cs" />
-    <Compile Include="Utilities\OmnitureHelper.cs" />
     <Compile Include="Utilities\SurveyHelper.cs" />
     <Compile Include="Utilities\SurveyResponseBuilder.cs" />
     <Compile Include="Utilities\ValidateResponse.cs" />

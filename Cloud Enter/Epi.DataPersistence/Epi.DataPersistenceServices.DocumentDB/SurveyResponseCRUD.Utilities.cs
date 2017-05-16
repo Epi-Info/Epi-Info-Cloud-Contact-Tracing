@@ -212,7 +212,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
                     // Retry for a maximum of 5 seconds for the async task to complete
                     var millisecondsToSleep = 10;
-                    var retries = (Int32)TimeSpan.FromSeconds(15).TotalMilliseconds / millisecondsToSleep;
+                    var retries = (Int32)TimeSpan.FromSeconds(60).TotalMilliseconds / millisecondsToSleep;
 
                     bool isCompleted = false;
                     while (retries > 0)
@@ -244,7 +244,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
 
                         // Wait for the follow on action to complete
-                        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(10));
+                        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(60));
 
 
                         awaiter.GetAwaiter().GetResult();
@@ -252,9 +252,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     }
                 }))
                 {
-                    startedEvent.WaitOne(TimeSpan.FromSeconds(10));
+                    startedEvent.WaitOne(TimeSpan.FromSeconds(60));
                     task = asyncTask;
-                    isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+                    isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(60));
                 };
             }
 

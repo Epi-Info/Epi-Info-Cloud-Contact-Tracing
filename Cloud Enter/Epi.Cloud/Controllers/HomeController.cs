@@ -93,10 +93,6 @@ namespace Epi.Web.MVC.Controllers
                     Session[SessionKeys.SearchModel] = null;
                 }
 
-                string surveyMode = "";
-                Omniture omnitureObj = Epi.Web.MVC.Utility.OmnitureHelper.GetSettings(surveyMode, isMobileDevice);
-                ViewBag.Omniture = omnitureObj;
-
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 ViewBag.Version = version;
 

@@ -770,7 +770,6 @@
     <Content Include="Views\Shared\Exception.Mobile.cshtml" />
     <Content Include="Views\Login\Index.Mobile.cshtml" />
     <Content Include="Views\EIWST\Index.cshtml" />
-    <Content Include="Views\Shared\OmniturePartial.cshtml" />
     <Content Include="Views\EIWST\View.Mobile.cshtml" />
     <Content Include="Views\Shared\FooterPartial.cshtml" />
     <Content Include="Views\Home\ListForms.cshtml" />
