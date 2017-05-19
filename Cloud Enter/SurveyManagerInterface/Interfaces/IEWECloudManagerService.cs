@@ -14,7 +14,7 @@ namespace Epi.Web.WCF.SurveyService
     {
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse PublishSurvey(PublishRequest pRequestMessage);  
+        PublishResponse PublishSurvey(PublishRequest pRequestMessage);
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
@@ -26,13 +26,13 @@ namespace Epi.Web.WCF.SurveyService
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse GetOrganizationNames(OrganizationRequest pRequest);
-        
+
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         OrganizationResponse GetOrganizationByKey(OrganizationRequest pRequest);
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        SurveyInfoResponse SetSurveyInfo(SurveyInfoRequest pRequest);           
+        SurveyInfoResponse SetSurveyInfo(SurveyInfoRequest pRequest);
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
@@ -40,7 +40,7 @@ namespace Epi.Web.WCF.SurveyService
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse RePublishSurvey(PublishRequest pRequestMessage);   
+        PublishResponse RePublishSurvey(PublishRequest pRequestMessage);
 
 
         [OperationContract]
@@ -49,18 +49,18 @@ namespace Epi.Web.WCF.SurveyService
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        bool PingManagerService();   
-       
+        bool PingManagerService();
+
 
         //Publish MetaData To Cloud
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
-        PublishResponse MetaDataToCloud(PublishRequest pRequest);
+        PublishResponse MetaDataToCloud(PublishRequest pRequestMessage);
 
 
         [OperationContract]
         [FaultContract(typeof(CustomFaultException))]
         PublishResponse RePublishMetaDataToCloud(PublishRequest pRequestMessage);
-        
+
     }
 }

@@ -11,7 +11,7 @@ using Epi.FormMetadata;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.CacheServices;
 using Epi.FormMetadata.DataStructures;
-using StackExchange.Redis; 
+using StackExchange.Redis;
 
 namespace Epi.Cloud.PublishMetaData
 {
@@ -24,11 +24,12 @@ namespace Epi.Cloud.PublishMetaData
         public bool StartAndStopWebJob(string status)
         {
             string webJobUserName = "$EICDCApp";// ConfigurationManager.AppSettings["webJobUserName"];
-            string webJobPassWord = "TXlHvy0F6nag33DwbimSrwejcS6LdNurmEm7AijGDjCr6evGCkTqRQgJlC6m";// ConfigurationManager.AppSettings["webJobPassWord"];
+            string webJobPassWord = "0lpriNdGPvM7HrvopR2D0fzpxMpS6krdfS1YhvhjuMPEeJsyEDuGm4eQg9v3";// ConfigurationManager.AppSettings["webJobPassWord"];
             string webJobName = "CloudJob";// ConfigurationManager.AppSettings["webJobName"];             
-            string webJobUrl = "https://eicdcapp.scm.azurewebsites.net/api/continuouswebjobs/";// ConfigurationManager.AppSettings["webJobUrl"];
-            return WebJobHandler.EnableandDisableWebJob(webJobUserName, webJobPassWord, webJobName, status, webJobUrl); 
-        } 
+            string webJobUrl = "https://eicdcqa.scm.azurewebsites.net/api/continuouswebjobs/";// ConfigurationManager.AppSettings["webJobUrl"];
+
+            return WebJobHandler.EnableandDisableWebJob(webJobUserName, webJobPassWord, webJobName, status, webJobUrl);
+        }
         #endregion
 
         #region Upload To Blob
@@ -54,7 +55,7 @@ namespace Epi.Cloud.PublishMetaData
         #region ClearCache
 
 
-        
+
         public bool ClearCache()
         {
             RedisCacheHandler _redishCacheHandler = new RedisCacheHandler();
@@ -69,6 +70,6 @@ namespace Epi.Cloud.PublishMetaData
             }
         }
         #endregion
- 
+
     }
 }
