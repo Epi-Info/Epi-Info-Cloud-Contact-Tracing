@@ -105,6 +105,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31FB19A9-9591-4202-8619-E6EC618FCA73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
       <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>
       <Name>Epi.Common.Core</Name>

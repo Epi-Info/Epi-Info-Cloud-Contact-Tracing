@@ -18,8 +18,9 @@ namespace Epi.Cloud.CloudOperation
         //}
         private static Lazy<ConnectionMultiplexer> lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
         {
-            string redisCacheName = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCacheName"]);
-            string redisCachePassword = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCachePassword"]);
+            var environmentKey = ConfigurationManager.AppSettings["Environment"];
+            string redisCacheName = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCacheName@" + environmentKey]);
+            string redisCachePassword = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCachePassword@" + environmentKey]);
             return ConnectionMultiplexer.Connect(redisCacheName + ",abortConnect=false,ssl=true,password=" + redisCachePassword);
         });
 

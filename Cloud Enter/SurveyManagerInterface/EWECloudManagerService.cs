@@ -76,7 +76,7 @@ namespace Epi.Web.WCF.SurveyService
 
             try
             {
-                pRequest.RequestId = "2";
+                //pRequest.RequestId = "2";
                 PublishResponse result = new PublishResponse(pRequest.RequestId);
 
                 if (pCloud)

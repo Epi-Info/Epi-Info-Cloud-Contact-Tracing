@@ -7,7 +7,8 @@ using Microsoft.ServiceBus.Messaging;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Epi.DataPersistence.DataStructures;
-
+using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
 namespace Epi.Cloud.ServiceBus
 {
     public class ServiceBusCRUD
@@ -31,7 +32,8 @@ namespace Epi.Cloud.ServiceBus
         private static bool VerifyConfiguration()
         {
             bool configOK = true;
-            var connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
+            var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
+            var connectionString = ConfigurationHelper.GetConnectionStringByResourceKey(ResourceKey);
 
             return configOK;
 
@@ -53,7 +55,7 @@ namespace Epi.Cloud.ServiceBus
                     SubscriptionDescription subscription = namespaceManager.CreateSubscription(myTopic.Path, SubscriptionName);
                     return true;
                 }
-              
+
             }
             catch (Exception e)
             {
@@ -62,12 +64,13 @@ namespace Epi.Cloud.ServiceBus
                 throw;
             }
         }
-		#endregion
+        #endregion
 
-		#region Send message to Topic
-		public bool SendMessagesToTopic(FormResponseDetail hierarchialResponse)
+        #region Send message to Topic
+        public bool SendMessagesToTopic(FormResponseDetail hierarchialResponse)
         {
-            var connectionString = ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
+            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
+            //var connectionString = ConfigurationHelper.GetConnectionStringByResourceKey(ResourceKey);
 
             //Create Topic
             CreateTopic();
