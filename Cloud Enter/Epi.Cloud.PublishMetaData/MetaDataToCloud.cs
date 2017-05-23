@@ -12,25 +12,31 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.CacheServices;
 using Epi.FormMetadata.DataStructures;
 using StackExchange.Redis;
+using Epi.Web.Enter.Common.Security;
+//using Epi.Web.Enter.Common.Security;
 
 namespace Epi.Cloud.PublishMetaData
 {
     public class MetaDataToCloud
     {
         static string containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
+
         MetadataBlobCRUD _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
 
         #region Start and Stop Cloud Web Job
         public bool StartAndStopWebJob(string status)
         {
-            string webJobUserName = "$EICDCApp";// ConfigurationManager.AppSettings["webJobUserName"];
-            string webJobPassWord = "0lpriNdGPvM7HrvopR2D0fzpxMpS6krdfS1YhvhjuMPEeJsyEDuGm4eQg9v3";// ConfigurationManager.AppSettings["webJobPassWord"];
-            string webJobName = "CloudJob";// ConfigurationManager.AppSettings["webJobName"];             
-            string webJobUrl = "https://eicdcqa.scm.azurewebsites.net/api/continuouswebjobs/";// ConfigurationManager.AppSettings["webJobUrl"];
-
+            var environmentKey = ConfigurationManager.AppSettings["Environment"];
+            string webJobUserName = GetEnvironmentValue("WebJobUsername@" + environmentKey);
+            string webJobPassWord = GetEnvironmentValue("WebJobPassWord@" + environmentKey);
+            string webJobName = GetEnvironmentValue("WebJobName@" + environmentKey);
+            string webJobUrl = GetEnvironmentValue("WebJobURL@" + environmentKey);
             return WebJobHandler.EnableandDisableWebJob(webJobUserName, webJobPassWord, webJobName, status, webJobUrl);
+
         }
         #endregion
+
+
 
         #region Upload To Blob
         public bool UploadBlob()
@@ -54,7 +60,17 @@ namespace Epi.Cloud.PublishMetaData
 
         #region ClearCache
 
-
+        public string GetEnvironmentValue(string resourceName)
+        {
+            string connectionKey = string.Empty;
+            if (resourceName != null)
+            {
+                connectionKey = ConfigurationManager.AppSettings[resourceName];
+                var DecryptConnectionValue = Cryptography.Decrypt(connectionKey);
+                return DecryptConnectionValue;
+            }
+            return connectionKey;
+        }
 
         public bool ClearCache()
         {

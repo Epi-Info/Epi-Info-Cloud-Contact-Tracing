@@ -5,7 +5,7 @@ namespace Epi.Cloud.Common.Configuration
 {
     public static class ConfigurationHelper
     {
-        public static string GetEnvironmentResourceKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment)
+        public static string GetEnvironmentResourceKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment, bool isEncrypt = true)
         {
             var environmentKey = AppSettings.GetStringValue(environmentKeyName);
             if (resourceName != null)
@@ -13,12 +13,31 @@ namespace Epi.Cloud.Common.Configuration
                 environmentKey = ConfigurationManager.AppSettings[environmentKeyName + '/' + resourceName] ?? environmentKey;
                 var connectionStringName = string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
                 var ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
-                var DecryptConnectionString = Cryptography.Decrypt(ConnectionString);
-                return DecryptConnectionString;
+                if (isEncrypt)
+                {
+                    var DecryptConnectionString = Cryptography.Decrypt(ConnectionString);
+                    return DecryptConnectionString;
+                }
+                else
+                {
+                    return ConnectionString;
+                }
             }
             return string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
 
+        }
 
+        public static string GetValueByResourceKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment, bool isEncrypt = true)
+        {
+            var environmentKey = AppSettings.GetStringValue(environmentKeyName);
+            if (resourceName != null)
+            {
+                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + '/' + resourceName] ?? environmentKey;
+                var Key = string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
+                var Value = ConfigurationManager.AppSettings[Key];
+                return Value;
+            }
+            return null;
 
         }
     }
