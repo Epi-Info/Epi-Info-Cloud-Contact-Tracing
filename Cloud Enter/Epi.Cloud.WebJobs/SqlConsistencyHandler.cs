@@ -7,35 +7,61 @@ using Newtonsoft.Json;
 
 namespace Epi.Cloud.WebJobs
 {
-    class SqlConsistencyHandler
+    public class SqlConsistencyHandler
     {
+        public SqlConsistencyHandler()
+        {
+
+        }
         static void Main(string[] args)
         {
             try
             {
-                //Read Message from Service Bus
-                var serviceBusCRUD = new ServiceBusCRUD();
-                var messagePayload = serviceBusCRUD.ReceiveMessages();
+                //Read Message from Service Bus 
+                var messagePayload = ReadMessageFromServiceBus();
 
                 if (messagePayload == null)
                 {
-                    Console.WriteLine("MessagePayload is not available in the Service Bus");
+                    Console.WriteLine(messagePayload.Body);
                 }
                 else
                 {
-                    //Convert to FormResponseDetails
-                    FormResponseDetail formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(messagePayload.Body);
-                    PageDigest[][] pagedigest = GetPageDigest();
-
-                    //Send to SQL Server
-                    Epi.Cloud.SqlServer.PersistToSqlServer objPersistResponse = new Cloud.SqlServer.PersistToSqlServer();
-                    objPersistResponse.PersistToSQLServerDB(formResponseDetail, pagedigest);
+                    SendSurveyDataToSQL(messagePayload);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+        public static MessagePayload ReadMessageFromServiceBus()
+        {
+            //Read Message from Service Bus
+            var serviceBusCRUD = new ServiceBusCRUD();
+            var messagePayload = serviceBusCRUD.ReceiveMessages();
+
+            if (messagePayload == null)
+            {
+                //messagePayload.Body = "null";
+                return messagePayload;
+
+            }
+            else
+            {
+                return messagePayload;
+            }
+        }
+
+        public static bool SendSurveyDataToSQL(MessagePayload messagePayload)
+        {
+            //Convert to FormResponseDetails
+            FormResponseDetail formResponseDetail = JsonConvert.DeserializeObject<FormResponseDetail>(messagePayload.Body);
+            PageDigest[][] pagedigest = GetPageDigest();
+
+            //Send to SQL Server
+            Epi.Cloud.SqlServer.PersistToSqlServer objPersistResponse = new Cloud.SqlServer.PersistToSqlServer();
+            objPersistResponse.PersistToSQLServerDB(formResponseDetail, pagedigest);
+            return true;
         }
 
         public static PageDigest[][] GetPageDigest()
