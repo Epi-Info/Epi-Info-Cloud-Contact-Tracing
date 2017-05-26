@@ -114,6 +114,8 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Epi.Web.WCF.SurveyHost.Azur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.CloudOperation", "Epi.Cloud.CloudOperation\Epi.Cloud.CloudOperation.csproj", "{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebJobTest", "WebJobTest\WebJobTest.csproj", "{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -1388,6 +1390,36 @@ Global
 		{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2}.Release|x86.ActiveCfg = Release|Any CPU
 		{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2}.Release|x86.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Debug|x86.Build.0 = Debug|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|x86.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Linux|x86.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|x86.ActiveCfg = Release|Any CPU
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1408,5 +1440,6 @@ Global
 		{31F91938-2997-4650-8D36-71C845F1071D} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
 		{6C9E7FC6-9064-4AB2-A5F7-3341AF57D73D} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
 		{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
+		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
 	EndGlobalSection
 EndGlobal
