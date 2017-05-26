@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Epi.Web.Enter.Common.Security;
 
 namespace Epi.Cloud.CloudOperation
 {
@@ -17,8 +18,9 @@ namespace Epi.Cloud.CloudOperation
         //}
         private static Lazy<ConnectionMultiplexer> lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
         {
-            string redisCacheName = ConfigurationManager.AppSettings["redisCacheName"];
-            string redisCachePassword = ConfigurationManager.AppSettings["redisCachePassword"];
+            var environmentKey = ConfigurationManager.AppSettings["Environment"];
+            string redisCacheName = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCacheName@" + environmentKey]);
+            string redisCachePassword = Cryptography.Decrypt(ConfigurationManager.AppSettings["redisCachePassword@" + environmentKey]);
             return ConnectionMultiplexer.Connect(redisCacheName + ",abortConnect=false,ssl=true,password=" + redisCachePassword);
         });
 
@@ -45,7 +47,7 @@ namespace Epi.Cloud.CloudOperation
                         //server.FlushAllDatabases();
                         Console.WriteLine("Removing Key {0} from cache", key.ToString());
                         cache.KeyDelete(key);
-                    } 
+                    }
                 }
                 return true;
 

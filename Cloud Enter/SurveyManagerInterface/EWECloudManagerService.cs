@@ -22,7 +22,7 @@ namespace Epi.Web.WCF.SurveyService
 {
     public class EWECloudManagerService : IEWECloudManagerService
     {
-      
+
         // Session state variables
         private string _accessToken;
         //private ShoppingCart _shoppingCart;
@@ -70,15 +70,15 @@ namespace Epi.Web.WCF.SurveyService
         /// <returns></returns>
         public PublishResponse MetaDataToCloud(PublishRequest pRequest)
         {
-             
+
             bool pCloud = true;
             MetaDataToCloud _publishMetaDataToCloud = new MetaDataToCloud();
-            
+
             try
             {
                 //pRequest.RequestId = "2";
                 PublishResponse result = new PublishResponse(pRequest.RequestId);
-             
+
                 if (pCloud)
                 {
                     //Stop Web Job

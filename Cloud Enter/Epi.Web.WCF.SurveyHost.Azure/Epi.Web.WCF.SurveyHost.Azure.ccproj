@@ -54,7 +54,7 @@
     <DiagnosticsConfiguration Include="Epi.Web.WCF.SurveyHostContent\diagnostics.wadcfgx" />
   </ItemGroup>
   <ItemGroup>
-    <PublishProfile Include="Profiles\epiwcfProduction.azurePubxml" />
+    <PublishProfile Include="Profiles\FetpEIDevDbsProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
