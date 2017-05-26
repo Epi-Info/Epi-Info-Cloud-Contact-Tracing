@@ -74,6 +74,12 @@ namespace Epi.Cloud.Common.DTO
         {
             get { return ((IResponseContext)ResponseDetail).IsNewRecord; }
             set { ((IResponseContext)ResponseDetail).IsNewRecord = value; }
+
+        }
+        public int OrgId
+        {
+            get { return ((IResponseContext)ResponseDetail).OrgId; }
+            set { ((IResponseContext)ResponseDetail).OrgId = value; }
         }
 
         public int UserId

@@ -18,6 +18,7 @@ namespace Epi.Common.Core.Interfaces
 
         bool IsNewRecord { get; set; }
 
+        int OrgId { get; set; }
         int UserId { get; set; }
         string UserName { get; set; }
 

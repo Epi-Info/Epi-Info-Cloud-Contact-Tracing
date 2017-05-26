@@ -5,7 +5,7 @@ using Epi.DataPersistence.Constants;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+    public partial class DocumentDbCRUD
     {
         private const string LT = "<";
         private const string LE = "<=";
@@ -22,9 +22,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string OR = " OR ";
         private const string Alias = "`@`";
 
-        private const string FRP = "FormResponseProperties.";
-        private const string RecStatus = FRP + "RecStatus";
-        private const string ResponseQA = FRP + "ResponseQA.";
+        private const string FRP_ = "FormResponseProperties.";
+        private const string FRP_RecStatus = FRP_ + "RecStatus";
+        private const string FRP_ResponseQA_ = FRP_ + "ResponseQA.";
 
         private string AssembleSelect(string collectionName, params string[] columnNames)
         {
@@ -57,11 +57,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private string AssembleParentQASelect(string formName, List<string> columnNames)
         {
             string query = "{"
-                            + AssembleParentSelect(null, columnNames.Select(g => g.ToLower() + ":" + formName + "." + ResponseQA + g.ToLower()).ToArray())
+                            + AssembleParentSelect(null, columnNames.Select(g => g.ToLower() + ":" + formName + "." + FRP_ResponseQA_ + g.ToLower()).ToArray())
                             + "} AS ResponseQA "
                             + FROM + formName;
             return query;
         }
+
         private string AssembleWhere(string collectionName, params string[] expressions)
         {
             string where;
@@ -94,8 +95,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return expression;
         }
 
-
-
         private static string And_Expression(string left, string relational_operator, object right, bool excludeExpression = false)
         {
             var expression = excludeExpression ? string.Empty : Expression(left, relational_operator, right, AND);
@@ -109,6 +108,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 : ExpressionWithFunction(left, relational_operator, right, function);
             return AND + expression;
         }
+
         private static string Or_Expression(string left, string relational_operator, object right, string function)
         {
             var expression = function == null
@@ -116,7 +116,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 : ExpressionWithFunction(left, relational_operator, right, function);
             return OR + expression;
         }
-
 
         private static string Or_Expression(string left, string relational_operator, object right, bool excludeExpression = false)
         {
@@ -132,7 +131,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 if (searchQualifier.Value.Contains('*') || searchQualifier.Value.Contains('?'))
                 {
-                    var expression = And_Expression(ResponseQA + searchQualifier.Key.FieldName, EQ, searchQualifier.Value.ToLowerInvariant(), "LOWER");
+                    var expression = And_Expression(FRP_ResponseQA_ + searchQualifier.Key.FieldName, EQ, searchQualifier.Value.ToLowerInvariant(), "LOWER");
                     searchExpression += expression;
                 }
             }
@@ -143,29 +142,27 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             return string.Format("LOWER({0})", argument);
         }
+
         private string GetAllRecordByFormId(string collectionAlias, string formId, List<string> formPoperties, List<string> columnlist)
         {
             string SelectColumnList = string.Empty;
 
-
             //var SelectFormPoperties = AssembleParentSelect(collectionAlias, formPoperties.Select(g =>"."+FRP + g).ToArray());
-            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP + g).ToArray());
+            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
 
             if (columnlist != null && columnlist.Count > 0)
             {
                 // convert column list to this format {patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist);
-
             }
-
 
             var query = SELECT
                            + SelectFormPoperties + ","
                            + AssembleSelect(collectionAlias, "_ts,")
                            + SelectColumnList
                            + WHERE
-                           + AssembleWhere(collectionAlias, Expression(FRP + "FormId", EQ, formId)
-                           + And_Expression(FRP + "RecStatus", NE, RecordStatus.Deleted))
+                           + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
+                           + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
                            + ORDERBY
                            + AssembleSelect(collectionAlias, "_ts")
                            + DESC;
@@ -177,7 +174,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             string SelectColumnList = string.Empty;
 
-            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP + g).ToArray());
+            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
             if (columnlist != null)
             {
                 // convert column list to this format ex:{patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
@@ -185,9 +182,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
 
             
-            var fieldKeyList = columnlist.Select(x=> collectionAlias + "." + ResponseQA + x.Key.FieldName +EQ +'"'+x.Value+'"' + AND).ToArray();
+            var fieldKeyList = columnlist.Select(x=> collectionAlias + "." + FRP_ResponseQA_ + x.Key.FieldName +EQ +'"'+x.Value+'"' + AND).ToArray();
 
-            var expersion = collectionAlias +"."+ FRP + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP + "RecStatus" + NE + RecordStatus.Deleted;
+            var expersion = collectionAlias +"."+ FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
             var query = SELECT
                            + SelectFormPoperties + ","
                            + AssembleSelect(collectionAlias, "_ts,")

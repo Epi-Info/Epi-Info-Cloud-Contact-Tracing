@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BusinessObjects\SurveyResponseBO.cs" />
+    <Compile Include="Interfaces\IFormSettingsPersistenceFacade.cs" />
     <Compile Include="Interfaces\ISurveyPersistenceFacade.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

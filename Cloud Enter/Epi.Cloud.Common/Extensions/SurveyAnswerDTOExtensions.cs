@@ -54,7 +54,10 @@ namespace Epi.Cloud.Common.Extensions
                 ParentFormName = metadataAccessor.GetParentFormName(surveyAnswerDTO.SurveyId),
                 RootFormId = metadataAccessor.GetRootFormId(surveyAnswerDTO.SurveyId),
                 RootFormName = metadataAccessor.GetRootFormName(surveyAnswerDTO.SurveyId),
+
                 IsNewRecord = surveyAnswerDTO.IsNewRecord,
+
+                OrgId = surveyAnswerDTO.OrgId,
                 UserId = surveyAnswerDTO.LoggedInUserId,
                 UserName = surveyAnswerDTO.UserName
             }.ResolveMetadataDependencies() as ResponseContext;

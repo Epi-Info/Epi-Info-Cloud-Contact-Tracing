@@ -1,18 +1,18 @@
-﻿using Epi.Cloud.Resources;
+﻿using System;
+using System.Collections.Generic;
+using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
+using Epi.PersistenceServices.DocumentDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Epi.PersistenceServices.DocumentDB;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+    public partial class DocumentDbCRUD
     {
         public int? continuationToken = null;
         private const string SPGetRecordsBySurveyId = "GetRecordsBySurveyId";
+
         /// <summary>
         /// Execute DB SP-Get all records by surveyID 
         /// </summary>
@@ -32,13 +32,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 
         /// <summary>
-        /// ExecuteStoredProcedureAsync
+        /// ExecuteSPAsync
         /// </summary>
         /// <param name="collectionId"></param>
         /// <param name="spId"></param>
         /// <param name="surveyId"></param>
         /// <returns></returns>
-
         private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string query)
         {
             RequestOptions option = new RequestOptions();
@@ -48,10 +47,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
             string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId).ToString();
             try
             {
-
                 do
                 {
-
                     var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
                     foreach (var doc in spResponse.Response.Result)
                     {
@@ -64,11 +61,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             catch (Exception ex)
             {
-                var ErrorCode = ((DocumentClientException)ex.InnerException).Error.Code;
-                if (ErrorCode == "NotFound")
+                var errorCode = ((DocumentClientException)ex.InnerException).Error.Code;
+                if (errorCode == "NotFound")
                 {
                     spUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId).ToString();
-                    var CreateSPResponse = CreateSPAsync(spUri, spId);
+                    var createSPResponse = CreateSPAsync(spUri, spId);
 
                     //Execute SP 
                     ExecuteSPAsync(collectionId, spId, query);
@@ -76,6 +73,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             return null;
         }
+
         /// <summary>
         /// Create Document Db Stored Procedure
         /// </summary>
@@ -102,7 +100,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             }
             return null;
-
         }
     }
 }

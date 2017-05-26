@@ -43,6 +43,7 @@
     <Compile Include="DataInterfaces\IDataEntryService.cs" />
     <Compile Include="DataInterfaces\IFormInfoDao.cs" />
     <Compile Include="DataInterfaces\IFormSettingDao.cs" />
+    <Compile Include="DataInterfaces\IFormSettingDao_EF.cs" />
     <Compile Include="DataInterfaces\IFormSettingsService.cs" />
     <Compile Include="DataInterfaces\IOrganizationDao.cs" />
     <Compile Include="DataInterfaces\ISurveyInfoDao.cs" />

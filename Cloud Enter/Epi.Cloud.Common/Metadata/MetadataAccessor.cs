@@ -65,6 +65,16 @@ namespace Epi.Cloud.Common.Metadata
             StaticCache.ClearAll();
         }
 
+        public static FieldTypes[] NonQueriableFieldTypes = new FieldTypes[]
+        {
+            FieldTypes.Label,
+            FieldTypes.UppercaseText,
+            FieldTypes.Multiline,
+            FieldTypes.CommandButton,
+            FieldTypes.Relate,
+            FieldTypes.Group
+        };
+
         public string CurrentFormId { get { return _formId; } set { _formId = value; } }
 
         public static IProjectMetadataProvider ProjectMetadataProvider

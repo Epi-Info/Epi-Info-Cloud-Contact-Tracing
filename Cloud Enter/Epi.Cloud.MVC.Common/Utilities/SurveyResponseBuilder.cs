@@ -13,7 +13,6 @@ namespace Epi.Web.MVC.Utility
 {
     public class SurveyResponseBuilder
     {
-        private IEnumerable<AbridgedFieldInfo> _pageFields;
         private string _requiredList = "";
 
         private Dictionary<string, string> _responseQA = new Dictionary<string, string>();
@@ -30,9 +29,8 @@ namespace Epi.Web.MVC.Utility
             set { _requiredList = value; }
         }
 
-        public SurveyResponseBuilder(IEnumerable<AbridgedFieldInfo> pageFields, string requiredList)
+        public SurveyResponseBuilder(string requiredList)
         {
-            _pageFields = pageFields;
             _requiredList = requiredList;
         }
 

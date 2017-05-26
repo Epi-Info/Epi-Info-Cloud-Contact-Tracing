@@ -80,16 +80,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataStructures.Methods.cs" />
-    <Compile Include="DataStructures.cs" />
+    <Compile Include="DataStructures.FormResponse.Methods.cs" />
+    <Compile Include="DataStructures.FormResponse.cs" />
+    <Compile Include="DocumentDbCRUD.FormSettings.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
+    <Compile Include="DataStructures.FormSettings.cs" />
+    <Compile Include="FormSettingsPersistenceFacade.cs" />
     <Compile Include="SurveyPersistenceFacade.cs" />
-    <Compile Include="SurveyResponseCRUD.Attachment.cs" />
-    <Compile Include="SurveyResponseCRUD.cs" />
-    <Compile Include="SurveyResponseCRUD.QueryHelpers.cs" />
+    <Compile Include="DocumentDbCRUD.FormResponse.Attachment.cs" />
+    <Compile Include="DocumentDbCRUD.FormResponse.cs" />
+    <Compile Include="DocumentDbCRUD.QueryHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurveyResponseCRUD.StoreProcedures.cs" />
-    <Compile Include="SurveyResponseCRUD.Utilities.cs" />
+    <Compile Include="DocumentDbCRUD.FormResponse.StoreProcedures.cs" />
+    <Compile Include="DocumentDbCRUD.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Metadata;
 using Epi.Common.Core.DataStructures;
-using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.Common.Extensions
 {
@@ -92,6 +90,8 @@ namespace Epi.Cloud.Common.Extensions
                 RootFormId = rootFormId,
                 RootFormName = rootFormName,
                 IsNewRecord = surveyResponseBO.IsNewRecord,
+
+                OrgId = surveyResponseBO.OrgId,
                 UserId = surveyResponseBO.UserId,
                 UserName = surveyResponseBO.UserName
             };

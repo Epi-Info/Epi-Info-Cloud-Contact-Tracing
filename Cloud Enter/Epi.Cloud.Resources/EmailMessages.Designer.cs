@@ -70,6 +70,42 @@ namespace Epi.Cloud.Resources.EmailMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} {1} has assigned the following form to you in Epi Info™ Cloud Enter.\n\nTitle: {2}\n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.\n \n&quot;{3}.
+        /// </summary>
+        internal static string FormAssignedToYou_Body {
+            get {
+                return ResourceManager.GetString("FormAssignedToYou_Body", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An Epi Info Cloud Enter Form - {0} has been assigned to you.
+        /// </summary>
+        internal static string FormAssignedToYou_Subject {
+            get {
+                return ResourceManager.GetString("FormAssignedToYou_Subject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} {1} has shared the following form with your organization in Epi Info™ Cloud Enter.\n\nTitle: {2}\n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.\n \n&quot;{3}.
+        /// </summary>
+        internal static string FormSharedWithYourOrganization_Body {
+            get {
+                return ResourceManager.GetString("FormSharedWithYourOrganization_Body", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An Epi Info Cloud Enter Form - {0} has been shared with your organization.
+        /// </summary>
+        internal static string FormSharedWithYourOrganization_Subject {
+            get {
+                return ResourceManager.GetString("FormSharedWithYourOrganization_Subject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An Epi Info Cloud Enter account has been created for your organization..
         /// </summary>
         internal static string InsertUser_Subject {
@@ -79,7 +115,7 @@ namespace Epi.Cloud.Resources.EmailMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You recently updated your password for Epi Info™ Cloud Enter. \n \n If you have not accessed password help, please contact the administrator for you organization. \n \n.
+        ///   Looks up a localized string similar to You recently updated your password for Epi Info™ Cloud Enter. If you have not accessed password help, please contact the administrator for you organization. .
         /// </summary>
         internal static string PasswordChanged_Body {
             get {
@@ -97,7 +133,25 @@ namespace Epi.Cloud.Resources.EmailMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. \n \n Your new temporary password is: {0}\n \n If you have not accessed password help, please contact the administrator. \n \nLog in with your temporary password. You will then be asked to create a new password..
+        ///   Looks up a localized string similar to A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below is the needed info to unlock the record.\n \n Response id: {0}\n\n User email: {1}\n\n.
+        /// </summary>
+        internal static string RecordLocked_Body {
+            get {
+                return ResourceManager.GetString("RecordLocked_Body", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record Locked Notification.
+        /// </summary>
+        internal static string RecordLocked_Subject {
+            get {
+                return ResourceManager.GetString("RecordLocked_Subject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. Your new temporary password is: {0} If you have not accessed password help, please contact the administrator. Log in with your temporary password. You will then be asked to create a new password..
         /// </summary>
         internal static string ResetPassword_Body {
             get {

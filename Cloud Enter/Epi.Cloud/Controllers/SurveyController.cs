@@ -29,10 +29,8 @@ namespace Epi.Web.MVC.Controllers
     [Authorize]
     public class SurveyController : BaseSurveyController
     {
-        private readonly ISurveyPersistenceFacade _surveyPersistenceFacade;
         private readonly ISecurityFacade _securityFacade;
 
-        private IEnumerable<AbridgedFieldInfo> _pageFields;
         private string _requiredList = "";
         private string RootFormId = "";
         private string RootResponseId = "";
@@ -42,13 +40,11 @@ namespace Epi.Web.MVC.Controllers
 
         public SurveyController(ISurveyFacade surveyFacade,
                                 ISecurityFacade securityFacade,
-                                IProjectMetadataProvider projectMetadataProvider,
-                                ISurveyPersistenceFacade surveyPersistenceFacade)
+                                IProjectMetadataProvider projectMetadataProvider)
         {
             _surveyFacade = surveyFacade;
             _securityFacade = securityFacade;
             _projectMetadataProvider = projectMetadataProvider;
-            _surveyPersistenceFacade = surveyPersistenceFacade;
         }
 
         /// <summary>
@@ -1000,7 +996,7 @@ namespace Epi.Web.MVC.Controllers
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
             EnterRule FunctionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-            SurveyResponseBuilder surveyResponseBuilder = new SurveyResponseBuilder(_pageFields, _requiredList);
+            SurveyResponseBuilder surveyResponseBuilder = new SurveyResponseBuilder(_requiredList);
             if (FunctionObject_B != null && !FunctionObject_B.IsNull())
             {
                 try

@@ -29,6 +29,7 @@ namespace Epi.Cloud.Common.BusinessObjects
         public bool IsChildResponse { get { return ((IResponseContext)ResponseDetail).IsChildResponse; } }
         public bool IsRootResponse { get { return ((IResponseContext)ResponseDetail).IsRootResponse; } }
 
+        public int OrgId { get { return ResponseDetail.OrgId; } set { ResponseDetail.OrgId = value; } }
         public int UserId { get { return ResponseDetail.UserId; } set { ResponseDetail.UserId = value; } }
         public int LastActiveUserId { get { return ResponseDetail.UserId; } set { ResponseDetail.UserId = value; } }
         public string UserName { get { return ResponseDetail.UserName; } set { ResponseDetail.UserName = value; } }

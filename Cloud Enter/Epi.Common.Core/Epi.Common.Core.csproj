@@ -45,8 +45,10 @@
     <Compile Include="Constants\RecordStatusChangeReason.cs" />
     <Compile Include="DataStructures\FormResponseDetail.cs" />
     <Compile Include="DataStructures\FormResponseDetailMethods.cs" />
+    <Compile Include="DataStructures\FormSettings.cs" />
     <Compile Include="DataStructures\PageResponseDetail.cs" />
     <Compile Include="DataStructures\ResponseContext.cs" />
+    <Compile Include="DataStructures\ResponseDisplaySettings.cs" />
     <Compile Include="DTO\FormInfoDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
     <Compile Include="Interfaces\IResponseContext.cs" />

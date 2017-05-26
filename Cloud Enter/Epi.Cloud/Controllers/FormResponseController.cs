@@ -210,6 +210,8 @@ namespace Epi.Web.MVC.Controllers
 
             TempData[TempDataKeys.ResponseId] = responseId.ToString();
 
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
+
             var responseContext = new ResponseContext
             {
                 FormId = /*FromURL*/addNewFormId,
@@ -217,6 +219,7 @@ namespace Epi.Web.MVC.Controllers
                 ParentResponseId = this.Request.Form["Parent_Response_Id"].ToString(),
                 RootResponseId = rootResponseId,
                 IsNewRecord = !isEditMode,
+                OrgId = orgId,
                 UserId = userId,
                 UserName = userName
             }.ResolveMetadataDependencies() as ResponseContext;
@@ -244,7 +247,7 @@ namespace Epi.Web.MVC.Controllers
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
             EnterRule functionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-            SurveyResponseBuilder surveyResponseDocDb = new SurveyResponseBuilder(_pageFields, _requiredList);
+            SurveyResponseBuilder surveyResponseDocDb = new SurveyResponseBuilder(_requiredList);
             if (functionObject_B != null && !functionObject_B.IsNull())
             {
                 try
@@ -335,6 +338,7 @@ namespace Epi.Web.MVC.Controllers
                 var responseContext = new ResponseContext
                 {
                     RootFormId = surveyId,
+                    OrgId = orgid,
                     UserId = userId,
                     UserName = userName
                 }.ResolveMetadataDependencies();

@@ -6,18 +6,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Metadata;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+    public partial class DocumentDbCRUD : MetadataAccessor
     {
         private string _serviceEndpoint;
         private string _authKey;
         private DocumentClient _client;
         private Microsoft.Azure.Documents.Database _database;
         private ConcurrentDictionary<string, DocumentCollection> _documentCollections = new ConcurrentDictionary<string, DocumentCollection>();
+
+        public DocumentDbCRUD()
+        {
+            Initialize();
+        }
+
+        private DocumentClient Client
+        {
+            get { return _client ?? GetOrCreateClient(); }
+        }
 
         private void Initialize()
         {

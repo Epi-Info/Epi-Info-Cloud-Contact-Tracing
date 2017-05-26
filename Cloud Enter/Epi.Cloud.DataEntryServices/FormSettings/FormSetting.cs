@@ -1,219 +1,157 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Cloud.Resources;
+using Epi.Cloud.Resources.Constants;
 using Epi.Common.EmailServices;
+using Epi.FormMetadata.Constants;
 
 namespace Epi.Web.BLL
 {
-    public class FormSetting
+    public class FormSetting : MetadataAccessor
     {
-        private IFormSettingDao FormSettingDao;
+        private readonly IFormSettingDao _formSettingDao;
+        private readonly IUserDao _userDao;
 
-        private IUserDao UserDao;
-        private IFormInfoDao FormInfoDao;
-
-        public FormSetting(IFormSettingDao pFormSettingDao, IUserDao pUserDao, IFormInfoDao pFormInfoDao)
+        public FormSetting(IFormSettingDao formSettingDao, IUserDao userDao)
         {
-            this.FormSettingDao = pFormSettingDao;
-            this.UserDao = pUserDao;
-            this.FormInfoDao = pFormInfoDao;
-        }
-        public FormSetting(IFormSettingDao pFormSettingDao)
-        {
-            this.FormSettingDao = pFormSettingDao;
-
+            _formSettingDao = formSettingDao;
+            _userDao = userDao;
         }
 
-        public FormSettingBO GetFormSettings(string FormId, string Xml, int CurrentOrgId = -1)
+        public FormSettingBO GetFormSettings(string formId, int currentOrgId = -1)
         {
-            FormSettingBO result = this.FormSettingDao.GetFormSettings(FormId, CurrentOrgId);
-            if (!string.IsNullOrEmpty(Xml))
-            {
-                result.FormControlNameList = GetFormColumnNames(Xml, result.ColumnNameList);
-            }
-            else
-            {
-                result.FormControlNameList = new Dictionary<int, string>();
-                var Columns = GetAllColumns(FormId);
+            FormSettingBO result = _formSettingDao.GetFormSettings(formId, currentOrgId);
 
-                for (int i = 0; i < Columns.Count; i++)
-                {
-                    result.FormControlNameList.Add(i, Columns[i]);
-                }
-            }
             return result;
         }
 
-        private List<string> GetAllColumns(string FormId)
+        public string SaveSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
         {
-            return FormSettingDao.GetAllColumnNames(FormId);
-        }
-
-        public Dictionary<int, string> GetFormColumnNames(string Xml, Dictionary<int, string> Selected)
-        {
-            Dictionary<int, string> List = new Dictionary<int, string>();
-
-            XDocument xdoc = XDocument.Parse(Xml);
-
-
-            var _FieldsTypeIDs = from _FieldTypeID in
-                                     xdoc.Descendants("Field")
-
-                                 select _FieldTypeID;
-            int Count = 0;
-            foreach (var _FieldTypeID in _FieldsTypeIDs)
-            {
-                if (!Selected.ContainsValue(_FieldTypeID.Attribute("Name").Value.ToString()) && _FieldTypeID.Attribute("FieldTypeId").Value != "2" && _FieldTypeID.Attribute("FieldTypeId").Value != "21" && _FieldTypeID.Attribute("FieldTypeId").Value != "3")
-                {
-                    List.Add(Count, _FieldTypeID.Attribute("Name").Value.ToString());
-                    Count++;
-                }
-            }
-            return List;
-
-        }
-
-
-        public FormSettingBO SaveSettings(Dictionary<int, string> ColumnList, bool IsDraftMode)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
-
-        // public string SaveSettings(bool IsDraftMode, Dictionary<int, string> ColumnNameList, Dictionary<int, string> AssignedUserList, string FormId, Dictionary<int, string> SelectedOrgList, bool IsShareable)
-        public string SaveSettings(bool IsDraftMode, FormSettingDTO FormSettingDTO)
-        {
-            string Message = "";
-            FormSettingBO FormSettingBO = new FormSettingBO();
-            // FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
-            FormSettingBO.AssignedUserList = FormSettingDTO.AssignedUserList;
-            FormSettingBO.SelectedOrgList = FormSettingDTO.SelectedOrgList;
-            FormSettingBO.DeleteDraftData = FormSettingDTO.DeleteDraftData;
-            //FormInfoBO FormInfoBO = new FormInfoBO();
-            //FormInfoBO.FormId = FormSettingDTO.FormId;
-            //FormInfoBO.IsDraftMode =IsDraftMode;
-            //FormInfoBO.IsShareable = FormSettingDTO.IsShareable;
+            string message = "";
+            FormSettingBO formSettingBO = new FormSettingBO();
+            formSettingBO.AssignedUserList = formSettingDTO.AssignedUserList;
+            formSettingBO.SelectedOrgList = formSettingDTO.SelectedOrgList;
+            formSettingBO.DeleteDraftData = formSettingDTO.DeleteDraftData;
             try
             {
-                List<UserBO> FormCurrentUsersList = this.UserDao.GetUserByFormId(FormSettingDTO.FormId);
-                //this.FormSettingDao.UpdateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-                // this.FormSettingDao.UpdateFormMode(FormInfoBO);
-                Dictionary<int, string> AssignedOrgAdminList = this.FormSettingDao.GetOrgAdmins(FormSettingDTO.SelectedOrgList);// about to share with
-                List<UserBO> CurrentOrgAdminList = this.FormSettingDao.GetOrgAdminsByFormId(FormSettingDTO.FormId);// shared with 
-                this.FormSettingDao.UpdateSettingsList(FormSettingBO, FormSettingDTO.FormId);
+                List<UserBO> formCurrentUsersList = _userDao.GetUserByFormId(formSettingDTO.FormId);
+                Dictionary<int, string> assignedOrgAdminList = _formSettingDao.GetOrgAdmins(formSettingDTO.SelectedOrgList);// about to share with
+                List<UserBO> CurrentOrgAdminList = _formSettingDao.GetOrgAdminsByFormId(formSettingDTO.FormId);// shared with 
+                _formSettingDao.UpdateSettingsList(formSettingBO, formSettingDTO.FormId);
 
                 // Clear all Draft records
-                if (FormSettingDTO.DeleteDraftData)
+                if (formSettingDTO.DeleteDraftData)
                 {
-                    this.FormSettingDao.DeleteDraftRecords(FormSettingDTO.FormId);
+                    _formSettingDao.DeleteDraftRecords(formSettingDTO.FormId);
                 }
 
-                List<UserBO> AdminList = this.UserDao.GetAdminsBySelectedOrgs(FormSettingBO, FormSettingDTO.FormId);
+                List<UserBO> AdminList = _userDao.GetAdminsBySelectedOrgs(formSettingBO, formSettingDTO.FormId);
 
-                if (FormSettingDTO.AssignedUserList.Count() > 0 && AppSettings.Key.SendEmailToAssignedUsers.GetBoolValue())
+                if (formSettingDTO.AssignedUserList.Count() > 0 && AppSettings.Key.SendEmailToAssignedUsers.GetBoolValue())
                 {
-                    SendEmail(FormSettingDTO.AssignedUserList, FormSettingDTO.FormId, FormCurrentUsersList);
+                    SendEmail(formSettingDTO.AssignedUserList, formSettingDTO.FormId, formCurrentUsersList);
                 }
 
                 // Send Email to organization admin when a form is shared with that organization
-                SendEmail(AssignedOrgAdminList, FormSettingDTO.FormId, CurrentOrgAdminList, true);
+                SendEmail(assignedOrgAdminList, formSettingDTO.FormId, CurrentOrgAdminList, true);
 
-                Message = "Success";
+                message = "Success";
             }
             catch (Exception Ex)
             {
-                Message = "Error";
+                message = "Error";
                 throw Ex;
 
             }
-            return Message;
+            return message;
         }
 
-        public void UpdateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO)
+        public void UpdateFormSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
         {
-            FormSettingBO FormSettingBO = new FormSettingBO();
-            FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
-            FormInfoBO FormInfoBO = new FormInfoBO();
-            FormInfoBO.FormId = FormSettingDTO.FormId;
-            FormInfoBO.IsDraftMode = IsDraftMode;
-            FormInfoBO.IsShareable = FormSettingDTO.IsShareable;
-            FormInfoBO.DataAccesRuleId = FormSettingDTO.SelectedDataAccessRule;
-            this.FormSettingDao.UpdateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-            this.FormSettingDao.UpdateFormMode(FormInfoBO);
-            if (FormSettingDTO.IsDisabled)
+            FormSettingBO formSettingBO = new FormSettingBO();
+            formSettingBO.ColumnNameList = formSettingDTO.ColumnNameList;
+            FormInfoBO formInfoBO = new FormInfoBO();
+            formInfoBO.FormId = formSettingDTO.FormId;
+            formInfoBO.IsDraftMode = isDraftMode;
+            formInfoBO.IsShareable = formSettingDTO.IsShareable;
+            formInfoBO.DataAccesRuleId = formSettingDTO.SelectedDataAccessRule;
+            _formSettingDao.UpdateColumnNames(formSettingBO, formSettingDTO.FormId);
+            _formSettingDao.UpdateFormMode(formInfoBO, formSettingBO);
+            if (formSettingDTO.IsDisabled)
             {
-                this.FormSettingDao.SoftDeleteForm(FormSettingDTO.FormId);
+                _formSettingDao.SoftDeleteForm(formSettingDTO.FormId);
             }
-
         }
-        private void SendEmail(Dictionary<int, String> AssignedUserList, string FormId, List<UserBO> FormCurrentUsersList, bool ShareForm = false)
+
+        private void SendEmail(Dictionary<int, String> assignedUserList, string formId, List<UserBO> formCurrentUsersList, bool shareForm = false)
         {
             try
             {
-                FormInfoBO FormInfoBO = this.FormInfoDao.GetFormByFormId(FormId);
-                if (!string.IsNullOrEmpty(FormInfoBO.ParentFormId))
+                var formDigest = GetFormDigest(formId);
+                if (formDigest.IsChildForm) return;
+
+                var formOwnerUserId = formDigest.OwnerUserId;
+
+                UserBO userBO = _userDao.GetCurrentUser(formOwnerUserId);
+                List<string> usersEmail = new List<string>();
+                List<string> currentUsersEmail = new List<string>();
+
+                foreach (UserBO user in formCurrentUsersList)
                 {
-                    return;
+                    currentUsersEmail.Add(user.EmailAddress);
                 }
-                UserBO UserBO = this.UserDao.GetCurrentUser(FormInfoBO.UserId);
-                List<string> UsersEmail = new List<string>();
-                List<string> CurrentUsersEmail = new List<string>();
 
-                foreach (UserBO User in FormCurrentUsersList)
+                if (currentUsersEmail.Count() > 0)
                 {
-                    CurrentUsersEmail.Add(User.EmailAddress);
-                }
-
-                if (CurrentUsersEmail.Count() > 0)
-                {
-
-                    foreach (var User in AssignedUserList)
+                    foreach (var User in assignedUserList)
                     {
-                        if (!CurrentUsersEmail.Contains(User.Value))
+                        if (!currentUsersEmail.Contains(User.Value))
                         {
 
-                            UsersEmail.Add(User.Value);
+                            usersEmail.Add(User.Value);
                         }
-
                     }
                 }
                 else
                 {
-                    foreach (var User in AssignedUserList)
+                    foreach (var user in assignedUserList)
                     {
-
-                        UsersEmail.Add(User.Value);
-
+                        usersEmail.Add(user.Value);
                     }
                 }
 
-                if (UsersEmail.Count() > 0)
+                if (usersEmail.Count() > 0)
                 {
                     Email email = new Email();
-                    if (!ShareForm)
+                    email.To = usersEmail;
+                    email.From = userBO.EmailAddress;
+                    if (shareForm)
                     {
-                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has assigned the following form to you in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                        email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
-                        email.From = UserBO.EmailAddress;
-                        email.To = UsersEmail;
-                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been assigned to you";
+                        //email.Subject = "An Epi Info Cloud Enter Form - " + formDigest.FormName + " has been shared with your organization.";
+                        //email.Body = userBO.FirstName + " " + userBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + formDigest.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        //email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+                        email.Subject = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.FormSharedWithYourOrganization_Subject),
+                            formDigest.FormName);
+                        email.Body = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.FormSharedWithYourOrganization_Body),
+                            userBO.FirstName, userBO.LastName, formDigest.FormName, AppSettings.GetStringValue(AppSettings.Key.BaseURL));
                     }
                     else
                     {
-                        email.Body = UserBO.FirstName + " " + UserBO.LastName + " has shared the following form  with your organization in Epi Info™ Cloud Enter.\n\nTitle: " + FormInfoBO.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
-                        email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
-                        email.From = UserBO.EmailAddress;
-                        email.To = UsersEmail;
-                        email.Subject = "An Epi Info Cloud Enter Form - " + FormInfoBO.FormName + " has been shared with your organization.";
+                        //email.Subject = "An Epi Info Cloud Enter Form - " + formDigest.FormName + " has been assigned to you";
+                        //email.Body = userBO.FirstName + " " + userBO.LastName + " has assigned the following form to you in Epi Info™ Cloud Enter.\n\nTitle: " + formDigest.FormName + " \n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.";
+                        //email.Body = email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+                        email.Subject = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.FormAssignedToYou_Subject),
+                            formDigest.FormName);
+                        email.Body = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.FormAssignedToYou_Body), 
+                            userBO.FirstName, userBO.LastName, formDigest.FormName, AppSettings.GetStringValue(AppSettings.Key.BaseURL));
                     }
+
                     EmailHandler.SendMessage(email);
                 }
             }
@@ -221,12 +159,6 @@ namespace Epi.Web.BLL
             {
                 throw ex;
             }
-        }
-
-        public FormSettingBO GetFormSettings()
-        {
-            FormSettingBO result = this.FormSettingDao.GetFormSettings();
-            return result;
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using Epi.Cloud.Common.BusinessObjects;
-using System.Configuration;
+using Epi.Cloud.Common.Constants;
 using Epi.Common.EmailServices;
 using Epi.Common.Security;
-using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.BLL
 {
@@ -28,7 +28,6 @@ namespace Epi.Web.BLL
             OrganizationBO result = this.OrganizationDao.GetOrganizationByOrgId(OrganizationId); ;
             return result;
         }
-
 
         public List<OrganizationBO> GetOrganizationKey(string OrganizationName)
         {

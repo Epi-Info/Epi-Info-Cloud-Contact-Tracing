@@ -2,8 +2,9 @@
 using System.Linq;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Metadata;
-using Epi.DataPersistence.Constants;
+using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.DataStructures;
+using Epi.DataPersistenceServices.DocumentDB.FormSettings;
 using Epi.PersistenceServices.DocumentDB;
 
 namespace Epi.DataPersistence.Extensions
@@ -68,6 +69,7 @@ namespace Epi.DataPersistence.Extensions
             target.FirstSaveTime = source.FirstSaveTime;
             target.LastSaveTime = source.LastSaveTime;
 
+            target.OrgId = source.OrgId;
             target.UserId = source.UserId;
             target.UserName = source.UserName;
 
@@ -110,6 +112,7 @@ namespace Epi.DataPersistence.Extensions
                 FirstSaveTime = formResponseProperties.FirstSaveTime,
                 LastSaveTime = formResponseProperties.LastSaveTime,
 
+                OrgId = formResponseProperties.OrgId,
                 UserId = formResponseProperties.UserId,
                 UserName = formResponseProperties.UserName,
 
@@ -182,6 +185,64 @@ namespace Epi.DataPersistence.Extensions
         {
             List<FormResponseDetail> formResonseDetailList = formResponsePropertiesList.Select(p => p.ToFormResponseDetail()).ToList();
             return formResonseDetailList;
+        }
+
+
+
+        public static FormSettings ToFormSettings(this FormSettingsProperties formSettingsProperties)
+        {
+            var formSettings = new FormSettings
+            {
+                FormId = formSettingsProperties.FormId,
+                FormName = formSettingsProperties.FormName,
+                IsDisabled = formSettingsProperties.IsDisabled,
+                IsDraftMode = formSettingsProperties.IsDraftMode,
+                IsShareable = formSettingsProperties.IsShareable,
+                DataAccessRuleId = formSettingsProperties.DataAccessRuleId,
+                ResponseDisplaySettings = formSettingsProperties.ToResponseDisplaySettingsList()
+            };
+            return formSettings;
+        }
+
+        public static FormSettingsProperties ToFormSettingsProperties(this FormSettings formSettings, FormSettingsProperties formSettingsProperties)
+        {
+            if (formSettingsProperties == null) formSettingsProperties = new FormSettingsProperties();
+            formSettingsProperties.FormId = formSettings.FormId;
+            formSettingsProperties.FormName = formSettings.FormName;
+            formSettingsProperties.IsDisabled = formSettings.IsDisabled;
+            formSettingsProperties.IsDraftMode = formSettings.IsDraftMode;
+            formSettingsProperties.IsShareable = formSettings.IsShareable;
+            formSettingsProperties.DataAccessRuleId = formSettings.DataAccessRuleId;
+            if (formSettings.ResponseDisplaySettings != null && formSettings.ResponseDisplaySettings.Count > 0)
+            {
+                formSettingsProperties.ResponseGridColumnNames = formSettings.ResponseDisplaySettings.Select(r => r.ColumnName).ToList();
+            }
+            return formSettingsProperties;
+        }
+
+        public static List<ResponseDisplaySettings> ToResponseDisplaySettingsList(this FormSettingsProperties formSettingsProperties)
+        {
+            List<ResponseDisplaySettings> responseDisplaySettingsList = new List<ResponseDisplaySettings>();
+            int sortOrder = 0;
+            foreach (var columnName in formSettingsProperties.ResponseGridColumnNames)
+            {
+                responseDisplaySettingsList.Add(
+                 new ResponseDisplaySettings
+                 {
+                     FormId = formSettingsProperties.FormId,
+                     ColumnName = columnName,
+                     SortOrder = ++sortOrder
+                 });
+            }
+            return responseDisplaySettingsList;
+        }
+
+
+        public static List<string> ToResponseDisplaySettingsList(this List<ResponseDisplaySettings> responseDisplaySettingsList)
+        {
+            responseDisplaySettingsList = responseDisplaySettingsList.OrderBy(s => s.SortOrder).ToList();
+            var responseDisplaySettingsPropertiesList = responseDisplaySettingsList.Select(s => s.ColumnName).ToList();
+            return responseDisplaySettingsPropertiesList;
         }
     }
 }

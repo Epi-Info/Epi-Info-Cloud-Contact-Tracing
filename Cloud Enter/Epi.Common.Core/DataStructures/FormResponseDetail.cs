@@ -35,6 +35,7 @@ namespace Epi.DataPersistence.DataStructures
         public string LastSaveLogonName { get; set; }
         public DateTime FirstSaveTime { get; set; }
         public DateTime LastSaveTime { get; set; }
+        public int OrgId { get; set; }
         public int UserId { get; set; }
         public string UserName { get; set; }
         public bool IsRelatedView { get; set; }

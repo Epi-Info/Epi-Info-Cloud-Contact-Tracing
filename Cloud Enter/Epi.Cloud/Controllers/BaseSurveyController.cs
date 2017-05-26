@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
@@ -133,6 +134,7 @@ namespace Epi.Web.MVC.Controllers
             string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
             string rootFormId = Session[SessionKeys.RootFormId].ToString();
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
             string userName = Session[SessionKeys.UserName].ToString();
 
             ResponseContext responseContext = (ResponseContext)new ResponseContext
@@ -141,6 +143,7 @@ namespace Epi.Web.MVC.Controllers
                 FormId = !string.IsNullOrEmpty(formId) ? formId : null,
                 ResponseId = responseId,
                 RootResponseId = rootResponseId,
+                OrgId = orgId,
                 UserId = userId,
                 UserName = userName
             }.ResolveMetadataDependencies();

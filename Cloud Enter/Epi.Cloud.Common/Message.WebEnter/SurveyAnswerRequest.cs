@@ -90,6 +90,11 @@ namespace Epi.Cloud.Common.Message
             get { return ResponseContext.IsNewRecord; }
             set { ResponseContext.IsNewRecord = value; }
         }
+        public int OrgId
+        {
+            get { return ResponseContext.OrgId; }
+            set { ResponseContext.OrgId = value; }
+        }
 
         public int UserId
         {

@@ -117,46 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="InsertUser_Subject" xml:space="preserve">
-    <value>An Epi Info Cloud Enter account has been created for your organization.</value>
+  <data name="Rule1" xml:space="preserve">
+    <value>Organization users can only access the data of their organization</value>
   </data>
-  <data name="PasswordChanged_Body" xml:space="preserve">
-    <value>You recently updated your password for Epi Info™ Cloud Enter. If you have not accessed password help, please contact the administrator for you organization. </value>
+  <data name="Rule2" xml:space="preserve">
+    <value>All users in host organization will have access to all data of all organizations</value>
   </data>
-  <data name="PasswordChanged_Subject" xml:space="preserve">
-    <value>Your Epi Info Cloud Enter Password has been updated</value>
-  </data>
-  <data name="ResetPassword_Body" xml:space="preserve">
-    <value>You recently accessed our Forgot Password service for Epi Info™ Cloud Enter. Your new temporary password is: {0} If you have not accessed password help, please contact the administrator. Log in with your temporary password. You will then be asked to create a new password.</value>
-  </data>
-  <data name="ResetPassword_Subject" xml:space="preserve">
-    <value>Your Epi Info Cloud Enter Password</value>
-  </data>
-  <data name="UpdateUserInfo_Body" xml:space="preserve">
-    <value>You account info has been updated in Epi Info™ Cloud Enter system.</value>
-  </data>
-  <data name="UpdateUserInfo_Subject" xml:space="preserve">
-    <value>Your Epi Info Cloud Enter Account info has been updated</value>
-  </data>
-  <data name="AMessageForUnitTests" xml:space="preserve">
-    <value>This is a test</value>
-  </data>
-  <data name="FormAssignedToYou_Body" xml:space="preserve">
-    <value>{0} {1} has assigned the following form to you in Epi Info™ Cloud Enter.\n\nTitle: {2}\n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.\n \n"{3}</value>
-  </data>
-  <data name="FormAssignedToYou_Subject" xml:space="preserve">
-    <value>An Epi Info Cloud Enter Form - {0} has been assigned to you</value>
-  </data>
-  <data name="FormSharedWithYourOrganization_Body" xml:space="preserve">
-    <value>{0} {1} has shared the following form with your organization in Epi Info™ Cloud Enter.\n\nTitle: {2}\n \n \nPlease click the link below to launch Epi Info™ Cloud Enter.\n \n"{3}</value>
-  </data>
-  <data name="FormSharedWithYourOrganization_Subject" xml:space="preserve">
-    <value>An Epi Info Cloud Enter Form - {0} has been shared with your organization</value>
-  </data>
-  <data name="RecordLocked_Body" xml:space="preserve">
-    <value>A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below is the needed info to unlock the record.\n \n Response id: {0}\n\n User email: {1}\n\n</value>
-  </data>
-  <data name="RecordLocked_Subject" xml:space="preserve">
-    <value>Record Locked Notification</value>
+  <data name="Rule3" xml:space="preserve">
+    <value>All users of all organizations can access all data</value>
   </data>
 </root>

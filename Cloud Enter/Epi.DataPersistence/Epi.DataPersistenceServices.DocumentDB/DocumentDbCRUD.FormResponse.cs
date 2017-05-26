@@ -21,20 +21,10 @@ using Newtonsoft.Json;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD : MetadataAccessor
+    public partial class DocumentDbCRUD
     {
         private string DatabaseName;
         private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
-
-        public SurveyResponseCRUD()
-        {
-            Initialize();
-        }
-
-        private DocumentClient Client
-        {
-            get { return _client ?? GetOrCreateClient(); }
-        }
 
         private Microsoft.Azure.Documents.Database ResponseDatabase
         {
@@ -80,7 +70,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     + FROM + rootFormCollectionName
                     + WHERE
                     + AssembleWhere(rootFormCollectionName, Expression("id", EQ, rootResponseId),
-                                                            And_Expression(RecStatus, NE, RecordStatus.Deleted))
+                                                            And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
                     , queryOptions);
 
                 FormResponseResource formResponseResource = query.AsEnumerable().FirstOrDefault();
@@ -94,14 +84,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
 
-        #region Delete
+        #region DeleteResponse
         /// <summary>
-        /// Delete
+        /// DeleteResponse
         /// </summary>
         /// <param name="responseContext"></param>
         /// <param name="deleteType"></param>
         /// <returns></returns>
-        public async Task<FormResponseResource> Delete(IResponseContext responseContext, int deleteType)
+        public async Task<FormResponseResource> DeleteResponse(IResponseContext responseContext, int deleteType)
         {
             var rootResponseId = responseContext.RootResponseId ?? responseContext.ResponseId;
             var rootFormName = responseContext.RootFormName ?? GetRootFormName(responseContext.RootFormId);
@@ -221,7 +211,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     //Is status is Saved and check if attachment is existed or not.If attachment is null and delete attachment
                     if (newResponseStatus == RecordStatus.Saved)
                     {
-                        Attachment attachment = ReadAttachment(responseContext, AttachmentId);
+                        Attachment attachment = ReadResponseAttachment(responseContext, AttachmentId);
                         if (attachment != null)
                         {
                             deleteResponse = DeleteAttachment(attachment);
@@ -320,7 +310,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         {
                             Attachment attachment = null;
                             var existingResponseJson = JsonConvert.SerializeObject(formResponseResource);
-                            attachment = CreateAttachment(formResponseResource.SelfLink, responseContext, AttachmentId, existingResponseJson);
+                            attachment = CreateResponseAttachment(formResponseResource.SelfLink, responseContext, AttachmentId, existingResponseJson);
                         }
 
                         formResponseResource.FormResponseProperties = formResponseProperties;
@@ -481,7 +471,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     + FROM + rootFormName
                     + (includeDeletedRecords
                         ? string.Empty
-                        : WHERE + AssembleWhere(rootFormName, Expression(RecStatus, NE, RecordStatus.Deleted)))
+                        : WHERE + AssembleWhere(rootFormName, Expression(FRP_RecStatus, NE, RecordStatus.Deleted)))
                     , queryOptions);
                 var formResponseCount = query.AsEnumerable().Count();
                 return formResponseCount;
@@ -515,7 +505,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     + FROM + collectionAlias
                     + WHERE
                     + AssembleWhere(collectionAlias, Expression("id", EQ, rootResponseId),
-                                                And_Expression(RecStatus, NE, RecordStatus.Deleted, includeDeleted))
+                                                And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted, includeDeleted))
                     , queryOptions);
                 var formResponseResource = (FormResponseResource)query.AsEnumerable().FirstOrDefault();
                 if (formResponseResource != null)

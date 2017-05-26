@@ -13,19 +13,19 @@ namespace Epi.Cloud.BLL
             _formInfoDao = formInfoDao;
         }
 
-        public List<FormInfoBO> GetFormsInfo(int UserId, int CurrentOrgId)
+        public List<FormInfoBO> GetFormsInfo(int userId, int currentOrgId)
         {
             //Owner Forms
-            List<FormInfoBO> result = _formInfoDao.GetFormInfo(UserId, CurrentOrgId);
+            List<FormInfoBO> result = _formInfoDao.GetFormInfo(userId, currentOrgId);
             return result;
         }
 
-        public FormInfoBO GetFormInfoByFormId(string FormId, bool getMetadata, int UserId)
+        public FormInfoBO GetFormInfoByFormId(string formId, int userId)
         {
             //Owner Forms
-            FormInfoBO result = _formInfoDao.GetFormByFormId(FormId, getMetadata, UserId);
+            FormInfoBO result = _formInfoDao.GetFormByFormId(formId, userId);
 
-            result.HasDraftModeData = _formInfoDao.HasDraftRecords(FormId);
+            result.HasDraftModeData = _formInfoDao.HasDraftRecords(formId);
 
             return result;
         }

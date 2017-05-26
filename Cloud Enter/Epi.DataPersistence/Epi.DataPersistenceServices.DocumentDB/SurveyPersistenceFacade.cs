@@ -18,7 +18,6 @@ using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB;
 using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents;
-using Newtonsoft.Json;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
@@ -30,22 +29,22 @@ namespace Epi.PersistenceServices.DocumentDB
         {
         }
 
-        SurveyResponseCRUD _surveyResponseCRUD = new SurveyResponseCRUD();
+        DocumentDbCRUD _formResponseCRUD = new DocumentDbCRUD();
 
         public FormResponseDetail GetFormResponseState(IResponseContext responseContext)
         {
-            var formResponseProperties = _surveyResponseCRUD.GetFormResponseState(responseContext);
+            var formResponseProperties = _formResponseCRUD.GetFormResponseState(responseContext);
             return formResponseProperties != null ? formResponseProperties.ToFormResponseDetail() : null;
         }
 
         public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false) // string childFormId, string parentResponseId)
         {
-            return _surveyResponseCRUD.DoChildResponsesExist(responseContext, includeDeletedRecords);
+            return _formResponseCRUD.DoChildResponsesExist(responseContext, includeDeletedRecords);
         }
 
         public int GetFormResponseCount(string formId, bool includeDeletedRecords = false)
         {
-            return _surveyResponseCRUD.GetFormResponseCount(formId, includeDeletedRecords);
+            return _formResponseCRUD.GetFormResponseCount(formId, includeDeletedRecords);
         }
 
         public bool UpdateResponseStatus(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
@@ -59,27 +58,27 @@ namespace Epi.PersistenceServices.DocumentDB
                 switch (responseStatus)
                 {
                     case RecordStatus.Saved:
-                        var UpdateAttachmentresult = _surveyResponseCRUD.UpdateAttachment(responseContext, responseStatus);
+                        var UpdateAttachmentresult = _formResponseCRUD.UpdateAttachment(responseContext, responseStatus);
                         break;
                     case RecordStatus.Deleted:
-                        var UpdateSurveyResponseStatusToDeleteResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.Deleted);
+                        var UpdateSurveyResponseStatusToDeleteResult = _formResponseCRUD.DeleteResponse(responseContext, RecordStatus.Deleted);
                         //NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
                         break;
                     case RecordStatus.Restore:
-                        attachment = _surveyResponseCRUD.ReadAttachment(responseContext, AttachmentId);
+                        attachment = _formResponseCRUD.ReadResponseAttachment(responseContext, AttachmentId);
                         if (attachment == null)
                         {
                             //Add new record Don't Save
-                            var NewRecordDontSaveResult = _surveyResponseCRUD.Delete(responseContext, RecordStatus.PhysicalDelete);
+                            var NewRecordDontSaveResult = _formResponseCRUD.DeleteResponse(responseContext, RecordStatus.PhysicalDelete);
                         }
                         else
                         {
                             //Edit Record Don't Save
-                            FormResponseResource formResonseResource = _surveyResponseCRUD.RetrieveAttachment(attachment);
-                            var editRecordDontSaveResult = _surveyResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
+                            FormResponseResource formResonseResource = _formResponseCRUD.RetrieveResponseAttachment(attachment);
+                            var editRecordDontSaveResult = _formResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
 
                             //Delete Attachment                         
-                            var deleteResponse = _surveyResponseCRUD.DeleteAttachment(attachment);
+                            var deleteResponse = _formResponseCRUD.DeleteAttachment(attachment);
                         }
                         break;
                 }
@@ -93,7 +92,7 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
-            var isSuccessful = _surveyResponseCRUD.ExecuteWithFollowOnAction(
+            var isSuccessful = _formResponseCRUD.ExecuteWithFollowOnAction(
                 () => SaveFormResponseProperties(surveyResponseBO),
                 () => {
                         if (surveyResponseBO.Status == RecordStatus.Saved)
@@ -104,46 +103,46 @@ namespace Epi.PersistenceServices.DocumentDB
             return isSuccessful;
         }
 
-        public bool SaveResponsexxx(SurveyResponseBO surveyResponseBO)
-        {
-            using (ManualResetEvent completionEvent = new ManualResetEvent(false))
-            {
-                bool isSuccessful = false;
-                Task<bool> isSuccessfulTask = null;
+        //public bool SaveResponsexxx(SurveyResponseBO surveyResponseBO)
+        //{
+        //    using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+        //    {
+        //        bool isSuccessful = false;
+        //        Task<bool> isSuccessfulTask = null;
 
-                var backgroundTask = Task.Run(() =>
-                {
-                    isSuccessfulTask = SaveFormResponseProperties(surveyResponseBO);
-                });
+        //        var backgroundTask = Task.Run(() =>
+        //        {
+        //            isSuccessfulTask = SaveFormResponseProperties(surveyResponseBO);
+        //        });
 
-                var millisecondsToSleep = 100;
-                var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
-                bool isCompleted = false;
-                while (retries > 0)
-                {
-                    if (isSuccessfulTask == null) { Thread.Sleep(10); continue; }
-                    isCompleted = isSuccessfulTask.IsCompleted;
-                    if (isCompleted) break;
-                    Thread.Sleep(millisecondsToSleep);
-                    retries -= 1;
-                }
-                isSuccessful = isCompleted;
-                var awaiter = isSuccessfulTask.ContinueWith(t =>
-                {
-                    if (surveyResponseBO.Status == RecordStatus.Saved)
-                    {
-                        NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
-                    }
-                    completionEvent.Set();
-                }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+        //        var millisecondsToSleep = 100;
+        //        var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
+        //        bool isCompleted = false;
+        //        while (retries > 0)
+        //        {
+        //            if (isSuccessfulTask == null) { Thread.Sleep(10); continue; }
+        //            isCompleted = isSuccessfulTask.IsCompleted;
+        //            if (isCompleted) break;
+        //            Thread.Sleep(millisecondsToSleep);
+        //            retries -= 1;
+        //        }
+        //        isSuccessful = isCompleted;
+        //        var awaiter = isSuccessfulTask.ContinueWith(t =>
+        //        {
+        //            if (surveyResponseBO.Status == RecordStatus.Saved)
+        //            {
+        //                NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
+        //            }
+        //            completionEvent.Set();
+        //        }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
 
-                isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
-                awaiter.GetAwaiter().GetResult();
-                isSuccessful &= isSuccessfulTask.Result;
-                isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
-                return isSuccessful;
-            }
-        }
+        //        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+        //        awaiter.GetAwaiter().GetResult();
+        //        isSuccessful &= isSuccessfulTask.Result;
+        //        isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+        //        return isSuccessful;
+        //    }
+        //}
 
         #region Save Form Response Properties
         /// <summary>
@@ -188,7 +187,7 @@ namespace Epi.PersistenceServices.DocumentDB
             };
 
             bool isSuccessful = false;
-            var result = await _surveyResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties).ConfigureAwait(false);
+            var result = await _formResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties).ConfigureAwait(false);
             isSuccessful = result.Resource != null;
             return isSuccessful;
         }
@@ -208,12 +207,12 @@ namespace Epi.PersistenceServices.DocumentDB
         #region Get All Responses With Criteria
         public IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
         {
-            return _surveyResponseCRUD.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, null, pageSize, pageNumber);
+            return _formResponseCRUD.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, null, pageSize, pageNumber);
         }
 
         public FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext)
 		{
-			var response = _surveyResponseCRUD.GetHierarchialResponseListByResponseId(responseContext);
+			var response = _formResponseCRUD.GetHierarchialResponseListByResponseId(responseContext);
 			var formResponseDetail = response[0].ToFormResponseDetail();
 			return formResponseDetail;
 		}
@@ -222,7 +221,7 @@ namespace Epi.PersistenceServices.DocumentDB
 		#region Get Hierarchial Responses for DataConsisitencyServiceAPI
 		public FormResponseDetail GetHierarchialResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)
 		{
-			var hierarchicalDocumentResponseProperties = _surveyResponseCRUD.GetHierarchialResponseListByResponseId(responseContext, includeDeletedRecords);
+			var hierarchicalDocumentResponseProperties = _formResponseCRUD.GetHierarchialResponseListByResponseId(responseContext, includeDeletedRecords);
 			var hierarchialFormResponseDetail = hierarchicalDocumentResponseProperties.ToHierarchialFormResponseDetail();
 			return hierarchialFormResponseDetail;
 		}

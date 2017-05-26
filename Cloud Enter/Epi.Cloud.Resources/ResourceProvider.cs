@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Resources;
 
@@ -26,6 +27,11 @@ namespace Epi.Cloud.Resources
         public static string GetResourceString(string resourceNamespace, string resourceName)
         {
             return GetResourceManager(resourceNamespace).GetString(resourceName);
+        }
+
+        public static string GetResourceString(string resourceNamespace, string resourceName, CultureInfo culture)
+        {
+            return GetResourceManager(resourceNamespace).GetString(resourceName, culture);
         }
     }
 }

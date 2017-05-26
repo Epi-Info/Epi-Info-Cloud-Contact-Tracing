@@ -1,32 +1,31 @@
-﻿using Epi.Cloud.Common.BusinessObjects;
-using Epi.Cloud.Common.Message;
+﻿using Epi.Cloud.Common.Message;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
 {
-	public interface ISecurityDataService
+    public interface ISecurityDataService
 	{
-		UserAuthenticationResponse PassCodeLogin(UserAuthenticationRequest pRequest);
+		UserAuthenticationResponse PassCodeLogin(UserAuthenticationRequest request);
 
-		UserAuthenticationResponse SetPassCode(UserAuthenticationRequest pRequest);
+		UserAuthenticationResponse SetPassCode(UserAuthenticationRequest request);
 
-		UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest pRequest);
+		UserAuthenticationResponse GetAuthenticationResponse(UserAuthenticationRequest request);
 
 
-		UserAuthenticationResponse ValidateUser(UserAuthenticationRequest pRequest);
+		UserAuthenticationResponse ValidateUser(UserAuthenticationRequest request);
 
 		UserAuthenticationResponse GetUser(UserAuthenticationRequest request);
 
 		bool UpdateUser(UserAuthenticationRequest request);
 
-		FormSettingResponse SaveSettings(FormSettingRequest FormSettingReq);
+		FormSettingResponse SaveSettings(FormSettingRequest formSettingRequest);
 
-		OrganizationResponse GetOrganizationsByUserId(OrganizationRequest OrgRequest);
+		OrganizationResponse GetOrganizationsByUserId(OrganizationRequest orgRequest);
 
-		OrganizationResponse GetUserOrganizations(OrganizationRequest OrgRequest);
+		OrganizationResponse GetUserOrganizations(OrganizationRequest orgRequest);
 
-		OrganizationResponse GetAdminOrganizations(OrganizationRequest OrgRequest);
+		OrganizationResponse GetAdminOrganizations(OrganizationRequest orgRequest);
 
-		OrganizationResponse GetOrganizationInfo(OrganizationRequest OrgRequest);
+		OrganizationResponse GetOrganizationInfo(OrganizationRequest orgRequest);
 
 		OrganizationResponse SetOrganization(OrganizationRequest request);
 

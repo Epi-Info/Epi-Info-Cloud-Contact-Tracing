@@ -28,16 +28,6 @@ namespace Epi.Cloud.SqlServer
     /// </summary>
     public class MetaData
     {
-
-        public metaFieldType GetMetaDataType(int ProjectId)
-        {
-            using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
-            {
-                var metadata = metacontext.metaFieldTypes.Where(s => s.FieldTypeId == ProjectId).FirstOrDefault<metaFieldType>();
-                return metadata;
-            }
-        }
-
         public Epi.FormMetadata.DataStructures.Template GetProjectTemplateMetadata(string projectId)
         {
             var template = new Epi.FormMetadata.DataStructures.Template();

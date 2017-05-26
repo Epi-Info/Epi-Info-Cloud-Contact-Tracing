@@ -104,6 +104,7 @@
     <Compile Include="DTO\UserDTO.cs" />
     <Compile Include="DTO\SurveyControlDTO.cs" />
     <Compile Include="DTO\SurveyInfoDTO.cs" />
+    <Compile Include="Extensions\FormInfoBOExtensions.cs" />
     <Compile Include="Extensions\FormSettingBOExtensions.cs" />
     <Compile Include="Extensions\LinqExtensions.cs" />
     <Compile Include="Extensions\OrganizationBOExtensions.cs" />

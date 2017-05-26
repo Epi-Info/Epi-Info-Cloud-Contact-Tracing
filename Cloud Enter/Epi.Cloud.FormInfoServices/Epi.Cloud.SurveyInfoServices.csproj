@@ -42,10 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAO\FormSettingDao.cs" />
     <Compile Include="DAO\FormInfoDao.cs" />
     <Compile Include="DAO\SurveyInfoDao.cs" />
+    <Compile Include="Extensions\FormSettingsExtensions.cs" />
     <Compile Include="Extensions\SurveyInfoBOExtensions.cs" />
-    <Compile Include="Extensions\SurveyMetadataExtensions.cs" />
     <Compile Include="SurveyInfoService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -61,6 +62,10 @@
     <ProjectReference Include="..\Epi.Cloud.MetadataServices.Common\Epi.Cloud.MetadataServices.Common.csproj">
       <Project>{57ed7a5a-2b03-4d5c-89dd-1b5e3880eafc}</Project>
       <Name>Epi.Cloud.MetadataServices.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Cloud.Resources\Epi.Cloud.Resources.csproj">
+      <Project>{96BCC2AC-31D3-49EE-902B-09AE7099BCBD}</Project>
+      <Name>Epi.Cloud.Resources</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
       <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>

@@ -14,6 +14,8 @@ using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Extensions;
+using Epi.Cloud.Resources;
+using Epi.Cloud.Resources.Constants;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.EmailServices;
 using Epi.Core.EnterInterpreter;
@@ -227,7 +229,7 @@ namespace Epi.Web.MVC.Controllers
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> contextDetailList = new Dictionary<string, string>();
             EnterRule functionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-            SurveyResponseBuilder surveyResponseBuilder = new SurveyResponseBuilder(_pageFields, _requiredList);
+            SurveyResponseBuilder surveyResponseBuilder = new SurveyResponseBuilder(_requiredList);
             if (functionObject_B != null && !functionObject_B.IsNull())
             {
                 try
@@ -846,8 +848,8 @@ namespace Epi.Web.MVC.Controllers
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
             //Get current user info
-            int CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-            var UserInfo = _securityFacade.GetUserInfo(userId);
+            int currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
+            var userInfo = _securityFacade.GetUserInfo(userId);
             //Get Organization admin info 
             var surveyAnswerDTO = GetSurveyAnswer(responseId, Session[SessionKeys.RootFormId].ToString());
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswerDTO.SurveyId);
@@ -855,13 +857,15 @@ namespace Epi.Web.MVC.Controllers
             var OwnerInfo = _securityFacade.GetUserInfo(surveyAnswerDTO.FormOwnerId);
 
             var email = new Email();
-            //ResponseId;
 
-            email.Subject = "Record locked notification.";
-            email.Body = " A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + responseId + "\n\n User email: " + UserInfo.User.EmailAddress + "\n\n";
-            email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
             email.To = new List<string>();
             email.To.Add(OwnerInfo.User.EmailAddress);
+            email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
+            //email.Subject = "Record locked notification.";
+            //email.Body = "A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + responseId + "\n\n User email: " + userInfo.User.EmailAddress + "\n\n";
+            email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.RecordLocked_Subject);
+            email.Body = string.Format(ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.RecordLocked_Body)
+                , responseId, userInfo.User.EmailAddress);
 
             var success = EmailHandler.SendMessage(email);
 
@@ -871,14 +875,14 @@ namespace Epi.Web.MVC.Controllers
         //Unlock
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Unlock(String ResponseId, bool RecoverLastRecordVersion = false)
+        public ActionResult Unlock(String responseId, bool recoverLastRecordVersion = false)
         {
             try
             {
                 SurveyAnswerRequest SurveyAnswerRequest = new SurveyAnswerRequest();
-                SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = ResponseId });
+                SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = responseId });
                 SurveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
-                Session[SessionKeys.RecoverLastRecordVersion] = RecoverLastRecordVersion;
+                Session[SessionKeys.RecoverLastRecordVersion] = recoverLastRecordVersion;
                 //  _isurveyFacade.UpdateResponseStatus(SurveyAnswerRequest);
             }
             catch (Exception ex)
@@ -892,44 +896,43 @@ namespace Epi.Web.MVC.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveSettings(string formid)
         {
-            List<FormsHierarchyDTO> FormList = GetFormsHierarchy(formid);
-            FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            foreach (var Form in FormList)
+            List<FormsHierarchyDTO> formsHierarchyDTOList = GetFormsHierarchy(formid);
+            FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            foreach (var formsHierarchyDTO in formsHierarchyDTOList)
             {
-                FormSettingReq.GetMetadata = true;
-                FormSettingReq.FormInfo.FormId = new Guid(formid).ToString();
-                FormSettingReq.FormInfo.UserId = UserId;
-                FormSettingDTO FormSetting = new FormSettingDTO();
-                FormSetting.FormId = Form.FormId;
-                FormSetting.ColumnNameList = GetDictionary(this.Request.Form["SelectedColumns_" + Form.FormId]);
-                FormSetting.AssignedUserList = GetDictionary(this.Request.Form["SelectedUser"]);
-                FormSetting.SelectedOrgList = GetDictionary(this.Request.Form["SelectedOrg"]);
-                FormSetting.IsShareable = GetBoolValue(this.Request.Form["IsShareable"]);
-                FormSetting.SelectedDataAccessRule = int.Parse(this.Request.Form["DataAccessRuleId"]);
+                formSettingReq.GetMetadata = true;
+                formSettingReq.FormInfo.FormId = new Guid(formid).ToString();
+                formSettingReq.FormInfo.UserId = userId;
+                FormSettingDTO formSetting = new FormSettingDTO();
+                formSetting.FormId = formsHierarchyDTO.FormId;
+                formSetting.ColumnNameList = GetDictionary(this.Request.Form["SelectedColumns_" + formsHierarchyDTO.FormId]);
+                formSetting.AssignedUserList = GetDictionary(this.Request.Form["SelectedUser"]);
+                formSetting.SelectedOrgList = GetDictionary(this.Request.Form["SelectedOrg"]);
+                formSetting.IsShareable = GetBoolValue(this.Request.Form["IsShareable"]);
+                formSetting.SelectedDataAccessRule = int.Parse(this.Request.Form["DataAccessRuleId"]);
 
                 if (!string.IsNullOrEmpty(this.Request.Form["SoftDeleteForm"]) && this.Request.Form["SoftDeleteForm"].ToUpper() == "ON")
                 {
-                    FormSetting.IsDisabled = true;
+                    formSetting.IsDisabled = true;
                 }
                 if (!string.IsNullOrEmpty(this.Request.Form["RemoveTestData"]) && this.Request.Form["RemoveTestData"].ToUpper() == "ON")
                 {
-                    FormSetting.DeleteDraftData = true;
+                    formSetting.DeleteDraftData = true;
                 }
-                FormSettingReq.FormSetting.Add(FormSetting);
-                FormSettingReq.FormInfo.IsDraftMode = GetBoolValue(this.Request.Form["Mode"]);
-
+                formSettingReq.FormSetting.Add(formSetting);
+                formSettingReq.FormInfo.IsDraftMode = GetBoolValue(this.Request.Form["Mode"]);
             }
-            FormSettingResponse FormSettingResponse = _surveyFacade.SaveSettings(FormSettingReq);
+            FormSettingResponse formSettingResponse = _surveyFacade.SaveSettings(formSettingReq);
 
-            bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
+            bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
             var model = new FormResponseInfoModel();
 
-            int CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-            model = GetFormResponseInfoModel(formid, 1, "", "", CurrentOrgId);
+            int currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
+            model = GetFormResponseInfoModel(formid, 1, "", "", currentOrgId);
 
-            if (IsMobileDevice == false)
+            if (isMobileDevice == false)
             {
                 if (!string.IsNullOrEmpty(this.Request.Form["SoftDeleteForm"]) && this.Request.Form["SoftDeleteForm"].ToUpper() == "ON")
                 {
@@ -974,14 +977,14 @@ namespace Epi.Web.MVC.Controllers
 
         private List<FormsHierarchyDTO> GetFormsHierarchy(string formId)
         {
-            FormsHierarchyResponse FormsHierarchyResponse = new FormsHierarchyResponse();
-            FormsHierarchyRequest FormsHierarchyRequest = new FormsHierarchyRequest();
+            FormsHierarchyResponse formsHierarchyResponse = new FormsHierarchyResponse();
+            FormsHierarchyRequest formsHierarchyRequest = new FormsHierarchyRequest();
 
-            FormsHierarchyRequest.SurveyInfo.FormId = formId;
+            formsHierarchyRequest.SurveyInfo.FormId = formId;
             // FormsHierarchyRequest.SurveyResponseInfo.ResponseId = Session[SessionKeys.RootResponseId].ToString();
-            FormsHierarchyResponse = _surveyFacade.GetFormsHierarchy(FormsHierarchyRequest);
+            formsHierarchyResponse = _surveyFacade.GetFormsHierarchy(formsHierarchyRequest);
 
-            return FormsHierarchyResponse.FormsHierarchy;
+            return formsHierarchyResponse.FormsHierarchy;
         }
     }
 }

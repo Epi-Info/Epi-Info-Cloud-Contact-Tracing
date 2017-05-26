@@ -3,72 +3,10 @@ using System.Collections.Generic;
 using Epi.Cloud.Common.DTO;
 using Epi.Web.MVC.Models;
 
-
 namespace Epi.Cloud.MVC.Extensions
 {
     public static class SurveryAnswerExtensions
     {
-#if false
-        public static SurveyAnswerDTO ToSurveyAnswerStateDTO(this SurveyAnswerDTO surveyAnswerDTO)
-        {
-            var surveyAnswerDTO = new SurveyAnswerDTO
-            {
-                ResponseId = surveyAnswerDTO.ResponseId,
-                SurveyId = surveyAnswerDTO.SurveyId,
-                DateUpdated = surveyAnswerDTO.DateUpdated,
-                DateCompleted = surveyAnswerDTO.DateCompleted,
-                DateCreated = surveyAnswerDTO.DateCreated,
-                Status = surveyAnswerDTO.Status,
-                ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange,
-                UserPublishKey = surveyAnswerDTO.UserPublishKey,
-                IsDraftMode = surveyAnswerDTO.IsDraftMode,
-                IsLocked = surveyAnswerDTO.IsLocked,
-                ParentResponseId = surveyAnswerDTO.ParentResponseId,
-                UserEmail = surveyAnswerDTO.UserEmail,
-                LastActiveUserId = surveyAnswerDTO.LastActiveUserId,
-                RecordSourceId = surveyAnswerDTO.RecordSourceId,
-                ViewId = surveyAnswerDTO.ViewId,
-                FormOwnerId = surveyAnswerDTO.FormOwnerId,
-                LoggedInUserId = surveyAnswerDTO.LoggedInUserId,
-                RecoverLastRecordVersion = surveyAnswerDTO.RecoverLastRecordVersion,
-                RequestedViewId = surveyAnswerDTO.RequestedViewId,
-                CurrentPageNumber = surveyAnswerDTO.CurrentPageNumber
-            };
-            return surveyAnswerStateDTO;
-        }
-
-        public static SurveyAnswerDTO ToSurveyAnswerDTO(this SurveyAnswerStateDTO surveyAnswerStateDTO)
-        {
-            var surveyAnswerDTO = new SurveyAnswerDTO();
-            return surveyAnswerStateDTO.MergeIntoToSurveyAnswerDTO(surveyAnswerDTO);
-        }
-
-        public static SurveyAnswerDTO MergeIntoToSurveyAnswerDTO(this SurveyAnswerStateDTO surveyAnswerStateDTO, SurveyAnswerDTO surveyAnswerDTO)
-        {
-            surveyAnswerDTO.ResponseId = surveyAnswerStateDTO.ResponseId;
-            surveyAnswerDTO.SurveyId = surveyAnswerStateDTO.SurveyId;
-            surveyAnswerDTO.DateUpdated = surveyAnswerStateDTO.DateUpdated;
-            surveyAnswerDTO.DateCompleted = surveyAnswerStateDTO.DateCompleted;
-            surveyAnswerDTO.DateCreated = surveyAnswerStateDTO.DateCreated;
-            surveyAnswerDTO.Status = surveyAnswerStateDTO.Status;
-            surveyAnswerDTO.ReasonForStatusChange = surveyAnswerStateDTO.ReasonForStatusChange;
-            surveyAnswerDTO.UserPublishKey = surveyAnswerStateDTO.UserPublishKey;
-            surveyAnswerDTO.IsDraftMode = surveyAnswerStateDTO.IsDraftMode;
-            surveyAnswerDTO.IsLocked = surveyAnswerStateDTO.IsLocked;
-            surveyAnswerDTO.ParentResponseId = surveyAnswerStateDTO.ParentResponseId;
-            surveyAnswerDTO.UserEmail = surveyAnswerStateDTO.UserEmail;
-            surveyAnswerDTO.LastActiveUserId = surveyAnswerStateDTO.LastActiveUserId;
-            surveyAnswerDTO.ParentResponseId = surveyAnswerStateDTO.ParentResponseId;
-            surveyAnswerDTO.RecordSourceId = surveyAnswerStateDTO.RecordSourceId;
-            surveyAnswerDTO.ViewId = surveyAnswerStateDTO.ViewId;
-            surveyAnswerDTO.FormOwnerId = surveyAnswerStateDTO.FormOwnerId;
-            surveyAnswerDTO.LoggedInUserId = surveyAnswerStateDTO.LoggedInUserId;
-            surveyAnswerDTO.RecoverLastRecordVersion = surveyAnswerStateDTO.RecoverLastRecordVersion;
-            surveyAnswerDTO.RequestedViewId = surveyAnswerStateDTO.RequestedViewId;
-            surveyAnswerDTO.CurrentPageNumber = surveyAnswerStateDTO.CurrentPageNumber;
-            return surveyAnswerDTO;
-        }
-#endif
         public static Epi.Web.MVC.Models.ResponseModel ToResponseModel(this SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
         {
             ResponseModel ResponseModel = new ResponseModel();
@@ -102,10 +40,6 @@ namespace Epi.Cloud.MVC.Extensions
                         KeyValuePair<int, string> Column = Columns[i];
                         _key = Column.Value.ToLower();
                         value = responseQA.ContainsKey(Column.Value.ToLower()) ? responseQA[Column.Value.ToLower()] : string.Empty;
-
-                        //// set value to value in the response
-                        //value = responseQA.TryGetValue(Column.Value.ToLower(), out value) ? (value ?? string.Empty) : string.Empty;
-                        ////_key = responseQA.TryGetValue(Column.Key.ToString(), out value) ? (_key ?? string.Empty) : string.Empty;
                     }
 
                     // set the associated ResponseModel column

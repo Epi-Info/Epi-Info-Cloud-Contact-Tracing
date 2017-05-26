@@ -477,7 +477,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
 
         public void InsertFormDefaultSettings(string formId, bool isSqlProject, List<string> controlsNameList)
         {
-
+#if false
             try
             {
                 //Delete old columns
@@ -524,6 +524,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             {
                 throw (ex);
             }
+#endif
         }
         public void UpdateParentId(string SurveyId, int ViewId, string ParentId)
         {

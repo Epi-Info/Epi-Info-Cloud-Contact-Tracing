@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Epi.Cloud.Common;
 using Epi.Common.Core.Interfaces;
 using Epi.PersistenceServices.DocumentDB;
@@ -9,11 +8,11 @@ using Newtonsoft.Json;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
-    public partial class SurveyResponseCRUD
+    public partial class DocumentDbCRUD
     {
         private const int HResult_AttachmentAlreadyExists = -2146233088;
 
-        public Attachment CreateAttachment(string documentSelfLink, IResponseContext responseContext, string attachmentId, string surveyData)
+        public Attachment CreateResponseAttachment(string documentSelfLink, IResponseContext responseContext, string attachmentId, string surveyData)
         {
             int maxRetries = 2;
             TimeSpan interval = TimeSpan.FromMilliseconds(100);
@@ -23,17 +22,17 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
                 Client.CreateAttachmentAsync(documentSelfLink, new { id = attachmentId, contentType = "text/plain", media = "link to your media", RootResponseId = responseContext.RootResponseId, SurveyDocument = surveyData }).Result,
                        
-                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateAttachment(ex, consumedRetries, remainingRetries, responseContext, attachmentId)
+                (ex, consumedRetries, remainingRetries) => RetryHandlerForCreateResponseAttachment(ex, consumedRetries, remainingRetries, responseContext, attachmentId)
             );
             return attachment;
         }
 
-        private RetryResponse<Attachment> RetryHandlerForCreateAttachment(Exception ex, int consumedRetries, int remainingRetries, IResponseContext responseContext, string attachmentId)
+        private RetryResponse<Attachment> RetryHandlerForCreateResponseAttachment(Exception ex, int consumedRetries, int remainingRetries, IResponseContext responseContext, string attachmentId)
         {
             var baseException = ex.GetBaseException();
             if (baseException as DocumentClientException != null && baseException.HResult == HResult_AttachmentAlreadyExists)
             {
-                var existingAttachment = ReadAttachment(responseContext, attachmentId);
+                var existingAttachment = ReadResponseAttachment(responseContext, attachmentId);
                 DeleteAttachment(existingAttachment);
                 return new RetryResponse<Attachment> { Action = RetryAction.ContinueRetrying };
             }
@@ -43,10 +42,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-
-        public Attachment ReadAttachment(IResponseContext responseContext, string attachmentId)
+        public Attachment ReadResponseAttachment(IResponseContext responseContext, string attachmentId)
         {
-
             Attachment attachment = null;
             try
             {
@@ -63,7 +60,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
    
-        public FormResponseResource RetrieveAttachment(Attachment attachmentInfo)
+        public FormResponseResource RetrieveResponseAttachment(Attachment attachmentInfo)
         {
             try
             {
@@ -78,26 +75,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 return null;
             }
-        }
-        public bool DeleteSurveyDataInDocumentDB(string globalId, string collectionName, List<int> pageIds)
-        {
-            try
-            {
-                foreach (var pageId in pageIds)
-                {
-                    //Create Survey Properties 
-                    Uri pageCollectionUri = GetCollectionUri(collectionName + pageId);
-                    var docLink = string.Format("dbs/{0}/colls/{1}/docs/{2}", DatabaseName, collectionName + pageId, globalId);
-                    var response = Client.DeleteDocumentAsync(docLink).Result;
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-
-            }
-            return false;
-
         }
 
         public bool DeleteAttachment(Attachment attachment)

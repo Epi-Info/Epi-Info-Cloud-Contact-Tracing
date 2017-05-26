@@ -6,10 +6,11 @@ using Epi.Cloud.Common.Constants;
 using Epi.Web.EF;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Interfaces.DataInterfaces;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {
-    public class FormInfoDao : IFormInfoDao
+    public class FormInfoDao : MetadataAccessor, IFormInfoDao
     {
         public List<FormInfoBO> GetFormInfo(int userId, int currentOrgId)
         {
@@ -51,7 +52,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
 
                     foreach (var item in items)
                     {
-                        formInfoBO = Epi.Web.EF.Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, false);
+                        formInfoBO = Epi.Web.EF.Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo);
                         if (item.UserInfo.UserID == userId)
                         {
                             formInfoBO.IsOwner = true;
@@ -169,12 +170,16 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             }
         }
 
-        public FormInfoBO GetFormByFormId(string formId, bool getMetadata, int userId)
+        public FormInfoBO GetFormByFormId(string formId, int userId)
         {
+            // TODO: Refactor to remove dependency on SurveyMetadatas
+
             FormInfoBO formInfoBO = new FormInfoBO();
 
             try
             {
+                var formOwnerUserId = GetFormDigest(formId).OwnerUserId;
+
                 Guid Id = new Guid(formId);
 
                 using (var context = DataObjectFactory.CreateContext())
@@ -187,40 +192,22 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
                                 where FormInfo.SurveyId == Id
                                 select new { FormInfo, UserInfo };
                     SurveyMetaData Response = context.SurveyMetaDatas.First(x => x.SurveyId == Id);
-                    var _Org = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
-                    var Orgs = context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
+                    var orgHashSet = new HashSet<int>(Response.Organizations.Select(x => x.OrganizationId));
+                    var orgList = context.Organizations.Where(t => orgHashSet.Contains(t.OrganizationId)).ToList();
 
                     bool isShared = false;
 
-                    foreach (var org in Orgs)
+                    foreach (var org in orgList)
                     {
-
-
-                        var userInfo = context.UserOrganizations.Where(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == Roles.Administrator);
-                        if (userInfo.Count() > 0)
-                        {
-                            isShared = true;
-                            break;
-
-                        }
-
+                        isShared = context.UserOrganizations.Any(x => x.OrganizationID == org.OrganizationId && x.UserID == userId && x.RoleId == Roles.Administrator);
+                        if (isShared) break;
                     }
 
                     foreach (var item in items)
                     {
-
-                        formInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo, getMetadata);
+                        formInfoBO = Mapper.MapToFormInfoBO(item.FormInfo, item.UserInfo);
                         formInfoBO.IsShared = isShared;
-
-                        if (item.UserInfo.UserID == userId)
-                        {
-                            formInfoBO.IsOwner = true;
-                        }
-                        else
-                        {
-                            formInfoBO.IsOwner = false;
-                        }
-
+                        formInfoBO.IsOwner = item.UserInfo.UserID == userId;
                     }
                 }
             }
@@ -242,7 +229,6 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
 
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-
                     SurveyMetaData SurveyMetaData = Context.SurveyMetaDatas.Single(x => x.SurveyId == Id);
                     formInfoBO = Mapper.ToFormInfoBO(SurveyMetaData);
                 }

@@ -92,7 +92,7 @@ namespace Epi.Web.EF
         /// </summary>
         /// <param name="entity">A SurveyMetaData entity to be transformed.</param>
         /// <returns>A FormInfoBO business object.</returns>
-        public static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity, bool getMetadata = false)
+        public static FormInfoBO MapToFormInfoBO(SurveyMetaData entity, User UserEntity)
         {
             FormInfoBO result = new FormInfoBO();
             result.IsSQLProject = (entity.IsSQLProject == null) ? false : (bool)entity.IsSQLProject;

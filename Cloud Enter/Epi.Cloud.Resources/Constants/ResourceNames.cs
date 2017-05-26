@@ -9,6 +9,14 @@
         public const string ResetPassword_Subject = "ResetPassword_Subject";
         public const string UpdateUserInfo_Body = "UpdateUserInfo_Body";
         public const string UpdateUserInfo_Subject = "UpdateUserInfo_Subject";
+
+        public const string FormAssignedToYou_Body = "FormAssignedToYou_Body";
+        public const string FormAssignedToYou_Subject = "FormAssignedToYou_Subject";
+        public const string FormSharedWithYourOrganization_Body = "FormSharedWithYourOrganization_Body";
+        public const string FormSharedWithYourOrganization_Subject = "FormSharedWithYourOrganization_Subject";
+
+        public const string RecordLocked_Body = "RecordLocked_Body";
+        public const string RecordLocked_Subject = "RecordLocked_Subject";
     }
 
     public struct UserAdminResourceKeys
@@ -24,4 +32,10 @@
         public const string OrderBy = "OrderBy";
     }
 
+    public struct DataAccessRuleKeys
+    {
+        public const string Rule1 = "Rule1";
+        public const string Rule2 = "Rule2";
+        public const string Rule3 = "Rule3";
+    }
 }

@@ -391,7 +391,7 @@ namespace Epi.Cloud.DataEntryServices
 
                 //Get form info 
                 Epi.Cloud.BLL.FormInfo formInfoImplementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);
-                var formInfoBO = formInfoImplementation.GetFormInfoByFormId(surveyAnswerRequest.Criteria.SurveyId, false, surveyAnswerRequest.Criteria.UserId);
+                var formInfoBO = formInfoImplementation.GetFormInfoByFormId(surveyAnswerRequest.Criteria.SurveyId, surveyAnswerRequest.Criteria.UserId);
                 result.FormInfo = formInfoBO.ToFormInfoDTO();
 
                 return result;

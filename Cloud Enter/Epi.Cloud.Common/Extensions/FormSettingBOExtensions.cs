@@ -1,5 +1,6 @@
 ﻿using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
+using Epi.Common.Core.DataStructures;
 
 namespace Epi.Cloud.Common.Extensions
 {
@@ -9,17 +10,20 @@ namespace Epi.Cloud.Common.Extensions
         {
             return new FormSettingDTO
             {
-                ColumnNameList = formSettingBO.ColumnNameList,
-                FormControlNameList = formSettingBO.FormControlNameList,
-                AssignedUserList = formSettingBO.AssignedUserList,
                 UserList = formSettingBO.UserList,
-                IsShareable = formSettingBO.IsShareable,
+                AssignedUserList = formSettingBO.AssignedUserList,
                 AvailableOrgList = formSettingBO.AvailableOrgList,
                 SelectedOrgList = formSettingBO.SelectedOrgList,
-                IsDisabled = formSettingBO.IsDisabled,
-                DataAccessRuleIds = formSettingBO.DataAccessRuleIds,
+
+                ColumnNameList = formSettingBO.ColumnNameList,
+                FormControlNameList = formSettingBO.FormControlNameList,
+
                 SelectedDataAccessRule = formSettingBO.SelectedDataAccessRule,
+                DataAccessRuleIds = formSettingBO.DataAccessRuleIds,
                 DataAccessRuleDescription = formSettingBO.DataAccessRuleDescription,
+                IsShareable = formSettingBO.IsShareable,
+                IsDisabled = formSettingBO.IsDisabled,
+
                 DeleteDraftData = formSettingBO.DeleteDraftData
             };
         }

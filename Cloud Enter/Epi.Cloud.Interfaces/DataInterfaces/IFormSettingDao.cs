@@ -5,15 +5,15 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 {
     public interface IFormSettingDao
     {
-        FormSettingBO GetFormSettings(string FormId, int CurrentOrgId);
+        FormSettingBO GetFormSettings(string formId, int currentOrgId);
         FormSettingBO GetFormSettings();
-        void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId);
-        void UpdateFormMode(FormInfoBO FormInfoBO);
-        void UpdateSettingsList(FormSettingBO FormSettingBO, string FormId);
-        List<string> GetAllColumnNames(string FormId);
-        Dictionary<int, string> GetOrgAdmins(Dictionary<int, string> SelectedOrgList);
-        List<UserBO> GetOrgAdminsByFormId(string FormId);
-        void SoftDeleteForm(string FormId);
-        void DeleteDraftRecords(string FormId);
+        void UpdateColumnNames(FormSettingBO formSettingBO, string formId);
+        void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null);
+        void UpdateSettingsList(FormSettingBO formSettingBO, string formId);
+        List<string> GetAllColumnNames(string formId);
+        Dictionary<int, string> GetOrgAdmins(Dictionary<int, string> selectedOrgList);
+        List<UserBO> GetOrgAdminsByFormId(string formId);
+        void SoftDeleteForm(string formId);
+        void DeleteDraftRecords(string formId);
     }
 }

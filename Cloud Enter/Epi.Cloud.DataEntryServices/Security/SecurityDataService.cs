@@ -60,8 +60,8 @@ namespace Epi.Cloud.DataEntryServices
 
 			SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
-			UserAuthenticationRequestBO PassCodeBO = request.ToPassCodeBO();
-			bool result = surveyResponseImplementation.ValidateUser(PassCodeBO);
+			UserAuthenticationRequestBO passCodeBO = request.ToPassCodeBO();
+			bool result = surveyResponseImplementation.ValidateUser(passCodeBO);
 
 			if (result)
 			{
@@ -183,12 +183,12 @@ namespace Epi.Cloud.DataEntryServices
             FormSettingResponse Response = new FormSettingResponse();
             try
             {
-                Epi.Web.BLL.FormSetting formSettingsImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao, _formInfoDao);
+                Epi.Web.BLL.FormSetting formSettingsImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao);
                 if (FormSettingReq.FormSetting.Count() > 0)
                 {
                     foreach (var item in FormSettingReq.FormSetting)
                     {
-                        formSettingsImplementation.UpdateColumnNames(FormSettingReq.FormInfo.IsDraftMode, item);
+                        formSettingsImplementation.UpdateFormSettings(FormSettingReq.FormInfo.IsDraftMode, item);
 
                     }
                     string Message = formSettingsImplementation.SaveSettings(FormSettingReq.FormInfo.IsDraftMode, FormSettingReq.FormSetting[0]);

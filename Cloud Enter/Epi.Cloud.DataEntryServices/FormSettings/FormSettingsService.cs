@@ -31,11 +31,11 @@ namespace Epi.Cloud.DataEntryServices
 			try
 			{
 				var formInfoImplementation = new FormInfo(_formInfoDao);
-				var formInfoBO = formInfoImplementation.GetFormInfoByFormId(formSettingRequest.FormInfo.FormId, formSettingRequest.GetMetadata, formSettingRequest.FormInfo.UserId);
+				var formInfoBO = formInfoImplementation.GetFormInfoByFormId(formSettingRequest.FormInfo.FormId, formSettingRequest.FormInfo.UserId);
 				response.FormInfo = formInfoBO.ToFormInfoDTO();
 
-				Epi.Web.BLL.FormSetting formSettingImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao, _formInfoDao);
-                var formSettingBO = formSettingImplementation.GetFormSettings(formSettingRequest.FormInfo.FormId.ToString(), formInfoBO.Xml, formSettingRequest.CurrentOrgId);
+				Epi.Web.BLL.FormSetting formSettingImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao);
+                var formSettingBO = formSettingImplementation.GetFormSettings(formSettingRequest.FormInfo.FormId.ToString(), formSettingRequest.CurrentOrgId);
 
                 response.FormSetting = formSettingBO.ToFormSettingDTO();
 
@@ -52,12 +52,12 @@ namespace Epi.Cloud.DataEntryServices
 			FormSettingResponse response = new FormSettingResponse();
 			try
 			{
-				Epi.Web.BLL.FormSetting formSettingImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao, _formInfoDao);
+				Epi.Web.BLL.FormSetting formSettingImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao);
 				if (formSettingRequest.FormSetting.Count() > 0)
 				{
 					foreach (var item in formSettingRequest.FormSetting)
 					{
-						formSettingImplementation.UpdateColumnNames(formSettingRequest.FormInfo.IsDraftMode, item);
+						formSettingImplementation.UpdateFormSettings(formSettingRequest.FormInfo.IsDraftMode, item);
 
 					}
 					string Message = formSettingImplementation.SaveSettings(formSettingRequest.FormInfo.IsDraftMode, formSettingRequest.FormSetting[0]);

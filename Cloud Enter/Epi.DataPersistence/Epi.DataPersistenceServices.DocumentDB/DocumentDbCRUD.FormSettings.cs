@@ -1,0 +1,114 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Epi.Cloud.Common.Metadata;
+using Epi.Common.Core.DataStructures;
+using Epi.DataPersistence.Extensions;
+using Epi.DataPersistenceServices.DocumentDB.FormSettings;
+using Epi.FormMetadata.Constants;
+using Microsoft.Azure.Documents.Client;
+
+namespace Epi.DataPersistenceServices.DocumentDB
+{
+    public partial class DocumentDbCRUD
+    {
+        private const string FormSettingsCollectionName = "FormSettings";
+
+        public FormSettingsProperties GetFormSettingsProperties(string formId)
+        {
+            var formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
+            return formSettingsResource.FormSettingsProperties;
+        }
+
+        public List<ResponseDisplaySettings> GetResponseGridColumns(string formId)
+        {
+            FormSettingsResource formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
+            var formSettingsProperties = formSettingsResource.FormSettingsProperties;
+            var responseDisplatySettingsList = formSettingsProperties.ToResponseDisplaySettingsList();
+            return responseDisplatySettingsList;
+        }
+
+        public FormSettingsResource ReadFormSettingsResource(string formId, bool ifNoneCreateDefault = false)
+        {
+            try
+            {
+                var formSettingsCollectionUri = GetCollectionUri(FormSettingsCollectionName);
+                var collectionAlias = FormSettingsCollectionName;
+
+                // Set some common query options
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+
+                var query = Client.CreateDocumentQuery(formSettingsCollectionUri,
+                    SELECT
+                    + AssembleSelect(collectionAlias, "*")
+                    + FROM + collectionAlias
+                    + WHERE
+                    + AssembleWhere(collectionAlias, Expression("id", EQ, formId))
+                    , queryOptions);
+                var formSettingsResource = (FormSettingsResource)query.AsEnumerable().FirstOrDefault();
+                if (formSettingsResource == null && ifNoneCreateDefault)
+                {
+                    formSettingsResource = SetDefaultFormSettingsProperties(formId);
+                }
+                return formSettingsResource;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return null;
+        }
+
+        private FormSettingsResource SetDefaultFormSettingsProperties(string formId)
+        {
+            FieldTypes[] nonQueriableFieldTypes = MetadataAccessor.NonQueriableFieldTypes;
+            var responseGridColumnNames = GetFieldDigests(formId)
+                .Where(f => !nonQueriableFieldTypes.Any(t => t == f.FieldType))
+                .Take(5)
+                .Select(f => f.TrueCaseFieldName)
+                .ToList();
+
+            FormSettingsResource formSettingsResource = new FormSettingsResource
+            {
+                Id = formId,
+                FormSettingsProperties = new FormSettingsProperties
+                {
+                    FormId = formId,
+                    FormName = GetFormDigest(formId).FormName,
+                    ResponseGridColumnNames = responseGridColumnNames
+                }
+            };
+
+            UpdateFormSettingsResource(formSettingsResource);
+            return formSettingsResource;
+        }
+
+        public void UpdateFormSettings(Epi.Common.Core.DataStructures.FormSettings formSettings)
+        {
+            var formSettingsResource = ReadFormSettingsResource(formSettings.FormId, ifNoneCreateDefault: true);
+            var formSettingsProperties = formSettingsResource.FormSettingsProperties;
+            formSettingsProperties = formSettings.ToFormSettingsProperties(formSettingsProperties);
+            formSettingsResource.FormSettingsProperties = formSettingsProperties;
+            UpdateFormSettingsResource(formSettingsResource);
+        }
+
+        public void SaveResponseGridColumnNames(string formId, List<ResponseDisplaySettings> responseDisplaySettings)
+        {
+            var formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
+            var responseGridColumnNames = responseDisplaySettings.ToResponseDisplaySettingsList();
+            formSettingsResource.FormSettingsProperties.ResponseGridColumnNames = responseGridColumnNames;
+            UpdateFormSettingsResource(formSettingsResource);
+        }
+
+        private FormSettingsResource UpdateFormSettingsResource(FormSettingsResource responseDisplaySettingsResource)
+        {
+            var formSettingsCollectionUri = GetCollectionUri(FormSettingsCollectionName);
+
+            var result = ExecuteWithFollowOnAction(() => Client.UpsertDocumentAsync(formSettingsCollectionUri, responseDisplaySettingsResource));
+
+            return responseDisplaySettingsResource;
+        }
+    }
+}
+
+
