@@ -34,9 +34,9 @@ namespace Epi.FormMetadata.Extensions
 
 					CheckCode = view.CheckCode,
 
+                    IsSharable = view.IsShareable,
 					DataAccessRuleId = view.DataAccessRuleId,
 					IsDraftMode = view.IsDraftMode
-
 				};
 
                 formDigest.FieldNameToPageIdDirectory = new Dictionary<string, int>();

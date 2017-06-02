@@ -21,6 +21,8 @@ namespace Epi.Cloud.Interfaces.MetadataInterfaces
         Task<FieldDigest> GetFieldDigestAsync(string formId, string fieldName);
         Task<FieldDigest[]> GetFieldDigestsAsync(string formId);
         Task<FieldDigest[]> GetFieldDigestsAsync(string formId, IEnumerable<string> fieldNames);
+
+        Task<bool> UpdateFormModeSettings(string[] formIds, bool isSharable, bool isDraftMode, int dataAccessRuleId);
     }
 
     public enum ProjectScope

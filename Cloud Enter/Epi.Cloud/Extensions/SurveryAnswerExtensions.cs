@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Epi.Cloud.Common.DTO;
 using Epi.Web.MVC.Models;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.MVC.Extensions
 {
@@ -22,7 +23,7 @@ namespace Epi.Cloud.MVC.Extensions
                 string value;
                 string _key = string.Empty;
                 var columnsCount = Columns.Count;
-                for (int i = 0; i < 5; ++i)
+                for (int i = 0; i < Constant.MaxGridColumns; ++i)
                 {
 
                     if (i >= columnsCount)

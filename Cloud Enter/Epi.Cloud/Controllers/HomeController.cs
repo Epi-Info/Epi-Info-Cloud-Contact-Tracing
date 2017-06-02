@@ -682,31 +682,6 @@ namespace Epi.Web.MVC.Controllers
             return AppSettings.GetIntValue(AppSettings.Key.ResponsePageSize);
         }
 
-        private SurveyAnswerDTO GetSurveyAnswer(string responseId, string formId)
-        {
-            SurveyAnswerDTO result = null;
-            string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
-            string rootFormId = Session[SessionKeys.RootFormId].ToString();
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string userName = Session[SessionKeys.UserName].ToString();
-
-            var responseContext = (ResponseContext)new ResponseContext
-            {
-                ResponseId = responseId,
-                RootFormId = rootFormId,
-                RootResponseId = rootResponseId ?? responseId,
-                FormId = formId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies();
-
-            var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
-
-            result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
-            result.FormOwnerId = MetadataAccessor.GetFormDigest(formId).OwnerUserId;
-            return result;
-        }
-
         [HttpGet]
         public ActionResult LogOut()
         {
@@ -719,23 +694,30 @@ namespace Epi.Web.MVC.Controllers
         [HttpGet]
         public ActionResult GetSettings(string formId)//List<FormInfoModel> ModelList, string formid)
         {
-            FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            var projectId = Session[SessionKeys.ProjectId].ToString();
+            var userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            var currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
+
             List<KeyValuePair<int, string>> tempColumns = new List<KeyValuePair<int, string>>();
             //Get All forms
             List<FormsHierarchyDTO> formsHierarchy = GetFormsHierarchy(/*FromURL*/formId);
             List<SettingsInfoModel> modelList = new List<SettingsInfoModel>();
+            List<FormSettingRequest> formSettingReqList = new List<FormSettingRequest>();
             foreach (var Item in formsHierarchy)
             {
+                FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = projectId };
                 formSettingReq.GetMetadata = true;
                 formSettingReq.FormInfo.FormId = new Guid(Item.FormId).ToString();
-                formSettingReq.FormInfo.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-                formSettingReq.CurrentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
-                //Getting Column Name  List
+                formSettingReq.FormInfo.UserId = userId;
+                formSettingReq.CurrentOrgId = currentOrgId;
+                formSettingReqList.Add(formSettingReq);
+            }
 
-                FormSettingResponse formSettingResponse = _surveyFacade.GetFormSettings(formSettingReq);
-                //  FormSettingResponseList.Add(FormSettingResponse);
+            //Getting Column Name  List
+            List<FormSettingResponse> formSettingResponseList = _surveyFacade.GetFormSettingsList(formSettingReqList);
 
-                // FormSettingResponse FormSettingResponse = _isurveyFacade.GetFormSettings(FormSettingReq);
+            foreach (var formSettingResponse in formSettingResponseList)
+            {
                 _columns = formSettingResponse.FormSetting.ColumnNameList.ToList();
                 tempColumns = _columns;
                 _columns.Sort(Compare);
@@ -800,7 +782,7 @@ namespace Epi.Web.MVC.Controllers
                 model.FormOwnerFirstName = formSettingResponse.FormInfo.OwnerFName;
                 model.FormOwnerLastName = formSettingResponse.FormInfo.OwnerLName;
                 model.FormName = formSettingResponse.FormInfo.FormName;
-                model.FormId = Item.FormId;
+                model.FormId = formSettingResponse.FormInfo.FormId;
                 model.DataAccessRuleIds = formSettingResponse.FormSetting.DataAccessRuleIds;
                 model.SelectedDataAccessRule = formSettingResponse.FormSetting.SelectedDataAccessRule;
                 model.HasDraftModeData = formSettingResponse.FormInfo.HasDraftModeData;

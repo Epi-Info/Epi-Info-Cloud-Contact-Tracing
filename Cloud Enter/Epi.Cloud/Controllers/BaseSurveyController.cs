@@ -151,6 +151,7 @@ namespace Epi.Web.MVC.Controllers
             var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
 
             result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
+            result.FormOwnerId = MetadataAccessor.GetFormDigest(formId).OwnerUserId;
 
             return result;
         }

@@ -12,6 +12,8 @@ namespace Epi.Cloud.Common.Metadata
     {
         public static class StaticCache
         {
+            public static object Gate = new object();
+
             public static void ClearAll()
             {
                 lock (Gate)
@@ -24,7 +26,6 @@ namespace Epi.Cloud.Common.Metadata
                     PageFieldAttributes = null;
                 }
             }
-            public static object Gate = new object();
 
             // Form Digests [FormId]
             public static FormDigest[] FormDigests = null;
@@ -43,8 +44,8 @@ namespace Epi.Cloud.Common.Metadata
             // FieldAttributes[FormId][PageId][FieldName]
             public static Dictionary<string, Dictionary<int, Dictionary<string, FieldAttributes>>> PageFieldAttributes = null;
 
-            public static Dictionary<string, string[]> FormIdPathFromRoot = new Dictionary<string, string[]>();
-            public static Dictionary<string, string[]> FormNamePathFromRoot = new Dictionary<string, string[]>();
+            public static Dictionary<string, List<string>> AllFormIdsByRootFormId = new Dictionary<string, List<string>>();
+            public static Dictionary<string, List<string>> AllFormNamesByRootFormName = new Dictionary<string, List<string>>();
         }
 
         [ThreadStatic]
@@ -65,17 +66,30 @@ namespace Epi.Cloud.Common.Metadata
             StaticCache.ClearAll();
         }
 
-        public static FieldTypes[] NonQueriableFieldTypes = new FieldTypes[]
-        {
-            FieldTypes.Label,
-            FieldTypes.UppercaseText,
-            FieldTypes.Multiline,
-            FieldTypes.CommandButton,
-            FieldTypes.Relate,
-            FieldTypes.Group
-        };
-
         public string CurrentFormId { get { return _formId; } set { _formId = value; } }
+
+        public bool UpdateMetadataIfNecessary(string formId, bool isDraftMode, bool isSharable, int dataAccessRuleId)
+        {
+            var formDigest = GetFormDigest(formId);
+            var mustUpdate = formDigest.IsSharable != isSharable || formDigest.IsDraftMode != isDraftMode || formDigest.DataAccessRuleId != dataAccessRuleId;
+            if (mustUpdate)
+            {
+                lock (StaticCache.Gate)
+                {
+                    var formIds = GetFormIdHeiarchyByRootFormId(formId);
+                    if (formIds.Length > 0)
+                    {
+                        var isSuccessful = ProjectMetadataProvider.UpdateFormModeSettings(formIds, isSharable, isDraftMode, dataAccessRuleId).Result;
+                        if (isSuccessful)
+                        {
+                            StaticCache.FormDigests = null;
+                        }
+                    }
+                }
+            }
+            return mustUpdate;
+        }
+
 
         public static IProjectMetadataProvider ProjectMetadataProvider
         {
@@ -106,9 +120,11 @@ namespace Epi.Cloud.Common.Metadata
             {
                 lock (StaticCache.Gate)
                 {
-                    if (StaticCache.FormDigests == null) StaticCache.FormDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
-
-                    GenerateFormPaths();
+                    if (StaticCache.FormDigests == null)
+                    {
+                        StaticCache.FormDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
+                        GenerateFormHeiarchies();
+                    }
 
                     return StaticCache.FormDigests;
                 }
@@ -138,26 +154,33 @@ namespace Epi.Cloud.Common.Metadata
             }
         }
 
-        private void GenerateFormPaths()
+        private void GenerateFormHeiarchies()
         {
             lock (StaticCache.Gate)
             {
-                foreach (var fd in StaticCache.FormDigests)
+                var allFormIdsByRootFormId = new Dictionary<string, List<string>>();
+                var allFormNamesByRootFormName = new Dictionary<string, List<string>>();
+                foreach (var fd in StaticCache.FormDigests.Where(f => f.IsRootForm))
                 {
-                    var formIdPathFromRoot = new List<string>();
-                    var formNamePathFromRoot = new List<string>();
-                    var fdx = fd;
-                    do
-                    {
-                        formIdPathFromRoot.Insert(0, fdx.FormId);
-                        formNamePathFromRoot.Insert(0, fdx.FormName);
-                        var isRootForm = fdx.IsRootForm;
-                        fdx = isRootForm ? null : StaticCache.FormDigests.Where(x => x.FormId == fdx.ParentFormId).SingleOrDefault();
-                    } while (fdx != null);
-
-                    StaticCache.FormIdPathFromRoot[fd.FormId] = formIdPathFromRoot.ToArray();
-                    StaticCache.FormNamePathFromRoot[fd.FormId] = formNamePathFromRoot.ToArray();
+                    allFormIdsByRootFormId[fd.FormId] = new List<string>();
+                    allFormIdsByRootFormId[fd.FormId].Add(fd.FormId);
+                    allFormNamesByRootFormName[fd.FormName] = new List<string>();
+                    allFormNamesByRootFormName[fd.FormName].Add(fd.FormName);
+                    AddChildren(fd.FormId, allFormIdsByRootFormId[fd.FormId], allFormNamesByRootFormName[fd.FormName]);
                 }
+                StaticCache.AllFormIdsByRootFormId = allFormIdsByRootFormId;
+                StaticCache.AllFormNamesByRootFormName = allFormNamesByRootFormName;
+            }
+        }
+
+        private void AddChildren(string parentFormId, List<string> allFormIdsOfChildrenOfRoot, List<string> allFormNamesOfChildrenOfRoot)
+        {
+            var thisLevelChildren = StaticCache.FormDigests.Where(f => f.ParentFormId == parentFormId).Select(f => f.FormId).ToArray();
+            allFormIdsOfChildrenOfRoot.AddRange(thisLevelChildren);
+            allFormNamesOfChildrenOfRoot.AddRange(thisLevelChildren.Select(f => GetFormDigest(f).FormName).ToArray());
+            foreach (var parent in thisLevelChildren)
+            {
+                AddChildren(parent, allFormIdsOfChildrenOfRoot, allFormNamesOfChildrenOfRoot);
             }
         }
 
@@ -172,6 +195,7 @@ namespace Epi.Cloud.Common.Metadata
             var formDigest = FormDigests.SingleOrDefault(d => d.ViewId == viewId);
             return formDigest != null ? formDigest.RootFormId : null;
         }
+
         public string GetParentFormIdByViewId(int viewId)
         {
             var formDigest = FormDigests.SingleOrDefault(d => d.ViewId == viewId);
@@ -183,6 +207,7 @@ namespace Epi.Cloud.Common.Metadata
             var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
             return formDigest != null ? formDigest.RootFormId : null;
         }
+
         public string GetRootFormName(string formId)
         {
             string rootFormName = null;
@@ -222,6 +247,18 @@ namespace Epi.Cloud.Common.Metadata
         {
             var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);
             return formDigest != null ? formDigest.FormName : null;
+        }
+
+        public string[] GetFormIdHeiarchyByRootFormId(string rootFormId)
+        {
+            List<string> formIdHeiarchy;
+            return StaticCache.AllFormIdsByRootFormId.TryGetValue(rootFormId, out formIdHeiarchy) ? formIdHeiarchy.ToArray() : new string[0];
+        }
+
+        public string[] GetFormNameHeiarchyByRootFormName(string rootFormName)
+        {
+            List<string> formNameHeiarchy;
+            return StaticCache.AllFormNamesByRootFormName.TryGetValue(rootFormName, out formNameHeiarchy) ? formNameHeiarchy.ToArray() : new string[0];
         }
 
         public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)

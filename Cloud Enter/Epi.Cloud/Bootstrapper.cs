@@ -63,13 +63,13 @@ namespace Epi.Web.MVC
 			// Registered Instances
 			var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
-            var surveyDocumentDBFacade = new Epi.PersistenceServices.DocumentDB.DocumentDBSurveyPersistenceFacade();
-            var formSettingsDocumentDBFacade = new Epi.DataPersistenceServices.DocumentDB.DocumentDBFormSettingsPersistenceFacade();
+            var docDB_SurveyFacade = new Epi.PersistenceServices.DocumentDB.DocDB_SurveyPersistenceFacade();
+            var docDB_FormSettingsFacade = new Epi.DataPersistenceServices.DocumentDB.DocDB_FormSettingsPersistenceFacade();
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(surveyDocumentDBFacade);
-            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.IFormSettingsPersistenceFacade>(formSettingsDocumentDBFacade);
+            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(docDB_SurveyFacade);
+            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.IFormSettingsPersistenceFacade>(docDB_FormSettingsFacade);
 
 			container.RegisterControllers();
 

@@ -11,6 +11,7 @@ using Epi.DataPersistence.Common.Interfaces;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 using Epi.Common.Core.DataStructures;
 using Epi.Cloud.Common.Extensions;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {
@@ -25,9 +26,27 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             _formSettingDao_EF = DependencyHelper.GetService<IFormSettingDao_EF>();
         }
 
+        public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
+        {
+            List<FormSettingBO> formSettingBOList = _formSettingDao_EF.GetFormSettingsList(formIds, currentOrgId);
+
+            foreach (var formSettingBO in formSettingBOList)
+            {
+                int i = 1;
+                formSettingBO.FormControlNameList = GetAllColumnNames(formSettingBO.FormId).ToDictionary(k => i++, v => v);
+            }
+
+            GetDataAccessRules(formSettingBOList);
+
+            var formSettingsList = _formSettingsPersistenceFacade.GetFormSettings(formIds);
+
+            formSettingBOList = FormSettingsExtensions.MergeInfoFormSettingBOList(formSettingsList, formSettingBOList);
+            return formSettingBOList;
+        }
+
         public FormSettingBO GetFormSettings(string formId, int currentOrgId)
         {
-            FormSettingBO formSettingBO = new FormSettingBO();
+            FormSettingBO formSettingBO = new FormSettingBO { FormId = formId };
             Dictionary<int, string> columnNameList = new Dictionary<int, string>();
             try
             {
@@ -61,10 +80,8 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
 
         public List<string> GetAllColumnNames(string FormId)
         {
-            var nonQueriableFieldTypes = MetadataAccessor.NonQueriableFieldTypes;
-            var metadataAccessor = new MetadataAccessor();
-            var columnNameList = metadataAccessor.GetFieldDigests(FormId)
-                .Where(f => !nonQueriableFieldTypes.Any(t => f.FieldType == t))
+            var columnNameList = GetFieldDigests(FormId)
+                .Where(f => !FieldDigest.NonDataFieldTypes.Any(t => f.FieldType == t))
                 .Select(f => f.TrueCaseFieldName)
                 .OrderBy(n => n).ToList();
 
@@ -80,10 +97,11 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             _formSettingsPersistenceFacade.UpdateResponseDisplaySettings(formId, responseDisplaySettingsList);
         }
 
-        private static FormSettingBO GetDataAccessRules(FormSettingBO formSettingBO)
+        private static void GetDataAccessRules(out Dictionary<int, string> dataAccessRuleIds, out Dictionary<string, string> dataAccessRuleDescriptions)
         {
-            Dictionary<int, string> dataAccessRuleIds = new Dictionary<int, string>();
-            Dictionary<string, string> dataAccessRuleDescription = new Dictionary<string, string>();
+            dataAccessRuleIds = new Dictionary<int, string>();
+            dataAccessRuleDescriptions = new Dictionary<string, string>();
+
             var ruleId = 0;
             string ruleName;
             string ruleDescription;
@@ -91,9 +109,29 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             while ((ruleDescription = resourceManager.GetString((ruleName = "Rule" + ++ruleId))) != null)
             {
                 dataAccessRuleIds.Add(ruleId, ruleName);
-                dataAccessRuleDescription.Add(ruleName, ruleDescription);
+                dataAccessRuleDescriptions.Add(ruleName, ruleDescription);
             }
-            formSettingBO.DataAccessRuleDescription = dataAccessRuleDescription;
+        }
+
+        private static void GetDataAccessRules(List<FormSettingBO> formSettingBOList)
+        {
+            Dictionary<int, string> dataAccessRuleIds = new Dictionary<int, string>();
+            Dictionary<string, string> dataAccessRuleDescriptions = new Dictionary<string, string>();
+            GetDataAccessRules(out dataAccessRuleIds, out dataAccessRuleDescriptions);
+            foreach (var formSettingBO in formSettingBOList)
+            {
+                formSettingBO.DataAccessRuleDescription = dataAccessRuleDescriptions;
+                formSettingBO.DataAccessRuleIds = dataAccessRuleIds;
+            }
+        }
+
+
+        private static FormSettingBO GetDataAccessRules(FormSettingBO formSettingBO)
+        {
+            Dictionary<int, string> dataAccessRuleIds = new Dictionary<int, string>();
+            Dictionary<string, string> dataAccessRuleDescriptions = new Dictionary<string, string>();
+            GetDataAccessRules(out dataAccessRuleIds, out dataAccessRuleDescriptions);
+            formSettingBO.DataAccessRuleDescription = dataAccessRuleDescriptions;
             formSettingBO.DataAccessRuleIds = dataAccessRuleIds;
             return formSettingBO;
         }
@@ -107,7 +145,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             {
                 formSettings.ResponseDisplaySettings = formSettingBO.ColumnNameList.OrderBy(k => k.Key).Select(kvp => new ResponseDisplaySettings { FormId = formId, ColumnName = kvp.Value, SortOrder = kvp.Key }).ToList();
             }
-            _formSettingsPersistenceFacade.UpdateFormSettings(formId, formSettings);
+            _formSettingsPersistenceFacade.UpdateFormSettings(formSettings);
 
             // Temporarily update WebEnter tables too
             _formSettingDao_EF.UpdateFormMode(formInfoBO);

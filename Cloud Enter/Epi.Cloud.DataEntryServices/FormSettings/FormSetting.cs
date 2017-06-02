@@ -9,7 +9,6 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
 using Epi.Common.EmailServices;
-using Epi.FormMetadata.Constants;
 
 namespace Epi.Web.BLL
 {
@@ -24,6 +23,12 @@ namespace Epi.Web.BLL
             _userDao = userDao;
         }
 
+        public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId = -1)
+        {
+            List<FormSettingBO> result = _formSettingDao.GetFormSettingsList(formIds, currentOrgId);
+            return result;
+        }
+
         public FormSettingBO GetFormSettings(string formId, int currentOrgId = -1)
         {
             FormSettingBO result = _formSettingDao.GetFormSettings(formId, currentOrgId);
@@ -33,8 +38,12 @@ namespace Epi.Web.BLL
 
         public string SaveSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
         {
+            var formId = formSettingDTO.FormId;
+            var isSharable = formSettingDTO.IsShareable;
+            var dataAccessRuleId = formSettingDTO.SelectedDataAccessRule;
+
             string message = "";
-            FormSettingBO formSettingBO = new FormSettingBO();
+            FormSettingBO formSettingBO = new FormSettingBO { FormId = formId };
             formSettingBO.AssignedUserList = formSettingDTO.AssignedUserList;
             formSettingBO.SelectedOrgList = formSettingDTO.SelectedOrgList;
             formSettingBO.DeleteDraftData = formSettingDTO.DeleteDraftData;
@@ -62,6 +71,9 @@ namespace Epi.Web.BLL
                 SendEmail(assignedOrgAdminList, formSettingDTO.FormId, CurrentOrgAdminList, true);
 
                 message = "Success";
+
+                UpdateMetadataIfNecessary(formId, isDraftMode, isSharable, dataAccessRuleId);
+
             }
             catch (Exception Ex)
             {
@@ -74,13 +86,17 @@ namespace Epi.Web.BLL
 
         public void UpdateFormSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
         {
-            FormSettingBO formSettingBO = new FormSettingBO();
+            var formId = formSettingDTO.FormId;
+            var isShareable = formSettingDTO.IsShareable;
+            var dataAccessRuleId = formSettingDTO.SelectedDataAccessRule;
+
+            FormSettingBO formSettingBO = new FormSettingBO { FormId = formSettingDTO.FormId };
             formSettingBO.ColumnNameList = formSettingDTO.ColumnNameList;
             FormInfoBO formInfoBO = new FormInfoBO();
-            formInfoBO.FormId = formSettingDTO.FormId;
+            formInfoBO.FormId = formId;
             formInfoBO.IsDraftMode = isDraftMode;
-            formInfoBO.IsShareable = formSettingDTO.IsShareable;
-            formInfoBO.DataAccesRuleId = formSettingDTO.SelectedDataAccessRule;
+            formInfoBO.IsShareable = isShareable;
+            formInfoBO.DataAccesRuleId = dataAccessRuleId;
             _formSettingDao.UpdateColumnNames(formSettingBO, formSettingDTO.FormId);
             _formSettingDao.UpdateFormMode(formInfoBO, formSettingBO);
             if (formSettingDTO.IsDisabled)

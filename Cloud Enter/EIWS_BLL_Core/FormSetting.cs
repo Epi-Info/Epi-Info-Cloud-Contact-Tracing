@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Text;
+using System.Xml.Linq;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
-using Epi.Web.Enter.Common.Criteria;
-using System.Xml;
-using System.Xml.Linq;
 using Epi.Web.Enter.Interfaces.DataInterface;
-using System.Configuration;
+
 namespace Epi.Web.BLL
 {
     public class FormSetting
     {
 
 
-        private IFormSettingDao FormSettingDao;
+        private readonly IFormSettingDao _formSettingDao;
+        private readonly IUserDao _userDao;
+        private readonly IFormInfoDao _formInfoDao;
 
-        private IUserDao UserDao;
-        private IFormInfoDao FormInfoDao;
-        public FormSetting(IFormSettingDao pFormSettingDao, IUserDao pUserDao, IFormInfoDao pFormInfoDao)
+        public FormSetting(IFormSettingDao formSettingDao, IUserDao userDao, IFormInfoDao formInfoDao)
         {
-            this.FormSettingDao = pFormSettingDao;
-            this.UserDao = pUserDao;
-            this.FormInfoDao = pFormInfoDao;
+            _formSettingDao = formSettingDao;
+            _userDao = userDao;
+            _formInfoDao = formInfoDao;
         }
+
         public FormSetting(IFormSettingDao pFormSettingDao )
         {
-            this.FormSettingDao = pFormSettingDao;
+            _formSettingDao = pFormSettingDao;
             
         }
 
         public FormSettingBO GetFormSettings(string FormId, string Xml,int CurrentOrgId = -1)
         {
-            FormSettingBO result = this.FormSettingDao.GetFormSettings(FormId, CurrentOrgId);
+            FormSettingBO result = _formSettingDao.GetFormSettings(FormId, CurrentOrgId);
             if (!string.IsNullOrEmpty(Xml))
             {
                 result.FormControlNameList = GetFormColumnNames(Xml, result.ColumnNameList);
@@ -53,7 +52,7 @@ namespace Epi.Web.BLL
 
         private List<string> GetAllColumns(string FormId)
         {
-            return FormSettingDao.GetAllColumnNames(FormId);
+            return _formSettingDao.GetAllColumnNames(FormId);
         }
 
         public Dictionary<int, string> GetFormColumnNames(string Xml, Dictionary<int, string> Selected)
@@ -95,7 +94,7 @@ namespace Epi.Web.BLL
         public string SaveSettings(bool IsDraftMode, FormSettingDTO FormSettingDTO)
         {
             string Message = "";
-            FormSettingBO FormSettingBO = new FormSettingBO();
+            FormSettingBO FormSettingBO = new FormSettingBO { FormId = FormSettingDTO.FormId };
            // FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
             FormSettingBO.AssignedUserList = FormSettingDTO.AssignedUserList;
             FormSettingBO.SelectedOrgList = FormSettingDTO.SelectedOrgList;
@@ -106,20 +105,20 @@ namespace Epi.Web.BLL
             //FormInfoBO.IsShareable = FormSettingDTO.IsShareable;
             try
             {
-                List<UserBO> FormCurrentUsersList = this.UserDao.GetUserByFormId(FormSettingDTO.FormId);
-                //this.FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-               // this.FormSettingDao.UpDateFormMode(FormInfoBO);
-                Dictionary<int, string> AssignedOrgAdminList = this.FormSettingDao.GetOrgAdmins(FormSettingDTO.SelectedOrgList);// about to share with
-                List<UserBO> CurrentOrgAdminList = this.FormSettingDao.GetOrgAdminsByFormId(FormSettingDTO.FormId);// shared with 
-                this.FormSettingDao.UpDateSettingsList(FormSettingBO, FormSettingDTO.FormId);
+                List<UserBO> FormCurrentUsersList = _userDao.GetUserByFormId(FormSettingDTO.FormId);
+                //FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
+               // FormSettingDao.UpDateFormMode(FormInfoBO);
+                Dictionary<int, string> AssignedOrgAdminList = _formSettingDao.GetOrgAdmins(FormSettingDTO.SelectedOrgList);// about to share with
+                List<UserBO> CurrentOrgAdminList = _formSettingDao.GetOrgAdminsByFormId(FormSettingDTO.FormId);// shared with 
+                _formSettingDao.UpDateSettingsList(FormSettingBO, FormSettingDTO.FormId);
 
                 // Clear all Draft records
                 if (FormSettingDTO.DeleteDraftData)
                 { 
-                this.FormSettingDao.DeleteDraftRecords(FormSettingDTO.FormId);
+                _formSettingDao.DeleteDraftRecords(FormSettingDTO.FormId);
                 }
 
-               List<UserBO> AdminList =  this.UserDao.GetAdminsBySelectedOrgs(FormSettingBO, FormSettingDTO.FormId);
+               List<UserBO> AdminList =  _userDao.GetAdminsBySelectedOrgs(FormSettingBO, FormSettingDTO.FormId);
 
                 if (ConfigurationManager.AppSettings["SEND_EMAIL_TO_ASSIGNED_USERS"].ToUpper() == "TRUE" && FormSettingDTO.AssignedUserList.Count() > 0)
                 {
@@ -144,35 +143,36 @@ namespace Epi.Web.BLL
 
         public void UpDateColumnNames(bool IsDraftMode, FormSettingDTO FormSettingDTO) 
         {
-            FormSettingBO FormSettingBO = new FormSettingBO();
-            FormSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
-            FormInfoBO FormInfoBO = new FormInfoBO();
-            FormInfoBO.FormId = FormSettingDTO.FormId;
-            FormInfoBO.IsDraftMode = IsDraftMode;
-            FormInfoBO.IsShareable = FormSettingDTO.IsShareable;
-            FormInfoBO.DataAccesRuleId = FormSettingDTO.SelectedDataAccessRule;
-            this.FormSettingDao.UpDateColumnNames(FormSettingBO, FormSettingDTO.FormId);
-            this.FormSettingDao.UpDateFormMode(FormInfoBO);
+            FormSettingBO formSettingBO = new FormSettingBO();
+            formSettingBO.ColumnNameList = FormSettingDTO.ColumnNameList;
+            FormInfoBO formInfoBO = new FormInfoBO();
+            formInfoBO.FormId = FormSettingDTO.FormId;
+            formInfoBO.IsDraftMode = IsDraftMode;
+            formInfoBO.IsShareable = FormSettingDTO.IsShareable;
+            formInfoBO.DataAccesRuleId = FormSettingDTO.SelectedDataAccessRule;
+            _formSettingDao.UpDateColumnNames(formSettingBO, FormSettingDTO.FormId);
+            _formSettingDao.UpDateFormMode(formInfoBO);
             if (FormSettingDTO.IsDisabled)
             {
 
-                this.FormSettingDao.SoftDeleteForm(FormSettingDTO.FormId);
+                _formSettingDao.SoftDeleteForm(FormSettingDTO.FormId);
             
             }
 
         }
+
         private void SendEmail(Dictionary<int, String> AssignedUserList, string FormId, List<UserBO> FormCurrentUsersList,bool ShareForm = false)
         {
 
             try
             {
 
-                FormInfoBO FormInfoBO = this.FormInfoDao.GetFormByFormId(FormId);
+                FormInfoBO FormInfoBO = _formInfoDao.GetFormByFormId(FormId);
                 if (!string.IsNullOrEmpty(FormInfoBO.ParentId))
                 {
                     return;
                 }
-                UserBO UserBO = this.UserDao.GetCurrentUser(FormInfoBO.UserId);
+                UserBO UserBO = _userDao.GetCurrentUser(FormInfoBO.UserId);
                 List<string> UsersEmail = new List<string>();
                 List<string> CurrentUsersEmail = new List<string>();
 
@@ -241,7 +241,7 @@ namespace Epi.Web.BLL
 
         public FormSettingBO GetFormSettings()
         {
-            FormSettingBO result = this.FormSettingDao.GetFormSettings();
+            FormSettingBO result = _formSettingDao.GetFormSettings();
             return result;
         }
     }

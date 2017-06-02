@@ -5,6 +5,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 {
     public interface IFormSettingDao
     {
+        List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId);
         FormSettingBO GetFormSettings(string formId, int currentOrgId);
         FormSettingBO GetFormSettings();
         void UpdateColumnNames(FormSettingBO formSettingBO, string formId);

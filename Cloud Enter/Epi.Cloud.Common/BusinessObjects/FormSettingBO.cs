@@ -6,6 +6,8 @@ namespace Epi.Cloud.Common.BusinessObjects
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class FormSettingBO
     {
+        public string FormId { get; set; }
+
         public Dictionary<string, string> DataAccessRuleDescription { get; set; }
 
         public Dictionary<int, string> DataAccessRuleIds { get; set; }

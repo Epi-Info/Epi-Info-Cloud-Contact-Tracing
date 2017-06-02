@@ -21,11 +21,11 @@ using Microsoft.Azure.Documents;
 
 namespace Epi.PersistenceServices.DocumentDB
 {
-    public partial class DocumentDBSurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
+    public partial class DocDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
     {
         private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
 
-        public DocumentDBSurveyPersistenceFacade()
+        public DocDB_SurveyPersistenceFacade()
         {
         }
 

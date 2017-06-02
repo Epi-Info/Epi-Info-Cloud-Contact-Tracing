@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
 using Epi.Cloud.MetadataServices.Common.ProxyService;
 using Epi.Common.Constants;
 using Epi.FormMetadata.DataStructures;
-using Epi.FormMetadata.Extensions;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Epi.Cloud.MetadataServices.Common
@@ -73,15 +71,15 @@ namespace Epi.Cloud.MetadataServices.Common
         public async Task<Template> RetrieveMetadataFromBlobStorage(Guid projectId)
         {
             Template metadata = null;
-            Dictionary<string, string> blobMetadata = null;
+            Dictionary<string, string> blobMetadataDictionary = null;
             if (projectId == Guid.Empty)
             {
                 var metadataBlobs = MetadataBlobCRUD.GetBlobList(BlobListingDetails.Metadata);
                 if (metadataBlobs.Count > 0)
                 {
                     var blobMetadataJson = metadataBlobs.First();
-                    blobMetadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(blobMetadataJson);
-                    Guid.TryParse(blobMetadata[BlobMetadataKeys.ProjectId], out projectId);
+                    blobMetadataDictionary = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(blobMetadataJson);
+                    Guid.TryParse(blobMetadataDictionary[BlobMetadataKeys.ProjectId], out projectId);
                 }
             }
             if (projectId != Guid.Empty)
@@ -90,9 +88,9 @@ namespace Epi.Cloud.MetadataServices.Common
                 if (!string.IsNullOrWhiteSpace(json))
                 {
                     metadata = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
-                    if (blobMetadata != null)
+                    if (blobMetadataDictionary != null)
                     {
-                        metadata.ProjectDeploymentProperties = blobMetadata;
+                        metadata.ProjectDeploymentProperties = blobMetadataDictionary;
                     }
                     else
                     {
@@ -101,6 +99,12 @@ namespace Epi.Cloud.MetadataServices.Common
                 }
             }
             return await Task.FromResult(metadata);
+        }
+
+        public async Task<bool> UpdateMetadataInBlobStorage(Template metadata)
+        {
+            var deploymentProperties = metadata.ProjectDeploymentProperties;
+            return await Task.FromResult(MetadataBlobCRUD.SaveMetadataToBlobStorage(metadata, deploymentProperties, deleteBeforeUpload: false));
         }
     }
 }

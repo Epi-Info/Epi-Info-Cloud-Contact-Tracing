@@ -187,7 +187,11 @@ namespace Epi.DataPersistence.Extensions
             return formResonseDetailList;
         }
 
-
+        public static List<FormSettings> ToFormSettingsList(this IEnumerable<FormSettingsProperties> formSettingsPropertiesList)
+        {
+            var formSettingsList = formSettingsPropertiesList.Select(f => f.ToFormSettings()).ToList();
+            return formSettingsList;
+        }
 
         public static FormSettings ToFormSettings(this FormSettingsProperties formSettingsProperties)
         {

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Epi.Web.Enter.Common.BusinessObject;
 namespace Epi.Web.BLL
 {
 
-  public  class SurveyInfo
+    public  class SurveyInfo
     {
       private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
       Dictionary<int, int> ViewIds = new Dictionary<int, int>();
@@ -358,7 +355,7 @@ namespace Epi.Web.BLL
             {
                 fieldType = _FieldTypeID.Attribute("FieldTypeId").Value;
 
-                if (fieldType != "2" && fieldType != "21" && fieldType != "3" && fieldType != "20")
+                if (fieldType != "2" && fieldType != "3" && fieldType != "20" && fieldType != "21")
                 {
                     List.Add(_FieldTypeID.Attribute("Name").Value.ToString());
                 }

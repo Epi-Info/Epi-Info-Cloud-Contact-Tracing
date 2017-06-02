@@ -343,6 +343,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
             {
             return new FormSettingDTO
             {
+                FormId = pBO.FormId,
                 ColumnNameList = pBO.ColumnNameList,
                 FormControlNameList = pBO.FormControlNameList,
                 AssignedUserList = pBO.AssignedUserList,

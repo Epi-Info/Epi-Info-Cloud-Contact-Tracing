@@ -45,13 +45,13 @@ namespace Epi.Cloud.Common.Extensions
             return new SurveyInfoDTO
             {
                 ClosingDate = surveyInfoBO.ClosingDate,
-                DataAccessRuleId = surveyInfoBO.DataAccessRuleId,
                 DBConnectionString = surveyInfoBO.DBConnectionString,
                 DepartmentName = surveyInfoBO.DepartmentName,
                 ExitText = surveyInfoBO.ExitText,
                 IntroductionText = surveyInfoBO.IntroductionText,
-                IsDraftMode = surveyInfoBO.IsDraftMode,
                 IsShareable = surveyInfoBO.IsShareable,
+                DataAccessRuleId = surveyInfoBO.DataAccessRuleId,
+                IsDraftMode = surveyInfoBO.IsDraftMode,
                 IsShared = surveyInfoBO.IsShared,
                 IsSqlProject = surveyInfoBO.IsSqlProject,
                 OrganizationKey = surveyInfoBO.OrganizationKey,

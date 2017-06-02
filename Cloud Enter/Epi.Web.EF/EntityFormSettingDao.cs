@@ -10,9 +10,19 @@ namespace Epi.Web.EF
 {
     public class EntityFormSettingDao : IFormSettingDao_EF
     {
+        public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
+        {
+            List<FormSettingBO> formSettingList = new List<FormSettingBO>();
+            foreach (string formId in formIds)
+            {
+                formSettingList.Add(GetFormSettings(formId, currentOrgId));
+            }
+            return formSettingList;
+        }
+
         public FormSettingBO GetFormSettings(string formId, int currentOrgId)
         {
-            FormSettingBO formSettingBO = new FormSettingBO();
+            FormSettingBO formSettingBO = new FormSettingBO { FormId = formId };
             Dictionary<int, string> availableUsers = new Dictionary<int, string>();
             Dictionary<int, string> selectedUsers = new Dictionary<int, string>();
             Dictionary<int, string> availableOrgs = new Dictionary<int, string>();
@@ -22,8 +32,6 @@ namespace Epi.Web.EF
                 Guid id = new Guid(formId);
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-                    // TODO: Refactor to remove dependency on SurveyMetadatas
-
                     SurveyMetaData selectedUserQuery = Context.SurveyMetaDatas.First(x => x.SurveyId == id);
 
                     var selectedOrgId = currentOrgId;
@@ -97,7 +105,6 @@ namespace Epi.Web.EF
 
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
         {
-            // TODO: Refactor to remove dependency on SurveyMetadatas
             try
             {
                 Guid id = new Guid(formInfoBO.FormId);
@@ -126,7 +133,6 @@ namespace Epi.Web.EF
         }
         public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
         {
-            // TODO: Refactor to remove dependency on SurveyMetadatas
             Guid id = new Guid(formId);
             try
             {
@@ -202,9 +208,8 @@ namespace Epi.Web.EF
                 {
                     List<string> columns = (from c in context.SurveyMetaDataTransforms
                                             where c.SurveyId == Id &&
-                                            //(c.FieldTypeId != 2 && c.FieldTypeId != 20 && c.FieldTypeId != 3 && c.FieldTypeId != 17 && c.FieldTypeId != 21) //filter non-data fields.
-                                            (c.FieldTypeId != 2 && c.FieldTypeId != 20 && c.FieldTypeId != 3 && c.FieldTypeId != 21 && c.FieldTypeId != 4
-                                            && c.FieldTypeId != 13) //filter non-data fields.
+                                            //(c.FieldTypeId != 2 && c.FieldTypeId != 3 && c.FieldTypeId != 17 && c.FieldTypeId != 20 && c.FieldTypeId != 21) //filter non-data fields.
+                                            (c.FieldTypeId != 2 && c.FieldTypeId != 3 && c.FieldTypeId != 4 && c.FieldTypeId != 13 && c.FieldTypeId != 20 &&  c.FieldTypeId != 21) //filter non-data fields.
                                             orderby c.FieldName
                                             select c.FieldName).ToList();
                     return columns;

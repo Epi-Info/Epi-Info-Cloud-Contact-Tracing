@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using Epi.Cloud.Common.Configuration;
@@ -72,9 +71,32 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 
         public Dictionary<string, string> GetMostRecentDeploymentProperties()
         {
-            var metadataBlobs = GetBlobList(BlobListingDetails.Metadata);
-            var mostRecentDeploymentProperties = metadataBlobs.Select(json => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json))
+            var deploymentProperties = GetBlobList(BlobListingDetails.Metadata);
+            var mostRecentDeploymentProperties = deploymentProperties.Select(json => Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(json))
+                                                    .Where(p => p != null && p.Count > 0 && p.ContainsKey(BlobMetadataKeys.PublishDate))
                                                     .OrderByDescending(p => DateTime.Parse(p[BlobMetadataKeys.PublishDate])).FirstOrDefault();
+            if (mostRecentDeploymentProperties == null)
+            {
+                var firstBlob = deploymentProperties.FirstOrDefault();
+                if (firstBlob != null)
+                {
+                    mostRecentDeploymentProperties = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, string>>(firstBlob);
+                    if (mostRecentDeploymentProperties == null || mostRecentDeploymentProperties.Count == 0)
+                    {
+                        var all = GetBlobList(BlobListingDetails.All);
+                        if (all.Count > 0)
+                        {
+                            Guid projectIdGuid;
+                            string projectId = all.FirstOrDefault(v => Guid.TryParse(v, out projectIdGuid));
+                            if (projectId != null)
+                            {
+                                if (mostRecentDeploymentProperties == null) mostRecentDeploymentProperties = new Dictionary<string, string>();
+                                mostRecentDeploymentProperties[BlobMetadataKeys.ProjectId] = projectId;
+                            }
+                        }
+                    }
+                }
+            }
             return mostRecentDeploymentProperties;
         }
 
@@ -107,12 +129,12 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
                 CloudBlockBlob blob = BlobContainer.GetBlockBlobReference(blobName);
                 blob.UploadText(content);
                 CloudBlockBlob blobReference = BlobContainer.GetBlockBlobReference(blobName);
-                blobReference.Metadata.Add(BlobMetadataKeys.Id, blobName);
+                blobReference.Metadata[BlobMetadataKeys.Id] = blobName;
                 if (metadataDictionary != null)
                 {
                     foreach (var kvp in metadataDictionary)
                     {
-                        blobReference.Metadata.Add(kvp.Key, kvp.Value);
+                        blobReference.Metadata[kvp.Key] = kvp.Value;
                     }
                 }
                 blobReference.SetMetadata();
@@ -250,24 +272,29 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
         /// 
         /// </summary>
         /// <param name="metadata"></param>
+        /// <param name="deploymentProperties"></param>
+        /// <param name="deleteBeforeUpload"></param>
         /// <returns></returns>
-        public bool SaveMetadataToBlobStorage(Template metadata)
+        public bool SaveMetadataToBlobStorage(Template metadata, Dictionary<string, string> deploymentProperties = null, bool deleteBeforeUpload = true)
         {
-            var blobMetadataDictionary = new Dictionary<string, string>();
-            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
-            blobMetadataDictionary.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
-            blobMetadataDictionary.Add(BlobMetadataKeys.Description, string.IsNullOrWhiteSpace(metadata.Project.Description) ? metadata.Project.Name : metadata.Project.Description);
-            blobMetadataDictionary.Add(BlobMetadataKeys.PublishDate, DateTime.UtcNow.ToString());
-            StringBuilder sb = new StringBuilder();
-            foreach (var form in metadata.Project.FormDigests)
+            if (deploymentProperties == null || deploymentProperties.Count == 0)
             {
-                if (sb.Length > 0) sb.Append(",");
-                sb.AppendFormat("{0}({1} page{2})", form.FormName, form.NumberOfPages, form.NumberOfPages == 1 ? "" : "s");
+                deploymentProperties = new Dictionary<string, string>();
+                deploymentProperties.Add(BlobMetadataKeys.ProjectId, metadata.Project.Id);
+                deploymentProperties.Add(BlobMetadataKeys.ProjectName, metadata.Project.Name);
+                deploymentProperties.Add(BlobMetadataKeys.Description, string.IsNullOrWhiteSpace(metadata.Project.Description) ? metadata.Project.Name : metadata.Project.Description);
+                deploymentProperties.Add(BlobMetadataKeys.PublishDate, DateTime.UtcNow.ToString());
+                StringBuilder sb = new StringBuilder();
+                foreach (var form in metadata.Project.FormDigests)
+                {
+                    if (sb.Length > 0) sb.Append(",");
+                    sb.AppendFormat("{0}({1} page{2})", form.FormName, form.NumberOfPages, form.NumberOfPages == 1 ? "" : "s");
+                }
+                string forms = sb.ToString();
+                deploymentProperties.Add(BlobMetadataKeys.Forms, forms);
             }
-            string forms = sb.ToString();
-            blobMetadataDictionary.Add(BlobMetadataKeys.Forms, forms);
 
-            metadata.ProjectDeploymentProperties = blobMetadataDictionary;
+            metadata.ProjectDeploymentProperties = deploymentProperties;
 
             string metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
 
@@ -277,9 +304,9 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 #endif
             var projectKey = new Guid(metadata.Project.Id).ToString("N");
 
-            DeleteBlob(projectKey);
+            if (deleteBeforeUpload) DeleteBlob(projectKey);
 
-            var isUploadBlobSuccessful = UploadText(metadataWithDigestsJson, projectKey, blobMetadataDictionary);
+            var isUploadBlobSuccessful = UploadText(metadataWithDigestsJson, projectKey, deploymentProperties);
             return isUploadBlobSuccessful;
         }
     }

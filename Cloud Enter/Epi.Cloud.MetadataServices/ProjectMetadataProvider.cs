@@ -39,7 +39,7 @@ namespace Epi.Cloud.MetadataServices
                 {
                     if (DoesCacheNeedToBeRefreshed(Guid.Empty, out _projectGuid))
                     {
-                        var metadata = RefreshCache(Guid.Empty);
+                        var metadata = RefreshCache(_projectGuid);
                     }
                 }
                 return ProjectId;
@@ -186,6 +186,7 @@ namespace Epi.Cloud.MetadataServices
                         var metadataProvider = new MetadataProvider();
                         var mostRecentDeploymentProperties = metadataProvider.GetMostRecentBlobDeploymentPropertiesAsync().Result;
                         cacheIsUpToDate = mostRecentDeploymentProperties != null && cachedDeploymentProperties != null
+                            && mostRecentDeploymentProperties.ContainsKey(BlobMetadataKeys.PublishDate)
                             && mostRecentDeploymentProperties[BlobMetadataKeys.PublishDate] == cachedPublishDate;
                         if (projectId != Guid.Empty)
                         {
@@ -212,6 +213,35 @@ namespace Epi.Cloud.MetadataServices
                     return metadata;
                 }
             }
+        }
+
+        public async Task<bool> UpdateFormModeSettings(string[] formIds, bool isSharable, bool isDraftMode, int dataAccessRuleId)
+        {
+            var metadataProvider = new MetadataProvider();
+            Template metadata = await metadataProvider.RetrieveMetadataFromBlobStorage(ProjectGuid);
+            var formDigests = metadata.Project.FormDigests.Where(fd => formIds.Contains(fd.FormId));
+            var cachedFormDigests = _epiCloudCache.GetFormDigests(ProjectGuid);
+            foreach (var formDigest in formDigests)
+            {
+                formDigest.IsSharable = isSharable;
+                formDigest.IsDraftMode = isDraftMode;
+                formDigest.DataAccessRuleId = dataAccessRuleId;
+                var view = metadata.Project.Views.Single(v => v.ViewId == formDigest.ViewId);
+                view.IsShareable = isSharable;
+                view.IsDraftMode = isDraftMode;
+                view.DataAccessRuleId = dataAccessRuleId;
+                for (int i = 0; i < cachedFormDigests.Length; ++i)
+                {
+                    if (cachedFormDigests[i].FormId == formDigest.FormId)
+                    {
+                        cachedFormDigests[i] = formDigest;
+                        break;
+                    }
+                }
+            }
+            var isSucessful = await metadataProvider.UpdateMetadataInBlobStorage(metadata);
+            isSucessful &= _epiCloudCache.SetFormDigests(ProjectGuid, cachedFormDigests);
+            return isSucessful;
         }
     }
 }

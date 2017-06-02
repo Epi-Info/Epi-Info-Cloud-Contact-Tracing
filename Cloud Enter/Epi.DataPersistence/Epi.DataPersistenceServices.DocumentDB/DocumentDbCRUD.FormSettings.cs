@@ -6,6 +6,7 @@ using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB.FormSettings;
 using Epi.FormMetadata.Constants;
+using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents.Client;
 
 namespace Epi.DataPersistenceServices.DocumentDB
@@ -13,6 +14,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
     public partial class DocumentDbCRUD
     {
         private const string FormSettingsCollectionName = "FormSettings";
+
+        public List<FormSettingsProperties> GetFormSettingsPropertiesList(IEnumerable<string> formIds)
+        {
+            List<FormSettingsProperties> formSettingsPropertiesList = new List<FormSettingsProperties>();
+            foreach (var formId in formIds)
+            {
+                formSettingsPropertiesList.Add(GetFormSettingsProperties(formId));
+            }
+            return formSettingsPropertiesList;
+        }
 
         public FormSettingsProperties GetFormSettingsProperties(string formId)
         {
@@ -61,9 +72,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         private FormSettingsResource SetDefaultFormSettingsProperties(string formId)
         {
-            FieldTypes[] nonQueriableFieldTypes = MetadataAccessor.NonQueriableFieldTypes;
             var responseGridColumnNames = GetFieldDigests(formId)
-                .Where(f => !nonQueriableFieldTypes.Any(t => t == f.FieldType))
+                .Where(f => !FieldDigest.NonDataFieldTypes.Any(t => t == f.FieldType))
                 .Take(5)
                 .Select(f => f.TrueCaseFieldName)
                 .ToList();
@@ -91,6 +101,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
             formSettingsResource.FormSettingsProperties = formSettingsProperties;
             UpdateFormSettingsResource(formSettingsResource);
         }
+
+        public void UpdateFormSettings(IEnumerable<Epi.Common.Core.DataStructures.FormSettings> formSettingsList)
+        {
+            foreach (var formSettings in formSettingsList)
+            {
+                UpdateFormSettings(formSettings);
+            }
+        }
+
+
 
         public void SaveResponseGridColumnNames(string formId, List<ResponseDisplaySettings> responseDisplaySettings)
         {

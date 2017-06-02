@@ -21,6 +21,7 @@ namespace Epi.Cloud.Facades.Interfaces
         List<FormInfoModel> GetFormsInfoModelList(FormsInfoRequest formsInfoRequest);
         SurveyInfoResponse GetChildFormInfo(SurveyInfoRequest SurveyInfoRequest);
         FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest);
+        List<FormSettingResponse> GetFormSettingsList(List<FormSettingRequest> formSettingRequest);
         SurveyAnswerResponse GetFormResponseList(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest surveyAnswerRequest);
         FormSettingResponse SaveSettings(FormSettingRequest formSettingReq);

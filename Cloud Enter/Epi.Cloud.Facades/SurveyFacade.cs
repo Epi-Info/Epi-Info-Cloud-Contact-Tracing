@@ -241,14 +241,28 @@ namespace Epi.Cloud.Facades
             return FormResponseList;
         }
 
+        public List<FormSettingResponse> GetFormSettingsList(List<FormSettingRequest> formSettingRequestList)
+        {
+            List<FormSettingResponse> formSettingResponseList = _formSettingsService.GetFormSettingsList(formSettingRequestList);
+            foreach (var formSettingResponse in formSettingResponseList)
+            {
+                AddColumnDigest(formSettingResponse);
+            }
+            return formSettingResponseList;
+        }
+
         public FormSettingResponse GetFormSettings(FormSettingRequest formSettingRequest)
         {
-            var projectId = formSettingRequest.ProjectId;
-            var formId = formSettingRequest.FormInfo.FormId;
             FormSettingResponse formSettingResponse = _formSettingsService.GetFormSettings(formSettingRequest);
+            return AddColumnDigest(formSettingResponse);
+        }
+
+        private static FormSettingResponse AddColumnDigest(FormSettingResponse formSettingResponse)
+        {
+            var formId = formSettingResponse.FormInfo.FormId;
             var formSetting = formSettingResponse.FormSetting;
-			var metadataAccessor = new MetadataAccessor();
-			var fieldDigests = metadataAccessor.GetFieldDigestsByFieldNames(formId, formSetting.ColumnNameList.Values);
+            var metadataAccessor = new MetadataAccessor();
+            var fieldDigests = metadataAccessor.GetFieldDigestsByFieldNames(formId, formSetting.ColumnNameList.Values);
             var reverseDictionary = formSetting.ColumnNameList.Select(t => new { t.Key, t.Value }).ToDictionary(t => t.Value, t => t.Key);
             formSetting.ColumnDigestList = fieldDigests.Select(t => new { Key = reverseDictionary[t.TrueCaseFieldName], Digest = t }).ToDictionary(t => t.Key, t => t.Digest);
 

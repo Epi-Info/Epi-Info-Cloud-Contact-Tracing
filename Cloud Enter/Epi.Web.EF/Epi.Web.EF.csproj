@@ -66,6 +66,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Epi.Web.Model.edmx</DependentUpon>
     </Compile>
+    <Compile Include="FormSettingsPersistenceFacade.cs" />
     <Compile Include="Mapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SurveyResponse.cs" />
@@ -96,6 +97,10 @@
     <ProjectReference Include="..\Epi.Cloud.RedisCacheServices\Epi.Cloud.CacheServices.csproj">
       <Project>{77423ea0-9f83-4e77-ad33-7483c36062ee}</Project>
       <Name>Epi.Cloud.CacheServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Epi.Common.Core\Epi.Common.Core.csproj">
+      <Project>{7555d754-575e-4988-bdd4-f6ad47cfb9d9}</Project>
+      <Name>Epi.Common.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Common\Epi.Common.csproj">
       <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>

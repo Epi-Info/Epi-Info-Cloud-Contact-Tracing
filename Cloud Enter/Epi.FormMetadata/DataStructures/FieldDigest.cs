@@ -10,6 +10,17 @@ namespace Epi.FormMetadata.DataStructures
         {
         }
 
+        public static readonly FieldTypes[] NonDataFieldTypes = new FieldTypes[]
+        {
+            FieldTypes.Label,           //  2
+            FieldTypes.UppercaseText,   //  3
+            FieldTypes.Multiline,       //  4
+            FieldTypes.CommandButton,   // 13
+            FieldTypes.Relate,          // 20
+            FieldTypes.Group            // 21
+        };
+
+
         public FieldDigest(IAbridgedFieldInfo field, PageDigest pageDigest)
         {
             Field = field;

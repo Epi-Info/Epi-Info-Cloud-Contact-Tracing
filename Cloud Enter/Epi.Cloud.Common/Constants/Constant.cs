@@ -4,6 +4,8 @@ namespace Epi.Cloud.Common.Constants
 {
     public static class Constant
     {
+        public static readonly int MaxGridColumns = 5;
+
 		public static List<string> MetadataColumnNames()
 		{
 			List<string> columns = new List<string>();

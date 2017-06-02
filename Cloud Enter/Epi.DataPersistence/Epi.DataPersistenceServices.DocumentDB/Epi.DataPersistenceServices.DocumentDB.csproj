@@ -105,6 +105,10 @@
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
+      <Project>{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}</Project>
+      <Name>Epi.Cloud.Interfaces</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.Resources\Epi.Cloud.Resources.csproj">
       <Project>{96BCC2AC-31D3-49EE-902B-09AE7099BCBD}</Project>
       <Name>Epi.Cloud.Resources</Name>
