@@ -14,10 +14,10 @@ namespace Epi.Cloud.DataConsistencyServices
 			_surveyPersistenceFacade = surveyPersistenceFacade;
 		}
 
-		public FormResponseDetail GetHierarchialResponse(IResponseContext responceContext)
+		public FormResponseDetail GetHierarchicalResponse(IResponseContext responceContext)
 		{
-			var hierarchialFormResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(responceContext);
-			return hierarchialFormResponseDetail;
+			var hierarchicalFormResponseDetail = _surveyPersistenceFacade.GetHierarchicalResponsesByResponseId(responceContext);
+			return hierarchicalFormResponseDetail;
 		}
 	}
 }

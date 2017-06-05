@@ -212,18 +212,18 @@ namespace Epi.PersistenceServices.DocumentDB
 
         public FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext)
 		{
-			var response = _formResponseCRUD.GetHierarchialResponseListByResponseId(responseContext);
+			var response = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext);
 			var formResponseDetail = response[0].ToFormResponseDetail();
 			return formResponseDetail;
 		}
 		#endregion
 
-		#region Get Hierarchial Responses for DataConsisitencyServiceAPI
-		public FormResponseDetail GetHierarchialResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)
+		#region Get Hierarchical Responses for DataConsisitencyServiceAPI
+		public FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)
 		{
-			var hierarchicalDocumentResponseProperties = _formResponseCRUD.GetHierarchialResponseListByResponseId(responseContext, includeDeletedRecords);
-			var hierarchialFormResponseDetail = hierarchicalDocumentResponseProperties.ToHierarchialFormResponseDetail();
-			return hierarchialFormResponseDetail;
+			var hierarchicalDocumentResponseProperties = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext, includeDeletedRecords);
+			var hierarchicalFormResponseDetail = hierarchicalDocumentResponseProperties.ToHierarchicalFormResponseDetail();
+			return hierarchicalFormResponseDetail;
 		}
 		#endregion
 
@@ -236,7 +236,7 @@ namespace Epi.PersistenceServices.DocumentDB
 				try
 				{
 					var serviceBusCRUD = new ServiceBusCRUD();
-					var hierarchialResponse = GetHierarchialResponsesByResponseId(responseContext,includeDeletedRecords: true);
+					var hierarchicalResponse = GetHierarchicalResponsesByResponseId(responseContext,includeDeletedRecords: true);
                     var messageHeader = string.Format("{0},{1},{2}", responseContext.RootFormName, responseContext.RootFormId, responseContext.RootResponseId);
 					switch (reasonForStatusChange)
 					{
@@ -244,8 +244,8 @@ namespace Epi.PersistenceServices.DocumentDB
 						case RecordStatusChangeReason.DeleteResponse:
 
                             //send notification to ServiceBus
-							serviceBusCRUD.SendMessagesToTopic(hierarchialResponse);
-							//ConsistencyHack(hierarchialResponse);
+							serviceBusCRUD.SendMessagesToTopic(hierarchicalResponse);
+							//ConsistencyHack(hierarchicalResponse);
 							break;
 					}
 				}

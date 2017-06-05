@@ -76,7 +76,7 @@ namespace Epi.Cloud.Common.Metadata
             {
                 lock (StaticCache.Gate)
                 {
-                    var formIds = GetFormIdHeiarchyByRootFormId(formId);
+                    var formIds = GetFormIdHierarchyByRootFormId(formId);
                     if (formIds.Length > 0)
                     {
                         var isSuccessful = ProjectMetadataProvider.UpdateFormModeSettings(formIds, isSharable, isDraftMode, dataAccessRuleId).Result;
@@ -112,6 +112,13 @@ namespace Epi.Cloud.Common.Metadata
                     StaticCache.ProjectMetadataProvider = value;
                 }
             }
+        }
+
+        public FormDigest[] GetFormDigestsInRootFormHierarchy(string formId)
+        {
+            var formIdHierarchy = GetFormIdHierarchyByRootFormId(GetRootFormId(formId));
+            var formDigests = FormDigests.Where(fd => formIdHierarchy.Contains(fd.FormId)).ToArray();
+            return formDigests;
         }
 
         public FormDigest[] FormDigests
@@ -249,16 +256,16 @@ namespace Epi.Cloud.Common.Metadata
             return formDigest != null ? formDigest.FormName : null;
         }
 
-        public string[] GetFormIdHeiarchyByRootFormId(string rootFormId)
+        public string[] GetFormIdHierarchyByRootFormId(string rootFormId)
         {
-            List<string> formIdHeiarchy;
-            return StaticCache.AllFormIdsByRootFormId.TryGetValue(rootFormId, out formIdHeiarchy) ? formIdHeiarchy.ToArray() : new string[0];
+            List<string> formIdHierarchy;
+            return StaticCache.AllFormIdsByRootFormId.TryGetValue(rootFormId, out formIdHierarchy) ? formIdHierarchy.ToArray() : new string[0];
         }
 
-        public string[] GetFormNameHeiarchyByRootFormName(string rootFormName)
+        public string[] GetFormNameHierarchyByRootFormName(string rootFormName)
         {
-            List<string> formNameHeiarchy;
-            return StaticCache.AllFormNamesByRootFormName.TryGetValue(rootFormName, out formNameHeiarchy) ? formNameHeiarchy.ToArray() : new string[0];
+            List<string> formNameHierarchy;
+            return StaticCache.AllFormNamesByRootFormName.TryGetValue(rootFormName, out formNameHierarchy) ? formNameHierarchy.ToArray() : new string[0];
         }
 
         public Dictionary<int, Page> GetAllPageMetadatasByFormId(string formId)

@@ -102,7 +102,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
 
-                FormResponseDetail hierarchialFormResponseDetail = null;
+                FormResponseDetail hierarchicalFormResponseDetail = null;
 
                 var formResponseResource = ReadRootResponseResource(responseContext, false);
                 if (formResponseResource != null)
@@ -116,7 +116,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
                         formResponseProperties.RecStatus = RecordStatus.Deleted;
 
-                        hierarchialFormResponseDetail = formResponseProperties.ToHierarchialFormResponseDetail(formResponseResource);
+                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(formResponseResource);
 
                         if (deleteType == RecordStatus.PhysicalDelete)
                         {
@@ -130,10 +130,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         // only logically delete child responses
                         isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
 
-                        hierarchialFormResponseDetail = formResponseProperties.ToHierarchialFormResponseDetail(formResponseResource);
+                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(formResponseResource);
                     }
 
-                    // TODO: send hierarchialFormResponseDetail to consistency service 
+                    // TODO: send hierarchicalFormResponseDetail to consistency service 
 
                     if (deleteType != RecordStatus.PhysicalDelete)
                     {
@@ -406,16 +406,16 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
         #endregion Get All Responses With FieldNames
 
-        #region Get hierarchial responses by ResponseId
+        #region Get hierarchical responses by ResponseId
         /// <summary>
-        /// GetHierarchialResponseListByResponseId
+        /// GetHierarchicalResponseListByResponseId
         /// </summary>
         /// <param name="responseId"></param>
         /// <param name="includeDeletedRecords"></param>
         /// <param name="excludeInProcessRecords"></param>
         /// <returns></returns>
         /// <remarks> Used by the DataConsisitencyServiceAPI</remarks>
-        public List<FormResponseProperties> GetHierarchialResponseListByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
+        public List<FormResponseProperties> GetHierarchicalResponseListByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false, bool excludeInProcessRecords = false)
         {
             var rootResponseResource = ReadRootResponseResource(responseContext, includeDeletedRecords);
             var rootformResponseProperties = rootResponseResource.FormResponseProperties;
@@ -436,7 +436,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return formResponsePropertiesList;
         }
 
-        #endregion Get hierarchial responses by ResponseId
+        #endregion Get hierarchical responses by ResponseId
 
         public bool DoChildResponsesExist(IResponseContext responseContext, bool includeDeletedRecords = false)
         {

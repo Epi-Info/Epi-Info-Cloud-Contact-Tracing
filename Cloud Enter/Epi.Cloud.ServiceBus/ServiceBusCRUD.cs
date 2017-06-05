@@ -67,7 +67,7 @@ namespace Epi.Cloud.ServiceBus
         #endregion
 
         #region Send message to Topic
-        public bool SendMessagesToTopic(FormResponseDetail hierarchialResponse)
+        public bool SendMessagesToTopic(FormResponseDetail hierarchicalResponse)
         {
             //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
             //var connectionString = ConfigurationHelper.GetConnectionStringByResourceKey(ResourceKey);
@@ -76,15 +76,15 @@ namespace Epi.Cloud.ServiceBus
             CreateTopic();
 
             var responseProperties = new Dictionary<string, object>();
-            responseProperties.Add("ResponseId", hierarchialResponse.RootResponseId);
-            responseProperties.Add("FormId", hierarchialResponse.RootFormId);
-            responseProperties.Add("FormName", hierarchialResponse.RootFormName);
+            responseProperties.Add("ResponseId", hierarchicalResponse.RootResponseId);
+            responseProperties.Add("FormId", hierarchicalResponse.RootFormId);
+            responseProperties.Add("FormName", hierarchicalResponse.RootFormName);
 
-            var hierarchialResponseJson = JsonConvert.SerializeObject(hierarchialResponse, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
+            var hierarchicalResponseJson = JsonConvert.SerializeObject(hierarchicalResponse, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
 
 
             //Send message
-            SendMessage(hierarchialResponseJson, responseProperties);
+            SendMessage(hierarchicalResponseJson, responseProperties);
 
             return false;
 

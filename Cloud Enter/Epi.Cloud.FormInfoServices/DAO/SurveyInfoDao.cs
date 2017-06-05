@@ -465,7 +465,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             try
             {
                 var metadatAccessor = new MetadataAccessor(rootFormId);
-                var formDigests = metadatAccessor.FormDigests;
+                var formDigests = metadatAccessor.GetFormDigestsInRootFormHierarchy(rootFormId);
                 result = formDigests.ToSurveyInfoBOList();
             }
             catch (Exception ex)

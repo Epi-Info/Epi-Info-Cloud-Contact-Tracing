@@ -18,12 +18,12 @@ namespace Epi.DataPersistence.Extensions
         }
 
         /// <summary>
-        /// ToHierarchialFormResponseDetail
+        /// ToHierarchicalFormResponseDetail
         /// </summary>
         /// <param name="formResponseProperties"></param>
         /// <param name="formResponseResource"></param>
         /// <returns></returns>
-        public static FormResponseDetail ToHierarchialFormResponseDetail(this FormResponseProperties formResponseProperties, FormResponseResource formResponseResource)
+        public static FormResponseDetail ToHierarchicalFormResponseDetail(this FormResponseProperties formResponseProperties, FormResponseResource formResponseResource)
         {
             FormResponseDetail formResponseDetail = formResponseProperties.ToFormResponseDetail();
             List<FormResponseDetail> flattened = formResponseDetail.FlattenHierarchy();
@@ -148,7 +148,7 @@ namespace Epi.DataPersistence.Extensions
             return formResponseDetail;
         }
 
-        public static FormResponseDetail ToHierarchialFormResponseDetail(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
+        public static FormResponseDetail ToHierarchicalFormResponseDetail(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
         {
             FormResponseDetail formResponseDetail = null;
             if (formResponsePropertiesList != null)

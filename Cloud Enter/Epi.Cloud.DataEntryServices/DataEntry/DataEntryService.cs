@@ -414,7 +414,8 @@ namespace Epi.Cloud.DataEntryServices
                 var rootFormId = formsHierarchyRequest.SurveyInfo.FormId;
                 var metadatAccessor = new MetadataAccessor();
                 var viewId = metadatAccessor.GetFormDigest(rootFormId).ViewId;
-                var formDigests = metadatAccessor.FormDigests;
+                var formIdHierarchy = metadatAccessor.GetFormIdHierarchyByRootFormId(rootFormId);
+                var formDigests = metadatAccessor.FormDigests.Where(fd => formIdHierarchy.Contains(fd.FormId)).ToArray();
                 var formInfoDTO = formsHierarchyRequest.SurveyInfo;
                 var surveyInfoBO = formInfoDTO.ToSurveyInfoBO(viewId);
                 var formsHierarchyBOList = formDigests.ToFormsHierarchyBOList(surveyInfoBO);

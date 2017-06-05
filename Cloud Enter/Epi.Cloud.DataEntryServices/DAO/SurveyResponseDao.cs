@@ -1112,7 +1112,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             List<string> list = new List<string>();
             try
             {
-                var formResponseDetail = _surveyPersistenceFacade.GetHierarchialResponsesByResponseId(responceContext);
+                var formResponseDetail = _surveyPersistenceFacade.GetHierarchicalResponsesByResponseId(responceContext);
 
                 //var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
                 //var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);

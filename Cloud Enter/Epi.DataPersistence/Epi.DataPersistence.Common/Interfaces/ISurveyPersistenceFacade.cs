@@ -29,7 +29,7 @@ namespace Epi.DataPersistence.Common.Interfaces
         //IEnumerable<SurveyResponse> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
         IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
 
-        FormResponseDetail GetHierarchialResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
+        FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
 
         void NotifyConsistencyService(IResponseContext responceContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange);
     }
