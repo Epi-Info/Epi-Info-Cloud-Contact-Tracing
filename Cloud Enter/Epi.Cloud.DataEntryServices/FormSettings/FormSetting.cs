@@ -39,7 +39,7 @@ namespace Epi.Web.BLL
         public string SaveSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
         {
             var formId = formSettingDTO.FormId;
-            var isSharable = formSettingDTO.IsShareable;
+            var isShareable = formSettingDTO.IsShareable;
             var dataAccessRuleId = formSettingDTO.SelectedDataAccessRule;
 
             string message = "";
@@ -72,7 +72,7 @@ namespace Epi.Web.BLL
 
                 message = "Success";
 
-                UpdateMetadataIfNecessary(formId, isDraftMode, isSharable, dataAccessRuleId);
+                UpdateMetadataIfNecessary(formId, isDraftMode, isShareable, dataAccessRuleId);
 
             }
             catch (Exception Ex)

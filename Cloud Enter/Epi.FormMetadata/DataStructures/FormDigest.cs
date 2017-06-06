@@ -52,7 +52,7 @@ namespace Epi.FormMetadata.DataStructures
             }
         }
 
-        public bool IsSharable { get; set; }
+        public bool IsShareable { get; set; }
         public int DataAccessRuleId { get; set; }
         public bool IsDraftMode { get; set; }
 

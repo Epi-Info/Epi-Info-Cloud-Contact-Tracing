@@ -68,10 +68,10 @@ namespace Epi.Cloud.Common.Metadata
 
         public string CurrentFormId { get { return _formId; } set { _formId = value; } }
 
-        public bool UpdateMetadataIfNecessary(string formId, bool isDraftMode, bool isSharable, int dataAccessRuleId)
+        public bool UpdateMetadataIfNecessary(string formId, bool isDraftMode, bool isShareable, int dataAccessRuleId)
         {
             var formDigest = GetFormDigest(formId);
-            var mustUpdate = formDigest.IsSharable != isSharable || formDigest.IsDraftMode != isDraftMode || formDigest.DataAccessRuleId != dataAccessRuleId;
+            var mustUpdate = formDigest.IsShareable != isShareable || formDigest.IsDraftMode != isDraftMode || formDigest.DataAccessRuleId != dataAccessRuleId;
             if (mustUpdate)
             {
                 lock (StaticCache.Gate)
@@ -79,7 +79,7 @@ namespace Epi.Cloud.Common.Metadata
                     var formIds = GetFormIdHierarchyByRootFormId(formId);
                     if (formIds.Length > 0)
                     {
-                        var isSuccessful = ProjectMetadataProvider.UpdateFormModeSettings(formIds, isSharable, isDraftMode, dataAccessRuleId).Result;
+                        var isSuccessful = ProjectMetadataProvider.UpdateFormModeSettings(formIds, isShareable, isDraftMode, dataAccessRuleId).Result;
                         if (isSuccessful)
                         {
                             StaticCache.FormDigests = null;

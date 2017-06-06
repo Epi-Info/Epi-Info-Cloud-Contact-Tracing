@@ -34,7 +34,7 @@ namespace Epi.FormMetadata.Extensions
 
 					CheckCode = view.CheckCode,
 
-                    IsSharable = view.IsShareable,
+                    IsShareable = view.IsShareable,
 					DataAccessRuleId = view.DataAccessRuleId,
 					IsDraftMode = view.IsDraftMode
 				};

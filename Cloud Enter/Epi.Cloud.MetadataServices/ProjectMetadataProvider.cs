@@ -215,7 +215,7 @@ namespace Epi.Cloud.MetadataServices
             }
         }
 
-        public async Task<bool> UpdateFormModeSettings(string[] formIds, bool isSharable, bool isDraftMode, int dataAccessRuleId)
+        public async Task<bool> UpdateFormModeSettings(string[] formIds, bool isShareable, bool isDraftMode, int dataAccessRuleId)
         {
             var metadataProvider = new MetadataProvider();
             Template metadata = await metadataProvider.RetrieveMetadataFromBlobStorage(ProjectGuid);
@@ -223,11 +223,11 @@ namespace Epi.Cloud.MetadataServices
             var cachedFormDigests = _epiCloudCache.GetFormDigests(ProjectGuid);
             foreach (var formDigest in formDigests)
             {
-                formDigest.IsSharable = isSharable;
+                formDigest.IsShareable = isShareable;
                 formDigest.IsDraftMode = isDraftMode;
                 formDigest.DataAccessRuleId = dataAccessRuleId;
                 var view = metadata.Project.Views.Single(v => v.ViewId == formDigest.ViewId);
-                view.IsShareable = isSharable;
+                view.IsShareable = isShareable;
                 view.IsDraftMode = isDraftMode;
                 view.DataAccessRuleId = dataAccessRuleId;
                 for (int i = 0; i < cachedFormDigests.Length; ++i)
