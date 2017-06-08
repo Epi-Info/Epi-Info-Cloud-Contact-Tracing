@@ -337,7 +337,7 @@ namespace Epi.Web.MVC.Controllers
         public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
         {
             page = page.HasValue ? page.Value : 1;
-
+            sortField = sortField.ToLower();
             bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
             //Code added to retain Search Starts
@@ -346,7 +346,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 Session[SessionKeys.SortOrder] = "";
                 Session[SessionKeys.SortField] = "";
-			}
+            }
 
             if (Session[SessionKeys.ProjectId] == null)
             {
@@ -371,23 +371,23 @@ namespace Epi.Web.MVC.Controllers
                     sortField = Session[SessionKeys.SortField].ToString();
                 }
 
-				Session[SessionKeys.SortOrder] = sort;
-				Session[SessionKeys.SortField] = sortField;
-				Session[SessionKeys.PageNumber] = page.Value;
-			}
-			else
-			{
+                Session[SessionKeys.SortOrder] = sort;
+                Session[SessionKeys.SortField] = sortField;
+                Session[SessionKeys.PageNumber] = page.Value;
+            }
+            else
+            {
                 ResponseContext responseContext = new ResponseContext { FormId = formId, RootFormId = formId };
                 Session[SessionKeys.ResponseContext] = responseContext;
 
-				Session.Remove(SessionKeys.SortOrder);
-				Session.Remove(SessionKeys.SortField);
-				Session[SessionKeys.RootFormId] = formId;
-				Session[SessionKeys.PageNumber] = page.Value;
+                Session.Remove(SessionKeys.SortOrder);
+                Session.Remove(SessionKeys.SortField);
+                Session[SessionKeys.RootFormId] = formId;
+                Session[SessionKeys.PageNumber] = page.Value;
 
-			}
+            }
 
-			//Code added to retain Search Ends. 
+            //Code added to retain Search Ends. 
 
             var formResponseInfoModel = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
 
@@ -401,14 +401,14 @@ namespace Epi.Web.MVC.Controllers
             }
         }
 
-		[HttpPost]
-		[AcceptVerbs(HttpVerbs.Post)]
-		public ActionResult ResetSort(string formId)
-		{
-			Session[SessionKeys.SortOrder] = null;
-			Session[SessionKeys.SortField] = null;
-			return Json(true);
-		}
+        [HttpPost]
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ResetSort(string formId)
+        {
+            Session[SessionKeys.SortOrder] = null;
+            Session[SessionKeys.SortField] = null;
+            return Json(true);
+        }
 
         /// <summary>
         /// Following Action method takes ResponseId as a parameter and deletes the response.
@@ -560,7 +560,7 @@ namespace Epi.Web.MVC.Controllers
                 {
                     foreach (var column in _columns)
                     {
-                        if (column.Value == sortfield)
+                        if (column.Value.ToLower() == sortfield)
                         {
                             sortFieldcolumn = "Column" + column.Key;
                         }
@@ -571,7 +571,7 @@ namespace Epi.Web.MVC.Controllers
                 sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
                 {
-                    if(sort != "ASC")
+                    if (sort != "ASC")
                     {
                         switch (sortFieldcolumn)
                         {
