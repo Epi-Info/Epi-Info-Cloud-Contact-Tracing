@@ -11,7 +11,7 @@ namespace Epi.DataPersistence.Common.Interfaces
         void UpdateFormSettings(FormSettings formSettings);
         void UpdateFormSettings(IEnumerable<FormSettings> formSettingsList);
 
-        List<ResponseDisplaySettings> GetResponseDisplaySettings(string formId);
-        void UpdateResponseDisplaySettings(string formId, List<ResponseDisplaySettings> responseDisplaySettings);
+        List<ResponseGridColumnSettings> GetResponseDisplaySettings(string formId);
+        void UpdateResponseDisplaySettings(string formId, List<ResponseGridColumnSettings> responseDisplaySettings);
     }
 }

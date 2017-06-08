@@ -15,7 +15,7 @@ namespace Epi.Cloud.Common.Extensions
                 AvailableOrgList = formSettingBO.AvailableOrgList,
                 SelectedOrgList = formSettingBO.SelectedOrgList,
 
-                ColumnNameList = formSettingBO.ColumnNameList,
+                ColumnNameList = formSettingBO.ResponseGridColumnNameList,
                 FormControlNameList = formSettingBO.FormControlNameList,
 
                 SelectedDataAccessRule = formSettingBO.SelectedDataAccessRule,

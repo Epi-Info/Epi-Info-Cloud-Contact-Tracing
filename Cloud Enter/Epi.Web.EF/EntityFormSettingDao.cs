@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.EF
 {
@@ -99,8 +98,6 @@ namespace Epi.Web.EF
                 throw (ex);
             }
             return formSettingBO;
-
-
         }
 
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
@@ -123,14 +120,13 @@ namespace Epi.Web.EF
 
                     context.SaveChanges();
                 }
-
             }
             catch (Exception ex)
             {
                 throw (ex);
             }
-
         }
+
         public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
         {
             Guid id = new Guid(formId);
@@ -146,48 +142,36 @@ namespace Epi.Web.EF
 
                     foreach (User user in users)
                     {
-
                         response.Users.Remove(user);
-
                     }
                     context.SaveChanges();
-
-
 
                     //insert new users
                     foreach (var item in formSettingBO.AssignedUserList)
                     {
                         User User = context.Users.FirstOrDefault(x => x.UserName == item.Value);
                         response.Users.Add(User);
-
                     }
                     context.SaveChanges();
-
-
 
                     //Remove old Orgs
+                    var orgHashSet = new HashSet<int>(response.Organizations.Select(x => x.OrganizationId));
+                    var orgs = context.Organizations.Where(t => orgHashSet.Contains(t.OrganizationId)).ToList();
 
-                    var _Org = new HashSet<int>(response.Organizations.Select(x => x.OrganizationId));
-                    var Orgs = context.Organizations.Where(t => _Org.Contains(t.OrganizationId)).ToList();
-
-                    foreach (Organization org in Orgs)
+                    foreach (Organization org in orgs)
                     {
-
                         response.Organizations.Remove(org);
-
                     }
                     context.SaveChanges();
 
-
-
                     //insert new Orgs
-                    List<User> OrgAdmis = new List<User>();
+                    List<User> orgAdmins = new List<User>();
 
                     foreach (var item in formSettingBO.SelectedOrgList)
                     {
-                        int OrgId = int.Parse(item.Value);
-                        Organization Org = context.Organizations.FirstOrDefault(x => x.OrganizationId == OrgId);
-                        response.Organizations.Add(Org);
+                        int orgId = int.Parse(item.Value);
+                        Organization org = context.Organizations.FirstOrDefault(x => x.OrganizationId == orgId);
+                        response.Organizations.Add(org);
                     }
 
                     context.SaveChanges();
@@ -316,12 +300,8 @@ namespace Epi.Web.EF
         }
 
 
-        // vvvvvvvvvvvvvvvvvvvvvvvvvvv Implemented in FormInfoServices/DAO/FormSettingDao vvvvvvvvvvvvvvvvvvvvvvvvvvv //
-
         public void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId)
         {
-            throw new NotImplementedException("Epi.Web.EF.UpdateColumnNames. Implemented in Epi.Cloud.FormInfoServices/DAO/FormSettingDao");
-#if false
             Guid Id = new Guid(FormId);
             try
             {
@@ -338,7 +318,7 @@ namespace Epi.Web.EF
 
                     //insert new columns
                     ResponseDisplaySetting ResponseDisplaySettingEntity = new ResponseDisplaySetting();
-                    foreach (var item in FormSettingBO.ColumnNameList)
+                    foreach (var item in FormSettingBO.ResponseGridColumnNameList)
                     {
 
                         ResponseDisplaySettingEntity = Mapper.ToColumnName(item, Id);
@@ -352,13 +332,10 @@ namespace Epi.Web.EF
             {
                 throw (ex);
             }
-#endif
         }
 
         public FormSettingBO GetFormSettings()
         {
-            throw new NotImplementedException("Epi.Web.EF.GetFormSettings. Implemented in Epi.Cloud.FormInfoServices/DAO/FormSettingDao.");
-#if false
             FormSettingBO formSettingBO = new FormSettingBO();
             Dictionary<int, string> dataAccessRuleIds = new Dictionary<int, string>();
             Dictionary<string, string> dataAccessRuleDescription = new Dictionary<string, string>();
@@ -388,7 +365,6 @@ namespace Epi.Web.EF
                 }
             }
             return formSettingBO;
-#endif
         }
 
         public void DeleteDraftRecords(string FormId)

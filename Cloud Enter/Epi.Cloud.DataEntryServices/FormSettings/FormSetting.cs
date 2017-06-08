@@ -5,6 +5,7 @@ using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
@@ -14,24 +15,24 @@ namespace Epi.Web.BLL
 {
     public class FormSetting : MetadataAccessor
     {
-        private readonly IFormSettingDao _formSettingDao;
+        private readonly IFormSettingFacade _formSettingFacade;
         private readonly IUserDao _userDao;
 
-        public FormSetting(IFormSettingDao formSettingDao, IUserDao userDao)
+        public FormSetting(IFormSettingFacade formSettingFacade, IUserDao userDao)
         {
-            _formSettingDao = formSettingDao;
+            _formSettingFacade = formSettingFacade;
             _userDao = userDao;
         }
 
         public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId = -1)
         {
-            List<FormSettingBO> result = _formSettingDao.GetFormSettingsList(formIds, currentOrgId);
+            List<FormSettingBO> result = _formSettingFacade.GetFormSettingsList(formIds, currentOrgId);
             return result;
         }
 
         public FormSettingBO GetFormSettings(string formId, int currentOrgId = -1)
         {
-            FormSettingBO result = _formSettingDao.GetFormSettings(formId, currentOrgId);
+            FormSettingBO result = _formSettingFacade.GetFormSettings(formId, currentOrgId);
 
             return result;
         }
@@ -50,14 +51,14 @@ namespace Epi.Web.BLL
             try
             {
                 List<UserBO> formCurrentUsersList = _userDao.GetUserByFormId(formSettingDTO.FormId);
-                Dictionary<int, string> assignedOrgAdminList = _formSettingDao.GetOrgAdmins(formSettingDTO.SelectedOrgList);// about to share with
-                List<UserBO> CurrentOrgAdminList = _formSettingDao.GetOrgAdminsByFormId(formSettingDTO.FormId);// shared with 
-                _formSettingDao.UpdateSettingsList(formSettingBO, formSettingDTO.FormId);
+                Dictionary<int, string> assignedOrgAdminList = _formSettingFacade.GetOrgAdmins(formSettingDTO.SelectedOrgList);// about to share with
+                List<UserBO> CurrentOrgAdminList = _formSettingFacade.GetOrgAdminsByFormId(formSettingDTO.FormId);// shared with 
+                _formSettingFacade.UpdateSettingsList(formSettingBO, formSettingDTO.FormId);
 
                 // Clear all Draft records
                 if (formSettingDTO.DeleteDraftData)
                 {
-                    _formSettingDao.DeleteDraftRecords(formSettingDTO.FormId);
+                    _formSettingFacade.DeleteDraftRecords(formSettingDTO.FormId);
                 }
 
                 List<UserBO> AdminList = _userDao.GetAdminsBySelectedOrgs(formSettingBO, formSettingDTO.FormId);
@@ -91,17 +92,17 @@ namespace Epi.Web.BLL
             var dataAccessRuleId = formSettingDTO.SelectedDataAccessRule;
 
             FormSettingBO formSettingBO = new FormSettingBO { FormId = formSettingDTO.FormId };
-            formSettingBO.ColumnNameList = formSettingDTO.ColumnNameList;
+            formSettingBO.ResponseGridColumnNameList = formSettingDTO.ColumnNameList;
             FormInfoBO formInfoBO = new FormInfoBO();
             formInfoBO.FormId = formId;
             formInfoBO.IsDraftMode = isDraftMode;
             formInfoBO.IsShareable = isShareable;
             formInfoBO.DataAccesRuleId = dataAccessRuleId;
-            _formSettingDao.UpdateColumnNames(formSettingBO, formSettingDTO.FormId);
-            _formSettingDao.UpdateFormMode(formInfoBO, formSettingBO);
+            _formSettingFacade.UpdateColumnNames(formSettingBO, formSettingDTO.FormId);
+            _formSettingFacade.UpdateFormMode(formInfoBO, formSettingBO);
             if (formSettingDTO.IsDisabled)
             {
-                _formSettingDao.SoftDeleteForm(formSettingDTO.FormId);
+                _formSettingFacade.SoftDeleteForm(formSettingDTO.FormId);
             }
         }
 

@@ -219,19 +219,19 @@ namespace Epi.DataPersistence.Extensions
             formSettingsProperties.DataAccessRuleId = formSettings.DataAccessRuleId;
             if (formSettings.ResponseDisplaySettings != null && formSettings.ResponseDisplaySettings.Count > 0)
             {
-                formSettingsProperties.ResponseGridColumnNames = formSettings.ResponseDisplaySettings.Select(r => r.ColumnName).ToList();
+                formSettingsProperties.ColumnNames = formSettings.ResponseDisplaySettings.Select(r => r.ColumnName).ToList();
             }
             return formSettingsProperties;
         }
 
-        public static List<ResponseDisplaySettings> ToResponseDisplaySettingsList(this FormSettingsProperties formSettingsProperties)
+        public static List<ResponseGridColumnSettings> ToResponseDisplaySettingsList(this FormSettingsProperties formSettingsProperties)
         {
-            List<ResponseDisplaySettings> responseDisplaySettingsList = new List<ResponseDisplaySettings>();
+            List<ResponseGridColumnSettings> responseDisplaySettingsList = new List<ResponseGridColumnSettings>();
             int sortOrder = 0;
-            foreach (var columnName in formSettingsProperties.ResponseGridColumnNames)
+            foreach (var columnName in formSettingsProperties.ColumnNames)
             {
                 responseDisplaySettingsList.Add(
-                 new ResponseDisplaySettings
+                 new ResponseGridColumnSettings
                  {
                      FormId = formSettingsProperties.FormId,
                      ColumnName = columnName,
@@ -242,7 +242,7 @@ namespace Epi.DataPersistence.Extensions
         }
 
 
-        public static List<string> ToResponseDisplaySettingsList(this List<ResponseDisplaySettings> responseDisplaySettingsList)
+        public static List<string> ToResponseDisplaySettingsList(this List<ResponseGridColumnSettings> responseDisplaySettingsList)
         {
             responseDisplaySettingsList = responseDisplaySettingsList.OrderBy(s => s.SortOrder).ToList();
             var responseDisplaySettingsPropertiesList = responseDisplaySettingsList.Select(s => s.ColumnName).ToList();

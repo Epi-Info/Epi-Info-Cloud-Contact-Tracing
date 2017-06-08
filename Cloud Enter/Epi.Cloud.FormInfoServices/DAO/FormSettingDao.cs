@@ -15,13 +15,15 @@ using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.SurveyInfoServices.DAO
 {
-    public class FormSettingDao : MetadataAccessor, IFormSettingDao
+    public class FormSettingDao : IFormSettingDao
     {
         private readonly IFormSettingsPersistenceFacade _formSettingsPersistenceFacade;
         private readonly IFormSettingDao_EF _formSettingDao_EF;
+        private readonly MetadataAccessor _metadataAccessor;
 
         public FormSettingDao(IFormSettingsPersistenceFacade formSettingsPersistenceFacade)
         {
+            _metadataAccessor = new MetadataAccessor();
             _formSettingsPersistenceFacade = formSettingsPersistenceFacade;
             _formSettingDao_EF = DependencyHelper.GetService<IFormSettingDao_EF>();
         }
@@ -33,7 +35,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             foreach (var formSettingBO in formSettingBOList)
             {
                 int i = 1;
-                formSettingBO.FormControlNameList = GetAllColumnNames(formSettingBO.FormId).ToDictionary(k => i++, v => v);
+                formSettingBO.FormControlNameList = _metadataAccessor.GetAllColumnNames(formSettingBO.FormId).ToDictionary(k => i++, v => v);
             }
 
             GetDataAccessRules(formSettingBOList);
@@ -52,7 +54,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             {
                 formSettingBO = _formSettingDao_EF.GetFormSettings(formId, currentOrgId);
                 int i = 1;
-                formSettingBO.FormControlNameList = GetAllColumnNames(formId).ToDictionary(k => i++, v => v);
+                formSettingBO.FormControlNameList = _metadataAccessor.GetAllColumnNames(formId).ToDictionary(k => i++, v => v);
                 formSettingBO = GetDataAccessRules(formSettingBO);
                 formSettingBO = _formSettingsPersistenceFacade.GetFormSettings(formId).ToFormSettingBO(formSettingBO);
             }
@@ -78,23 +80,18 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             return formSettingBO;
         }
 
-        public List<string> GetAllColumnNames(string FormId)
+        public List<string> GetAllColumnNames(string formId)
         {
-            var columnNameList = GetFieldDigests(FormId)
-                .Where(f => !FieldDigest.NonDataFieldTypes.Any(t => f.FieldType == t))
-                .Select(f => f.TrueCaseFieldName)
-                .OrderBy(n => n).ToList();
-
-            return columnNameList;
+            return _metadataAccessor.GetAllColumnNames(formId);
         }
 
         public void UpdateColumnNames(FormSettingBO formSettingBO, string formId)
         {
-            var responseDisplaySettingsList = formSettingBO.ColumnNameList
-                .Select(n => new ResponseDisplaySettings { ColumnName = n.Value, SortOrder = n.Key, FormId = formId })
+            var responseGridColumnSettingsList = formSettingBO.ResponseGridColumnNameList
+                .Select(n => new ResponseGridColumnSettings { ColumnName = n.Value, SortOrder = n.Key, FormId = formId })
                 .ToList();
 
-            _formSettingsPersistenceFacade.UpdateResponseDisplaySettings(formId, responseDisplaySettingsList);
+            _formSettingsPersistenceFacade.UpdateResponseDisplaySettings(formId, responseGridColumnSettingsList);
         }
 
         private static void GetDataAccessRules(out Dictionary<int, string> dataAccessRuleIds, out Dictionary<string, string> dataAccessRuleDescriptions)
@@ -139,11 +136,11 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
         {
             var formId = formInfoBO.FormId;
-            if (string.IsNullOrEmpty(formInfoBO.FormName)) formInfoBO.FormName = GetFormDigest(formId).FormName;
+            if (string.IsNullOrEmpty(formInfoBO.FormName)) formInfoBO.FormName = _metadataAccessor.GetFormDigest(formId).FormName;
             var formSettings = formInfoBO.ToFormSettings();
             if (formSettingBO != null)
             {
-                formSettings.ResponseDisplaySettings = formSettingBO.ColumnNameList.OrderBy(k => k.Key).Select(kvp => new ResponseDisplaySettings { FormId = formId, ColumnName = kvp.Value, SortOrder = kvp.Key }).ToList();
+                formSettings.ResponseDisplaySettings = formSettingBO.ResponseGridColumnNameList.OrderBy(k => k.Key).Select(kvp => new ResponseGridColumnSettings { FormId = formId, ColumnName = kvp.Value, SortOrder = kvp.Key }).ToList();
             }
             _formSettingsPersistenceFacade.UpdateFormSettings(formSettings);
 

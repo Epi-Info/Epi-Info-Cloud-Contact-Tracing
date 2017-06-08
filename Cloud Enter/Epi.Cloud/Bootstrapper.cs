@@ -1,3 +1,5 @@
+//#define useEF_FormSettingFacade
+
 using System.Web.Mvc;
 using Epi.Web.MVC.Utility;
 using Microsoft.Practices.Unity;
@@ -45,7 +47,7 @@ namespace Epi.Web.MVC
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoDao, Epi.Cloud.SurveyInfoServices.DAO.SurveyInfoDao>();
 			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyResponseDao, Epi.Cloud.DataEntryServices.DAO.SurveyResponseDao>();
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormInfoDao, Epi.Cloud.SurveyInfoServices.DAO.FormInfoDao>();
-			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormSettingDao, Epi.Cloud.SurveyInfoServices.DAO.FormSettingDao>();
+			//container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormSettingDao, Epi.Cloud.SurveyInfoServices.DAO.FormSettingDao>();
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IFormSettingDao_EF, Epi.Web.EF.EntityFormSettingDao>();
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IUserDao, Epi.Web.EF.EntityUserDao>();
 			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao, Epi.Web.EF.EntityOrganizationDao>();
@@ -53,7 +55,11 @@ namespace Epi.Web.MVC
 			// Facades
 			container.RegisterType<Epi.Cloud.Facades.Interfaces.ISurveyFacade, Epi.Cloud.Facades.SurveyFacade>();
 			container.RegisterType<Epi.Cloud.Facades.Interfaces.ISecurityFacade, Epi.Cloud.Facades.SecurityFacade>();
-
+#if useEF_FormSettingFacade
+            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.Cloud.Facades.EF_FormSettingFacade>();
+#else            
+            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.DocumentDB.Facades.DocDB_EF_FormSettingFacade>();
+#endif
             // Data Service Interfaces
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
 			container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.ISurveyInfoService, Epi.Cloud.SurveyInfoServices.SurveyInfoService>();
@@ -64,12 +70,10 @@ namespace Epi.Web.MVC
 			var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
             var docDB_SurveyFacade = new Epi.PersistenceServices.DocumentDB.DocDB_SurveyPersistenceFacade();
-            var docDB_FormSettingsFacade = new Epi.DataPersistenceServices.DocumentDB.DocDB_FormSettingsPersistenceFacade();
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
             container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(docDB_SurveyFacade);
-            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.IFormSettingsPersistenceFacade>(docDB_FormSettingsFacade);
 
 			container.RegisterControllers();
 

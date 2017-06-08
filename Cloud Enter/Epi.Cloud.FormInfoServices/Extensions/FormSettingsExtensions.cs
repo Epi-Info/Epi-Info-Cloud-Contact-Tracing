@@ -14,7 +14,7 @@ namespace Epi.Cloud.SurveyInfoServices.Extensions
             formSettingBO.SelectedDataAccessRule = formSettings.DataAccessRuleId;
             formSettingBO.IsDisabled = formSettings.IsDisabled;
             formSettingBO.IsShareable = formSettings.IsShareable;
-            formSettingBO.ColumnNameList = formSettings.ResponseDisplaySettings.ToDictionary(k => k.SortOrder, v => v.ColumnName);
+            formSettingBO.ResponseGridColumnNameList = formSettings.ResponseDisplaySettings.ToDictionary(k => k.SortOrder, v => v.ColumnName);
             return formSettingBO;
         }
 

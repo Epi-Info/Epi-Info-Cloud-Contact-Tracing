@@ -10,6 +10,11 @@ namespace Epi.Common.Core.DataStructures
         public bool IsDraftMode { get; set; }
         public bool IsShareable { get; set; }
         public int DataAccessRuleId { get; set; }
-        public List<ResponseDisplaySettings> ResponseDisplaySettings { get; set; }
+        public List<ResponseGridColumnSettings> ResponseDisplaySettings { get; set; }
+
+        public Dictionary<int, string> AssignedUserList { get; set; }
+        public Dictionary<int, string> SelectedOrgList { get; set; }
+
+        public bool DeleteDraftData { get; set; }
     }
 }

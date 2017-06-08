@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EF_FormSettingFacade.cs" />
+    <Compile Include="Interfaces\IFormSettingFacade.cs" />
     <Compile Include="Interfaces\ISecurityFacade.cs" />
     <Compile Include="Interfaces\ISurveyFacade.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Epi.Cloud.Common.Metadata;
 using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.DocumentDB.FormSettings;
-using Epi.FormMetadata.Constants;
 using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents.Client;
 
@@ -31,7 +29,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return formSettingsResource.FormSettingsProperties;
         }
 
-        public List<ResponseDisplaySettings> GetResponseGridColumns(string formId)
+        public List<ResponseGridColumnSettings> GetResponseGridColumns(string formId)
         {
             FormSettingsResource formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
             var formSettingsProperties = formSettingsResource.FormSettingsProperties;
@@ -85,7 +83,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 {
                     FormId = formId,
                     FormName = GetFormDigest(formId).FormName,
-                    ResponseGridColumnNames = responseGridColumnNames
+                    ColumnNames = responseGridColumnNames
                 }
             };
 
@@ -112,11 +110,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 
-        public void SaveResponseGridColumnNames(string formId, List<ResponseDisplaySettings> responseDisplaySettings)
+        public void SaveResponseGridColumnNames(string formId, List<ResponseGridColumnSettings> responseDisplaySettings)
         {
             var formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
             var responseGridColumnNames = responseDisplaySettings.ToResponseDisplaySettingsList();
-            formSettingsResource.FormSettingsProperties.ResponseGridColumnNames = responseGridColumnNames;
+            formSettingsResource.FormSettingsProperties.ColumnNames = responseGridColumnNames;
             UpdateFormSettingsResource(formSettingsResource);
         }
 

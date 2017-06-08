@@ -85,7 +85,7 @@
     <Compile Include="DocumentDbCRUD.FormSettings.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="DataStructures.FormSettings.cs" />
-    <Compile Include="FormSettingsPersistenceFacade.cs" />
+    <Compile Include="Facades\DocDB_EF_FormSettingFacade.cs" />
     <Compile Include="SurveyPersistenceFacade.cs" />
     <Compile Include="DocumentDbCRUD.FormResponse.Attachment.cs" />
     <Compile Include="DocumentDbCRUD.FormResponse.cs" />
@@ -104,6 +104,14 @@
     <ProjectReference Include="..\..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
       <Project>{31fb19a9-9591-4202-8619-e6ec618fca73}</Project>
       <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Cloud.Facades\Epi.Cloud.Facades.csproj">
+      <Project>{47C60F59-94A2-44AE-B556-F9B3D03E191E}</Project>
+      <Name>Epi.Cloud.Facades</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Epi.Cloud.FormInfoServices\Epi.Cloud.SurveyInfoServices.csproj">
+      <Project>{3725080E-4C8A-4DD2-8435-D42BCAEE5E6F}</Project>
+      <Name>Epi.Cloud.SurveyInfoServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Epi.Cloud.Interfaces\Epi.Cloud.Interfaces.csproj">
       <Project>{1ABBBD53-0239-4BDE-8F14-1AAA9FDA2AC2}</Project>

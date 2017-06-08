@@ -389,16 +389,15 @@ namespace Epi.Web.MVC.Controllers
 
 			//Code added to retain Search Ends. 
 
-            var model = new FormResponseInfoModel();
-            model = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
+            var formResponseInfoModel = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
 
             if (isMobileDevice == false)
             {
-                return PartialView("ListResponses", model);
+                return PartialView("ListResponses", formResponseInfoModel);
             }
             else
             {
-                return View("ListResponses", model);
+                return View("ListResponses", formResponseInfoModel);
             }
         }
 
@@ -456,13 +455,9 @@ namespace Epi.Web.MVC.Controllers
 
             formReq.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());//Hard coded user for now.
             formReq.Criteria.CurrentOrgId = OrgID;
-            // formReq.Criteria.UserId = UserId;
-            //define filter criteria here.
-            //define sorting criteria here.
 
             List<FormInfoModel> listOfFormsInfoModel = _surveyFacade.GetFormsInfoModelList(formReq);
 
-            // return listOfFormsInfoModel.Where(x=>x.OrganizationId== OrgID).ToList();
             return listOfFormsInfoModel;
         }
 
@@ -489,15 +484,6 @@ namespace Epi.Web.MVC.Controllers
 
 
                 // Set User Role 
-                //if (formResponseInfoModel.FormInfoModel.IsShared)
-                //{
-
-                //    SetUserRole(UserId, orgid);
-                //}
-                //else
-                //{
-                //SetUserRole(UserId, FormSettingResponse.FormInfo.OrganizationId);
-                //}
                 SetUserRole(userId, orgid);
 
                 var responseContext = new ResponseContext
@@ -580,7 +566,7 @@ namespace Epi.Web.MVC.Controllers
                         }
                     }
                 }
-                //ResponseList = ResponseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+
                 var sortList = responseList;
                 sortfield = sortfield.ToLower();
                 if (!string.IsNullOrEmpty(sortfield))
@@ -605,8 +591,6 @@ namespace Epi.Web.MVC.Controllers
                                 responseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
                                 break;
                         }
-
-                        // formResponseInfoModel.ResponsesList = ResponseListModel;
                     }
                     else
                     {
@@ -628,8 +612,6 @@ namespace Epi.Web.MVC.Controllers
                                 responseListModel = sortList.OrderBy(x => x.Column5).ToList();
                                 break;
                         }
-
-                        // formResponseInfoModel.ResponsesList = ResponseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
                     }
                     formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
 
@@ -637,15 +619,13 @@ namespace Epi.Web.MVC.Controllers
                 if (string.IsNullOrEmpty(sort))
                 {
                     formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
-
-                    //formResponseInfoModel.ResponsesList = ResponseList;
                 }
 
 
                 //Setting Form Info 
                 formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
-                //Setting Additional Data
 
+                //Setting Additional Data
                 formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
                 formResponseInfoModel.PageSize = ReadPageSize();
                 formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;

@@ -14,7 +14,7 @@ namespace Epi.Cloud.Common.BusinessObjects
 
         public int SelectedDataAccessRule { get; set; }
 
-        public Dictionary<int, string> ColumnNameList { get; set; }
+        public Dictionary<int, string> ResponseGridColumnNameList { get; set; }
 
         public Dictionary<int, string> FormControlNameList { get; set; }
 

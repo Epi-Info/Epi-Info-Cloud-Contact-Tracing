@@ -8,7 +8,7 @@ using Epi.FormMetadata.Constants;
 
 namespace Epi.Cloud.Common.Metadata
 {
-    public class MetadataAccessor
+    public partial class MetadataAccessor
     {
         public static class StaticCache
         {

@@ -137,6 +137,7 @@
     <Compile Include="Metadata\FieldAttributes.cs" />
     <Compile Include="Metadata\Interfaces\IProjectMetadataProvider.cs" />
     <Compile Include="Metadata\MetadataAccessor.cs" />
+    <Compile Include="Metadata\MetadataAccessor.FormSettings.cs" />
     <Compile Include="Metadata\NullableExtensions.cs" />
     <Compile Include="Metadata\ProjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,6 +16,6 @@ namespace Epi.DataPersistenceServices.DocumentDB.FormSettings
         public bool IsDraftMode { get; set; }
         public bool IsShareable { get; set; }
         public int DataAccessRuleId { get; set; }
-        public List<string> ResponseGridColumnNames { get; set; }
+        public List<string> ColumnNames { get; set; }
     }
 }

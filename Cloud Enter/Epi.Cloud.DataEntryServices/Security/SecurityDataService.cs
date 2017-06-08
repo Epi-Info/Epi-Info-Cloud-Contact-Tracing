@@ -10,6 +10,7 @@ using Epi.Common.Exception;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.MessageBase;
+using Epi.Cloud.Facades.Interfaces;
 
 namespace Epi.Cloud.DataEntryServices
 {
@@ -23,21 +24,21 @@ namespace Epi.Cloud.DataEntryServices
 		private readonly ISurveyInfoDao _surveyInfoDao;
 		private readonly ISurveyResponseDao _surveyResponseDao;
 		private readonly IFormInfoDao _formInfoDao;
-		private readonly IFormSettingDao _formSettingDao;
+		private readonly IFormSettingFacade _formSettingFacade;
 		private readonly IUserDao _userDao;
 		private readonly IOrganizationDao _organizationDao;
 
 		public SecurityDataService(ISurveyInfoDao surveyInfoDao,
 						   ISurveyResponseDao surveyResponseDao,
 						   IFormInfoDao formInfoDao,
-						   IFormSettingDao formSettingDao,
+						   IFormSettingFacade formSettingFacade,
 						   IUserDao userDao,
 						   IOrganizationDao organizationDao)
 		{
 			_surveyInfoDao = surveyInfoDao;
 			_surveyResponseDao = surveyResponseDao;
 			_formInfoDao = formInfoDao;
-			_formSettingDao = formSettingDao;
+			_formSettingFacade = formSettingFacade;
 			_userDao = userDao;
 			_organizationDao = organizationDao;
 		}
@@ -183,7 +184,7 @@ namespace Epi.Cloud.DataEntryServices
             FormSettingResponse Response = new FormSettingResponse();
             try
             {
-                Epi.Web.BLL.FormSetting formSettingsImplementation = new Epi.Web.BLL.FormSetting(_formSettingDao, _userDao);
+                Epi.Web.BLL.FormSetting formSettingsImplementation = new Epi.Web.BLL.FormSetting(_formSettingFacade, _userDao);
                 if (FormSettingReq.FormSetting.Count() > 0)
                 {
                     foreach (var item in FormSettingReq.FormSetting)
