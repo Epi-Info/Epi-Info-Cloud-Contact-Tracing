@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Metadata;
 
 namespace Epi.Web.EF
 {
-    public class EntityFormSettingDao : IFormSettingDao_EF
+    public class EntityFormSettingDao : MetadataAccessor, IFormSettingDao_EF
     {
         public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
         {
@@ -91,6 +92,53 @@ namespace Epi.Web.EF
                     formSettingBO.AvailableOrgList = availableOrgs;
 
                     // --------------------------------------------------------------------------------------------- \\
+
+                    Dictionary<int, string> ColumnNameList = new Dictionary<int, string>();
+
+                    var Query = from response in Context.ResponseDisplaySettings
+                                where response.FormId == id
+                                select response;
+
+                    var DataRow = Query;
+
+                    foreach (var Row in DataRow)
+                    {
+
+                        ColumnNameList.Add(Row.SortOrder, Row.ColumnName);
+
+                    }
+                    formSettingBO.ResponseGridColumnNameList = ColumnNameList;
+
+
+                    Dictionary<int, string> DataAccessRuleIds = new Dictionary<int, string>();
+                    Dictionary<string, string> DataAccessRuleDescription = new Dictionary<string, string>();
+
+                    var MetaData = from r in Context.SurveyMetaDatas
+                                   where r.SurveyId == id
+                                   select new
+                                   {
+                                       Id = r.DataAccessRuleId,
+
+                                   };
+
+                    var selectedDataAccessRuleId = int.Parse(MetaData.First().Id.ToString());
+                    ////  Available DataAccess Rule Ids  list 
+
+                    IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
+                    foreach (var Rule in RuleIDs)
+                    {
+
+                        DataAccessRuleIds.Add(Rule.RuleId, Rule.RuleName);
+                        DataAccessRuleDescription.Add(Rule.RuleName, Rule.RuleDescription);
+
+                    }
+
+                    formSettingBO.DataAccessRuleIds = DataAccessRuleIds;
+                    formSettingBO.SelectedDataAccessRule = selectedDataAccessRuleId;
+                    formSettingBO.DataAccessRuleDescription = DataAccessRuleDescription;
+
+                    int k = 1;
+                    formSettingBO.FormControlNameList = GetAllColumnNames(formId).ToDictionary(key => k++, value => value);
                 }
             }
             catch (Exception ex)

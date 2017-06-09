@@ -1,4 +1,4 @@
-//#define useEF_FormSettingFacade
+#define useEF_FormSettingFacade
 
 using System.Web.Mvc;
 using Epi.Web.MVC.Utility;

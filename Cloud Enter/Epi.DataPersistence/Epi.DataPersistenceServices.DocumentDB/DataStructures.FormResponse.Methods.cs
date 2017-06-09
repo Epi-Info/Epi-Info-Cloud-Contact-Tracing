@@ -34,6 +34,9 @@ namespace Epi.PersistenceServices.DocumentDB
                 ChildResponseContexts.Add(childResponse.ResponseId, new ChildResponseContext(childResponse));
             }
 
+            var childResponsesByChildFormId = ChildResponses[parentResponseId];
+            childResponsesByChildFormId[childFormName] = childResponseList;
+
             return childResponse;
         }
 
