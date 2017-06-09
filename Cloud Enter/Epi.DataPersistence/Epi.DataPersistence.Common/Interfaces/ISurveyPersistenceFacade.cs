@@ -32,5 +32,7 @@ namespace Epi.DataPersistence.Common.Interfaces
         FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
 
         void NotifyConsistencyService(IResponseContext responceContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange);
+
+        void NotifyConsistencyService(FormResponseDetail hierarchicalFormResponseDetail);
     }
 }
