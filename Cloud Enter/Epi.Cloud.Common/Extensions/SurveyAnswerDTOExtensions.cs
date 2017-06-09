@@ -14,6 +14,7 @@ namespace Epi.Cloud.Common.Extensions
         public static SurveyResponseBO ToSurveyResponseBO(this SurveyAnswerDTO surveyAnswerDTO, int? userId = null)
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
+            surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
             surveyResponseBO.FormId = surveyAnswerDTO.SurveyId;
             surveyResponseBO.ResponseId = surveyAnswerDTO.ResponseId;
             surveyResponseBO.ParentResponseId = surveyAnswerDTO.ParentResponseId;
@@ -22,7 +23,6 @@ namespace Epi.Cloud.Common.Extensions
             surveyResponseBO.UserPublishKey = surveyAnswerDTO.UserPublishKey;
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
-            surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
             surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
 
             surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
