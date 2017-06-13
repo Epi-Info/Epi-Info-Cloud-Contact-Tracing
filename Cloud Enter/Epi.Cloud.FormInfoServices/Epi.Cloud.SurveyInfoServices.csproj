@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DAO\FormSettingDao.cs" />
     <Compile Include="DAO\FormInfoDao.cs" />
     <Compile Include="DAO\SurveyInfoDao.cs" />
     <Compile Include="Extensions\FormSettingsExtensions.cs" />

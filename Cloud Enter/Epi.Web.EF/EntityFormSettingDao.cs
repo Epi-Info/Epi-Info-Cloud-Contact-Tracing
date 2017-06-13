@@ -5,22 +5,24 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Resources;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Web.EF
 {
     public class EntityFormSettingDao : MetadataAccessor, IFormSettingDao_EF
     {
-        public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
+        public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId, bool userAndOrgInfoOnly)
         {
             List<FormSettingBO> formSettingList = new List<FormSettingBO>();
             foreach (string formId in formIds)
             {
-                formSettingList.Add(GetFormSettings(formId, currentOrgId));
+                formSettingList.Add(GetFormSettings(formId, currentOrgId, userAndOrgInfoOnly));
             }
             return formSettingList;
         }
 
-        public FormSettingBO GetFormSettings(string formId, int currentOrgId)
+        public FormSettingBO GetFormSettings(string formId, int currentOrgId, bool userAndOrgInfoOnly)
         {
             FormSettingBO formSettingBO = new FormSettingBO { FormId = formId };
             Dictionary<int, string> availableUsers = new Dictionary<int, string>();
@@ -80,7 +82,7 @@ namespace Epi.Web.EF
 
                     // --------------------------------------------------------------------------------------------- \\
 
-                    ////  Available Orgnization list 
+                    ////  Available Organization list 
                     IQueryable<Organization> OrganizationList = Context.Organizations.ToList().AsQueryable();
                     foreach (var Org in OrganizationList)
                     {
@@ -93,52 +95,78 @@ namespace Epi.Web.EF
 
                     // --------------------------------------------------------------------------------------------- \\
 
-                    Dictionary<int, string> ColumnNameList = new Dictionary<int, string>();
-
-                    var Query = from response in Context.ResponseDisplaySettings
-                                where response.FormId == id
-                                select response;
-
-                    var DataRow = Query;
-
-                    foreach (var Row in DataRow)
+                    if (!userAndOrgInfoOnly)
                     {
+                        //// Response Grid Column Name List
+                        Dictionary<int, string> ColumnNameList = new Dictionary<int, string>();
 
-                        ColumnNameList.Add(Row.SortOrder, Row.ColumnName);
+                        var Query = from response in Context.ResponseDisplaySettings
+                                    where response.FormId == id
+                                    select response;
 
+                        var DataRow = Query;
+
+                        // If there are no grid display columns currently defined
+                        // then initialize the list to the first 5 fields in the form.
+                        if (DataRow.Count() == 0)
+                        {
+                            var sortOrder = 1;
+                            var responseGridColumnNames = GetFieldDigests(formId)
+                                .Where(f => !FieldDigest.NonDataFieldTypes.Any(t => t == f.FieldType))
+                                .Take(5)
+                                .Select(f => ResponseDisplaySetting.CreateResponseDisplaySetting(id, f.TrueCaseFieldName, sortOrder++));
+                            foreach (var responseDisplaySetting in responseGridColumnNames)
+                            {
+                                Context.AddToResponseDisplaySettings(responseDisplaySetting);
+                                ColumnNameList.Add(responseDisplaySetting.SortOrder, responseDisplaySetting.ColumnName);
+                            }
+                            Context.SaveChanges();
+                        }
+                        else
+                        {
+                            foreach (var Row in DataRow)
+                            {
+                                ColumnNameList.Add(Row.SortOrder, Row.ColumnName);
+                            }
+                        }
+                        formSettingBO.ResponseGridColumnNameList = ColumnNameList;
+
+                        // --------------------------------------------------------------------------------------------- \\
+
+                        //// Selected Data Access Rule Id
+                        var MetaData = from r in Context.SurveyMetaDatas
+                                       where r.SurveyId == id
+                                       select new
+                                       {
+                                           Id = r.DataAccessRuleId
+                                       };
+
+                        var selectedDataAccessRuleId = int.Parse(MetaData.First().Id.ToString());
+                        formSettingBO.SelectedDataAccessRule = selectedDataAccessRuleId;
+
+                        // --------------------------------------------------------------------------------------------- \\
+
+                        //// Data Access Rules 
+                        Dictionary<int, string> DataAccessRuleIds = new Dictionary<int, string>();
+                        Dictionary<string, string> DataAccessRuleDescription = new Dictionary<string, string>();
+
+                        DataAccessessRulesHelper.GetDataAccessRules(out DataAccessRuleIds, out DataAccessRuleDescription);
+                        formSettingBO.DataAccessRuleIds = DataAccessRuleIds;
+                        formSettingBO.DataAccessRuleDescription = DataAccessRuleDescription;
+
+                        //IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
+                        //foreach (var Rule in RuleIDs)
+                        //{
+                        //    DataAccessRuleIds.Add(Rule.RuleId, Rule.RuleName);
+                        //    DataAccessRuleDescription.Add(Rule.RuleName, Rule.RuleDescription);
+                        //}
+
+                        // --------------------------------------------------------------------------------------------- \\
+
+                        //// All Column Names From MetadataAccessor
+                        int k = 1;
+                        formSettingBO.FormControlNameList = GetAllColumnNames(formId).ToDictionary(key => k++, value => value);
                     }
-                    formSettingBO.ResponseGridColumnNameList = ColumnNameList;
-
-
-                    Dictionary<int, string> DataAccessRuleIds = new Dictionary<int, string>();
-                    Dictionary<string, string> DataAccessRuleDescription = new Dictionary<string, string>();
-
-                    var MetaData = from r in Context.SurveyMetaDatas
-                                   where r.SurveyId == id
-                                   select new
-                                   {
-                                       Id = r.DataAccessRuleId,
-
-                                   };
-
-                    var selectedDataAccessRuleId = int.Parse(MetaData.First().Id.ToString());
-                    ////  Available DataAccess Rule Ids  list 
-
-                    IQueryable<DataAccessRule> RuleIDs = Context.DataAccessRules.ToList().AsQueryable();
-                    foreach (var Rule in RuleIDs)
-                    {
-
-                        DataAccessRuleIds.Add(Rule.RuleId, Rule.RuleName);
-                        DataAccessRuleDescription.Add(Rule.RuleName, Rule.RuleDescription);
-
-                    }
-
-                    formSettingBO.DataAccessRuleIds = DataAccessRuleIds;
-                    formSettingBO.SelectedDataAccessRule = selectedDataAccessRuleId;
-                    formSettingBO.DataAccessRuleDescription = DataAccessRuleDescription;
-
-                    int k = 1;
-                    formSettingBO.FormControlNameList = GetAllColumnNames(formId).ToDictionary(key => k++, value => value);
                 }
             }
             catch (Exception ex)
@@ -348,7 +376,7 @@ namespace Epi.Web.EF
         }
 
 
-        public void UpdateColumnNames(FormSettingBO FormSettingBO, string FormId)
+        public void UpdateResponseGridColumnNames(FormSettingBO FormSettingBO, string FormId)
         {
             Guid Id = new Guid(FormId);
             try

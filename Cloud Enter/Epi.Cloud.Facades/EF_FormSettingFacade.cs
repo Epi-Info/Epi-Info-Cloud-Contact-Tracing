@@ -31,12 +31,12 @@ namespace Epi.Cloud.Facades
 
         public FormSettingBO GetFormSettings(string formId, int currentOrgId)
         {
-            return _formSettingDao.GetFormSettings(formId, currentOrgId);
+            return _formSettingDao.GetFormSettings(formId, currentOrgId, userAndOrgInfoOnly: false);
         }
 
         public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
         {
-            return _formSettingDao.GetFormSettingsList(formIds, currentOrgId);
+            return _formSettingDao.GetFormSettingsList(formIds, currentOrgId, userAndOrgInfoOnly: false);
         }
 
         public Dictionary<int, string> GetOrgAdmins(Dictionary<int, string> selectedOrgList)
@@ -54,9 +54,9 @@ namespace Epi.Cloud.Facades
             _formSettingDao.SoftDeleteForm(formId);
         }
 
-        public void UpdateColumnNames(FormSettingBO formSettingBO, string formId)
+        public void UpdateResponseGridColumnNames(FormSettingBO formSettingBO, string formId)
         {
-            _formSettingDao.UpdateColumnNames(formSettingBO, formId);
+            _formSettingDao.UpdateResponseGridColumnNames(formSettingBO, formId);
         }
 
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
