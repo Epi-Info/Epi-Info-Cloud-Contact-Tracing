@@ -244,7 +244,7 @@ namespace Epi.PersistenceServices.DocumentDB
 						case RecordStatusChangeReason.DeleteResponse:
 
                             //send notification to ServiceBus
-							serviceBusCRUD.SendMessagesToTopic(hierarchicalResponse);
+                            NotifyConsistencyService(hierarchicalResponse);
 							//ConsistencyHack(hierarchicalResponse);
 							break;
 					}
@@ -255,6 +255,14 @@ namespace Epi.PersistenceServices.DocumentDB
 				}
 			}
 		}
+        public void NotifyConsistencyService(FormResponseDetail hierarchicalFormResponseDetail)
+        {
+            var serviceBusCRUD = new ServiceBusCRUD();
+            //send notification to ServiceBus
+            serviceBusCRUD.SendMessagesToTopic(hierarchicalFormResponseDetail);
+            //ConsistencyHack(hierarchicalResponse);
+        }
+
         #endregion NotifyConsistencyService  
     }
 }

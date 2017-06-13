@@ -33,8 +33,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             FormSettingsResource formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
             var formSettingsProperties = formSettingsResource.FormSettingsProperties;
-            var responseDisplatySettingsList = formSettingsProperties.ToResponseDisplaySettingsList();
-            return responseDisplatySettingsList;
+            var responseDisplaySettingsList = formSettingsProperties.ToResponseDisplaySettingsList();
+            return responseDisplaySettingsList;
         }
 
         public FormSettingsResource ReadFormSettingsResource(string formId, bool ifNoneCreateDefault = false)
@@ -110,7 +110,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
 
 
-        public void SaveResponseGridColumnNames(string formId, List<ResponseGridColumnSettings> responseDisplaySettings)
+        public void UpdateResponseGridColumnNames(string formId, List<ResponseGridColumnSettings> responseDisplaySettings)
         {
             var formSettingsResource = ReadFormSettingsResource(formId, ifNoneCreateDefault: true);
             var responseGridColumnNames = responseDisplaySettings.ToResponseDisplaySettingsList();

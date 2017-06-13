@@ -11,6 +11,7 @@ using Epi.Cloud.Resources;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Extensions;
+using Epi.DataPersistenceServices.DocumentDB.DAO;
 
 namespace Epi.DataPersistenceServices.DocumentDB.Facades
 {
@@ -19,12 +20,14 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
         private readonly MetadataAccessor _metadataAccessor;
         private readonly DocumentDbCRUD _formResponseCRUD;
         private readonly IFormSettingDao_EF _formSettingDao_EF;
+        private readonly IFormSettingDao _formSettingDao_DocDB;
 
         public DocDB_EF_FormSettingFacade(IFormSettingDao_EF formSettingDao_EF)
         {
             _metadataAccessor = new MetadataAccessor();
             _formResponseCRUD = new DocumentDbCRUD();
             _formSettingDao_EF = formSettingDao_EF;
+            _formSettingDao_DocDB = new FormSettingDao(formSettingDao_EF);
         }
 
         public List<ResponseGridColumnSettings> GetResponseDisplaySettings(string formId)
@@ -34,7 +37,7 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
 
         public void UpdateResponseDisplaySettings(string formId, List<ResponseGridColumnSettings> responseDisplaySettings)
         {
-            _formResponseCRUD.SaveResponseGridColumnNames(formId, responseDisplaySettings);
+            _formResponseCRUD.UpdateResponseGridColumnNames(formId, responseDisplaySettings);
         }
 
         public List<Epi.Common.Core.DataStructures.FormSettings> GetFormSettings(List<string> formIds)
@@ -62,7 +65,7 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
 
         public List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId)
         {
-            List<FormSettingBO> formSettingBOList = _formSettingDao_EF.GetFormSettingsList(formIds, currentOrgId);
+            List<FormSettingBO> formSettingBOList = _formSettingDao_EF.GetFormSettingsList(formIds, currentOrgId, userAndOrgInfoOnly: true);
 
             foreach (var formSettingBO in formSettingBOList)
             {
@@ -84,7 +87,7 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
             Dictionary<int, string> columnNameList = new Dictionary<int, string>();
             try
             {
-                formSettingBO = _formSettingDao_EF.GetFormSettings(formId, currentOrgId);
+                formSettingBO = _formSettingDao_EF.GetFormSettings(formId, currentOrgId, userAndOrgInfoOnly: true);
                 int i = 1;
                 formSettingBO.FormControlNameList = GetAllColumnNames(formId).ToDictionary(k => i++, v => v);
                 formSettingBO = DataAccessessRulesHelper.GetDataAccessRules(formSettingBO);
@@ -117,7 +120,7 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
             return _metadataAccessor.GetAllColumnNames(formId);
         }
 
-        public void UpdateColumnNames(FormSettingBO formSettingBO, string formId)
+        public void UpdateResponseGridColumnNames(FormSettingBO formSettingBO, string formId)
         {
             var responseGridColumnSettingsList = formSettingBO.ResponseGridColumnNameList
                 .Select(n => new ResponseGridColumnSettings { ColumnName = n.Value, SortOrder = n.Key, FormId = formId })
@@ -128,17 +131,7 @@ namespace Epi.DataPersistenceServices.DocumentDB.Facades
 
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
         {
-            var formId = formInfoBO.FormId;
-            if (string.IsNullOrEmpty(formInfoBO.FormName)) formInfoBO.FormName = _metadataAccessor.GetFormDigest(formId).FormName;
-            var formSettings = formInfoBO.ToFormSettings();
-            if (formSettingBO != null)
-            {
-                formSettings.ResponseDisplaySettings = formSettingBO.ResponseGridColumnNameList.OrderBy(k => k.Key).Select(kvp => new ResponseGridColumnSettings { FormId = formId, ColumnName = kvp.Value, SortOrder = kvp.Key }).ToList();
-            }
-            UpdateFormSettings(formSettings);
-
-            // Temporarily update WebEnter tables too
-            _formSettingDao_EF.UpdateFormMode(formInfoBO);
+            _formSettingDao_DocDB.UpdateFormMode(formInfoBO, formSettingBO);
         }
 
         public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)

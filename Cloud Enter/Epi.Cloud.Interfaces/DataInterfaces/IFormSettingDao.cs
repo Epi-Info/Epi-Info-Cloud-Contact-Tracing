@@ -5,10 +5,10 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 {
     public interface IFormSettingDao
     {
-        List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId);
-        FormSettingBO GetFormSettings(string formId, int currentOrgId);
+        List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId, bool userAndOrgInfoOnly);
+        FormSettingBO GetFormSettings(string formId, int currentOrgId, bool userAndOrgInfoOnly);
         FormSettingBO GetFormSettings();
-        void UpdateColumnNames(FormSettingBO formSettingBO, string formId);
+        void UpdateResponseGridColumnNames(FormSettingBO formSettingBO, string formId);
         void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null);
         void UpdateSettingsList(FormSettingBO formSettingBO, string formId);
         List<string> GetAllColumnNames(string formId);

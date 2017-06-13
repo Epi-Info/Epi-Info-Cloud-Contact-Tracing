@@ -133,11 +133,21 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(formResponseResource);
                     }
 
-                    // TODO: send hierarchicalFormResponseDetail to consistency service 
-
-                    if (deleteType != RecordStatus.PhysicalDelete)
+                    if (deleteType != RecordStatus.PhysicalDelete && hierarchicalFormResponseDetail != null)
                     {
-                        var result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+                        if (responseContext.IsChildResponse)
+                        {
+                            var result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+                        }
+
+                        // Send hierarchicalFormResponseDetail to consistency service 
+                        var surveyPersistenceFacade = new DocDB_SurveyPersistenceFacade();
+                        surveyPersistenceFacade.NotifyConsistencyService(hierarchicalFormResponseDetail);
+
+                        if (responseContext.IsRootResponse)
+                        {
+                            var result = await PhysicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                        }
 
                         return formResponseResource;
                     }

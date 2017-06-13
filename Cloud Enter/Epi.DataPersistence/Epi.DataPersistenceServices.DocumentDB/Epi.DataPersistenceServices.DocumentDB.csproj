@@ -80,6 +80,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DAO\FormSettingDao.cs" />
     <Compile Include="DataStructures.FormResponse.Methods.cs" />
     <Compile Include="DataStructures.FormResponse.cs" />
     <Compile Include="DocumentDbCRUD.FormSettings.cs" />

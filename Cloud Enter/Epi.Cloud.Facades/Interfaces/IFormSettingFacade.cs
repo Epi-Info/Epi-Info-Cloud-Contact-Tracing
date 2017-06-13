@@ -8,7 +8,7 @@ namespace Epi.Cloud.Facades.Interfaces
         List<FormSettingBO> GetFormSettingsList(List<string> formIds, int currentOrgId);
         FormSettingBO GetFormSettings(string formId, int currentOrgId);
         FormSettingBO GetFormSettings();
-        void UpdateColumnNames(FormSettingBO formSettingBO, string formId);
+        void UpdateResponseGridColumnNames(FormSettingBO formSettingBO, string formId);
         void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null);
         void UpdateSettingsList(FormSettingBO formSettingBO, string formId);
         List<string> GetAllColumnNames(string formId);

@@ -98,7 +98,7 @@ namespace Epi.Web.BLL
             formInfoBO.IsDraftMode = isDraftMode;
             formInfoBO.IsShareable = isShareable;
             formInfoBO.DataAccesRuleId = dataAccessRuleId;
-            _formSettingFacade.UpdateColumnNames(formSettingBO, formSettingDTO.FormId);
+            _formSettingFacade.UpdateResponseGridColumnNames(formSettingBO, formSettingDTO.FormId);
             _formSettingFacade.UpdateFormMode(formInfoBO, formSettingBO);
             if (formSettingDTO.IsDisabled)
             {
