@@ -32,7 +32,7 @@ namespace Epi.Cloud.SqlServer
         {
             var template = new Epi.FormMetadata.DataStructures.Template();
 
-            using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetConnectionString("EPIInfo7Entities")))
+            using (EPIInfo7Entities metacontext = new EPIInfo7Entities("EPIInfo7Entities"))
             {
                 try
                 {
