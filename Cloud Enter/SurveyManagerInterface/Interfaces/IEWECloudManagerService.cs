@@ -62,5 +62,17 @@ namespace Epi.Web.WCF.SurveyService
         [FaultContract(typeof(CustomFaultException))]
         PublishResponse RePublishMetaDataToCloud(PublishRequest pRequestMessage);
 
+        [OperationContract]
+        [FaultContract(typeof(CustomFaultException))]
+        UserAuthenticationResponse UserLogin(UserAuthenticationRequest request);
+
+        [OperationContract]
+        [FaultContract(typeof(CustomFaultException))]
+        SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest);
+
+        [OperationContract]
+        [FaultContract(typeof(CustomFaultException))]
+        FormSettingResponse GetSettings(FormSettingRequest Request);
+
     }
 }

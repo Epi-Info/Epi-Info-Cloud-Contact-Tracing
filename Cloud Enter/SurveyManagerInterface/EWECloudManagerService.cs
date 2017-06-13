@@ -756,7 +756,174 @@ namespace Epi.Web.WCF.SurveyService
 
 
 
+        public UserAuthenticationResponse UserLogin(UserAuthenticationRequest request)
+        {
 
+
+            var response = new UserAuthenticationResponse();
+            Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
+            Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+            Epi.Web.BLL.User Implementation = new Epi.Web.BLL.User(IUserDao);
+
+
+            UserBO UserBO = Mapper.ToUserBO(request.User);
+
+
+            UserBO result = Implementation.GetUser(UserBO);
+
+
+
+            if (result != null)
+            {
+
+                //response.Acknowledge = AcknowledgeType.Failure; TBD
+                //response.Message = "Invalid Pass Code.";
+                response.User = Mapper.ToUserDTO(result);
+                response.UserIsValid = true;
+
+            }
+            else
+            {
+                response.UserIsValid = false;
+
+            }
+
+
+            return response;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pRequest"></param>
+        /// <returns></returns>
+        public SurveyInfoResponse GetSurveyInfo(SurveyInfoRequest pRequest)
+        {
+            try
+            {
+                SurveyInfoResponse result = new SurveyInfoResponse(pRequest.RequestId);
+                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = new EF.EntitySurveyInfoDao();
+                //Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
+
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
+                Epi.Web.BLL.SurveyInfo implementation = new Epi.Web.BLL.SurveyInfo(surveyInfoDao);
+
+                // Validate client tag, access token, and user credentials
+                if (!ValidRequest(pRequest, result, Validate.All))
+                {
+                    return result;
+                }
+
+                //Validate UserPublishKey exists
+                if (pRequest.Criteria.UserPublishKey == null)
+                {
+                    return result;
+                }
+
+                var criteria = pRequest.Criteria as SurveyInfoCriteria;
+                string sort = criteria.SortExpression;
+                List<string> SurveyIdList = new List<string>();
+                foreach (string id in criteria.SurveyIdList)
+                {
+                    SurveyIdList.Add(id.ToUpper());
+                }
+
+
+
+
+
+                List<SurveyInfoBO> SurveyBOList = new List<SurveyInfoBO>();
+                //  int ResponseMaxSize = 16384;   
+                int ResponseMaxSize = Int32.Parse(ConfigurationManager.AppSettings["maxBytesPerRead"]);
+                int BandwidthUsageFactor = Int32.Parse(ConfigurationManager.AppSettings["BandwidthUsageFactor"]);
+
+
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao entityDaoFactory1 = new EFwcf.EntityOrganizationDao();
+                //Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao surveyInfoDao = entityDaoFactory.SurveyInfoDao;
+                Epi.Web.Enter.Interfaces.DataInterfaces.IOrganizationDao surveyInfoDao1 = entityDaoFactory1;
+
+                Epi.Web.BLL.Organization implementation1 = new Epi.Web.BLL.Organization(surveyInfoDao1);
+                bool ISValidOrg = implementation1.ValidateOrganization(pRequest.Criteria.OrganizationKey.ToString());
+
+                if (ISValidOrg)
+                {
+                    if (pRequest.Criteria.ReturnSizeInfoOnly == true)
+                    {
+                        // add BandwidthUsageFactor
+                        PageInfoBO PageInfoBO = implementation.GetSurveySizeInfo(SurveyIdList, criteria.ClosingDate, criteria.OrganizationKey.ToString(), BandwidthUsageFactor, criteria.SurveyType, criteria.PageNumber, criteria.PageSize, ResponseMaxSize);
+                        result.PageSize = PageInfoBO.PageSize;
+                        result.NumberOfPages = PageInfoBO.NumberOfPages;
+                    }
+                    else
+                    {
+                        SurveyBOList = implementation.GetSurveyInfo(SurveyIdList, criteria.ClosingDate, criteria.OrganizationKey.ToString(), criteria.SurveyType, criteria.PageNumber, criteria.PageSize);//Default 
+                        foreach (SurveyInfoBO surveyInfoBO in SurveyBOList)
+                        {
+
+                            result.SurveyInfoList.Add(Mapper.ToDataTransferObject(surveyInfoBO));
+
+                        }
+                    }
+                }
+                else
+                {
+
+                    result.Message = "Organization Key not found";
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                CustomFaultException customFaultException = new CustomFaultException();
+                customFaultException.CustomMessage = ex.Message;
+                customFaultException.Source = ex.Source;
+                customFaultException.StackTrace = ex.StackTrace;
+                customFaultException.HelpLink = ex.HelpLink;
+                throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
+
+
+        public FormSettingResponse GetSettings(FormSettingRequest pRequest)
+        {
+            FormSettingResponse Response = new FormSettingResponse();
+            try
+            {
+                Epi.Web.Enter.Interfaces.DataInterfaces.IDaoFactory entityDaoFactory = new EFwcf.EntityDaoFactory();
+                Epi.Web.Enter.Interfaces.DataInterface.IFormSettingDao IFormSettingDao = entityDaoFactory.FormSettingDao;
+
+                if (!string.IsNullOrEmpty(pRequest.FormInfo.FormId))
+                {
+                    Epi.Web.Enter.Interfaces.DataInterface.IFormInfoDao FormInfoDao = entityDaoFactory.FormInfoDao;
+
+                    Epi.Web.Enter.Interfaces.DataInterface.IUserDao IUserDao = entityDaoFactory.UserDao;
+                    Epi.Web.BLL.FormInfo FormInfoImplementation = new Epi.Web.BLL.FormInfo(FormInfoDao);
+                    Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao, IUserDao, FormInfoDao);
+                    FormInfoBO FormInfoBO = FormInfoImplementation.GetFormInfoByFormId(pRequest.FormInfo.FormId, pRequest.GetXml, pRequest.FormInfo.UserId);
+                    Response.FormInfo = Mapper.ToFormInfoDTO(FormInfoBO);
+                    Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings(pRequest.FormInfo.FormId.ToString(), FormInfoBO.Xml));
+                }
+                else
+                {
+                    Epi.Web.BLL.FormSetting SettingsImplementation = new Epi.Web.BLL.FormSetting(IFormSettingDao);
+                    Response.FormSetting = Mapper.ToDataTransferObject(SettingsImplementation.GetFormSettings());
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+
+
+            }
+
+            return Response;
+
+
+        }
 
 
 

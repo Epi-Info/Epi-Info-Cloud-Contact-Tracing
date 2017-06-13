@@ -32,7 +32,7 @@ namespace Epi.Cloud.SqlServer
         {
             var template = new Epi.FormMetadata.DataStructures.Template();
 
-            using (EPIInfo7Entities metacontext = new EPIInfo7Entities(ConfigurationHelper.GetEnvironmentResourceKey("EPIInfo7Entities")))
+            using (EPIInfo7Entities metacontext = new EPIInfo7Entities("EPIInfo7Entities"))
             {
                 try
                 {
@@ -521,8 +521,8 @@ namespace Epi.Cloud.SqlServer
         public IDbConnection GetConnection()
         {
             //return GetNativeConnection(connectionString);
-            var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("DBConnection");
-            var connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+            //var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("DBConnection");
+            var connectionString = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
             return GetNativeConnection(connectionString);
             //return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
         }

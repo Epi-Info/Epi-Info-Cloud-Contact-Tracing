@@ -156,7 +156,7 @@ namespace Epi.Cloud.CacheServices
 
         private static string CacheConnectionString()
         {
-            return ConfigurationHelper.GetEnvironmentResourceKey("CacheConnectionString");
+            return ConfigurationHelper.GetConnectionString("CacheConnectionString");
         }
 
         private static IDatabase Cache
