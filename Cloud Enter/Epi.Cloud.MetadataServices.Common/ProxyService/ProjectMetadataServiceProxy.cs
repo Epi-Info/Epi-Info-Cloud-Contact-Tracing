@@ -20,7 +20,7 @@ namespace Epi.Cloud.MetadataServices.Common.ProxyService
         private string _apiUrl;
         public ProjectMetadataServiceProxy()
         {
-            _apiUrl = ConfigurationHelper.GetValueByResourceKey(AppSettings.Key.MetadataAccessServiceAPI, AppSettings.Key.Environment_API, false);
+            _apiUrl = ConfigurationHelper.GetEnvironmentValueByKey(AppSettings.Key.MetadataAccessServiceAPI);
             //_apiUrl = ConfigurationManager.AppSettings[apiUrlKey];
         }
 

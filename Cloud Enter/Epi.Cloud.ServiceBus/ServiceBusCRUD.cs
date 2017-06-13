@@ -32,8 +32,9 @@ namespace Epi.Cloud.ServiceBus
         private static bool VerifyConfiguration()
         {
             bool configOK = true;
-            var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
-            var connectionString = ConfigurationHelper.GetConnectionStringByResourceKey(ResourceKey);
+            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
+
+            var connectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString");
 
             return configOK;
 

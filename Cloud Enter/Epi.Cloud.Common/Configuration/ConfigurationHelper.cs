@@ -25,17 +25,25 @@ namespace Epi.Cloud.Common.Configuration
             }
             return string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
         }
-
-        public static string GetEnvironmentKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment, bool isEncrypt = true)
+        public static string GetConnectionString(string resourceName)
         {
-            var environmentKey = AppSettings.GetStringValue(environmentKeyName);
+
             if (resourceName != null)
             {
-                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + '/' + resourceName] ?? environmentKey;
-                var connectionStringName = string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
-                return connectionStringName;
+                var ConnectionString = ConfigurationManager.ConnectionStrings[resourceName].ConnectionString;
+                return ConnectionString;
             }
-            return string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
+            return null;
+        }
+
+        public static string GetEnvironmentValueByKey(string resourceName)
+        {
+            if (resourceName != null)
+            {
+                var EnvironmentValue = ConfigurationManager.AppSettings[resourceName];
+                return EnvironmentValue;
+            }
+            return null;
         }
 
         public static string GetValueByResourceKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment, bool isEncrypt = true)
@@ -53,7 +61,7 @@ namespace Epi.Cloud.Common.Configuration
 
         public static string GetConnectionStringByResourceKey(string environmentKeyName, bool isEncrypt = true)
         {
-            
+
             if (environmentKeyName != null)
             {
                 var ConnectionString = ConfigurationManager.ConnectionStrings[environmentKeyName].ConnectionString;
