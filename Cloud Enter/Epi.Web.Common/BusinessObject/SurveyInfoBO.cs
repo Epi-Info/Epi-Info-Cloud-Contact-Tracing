@@ -10,7 +10,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
     {
         private string _SurveyId;
         private string _SurveyNumber;
-        private int  _SurveyType;
+        private int _SurveyType;
         private string _SurveyName;
         private string _IntroductionText;
         private string _DepartmentName;
@@ -29,7 +29,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private int _ViewId;
         private int _OwnerId;
         private bool _IsSqlProject;
-        private bool _IsShareable; 
+        private bool _IsShareable;
         private string _DBConnectionString;
         private int _DataAccessRuleId;
         private bool _HasDraftModeData;
@@ -41,9 +41,9 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _DataAccessRuleId = value; }
         }
         public string StatusText
-        { 
+        {
             get { return _StatusText; }
-            set { _StatusText = value; } 
+            set { _StatusText = value; }
         }
         public string SurveyId
         {
@@ -109,7 +109,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
             set { _ClosingDate = value; }
         }
 
-        public Guid UserPublishKey 
+        public Guid UserPublishKey
         {
             get { return _UserPublishKey; }
             set { _UserPublishKey = value; }
@@ -130,7 +130,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
         public DateTime DateCreated
         {
             get { return _DateCreated; }
-            set{ _DateCreated = value;}
+            set { _DateCreated = value; }
         }
 
         [DataMember]
@@ -139,7 +139,7 @@ namespace Epi.Web.Enter.Common.BusinessObject
             get { return _IsDraftMode; }
             set { _IsDraftMode = value; }
         }
-          [DataMember]
+        [DataMember]
         public bool IsShareable
         {
             get { return _IsShareable; }
@@ -156,52 +156,58 @@ namespace Epi.Web.Enter.Common.BusinessObject
 
         [DataMember]
         public string ParentId
-            {
+        {
             get { return _ParentId; }
             set { _ParentId = value; }
-            }
+        }
 
         [DataMember]
         public int ViewId
-            {
+        {
             get { return _ViewId; }
             set { _ViewId = value; }
-            }
+        }
         [DataMember]
         public int OwnerId
-            {
+        {
             get { return _OwnerId; }
             set { _OwnerId = value; }
-            }
+        }
         [DataMember]
         public bool IsSqlProject
-            {
+        {
             get { return _IsSqlProject; }
             set { _IsSqlProject = value; }
-            }
+        }
         [DataMember]
         public string DBConnectionString
-            {
+        {
             get { return _DBConnectionString; }
             set { _DBConnectionString = value; }
-            }
-         [DataMember]
+        }
+        [DataMember]
         public bool IsShared
         {
             get { return _IsShared; }
             set { _IsShared = value; }
         }
-         [DataMember]
+        [DataMember]
         public bool HasDraftModeData
         {
             get { return _HasDraftModeData; }
             set { _HasDraftModeData = value; }
         }
-         [DataMember]
-         public bool EwavLiteToggleSwitch
-         {
-             get { return _ewavLiteToggleSwitch; }
-             set { _ewavLiteToggleSwitch = value; }
-         }
+        [DataMember]
+        public bool EwavLiteToggleSwitch
+        {
+            get { return _ewavLiteToggleSwitch; }
+            set { _ewavLiteToggleSwitch = value; }
+        }
+
+        [DataMember]
+        public Dictionary<int, int> RelateViewIds { get; set; }
+
+        [DataMember]
+        public Dictionary<int, string> ViewIdNames { get; set; }
     }
 }

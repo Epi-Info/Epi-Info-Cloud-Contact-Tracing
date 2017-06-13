@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using Epi.Web.Enter.Common.BusinessObject;
+using Epi.Web.Enter.Common.Criteria;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using Epi.Web.Enter.Common.BusinessObject;
 namespace Epi.Web.BLL
 {
 
-    public  class SurveyInfo
+  public  class SurveyInfo
     {
       private Epi.Web.Enter.Interfaces.DataInterfaces.ISurveyInfoDao SurveyInfoDao;
       Dictionary<int, int> ViewIds = new Dictionary<int, int>();
@@ -136,31 +139,29 @@ namespace Epi.Web.BLL
         SurveyInfoBO result = pRequestMessage;
         if (ValidateSurveyFields(pRequestMessage))
             {
-                
-            if (this.IsRelatedForm(pRequestMessage.XML))
-                    {
+
+                if (pRequestMessage.ViewIdNames.Count > 1)
+                {
 
                     List<SurveyInfoBO> FormsHierarchyIds = this.GetFormsHierarchyIds(pRequestMessage.SurveyId.ToString());
-                    
-                    // 1- breck down the xml to n views
-                    List<string> XmlList = new List<string>();
-                    XmlList = XmlChunking(pRequestMessage.XML);
+
+                    // 1- breck down the xml to n views                   
 
                     // 2- call publish() with each of the views
-                    foreach (string Xml in XmlList)
-                        {
-                        XDocument xdoc = XDocument.Parse(Xml);
+                    foreach (KeyValuePair<int, string> viewidname in pRequestMessage.ViewIdNames)
+                    {                       
+                       
                         SurveyInfoBO SurveyInfoBO = new SurveyInfoBO();
-                        XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
-                        int ViewId;
-                        int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
+                       // XElement ViewElement = xdoc.XPathSelectElement("Template/Project/View");
+                        int ViewId= viewidname.Key;
+                       // int.TryParse(ViewElement.Attribute("ViewId").Value.ToString(), out ViewId);
 
-                        GetRelateViewIds(ViewElement, ViewId);
+                        //GetRelateViewIds(ViewElement, ViewId);
 
                         SurveyInfoBO = pRequestMessage;
-                        SurveyInfoBO.XML = Xml;
-                        SurveyInfoBO.SurveyName = ViewElement.Attribute("Name").Value.ToString();
-                        SurveyInfoBO.ViewId = ViewId;
+                        SurveyInfoBO.XML = " ";
+                        SurveyInfoBO.SurveyName =  viewidname.Value.ToString();
+                        SurveyInfoBO.ViewId = viewidname.Key;
 
                         SurveyInfoBO pBO = FormsHierarchyIds.Single(x => x.ViewId == ViewId);
                         SurveyInfoBO.SurveyId = pBO.SurveyId;
@@ -169,7 +170,7 @@ namespace Epi.Web.BLL
                         SurveyInfoBO.OwnerId = pRequestMessage.OwnerId;
                         if (SurveyInfoBO.IsSqlProject == true)
                         {
-                            this.SurveyInfoDao.ValidateServername(pRequestMessage);
+                           // this.SurveyInfoDao.ValidateServername(pRequestMessage);
                             SurveyInfoBO.IsSqlProject = pRequestMessage.IsSqlProject;
                         }
                         this.SurveyInfoDao.UpdateSurveyInfo(SurveyInfoBO);
@@ -182,11 +183,11 @@ namespace Epi.Web.BLL
                     {
                         if (pRequestMessage.IsSqlProject == true)
                         {
-                            this.SurveyInfoDao.ValidateServername(pRequestMessage);
+                            //this.SurveyInfoDao.ValidateServername(pRequestMessage);
                         }
                         this.SurveyInfoDao.UpdateSurveyInfo(pRequestMessage);
 
-                    this.SurveyInfoDao.UpdateSurveyInfo(pRequestMessage);
+                   // this.SurveyInfoDao.UpdateSurveyInfo(pRequestMessage);
 
                     //Commented as updating mode does not require update of the display settings
                     //this.SurveyInfoDao.InsertFormdefaultSettings(pRequestMessage.SurveyId, pRequestMessage.IsSqlProject, GetSurveyControls(pRequestMessage));
@@ -355,7 +356,7 @@ namespace Epi.Web.BLL
             {
                 fieldType = _FieldTypeID.Attribute("FieldTypeId").Value;
 
-                if (fieldType != "2" && fieldType != "3" && fieldType != "20" && fieldType != "21")
+                if (fieldType != "2" && fieldType != "21" && fieldType != "3" && fieldType != "20")
                 {
                     List.Add(_FieldTypeID.Attribute("Name").Value.ToString());
                 }

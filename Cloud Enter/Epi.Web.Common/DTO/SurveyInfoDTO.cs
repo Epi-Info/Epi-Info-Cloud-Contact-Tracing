@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace Epi.Web.Enter.Common.DTO
 {
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
-    public class SurveyInfoDTO 
+    public class SurveyInfoDTO
     {
         private string _SurveyId;
         private string _SurveyNumber;
@@ -27,7 +27,7 @@ namespace Epi.Web.Enter.Common.DTO
         private int _ViewId;
         private int _OwnerId;
         private bool _IsSqlProject;
-        private bool _IsShareable; 
+        private bool _IsShareable;
         private string _DBConnectionString;
         private int _DataAccessRuleId;
         private bool _HasDraftModeData;
@@ -121,7 +121,7 @@ namespace Epi.Web.Enter.Common.DTO
             get { return _ClosingDate; }
             set { _ClosingDate = value; }
         }
-       
+
         [DataMember]
         public Guid UserPublishKey
         {
@@ -147,59 +147,69 @@ namespace Epi.Web.Enter.Common.DTO
         [DataMember]
         public DateTime StartDate
         {
-            get {return _StartDate;}
+            get { return _StartDate; }
             set { _StartDate = value; }
         }
 
         [DataMember]
         public int ViewId
-            {
+        {
             get { return _ViewId; }
             set { _ViewId = value; }
-            }
+        }
         [DataMember]
         public int OwnerId
-            {
+        {
             get { return _OwnerId; }
             set { _OwnerId = value; }
-            }
+        }
 
-      
+
         [DataMember]
         public bool IsSqlProject
-            {
+        {
             get { return _IsSqlProject; }
             set { _IsSqlProject = value; }
-            }
+        }
         [DataMember]
         public string DBConnectionString
-            {
+        {
             get { return _DBConnectionString; }
             set { _DBConnectionString = value; }
-            }
-          [DataMember]
+        }
+        [DataMember]
         public bool IsShareable
         {
             get { return _IsShareable; }
             set { _IsShareable = value; }
         }
-          [DataMember]
-          public bool IsShared
-          {
-              get { return _IsShared; }
-              set { _IsShared = value; }
-          }
-          [DataMember]
-          public bool HasDraftModeData
-          {
-              get { return _HasDraftModeData; }
-              set { _HasDraftModeData = value; }
-          }
-          [DataMember]
-          public bool EwavLiteToggleSwitch
-          {
-              get { return _ewavLiteToggleSwitch; }
-              set { _ewavLiteToggleSwitch = value; }
-          }
+        [DataMember]
+        public bool IsShared
+        {
+            get { return _IsShared; }
+            set { _IsShared = value; }
+        }
+        [DataMember]
+        public bool HasDraftModeData
+        {
+            get { return _HasDraftModeData; }
+            set { _HasDraftModeData = value; }
+        }
+        [DataMember]
+        public bool EwavLiteToggleSwitch
+        {
+            get { return _ewavLiteToggleSwitch; }
+            set { _ewavLiteToggleSwitch = value; }
+        }
+
+        [DataMember]
+        public Dictionary<int, int> RelateViewIds { get; set; }
+
+        [DataMember]
+        public Dictionary<int, string> ViewIdNames { get; set; }
+
+        [DataMember]
+        public Dictionary<int, List<string>> ViewColumnNames { get; set; }
+
     }
 }

@@ -68,12 +68,12 @@
   <ItemGroup>
     <Compile Include="FormInfo.cs" />
     <Compile Include="FormSetting.cs" />
+    <Compile Include="Publisher.cs" />
+    <Compile Include="SurveyInfo.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="Organization.cs" />
-    <Compile Include="Publisher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SurveyInfo.cs" />
     <Compile Include="SurveyResponse.cs" />
   </ItemGroup>
   <ItemGroup>
