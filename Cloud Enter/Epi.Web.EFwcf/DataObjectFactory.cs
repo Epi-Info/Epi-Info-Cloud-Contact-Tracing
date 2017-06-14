@@ -26,7 +26,7 @@ namespace Epi.Web.EFwcf
                 string EWEADOconnectionStringName = "EWEADO";
 
                 //Decrypt connection string here
-                _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString);
+                _connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
                 //_eweAdoConnectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[EWEADOconnectionStringName].ConnectionString);
             }
             catch (Exception ex)

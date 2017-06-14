@@ -8,7 +8,7 @@ namespace MetadataTests
     [TestClass]
     public class TestFormResponseDetailPropCount
     {
-        private const int FormResponseDetailPropertyCount = 22;
+        private const int FormResponseDetailPropertyCount = 31;
         [TestMethod]
         public void TestMethod1()
         {

@@ -8,7 +8,7 @@ namespace MetadataTests
     [TestClass]
     public class TestSurveyResponseBOPropertyCount
     {
-        private const int SurveyResponseBOPropertyCount = 23;
+        private const int SurveyResponseBOPropertyCount = 29;
         [TestMethod]
         public void TestMethod1()
         {

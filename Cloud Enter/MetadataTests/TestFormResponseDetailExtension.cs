@@ -18,10 +18,10 @@ namespace MetadataTests
         [TestMethod]
         public void GetSurveyResponseFromFormDetail()
         {
-            var json = System.IO.File.ReadAllText(@"c:\junk\ZikaMetadataFromService.json");
-            Template metadataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
+            //var json = System.IO.File.ReadAllText(@"c:\junk\ZikaMetadataFromService.json");
+            //Template metadataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
             MetadataAccessor metaDataAccessor = new MetadataAccessor("2e1d01d4-f50d-4f23-888b-cd4b7fc9884b");
-          
+
             metaDataAccessor.CurrentFormId = "2e1d01d4-f50d-4f23-888b-cd4b7fc9884b";
             var _projectMetadataProvider = new Mock<IProjectMetadataProvider>();
             MetadataAccessor.StaticCache.ProjectMetadataProvider = _projectMetadataProvider.Object;
