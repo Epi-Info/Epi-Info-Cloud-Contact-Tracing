@@ -181,6 +181,63 @@ namespace Epi.DataPersistence.Extensions
             return formResponseDetail;    
         }
 
+        public static FormResponseProperties ToFormResponseProperties(this FormResponseDetail formResponseDetail)
+        {
+            if (formResponseDetail == null) return null;
+
+            FormResponseProperties formResponseProperties = new FormResponseProperties
+            {
+                ResponseId = formResponseDetail.ResponseId,
+                FormId = formResponseDetail.FormId,
+                FormName = formResponseDetail.FormName,
+
+                ParentResponseId = formResponseDetail.ParentResponseId,
+                ParentFormId = formResponseDetail.ParentFormId,
+                ParentFormName = formResponseDetail.ParentFormName,
+
+                RootResponseId = formResponseDetail.RootResponseId,
+                RootFormId = formResponseDetail.RootFormId,
+                RootFormName = formResponseDetail.RootFormName,
+
+                IsNewRecord = formResponseDetail.IsNewRecord,
+
+                RecStatus = formResponseDetail.RecStatus,
+                LastPageVisited = formResponseDetail.LastPageVisited,
+
+                FirstSaveLogonName = formResponseDetail.FirstSaveLogonName,
+                LastSaveLogonName = formResponseDetail.LastSaveLogonName,
+                FirstSaveTime = formResponseDetail.FirstSaveTime,
+                LastSaveTime = formResponseDetail.LastSaveTime,
+
+                OrgId = formResponseDetail.OrgId,
+                UserId = formResponseDetail.UserId,
+                UserName = formResponseDetail.UserName,
+
+                IsDraftMode = formResponseDetail.IsDraftMode,
+                IsLocked = formResponseDetail.IsLocked,
+                RequiredFieldsList = formResponseDetail.RequiredFieldsList,
+                HiddenFieldsList = formResponseDetail.HiddenFieldsList,
+                HighlightedFieldsList = formResponseDetail.HighlightedFieldsList,
+                DisabledFieldsList = formResponseDetail.DisabledFieldsList,
+                ResponseQA = formResponseDetail.FlattenedResponseQA()
+            };
+
+            return formResponseProperties;
+        }
+
+        public static List<FormResponseProperties> ToFormResponsePropertiesFlattenedList(this FormResponseDetail formResponseDetail)
+        {
+            List<FormResponseProperties> formResponsePropertiesList = new List<FormResponseProperties>();
+            var formResponseProperties = formResponseDetail.ToFormResponseProperties();
+            formResponsePropertiesList.Add(formResponseProperties);
+            foreach (var childFormResponseDetail in formResponseDetail.ChildFormResponseDetailList)
+            {
+                var childFormResponseProperties = childFormResponseDetail.ToFormResponseProperties();
+                formResponsePropertiesList.Add(childFormResponseProperties);
+            }
+            return formResponsePropertiesList;
+        }
+
         public static List<FormResponseDetail> ToFormResponseDetailList(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
         {
             List<FormResponseDetail> formResonseDetailList = formResponsePropertiesList.Select(p => p.ToFormResponseDetail()).ToList();

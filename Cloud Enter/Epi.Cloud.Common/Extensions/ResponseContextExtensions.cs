@@ -24,6 +24,11 @@ namespace Epi.Cloud.Common.Extensions
             {
                 responseContext.RootFormId = _metadataAccessor.GetRootFormId(responseContext.ParentFormId);
             }
+            else if (string.IsNullOrWhiteSpace(responseContext.RootFormId))
+            {
+                // Get the first form Id that the MetadataAccessor is aware of.
+                responseContext.RootFormId = _metadataAccessor.GetRootFormId();
+            }
 
             if (!string.IsNullOrWhiteSpace(responseContext.ParentFormId))
             {
@@ -36,6 +41,7 @@ namespace Epi.Cloud.Common.Extensions
             }
 
             if (string.IsNullOrWhiteSpace(responseContext.RootResponseId)) responseContext.RootResponseId = responseContext.ResponseId;
+
 
             if (responseContext.IsRootResponse)
             {
