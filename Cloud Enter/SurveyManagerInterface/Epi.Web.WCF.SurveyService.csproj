@@ -74,9 +74,9 @@
       <Project>{50ce0fc1-d4c8-45cc-ab84-ae34013a7186}</Project>
       <Name>Epi.Cloud.PublishMetaData</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
+    <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Enter.Common.csproj">
       <Project>{6e2f059b-c1cd-401f-8a63-dc2933cfb0d8}</Project>
-      <Name>Epi.Web.Common</Name>
+      <Name>Epi.Web.Enter.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Epi.Web.EFwcf\Epi.Web.EFwcf.csproj">
       <Project>{bf84e169-79d5-4b52-89df-58d50a8fec07}</Project>
