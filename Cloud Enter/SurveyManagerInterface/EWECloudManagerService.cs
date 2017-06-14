@@ -70,7 +70,6 @@ namespace Epi.Web.WCF.SurveyService
         /// <returns></returns>
         public PublishResponse MetaDataToCloud(PublishRequest pRequest)
         {
-
             bool pCloud = true;
             MetaDataToCloud _publishMetaDataToCloud = new MetaDataToCloud();
 
@@ -91,17 +90,7 @@ namespace Epi.Web.WCF.SurveyService
                         SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
                         SurveyRequestResultBO surveyRequestResultBO = Implementation.PublishSurvey(surveyInfoBO);
                         result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
-
-                        //Update the Blob
-                        if (_publishMetaDataToCloud.UploadBlob())
-                        {
-                            //Clear the Cache
-                            if (_publishMetaDataToCloud.ClearCache())
-                            {
-                                //Start Web Job
-                                _publishMetaDataToCloud.StartAndStopWebJob(Constant.WebJob.Start);
-                            }
-                        }
+                        EpiCloudOperation();
                     }
                 }
                 else
@@ -118,6 +107,23 @@ namespace Epi.Web.WCF.SurveyService
                 customFaultException.StackTrace = ex.StackTrace;
                 customFaultException.HelpLink = ex.HelpLink;
                 throw new FaultException<CustomFaultException>(customFaultException);
+            }
+        }
+
+
+        public void EpiCloudOperation()
+        {
+            MetaDataToCloud _publishMetaDataToCloud = new MetaDataToCloud();
+            //_publishMetaDataToCloud.StartAndStopWebJob(Constant.WebJob.Stop);
+            //Update the Blob
+            if (_publishMetaDataToCloud.UploadBlob())
+            {
+                //Clear the Cache
+                if (_publishMetaDataToCloud.ClearCache())
+                {
+                    //Start Web Job
+                    _publishMetaDataToCloud.StartAndStopWebJob(Constant.WebJob.Start);
+                }
             }
         }
 
@@ -147,17 +153,7 @@ namespace Epi.Web.WCF.SurveyService
                         SurveyInfoBO surveyInfoBO = Mapper.ToBusinessObject(pRequest.SurveyInfo);
                         SurveyRequestResultBO surveyRequestResultBO = Implementation.PublishSurvey(surveyInfoBO);
                         result.PublishInfo = Mapper.ToDataTransferObject(surveyRequestResultBO);
-
-                        //Update the Blob
-                        if (_publishMetaDataToCloud.UploadBlob())
-                        {
-                            //Clear the Cache
-                            if (_publishMetaDataToCloud.ClearCache())
-                            {
-                                //Start Web Job
-                                _publishMetaDataToCloud.StartAndStopWebJob(Constant.WebJob.Start);
-                            }
-                        }
+                        EpiCloudOperation();
                     }
                 }
                 else

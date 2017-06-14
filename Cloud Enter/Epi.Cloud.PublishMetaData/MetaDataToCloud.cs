@@ -27,10 +27,10 @@ namespace Epi.Cloud.PublishMetaData
         public bool StartAndStopWebJob(string status)
         {
             var environmentKey = ConfigurationManager.AppSettings["Environment"];
-            string webJobUserName = GetEnvironmentValue("WebJobUsername@" + environmentKey);
-            string webJobPassWord = GetEnvironmentValue("WebJobPassWord@" + environmentKey);
-            string webJobName = GetEnvironmentValue("WebJobName@" + environmentKey);
-            string webJobUrl = GetEnvironmentValue("WebJobURL@" + environmentKey);
+            string webJobUserName = GetEnvironmentValue("WebJobUsername");
+            string webJobPassWord = GetEnvironmentValue("WebJobPassWord");
+            string webJobName = GetEnvironmentValue("WebJobName");
+            string webJobUrl = GetEnvironmentValue("WebJobURL");
             return WebJobHandler.EnableandDisableWebJob(webJobUserName, webJobPassWord, webJobName, status, webJobUrl);
 
         }
@@ -62,14 +62,13 @@ namespace Epi.Cloud.PublishMetaData
 
         public string GetEnvironmentValue(string resourceName)
         {
-            string connectionKey = string.Empty;
+            string connectionValue = string.Empty;
             if (resourceName != null)
             {
-                connectionKey = ConfigurationManager.AppSettings[resourceName];
-                var DecryptConnectionValue = Cryptography.Decrypt(connectionKey);
-                return DecryptConnectionValue;
+                connectionValue = ConfigurationManager.AppSettings[resourceName];
+                return connectionValue;
             }
-            return connectionKey;
+            return null;
         }
 
         public bool ClearCache()

@@ -2072,7 +2072,7 @@ FROM [dbo].[ErrorLogSorted] AS [ErrorLogSorted]</DefiningQuery>
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="Epi.Web.Model" ZoomLevel="66">
+      <Diagram Name="Epi.Web.Model" ZoomLevel="63">
         <EntityTypeShape EntityType="OSELS_EWEModel.lk_Status" Width="1.5" PointX="9.625" PointY="5.625" Height="1.5956835937499996" IsExpanded="true" />
         <EntityTypeShape EntityType="OSELS_EWEModel.lk_SurveyType" Width="1.5" PointX="3.75" PointY="2.75" Height="1.5956835937499996" IsExpanded="true" />
         <EntityTypeShape EntityType="OSELS_EWEModel.Organization" Width="1.5" PointX="0.75" PointY="5.375" Height="2.3648893229166656" IsExpanded="true" />

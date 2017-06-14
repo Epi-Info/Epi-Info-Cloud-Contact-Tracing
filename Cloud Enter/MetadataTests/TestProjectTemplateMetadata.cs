@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Epi.FormMetadata.DataStructures;
 using System.Linq;
 //using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Cloud.MetadataServices.Common.ProxyService;
 
 namespace Epi.Web.SurveyManager.Test
 {
@@ -27,7 +28,7 @@ namespace Epi.Web.SurveyManager.Test
                 //var parentView = projectMetadata.Project.Views[0];
                 foreach (var view in projectMetadata.Project.Views)
                 {
-                    Assert.IsNotNull(view.FormId,"FormId is Null");
+                    Assert.IsNotNull(view.FormId, "FormId is Null");
                     Assert.IsTrue(view.ParentFormId != null ? projectMetadata.Project.Views.Any(v => v.FormId == view.ParentFormId) : true, "Child view no corresponding Parent");
                     if (view.Pages.Length > 0)
                     {
@@ -42,18 +43,19 @@ namespace Epi.Web.SurveyManager.Test
                 }
             }
 
-          
-           
+
+
         }
-                                                                                                                                     
+
 
         public Template MockTemplateData()
         {
 
 
-            var json = System.IO.File.ReadAllText(@"c:\junk\ZikaMetadataFromService.json");
-            Template metadataObject = Newtonsoft.Json.JsonConvert.DeserializeObject<Template>(json);
-
+            //var json = System.IO.File.ReadAllText(@"c:\junk\ZikaMetadataFromService.json");
+            Template metadataObject = new Template();
+            ProjectMetadataServiceProxy serviceProxy = new ProjectMetadataServiceProxy();
+            metadataObject = serviceProxy.GetProjectMetadataAsync("0").Result;
             //Template template = new Template();
             //template.Name = "name";
             //template.CreateDate = DateTime.Now.ToString();

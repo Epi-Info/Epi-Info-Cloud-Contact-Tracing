@@ -3,8 +3,7 @@
   <Role name="Epi.Web.WCF.SurveyHost">
     <Instances count="1" />
     <ConfigurationSettings>
-      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=wcferror;AccountKey=$(_wcferror.key_)" />
-      <Setting name="APPINSIGHTS_INSTRUMENTATIONKEY" value="71cd9150-d051-42b0-81b6-645e763f82ae" />
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="UseDevelopmentStorage=true" />
     </ConfigurationSettings>
   </Role>
 </ServiceConfiguration>

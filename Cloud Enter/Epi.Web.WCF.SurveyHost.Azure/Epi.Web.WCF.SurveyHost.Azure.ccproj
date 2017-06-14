@@ -5,13 +5,14 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>2.9</ProductVersion>
-    <ProjectGuid>6c9e7fc6-9064-4ab2-a5f7-3341af57d73d</ProjectGuid>
+    <ProjectGuid>178cd1ab-1835-46cb-aeed-6b44675ccf3e</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Epi.Web.WCF.SurveyHost.Azure</RootNamespace>
     <AssemblyName>Epi.Web.WCF.SurveyHost.Azure</AssemblyName>
     <StartDevelopmentStorage>True</StartDevelopmentStorage>
     <Name>Epi.Web.WCF.SurveyHost.Azure</Name>
+    <PackageEnableRemoteDebugger>False</PackageEnableRemoteDebugger>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,13 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Epi.Web.WCF.SurveyHostContent\" />
-    <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="Epi.Web.WCF.SurveyHostContent\diagnostics.wadcfgx" />
-  </ItemGroup>
-  <ItemGroup>
-    <PublishProfile Include="Profiles\FetpEIDevDbsProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>

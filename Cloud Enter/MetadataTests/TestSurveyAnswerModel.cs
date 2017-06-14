@@ -9,11 +9,12 @@ namespace MetadataTests
     [TestClass]
     public class TestSurveyAnswerModel
     {
-        private const int SurveyAnswerModelPropertyCount = 8;
-        private const int SurveyAnswerDTOPropertyCount = 24;
+        private const int SurveyAnswerModelPropertyCount = 13;
+        private const int SurveyAnswerDTOPropertyCount = 35;
         [TestMethod]
         public void TestSurveyAnswerDTO()
         {
+
             SurveyAnswerModel objSurveyAnswerModel = new SurveyAnswerModel();
             SurveyAnswerDTO objSurveyAnswerDTO = new SurveyAnswerDTO();
             int numberOfPublicPropertiesofSurveyAnswerDTO = objSurveyAnswerDTO.GetType().GetProperties().Count();
