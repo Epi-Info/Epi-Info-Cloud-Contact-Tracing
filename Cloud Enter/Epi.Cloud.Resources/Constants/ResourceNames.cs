@@ -32,6 +32,11 @@
         public const string OrderBy = "OrderBy";
     }
 
+    public struct DocumentDBUDFKeys
+    {
+        public const string udfWildCardCompare = "udfWildCardCompare";
+    }
+
     public struct DataAccessRuleKeys
     {
         public const string Rule1 = "Rule1";

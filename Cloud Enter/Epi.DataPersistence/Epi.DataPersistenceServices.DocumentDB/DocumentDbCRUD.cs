@@ -201,12 +201,20 @@ namespace Epi.DataPersistenceServices.DocumentDB
             isSuccessful &= result;
             return isSuccessful;
         }
-
-        public ResourceResponse<Document> ExecuteWithFollowOnAction(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+        public UserDefinedFunction ExecuteWithFollowOnAction<T>(Func<Task<UserDefinedFunction>> asyncFunc, Action followOnAction = null)
         {
-            Task<ResourceResponse<Document>> documentTask = null;
+            Task<UserDefinedFunction> documentTask = null;
             bool isSuccessful = ExecuteFollowOn(asyncFunc, followOnAction, out documentTask);
-            ResourceResponse<Document> result = documentTask.Result;
+            UserDefinedFunction result = documentTask.Result;
+            return result;
+        }
+
+
+        public T ExecuteWithFollowOnAction<T>(Func<Task<T>> asyncFunc, Action followOnAction = null)
+        {
+            Task<T> documentTask = null;
+            bool isSuccessful = ExecuteFollowOn(asyncFunc, followOnAction, out documentTask);
+            T result = documentTask.Result;
             return result;
         }
 

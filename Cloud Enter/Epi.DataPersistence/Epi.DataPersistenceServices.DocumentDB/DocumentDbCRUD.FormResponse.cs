@@ -563,13 +563,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 };
                 if (nonWildSearchQualifiers != null)
                 {
-                    query = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
+                    query = SearchByFieldNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
                 }
                 else
                 {
                     query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
                 }
-                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, SPGetRecordsBySurveyId, query);
+                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, spGetRecordsBySurveyId, udfWildCardCompare, query).Result;
 
 
                 //var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);

@@ -45,7 +45,7 @@
             {
                 inputPos = inputPosStack[stackPos];         // Pop input and pattern positions from stack
                 patternPos = patternPosStack[stackPos--];   // Matching will succeed if rest of the input string matches rest of the pattern
-                if (inputPos == input.Length && patternPos == pattern.Length)
+                if (inputPos == input.Length && (patternPos == pattern.Length || patternPos == pattern.Length - 1 && pattern[patternPos] == multipleWildcard))
                 {
                     isMatched = true;     // Reached end of both pattern and input string, hence matching is successful
                 }

@@ -240,7 +240,9 @@ namespace Epi.DataPersistence.Extensions
 
         public static List<FormResponseDetail> ToFormResponseDetailList(this IEnumerable<FormResponseProperties> formResponsePropertiesList)
         {
-            List<FormResponseDetail> formResonseDetailList = formResponsePropertiesList.Select(p => p.ToFormResponseDetail()).ToList();
+            List<FormResponseDetail> formResonseDetailList = new List<FormResponseDetail>();
+            if (formResponsePropertiesList != null)
+                formResonseDetailList = formResponsePropertiesList.Select(p => p.ToFormResponseDetail()).ToList();
             return formResonseDetailList;
         }
 

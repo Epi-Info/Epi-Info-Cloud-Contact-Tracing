@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
 using Epi.PersistenceServices.DocumentDB;
@@ -11,7 +12,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
     public partial class DocumentDbCRUD
     {
         public int? continuationToken = null;
-        private const string SPGetRecordsBySurveyId = "GetRecordsBySurveyId";
+
+        private const string spGetRecordsBySurveyId = "GetRecordsBySurveyId";
+        private const string udfWildCardCompare = "WildCardCompare";
 
         /// <summary>
         /// Execute DB SP-Get all records by surveyID 
@@ -20,9 +23,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spId"></param>
         /// <param name="surveyID"></param>
         /// <returns></returns>
-        private List<FormResponseProperties> GetAllRecordsBySurveyId(string collectionId, string spId, string query)
+        private async Task<List<FormResponseProperties>> GetAllRecordsBySurveyId(string collectionId, string spId, string udfId, string query)
         {
-            return ExecuteSPAsync(collectionId, spId, query);
+            return await ExecuteSPAsync(collectionId, spId, udfId, query);
         }
 
         internal class OrderByResult
@@ -38,13 +41,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spId"></param>
         /// <param name="surveyId"></param>
         /// <returns></returns>
-        private List<FormResponseProperties> ExecuteSPAsync(string collectionId, string spId, string query)
+        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfId, string query)
         {
             RequestOptions option = new RequestOptions();
             var formResponseList = new List<FormResponseProperties>();
             var formResponse = new FormResponseProperties();
             // Create SP Uri
             string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId).ToString();
+            string udfUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfId).ToString();
             try
             {
                 do
@@ -62,13 +66,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
             catch (Exception ex)
             {
                 var errorCode = ((DocumentClientException)ex.InnerException).Error.Code;
-                if (errorCode == "NotFound")
+                if (errorCode == "NotFound" || errorCode == "BadRequest")
                 {
-                    spUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId).ToString();
-                    var createSPResponse = CreateSPAsync(spUri, spId);
+                    //spUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId).ToString();
+                    var createSPResponse = await CreateSPAsync(spUri, spId);
+                    var createUDFResponse = await CreateUDFAsync(udfUri, udfId);
 
                     //Execute SP 
-                    ExecuteSPAsync(collectionId, spId, query);
+                    ExecuteSPAsync(collectionId, spId, udfId, query);
                 }
             }
             return null;
@@ -80,20 +85,44 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spSelfLink"></param>
         /// <param name="spId"></param>
         /// <returns></returns>
-        private StoredProcedure CreateSPAsync(string spSelfLink, string spId)
+        private async Task<StoredProcedure> CreateSPAsync(string spSelfLink, string spId)
         {
 
             try
             {
-                StoredProcedure sproc = new StoredProcedure();
                 var sprocBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, DocumentDBSPKeys.GetAllRecordsBySurveyID);
                 var sprocDefinition = new StoredProcedure
                 {
                     Id = spId,
                     Body = sprocBody
                 };
-                var result = Client.CreateStoredProcedureAsync(spSelfLink, sprocDefinition).Result;
-                return sproc;
+                var result = ExecuteWithFollowOnAction(() => Client.CreateStoredProcedureAsync(spSelfLink, sprocDefinition));
+                return await Task.FromResult(result);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return null;
+        }
+        /// <summary>
+        /// Create Document Db Stored Procedure
+        /// </summary>
+        /// <param name="udfSelfLink"></param>
+        /// <param name="udfId"></param>
+        /// <returns></returns>
+        private async Task<UserDefinedFunction> CreateUDFAsync(string udfSelfLink, string udfId)
+        {
+            try
+            {
+                var udfBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, DocumentDBUDFKeys.udfWildCardCompare);
+                var udfDefinition = new UserDefinedFunction
+                {
+                    Id = udfId,
+                    Body = udfBody
+                };
+                var udf = ExecuteWithFollowOnAction(() => Client.CreateUserDefinedFunctionAsync(udfSelfLink, udfDefinition));
+                return await Task.FromResult(udf);
             }
             catch (Exception ex)
             {
