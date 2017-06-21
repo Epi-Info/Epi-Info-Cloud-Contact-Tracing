@@ -1,4 +1,5 @@
-function orderBy(filterQuery) {
+function orderBy(filterQuery)
+{
     // HTTP error codes sent to our callback funciton by DocDB server.
     var ErrorCode = {
         REQUEST_ENTITY_TOO_LARGE: 413,

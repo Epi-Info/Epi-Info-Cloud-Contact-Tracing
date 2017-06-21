@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
@@ -66,14 +67,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
             catch (Exception ex)
             {
                 var errorCode = ((DocumentClientException)ex.InnerException).Error.Code;
-                if (errorCode == "NotFound" || errorCode == "BadRequest")
+                if (errorCode == "NotFound" /* || errorCode == "BadRequest" */ )
                 {
-                    //spUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId).ToString();
                     var createSPResponse = await CreateSPAsync(spUri, spId);
-                    var createUDFResponse = await CreateUDFAsync(udfUri, udfId);
+                    //var createUDFResponse = await CreateUDFAsync(udfUri, udfId);
 
                     //Execute SP 
-                    ExecuteSPAsync(collectionId, spId, udfId, query);
+                    await ExecuteSPAsync(collectionId, spId, udfId, query);
                 }
             }
             return null;
@@ -121,8 +121,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     Id = udfId,
                     Body = udfBody
                 };
-                var udf = ExecuteWithFollowOnAction(() => Client.CreateUserDefinedFunctionAsync(udfSelfLink, udfDefinition));
-                return await Task.FromResult(udf);
+                var udfTask = Client.CreateUserDefinedFunctionAsync(udfSelfLink, udfDefinition);
+                var response = await udfTask;
+                return response.Resource;
             }
             catch (Exception ex)
             {
