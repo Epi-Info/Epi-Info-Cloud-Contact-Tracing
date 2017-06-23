@@ -45,47 +45,100 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfId, string query)
         {
             RequestOptions option = new RequestOptions();
-            var formResponseList = new List<FormResponseProperties>();
             var formResponse = new FormResponseProperties();
             // Create SP Uri
-            string spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId).ToString();
-            string udfUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfId).ToString();
+            Uri spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId);
+            Uri udfUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfId);
+            Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
             try
             {
-                do
-                {
-                    var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
-                    foreach (var doc in spResponse.Response.Result)
-                    {
-                        formResponse = (dynamic)doc;
-                        formResponseList.Add(formResponse);
-                    }
-                } while (continuationToken != null);
-
-                return formResponseList;
+                return ExecuteQuery(query, spUri);
             }
             catch (Exception ex)
             {
                 var errorCode = ((DocumentClientException)ex.InnerException).Error.Code;
-                if (errorCode == "NotFound" /* || errorCode == "BadRequest" */ )
+                if (errorCode == "NotFound" || errorCode == "BadRequest")
                 {
-                    var createSPResponse = await CreateSPAsync(spUri, spId);
-                    //var createUDFResponse = await CreateUDFAsync(udfUri, udfId);
+                    if (await DoesStoredProcedureExist(spUri) == false)
+                    {
+                        var createSPResponse = await CreateSPAsync(collectionUri, spId);
+                    }
+                    if (await DoesUserDefinedFunctionExist(udfUri) == false)
+                    {
+                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfId);
+                    }
 
-                    //Execute SP 
-                    await ExecuteSPAsync(collectionId, spId, udfId, query);
+                    try
+                    {
+                        return ExecuteQuery(query, spUri);
+                    }
+                    catch (Exception ex2)
+                    {
+                    }
                 }
             }
             return null;
         }
 
+        private List<FormResponseProperties> ExecuteQuery(string query, Uri spUri)
+        {
+            var formResponseList = new List<FormResponseProperties>();
+
+            do
+            {
+                var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
+                foreach (var doc in spResponse.Response.Result)
+                {
+                    FormResponseProperties formResponse = (dynamic)doc;
+                    formResponseList.Add(formResponse);
+                }
+            } while (continuationToken != null);
+
+            return formResponseList;
+        }
+
+        public async Task<bool> DoesStoredProcedureExist(Uri spUri)
+        {
+            bool exists = false;
+            try
+            {
+                var task = Client.ReadStoredProcedureAsync(spUri);
+                while (!task.IsCompleted && !task.IsFaulted) Thread.SpinWait(5);
+                var spResult = await task;
+                exists = spResult != null && !task.IsFaulted;
+            }
+            catch (Exception ex)
+            {
+                exists = false;
+            }
+            return exists;
+        }
+
+
+        public async Task<bool> DoesUserDefinedFunctionExist(Uri udfUri)
+        {
+            bool exists = false;
+            try
+            {
+                var task = Client.ReadUserDefinedFunctionAsync(udfUri);
+                while (!task.IsCompleted && !task.IsFaulted) Thread.SpinWait(5);
+                var udfResult = await task;
+                exists = udfResult != null && !task.IsFaulted;
+            }
+            catch (Exception ex)
+            {
+                exists = false;
+            }
+            return exists;
+        }
+
         /// <summary>
         /// Create Document Db Stored Procedure
         /// </summary>
-        /// <param name="spSelfLink"></param>
+        /// <param name="collectionUri"></param>
         /// <param name="spId"></param>
         /// <returns></returns>
-        private async Task<StoredProcedure> CreateSPAsync(string spSelfLink, string spId)
+        private async Task<StoredProcedure> CreateSPAsync(Uri collectionUri, string spId)
         {
 
             try
@@ -96,7 +149,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     Id = spId,
                     Body = sprocBody
                 };
-                var result = ExecuteWithFollowOnAction(() => Client.CreateStoredProcedureAsync(spSelfLink, sprocDefinition));
+                var result = ExecuteWithFollowOnAction(() => Client.CreateStoredProcedureAsync(collectionUri, sprocDefinition));
                 return await Task.FromResult(result);
             }
             catch (Exception ex)
@@ -108,10 +161,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <summary>
         /// Create Document Db Stored Procedure
         /// </summary>
-        /// <param name="udfSelfLink"></param>
+        /// <param name="collectionUri"></param>
         /// <param name="udfId"></param>
         /// <returns></returns>
-        private async Task<UserDefinedFunction> CreateUDFAsync(string udfSelfLink, string udfId)
+        private async Task<UserDefinedFunction> CreateUDFAsync(Uri collectionUri, string udfId)
         {
             try
             {
@@ -121,7 +174,9 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     Id = udfId,
                     Body = udfBody
                 };
-                var udfTask = Client.CreateUserDefinedFunctionAsync(udfSelfLink, udfDefinition);
+                var udfTask = Client.CreateUserDefinedFunctionAsync(collectionUri, udfDefinition);
+                while (!udfTask.IsCompleted && !udfTask.IsFaulted) Thread.SpinWait(5);
+                if (udfTask.IsFaulted) throw new Exception("CreateUserDefinedFunction faulted");
                 var response = await udfTask;
                 return response.Resource;
             }
