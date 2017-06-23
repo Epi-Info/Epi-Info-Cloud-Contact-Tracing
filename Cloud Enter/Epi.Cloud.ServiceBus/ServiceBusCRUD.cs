@@ -15,9 +15,8 @@ namespace Epi.Cloud.ServiceBus
     {
 
         public TopicClient topicClient;
-        public string TopicName = ConfigurationManager.AppSettings["ServiceBusTopicName"];
-        public string SubscriptionName = ConfigurationManager.AppSettings["ServiceBusSubscriptionName"];
-        const Int16 maxTrials = 4;
+        public string TopicName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusTopicName);
+        public string SubscriptionName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusSubscriptionName);
 
         public ServiceBusCRUD()
         {

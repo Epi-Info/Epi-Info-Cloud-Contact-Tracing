@@ -106,6 +106,16 @@ namespace Epi.Cloud.Common.Constants
             public const string AttachmentId = "AttachmentId";
 
             #endregion DocumentDB
+
+            #region Service Bus
+
+            [DefaultValue("responseinfotopic")]
+            public const string ServiceBusTopicName = "ServiceBusTopicName";
+
+            [DefaultValue("ReadSurveyInfoSubscription")]
+            public const string ServiceBusSubscriptionName = "ServiceBusSubscriptionName";
+
+            #endregion Service Bus
         }
 
         public static bool GetBoolValue(this string key)

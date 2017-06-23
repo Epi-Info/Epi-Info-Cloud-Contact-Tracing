@@ -2,13 +2,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Common.Metadata;
 using Epi.Common.Core.Interfaces;
-using Epi.Common.Utilities;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
@@ -24,7 +21,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
     public partial class DocumentDbCRUD
     {
         private string DatabaseName;
-        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);
 
         private Microsoft.Azure.Documents.Database ResponseDatabase
         {

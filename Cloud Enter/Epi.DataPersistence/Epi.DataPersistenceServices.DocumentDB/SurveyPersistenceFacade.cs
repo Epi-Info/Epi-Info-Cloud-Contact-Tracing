@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
@@ -9,7 +7,6 @@ using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
-using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
@@ -23,7 +20,7 @@ namespace Epi.PersistenceServices.DocumentDB
 {
     public partial class DocDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
     {
-        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);
 
         public DocDB_SurveyPersistenceFacade()
         {
