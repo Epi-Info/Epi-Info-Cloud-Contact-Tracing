@@ -138,7 +138,7 @@ namespace Epi.Web.WCF.SurveyService
             MetaDataToCloud _publishMetaDataToCloud = new MetaDataToCloud();
             try
             {
-                pRequest.RequestId = "2";
+
                 PublishResponse result = new PublishResponse(pRequest.RequestId);
 
                 if (pCloud)

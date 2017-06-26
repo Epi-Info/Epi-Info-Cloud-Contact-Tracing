@@ -10,7 +10,7 @@ namespace MetadataTests
     {
         private const int SurveyResponseBOPropertyCount = 29;
         [TestMethod]
-        public void TestMethod1()
+        public void SurveyResponseBOCount()
         {
             SurveyResponseBO objSurveyResponseBO = new SurveyResponseBO();
             int numberOfPublicPropertiesofSurveyResponseBO = objSurveyResponseBO.GetType().GetProperties().Count();

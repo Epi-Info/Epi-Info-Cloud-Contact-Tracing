@@ -7,7 +7,7 @@ namespace DocumentDBTests
     public class WildCardExtensionTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void WildCardTest()
         {
             var value = "bill";
             var pattern = "b*";

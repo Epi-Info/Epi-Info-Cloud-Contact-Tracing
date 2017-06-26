@@ -21,7 +21,7 @@ namespace Epi.Cloud.PublishMetaData
     {
         static string containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
 
-        MetadataBlobCRUD _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
+
 
         #region Start and Stop Cloud Web Job
         public bool StartAndStopWebJob(string status)
@@ -54,6 +54,7 @@ namespace Epi.Cloud.PublishMetaData
         }
         private bool SaveMetadataToBlob(Template metadata)
         {
+            MetadataBlobCRUD _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
             return _metadataBlobCRUD.SaveMetadataToBlobStorage(metadata);
         }
         #endregion

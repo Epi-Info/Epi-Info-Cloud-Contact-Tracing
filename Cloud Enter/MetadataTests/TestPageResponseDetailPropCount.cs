@@ -10,7 +10,7 @@ namespace MetadataTests
     {
          private const int PageResponseDetailPropertyCount = 7;
         [TestMethod]
-        public void TestMethod1()
+        public void PageResponseDetailPropCount()
         {
             PageResponseDetail objPageResponseDetail = new PageResponseDetail();
             int numberOfPublicPropertiesofPageResponseDetail = objPageResponseDetail.GetType().GetProperties().Count();

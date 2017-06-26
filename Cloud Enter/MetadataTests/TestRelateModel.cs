@@ -10,7 +10,7 @@ namespace MetadataTests
     {
         private const int RelateModelPropertyCount = 6;
         [TestMethod]
-        public void TestMethod1()
+        public void GetRelateModel()
         {
 
             RelateModel objRelateModel = new RelateModel();
