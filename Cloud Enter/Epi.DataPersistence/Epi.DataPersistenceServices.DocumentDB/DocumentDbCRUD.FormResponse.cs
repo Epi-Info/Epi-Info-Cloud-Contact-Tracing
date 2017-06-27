@@ -2,13 +2,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Common.Metadata;
 using Epi.Common.Core.Interfaces;
-using Epi.Common.Utilities;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
@@ -24,7 +21,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
     public partial class DocumentDbCRUD
     {
         private string DatabaseName;
-        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);
 
         private Microsoft.Azure.Documents.Database ResponseDatabase
         {
@@ -275,31 +272,27 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// This method will save form properties 
         /// and also used for delete operation.Ex:RecStatus=0
         /// </summary>
-        /// <param name="formResponseProperties"></param>
+        /// <param name="formResponsePropertiesList"></param>
         /// <returns></returns>
-        public async Task<ResourceResponse<Document>> SaveFormResponsePropertiesAsync(IResponseContext responseContext, FormResponseProperties formResponseProperties)
+        public async Task<ResourceResponse<Document>> SaveFormResponsePropertiesAsync(List<FormResponseProperties> formResponsePropertiesList)
         {
             var now = DateTime.UtcNow;
-
+            var rootFormResponseProperties = formResponsePropertiesList[0];
             ResourceResponse<Document> result = null;
             var formResponseResource = new FormResponseResource();
-            var rootFormCollectionUri = GetCollectionUri(responseContext.RootFormName);
+            var rootFormCollectionUri = GetCollectionUri(rootFormResponseProperties.RootFormName);
             try
             {
                 //Verify that the Root Response Id exists
-                formResponseResource = ReadRootResponseResource(responseContext, true);
+                formResponseResource = ReadRootResponseResource((IResponseContext)rootFormResponseProperties);
                 if (formResponseResource == null)
                 {
-                    if (responseContext.IsRootResponse)
+                    if (rootFormResponseProperties.IsRootResponse)
                     {
-                        formResponseProperties.IsNewRecord = true;
-                        formResponseProperties.FirstSaveTime = now;
-                        formResponseProperties.LastSaveTime = now;
-
                         formResponseResource = new FormResponseResource
                         {
-                            Id = responseContext.RootResponseId,
-                            FormResponseProperties = formResponseProperties
+                            Id = rootFormResponseProperties.RootResponseId,
+                            FormResponseProperties = rootFormResponseProperties
                         };
                     }
                     else // if (responseContext.IsChildResponse)
@@ -307,10 +300,12 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         throw new Exception("Can't add a child response without an existing root response");
                     }
                 }
-                else
+                var existingFormResponseProperties = formResponseResource.FormResponseProperties;
+                foreach (var formResponseProperties in formResponsePropertiesList)
                 {
-                    var existingFormResponseProperties = formResponseResource.FormResponseProperties;
-                    if (responseContext.IsRootResponse)
+                    formResponseProperties.LastSaveTime = now;
+
+                    if (formResponseProperties.IsRootResponse)
                     {
                         formResponseProperties.FirstSaveTime = existingFormResponseProperties.FirstSaveTime;
                         formResponseProperties.FirstSaveLogonName = existingFormResponseProperties.FirstSaveLogonName;
@@ -320,7 +315,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         {
                             Attachment attachment = null;
                             var existingResponseJson = JsonConvert.SerializeObject(formResponseResource);
-                            attachment = CreateResponseAttachment(formResponseResource.SelfLink, responseContext, AttachmentId, existingResponseJson);
+                            attachment = CreateResponseAttachment(formResponseResource.SelfLink, (IResponseContext)formResponseProperties, AttachmentId, existingResponseJson);
                         }
 
                         formResponseResource.FormResponseProperties = formResponseProperties;
@@ -565,13 +560,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 };
                 if (nonWildSearchQualifiers != null)
                 {
-                    query = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
+                    query = SearchByFieldNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
                 }
                 else
                 {
                     query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
                 }
-                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, SPGetRecordsBySurveyId, query);
+                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, spGetRecordsBySurveyId, udfWildCardCompare, query).Result;
 
 
                 //var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);

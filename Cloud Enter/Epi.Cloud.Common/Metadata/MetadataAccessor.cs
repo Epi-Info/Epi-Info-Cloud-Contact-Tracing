@@ -209,6 +209,12 @@ namespace Epi.Cloud.Common.Metadata
             return formDigest != null ? formDigest.ParentFormId : null;
         }
 
+        public string GetRootFormId()
+        {
+            var rootFormDigest = FormDigests.FirstOrDefault();
+            return rootFormDigest != null ? rootFormDigest.FormId : null;
+        }
+
         public string GetRootFormId(string formId)
         {
             var formDigest = FormDigests.SingleOrDefault(d => d.FormId == formId);

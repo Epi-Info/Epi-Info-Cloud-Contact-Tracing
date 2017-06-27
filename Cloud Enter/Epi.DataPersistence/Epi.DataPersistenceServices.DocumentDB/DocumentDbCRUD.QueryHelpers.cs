@@ -26,6 +26,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string FRP_RecStatus = FRP_ + "RecStatus";
         private const string FRP_ResponseQA_ = FRP_ + "ResponseQA.";
 
+        private const string udf_wildCardCompare = "udf.WildCardCompare";
+
         private string AssembleSelect(string collectionName, params string[] columnNames)
         {
             string columnList;
@@ -170,7 +172,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return query;
         }
 
-        private string SearchByFiledNames(string collectionAlias, string formId, List<string> formPoperties, KeyValuePair<FieldDigest, string>[] columnlist)
+        private string SearchByFieldNames(string collectionAlias, string formId, List<string> formPoperties, KeyValuePair<FieldDigest, string>[] columnlist)
         {
             string SelectColumnList = string.Empty;
 
@@ -181,23 +183,36 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist.Select(x => x.Key.FieldName).ToList());
             }
 
-            
-            var fieldKeyList = columnlist.Select(x=> collectionAlias + "." + FRP_ResponseQA_ + x.Key.FieldName +EQ +'"'+x.Value+'"' + AND).ToArray();
 
-            var expersion = collectionAlias +"."+ FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
+            //var qualifiers = columnlist.Select(x=> collectionAlias + "." + FRP_ResponseQA_ + x.Key.FieldName + EQ +'"'+ x.Value + '"' + AND).ToArray();
+            var qualifiers = columnlist.Select(x => AssembleQuailifer(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
+
+            var expression = collectionAlias +"."+ FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
             var query = SELECT
                            + SelectFormPoperties + ","
                            + AssembleSelect(collectionAlias, "_ts,")
                            + SelectColumnList
                            + WHERE
-                           + AssembleWhere(collectionAlias, fieldKeyList)
-                           + expersion
+                           + AssembleWhere(collectionAlias, qualifiers)
+                           + expression
                            + ORDERBY
                            + AssembleSelect(collectionAlias, "_ts")
                            + DESC;
             return query;
         }
 
-
+        private string AssembleQuailifer(string collectionAlias, string fieldName, string fieldValue)
+        {
+            string qualifer;
+            if (fieldValue.Contains('*') || fieldValue.Contains('?'))
+            {
+                qualifer = udf_wildCardCompare + "(" + collectionAlias + "." + FRP_ResponseQA_ + fieldName + "," + "\"" + fieldValue + "\"" + ")";
+            }
+            else
+            {
+                qualifer = FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
+            }
+            return qualifer;
+        }
     }
 }

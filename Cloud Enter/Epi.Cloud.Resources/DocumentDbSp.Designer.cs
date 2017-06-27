@@ -74,8 +74,7 @@ namespace Epi.Cloud.Resources {
         ///
         ///    function tryQuery(options) {
         ///        var isAccepted = (filterQuery &amp;&amp; filterQuery.length) ?
-        ///            collection.queryDocuments(collectionLink, filterQuery, options, callback) :
-        ///      [rest of string was truncated]&quot;;.
+        ///            collection.queryDocuments(collectionLink, filterQuery, options, call [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string GetAllRecordsBySurveyID {
             get {
@@ -94,11 +93,33 @@ namespace Epi.Cloud.Resources {
         ///    var result = new Array();
         ///     
         ///    if(relateParentId){
-        ///            var filterQuery=&quot;SELECT * FROM c where c.RelateParentId=&apos;&quot;+relateParentId+&quot;&apos;                                [rest of string was truncated]&quot;;.
+        ///            var filterQuery=&quot;SELECT * FROM c where c.RelateParentId=&apos;&quot;+relateParentId+&quot;&apos;                      [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OrderBy {
             get {
                 return ResourceManager.GetString("OrderBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to function WildCardCompare(input, pattern, singleWildcard = &apos;?&apos;, multipleWildcard = &apos;*&apos;)
+        ///{
+        ///    input = input.toLowerCase();
+        ///    pattern = pattern.toLowerCase();
+        ///
+        ///    var inputLength = input.length;
+        ///    var patternLength = pattern.length;
+        ///
+        ///    // Stack containing input positions that should be tested for further matching
+        ///    //var inputPosStack = new int[(input.Length + 1) * (pattern.Length + 1)];
+        ///    var inputPosStack = [];
+        ///
+        ///    // Stack containing pattern positions that should be tested for further matching
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string udfWildCardCompare {
+            get {
+                return ResourceManager.GetString("udfWildCardCompare", resourceCulture);
             }
         }
     }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
@@ -9,7 +7,6 @@ using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
-using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
@@ -23,7 +20,7 @@ namespace Epi.PersistenceServices.DocumentDB
 {
     public partial class DocDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
     {
-        private string AttachmentId = ConfigurationManager.AppSettings[AppSettings.Key.AttachmentId];
+        private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);
 
         public DocDB_SurveyPersistenceFacade()
         {
@@ -148,46 +145,15 @@ namespace Epi.PersistenceServices.DocumentDB
         /// <summary>
         /// First time store ResponseId, RecStatus, and SurveyId in DocumentDB
         /// </summary>
-        /// <param name="request"></param>
+        /// <param name="response"></param>
         /// <returns></returns>
-        private async Task<bool> SaveFormResponseProperties(SurveyResponseBO request)
+        private async Task<bool> SaveFormResponseProperties(SurveyResponseBO response)
         {
-            ResponseContext responseContext = request.ToResponseContext();
-            var formName = responseContext.FormName;
             var now = DateTime.UtcNow;
-            FormResponseProperties formResponseProperties = new FormResponseProperties
-            {
-                ResponseId = responseContext.ResponseId,
-                FormId = responseContext.FormId,
-                FormName = responseContext.FormName,
-
-                ParentResponseId = responseContext.ParentResponseId,
-                ParentFormId = responseContext.ParentFormId,
-                ParentFormName = responseContext.ParentFormName,
-
-                RootResponseId = responseContext.RootResponseId,
-                RootFormId = responseContext.RootFormId,
-                RootFormName = responseContext.RootFormName,
-
-                UserId = responseContext.UserId,
-                UserName = request.UserName,
-
-                IsNewRecord = request.Status == RecordStatus.InProcess ? request.IsNewRecord : false,
-                RecStatus = request.Status,
-                FirstSaveTime = request.ResponseDetail.FirstSaveTime,
-                LastSaveTime = now,
-                FirstSaveLogonName = request.ResponseDetail.FirstSaveLogonName,
-                IsDraftMode = request.IsDraftMode,
-                IsLocked = request.IsLocked,
-                RequiredFieldsList = request.ResponseDetail.RequiredFieldsList,
-                HiddenFieldsList = request.ResponseDetail.HiddenFieldsList,
-                HighlightedFieldsList = request.ResponseDetail.HighlightedFieldsList,
-                DisabledFieldsList = request.ResponseDetail.DisabledFieldsList,
-                ResponseQA = request.ResponseDetail.FlattenedResponseQA()
-            };
+            List<FormResponseProperties> formResponsePropertiesList = response.ResponseDetail.ToFormResponsePropertiesFlattenedList();
 
             bool isSuccessful = false;
-            var result = await _formResponseCRUD.SaveFormResponsePropertiesAsync(responseContext, formResponseProperties).ConfigureAwait(false);
+            var result = await _formResponseCRUD.SaveFormResponsePropertiesAsync(formResponsePropertiesList).ConfigureAwait(false);
             isSuccessful = result.Resource != null;
             return isSuccessful;
         }

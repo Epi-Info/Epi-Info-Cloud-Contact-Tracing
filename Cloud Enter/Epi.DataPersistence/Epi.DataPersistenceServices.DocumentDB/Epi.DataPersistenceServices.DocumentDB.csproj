@@ -143,6 +143,10 @@
       <Name>Epi.DataPersistence.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="StoredProcedures\OrderBy.js" />
+    <Content Include="StoredProcedures\WildCardCompare.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

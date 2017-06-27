@@ -62,6 +62,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Epi.Cloud.Common\Epi.Cloud.Common.csproj">
+      <Project>{31FB19A9-9591-4202-8619-E6EC618FCA73}</Project>
+      <Name>Epi.Cloud.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Epi.Web.Common\Epi.Web.Common.csproj">
       <Project>{6E2F059B-C1CD-401F-8A63-DC2933CFB0D8}</Project>
       <Name>Epi.Web.Common</Name>

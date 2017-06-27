@@ -5,6 +5,6 @@ namespace Epi.Cloud.DataConsistencyServices.Proxy
 {
     public interface IResponseInfoProxyService
     {
-        string GetResponseInfoData(IResponseContext responceContext);
+        string GetResponseInfoData(IResponseContext responseContext);
     }
 }

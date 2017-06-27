@@ -202,11 +202,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return isSuccessful;
         }
 
-        public ResourceResponse<Document> ExecuteWithFollowOnAction(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+        public T ExecuteWithFollowOnAction<T>(Func<Task<T>> asyncFunc, Action followOnAction = null)
         {
-            Task<ResourceResponse<Document>> documentTask = null;
+            Task<T> documentTask = null;
             bool isSuccessful = ExecuteFollowOn(asyncFunc, followOnAction, out documentTask);
-            ResourceResponse<Document> result = documentTask.Result;
+            T result = documentTask.Result;
             return result;
         }
 
@@ -272,55 +272,54 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             return isSuccessful;
         }
+
+        //public ResourceResponse<Document> ExecuteAsync(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
+        //{
+        //    using (ManualResetEvent completionEvent = new ManualResetEvent(false))
+        //    {
+        //        ResourceResponse<Document> result = null;
+
+        //        Task<ResourceResponse<Document>> documentTask = null;
+
+        //        var backgroundTask = Task.Run(() =>
+        //        {
+        //            documentTask = asyncFunc();
+        //        });
+
+        //        var millisecondsToSleep = 100;
+        //        var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
+        //        bool isCompleted = false;
+        //        while (retries > 0)
+        //        {
+        //            if (documentTask == null) { Thread.Sleep(10); continue; }
+        //            isCompleted = documentTask.IsCompleted;
+        //            if (isCompleted) break;
+        //            Thread.Sleep(millisecondsToSleep);
+        //            retries -= 1;
+        //        }
+        //        bool isSuccessful = isCompleted;
+
+        //        var awaiter = documentTask.ContinueWith(t =>
+        //        {
+        //            if (followOnAction != null)
+        //            {
+        //                followOnAction();
+        //            }
+        //            completionEvent.Set();
+        //        }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
+
+        //        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
+
+        //        awaiter.GetAwaiter().GetResult();
+
+        //        result = documentTask.Result;
+
+        //        isSuccessful &= (result != null);
+
+        //        isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
+
+        //        return result;
+        //    }
     }
-
-    //public ResourceResponse<Document> ExecuteAsync(Func<Task<ResourceResponse<Document>>> asyncFunc, Action followOnAction = null)
-    //{
-    //    using (ManualResetEvent completionEvent = new ManualResetEvent(false))
-    //    {
-    //        ResourceResponse<Document> result = null;
-
-    //        Task<ResourceResponse<Document>> documentTask = null;
-
-    //        var backgroundTask = Task.Run(() =>
-    //        {
-    //            documentTask = asyncFunc();
-    //        });
-
-    //        var millisecondsToSleep = 100;
-    //        var retries = (Int32)TimeSpan.FromSeconds(5).TotalMilliseconds / millisecondsToSleep;
-    //        bool isCompleted = false;
-    //        while (retries > 0)
-    //        {
-    //            if (documentTask == null) { Thread.Sleep(10); continue; }
-    //            isCompleted = documentTask.IsCompleted;
-    //            if (isCompleted) break;
-    //            Thread.Sleep(millisecondsToSleep);
-    //            retries -= 1;
-    //        }
-    //        bool isSuccessful = isCompleted;
-
-    //        var awaiter = documentTask.ContinueWith(t =>
-    //        {
-    //            if (followOnAction != null)
-    //            {
-    //                followOnAction();
-    //            }
-    //            completionEvent.Set();
-    //        }, TaskContinuationOptions.AttachedToParent).ConfigureAwait(false);
-
-    //        isSuccessful &= completionEvent.WaitOne(TimeSpan.FromSeconds(5));
-
-    //        awaiter.GetAwaiter().GetResult();
-
-    //        result = documentTask.Result;
-
-    //        isSuccessful &= (result != null);
-
-    //        isSuccessful &= backgroundTask.Wait(TimeSpan.FromSeconds(5));
-
-    //        return result;
-    //    }
-    //}
 
 }
