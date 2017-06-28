@@ -34,7 +34,7 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
         {
             lock (this)
             {
-                _cloudStorageAccount = CloudStorageAccount.Parse(ConfigurationHelper.GetConnectionString("MetadataBlobStorage.ConnectionString"));
+                _cloudStorageAccount = CloudStorageAccount.Parse(ConfigurationHelper.GetConnectionString("MetadataBlobStorage.ConnectionString", true));
                 _containerName = containerName.ToLower();
             }
         }
