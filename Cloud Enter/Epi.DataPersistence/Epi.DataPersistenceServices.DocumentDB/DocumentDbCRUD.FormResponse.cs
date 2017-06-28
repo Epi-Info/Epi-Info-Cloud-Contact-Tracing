@@ -343,6 +343,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <summary>
         /// GetAllResponsesWithCriteria
         /// </summary>
+        /// <param name="responseContext"></param>
         /// <param name="fields"></param>
         /// <param name="searchFields"></param>
         /// <param name="parentResponseId"></param>
@@ -368,7 +369,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             List<FormResponseDetail> formResponseDetailList = new List<FormResponseDetail>();
             List<FormResponseProperties> formResponsePropertiesList;
-            List<string> columnNames = new List<string>();
             if (responseContext.IsChildResponse)
             {
                 if (searchQualifiers != null && searchQualifiers.Count > 0) throw new ArgumentException("Search not available on child forms");
@@ -379,24 +379,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             {
                 try
                 {
+                    var columnNames = fieldDigestList.Select(f => f.Value.TrueCaseFieldName).ToList();
+
                     var searchFieldNameValueQualifiers = searchQualifiers != null && searchQualifiers.Count > 0
                         ? searchQualifiers.Values.ToArray()
                         : null;
-                    if (searchFieldNameValueQualifiers == null)
-                    {
-                        foreach (var fildname in fieldDigestList)
-                        {
-                            columnNames.Add(fildname.Value.TrueCaseFieldName);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var fildname in searchFieldNameValueQualifiers)
-                        {
-                            columnNames.Add(fildname.Value);
-                        }
-                    }
-
 
                     formResponseDetailList = ReadAllRootResponses(responseContext, columnNames, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
 
@@ -549,27 +536,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 string query;
                 var collectionAlias = rootFormName;
                 var rootFormCollectionUri = GetCollectionUri(rootFormName);
-                var nonWildSearchQualifiers = searchQualifiers != null
-                    ? searchQualifiers.Where(q => !(q.Value.Contains('*') || q.Value.Contains('?'))).ToArray()
-                    : null;
                 // Set some common query options
                 FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
                 List<string> formProperties = new List<string>
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"
                 };
-                if (nonWildSearchQualifiers != null)
-                {
-                    query = SearchByFieldNames(collectionAlias, responseContext.FormId, formProperties, searchQualifiers);
-                }
-                else
-                {
-                    query = GetAllRecordByFormId(collectionAlias, responseContext.FormId, formProperties, columnlist);
-                }
-                var formResponsePropertiesList = GetAllRecordsBySurveyId(rootFormName, spGetRecordsBySurveyId, udfWildCardCompare, query).Result;
-
-
-                //var response = FilterQueryResponseByWildCardQualifiers(formResponsePropertiesList, searchQualifiers);
+                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers);
+                var formResponsePropertiesList = GetAllRecordsByFormName(rootFormName, spGetRecordsBySurveyId, udfWildCardCompare, query).Result;
                 return formResponsePropertiesList;
             }
             catch (Exception ex)
