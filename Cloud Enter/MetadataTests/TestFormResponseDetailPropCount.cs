@@ -10,7 +10,7 @@ namespace MetadataTests
     {
         private const int FormResponseDetailPropertyCount = 31;
         [TestMethod]
-        public void TestMethod1()
+        public void FormResponseDetailPropCount()
         {
             FormResponseDetail objFormResponseDetail = new FormResponseDetail();
             int numberOfPublicPropertiesofFormResponseDetail = objFormResponseDetail.GetType().GetProperties().Count();

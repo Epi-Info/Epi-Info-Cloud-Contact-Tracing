@@ -12,7 +12,7 @@ namespace MetadataTests
         private const int FormsHierarchyDTOPropertyCount = 7;
         private const int FormsHierarchyBOPropertyCount = 7;
         [TestMethod]
-        public void TestFormHierachyBODTO()
+        public void FormHierarchyBoExtension()
         {
 
 

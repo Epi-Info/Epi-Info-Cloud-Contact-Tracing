@@ -9,7 +9,7 @@ namespace MetadataTests
     public class TestUserExtension
     {
         [TestMethod]
-        public void TestMethod1()
+        public void UserExtension()
         {
             var user = new User()
             {

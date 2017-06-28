@@ -5,14 +5,11 @@ namespace Epi.Cloud.Common.Configuration
 {
     public static class ConfigurationHelper
     {
-        public static string GetEnvironmentResourceKey(string resourceName, string environmentKeyName = AppSettings.Key.Environment, bool isEncrypt = true)
+        public static string GetConnectionString(string resourceName, bool isEncrypt = true)
         {
-            var environmentKey = AppSettings.GetStringValue(environmentKeyName);
             if (resourceName != null)
             {
-                environmentKey = ConfigurationManager.AppSettings[environmentKeyName + '/' + resourceName] ?? environmentKey;
-                var connectionStringName = string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
-                var ConnectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString;
+                var ConnectionString = ConfigurationManager.ConnectionStrings[resourceName].ConnectionString;
                 if (isEncrypt)
                 {
                     var DecryptConnectionString = Cryptography.Decrypt(ConnectionString);
@@ -23,7 +20,7 @@ namespace Epi.Cloud.Common.Configuration
                     return ConnectionString;
                 }
             }
-            return string.IsNullOrWhiteSpace(environmentKey) ? resourceName : resourceName + "@" + environmentKey;
+            return null;
         }
         public static string GetConnectionString(string resourceName)
         {

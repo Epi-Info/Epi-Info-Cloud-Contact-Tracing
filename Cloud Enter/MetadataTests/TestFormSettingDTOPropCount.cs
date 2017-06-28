@@ -8,9 +8,9 @@ namespace MetadataTests
     [TestClass]
     public class TestFormSettingDTOPropCount
     {
-         private const int FormSettingDTOPropertyCount = 14;
+        private const int FormSettingDTOPropertyCount = 14;
         [TestMethod]
-        public void TestMethod1()
+        public void FormSettingDTOPropCount()
         {
             FormSettingDTO objFormSettingDTO = new FormSettingDTO();
             int numberOfPublicPropertiesofFormSettingDTO = objFormSettingDTO.GetType().GetProperties().Count();

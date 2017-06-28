@@ -116,6 +116,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebJobTest", "WebJobTest\We
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Epi.Web.WCF.SurveyHost.Azure", "Epi.Web.WCF.SurveyHost.Azure\Epi.Web.WCF.SurveyHost.Azure.ccproj", "{178CD1AB-1835-46CB-AEED-6B44675CCF3E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishAndRepublishTest", "PublishAndRepublishTest\PublishAndRepublishTest.csproj", "{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -1420,6 +1422,36 @@ Global
 		{178CD1AB-1835-46CB-AEED-6B44675CCF3E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{178CD1AB-1835-46CB-AEED-6B44675CCF3E}.Release|x86.ActiveCfg = Release|Any CPU
 		{178CD1AB-1835-46CB-AEED-6B44675CCF3E}.Release|x86.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|x86.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Linux|x86.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1441,5 +1473,6 @@ Global
 		{BB4EB5D1-6B09-4BBE-AD15-A68F9A9E67A2} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
 		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
 		{178CD1AB-1835-46CB-AEED-6B44675CCF3E} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
+		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
 	EndGlobalSection
 EndGlobal

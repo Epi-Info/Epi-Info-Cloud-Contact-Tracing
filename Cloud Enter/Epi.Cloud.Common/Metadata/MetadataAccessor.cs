@@ -127,7 +127,7 @@ namespace Epi.Cloud.Common.Metadata
             {
                 lock (StaticCache.Gate)
                 {
-                    if (StaticCache.FormDigests == null)
+                    if (StaticCache.FormDigests == null || StaticCache.FormDigests.Count() == 0)
                     {
                         StaticCache.FormDigests = ProjectMetadataProvider.GetFormDigestsAsync().Result;
                         GenerateFormHeiarchies();
@@ -144,13 +144,13 @@ namespace Epi.Cloud.Common.Metadata
             {
                 lock (StaticCache.Gate)
                 {
-                    if (StaticCache.PageDigests == null) StaticCache.PageDigests = (PageDigest[][])ProjectMetadataProvider.GetProjectPageDigestsAsync().Result.Clone();
+                    if (StaticCache.PageDigests == null || StaticCache.PageDigests.Count() == 0) StaticCache.PageDigests = (PageDigest[][])ProjectMetadataProvider.GetProjectPageDigestsAsync().Result.Clone();
                     return StaticCache.PageDigests;
                 }
             }
         }
 
-		public FieldDigest[] GetFieldDigests(string formId)
+        public FieldDigest[] GetFieldDigests(string formId)
         {
             lock (StaticCache.Gate)
             {
@@ -361,13 +361,13 @@ namespace Epi.Cloud.Common.Metadata
             return fieldDigest;
         }
 
-		public FieldDigest[] GetFieldDigestsByFieldNames(string formId, IEnumerable<string> fieldNames)
-		{
-			formId = formId.ToLower();
-			var fieldNameList = fieldNames.Select(n => n.ToLower()).ToArray();
-			var fieldDigests = GetFieldDigests(formId).Where(fd => fieldNameList.Contains(fd.FieldName));
-			return fieldDigests != null ? fieldDigests.ToArray() : null;
-		}
+        public FieldDigest[] GetFieldDigestsByFieldNames(string formId, IEnumerable<string> fieldNames)
+        {
+            formId = formId.ToLower();
+            var fieldNameList = fieldNames.Select(n => n.ToLower()).ToArray();
+            var fieldDigests = GetFieldDigests(formId).Where(fd => fieldNameList.Contains(fd.FieldName));
+            return fieldDigests != null ? fieldDigests.ToArray() : null;
+        }
 
         public Page GetCurrentFormPageMetadataByPageId(int pageId)
         {

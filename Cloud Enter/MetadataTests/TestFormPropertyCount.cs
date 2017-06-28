@@ -10,7 +10,7 @@ namespace MetadataTests
     {
         private const int FormPropertyCount = 36;
         [TestMethod]
-        public void TestForm()
+        public void FromPropertyCount()
         {
             Form objform = new Form();
             int numberOfPublicPropertiesofForm = objform.GetType().GetProperties().Count();

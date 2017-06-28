@@ -22,8 +22,10 @@ namespace Epi.Web.EF
             try
             {
                 // Connection strings here
-                _connectionString = ConfigurationHelper.GetConnectionString("EWEEntities");
-                _eweAdoConnectionString = ConfigurationHelper.GetConnectionString("EWEADO");
+                _connectionString = ConfigurationHelper.GetConnectionString("EWEEntities", true);
+                _eweAdoConnectionString = ConfigurationHelper.GetConnectionString("EWEADO", true);
+
+
 
 
             }

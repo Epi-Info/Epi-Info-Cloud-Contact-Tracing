@@ -9,7 +9,7 @@ namespace MetadataTests
     public class TestUserBOExtensions
     {
         [TestMethod]
-        public void TestMethod1()
+        public void UserBOExtension()
         {
             var userBO = new UserBO()
             {
@@ -32,7 +32,7 @@ namespace MetadataTests
             Assert.AreEqual(user.EmailAddress, userBO.EmailAddress);
             Assert.IsFalse(user.PhoneNumber.Length > 10);
             Assert.IsFalse(userBO.PhoneNumber.Length > 10);
-           
+
 
         }
     }

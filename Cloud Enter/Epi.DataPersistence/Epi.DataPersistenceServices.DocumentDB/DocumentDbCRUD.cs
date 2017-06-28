@@ -43,7 +43,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         private void ParseConnectionString()
         {
-            var connectionString = ConfigurationHelper.GetConnectionString("CollectedDataConnectionString");
+            var connectionString = ConfigurationHelper.GetConnectionString("CollectedDataConnectionString", true);
 
             string[] parts;
 
