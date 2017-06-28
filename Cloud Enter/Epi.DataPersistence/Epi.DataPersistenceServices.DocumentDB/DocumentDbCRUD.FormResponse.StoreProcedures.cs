@@ -18,13 +18,14 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string udfWildCardCompare = "WildCardCompare";
 
         /// <summary>
-        /// Execute DB SP-Get all records by surveyID 
+        /// Execute DB SP-Get all records by FormName (aka: collectionId) 
         /// </summary>
         /// <param name="collectionId"></param>
         /// <param name="spId"></param>
-        /// <param name="surveyID"></param>
+        /// <param name="udfId"></param>
+        /// <param name="query"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> GetAllRecordsBySurveyId(string collectionId, string spId, string udfId, string query)
+        private async Task<List<FormResponseProperties>> GetAllRecordsByFormName(string collectionId, string spId, string udfId, string query)
         {
             return await ExecuteSPAsync(collectionId, spId, udfId, query);
         }

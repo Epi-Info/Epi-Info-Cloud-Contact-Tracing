@@ -145,11 +145,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return string.Format("LOWER({0})", argument);
         }
 
-        private string GetAllRecordByFormId(string collectionAlias, string formId, List<string> formPoperties, List<string> columnlist)
+        private string GenerateResponseGridQuery(string collectionAlias, string formId, List<string> formPoperties, 
+            List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null)
         {
             string SelectColumnList = string.Empty;
 
-            //var SelectFormPoperties = AssembleParentSelect(collectionAlias, formPoperties.Select(g =>"."+FRP + g).ToArray());
             var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
 
             if (columnlist != null && columnlist.Count > 0)
@@ -158,18 +158,38 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist);
             }
 
-            var query = SELECT
-                           + SelectFormPoperties + ","
-                           + AssembleSelect(collectionAlias, "_ts,")
-                           + SelectColumnList
-                           + WHERE
-                           + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
-                           + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
-                           + ORDERBY
-                           + AssembleSelect(collectionAlias, "_ts")
-                           + DESC;
+            if (searchQualifiers != null && searchQualifiers.Length > 0)
+            {
+                var qualifiers = searchQualifiers.Select(x => AssembleQuailifer(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
 
-            return query;
+                var expression = collectionAlias + "." + FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
+                var query = SELECT
+                               + SelectFormPoperties + ","
+                               + AssembleSelect(collectionAlias, "_ts,")
+                               + SelectColumnList
+                               + WHERE
+                               + AssembleWhere(collectionAlias, qualifiers)
+                               + expression
+                               + ORDERBY
+                               + AssembleSelect(collectionAlias, "_ts")
+                               + DESC;
+                return query;
+            }
+            else
+            {
+                var query = SELECT
+                               + SelectFormPoperties + ","
+                               + AssembleSelect(collectionAlias, "_ts,")
+                               + SelectColumnList
+                               + WHERE
+                               + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
+                               + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
+                               + ORDERBY
+                               + AssembleSelect(collectionAlias, "_ts")
+                               + DESC;
+
+                return query;
+            }
         }
 
         private string SearchByFieldNames(string collectionAlias, string formId, List<string> formPoperties, KeyValuePair<FieldDigest, string>[] columnlist)
@@ -184,7 +204,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
 
 
-            //var qualifiers = columnlist.Select(x=> collectionAlias + "." + FRP_ResponseQA_ + x.Key.FieldName + EQ +'"'+ x.Value + '"' + AND).ToArray();
             var qualifiers = columnlist.Select(x => AssembleQuailifer(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
 
             var expression = collectionAlias +"."+ FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
@@ -210,7 +229,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
             else
             {
-                qualifer = FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
+                qualifer = collectionAlias + "." + FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
             }
             return qualifer;
         }
