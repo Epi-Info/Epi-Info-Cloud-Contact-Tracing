@@ -31,7 +31,6 @@ namespace Epi.Cloud.SqlServer
         public Epi.FormMetadata.DataStructures.Template GetProjectTemplateMetadata(string projectId)
         {
             var template = new Epi.FormMetadata.DataStructures.Template();
-
             using (EPIInfo7Entities metacontext = new EPIInfo7Entities("EPIInfo7Entities"))
             {
                 try
@@ -522,7 +521,7 @@ namespace Epi.Cloud.SqlServer
         {
             //return GetNativeConnection(connectionString);
             //var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("DBConnection");
-            var connectionString = ConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
+            var connectionString = ConfigurationHelper.GetConnectionString("DBConnection", true);
             return GetNativeConnection(connectionString);
             //return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
         }

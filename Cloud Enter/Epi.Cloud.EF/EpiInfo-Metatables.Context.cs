@@ -12,19 +12,16 @@ namespace Epi.Data.EF
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+
     public partial class EPIInfo7Entities : DbContext
     {
-        public EPIInfo7Entities()
-            : base("name=EPIInfo7Entities")
-        {
-        }
-    
+
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<metaBackground> metaBackgrounds { get; set; }
         public virtual DbSet<metaDataType> metaDataTypes { get; set; }
         public virtual DbSet<metaField> metaFields { get; set; }
