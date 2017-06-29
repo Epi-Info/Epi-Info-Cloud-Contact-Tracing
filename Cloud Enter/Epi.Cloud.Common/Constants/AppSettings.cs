@@ -33,6 +33,9 @@ namespace Epi.Cloud.Common.Constants
             public const string EmailFrom = "EMAIL_FROM";
 
             // No Default Value
+            public const string EmailUserName = "EMAIL_USERNAME";
+
+            // No Default Value
             public const string EmailPassword = "EMAIL_PASSWORD";
 
             #endregion EMail Settings

@@ -31,7 +31,7 @@ namespace Epi.Web.BLL
 
             userResponseBO = _userDao.GetUser(user);
             if (userResponseBO != null)
-            	userResponseBO.UserHighestRole = _userDao.GetUserHighestRole(userResponseBO.UserId);
+                userResponseBO.UserHighestRole = _userDao.GetUserHighestRole(userResponseBO.UserId);
 
             return userResponseBO;
         }
@@ -166,7 +166,7 @@ namespace Epi.Web.BLL
             }
 
             //email.Body = email.Body.ToString() + " \n \nPlease click the link below to launch Epi Cloud Enter. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\nThank you.";
-            email.From = AppSettings.GetStringValue(AppSettings.Key.EmailFrom);
+            email.From = AppSettings.GetStringValue(AppSettings.Key.EmailUserName);
 
             return EmailHandler.SendMessage(email);
         }
