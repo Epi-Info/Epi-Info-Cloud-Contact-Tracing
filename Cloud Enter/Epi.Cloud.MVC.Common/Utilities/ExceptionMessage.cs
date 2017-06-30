@@ -102,7 +102,7 @@ namespace Epi.Web.Utility
                 bool isUsingSSL = false;
                 int SMTPPort = 25;
                 string AdminEmailAddress = "";
-                bool IsEmailNOTIFICATION = false;
+                bool IsEmailNotification = false;
                 // App Config Settings:
                 // EMAIL_USE_AUTHENTICATION [ True | False ] default is False
                 // EMAIL_USE_SSL [ True | False] default is False
@@ -129,69 +129,34 @@ namespace Epi.Web.Utility
                     pMessage += "Response Id: \n" + Context.Session[SessionKeys.RootResponseId] + "\n\n\n"; ;
                 }
 
+                AdminEmailAddress = AppSettings.GetStringValue(AppSettings.Key.LoggingAdminEmailAddress);
 
+                IsEmailNotification = AppSettings.GetBoolValue(AppSettings.Key.LoggingSendEmailNotification);
 
-                string s = ConfigurationManager.AppSettings["LOGGING_ADMIN_EMAIL_ADDRESS"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    AdminEmailAddress = s.ToString();
-                }
+                isAuthenticated = AppSettings.GetBoolValue(AppSettings.Key.EmailUseAuthentication);
 
+                isUsingSSL = AppSettings.GetBoolValue(AppSettings.Key.EmailUseSSL);
 
-                s = ConfigurationManager.AppSettings["LOGGING_SEND_EMAIL_NOTIFICATION"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        IsEmailNOTIFICATION = true;
-                    }
-                }
-
-
-
-
-                s = ConfigurationManager.AppSettings["EMAIL_USE_AUTHENTICATION"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isAuthenticated = true;
-                    }
-                }
-
-                s = ConfigurationManager.AppSettings["EMAIL_USE_SSL"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isUsingSSL = true;
-                    }
-                }
-
-                s = ConfigurationManager.AppSettings["SMTP_PORT"];
-                if (!int.TryParse(s, out SMTPPort))
-                {
-                    SMTPPort = 25;
-                }
+                SMTPPort = AppSettings.GetIntValue(AppSettings.Key.SmtpPort);
 
                 System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
                 //message.To.Add(emailAddress);
                 message.To.Add(AdminEmailAddress);
-                message.Subject = ConfigurationManager.AppSettings["LOGGING_EMAIL_SUBJECT"].ToString();
-                message.From = new System.Net.Mail.MailAddress(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString());
+                message.Subject = AppSettings.GetStringValue(AppSettings.Key.LoggingEmailSubject);
+                message.From = new System.Net.Mail.MailAddress(AppSettings.GetStringValue(AppSettings.Key.EmailFrom));
                 message.Body = pMessage;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings[AppSettings.Key.SmtpHost].ToString());
                 smtp.Port = SMTPPort;
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                    smtp.Credentials = new System.Net.NetworkCredential(AppSettings.GetStringValue(AppSettings.Key.EmailFrom), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
                 }
 
 
                 smtp.EnableSsl = isUsingSSL;
 
-                if (IsEmailNOTIFICATION)
+                if (IsEmailNotification)
                 {
                     smtp.Send(message);
                     return true;

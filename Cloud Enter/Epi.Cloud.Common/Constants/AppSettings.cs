@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
+using Epi.Cloud.Common.Attributes;
+using Epi.Common.Security;
 
 namespace Epi.Cloud.Common.Constants
 {
@@ -17,14 +20,26 @@ namespace Epi.Cloud.Common.Constants
 
             #region EMail Settings
 
-            [DefaultValue(true)]
+            [DefaultValue(false)]
             public const string EmailUseAuthentication = "EMAIL_USE_AUTHENTICATION";
 
-            [DefaultValue(true)]
+            // No Default Value
+            public const string LoggingAdminEmailAddress = "LOGGING_ADMIN_EMAIL_ADDRESS";
+
+            // No Default Value
             public const string EmailSubject = "EMAIL_SUBJECT";
 
+            // No Default Value
+            public const string LoggingEmailSubject = "LOGGING_EMAIL_SUBJECT";
+
             [DefaultValue(true)]
+            public const string LoggingSendEmailNotification = "LOGGING_SEND_EMAIL_NOTIFICATION";
+
+            [DefaultValue(false)]
             public const string EmailUseSSL = "EMAIL_USE_SSL";
+
+            [EncryptedValue(true)]
+            public const string SmtpHost = "SMTP_HOST";
 
             [DefaultValue(25)]
             public const string SmtpPort = "SMTP_PORT";
@@ -33,6 +48,7 @@ namespace Epi.Cloud.Common.Constants
             public const string EmailFrom = "EMAIL_FROM";
 
             // No Default Value
+            [EncryptedValue(true)]
             public const string EmailPassword = "EMAIL_PASSWORD";
 
             #endregion EMail Settings
@@ -118,9 +134,16 @@ namespace Epi.Cloud.Common.Constants
             #endregion Service Bus
         }
 
+        public static bool IsValueEncrypted(string key)
+        {
+            var encryptedAttribute = FindEncryptedAttribute(key);
+            var isEncrypted = encryptedAttribute.IsEncrypted;
+
+            return isEncrypted;
+        }
+
         public static bool GetBoolValue(this string key)
         {
-
             bool value = false;
             try
             {
@@ -140,7 +163,7 @@ namespace Epi.Cloud.Common.Constants
             }
         }
 
-        public static string GetStringValue(this string key)
+        public static string GetStringValue(this string key, bool decryptIfEncrypted = true)
         {
             string value = string.Empty;
             try
@@ -152,6 +175,18 @@ namespace Epi.Cloud.Common.Constants
                 }
                 else
                 {
+                    if (decryptIfEncrypted && IsValueEncrypted(key))
+                    {
+                        try
+                        {
+                            value = Cryptography.Decrypt(value);
+                        }
+                        catch (Exception ex)
+                        {
+                            // If an exception occurrs assume that the value is not encrypted;
+                            _encryptedValueAttributes[key] = EncryptedValueAttribute.False;
+                        }
+                    }
                     return value;
                 }
             }
@@ -183,6 +218,26 @@ namespace Epi.Cloud.Common.Constants
         }
 
         private static System.Reflection.FieldInfo[] _fields;
+
+        private static Dictionary<string, EncryptedValueAttribute> _encryptedValueAttributes = new Dictionary<string, EncryptedValueAttribute>();
+
+        private static EncryptedValueAttribute FindEncryptedAttribute(string key)
+        {
+            EncryptedValueAttribute encryptedValueAttribute = EncryptedValueAttribute.False;
+            if (!_encryptedValueAttributes.TryGetValue(key, out encryptedValueAttribute))
+            {
+                _fields = _fields ?? typeof(Key).GetFields();
+                var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
+                if (field != null)
+                {
+                    encryptedValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(EncryptedValueAttribute)).FirstOrDefault() as EncryptedValueAttribute;
+                }
+                encryptedValueAttribute = encryptedValueAttribute ?? EncryptedValueAttribute.False;
+                _encryptedValueAttributes.Add(key, encryptedValueAttribute);
+            }
+            return encryptedValueAttribute;
+        }
+
 
         private static DefaultValueAttribute FindDefaultValueAttribute(string key)
         {

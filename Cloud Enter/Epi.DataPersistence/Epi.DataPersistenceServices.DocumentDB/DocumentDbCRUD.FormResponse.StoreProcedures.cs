@@ -104,7 +104,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             try
             {
                 var task = Client.ReadStoredProcedureAsync(spUri);
-                while (!task.IsCompleted && !task.IsFaulted) Thread.SpinWait(5);
+                while (!task.IsCompleted && !task.IsFaulted) Thread.Sleep(5);
                 var spResult = await task;
                 exists = spResult != null && !task.IsFaulted;
             }
@@ -122,7 +122,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             try
             {
                 var task = Client.ReadUserDefinedFunctionAsync(udfUri);
-                while (!task.IsCompleted && !task.IsFaulted) Thread.SpinWait(5);
+                while (!task.IsCompleted && !task.IsFaulted) Thread.Sleep(5);
                 var udfResult = await task;
                 exists = udfResult != null && !task.IsFaulted;
             }
@@ -176,7 +176,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     Body = udfBody
                 };
                 var udfTask = Client.CreateUserDefinedFunctionAsync(collectionUri, udfDefinition);
-                while (!udfTask.IsCompleted && !udfTask.IsFaulted) Thread.SpinWait(5);
+                while (!udfTask.IsCompleted && !udfTask.IsFaulted) Thread.Sleep(5);
                 if (udfTask.IsFaulted) throw new Exception("CreateUserDefinedFunction faulted");
                 var response = await udfTask;
                 return response.Resource;
