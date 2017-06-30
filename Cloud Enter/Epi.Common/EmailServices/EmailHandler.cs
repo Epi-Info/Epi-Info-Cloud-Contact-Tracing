@@ -70,7 +70,6 @@ namespace Epi.Common.EmailServices
                 var userName = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_USERNAME"].ToString());
                 message.From = new MailAddress(ConfigurationManager.AppSettings["LOGGING_ADMIN_EMAIL_ADDRESS"].ToString());
                 var SmtpHost = ConfigurationManager.AppSettings["SMTP_HOST"].ToString();
-                //message.From = new MailAddress("ananthwin@gmail.com", "CloudEnter");
                 message.Body = Email.Body;
                 SmtpClient smtp = new SmtpClient(SmtpHost, Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
                 smtp.Port = SMTPPort;
