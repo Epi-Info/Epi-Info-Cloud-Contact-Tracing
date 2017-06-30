@@ -59,7 +59,7 @@ namespace Epi.Common.EmailServices
                     SMTPPort = 25;
                 }
 
-                MailMessage message = new  MailMessage();
+                MailMessage message = new MailMessage();
                 foreach (string item in Email.To)
                 {
                     message.To.Add(item);
@@ -67,15 +67,14 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
 
-                var userName = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString()); 
+                var userName = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_USERNAME"].ToString());
                 message.From = new MailAddress(ConfigurationManager.AppSettings["LOGGING_ADMIN_EMAIL_ADDRESS"].ToString());
-                var SmtpHost = Cryptography.Decrypt(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
-                //message.From = new MailAddress("ananthwin@gmail.com", "CloudEnter");
+                var SmtpHost = ConfigurationManager.AppSettings["SMTP_HOST"].ToString();
                 message.Body = Email.Body;
                 SmtpClient smtp = new SmtpClient(SmtpHost, Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
                 smtp.Port = SMTPPort;
-               
-                
+
+
                 var PassWord = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
 
                 if (isAuthenticated)
@@ -89,7 +88,7 @@ namespace Epi.Common.EmailServices
                 smtp.EnableSsl = isUsingSSL;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-              
+
 
 
                 smtp.Send(message);
@@ -154,13 +153,13 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
-               // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
+                // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
                 System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                    smtp.Credentials = new System.Net.NetworkCredential(Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_USERNAME"].ToString()), Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString()));
                 }
 
 
