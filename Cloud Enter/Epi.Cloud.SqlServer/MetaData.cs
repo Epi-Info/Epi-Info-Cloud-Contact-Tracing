@@ -10,6 +10,7 @@ using Epi.Cloud.Common.Configuration;
 using Epi.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.SqlServer
 {
@@ -519,13 +520,9 @@ namespace Epi.Cloud.SqlServer
         /// <returns>Connection instance</returns>
         public IDbConnection GetConnection()
         {
-            //return GetNativeConnection(connectionString);
-            //var connectionStringName = ConfigurationHelper.GetEnvironmentResourceKey("DBConnection");
-            var connectionString = ConfigurationHelper.GetConnectionString("DBConnection", true);
+            var connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.DBConnection);
             return GetNativeConnection(connectionString);
-            //return GetNativeConnection("Data Source=tcp:epiinfocloudserver.database.windows.net,1433;Persist Security Info=True;User ID=epiinfoadmin@epiinfocloudserver;Password=Strong5050;Initial Catalog=EPIInfo7;");
         }
-
 
         /// <summary>
         /// Gets a native connection instance from supplied connection string

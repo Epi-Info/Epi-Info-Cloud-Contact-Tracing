@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Metadata;
 using Microsoft.Azure.Documents;
@@ -43,7 +41,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         private void ParseConnectionString()
         {
-            var connectionString = ConfigurationHelper.GetConnectionString("CollectedDataConnectionString", true);
+            var connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.CollectedDataConnectionString);
 
             string[] parts;
 

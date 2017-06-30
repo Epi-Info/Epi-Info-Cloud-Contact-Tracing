@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Threading.Tasks;
 using Epi.Cloud.Common;
 using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -156,7 +157,7 @@ namespace Epi.Cloud.CacheServices
 
         private static string CacheConnectionString()
         {
-            return ConfigurationHelper.GetConnectionString("CacheConnectionString",true);
+            return ConnectionStrings.GetConnectionString(ConnectionStrings.Key.CacheConnectionString);
         }
 
         private static IDatabase Cache

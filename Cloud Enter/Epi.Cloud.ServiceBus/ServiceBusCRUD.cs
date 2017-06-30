@@ -1,14 +1,12 @@
 ﻿
 using System;
-using System.Configuration;
+using System.Collections.Generic;
 using System.Threading;
+using Epi.Cloud.Common.Constants;
+using Epi.DataPersistence.DataStructures;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using Epi.DataPersistence.DataStructures;
-using Epi.Cloud.Common.Configuration;
-using Epi.Cloud.Common.Constants;
 namespace Epi.Cloud.ServiceBus
 {
     public class ServiceBusCRUD
@@ -31,9 +29,8 @@ namespace Epi.Cloud.ServiceBus
         private static bool VerifyConfiguration()
         {
             bool configOK = true;
-            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
 
-            var connectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString",true);
+            var connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString);
 
             return configOK;
 

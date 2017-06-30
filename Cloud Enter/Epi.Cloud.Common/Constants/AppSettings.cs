@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Linq;
+﻿using System.ComponentModel;
 using Epi.Cloud.Common.Attributes;
-using Epi.Common.Security;
+using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Cloud.Common.Constants
 {
     public static class AppSettings
     {
+        static ConfigurationAttributesHelper AttributeHelper = new ConfigurationAttributesHelper(typeof(Key));
+
         public struct Key
         {
             // No Default Value
@@ -46,6 +44,10 @@ namespace Epi.Cloud.Common.Constants
 
             // No Default Value
             public const string EmailFrom = "EMAIL_FROM";
+
+            // No Default Value
+            [EncryptedValue(true)]
+            public const string EmailUserName = "EMAIL_USERNAME";
 
             // No Default Value
             [EncryptedValue(true)]
@@ -136,160 +138,22 @@ namespace Epi.Cloud.Common.Constants
 
         public static bool IsValueEncrypted(string key)
         {
-            var encryptedAttribute = FindEncryptedAttribute(key);
-            var isEncrypted = encryptedAttribute.IsEncrypted;
-
-            return isEncrypted;
+            return AttributeHelper.IsValueEncrypted(key);
         }
 
         public static bool GetBoolValue(this string key)
         {
-            bool value = false;
-            try
-            {
-                var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !bool.TryParse(stringValue, out value))
-                {
-                    return ReturnDefaultBoolValue(key);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultBoolValue(key, ex);
-            }
-        }
-
-        public static string GetStringValue(this string key, bool decryptIfEncrypted = true)
-        {
-            string value = string.Empty;
-            try
-            {
-                value = ConfigurationManager.AppSettings[key];
-                if (value == null)
-                {
-                    return ReturnDefaultStringValue(key);
-                }
-                else
-                {
-                    if (decryptIfEncrypted && IsValueEncrypted(key))
-                    {
-                        try
-                        {
-                            value = Cryptography.Decrypt(value);
-                        }
-                        catch (Exception ex)
-                        {
-                            // If an exception occurrs assume that the value is not encrypted;
-                            _encryptedValueAttributes[key] = EncryptedValueAttribute.False;
-                        }
-                    }
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultStringValue(key, ex);
-            }
+            return AttributeHelper.IsValueEncrypted(key);
         }
 
         public static int GetIntValue(this string key)
         {
-            int value = 0;
-            try
-            {
-                var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !Int32.TryParse(stringValue, out value))
-                {
-                    return ReturnDefaultIntValue(key);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultIntValue(key, ex);
-            }
+            return AttributeHelper.GetIntValue(key);
         }
 
-        private static System.Reflection.FieldInfo[] _fields;
-
-        private static Dictionary<string, EncryptedValueAttribute> _encryptedValueAttributes = new Dictionary<string, EncryptedValueAttribute>();
-
-        private static EncryptedValueAttribute FindEncryptedAttribute(string key)
+        public static string GetStringValue(this string key, bool decryptIfEncrypted = true)
         {
-            EncryptedValueAttribute encryptedValueAttribute = EncryptedValueAttribute.False;
-            if (!_encryptedValueAttributes.TryGetValue(key, out encryptedValueAttribute))
-            {
-                _fields = _fields ?? typeof(Key).GetFields();
-                var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
-                if (field != null)
-                {
-                    encryptedValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(EncryptedValueAttribute)).FirstOrDefault() as EncryptedValueAttribute;
-                }
-                encryptedValueAttribute = encryptedValueAttribute ?? EncryptedValueAttribute.False;
-                _encryptedValueAttributes.Add(key, encryptedValueAttribute);
-            }
-            return encryptedValueAttribute;
-        }
-
-
-        private static DefaultValueAttribute FindDefaultValueAttribute(string key)
-        {
-            DefaultValueAttribute defaultValueAttribute = null;
-
-            _fields = _fields ?? typeof(Key).GetFields();
-
-            var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
-            if (field != null)
-            {
-                defaultValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(DefaultValueAttribute)).FirstOrDefault() as DefaultValueAttribute;
-            }
-            return defaultValueAttribute;
-        }
-
-        private static bool ReturnDefaultBoolValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value as bool?;
-                if (defaultValue.HasValue) return defaultValue.Value;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
-        }
-
-        private static string ReturnDefaultStringValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value.ToString();
-                if (defaultValue != null) return defaultValue;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
-        }
-
-        private static Int32 ReturnDefaultIntValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value as Int32?;
-                if (defaultValue.HasValue) return defaultValue.Value;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
+            return AttributeHelper.GetStringValue(key, decryptIfEncrypted);
         }
     }
 }
