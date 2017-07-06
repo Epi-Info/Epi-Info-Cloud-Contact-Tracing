@@ -45,6 +45,7 @@ namespace Epi.Web.MVC.Controllers
                 }.ResolveMetadataDependencies();
             }
             responseContext.ResponseId = responseId;
+            responseContext.UserOrgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
             Session[SessionKeys.ResponseContext] = responseContext;
 
             responseContext.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
@@ -143,7 +144,7 @@ namespace Epi.Web.MVC.Controllers
                 FormId = !string.IsNullOrEmpty(formId) ? formId : null,
                 ResponseId = responseId,
                 RootResponseId = rootResponseId,
-                OrgId = orgId,
+                UserOrgId = orgId,
                 UserId = userId,
                 UserName = userName
             }.ResolveMetadataDependencies();

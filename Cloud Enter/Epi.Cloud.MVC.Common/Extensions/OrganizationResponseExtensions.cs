@@ -10,6 +10,7 @@ namespace Epi.Cloud.MVC.Extensions
             OrgAdminInfoModel OrgAdminInfoModel = new OrgAdminInfoModel();
             OrgAdminInfoModel.OrgName = Organizations.OrganizationList[0].Organization;
             OrgAdminInfoModel.IsOrgEnabled = Organizations.OrganizationList[0].IsEnabled;
+            OrgAdminInfoModel.IsHostOrganization = Organizations.OrganizationList[0].IsHostOrganization;
 
             return OrgAdminInfoModel;
         }

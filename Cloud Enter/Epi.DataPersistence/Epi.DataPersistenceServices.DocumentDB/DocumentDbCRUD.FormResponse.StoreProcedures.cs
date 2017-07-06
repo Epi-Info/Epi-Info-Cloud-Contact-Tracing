@@ -16,18 +16,19 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         private const string spGetRecordsBySurveyId = "GetRecordsBySurveyId";
         private const string udfWildCardCompare = "WildCardCompare";
+        private const string udfSharingRules = "SharingRules";
 
         /// <summary>
         /// Execute DB SP-Get all records by FormName (aka: collectionId) 
         /// </summary>
         /// <param name="collectionId"></param>
         /// <param name="spId"></param>
-        /// <param name="udfId"></param>
+        /// <param name="udfWildCardCompareId"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> GetAllRecordsByFormName(string collectionId, string spId, string udfId, string query)
+        private async Task<List<FormResponseProperties>> GetAllRecordsByFormName(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query)
         {
-            return await ExecuteSPAsync(collectionId, spId, udfId, query);
+            return await ExecuteSPAsync(collectionId, spId, udfSharingRulesId, udfWildCardCompareId, query);
         }
 
         internal class OrderByResult
@@ -43,14 +44,18 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="spId"></param>
         /// <param name="surveyId"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfId, string query)
+        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query)
         {
             RequestOptions option = new RequestOptions();
-            var formResponse = new FormResponseProperties();
-            // Create SP Uri
-            Uri spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId);
-            Uri udfUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfId);
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
+            var formResponse = new FormResponseProperties();
+            // Create Stored Procedure Uri
+            Uri spUri = UriFactory.CreateStoredProcedureUri(DatabaseName, collectionId, spId);
+
+            // Create the User Defined Function Uris
+            Uri udfSharingRulesUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfSharingRulesId);
+            Uri udfWildCardUri = UriFactory.CreateUserDefinedFunctionUri(DatabaseName, collectionId, udfWildCardCompareId);
+
             try
             {
                 return ExecuteQuery(query, spUri);
@@ -64,9 +69,13 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     {
                         var createSPResponse = await CreateSPAsync(collectionUri, spId);
                     }
-                    if (await DoesUserDefinedFunctionExist(udfUri) == false)
+                    if (await DoesUserDefinedFunctionExist(udfSharingRulesUri) == false)
                     {
-                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfId);
+                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfSharingRulesId, DocumentDBUDFKeys.udfSharingRules);
+                    }
+                    if (await DoesUserDefinedFunctionExist(udfWildCardUri) == false)
+                    {
+                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfWildCardCompareId, DocumentDBUDFKeys.udfWildCardCompare);
                     }
 
                     try
@@ -165,11 +174,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// <param name="collectionUri"></param>
         /// <param name="udfId"></param>
         /// <returns></returns>
-        private async Task<UserDefinedFunction> CreateUDFAsync(Uri collectionUri, string udfId)
+        private async Task<UserDefinedFunction> CreateUDFAsync(Uri collectionUri, string udfId, string resourceName)
         {
             try
             {
-                var udfBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, DocumentDBUDFKeys.udfWildCardCompare);
+                var udfBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, resourceName);
                 var udfDefinition = new UserDefinedFunction
                 {
                     Id = udfId,

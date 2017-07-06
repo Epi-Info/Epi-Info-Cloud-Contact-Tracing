@@ -16,6 +16,7 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
 using Moq;
+using Epi.Cloud.Facades.Interfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO.Tests
 {
@@ -41,6 +42,8 @@ namespace Epi.Cloud.DataEntryServices.DAO.Tests
             projectMetadataProvider.SetupAllProperties();
             var surveyPersistenceFacade = new Mock<ISurveyPersistenceFacade>();
             surveyPersistenceFacade.SetupAllProperties();
+            var securityFacade = new Mock<ISecurityFacade>();
+            securityFacade.SetupAllProperties();
 
             //ISurveyPersistenceFacade surveyPersistenceFacade; // = new ISurveyPersistenceFacade();
             Guid projectguid = Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");
@@ -48,7 +51,7 @@ namespace Epi.Cloud.DataEntryServices.DAO.Tests
             //IProjectMetadataProvider ProjectMetadata = new SurveyResponseDao();
             //SurveyResponseDao SurveyResponsetest = new SurveyResponseDao();
             //projectMetadataProvider = 
-            SurveyResponseDao dao = new SurveyResponseDao(projectMetadataProvider.Object, surveyPersistenceFacade.Object);// _surveyPersistenceFacade);ProjectMetadataProvider
+            SurveyResponseDao dao = new SurveyResponseDao(projectMetadataProvider.Object, surveyPersistenceFacade.Object, securityFacade.Object);// _surveyPersistenceFacade);ProjectMetadataProvider
 
             List<string> surveryResponseStringList = new List<string> { "sxy9", "sfe45", "fdfe6", "fdt7" };
             //Guid userPublishKey = Guid.Parse("257b05f2-dab2-c8e3-caed-92f0f6a88169");

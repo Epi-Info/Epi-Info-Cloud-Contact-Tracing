@@ -10,6 +10,7 @@ namespace Epi.Cloud.Common.Extensions
             return new OrganizationBO
             {
                 IsEnabled = pDTO.IsEnabled,
+                IsHostOrganization = pDTO.IsHostOrganization,
                 Organization = pDTO.Organization,
                 OrganizationKey = pDTO.OrganizationKey,
                 OrganizationId = pDTO.OrganizationId

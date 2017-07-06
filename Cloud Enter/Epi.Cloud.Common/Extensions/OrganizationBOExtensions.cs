@@ -11,8 +11,8 @@ namespace Epi.Cloud.Common.Extensions
         {
             return new OrganizationDTO
             {
-                //  AdminId = pBO.AdminId,
                 IsEnabled = organizationBO.IsEnabled,
+                IsHostOrganization = organizationBO.IsHostOrganization,
                 Organization = organizationBO.Organization,
                 OrganizationKey = Epi.Common.Security.Cryptography.Decrypt(organizationBO.OrganizationKey),
                 OrganizationId = organizationBO.OrganizationId

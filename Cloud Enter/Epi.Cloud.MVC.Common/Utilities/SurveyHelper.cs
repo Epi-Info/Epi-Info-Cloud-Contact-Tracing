@@ -47,7 +47,9 @@ namespace Epi.Web.MVC.Utility
 			surveyAnswerDTO.DateCreated = DateTime.UtcNow;
 			surveyAnswerDTO.SurveyId = responseContext.FormId;
 			surveyAnswerDTO.Status = RecordStatus.InProcess;
+            surveyAnswerDTO.LastActiveOrgId = responseContext.UserOrgId;
             surveyAnswerDTO.LastActiveUserId = responseContext.UserId;
+            surveyAnswerDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
 			surveyAnswerDTO.RecordSourceId = RecordSource.CloudEnter;
 			//if (isEditMode)
@@ -60,7 +62,8 @@ namespace Epi.Web.MVC.Utility
             surveyAnswerDTO.ResponseDetail = responseDetail;
 
 			surveyAnswerDTO.ParentResponseId = responseContext.ParentResponseId;
-			surveyAnswerRequest.Criteria.UserId = responseContext.UserId;
+            surveyAnswerRequest.Criteria.UserOrganizationId  = responseContext.UserOrgId;
+            surveyAnswerRequest.Criteria.UserId = responseContext.UserId;
             surveyAnswerRequest.Criteria.UserName = responseContext.UserName;
 
             surveyAnswerRequest.Criteria.UserOrganizationId = currentOrgId;
@@ -98,6 +101,7 @@ namespace Epi.Web.MVC.Utility
 												bool isSubmited,
 												bool isSaved,
 												int pageNumber,
+                                                int orgId,
 												int userId)
 		{
 			// 1 Get the record for the current survey response
@@ -132,6 +136,7 @@ namespace Epi.Web.MVC.Utility
 			}
 
 			var updatedFromResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
+            updatedFromResponseDetail.UserOrgId = orgId;
             updatedFromResponseDetail.UserId = userId;
 
 			////Update page number before saving response 
@@ -190,6 +195,7 @@ namespace Epi.Web.MVC.Utility
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
             //surveyAnswerRequest.Criteria.UserId = UserId;
             ResponseContext responseContext = ((IResponseContext)updatedFromResponseDetail).CloneResponseContext();
+            responseContext.UserOrgId = orgId;
             responseContext.UserId = userId;
 
             dataEntryService.SetSurveyAnswer(surveyAnswerRequest);

@@ -5,6 +5,7 @@ using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Message;
 using Epi.Common.Core.Interfaces;
+using Epi.Cloud.Common.Core.DataStructures;
 
 namespace Epi.DataPersistence.Common.Interfaces
 {
@@ -27,7 +28,7 @@ namespace Epi.DataPersistence.Common.Interfaces
         //bool SaveFormResponseProperties(SurveyResponseBO request);
 
         //IEnumerable<SurveyResponse> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
-        IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responceContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
+        IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responceContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0);
 
         FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
 

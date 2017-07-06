@@ -10,6 +10,7 @@ using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Common.Core.DataStructures;
 using Epi.Web.MVC.Models;
+using Epi.Web.MVC.Utility;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -76,12 +77,15 @@ namespace Epi.Web.MVC.Controllers
                 FormsAuthentication.SetAuthCookie("BeginSurvey", false);
                 Guid responseId = Guid.NewGuid();
                 string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
+                int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
+                int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
 
                 var responseContext = new ResponseContext
                 {
                     FormId = surveyId,
                     ResponseId = responseId.ToString(),
-                    RootResponseId = rootResponseId
+                    RootResponseId = rootResponseId,
+                    UserOrgId = orgId,
                 }.ResolveMetadataDependencies() as ResponseContext;
 
                 SurveyAnswerDTO surveyAnswer = _isurveyFacade.CreateSurveyAnswer(responseContext);
@@ -113,7 +117,7 @@ namespace Epi.Web.MVC.Controllers
                     form.RequiredFieldsList = string.Join(",", requiredFields);
                 }
 
-                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 1, 0,null);
+                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 1, orgId, userId, null);
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseId = responseId, PageNumber = 1 });
             }

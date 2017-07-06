@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
@@ -342,19 +343,20 @@ namespace Epi.DataPersistenceServices.DocumentDB
         /// GetAllResponsesWithCriteria
         /// </summary>
         /// <param name="responseContext"></param>
+        /// <param name="responseAccessRuleContext"></param>
         /// <param name="fields"></param>
         /// <param name="searchFields"></param>
         /// <param name="parentResponseId"></param>
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
         /// <returns></returns>
-        public List<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string parentResponseId = null, int pageSize = 0, int pageNumber = 0)
+        public List<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string parentResponseId = null, int pageSize = 0, int pageNumber = 0)
         {
             List<FormResponseDetail> formResponseDetailList = null;
 
             try
             {
-                formResponseDetailList = ReadAllResponsesWithCriteria(responseContext, fields, searchFields, parentResponseId, pageSize, pageNumber);
+                formResponseDetailList = ReadAllResponsesWithCriteria(responseContext, responseAccessRuleContext, fields, searchFields, parentResponseId, pageSize, pageNumber);
             }
             catch (DocumentQueryException ex)
             {
@@ -363,7 +365,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return formResponseDetailList;
         }
 
-        private List<FormResponseDetail> ReadAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchQualifiers, string parentResponseId, int pageSize = 0, int pageNumber = 0)
+        private List<FormResponseDetail> ReadAllResponsesWithCriteria(IResponseContext responseContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchQualifiers, string parentResponseId, int pageSize = 0, int pageNumber = 0)
         {
             List<FormResponseDetail> formResponseDetailList = new List<FormResponseDetail>();
             List<FormResponseProperties> formResponsePropertiesList;
@@ -383,7 +385,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                         ? searchQualifiers.Values.ToArray()
                         : null;
 
-                    formResponseDetailList = ReadAllRootResponses(responseContext, columnNames, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
+                    formResponseDetailList = ReadAllRootResponses(responseContext, responseAccessRuleContext, columnNames, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
 
                 }
                 catch (DocumentQueryException ex)
@@ -526,7 +528,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null, int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
+        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, ResponseAccessRuleContext accessRuleContext, List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null, int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
         {
             try
             {
@@ -540,8 +542,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"
                 };
-                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers);
-                var formResponsePropertiesList = GetAllRecordsByFormName(rootFormName, spGetRecordsBySurveyId, udfWildCardCompare, query).Result;
+                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers, accessRuleContext.IsSharable ? accessRuleContext : null);
+                var formResponsePropertiesList = GetAllRecordsByFormName(rootFormName, spGetRecordsBySurveyId, udfSharingRules, udfWildCardCompare, query).Result;
                 return formResponsePropertiesList;
             }
             catch (Exception ex)
@@ -550,39 +552,6 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
 
             return null;
-        }
-
-        private List<FormResponseProperties> FilterQueryResponseByWildCardQualifiers(IEnumerable<FormResponseProperties> enumerableFormResponseProperties, KeyValuePair<FieldDigest, string>[] searchQualifiers)
-        {
-            if (searchQualifiers != null)
-            {
-                var wildQualifiers = searchQualifiers.Where(search => search.Value.Contains("*") || search.Value.Contains("?")).ToArray();
-                if (wildQualifiers.Length > 0)
-                {
-                    List<FormResponseProperties> filteredFormResponsePropertiesList = new List<FormResponseProperties>();
-                    //var search = SearchByFiledNames(collectionAlias, responseContext.FormId, formProperties, columnlist);
-
-                    //foreach (var formReponseProperties in enumerableFormResponseProperties)
-                    //{
-                    //    bool isQuailfied = true;
-                    //    foreach (var searchQuery in wildQualifiers)
-                    //    {
-                    //        var fieldName = searchQuery.Key.FieldName;
-                    //        var searchValue = searchQuery.Value;
-                    //        string responseValue;
-                    //        bool responseExists = formReponseProperties.ResponseQA.TryGetValue(fieldName, out responseValue);
-                    //        if (!responseValue.WildcardCompare(searchValue))
-                    //        {
-                    //            isQuailfied = false;
-                    //            break;
-                    //        }
-                    //    }
-                    //    if (isQuailfied) filteredFormResponsePropertiesList.Add(formReponseProperties);
-                    //}
-                    return filteredFormResponsePropertiesList;
-                }
-            }
-            return enumerableFormResponseProperties.ToList();
         }
 
         #region Read All Child Responses

@@ -10,8 +10,6 @@ namespace Epi.Web.Enter.Interfaces.DataInterface
     {
         UserBO GetUser(UserBO User);
         bool GetExistingUser(UserBO User);
-        bool UpdateUser(UserBO User);
-        bool DeleteUser(UserBO User);
         bool InsertUser(UserBO User, OrganizationBO OrgBO);
         bool UpdateUserOrganization(UserBO User, OrganizationBO OrgBO);
         UserBO GetUserByUserId(UserBO User);

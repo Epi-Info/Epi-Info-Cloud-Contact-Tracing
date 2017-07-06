@@ -90,10 +90,10 @@ namespace Epi.Cloud.Common.Message
             get { return ResponseContext.IsNewRecord; }
             set { ResponseContext.IsNewRecord = value; }
         }
-        public int OrgId
+        public int UserOrgId
         {
-            get { return ResponseContext.OrgId; }
-            set { ResponseContext.OrgId = value; }
+            get { return ResponseContext.UserOrgId; }
+            set { ResponseContext.UserOrgId = value; }
         }
 
         public int UserId

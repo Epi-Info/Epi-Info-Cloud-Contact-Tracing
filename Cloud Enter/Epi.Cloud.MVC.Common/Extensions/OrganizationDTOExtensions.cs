@@ -14,6 +14,7 @@ namespace Epi.Cloud.MVC.Extensions
             OrganizationModel ModelList = new OrganizationModel();
 
             ModelList.IsEnabled = DTO.IsEnabled;
+            ModelList.IsHostOrganization = DTO.IsHostOrganization;
             ModelList.Organization = DTO.Organization;
             ModelList.OrganizationId = DTO.OrganizationId;
             ModelList.OrganizationKey = DTO.OrganizationKey;

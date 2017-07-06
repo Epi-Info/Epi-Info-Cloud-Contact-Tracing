@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Core.DataStructures;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
@@ -171,9 +172,9 @@ namespace Epi.PersistenceServices.DocumentDB
         #endregion
 
         #region Get All Responses With Criteria
-        public IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
+        public IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> gridFields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, int pageSize = 0, int pageNumber = 0)
         {
-            return _formResponseCRUD.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, null, pageSize, pageNumber);
+            return _formResponseCRUD.GetAllResponsesWithCriteria(responseContext, responseAccessRuleContext, gridFields, searchFields, null, pageSize, pageNumber);
         }
 
         public FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext)

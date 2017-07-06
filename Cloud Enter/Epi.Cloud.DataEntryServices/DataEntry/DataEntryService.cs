@@ -138,9 +138,10 @@ namespace Epi.Cloud.DataEntryServices
 
             surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
 
+            surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+            surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
             surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
             surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
-            surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
 
             // Validate SurveyResponse business rules
 
@@ -315,9 +316,10 @@ namespace Epi.Cloud.DataEntryServices
                 foreach (var surveyResponseBO in surveyResponseBOList)
                 {
                     surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
+                    surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                    surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
                     surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
-                    surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
                     surveyResponseBO.Status = surveyAnswerRequest.Criteria.StatusId;
                     surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
                 }

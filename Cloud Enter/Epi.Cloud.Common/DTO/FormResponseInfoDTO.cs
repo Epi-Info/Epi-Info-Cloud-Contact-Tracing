@@ -51,7 +51,7 @@ namespace Epi.Cloud.Common.DTO
 
         public bool IsNewRecord { get { return ResponseContext.IsNewRecord; } set { ResponseContext.IsNewRecord = value; } }
 
-        public int OrgId { get { return ResponseContext.OrgId; } set { ResponseContext.OrgId = value; } }
+        public int UserOrgId { get { return ResponseContext.UserOrgId; } set { ResponseContext.UserOrgId = value; } }
 
         public int UserId { get { return ResponseContext.UserId; } set { ResponseContext.UserId = value; } }
 

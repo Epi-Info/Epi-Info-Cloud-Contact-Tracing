@@ -15,32 +15,18 @@ namespace Epi.Web.Enter.Common.BusinessObject
         private int _OrganizationId;
         private List<UserBO> _OrganizationUserList;
         [DataMember]
-        public string Organization
-        {
-            get { return _Organization; }
-            set { _Organization = value; }
-        }
+        public string Organization { get; set; }
 
         [DataMember]
-        public string OrganizationKey 
-        {
-            get { return _OrganizationKey; }
-            set { _OrganizationKey = value; }
-        }
+        public string OrganizationKey { get; set; }
 
         [DataMember]
-        public bool IsEnabled
-        {
-            get { return _IsEnabled; }
-            set { _IsEnabled = value; }
-        }
+        public bool IsEnabled { get; set; }
 
         [DataMember]
-        public int OrganizationId
-            {
-            get { return _OrganizationId; }
-            set { _OrganizationId = value; }
-            }
-       
+        public bool IsHostOrganization { get; set; }
+
+        [DataMember]
+        public int OrganizationId { get; set; }
     }
 }

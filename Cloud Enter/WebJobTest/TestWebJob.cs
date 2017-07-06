@@ -67,6 +67,7 @@ namespace WebJobTest
             _formResponse.RecStatus = 2;
             _formResponse.FirstSaveTime = DateTime.Now;
             _formResponse.LastSaveTime = DateTime.Now;
+            _formResponse.UserOrgId = 1;
             _formResponse.UserId = 1014;
             _formResponse.UserName = "Ananth_Raja@sra.com";
             _formResponse.IsRelatedView = false;

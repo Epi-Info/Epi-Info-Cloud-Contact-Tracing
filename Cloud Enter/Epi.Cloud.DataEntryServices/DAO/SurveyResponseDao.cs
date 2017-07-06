@@ -13,6 +13,8 @@ using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Core.DataStructures;
+using Epi.Cloud.Facades.Interfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -21,7 +23,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
     /// </summary> 
     public class SurveyResponseDao : MetadataAccessor, ISurveyResponseDao
     {
-        ISurveyPersistenceFacade _surveyPersistenceFacade;
+        private readonly ISurveyPersistenceFacade _surveyPersistenceFacade;
 
         public SurveyResponseDao(IProjectMetadataProvider projectMetadataProvider,
                                  ISurveyPersistenceFacade surveyPersistenceFacade)
@@ -174,22 +176,30 @@ namespace Epi.Cloud.DataEntryServices.DAO
         public List<SurveyResponseBO> GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria)
         {
             List<SurveyResponseBO> result = new List<SurveyResponseBO>();
-
-            _dataAccessRuleId = GetDataAccessRule(criteria.SurveyId, criteria.UserId);
+            ResponseAccessRuleContext responseAccessRuleContext = null;
 
             try
             {
-                Guid Id = new Guid(criteria.SurveyId);
-
-#if ImplementSharableRules
                 if (criteria.IsShareable)
                 {
-                    // TODO: Implement Sharable Rules
-
                     //Shareable
                     using (var Context = Epi.Web.EF.DataObjectFactory.CreateContext())
                     {
+                        // TODO: Implement Sharable Rules
+                        var organization = Context.Organizations.Where(org => org.OrganizationId == criteria.UserOrganizationId).SingleOrDefault();
+                        var isHostOrganizationUser = organization != null ? organization.IsHostOrganization : false;
 
+                        responseAccessRuleContext = new ResponseAccessRuleContext
+                        {
+                            RuleId = criteria.DataAccessRuleId,
+                            IsSharable = criteria.IsShareable,
+                            IsHostOrganizationUser = isHostOrganizationUser,
+                            UserOrganizationId = criteria.UserOrganizationId
+                        };
+
+#if WebEnterSharableRules
+                        Guid Id = new Guid(criteria.SurveyId);
+                        _dataAccessRuleId = GetDataAccessRule(criteria.SurveyId, criteria.UserId);
                         IQueryable<SurveyResponse> SurveyResponseList;
                         switch (_dataAccessRuleId)
                         {
@@ -238,20 +248,18 @@ namespace Epi.Cloud.DataEntryServices.DAO
                                     .OrderByDescending(x => x.DateUpdated);
                                 break;
                         }
+#endif //WebEnterSharableRules
                     }
                 }
-                else
-#endif //ImplementSharableRules
-                {
-                    var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
-                    var searchFields = criteria.SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>();
 
-                    var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseContext, gridFields, searchFields, criteria.GridPageSize, criteria.PageNumber);
-                    if (surveyResponses != null)
-                    {
-                        var responseList = surveyResponses;
-                        result = responseList.Select(r => r.ToSurveyResponseBO()).ToList();
-                    }
+                var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
+                var searchFields = criteria.SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>();
+
+                var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseContext, responseAccessRuleContext, gridFields, searchFields, criteria.GridPageSize, criteria.PageNumber);
+                if (surveyResponses != null)
+                {
+                    var responseList = surveyResponses;
+                    result = responseList.Select(r => r.ToSurveyResponseBO()).ToList();
                 }
             }
             catch (Exception ex)
@@ -1105,14 +1113,14 @@ namespace Epi.Cloud.DataEntryServices.DAO
         }
 #endif //IncludeEpi7Compatibilty
 
-        public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(IResponseContext responceContext)
+        public List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(IResponseContext responseContext)
         {
             List<SurveyResponseBO> result = null;
 
             List<string> list = new List<string>();
             try
             {
-                var formResponseDetail = _surveyPersistenceFacade.GetHierarchicalResponsesByResponseId(responceContext);
+                var formResponseDetail = _surveyPersistenceFacade.GetHierarchicalResponsesByResponseId(responseContext);
 
                 //var json = Newtonsoft.Json.JsonConvert.SerializeObject(formResponseDetail);
                 //var temp = Newtonsoft.Json.JsonConvert.DeserializeObject<FormResponseDetail>(json);

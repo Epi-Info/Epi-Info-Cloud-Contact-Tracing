@@ -8,6 +8,8 @@
 
 		public bool IsEnabled { get; set; }
 
-		public int OrganizationId { get; set; }
+        public bool IsHostOrganization { get; set; }
+
+        public int OrganizationId { get; set; }
 	}
 }

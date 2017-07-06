@@ -39,6 +39,7 @@ namespace Epi.Web.MVC.Controllers
             if (Session[SessionKeys.CurrentOrgId] == null)
             {
                 Session[SessionKeys.CurrentOrgId] = userOrgModel.OrgList[0].OrganizationId;
+                Session[SessionKeys.IsCurrentOrgHostOrg] = userOrgModel.OrgList[0].IsHostOrganization;
             }
             
             return View(ViewActions.UserList, userOrgModel);
@@ -137,16 +138,19 @@ namespace Epi.Web.MVC.Controllers
         }
 
         [HttpGet]
-        public ActionResult GetUserList(int orgid)
+        public ActionResult GetUserList(int orgId)
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
             OrganizationRequest request = new OrganizationRequest();
-            request.Organization.OrganizationId = orgid;
+            request.Organization.OrganizationId = orgId;
             OrganizationResponse organizationUsers = _securityFacade.GetOrganizationUsers(request);
             List<UserModel> userModel = organizationUsers.OrganizationUsersList.ToUserModelList();
-            ViewBag.SelectedOrg = orgid;
-            Session[SessionKeys.CurrentOrgId] = orgid;
+            UserOrgModel userOrgModel = GetUserInfoList(orgId);
+
+            ViewBag.SelectedOrg = orgId;
+            Session[SessionKeys.CurrentOrgId] = orgId;
+            Session[SessionKeys.IsCurrentOrgHostOrg] = userOrgModel.OrgList[0].IsHostOrganization;
 
             return PartialView("PartialUserList", userModel);
         }
