@@ -118,6 +118,16 @@ Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Epi.Web.WCF.SurveyHost.Azur
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PublishAndRepublishTest", "PublishAndRepublishTest\PublishAndRepublishTest.csproj", "{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Epi.Cloud.Powershell", "Epi.Cloud.Powershell", "{49F96C7E-4FA5-4303-B781-6548D2784AF4}"
+EndProject
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "EpiCloudDeployment", "EpiCloudDeployment\EpiCloudDeployment.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EpiCloudSetupTemplate", "EpiCloudSetupTemplate", "{83720B53-704A-41D9-9EFE-36225AA249CA}"
+	ProjectSection(SolutionItems) = preProject
+		Parameters.json = Parameters.json
+		Template.json = Template.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -1452,6 +1462,36 @@ Global
 		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|x86.ActiveCfg = Release|Any CPU
 		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18}.Release|x86.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|x86.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug (Exclude EpiMap)|x86.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|x86.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|Mixed Platforms.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|x86.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Epi.Enter.ServiceApplication|x86.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|Mixed Platforms.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|x86.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Linux|x86.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|x86.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1474,5 +1514,7 @@ Global
 		{E4D7CBED-64BA-40B0-A4D2-558F9A9B62BA} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
 		{178CD1AB-1835-46CB-AEED-6B44675CCF3E} = {1D734EF5-BCFA-4832-BE7C-DA06550B7142}
 		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
+		{83720B53-704A-41D9-9EFE-36225AA249CA} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serverfarms_eicdcserviceplanpro_name": {
+      "value": "eicdcserviceplanprq"
+    },
+    "sites_eicdcmetadataapipro_name": {
+      "value": "eicdcmetadataapiproq"
+    },
+    "sites_eicdcpro_name": {
+      "value": "eicdcpro"
+    },
+    "sites_eicdcdataconsistencyservicesapipro_name": {
+      "value": "eicdcdataconsistencyservicesapipr"
+    },
+    "sites_eicdcresponsedataapipro_name": {
+      "value": "eicdcresponsedataapipr"
+    },
+    "config_web_name": {
+      "value": "eicdcproweb"
+    },
+    "config_web_name_1": {
+      "value": "eicdcproweb"
+    },
+    "config_web_name_2": {
+      "value": "eicdcprowebtwo"
+    },
+    "config_web_name_3": {
+      "value": "eicdcprowebthree"
+    },
+    "Redis_eicdcsessionpro_name": {
+      "value": "eicdcsessionprdo"
+    },
+    "Redis_eicdccachepro_name": {
+      "value": "eicdccacheprfo"
+    },
+    "serviceBusNamespaceName": {
+      "value": "sbsananthnamspau"
+    },
+    "storageAccountType": {
+      "value": "Standard_GRS"
+    },
+    "storageAccName": {
+      "value": "eicdcstoragepros"
+    },
+    "yourservernameName": {
+      "value": "mytesterserser"
+    },
+    "yourservernameAdminLogin": {
+      "value": "adminlogines"
+    },
+    "yourservernameAdminLoginPassword": {
+      "value": "Passwor$#12233"
+    },
+    "dbnameName": {
+      "value": "testdbeanme"
+
+    },
+    "dbnameCollation": {
+      "value": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "dbnameEdition": {
+      "value": "Basic"
+    },
+    "dbnameRequestedServiceObjectiveName": {
+      "value": "Basic"
+    },
+    "databaseAccountName": {
+      "value": "mydocumentdbs"
+    },
+    "consistencyLevel": {
+      "value": "BoundedStaleness"
+    },
+    "maxStalenessPrefix": {
+      "value": 100
+    },
+    "maxIntervalInSeconds": {
+      "value": 5
+    },
+    "sendgridAccountName": {
+      "value": "testmynewsendgris"
+    },
+    "sendgridPassword": {
+      "value": "PassWrods$#1234"
+    },
+    "toAddress": {
+      "value": "ananthwin@gmail.com"
+    }
+  }
+}
