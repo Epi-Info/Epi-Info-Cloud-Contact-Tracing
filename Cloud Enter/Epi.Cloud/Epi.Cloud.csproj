@@ -734,7 +734,6 @@
     <None Include="Properties\PublishProfiles\GELWebEnter01 - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
-    <Content Include="SP_Script\spGetAllRecordsBySurveyID.js" />
     <Content Include="Unity.Mvc3.README.txt" />
     <Content Include="Views\Home\ListResponses.cshtml" />
     <Content Include="Views\Shared\footer.htm" />

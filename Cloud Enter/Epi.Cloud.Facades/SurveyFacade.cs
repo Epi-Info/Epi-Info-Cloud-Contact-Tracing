@@ -162,6 +162,7 @@ namespace Epi.Cloud.Facades
                                          bool isSubmited, 
                                          bool isSaved, 
                                          int pageNumber, 
+                                         int orgId,
                                          int userId, 
                                          string userName)
         {
@@ -185,6 +186,7 @@ namespace Epi.Cloud.Facades
                                               isSubmited, 
                                               isSaved, 
                                               pageNumber, 
+                                              orgId,
                                               userId);
         }
 

@@ -76,10 +76,10 @@ namespace Epi.Cloud.Common.DTO
             set { ((IResponseContext)ResponseDetail).IsNewRecord = value; }
 
         }
-        public int OrgId
+        public int UserOrgId
         {
-            get { return ((IResponseContext)ResponseDetail).OrgId; }
-            set { ((IResponseContext)ResponseDetail).OrgId = value; }
+            get { return ((IResponseContext)ResponseDetail).UserOrgId; }
+            set { ((IResponseContext)ResponseDetail).UserOrgId = value; }
         }
 
         public int UserId
@@ -114,10 +114,12 @@ namespace Epi.Cloud.Common.DTO
         public bool IsDraftMode { get; set; }
         public bool IsLocked { get; set; }
         public string UserEmail { get; set; }
+        public int LastActiveOrgId { get; set; }
         public int LastActiveUserId { get; set; }
         public int RecordSourceId { get; set; }
         public int ViewId { get; set; }
         public int FormOwnerId { get; set; }
+        public int LoggedInUserOrgId { get; set; }
         public int LoggedInUserId { get; set; }
         public bool RecoverLastRecordVersion { get; set; }
         public string RequestedViewId { get; set; }

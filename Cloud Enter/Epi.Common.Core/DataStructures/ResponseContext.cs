@@ -20,7 +20,7 @@ namespace Epi.Common.Core.DataStructures
 
         public bool IsNewRecord { get; set; }
 
-        public int OrgId { get; set; }
+        public int UserOrgId { get; set; }
         public int UserId { get; set; }
         public string UserName { get; set; }
 

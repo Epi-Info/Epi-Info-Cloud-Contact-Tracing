@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
 using Epi.Common.Constants;
 using Epi.FormMetadata.DataStructures;
 using Microsoft.WindowsAzure.Storage;
@@ -12,7 +12,6 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 {
     public partial class MetadataBlobCRUD
     {
-
         //these variables are used throughout the class
         string _containerName { get; set; }
 
@@ -34,7 +33,7 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
         {
             lock (this)
             {
-                _cloudStorageAccount = CloudStorageAccount.Parse(ConfigurationHelper.GetConnectionString("MetadataBlobStorage.ConnectionString", true));
+                _cloudStorageAccount = CloudStorageAccount.Parse(ConnectionStrings.GetConnectionString(ConnectionStrings.Key.MetadataBlobStorage));
                 _containerName = containerName.ToLower();
             }
         }

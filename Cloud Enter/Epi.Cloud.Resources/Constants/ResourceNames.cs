@@ -35,6 +35,7 @@
     public struct DocumentDBUDFKeys
     {
         public const string udfWildCardCompare = "udfWildCardCompare";
+        public const string udfSharingRules = "udfSharingRules";
     }
 
     public struct DataAccessRuleKeys

@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\EncryptedValueAttribute.cs" />
     <Compile Include="BusinessObjects\AdminBO.cs" />
     <Compile Include="BusinessObjects\BusinessObject.cs" />
     <Compile Include="BusinessObjects\DbConnectionStringBO.cs" />
@@ -70,6 +71,8 @@
     <Compile Include="BusinessRules\ValidateRequired.cs" />
     <Compile Include="BusinessRules\ValidationDataType.cs" />
     <Compile Include="BusinessRules\ValidationOperator.cs" />
+    <Compile Include="Configuration\ConfigurationAttributesHelper.cs" />
+    <Compile Include="Constants\ConnectionStrings.cs" />
     <Compile Include="Constants\ControllerNames.cs" />
     <Compile Include="Constants\AppSettings.cs" />
     <Compile Include="BusinessObjects\PageInfoBO.cs" />

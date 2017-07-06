@@ -142,6 +142,7 @@ namespace Epi.Web.MVC.Controllers
         {
             bool isNewRecord = false;
 
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             string userName = Session[SessionKeys.UserName].ToString();
             Session[SessionKeys.FormValuesHasChanged] = "";
@@ -201,6 +202,7 @@ namespace Epi.Web.MVC.Controllers
                 FormId = addNewFormId,
                 ResponseId = responseId.ToString(),
                 IsNewRecord = isNewRecord,
+                UserOrgId = orgId,
                 UserId = userId,
                 UserName = userName
             }.ResolveMetadataDependencies() as ResponseContext;
@@ -265,7 +267,9 @@ namespace Epi.Web.MVC.Controllers
                                                         false,
                                                         false,
                                                         0,
-                                                        SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()), userName);
+                                                        orgId,
+                                                        userId,
+                                                        userName);
                 }
                 catch (Exception ex)
                 {
@@ -423,17 +427,19 @@ namespace Epi.Web.MVC.Controllers
             var rootFormId = Session[SessionKeys.RootFormId].ToString();
             string encryptedUserId = Session[SessionKeys.UserId].ToString();
             int userId = SurveyHelper.GetDecryptUserId(encryptedUserId);
-
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
             var responseContext = new ResponseContext
             {
                 ResponseId = responseId,
                 RootResponseId = responseId,
                 FormId = rootFormId,
+                UserOrgId = orgId,
                 UserId = userId
             }.ResolveMetadataDependencies() as ResponseContext;
 
             SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
             surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.Criteria.UserOrganizationId = orgId;
             surveyAnswerRequest.Criteria.UserId = userId;
             surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
             surveyAnswerRequest.Criteria.SurveyId = rootFormId;
@@ -468,6 +474,7 @@ namespace Epi.Web.MVC.Controllers
 
             FormResponseInfoModel formResponseInfoModel = null;
 
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
             int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
             string userName = Session[SessionKeys.UserName].ToString();
             if (!string.IsNullOrEmpty(/*FromURL*/surveyId))
@@ -489,6 +496,7 @@ namespace Epi.Web.MVC.Controllers
                 var responseContext = new ResponseContext
                 {
                     RootFormId = surveyId,
+                    UserOrgId = orgid,
                     UserId = userId,
                     UserName = userName
                 }.ResolveMetadataDependencies();
@@ -499,6 +507,8 @@ namespace Epi.Web.MVC.Controllers
                 formResponseReq.Criteria.UserId = userId;
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
                 formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                formResponseReq.Criteria.DataAccessRuleId = formSettingResponse.FormSetting.SelectedDataAccessRule;
+
                 formResponseReq.Criteria.UserOrganizationId = orgid;
 
                 Session[SessionKeys.IsSqlProject] = formSettingResponse.FormInfo.IsSQLProject;
@@ -796,6 +806,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 surveyAnswerDTO.DateCreated = surveyAnswerDTO.DateUpdated;
             }
+            surveyAnswerDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
             Session[SessionKeys.EditForm] = responseId;
 

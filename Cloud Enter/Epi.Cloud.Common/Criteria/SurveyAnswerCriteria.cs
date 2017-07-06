@@ -84,7 +84,7 @@ namespace Epi.Cloud.Common.Criteria
 
         public bool IsShareable { get; set; }
         public int UserOrganizationId { get; set; }
-
+        public bool IsHostOrganizationUser { get; set; }
         public int DataAccessRuleId { get; set; }
 
         public int? FormResponseCount { get; set; }

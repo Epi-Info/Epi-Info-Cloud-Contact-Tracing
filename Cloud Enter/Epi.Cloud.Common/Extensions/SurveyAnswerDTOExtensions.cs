@@ -24,6 +24,10 @@ namespace Epi.Cloud.Common.Extensions
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
+            surveyResponseBO.UserOrgId = surveyAnswerDTO.UserOrgId;
+            surveyResponseBO.UserId = surveyAnswerDTO.UserId;
+            surveyResponseBO.LastActiveOrgId = surveyAnswerDTO.LastActiveOrgId;
+            surveyResponseBO.LastActiveUserId = surveyAnswerDTO.LastActiveUserId;
 
             surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
             surveyResponseBO.ResponseDetail.PageIds = surveyResponseBO.ResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
@@ -32,13 +36,6 @@ namespace Epi.Cloud.Common.Extensions
             if (userId.HasValue) surveyResponseBO.UserId = userId.Value;
             return surveyResponseBO;
         }
-
-        public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<SurveyAnswerDTO> surveyAnswerDTOList, int? userId = null)
-        {
-            List<SurveyResponseBO> result = surveyAnswerDTOList.Select(dto => dto.ToSurveyResponseBO(userId)).ToList();
-            return result;
-        }
-
 
         public static ResponseContext ToResponseContext(this SurveyAnswerDTO surveyAnswerDTO)
         {
@@ -57,7 +54,7 @@ namespace Epi.Cloud.Common.Extensions
 
                 IsNewRecord = surveyAnswerDTO.IsNewRecord,
 
-                OrgId = surveyAnswerDTO.OrgId,
+                UserOrgId = surveyAnswerDTO.LoggedInUserOrgId,
                 UserId = surveyAnswerDTO.LoggedInUserId,
                 UserName = surveyAnswerDTO.UserName
             }.ResolveMetadataDependencies() as ResponseContext;

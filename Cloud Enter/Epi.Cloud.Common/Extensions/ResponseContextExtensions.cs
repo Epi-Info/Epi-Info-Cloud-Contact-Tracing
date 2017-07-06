@@ -85,7 +85,7 @@ namespace Epi.Cloud.Common.Extensions
 
                 IsNewRecord = responseContext.IsNewRecord,
 
-                OrgId = responseContext.OrgId,
+                UserOrgId = responseContext.UserOrgId,
                 UserId = responseContext.UserId,
                 UserName = responseContext.UserName
             }.ResolveMetadataDependencies() as ResponseContext;
@@ -110,7 +110,7 @@ namespace Epi.Cloud.Common.Extensions
             formResponseDetail.RootFormName = responseContext.RootFormName;
             formResponseDetail.IsNewRecord = responseContext.IsNewRecord;
 
-            formResponseDetail.OrgId = responseContext.OrgId;
+            formResponseDetail.UserOrgId = responseContext.UserOrgId;
             formResponseDetail.UserId = responseContext.UserId;
             formResponseDetail.UserName = responseContext.UserName;
 

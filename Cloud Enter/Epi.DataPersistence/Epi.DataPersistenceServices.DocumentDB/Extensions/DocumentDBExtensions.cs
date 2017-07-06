@@ -69,7 +69,7 @@ namespace Epi.DataPersistence.Extensions
             target.FirstSaveTime = source.FirstSaveTime;
             target.LastSaveTime = source.LastSaveTime;
 
-            target.OrgId = source.OrgId;
+            target.UserOrgId = source.UserOrgId;
             target.UserId = source.UserId;
             target.UserName = source.UserName;
 
@@ -112,7 +112,7 @@ namespace Epi.DataPersistence.Extensions
                 FirstSaveTime = formResponseProperties.FirstSaveTime,
                 LastSaveTime = formResponseProperties.LastSaveTime,
 
-                OrgId = formResponseProperties.OrgId,
+                UserOrgId = formResponseProperties.UserOrgId,
                 UserId = formResponseProperties.UserId,
                 UserName = formResponseProperties.UserName,
 
@@ -209,7 +209,7 @@ namespace Epi.DataPersistence.Extensions
                 FirstSaveTime = formResponseDetail.FirstSaveTime,
                 LastSaveTime = formResponseDetail.LastSaveTime,
 
-                OrgId = formResponseDetail.OrgId,
+                UserOrgId = formResponseDetail.UserOrgId,
                 UserId = formResponseDetail.UserId,
                 UserName = formResponseDetail.UserName,
 

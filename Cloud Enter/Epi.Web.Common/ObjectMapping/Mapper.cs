@@ -96,33 +96,21 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 IsEnabled = pDTO.IsEnabled,
                 Organization = pDTO.Organization,
                 OrganizationKey = pDTO.OrganizationKey,
-                OrganizationId = pDTO.OrganizationId
-                // AdminId = pDTO.AdminId,
-
+                OrganizationId = pDTO.OrganizationId,
+                IsHostOrganization = pDTO.IsHostOrganization
             };
         }
-        public static OrganizationBO ToOrgBusinessObject(OrganizationDTO pDTO)
-        {
-            return new OrganizationBO
-            {
-                IsEnabled = pDTO.IsEnabled,
-                Organization = pDTO.Organization,
-                OrganizationKey = pDTO.OrganizationKey,
-                OrganizationId = pDTO.OrganizationId
 
-            };
-        }
         public static OrganizationDTO ToDataTransferObjects(OrganizationBO pBO)
         {
 
             return new OrganizationDTO
             {
-                //  AdminId = pBO.AdminId,
                 IsEnabled = pBO.IsEnabled,
                 Organization = pBO.Organization,
                 OrganizationKey = Epi.Web.Enter.Common.Security.Cryptography.Decrypt(pBO.OrganizationKey),
-                OrganizationId = pBO.OrganizationId
-
+                OrganizationId = pBO.OrganizationId,
+                IsHostOrganization = pBO.IsHostOrganization
             };
 
         }

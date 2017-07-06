@@ -4,7 +4,8 @@
 	{
 		public const string CurrentFormId = "CurrentFormId";
 		public const string CurrentOrgId = "CurrentOrgId";
-		public const string EditForm = "EditForm";
+        public const string IsCurrentOrgHostOrg = "IsCurrentOrgHostOrg";
+        public const string EditForm = "EditForm";
 		public const string FormValuesHasChanged = "FormValuesHasChanged";
 		public const string IsDemoMode = "IsDemoMode";
 		public const string IsEditMode = "IsEditMode";

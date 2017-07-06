@@ -1,12 +1,13 @@
-﻿using System;
-using System.ComponentModel;
-using System.Configuration;
-using System.Linq;
+﻿using System.ComponentModel;
+using Epi.Cloud.Common.Attributes;
+using Epi.Cloud.Common.Configuration;
 
 namespace Epi.Cloud.Common.Constants
 {
     public static class AppSettings
     {
+        static ConfigurationAttributesHelper AttributeHelper = new ConfigurationAttributesHelper(typeof(Key));
+
         public struct Key
         {
             // No Default Value
@@ -17,14 +18,26 @@ namespace Epi.Cloud.Common.Constants
 
             #region EMail Settings
 
-            [DefaultValue(true)]
+            [DefaultValue(false)]
             public const string EmailUseAuthentication = "EMAIL_USE_AUTHENTICATION";
 
-            [DefaultValue(true)]
+            // No Default Value
+            public const string LoggingAdminEmailAddress = "LOGGING_ADMIN_EMAIL_ADDRESS";
+
+            // No Default Value
             public const string EmailSubject = "EMAIL_SUBJECT";
 
+            // No Default Value
+            public const string LoggingEmailSubject = "LOGGING_EMAIL_SUBJECT";
+
             [DefaultValue(true)]
+            public const string LoggingSendEmailNotification = "LOGGING_SEND_EMAIL_NOTIFICATION";
+
+            [DefaultValue(false)]
             public const string EmailUseSSL = "EMAIL_USE_SSL";
+
+            [EncryptedValue(true)]
+            public const string SmtpHost = "SMTP_HOST";
 
             [DefaultValue(25)]
             public const string SmtpPort = "SMTP_PORT";
@@ -32,10 +45,12 @@ namespace Epi.Cloud.Common.Constants
             // No Default Value
             public const string EmailFrom = "EMAIL_FROM";
 
-            // No Default Value
+            // No Default Value
+            [EncryptedValue(true)]
             public const string EmailUserName = "EMAIL_USERNAME";
 
             // No Default Value
+            [EncryptedValue(true)]
             public const string EmailPassword = "EMAIL_PASSWORD";
 
             #endregion EMail Settings
@@ -121,123 +136,24 @@ namespace Epi.Cloud.Common.Constants
             #endregion Service Bus
         }
 
-        public static bool GetBoolValue(this string key)
+        public static bool IsValueEncrypted(string key)
         {
-
-            bool value = false;
-            try
-            {
-                var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !bool.TryParse(stringValue, out value))
-                {
-                    return ReturnDefaultBoolValue(key);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultBoolValue(key, ex);
-            }
+            return AttributeHelper.IsValueEncrypted(key);
         }
 
-        public static string GetStringValue(this string key)
+        public static bool GetBoolValue(this string key)
         {
-            string value = string.Empty;
-            try
-            {
-                value = ConfigurationManager.AppSettings[key];
-                if (value == null)
-                {
-                    return ReturnDefaultStringValue(key);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultStringValue(key, ex);
-            }
+            return AttributeHelper.IsValueEncrypted(key);
         }
 
         public static int GetIntValue(this string key)
         {
-            int value = 0;
-            try
-            {
-                var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !Int32.TryParse(stringValue, out value))
-                {
-                    return ReturnDefaultIntValue(key);
-                }
-                else
-                {
-                    return value;
-                }
-            }
-            catch (Exception ex)
-            {
-                return ReturnDefaultIntValue(key, ex);
-            }
+            return AttributeHelper.GetIntValue(key);
         }
 
-        private static System.Reflection.FieldInfo[] _fields;
-
-        private static DefaultValueAttribute FindDefaultValueAttribute(string key)
+        public static string GetStringValue(this string key, bool decryptIfEncrypted = true)
         {
-            DefaultValueAttribute defaultValueAttribute = null;
-
-            _fields = _fields ?? typeof(Key).GetFields();
-
-            var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
-            if (field != null)
-            {
-                defaultValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(DefaultValueAttribute)).FirstOrDefault() as DefaultValueAttribute;
-            }
-            return defaultValueAttribute;
-        }
-
-        private static bool ReturnDefaultBoolValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value as bool?;
-                if (defaultValue.HasValue) return defaultValue.Value;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
-        }
-
-        private static string ReturnDefaultStringValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value.ToString();
-                if (defaultValue != null) return defaultValue;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
-        }
-
-        private static Int32 ReturnDefaultIntValue(string key, Exception ex = null)
-        {
-            var defaultValueAttribute = FindDefaultValueAttribute(key);
-
-            if (defaultValueAttribute != null)
-            {
-                var defaultValue = defaultValueAttribute.Value as Int32?;
-                if (defaultValue.HasValue) return defaultValue.Value;
-            }
-
-            throw new SettingsPropertyNotFoundException(key, ex);
+            return AttributeHelper.GetStringValue(key, decryptIfEncrypted);
         }
     }
 }

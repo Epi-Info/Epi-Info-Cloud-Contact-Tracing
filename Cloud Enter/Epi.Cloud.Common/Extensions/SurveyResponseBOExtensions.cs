@@ -11,6 +11,8 @@ namespace Epi.Cloud.Common.Extensions
     {
         public static SurveyAnswerDTO ToSurveyAnswerDTO(this SurveyResponseBO surveyResponseBO)
         {
+            MetadataAccessor metadataAccessor = new MetadataAccessor();
+
             return new SurveyAnswerDTO
             {
                 ResponseId = surveyResponseBO.ResponseId,
@@ -27,10 +29,12 @@ namespace Epi.Cloud.Common.Extensions
                 IsDraftMode = surveyResponseBO.IsDraftMode,
                 IsLocked = surveyResponseBO.IsLocked,
                 UserEmail = surveyResponseBO.UserEmail,
+                LastActiveOrgId = surveyResponseBO.LastActiveOrgId,
                 LastActiveUserId = surveyResponseBO.LastActiveUserId,
                 RecordSourceId = surveyResponseBO.RecordSourceId,
                 ViewId = surveyResponseBO.ViewId,
-                FormOwnerId = 0, // TODO: Add FormOwnerId
+                FormOwnerId = metadataAccessor.GetFormDigest(surveyResponseBO.FormId).OrganizationId,
+                LoggedInUserOrgId = surveyResponseBO.UserOrgId,
                 LoggedInUserId = surveyResponseBO.UserId,
                 RecoverLastRecordVersion = false, // TODO: Do we have to populate RecoverLastRecordVersion
                 RequestedViewId = string.Empty,
@@ -91,7 +95,7 @@ namespace Epi.Cloud.Common.Extensions
                 RootFormName = rootFormName,
                 IsNewRecord = surveyResponseBO.IsNewRecord,
 
-                OrgId = surveyResponseBO.OrgId,
+                UserOrgId = surveyResponseBO.UserOrgId,
                 UserId = surveyResponseBO.UserId,
                 UserName = surveyResponseBO.UserName
             };

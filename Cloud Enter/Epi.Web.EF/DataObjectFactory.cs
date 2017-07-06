@@ -2,6 +2,7 @@
 using System;
 using Epi.Common.Security;
 using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.EF
 {
@@ -22,12 +23,8 @@ namespace Epi.Web.EF
             try
             {
                 // Connection strings here
-                _connectionString = ConfigurationHelper.GetConnectionString("EWEEntities", true);
-                _eweAdoConnectionString = ConfigurationHelper.GetConnectionString("EWEADO", true);
-
-
-
-
+                _connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.EWEEntities);
+                _eweAdoConnectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.EWEADO);
             }
             catch (Exception ex)
             {

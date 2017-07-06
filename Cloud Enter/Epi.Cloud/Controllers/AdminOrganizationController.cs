@@ -109,6 +109,7 @@ namespace Epi.Web.MVC.Controllers
 
                 request.Organization.Organization = orgAdminInfoModel.OrgName;
                 request.Organization.IsEnabled = orgAdminInfoModel.IsOrgEnabled;
+                request.Organization.IsHostOrganization = orgAdminInfoModel.IsHostOrganization;
 
                 request.Organization.OrganizationKey = GetOrgKey(url);
                 request.UserId = userId;
@@ -165,7 +166,8 @@ namespace Epi.Web.MVC.Controllers
                     OrganizationRequest request = new OrganizationRequest();
                     request.Organization.Organization = orgAdminInfoModel.OrgName;
                     request.Organization.IsEnabled = orgAdminInfoModel.IsOrgEnabled;
-					UserDTO adminInfo = new UserDTO();
+                    request.Organization.IsHostOrganization = orgAdminInfoModel.IsHostOrganization;
+                    UserDTO adminInfo = new UserDTO();
 
                     adminInfo.FirstName = orgAdminInfoModel.AdminFirstName;
                     adminInfo.LastName = orgAdminInfoModel.AdminLastName;

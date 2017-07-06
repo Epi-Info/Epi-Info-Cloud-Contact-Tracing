@@ -2,6 +2,7 @@
 using System.Linq;
 using Epi.FormMetadata.DataStructures;
 using Epi.DataPersistence.Constants;
+using Epi.Cloud.Common.Core.DataStructures;
 
 namespace Epi.DataPersistenceServices.DocumentDB
 {
@@ -25,8 +26,10 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string FRP_ = "FormResponseProperties.";
         private const string FRP_RecStatus = FRP_ + "RecStatus";
         private const string FRP_ResponseQA_ = FRP_ + "ResponseQA.";
+        private const string FRP_OrgId = FRP_ + "OrgId";
 
         private const string udf_wildCardCompare = "udf.WildCardCompare";
+        private const string udf_sharingRules = "udf.SharingRules";
 
         private string AssembleSelect(string collectionName, params string[] columnNames)
         {
@@ -146,7 +149,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 
         private string GenerateResponseGridQuery(string collectionAlias, string formId, List<string> formPoperties, 
-            List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null)
+            List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers,
+            ResponseAccessRuleContext responseAccessRuleContext)
         {
             string SelectColumnList = string.Empty;
 
@@ -160,7 +164,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             if (searchQualifiers != null && searchQualifiers.Length > 0)
             {
-                var qualifiers = searchQualifiers.Select(x => AssembleQuailifer(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
+                var searchQualifierList = searchQualifiers.Select(x => AssembleSearchQuailifier(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
 
                 var expression = collectionAlias + "." + FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
                 var query = SELECT
@@ -168,7 +172,8 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                + AssembleSelect(collectionAlias, "_ts,")
                                + SelectColumnList
                                + WHERE
-                               + AssembleWhere(collectionAlias, qualifiers)
+                               + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
+                               + AssembleWhere(collectionAlias, searchQualifierList)
                                + expression
                                + ORDERBY
                                + AssembleSelect(collectionAlias, "_ts")
@@ -182,6 +187,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                + AssembleSelect(collectionAlias, "_ts,")
                                + SelectColumnList
                                + WHERE
+                               + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
                                + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
                                + ORDERBY
@@ -192,46 +198,37 @@ namespace Epi.DataPersistenceServices.DocumentDB
             }
         }
 
-        private string SearchByFieldNames(string collectionAlias, string formId, List<string> formPoperties, KeyValuePair<FieldDigest, string>[] columnlist)
+        private string AssembleSearchQuailifier(string collectionAlias, string fieldName, string fieldValue)
         {
-            string SelectColumnList = string.Empty;
-
-            var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
-            if (columnlist != null)
-            {
-                // convert column list to this format ex:{patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
-                SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist.Select(x => x.Key.FieldName).ToList());
-            }
-
-
-            var qualifiers = columnlist.Select(x => AssembleQuailifer(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
-
-            var expression = collectionAlias +"."+ FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
-            var query = SELECT
-                           + SelectFormPoperties + ","
-                           + AssembleSelect(collectionAlias, "_ts,")
-                           + SelectColumnList
-                           + WHERE
-                           + AssembleWhere(collectionAlias, qualifiers)
-                           + expression
-                           + ORDERBY
-                           + AssembleSelect(collectionAlias, "_ts")
-                           + DESC;
-            return query;
-        }
-
-        private string AssembleQuailifer(string collectionAlias, string fieldName, string fieldValue)
-        {
-            string qualifer;
+            string qualifier;
             if (fieldValue.Contains('*') || fieldValue.Contains('?'))
             {
-                qualifer = udf_wildCardCompare + "(" + collectionAlias + "." + FRP_ResponseQA_ + fieldName + "," + "\"" + fieldValue + "\"" + ")";
+                qualifier = udf_wildCardCompare + "(" + collectionAlias + "." + FRP_ResponseQA_ + fieldName + "," + "\"" + fieldValue + "\"" + ")";
             }
             else
             {
-                qualifer = collectionAlias + "." + FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
+                qualifier = collectionAlias + "." + FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
             }
-            return qualifer;
+            return qualifier;
+        }
+
+        private string AssembleAcessRuleQualifier(string collectionAlias, ResponseAccessRuleContext ruleContext)
+        {
+            string qualifier = string.Empty;
+            if (ruleContext != null && ruleContext.IsSharable)
+            {
+                var parameters = new string[]
+                {
+                ruleContext.RuleId.ToString(),
+                ruleContext.IsHostOrganizationUser.ToString().ToLower(),
+                ruleContext.UserOrganizationId.ToString(),
+                collectionAlias + "." + FRP_OrgId
+                };
+
+                qualifier = udf_sharingRules + "(" + string.Join(",", parameters) + ")" + AND;
+            }
+
+            return qualifier;
         }
     }
 }

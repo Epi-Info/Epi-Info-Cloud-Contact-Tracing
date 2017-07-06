@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Common.BusinessObject;
-using Epi.Web.Enter.Common.Criteria;
-using Epi.Web.Enter.Common.Constants;
+using Epi.Web.Enter.Interfaces.DataInterface;
 namespace Epi.Web.EFwcf
 {
     public class EntityUserDao : IUserDao
@@ -43,32 +40,6 @@ namespace Epi.Web.EFwcf
             return Result;
         }
 
-        public bool UpdateUser(UserBO User)
-        {
-            //var Context = DataObjectFactory.CreateContext();
-            //switch (User.Operation)
-            //{
-            //    case Constant.OperationMode.UpdatePassword:
-            //        var user = Context.Users.Single(a => a.UserName == User.UserName);
-            //        user.PasswordHash = User.PasswordHash;
-            //        Context.SaveChanges();
-            //        return true;
-            //    case Constant.OperationMode.UpdateUserInfo:
-            //        break;
-            //    case Constant.OperationMode.UpdateUser:
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //return false;
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteUser(UserBO User)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool InsertUser(UserBO User, OrganizationBO OrgBO)
         {
             try
@@ -79,15 +50,11 @@ namespace Epi.Web.EFwcf
                     var Org = Context.Organizations.Where(x => x.OrganizationId == OrgBO.OrganizationId).Single();
 
                     Context.Organizations.Attach(Org);
-
-
                    
                     Context.Users.AddObject(Mapper.ToUserEntity(User));
 
                     UserOrganization UserOrganizationEntity = Mapper.ToUserOrganizationEntity(User, OrgBO);
                     Context.UserOrganizations.AddObject(UserOrganizationEntity);
-
-                                   
 
                     Context.SaveChanges();
                 }
@@ -98,6 +65,7 @@ namespace Epi.Web.EFwcf
                 throw (ex);
             }
         }
+
         public UserBO GetUserByUserId(UserBO User)
         {
             var Context = DataObjectFactory.CreateContext();
@@ -116,7 +84,6 @@ namespace Epi.Web.EFwcf
         }
         public UserBO GetUserByUserIdAndOrgId(UserBO User, OrganizationBO OrgBO)
         {
-
             var Context = DataObjectFactory.CreateContext();
             var UserQuery = from Users in Context.Users
                             where Users.UserID == User.UserId
@@ -130,12 +97,10 @@ namespace Epi.Web.EFwcf
                 var _User = Context.UserOrganizations.Where(x => x.UserID == user.UserID && x.OrganizationID == OrgBO.OrganizationId).Single();
                 Result.IsActive = _User.Active;
                 Result.Role = _User.RoleId;
-
             }
             return Result;
-
-
         }
+
         public UserBO GetCurrentUser(int UserId)
         {
             UserBO Result = new UserBO();
@@ -143,12 +108,7 @@ namespace Epi.Web.EFwcf
             {
 
                 Result = Mapper.MapToUserBO(Context.Users.Single(x => x.UserID == UserId));
-
-
             }
-
-
-
             return Result;
         }
 
@@ -162,26 +122,20 @@ namespace Epi.Web.EFwcf
                 user.ResetPassword = User.ResetPassword;
                 Context.SaveChanges();
                 return true;
-
             }
             catch (Exception ex )
             {
-
                 return false;
             }
         }
 
         public bool UpdateUserInfo(UserBO User, OrganizationBO OrgBO)
         {
-
             try
             {
                 using (var Context = DataObjectFactory.CreateContext())
                 {
-
-
                     User user = Context.Users.First(x => x.UserID == User.UserId);
-                    // user.UserName = User.UserName;
                     user.EmailAddress = User.EmailAddress;
                     user.FirstName = User.FirstName;
                     user.LastName = User.LastName;
@@ -191,9 +145,6 @@ namespace Epi.Web.EFwcf
                     UserOrganization.Active = User.IsActive;
 
                     Context.SaveChanges();
-
-
-
                 }
                 return true;
             }
@@ -221,7 +172,6 @@ namespace Epi.Web.EFwcf
                 }
             }
             return UserList;
-
         }
 
         public UserBO GetUserByEmail(UserBO User)

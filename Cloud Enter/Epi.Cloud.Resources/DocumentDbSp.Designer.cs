@@ -102,6 +102,27 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to function SharingRules(ruleId, isHostOrgUser, userOrgId, responseOrgId)
+        ///{
+        ///    switch (ruleId)
+        ///    {
+        ///        case 1:
+        ///        default:
+        ///            // Organization users can only access the data of there organization.
+        ///            return userOrgId == responseOrgId;
+        ///
+        ///        case 2:
+        ///            // All users in host organization will have access to all data of all organizations
+        ///            // and other Organization users can only access the data of there organization.
+        ///            return isHostOrgUser || [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string udfSharingRules {
+            get {
+                return ResourceManager.GetString("udfSharingRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function WildCardCompare(input, pattern, singleWildcard = &apos;?&apos;, multipleWildcard = &apos;*&apos;)
         ///{
         ///    input = input.toLowerCase();

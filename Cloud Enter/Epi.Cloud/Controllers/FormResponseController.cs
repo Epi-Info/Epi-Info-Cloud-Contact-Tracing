@@ -219,7 +219,7 @@ namespace Epi.Web.MVC.Controllers
                 ParentResponseId = this.Request.Form["Parent_Response_Id"].ToString(),
                 RootResponseId = rootResponseId,
                 IsNewRecord = !isEditMode,
-                OrgId = orgId,
+                UserOrgId = orgId,
                 UserId = userId,
                 UserName = userName
             }.ResolveMetadataDependencies() as ResponseContext;
@@ -275,7 +275,7 @@ namespace Epi.Web.MVC.Controllers
                     ContextDetailList = SurveyHelper.GetContextDetailList(functionObject_B);
                     form = SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
 
-                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId.ToString(), form, surveyAnswerDTO, false, false, 0, userId, userName);
+                    _surveyFacade.UpdateSurveyResponse(surveyInfoModel, responseId.ToString(), form, surveyAnswerDTO, false, false, 0, orgId, userId, userName);
                 }
                 catch (Exception ex)
                 {
@@ -293,7 +293,7 @@ namespace Epi.Web.MVC.Controllers
                 Session[SessionKeys.RequiredList] = surveyResponseDocDb.RequiredList;
                 form.RequiredFieldsList = _requiredList;
                 // Session[SessionKeys.RequiredList] = _requiredList;
-                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, userId, userName);
+                _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, orgId, userId, userName);
             }
 
             surveyAnswerDTO = (SurveyAnswerDTO)formsHierarchy.SelectMany(x => x.ResponseIds).FirstOrDefault(z => z.ResponseId == surveyAnswerDTO.ResponseId);
@@ -338,7 +338,7 @@ namespace Epi.Web.MVC.Controllers
                 var responseContext = new ResponseContext
                 {
                     RootFormId = surveyId,
-                    OrgId = orgid,
+                    UserOrgId = orgid,
                     UserId = userId,
                     UserName = userName
                 }.ResolveMetadataDependencies();
@@ -349,6 +349,7 @@ namespace Epi.Web.MVC.Controllers
                 formResponseReq.Criteria.UserId = userId;
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
                 formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
+                formResponseReq.Criteria.DataAccessRuleId = formSettingResponse.FormSetting.SelectedDataAccessRule;
                 formResponseReq.Criteria.IsMobile = true;
                 formResponseReq.Criteria.UserOrganizationId = orgid;
 
@@ -614,6 +615,7 @@ namespace Epi.Web.MVC.Controllers
             ResponseContext responseContext = GetSetResponseContext(responseId);
 
             var surveyAnswerStateDTO = GetSurveyAnswerState(responseContext);
+            surveyAnswerStateDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerStateDTO.LoggedInUserId = responseContext.UserId;
             Session[SessionKeys.EditForm] = responseId;
 

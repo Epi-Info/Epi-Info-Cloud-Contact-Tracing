@@ -15,7 +15,7 @@ namespace Epi.Cloud.Facades.Interfaces
 			bool IsAndroid = false);
 
         SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext, bool isEditMode = false, int currentOrgId = -1);
-        void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, SurveyAnswerDTO surveyAnswerDTO, bool isSubmited, bool isSaved, int pageNumber, int userId,string userName);
+        void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, SurveyAnswerDTO surveyAnswerDTO, bool isSubmited, bool isSaved, int pageNumber, int orgId, int userId,string userName);
 
         SurveyInfoModel GetSurveyInfoModel(string surveyId);
         List<FormInfoModel> GetFormsInfoModelList(FormsInfoRequest formsInfoRequest);

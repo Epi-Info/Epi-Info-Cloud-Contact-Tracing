@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="StoredProcedures\OrderBy.js" />
+    <Content Include="StoredProcedures\SharingRules.js" />
     <Content Include="StoredProcedures\WildCardCompare.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
