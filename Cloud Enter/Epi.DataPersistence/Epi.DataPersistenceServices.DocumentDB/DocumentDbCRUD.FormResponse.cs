@@ -542,7 +542,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"
                 };
-                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers, accessRuleContext.IsSharable ? accessRuleContext : null);
+                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers, accessRuleContext != null && accessRuleContext.IsSharable ? accessRuleContext : null);
                 var formResponsePropertiesList = GetAllRecordsByFormName(rootFormName, spGetRecordsBySurveyId, udfSharingRules, udfWildCardCompare, query).Result;
                 return formResponsePropertiesList;
             }
