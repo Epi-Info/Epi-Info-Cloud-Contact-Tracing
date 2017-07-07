@@ -24,16 +24,17 @@ namespace Epi.Cloud.Common.Extensions
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
-            surveyResponseBO.UserOrgId = surveyAnswerDTO.UserOrgId;
-            surveyResponseBO.UserId = surveyAnswerDTO.UserId;
-            surveyResponseBO.LastActiveOrgId = surveyAnswerDTO.LastActiveOrgId;
+
+            surveyResponseBO.UserId = userId.HasValue ? userId.Value : surveyAnswerDTO.UserId;
             surveyResponseBO.LastActiveUserId = surveyAnswerDTO.LastActiveUserId;
+
+            surveyResponseBO.UserOrgId = surveyAnswerDTO.UserOrgId;
+            surveyResponseBO.CurrentOrgId = surveyAnswerDTO.UserOrgId;
+            surveyResponseBO.LastActiveOrgId = surveyAnswerDTO.LastActiveOrgId;
 
             surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
             surveyResponseBO.ResponseDetail.PageIds = surveyResponseBO.ResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
 
-
-            if (userId.HasValue) surveyResponseBO.UserId = userId.Value;
             return surveyResponseBO;
         }
 

@@ -15,7 +15,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string GT = ">";
         private const string GE = ">=";
         private const string SELECT = "SELECT ";
-        private const string ORDERBY = " ORDER BY ";
+        private const string ORDER_BY = " ORDER BY ";
         private const string DESC = " DESC ";
         private const string FROM = " FROM ";
         private const string WHERE = " WHERE ";
@@ -175,7 +175,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, searchQualifierList)
                                + expression
-                               + ORDERBY
+                               + ORDER_BY
                                + AssembleSelect(collectionAlias, "_ts")
                                + DESC;
                 return query;
@@ -190,7 +190,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
                                + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
-                               + ORDERBY
+                               + ORDER_BY
                                + AssembleSelect(collectionAlias, "_ts")
                                + DESC;
 

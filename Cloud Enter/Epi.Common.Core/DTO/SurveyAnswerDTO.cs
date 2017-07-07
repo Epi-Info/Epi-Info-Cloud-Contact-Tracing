@@ -74,7 +74,12 @@ namespace Epi.Cloud.Common.DTO
         {
             get { return ((IResponseContext)ResponseDetail).IsNewRecord; }
             set { ((IResponseContext)ResponseDetail).IsNewRecord = value; }
+        }
 
+        public int LoggedInUserOrgId
+        {
+            get { return ((IResponseContext)ResponseDetail).UserOrgId; }
+            set { ((IResponseContext)ResponseDetail).UserOrgId = value; }
         }
         public int UserOrgId
         {
@@ -93,6 +98,9 @@ namespace Epi.Cloud.Common.DTO
             get { return ((IResponseContext)ResponseDetail).UserName; }
             set { ((IResponseContext)ResponseDetail).UserName = value; }
         }
+
+public int LoggedInUserId { get; set; }
+
 
         public bool IsChildResponse { get { return ((IResponseContext)ResponseDetail).IsChildResponse; } }
 
@@ -119,8 +127,6 @@ namespace Epi.Cloud.Common.DTO
         public int RecordSourceId { get; set; }
         public int ViewId { get; set; }
         public int FormOwnerId { get; set; }
-        public int LoggedInUserOrgId { get; set; }
-        public int LoggedInUserId { get; set; }
         public bool RecoverLastRecordVersion { get; set; }
         public string RequestedViewId { get; set; }
         public int CurrentPageNumber { get; set; }

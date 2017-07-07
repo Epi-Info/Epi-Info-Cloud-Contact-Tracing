@@ -138,10 +138,15 @@ namespace Epi.Cloud.DataEntryServices
 
             surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
 
-            surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
-            surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
-            surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
-            surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
+            if (surveyAnswerRequest.Criteria.UserOrganizationId > 0)
+            {
+                surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+            }
+
+            if (surveyAnswerRequest.Criteria.UserId > 0) surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+            if (!string.IsNullOrWhiteSpace(surveyAnswerRequest.Criteria.UserName)) surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
+            
 
             // Validate SurveyResponse business rules
 

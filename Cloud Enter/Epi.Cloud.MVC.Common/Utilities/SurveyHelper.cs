@@ -136,8 +136,8 @@ namespace Epi.Web.MVC.Utility
 			}
 
 			var updatedFromResponseDetail = surveyAnswerRequest.SurveyAnswerList[0].ResponseDetail;
-            updatedFromResponseDetail.UserOrgId = orgId;
-            updatedFromResponseDetail.UserId = userId;
+            if (updatedFromResponseDetail.UserId <= 0) updatedFromResponseDetail.UserId = userId;
+            if (updatedFromResponseDetail.UserOrgId <= 0) updatedFromResponseDetail.UserOrgId = orgId;
 
 			////Update page number before saving response 
 			if (surveyAnswerRequest.SurveyAnswerList[0].CurrentPageNumber != 0)
@@ -195,8 +195,9 @@ namespace Epi.Web.MVC.Utility
 			surveyAnswerRequest.SurveyAnswerList[0].IsDraftMode = surveyAnswerDTO.IsDraftMode;
             //surveyAnswerRequest.Criteria.UserId = UserId;
             ResponseContext responseContext = ((IResponseContext)updatedFromResponseDetail).CloneResponseContext();
-            responseContext.UserOrgId = orgId;
-            responseContext.UserId = userId;
+            if (responseContext.UserId == 0) responseContext.UserId = userId;
+            if (responseContext.UserOrgId == 0) responseContext.UserOrgId = orgId;
+            surveyAnswerRequest.ResponseContext = responseContext;
 
             dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
 		}
