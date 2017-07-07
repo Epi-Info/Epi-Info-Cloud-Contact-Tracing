@@ -14,9 +14,6 @@
     "sites_eicdcdataconsistencyservicesapipro_name": {
       "value": "eicdcdataconsistencyservicesapipr"
     },
-    "sites_eicdcresponsedataapipro_name": {
-      "value": "eicdcresponsedataapipr"
-    },
     "config_web_name": {
       "value": "eicdcproweb"
     },
@@ -25,9 +22,6 @@
     },
     "config_web_name_2": {
       "value": "eicdcprowebtwo"
-    },
-    "config_web_name_3": {
-      "value": "eicdcprowebthree"
     },
     "Redis_eicdcsessionpro_name": {
       "value": "eicdcsessionprdo"
@@ -55,7 +49,6 @@
     },
     "dbnameName": {
       "value": "testdbeanme"
-
     },
     "dbnameCollation": {
       "value": "SQL_Latin1_General_CP1_CI_AS"
