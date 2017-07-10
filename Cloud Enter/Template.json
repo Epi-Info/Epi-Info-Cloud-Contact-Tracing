@@ -1,0 +1,792 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "serverfarms_eicdcserviceplanpro_name": {
+      "defaultValue": "eicdcserviceplanpro",
+      "type": "String"
+    },
+    "sites_eicdcmetadataapipro_name": {
+      "defaultValue": "eicdcmetadataapipro",
+      "type": "String"
+    },
+    "sites_eicdcpro_name": {
+      "defaultValue": "eicdcpro",
+      "type": "String"
+    },
+    "sites_eicdcdataconsistencyservicesapipro_name": {
+      "defaultValue": "eicdcdataconsistencyservicesapipro",
+      "type": "String"
+    },
+    "config_web_name": {
+      "defaultValue": "eicdcmetadataapipro/web",
+      "type": "String"
+    },
+    "config_web_name_1": {
+      "defaultValue": "eicdcpro/web",
+      "type": "String"
+    },
+    "config_web_name_2": {
+      "defaultValue": "eicdcdataconsistencyservicesapipro/web",
+      "type": "String"
+    },
+    "Redis_eicdcsessionpro_name": {
+      "defaultValue": "eicdcsessionpro",
+      "type": "String"
+    },
+    "Redis_eicdccachepro_name": {
+      "defaultValue": "eicdccachepro",
+      "type": "String"
+    },
+    "storageAccName": {
+      "defaultValue": "StorageAccNam",
+      "type": "String"
+    },
+    "serviceBusNamespaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Service Bus namespace"
+      }
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+      ],
+      "metadata": {
+        "description": "Storage Account type"
+      }
+    },
+    "yourservernameName": {
+      "type": "string",
+      "defaultValue": "yourservername2"
+    },
+    "yourservernameAdminLogin": {
+      "type": "string",
+      "defaultValue": "VeryWiseAdmin",
+      "minLength": 1
+    },
+    "yourservernameAdminLoginPassword": {
+      "type": "securestring",
+      "defaultValue": "ReplaceWithTheMostSecurePasswordThatEverExisted&NeverShareLikeThisWithAnyone!"
+    },
+    "dbnameName": {
+      "type": "string",
+      "defaultValue": "dbname",
+      "minLength": 1
+    },
+    "dbnameCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "dbnameEdition": {
+      "type": "string",
+      "defaultValue": "Basic"
+    },
+    "dbnameRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic"
+    },
+    "databaseAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The DocumentDB database account name."
+      }
+    },
+    "consistencyLevel": {
+      "type": "string",
+      "allowedValues": [
+        "Eventual",
+        "Strong",
+        "Session",
+        "BoundedStaleness"
+      ],
+      "defaultValue": "Session",
+      "metadata": {
+        "description": "The DocumentDB deault consistency level for this account."
+      }
+    },
+    "maxStalenessPrefix": {
+      "type": "int",
+      "minValue": 10,
+      "maxValue": 1000,
+      "defaultValue": 10,
+      "metadata": {
+        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
+      }
+    },
+    "maxIntervalInSeconds": {
+      "type": "int",
+      "minValue": 5,
+      "maxValue": 600,
+      "defaultValue": 5,
+      "metadata": {
+        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
+      }
+    },
+    "sendgridAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of your new SendGrid account."
+      }
+    },
+    "sendgridPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The password to use for your new SendGrid account."
+      }
+    },
+    "toAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The email address to send the test message to."
+      }
+    }
+  },
+  "variables": {
+    "defaultSASKeyName": "RootManageSharedAccessKey",
+    "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusNamespaceName'), variables('defaultSASKeyName'))]",
+    "sbVersion": "2017-04-01",
+    "storageAccountName": "[parameters('storageAccName')]",
+    "offerType": "Standard"
+  },
+  "resources": [
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro'.",
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "B1",
+        "tier": "Basic",
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      },
+      "kind": "app",
+      "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "scale": null,
+      "properties": {
+        "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
+        "numberOfWorkers": 1
+      },
+      "dependsOn": [ ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcmetadataapipro'.",
+      "type": "Microsoft.Web/sites",
+      "kind": "api",
+      "name": "[parameters('sites_eicdcmetadataapipro_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "name": "[parameters('sites_eicdcmetadataapipro_name')]",
+        "hostNames": [
+          "eicdcmetadataapipro.azurewebsites.net"
+        ],
+        "enabledHostNames": [
+          "eicdcmetadataapipro.azurewebsites.net",
+          "eicdcmetadataapipro.scm.azurewebsites.net"
+        ],
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_eicdcmetadataapipro_name'),'.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          },
+          {
+            "name": "[concat(parameters('sites_eicdcmetadataapipro_name'),'.scm.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcpro'.",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[parameters('sites_eicdcpro_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "name": "[parameters('sites_eicdcpro_name')]",
+        "hostNames": [
+          "eicdcpro.azurewebsites.net"
+        ],
+        "enabledHostNames": [
+          "eicdcpro.azurewebsites.net",
+          "eicdcpro.scm.azurewebsites.net"
+        ],
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_eicdcpro_name'),'.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          },
+          {
+            "name": "[concat(parameters('sites_eicdcpro_name'),'.scm.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcdataconsistencyservicesapipro'.",
+      "type": "Microsoft.Web/sites",
+      "kind": "api",
+      "name": "[parameters('sites_eicdcdataconsistencyservicesapipro_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "name": "[parameters('sites_eicdcdataconsistencyservicesapipro_name')]",
+        "hostNames": [
+          "eicdcdataconsistencyservicesapipro.azurewebsites.net"
+        ],
+        "enabledHostNames": [
+          "eicdcdataconsistencyservicesapipro.azurewebsites.net",
+          "eicdcdataconsistencyservicesapipro.scm.azurewebsites.net"
+        ],
+        "hostNameSslStates": [
+          {
+            "name": "[concat(parameters('sites_eicdcdataconsistencyservicesapipro_name'),'.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          },
+          {
+            "name": "[concat(parameters('sites_eicdcdataconsistencyservicesapipro_name'),'.scm.azurewebsites.net')]",
+            "sslState": 0,
+            "thumbprint": null,
+            "ipBasedSslState": 0
+          }
+        ],
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+      ]
+    },
+
+    {
+      "name": "[parameters('sendgridAccountName')]",
+      "type": "Sendgrid.Email/accounts",
+      "apiVersion": "2015-01-01",
+      "location": "[resourceGroup().location]",
+      "plan": {
+        "name": "free",
+        "publisher": "Sendgrid",
+        "product": "sendgrid_azure",
+        "promotionCode": ""
+      },
+      "properties": {
+        "password": "[parameters('sendgridPassword')]",
+        "acceptMarketingEmails": "0",
+        "email": ""
+      }
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcmetadataapipro/config/web'.",
+      "type": "Microsoft.Web/sites/config",
+      "name": "[concat(parameters('sites_eicdcmetadataapipro_name'), '/web')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": null,
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "$eicdcmetadataapipro",
+        "publishingPassword": null,
+        "appSettings": null,
+        "metadata": null,
+        "connectionStrings": null,
+        "machineKey": null,
+        "handlerMappings": null,
+        "documentRoot": null,
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": false,
+        "javaVersion": null,
+        "javaContainer": null,
+        "javaContainerVersion": null,
+        "appCommandLine": "",
+        "managedPipelineMode": 0,
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "runtimeADUser": null,
+        "runtimeADUserPassword": null,
+        "loadBalancing": 1,
+        "routingRules": [ ],
+        "experiments": {
+          "rampUpRules": [ ]
+        },
+        "limits": null,
+        "autoHealEnabled": false,
+        "autoHealRules": null,
+        "tracingOptions": null,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "cors": null,
+        "push": null,
+        "apiDefinition": null,
+        "autoSwapSlotName": null,
+        "localMySqlEnabled": false,
+        "ipSecurityRestrictions": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_eicdcmetadataapipro_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcpro/config/web'.",
+      "type": "Microsoft.Web/sites/config",
+      "name": "[concat(parameters('sites_eicdcpro_name'), '/web')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": null,
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "$eicdcpro",
+        "publishingPassword": null,
+        "appSettings": null,
+        "metadata": null,
+        "connectionStrings": null,
+        "machineKey": null,
+        "handlerMappings": null,
+        "documentRoot": null,
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": false,
+        "javaVersion": null,
+        "javaContainer": null,
+        "javaContainerVersion": null,
+        "appCommandLine": "",
+        "managedPipelineMode": 0,
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "runtimeADUser": null,
+        "runtimeADUserPassword": null,
+        "loadBalancing": 1,
+        "routingRules": [ ],
+        "experiments": {
+          "rampUpRules": [ ]
+        },
+        "limits": null,
+        "autoHealEnabled": false,
+        "autoHealRules": null,
+        "tracingOptions": null,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "cors": null,
+        "push": null,
+        "apiDefinition": null,
+        "autoSwapSlotName": null,
+        "localMySqlEnabled": false,
+        "ipSecurityRestrictions": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_eicdcpro_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcdataconsistencyservicesapipro/config/web'.",
+      "type": "Microsoft.Web/sites/config",
+      "name": "[concat(parameters('sites_eicdcdataconsistencyservicesapipro_name'), '/web')]",
+      "apiVersion": "2015-08-01",
+      "location": "East US",
+      "tags": {
+        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+      },
+      "scale": null,
+      "properties": {
+        "numberOfWorkers": 1,
+        "defaultDocuments": [
+          "Default.htm",
+          "Default.html",
+          "Default.asp",
+          "index.htm",
+          "index.html",
+          "iisstart.htm",
+          "default.aspx",
+          "index.php",
+          "hostingstart.html"
+        ],
+        "netFrameworkVersion": "v4.0",
+        "phpVersion": "5.6",
+        "pythonVersion": "",
+        "nodeVersion": "",
+        "linuxFxVersion": "",
+        "requestTracingEnabled": false,
+        "remoteDebuggingEnabled": false,
+        "remoteDebuggingVersion": null,
+        "httpLoggingEnabled": false,
+        "logsDirectorySizeLimit": 35,
+        "detailedErrorLoggingEnabled": false,
+        "publishingUsername": "$eicdcdataconsistencyservicesapipro",
+        "publishingPassword": null,
+        "appSettings": null,
+        "metadata": null,
+        "connectionStrings": null,
+        "machineKey": null,
+        "handlerMappings": null,
+        "documentRoot": null,
+        "scmType": "None",
+        "use32BitWorkerProcess": true,
+        "webSocketsEnabled": false,
+        "alwaysOn": false,
+        "javaVersion": null,
+        "javaContainer": null,
+        "javaContainerVersion": null,
+        "appCommandLine": "",
+        "managedPipelineMode": 0,
+        "virtualApplications": [
+          {
+            "virtualPath": "/",
+            "physicalPath": "site\\wwwroot",
+            "preloadEnabled": false,
+            "virtualDirectories": null
+          }
+        ],
+        "winAuthAdminState": 0,
+        "winAuthTenantState": 0,
+        "customAppPoolIdentityAdminState": false,
+        "customAppPoolIdentityTenantState": false,
+        "runtimeADUser": null,
+        "runtimeADUserPassword": null,
+        "loadBalancing": 1,
+        "routingRules": [ ],
+        "experiments": {
+          "rampUpRules": [ ]
+        },
+        "limits": null,
+        "autoHealEnabled": false,
+        "autoHealRules": null,
+        "tracingOptions": null,
+        "vnetName": "",
+        "siteAuthEnabled": false,
+        "siteAuthSettings": {
+          "enabled": null,
+          "unauthenticatedClientAction": null,
+          "tokenStoreEnabled": null,
+          "allowedExternalRedirectUrls": null,
+          "defaultProvider": null,
+          "clientId": null,
+          "clientSecret": null,
+          "issuer": null,
+          "allowedAudiences": null,
+          "additionalLoginParams": null,
+          "isAadAutoProvisioned": false,
+          "googleClientId": null,
+          "googleClientSecret": null,
+          "googleOAuthScopes": null,
+          "facebookAppId": null,
+          "facebookAppSecret": null,
+          "facebookOAuthScopes": null,
+          "twitterConsumerKey": null,
+          "twitterConsumerSecret": null,
+          "microsoftAccountClientId": null,
+          "microsoftAccountClientSecret": null,
+          "microsoftAccountOAuthScopes": null
+        },
+        "cors": null,
+        "push": null,
+        "apiDefinition": null,
+        "autoSwapSlotName": null,
+        "localMySqlEnabled": false,
+        "ipSecurityRestrictions": null
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('sites_eicdcdataconsistencyservicesapipro_name'))]"
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdcsessionpro'.",
+      "type": "Microsoft.Cache/Redis",
+      "name": "[parameters('Redis_eicdcsessionpro_name')]",
+      "apiVersion": "2016-04-01",
+      "location": "East US",
+      "tags": { },
+      "scale": null,
+      "properties": {
+        "redisVersion": "3.2.7",
+        "sku": {
+          "name": "Standard",
+          "family": "C",
+          "capacity": 0
+        },
+        "enableNonSslPort": false,
+        "redisConfiguration": {
+          "maxclients": "256",
+          "maxmemory-reserved": "2",
+          "maxfragmentationmemory-reserved": "12",
+          "maxmemory-delta": "2"
+        }
+      },
+      "dependsOn": [ ]
+    },
+    {
+      "apiVersion": "2015-04-08",
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "name": "[parameters('databaseAccountName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[parameters('databaseAccountName')]",
+        "databaseAccountOfferType": "[variables('offerType')]",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "[parameters('consistencyLevel')]",
+          "maxStalenessPrefix": "[parameters('maxStalenessPrefix')]",
+          "maxIntervalInSeconds": "[parameters('maxIntervalInSeconds')]"
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0
+          }
+        ]
+      }
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdccachepro'.",
+      "type": "Microsoft.Cache/Redis",
+      "name": "[parameters('Redis_eicdccachepro_name')]",
+      "apiVersion": "2016-04-01",
+      "location": "East US",
+      "tags": { },
+      "scale": null,
+      "properties": {
+        "redisVersion": "3.2.7",
+        "sku": {
+          "name": "Standard",
+          "family": "C",
+          "capacity": 0
+        },
+        "enableNonSslPort": false,
+        "redisConfiguration": {
+          "maxclients": "256",
+          "maxmemory-reserved": "2",
+          "maxfragmentationmemory-reserved": "12",
+          "maxmemory-delta": "2"
+        }
+      },
+      "dependsOn": [ ]
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[parameters('serviceBusNamespaceName')]",
+      "type": "Microsoft.ServiceBus/Namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "apiVersion": "2016-01-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      },
+      "kind": "Storage",
+      "properties": {
+      }
+    },
+    {
+      "name": "[parameters('yourservernameName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "West Europe",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "yourservername"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('yourservernameAdminLogin')]",
+        "administratorLoginPassword": "[parameters('yourservernameAdminLoginPassword')]",
+        "version": "12.0"
+      },
+      "resources": [
+        {
+          "name": "[concat(parameters('yourservernameName'),'/AllowAllWindowsAzureIps')]",
+          "type": "Microsoft.Sql/servers/firewallRules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('yourservernameName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "name": "[concat(parameters('yourservernameName'),'/',parameters('dbnameName'))]",
+          "type": "Microsoft.Sql/servers/databases",
+          "location": "West Europe",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('yourservernameName'))]"
+          ],
+          "tags": {
+            "displayName": "dbname"
+          },
+          "properties": {
+            "collation": "[parameters('dbnameCollation')]",
+            "edition": "[parameters('dbnameEdition')]",
+            "maxSizeBytes": "1073741824",
+            "requestedServiceObjectiveName": "[parameters('dbnameRequestedServiceObjectiveName')]"
+          }
+        }
+      ]
+    }
+  ]
+}

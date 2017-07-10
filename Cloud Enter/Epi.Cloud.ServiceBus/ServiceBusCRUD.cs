@@ -1,18 +1,21 @@
 ﻿
 using System;
-using System.Collections.Generic;
+using System.Configuration;
 using System.Threading;
-using Epi.Cloud.Common.Constants;
-using Epi.DataPersistence.DataStructures;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using Epi.DataPersistence.DataStructures;
+using Epi.Cloud.Common.Configuration;
+using Epi.Cloud.Common.Constants;
 namespace Epi.Cloud.ServiceBus
 {
     public class ServiceBusCRUD
     {
 
         public TopicClient topicClient;
+        public string SBconnectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString", true);
         public string TopicName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusTopicName);
         public string SubscriptionName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusSubscriptionName);
 
@@ -29,8 +32,9 @@ namespace Epi.Cloud.ServiceBus
         private static bool VerifyConfiguration()
         {
             bool configOK = true;
+            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
 
-            var connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString);
+            var connectionString = ConfigurationHelper.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString, true);
 
             return configOK;
 
@@ -39,7 +43,7 @@ namespace Epi.Cloud.ServiceBus
         #region Create Topic if topic is not exist
         private bool CreateTopic()
         {
-            NamespaceManager namespaceManager = NamespaceManager.Create();
+            NamespaceManager namespaceManager = NamespaceManager.CreateFromConnectionString(SBconnectionString);
             try
             {
                 if (namespaceManager.TopicExists(TopicName))
@@ -66,9 +70,6 @@ namespace Epi.Cloud.ServiceBus
         #region Send message to Topic
         public bool SendMessagesToTopic(FormResponseDetail hierarchicalResponse)
         {
-            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
-            //var connectionString = ConfigurationHelper.GetConnectionStringByResourceKey(ResourceKey);
-
             //Create Topic
             CreateTopic();
 
@@ -92,7 +93,7 @@ namespace Epi.Cloud.ServiceBus
         public MessagePayload ReceiveMessages()
         {
             // For PeekLock mode (default) where applications require "at least once" delivery of messages 
-            SubscriptionClient agentSubscriptionClient = SubscriptionClient.Create(TopicName, SubscriptionName);
+            SubscriptionClient agentSubscriptionClient = SubscriptionClient.CreateFromConnectionString(SBconnectionString, TopicName, SubscriptionName);
             MessagePayload messagePayload = null;
             try
             {
@@ -135,7 +136,9 @@ namespace Epi.Cloud.ServiceBus
         #region Created message and send message to queue
         public void SendMessage(string body, IDictionary<string, object> responseProperties = null)
         {
-            topicClient = TopicClient.Create(TopicName);
+            var SBconnectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString", true);
+            topicClient = TopicClient.CreateFromConnectionString(SBconnectionString, TopicName);
+            //topicClient = TopicClient.Create(TopicName);
             BrokeredMessage message = CreateMessage(body, responseProperties);
             try
             {
