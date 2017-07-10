@@ -144,6 +144,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="StoredProcedures\GetAllRecordsBySurveyID.js" />
     <Content Include="StoredProcedures\OrderBy.js" />
     <Content Include="StoredProcedures\SharingRules.js" />
     <Content Include="StoredProcedures\WildCardCompare.js" />

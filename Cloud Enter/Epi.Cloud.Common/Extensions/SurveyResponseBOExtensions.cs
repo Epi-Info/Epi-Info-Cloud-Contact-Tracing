@@ -29,13 +29,18 @@ namespace Epi.Cloud.Common.Extensions
                 IsDraftMode = surveyResponseBO.IsDraftMode,
                 IsLocked = surveyResponseBO.IsLocked,
                 UserEmail = surveyResponseBO.UserEmail,
-                LastActiveOrgId = surveyResponseBO.LastActiveOrgId,
-                LastActiveUserId = surveyResponseBO.LastActiveUserId,
                 RecordSourceId = surveyResponseBO.RecordSourceId,
                 ViewId = surveyResponseBO.ViewId,
                 FormOwnerId = metadataAccessor.GetFormDigest(surveyResponseBO.FormId).OrganizationId,
-                LoggedInUserOrgId = surveyResponseBO.UserOrgId,
+
+                UserId = surveyResponseBO.UserId,
                 LoggedInUserId = surveyResponseBO.UserId,
+                LastActiveUserId = surveyResponseBO.LastActiveUserId,
+
+                UserOrgId = surveyResponseBO.UserOrgId,
+                LoggedInUserOrgId = surveyResponseBO.UserOrgId,
+                LastActiveOrgId = surveyResponseBO.LastActiveOrgId,
+               
                 RecoverLastRecordVersion = false, // TODO: Do we have to populate RecoverLastRecordVersion
                 RequestedViewId = string.Empty,
                 CurrentPageNumber = 0,
@@ -69,6 +74,13 @@ namespace Epi.Cloud.Common.Extensions
 
             surveyResponseBO.ParentFormName = responseDetail.ParentFormName;
             surveyResponseBO.FormName = responseDetail.FormName;
+
+            surveyResponseBO.UserId = responseDetail.UserId;
+            surveyResponseBO.LastActiveUserId = responseDetail.UserId;
+
+            surveyResponseBO.CurrentOrgId = responseDetail.UserOrgId;
+            surveyResponseBO.UserOrgId = responseDetail.UserOrgId;
+            surveyResponseBO.LastActiveOrgId = responseDetail.UserOrgId;
 
             return surveyResponseBO;
         }

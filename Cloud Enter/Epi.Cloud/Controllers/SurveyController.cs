@@ -310,6 +310,11 @@ namespace Epi.Web.MVC.Controllers
                 surveyAnswer.RequestedViewId = Requested_View_Id;
                 surveyAnswer.CurrentPageNumber = pageNumber != 0 ? pageNumber : 1;
 
+                // Fill in any missing organization ids
+                surveyAnswer.UserOrgId = surveyAnswer.UserOrgId != 0 ? surveyAnswer.UserOrgId : orgId;
+                surveyAnswer.LoggedInUserOrgId = surveyAnswer.LoggedInUserOrgId != 0 ? surveyAnswer.LoggedInUserOrgId : orgId;
+                surveyAnswer.LastActiveOrgId = surveyAnswer.LastActiveOrgId != 0 ? surveyAnswer.LastActiveOrgId : orgId;
+
                 //object temp = System.Web.HttpContext.Current.Cache;
                 SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswer.SurveyId, FormsHierarchy);
 

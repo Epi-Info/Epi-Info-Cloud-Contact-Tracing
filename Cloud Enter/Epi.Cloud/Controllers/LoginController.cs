@@ -290,9 +290,14 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
+                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
+                        OrganizationRequest request = new OrganizationRequest();
+                        request.UserId = result.User.UserId;
+                        request.UserRole = result.User.UserHighestRole;
+                        OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
+
 
                         FormsAuthentication.SetAuthCookie(Model.UserName, false);
-                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
                         Session[SessionKeys.UserId] = UserId;
                         //Session[SessionKeys.UsertRole] = result.User.Role;
                         Session[SessionKeys.UserHighestRole] = result.User.UserHighestRole;
@@ -301,6 +306,7 @@ namespace Epi.Web.MVC.Controllers
                         Session[SessionKeys.UserLastName] = result.User.LastName;
                         Session[SessionKeys.UserName] = result.User.UserName;
                         Session[SessionKeys.UGuid] = result.User.UGuid;
+                        Session[SessionKeys.CurrentOrgId] = organizations.OrganizationList[0].OrganizationId;
                         return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = formId });
                         //return Redirect(ReturnUrl);
                     }
