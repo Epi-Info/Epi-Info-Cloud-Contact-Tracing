@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Epi.Common.Exception
+namespace Epi.Common.Exceptions
 {
     [DataContract(Namespace = "http://www.yourcompany.com/types/")]
     public class CustomFaultException

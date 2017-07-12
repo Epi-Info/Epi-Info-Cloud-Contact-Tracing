@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Security;
-using System.Reflection;
-using Epi.Common.Diagnostics;
-using Epi.Cloud.Common.Message;
-using Epi.Web.MVC.Models;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Message;
+using Epi.Cloud.Facades.Interfaces;
+using Epi.Common.Diagnostics;
+using Epi.Common.Security.Constants;
+using Epi.Web.MVC.Models;
 
 namespace Epi.Web.MVC.Controllers
 {
@@ -410,7 +410,7 @@ namespace Epi.Web.MVC.Controllers
         {
             bool result = false;
 
-            result = System.Text.RegularExpressions.Regex.IsMatch(password, @"[" + ConfigurationManager.AppSettings["Symbols"].Replace(" ", "") + "]");
+            result = System.Text.RegularExpressions.Regex.IsMatch(password, @"[" + SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols).Replace(" ", "") + "]");
 
             if (result)//Validates if password has only allowed characters.
             {
@@ -418,7 +418,7 @@ namespace Epi.Web.MVC.Controllers
                 {
                     if (Char.IsPunctuation(character))
                     {
-                        if (!System.Text.RegularExpressions.Regex.IsMatch(character.ToString(), @"[" + ConfigurationManager.AppSettings["Symbols"].Replace(" ", "") + "]"))
+                        if (!System.Text.RegularExpressions.Regex.IsMatch(character.ToString(), @"[" + SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols).Replace(" ", "") + "]"))
                         {
                             return false;
                         }
@@ -432,16 +432,16 @@ namespace Epi.Web.MVC.Controllers
 
         private void ReadPasswordPolicy(UserResetPasswordModel Model)
         {
-            Model.MinimumLength = Convert.ToInt16(ConfigurationManager.AppSettings["PasswordMinimumLength"]);
-            Model.MaximumLength = Convert.ToInt16(ConfigurationManager.AppSettings["PasswordMaximumLength"]);
-            Model.UseSymbols = Convert.ToBoolean(ConfigurationManager.AppSettings["UseSymbols"]); //= false;
-            Model.UseNumeric = Convert.ToBoolean(ConfigurationManager.AppSettings["UseNumbers"]); //= false;
-            Model.UseLowerCase = Convert.ToBoolean(ConfigurationManager.AppSettings["UseLowerCase"]);
-            Model.UseUpperCase = Convert.ToBoolean(ConfigurationManager.AppSettings["UseUpperCase"]);
-            Model.UseUserIdInPassword = Convert.ToBoolean(ConfigurationManager.AppSettings["UseUserIdInPassword"]);
-            Model.UseUserNameInPassword = Convert.ToBoolean(ConfigurationManager.AppSettings["UseUserNameInPassword"]);
-            Model.NumberOfTypesRequiredInPassword = Convert.ToInt16(ConfigurationManager.AppSettings["NumberOfTypesRequiredInPassword"]);
-            Model.Symbols = ConfigurationManager.AppSettings["Symbols"];
+            Model.MinimumLength = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMinimumLength);
+            Model.MaximumLength = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMaximumLength);
+            Model.UseSymbols = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseSymbols);
+            Model.UseNumeric = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseNumbers);
+            Model.UseLowerCase = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseLowerCase);
+            Model.UseUpperCase = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseUpperCase);
+            Model.UseUserIdInPassword = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseUserIdInPassword);
+            Model.UseUserNameInPassword = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseUserNameInPassword);
+            Model.NumberOfTypesRequiredInPassword = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.NumberOfTypesRequiredInPassword);
+            Model.Symbols = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols);
         }
     }
 }

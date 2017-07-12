@@ -7,9 +7,6 @@ namespace Epi.MetadataAccessService.Repository
 {
     public class GetmetadataDB
     {
-        //string connStr = WebConfigurationManager.ConnectionStrings["DBConnection"].ConnectionString;
-
-
         //Call the Cloud EF and get the meta data
         public async Task<Template> MetaDataAsync(string projectId)
         {            

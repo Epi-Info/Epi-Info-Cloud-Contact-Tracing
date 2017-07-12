@@ -5,10 +5,11 @@ using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Common.EmailServices;
 using Epi.Common.Security;
+using Epi.Common.EmailServices.Constants;
+using Epi.Common.Security.Constants;
 
 namespace Epi.Web.BLL
 {
-
     public class Organization
     {
         private Epi.Cloud.Interfaces.DataInterfaces.IOrganizationDao OrganizationDao;
@@ -23,6 +24,7 @@ namespace Epi.Web.BLL
             OrganizationBO result = GetOrganizationObjByKey(OrganizationKey);
             return result;
         }
+
         public OrganizationBO GetOrganizationByOrgId(int OrganizationId)
         {
             OrganizationBO result = this.OrganizationDao.GetOrganizationByOrgId(OrganizationId); ;
@@ -40,24 +42,24 @@ namespace Epi.Web.BLL
 
             return result;
         }
+
         public List<OrganizationBO> GetOrganizationInfo()
         {
-
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationInfo();
             return result;
         }
+
         public List<OrganizationBO> GetOrganizationNames()
         {
-
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationNames();
             return result;
         }
+
         public void InsertOrganizationInfo(OrganizationBO OrganizationBO)
         {
             OrganizationBO.OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
 
             this.OrganizationDao.InsertOrganization(OrganizationBO);
-
         }
 
         enum InsertCombination
@@ -66,6 +68,7 @@ namespace Epi.Web.BLL
             NewUserNewOrg = 1,
             ExistingUserNewOrg = 2
         }
+
         public void InsertOrganizationInfo(OrganizationBO OrganizationBO, UserBO UserBO)
         {
             bool success;
@@ -94,7 +97,7 @@ namespace Epi.Web.BLL
             }
             else
             {
-                string KeyForUserPasswordSalt = ConfigurationManager.AppSettings[AppSettings.Key.KeyForUserPasswordSalt];
+                string KeyForUserPasswordSalt = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForUserPasswordSalt);
                 PasswordHasher PasswordHasher = new PasswordHasher(KeyForUserPasswordSalt);
                 string salt = PasswordHasher.CreateSalt(UserBO.EmailAddress);
                 UserBO.ResetPassword = true;
@@ -135,7 +138,7 @@ namespace Epi.Web.BLL
                 if (InsertStatus == InsertCombination.NewUserNewOrg)
                 {
                     Body.Append("\n\nPlease follow the steps below in order to start publishing forms to the web using Epi Info™ 7.");
-                    Body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + ConfigurationManager.AppSettings["EPI_INFO_DOWNLOAD_URL"]);
+                    Body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + AppSettings.GetStringValue(AppSettings.Key.EpiInfoDownloadURL));
                     Body.Append("\n\tStep 2: On the Main Menu, click on “Tools” and select “Options”");
                     Body.Append("\n\tStep 3: On the Options dialog, click on the “Cloud Enter” Tab.");
                     Body.Append("\n\tStep 4: On the Cloud Enter tab, enter the following information.");
@@ -162,7 +165,6 @@ namespace Epi.Web.BLL
         {
             OrganizationBO.OrganizationKey = Epi.Common.Security.Cryptography.Encrypt(OrganizationBO.OrganizationKey);
             return this.OrganizationDao.UpdateOrganization(OrganizationBO);
-
         }
 
 
@@ -177,8 +179,6 @@ namespace Epi.Web.BLL
             if (OrganizationBO != null)
             {
                 ISValidOrg = true;
-
-
             }
             else
             {
@@ -220,8 +220,6 @@ namespace Epi.Web.BLL
                 }
             }
 
-
-
             return orgExists;
         }
 
@@ -231,8 +229,6 @@ namespace Epi.Web.BLL
             OrganizationBO result = this.OrganizationDao.GetOrganizationInfoByKey(OrganizationKey);
             return result;
         }
-
-
 
         public List<OrganizationBO> GetOrganizationsByUserId(int UserId)
         {
@@ -271,8 +267,8 @@ namespace Epi.Web.BLL
             }
 
             email.Body = email.Body.ToString();
-            //+" \n \nPlease click the link below to launch Epi Cloud Enter. \n" + ConfigurationManager.AppSettings["BaseURL"] + "\n\nThank you."; //email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
-            email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
+            //+" \n \nPlease click the link below to launch Epi Cloud Enter. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\n\nThank you."; //email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+            email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom);
 
             return EmailHandler.SendMessage(email);
         }

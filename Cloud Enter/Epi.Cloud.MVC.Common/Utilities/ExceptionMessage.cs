@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
-using System.Configuration;
 using Epi.Cloud.Common.Constants;
+using Epi.Common.EmailServices.Constants;
 
 namespace Epi.Web.Utility
 {
@@ -33,46 +33,24 @@ namespace Epi.Web.Utility
                 // EMAIL_PASSWORD [ password of sender and authenticator ]
 
 
-                string s = ConfigurationManager.AppSettings["EMAIL_USE_AUTHENTICATION"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isAuthenticated = true;
-                    }
-                }
-
-                s = ConfigurationManager.AppSettings["EMAIL_USE_SSL"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isUsingSSL = true;
-                    }
-                }
-
-                s = ConfigurationManager.AppSettings["SMTP_PORT"];
-                if (!int.TryParse(s, out SMTPPort))
-                {
-                    SMTPPort = 25;
-                }
+                isAuthenticated = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseAuthentication);
+                isUsingSSL = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseSSL);
+                SMTPPort = EmailAppSettings.GetIntValue(EmailAppSettings.Key.SmtpPort);
 
                 System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
                 message.To.Add(emailAddress);
                 message.Subject = EmailSubject;      // "Link for Survey: " + surveyName; 
-                message.From = new System.Net.Mail.MailAddress(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString());
+                message.From = new System.Net.Mail.MailAddress(EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom));
                 message.Body = redirectUrl + " and Pass Code is: " + passCode;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(EmailAppSettings.GetStringValue(EmailAppSettings.Key.SmtpHost));
                 smtp.Port = SMTPPort;
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(ConfigurationManager.AppSettings["EMAIL_FROM"].ToString(), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                    smtp.Credentials = new System.Net.NetworkCredential(EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom), EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailPassword));
                 }
 
-
                 smtp.EnableSsl = isUsingSSL;
-
 
                 smtp.Send(message);
 
@@ -129,28 +107,28 @@ namespace Epi.Web.Utility
                     pMessage += "Response Id: \n" + Context.Session[SessionKeys.RootResponseId] + "\n\n\n"; ;
                 }
 
-                AdminEmailAddress = AppSettings.GetStringValue(AppSettings.Key.LoggingAdminEmailAddress);
+                AdminEmailAddress = EmailAppSettings.GetStringValue(EmailAppSettings.Key.LoggingAdminEmailAddress);
 
-                IsEmailNotification = AppSettings.GetBoolValue(AppSettings.Key.LoggingSendEmailNotification);
+                IsEmailNotification = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.LoggingSendEmailNotification);
 
-                isAuthenticated = AppSettings.GetBoolValue(AppSettings.Key.EmailUseAuthentication);
+                isAuthenticated = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseAuthentication);
 
-                isUsingSSL = AppSettings.GetBoolValue(AppSettings.Key.EmailUseSSL);
+                isUsingSSL = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseSSL);
 
-                SMTPPort = AppSettings.GetIntValue(AppSettings.Key.SmtpPort);
+                SMTPPort = EmailAppSettings.GetIntValue(EmailAppSettings.Key.SmtpPort);
 
                 System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
                 //message.To.Add(emailAddress);
                 message.To.Add(AdminEmailAddress);
-                message.Subject = AppSettings.GetStringValue(AppSettings.Key.LoggingEmailSubject);
-                message.From = new System.Net.Mail.MailAddress(AppSettings.GetStringValue(AppSettings.Key.EmailFrom));
+                message.Subject = EmailAppSettings.GetStringValue(EmailAppSettings.Key.LoggingEmailSubject);
+                message.From = new System.Net.Mail.MailAddress(EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom));
                 message.Body = pMessage;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings[AppSettings.Key.SmtpHost].ToString());
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(EmailAppSettings.GetStringValue(EmailAppSettings.Key.SmtpHost));
                 smtp.Port = SMTPPort;
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(AppSettings.GetStringValue(AppSettings.Key.EmailFrom), ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                    smtp.Credentials = new System.Net.NetworkCredential(EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom), EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailPassword));
                 }
 
 

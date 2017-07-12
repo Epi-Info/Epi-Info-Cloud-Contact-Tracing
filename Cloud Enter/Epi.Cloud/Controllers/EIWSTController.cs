@@ -7,6 +7,7 @@ using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Common.EmailServices;
+using Epi.Common.EmailServices.Constants;
 using Epi.Common.Security;
 using Epi.Web.MVC.Models;
 
@@ -40,14 +41,9 @@ namespace Epi.Web.MVC.Controllers
                 string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 ViewBag.Version = version;
 
-                // string _connectionString = ConfigurationManager.AppSettings["TEST_CONNECTION_STRING"];
-                //string connectionStringName = "EIWSADO";
-                string connectionStringName = "EWEADO";
-                //Decrypt connection string here
-                string _connectionString = Cryptography.Decrypt(ConfigurationManager.ConnectionStrings[connectionStringName].ConnectionString);
+                string connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.EWEADO);
 
-                // string _connectionString ="Data Source=ETIDHAP56-SQL;Initial Catalog=OSELS_EIWS;User ID=SA;Password=put6uQ";
-                using (var conn = new System.Data.SqlClient.SqlConnection(_connectionString))
+                using (var conn = new System.Data.SqlClient.SqlConnection(connectionString))
                 using (var cmd = conn.CreateCommand())
                 {
                     conn.Open();
@@ -113,7 +109,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 var email = new Email();
                 email.Body = "Test email From EWE System.";
-                email.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
+                email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom);
                 email.Subject = emailSubject;
 
                 List<string> tempList = new List<string>();

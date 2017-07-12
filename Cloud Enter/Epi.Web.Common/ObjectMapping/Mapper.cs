@@ -1,11 +1,11 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Epi.Cloud.Common.Constants;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
-using Epi.Web.Enter.Common.Constants;
-using System;
-using System.Configuration;
+
 namespace Epi.Web.Enter.Common.ObjectMapping
 {
     /// <summary>
@@ -284,7 +284,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 Role = User.Role,
                 UserHighestRole = User.UserHighestRole,
                 IsActive = User.IsActive,
-                Operation = (Constant.OperationMode)User.Operation,
+                Operation = (OperationMode)User.Operation,
                 UGuid = User.UGuid
             };
         }
@@ -363,7 +363,7 @@ namespace Epi.Web.Enter.Common.ObjectMapping
                 ResetPassword = result.ResetPassword,
                 Role = result.Role,
                 UserHighestRole = result.UserHighestRole,
-                Operation = Constant.OperationMode.NoChange,
+                Operation = OperationMode.NoChange,
                 EmailAddress = result.EmailAddress,
                 IsActive = result.IsActive,
                 UGuid = result.UGuid

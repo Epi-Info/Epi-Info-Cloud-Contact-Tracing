@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Net.Mail;
+using Epi.Common.EmailServices.Constants;
 using Epi.Common.Security;
 
 namespace Epi.Common.EmailServices
@@ -24,7 +25,7 @@ namespace Epi.Common.EmailServices
             {
                 bool isAuthenticated = false;
                 bool isUsingSSL = false;
-                int SMTPPort = 25;
+                int smptPort = 25;
 
                 // App Config Settings:
                 // EMAIL_USE_AUTHENTICATION [ True | False ] default is False
@@ -35,29 +36,11 @@ namespace Epi.Common.EmailServices
                 // EMAIL_PASSWORD [ password of sender and authenticator ]
 
 
-                string s = ConfigurationManager.AppSettings["EMAIL_USE_AUTHENTICATION"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isAuthenticated = true;
-                    }
-                }
+                isAuthenticated = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseAuthentication);
 
-                s = ConfigurationManager.AppSettings["EMAIL_USE_SSL"];
-                if (!String.IsNullOrEmpty(s))
-                {
-                    if (s.ToUpper() == "TRUE")
-                    {
-                        isUsingSSL = true;
-                    }
-                }
+                isUsingSSL = EmailAppSettings.GetBoolValue(EmailAppSettings.Key.EmailUseSSL);
 
-                s = ConfigurationManager.AppSettings["SMTP_PORT"];
-                if (!int.TryParse(s, out SMTPPort))
-                {
-                    SMTPPort = 25;
-                }
+                smptPort = EmailAppSettings.GetIntValue(EmailAppSettings.Key.SmtpPort);
 
                 MailMessage message = new MailMessage();
                 foreach (string item in Email.To)
@@ -67,29 +50,21 @@ namespace Epi.Common.EmailServices
 
                 message.Subject = Email.Subject;
 
-                var userName = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_USERNAME"].ToString());
-                message.From = new MailAddress(ConfigurationManager.AppSettings["LOGGING_ADMIN_EMAIL_ADDRESS"].ToString());
-                var SmtpHost = ConfigurationManager.AppSettings["SMTP_HOST"].ToString();
+                var userName = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailUserName);
+                message.From = new MailAddress(EmailAppSettings.GetStringValue(EmailAppSettings.Key.LoggingAdminEmailAddress));
+                var smtpHost = EmailAppSettings.GetStringValue(EmailAppSettings.Key.SmtpHost);
                 message.Body = Email.Body;
-                SmtpClient smtp = new SmtpClient(SmtpHost, Convert.ToInt32(ConfigurationManager.AppSettings["SMTP_PORT"]));
-                smtp.Port = SMTPPort;
+                SmtpClient smtp = new SmtpClient(smtpHost, smptPort);
 
-
-                var PassWord = Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString());
+                var passWord = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailPassword);
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(userName, PassWord);
+                    smtp.Credentials = new System.Net.NetworkCredential(userName, passWord);
                 }
-
-
-                //smtp.EnableSsl = isUsingSSL;
 
                 smtp.EnableSsl = isUsingSSL;
                 smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-
-
 
                 smtp.Send(message);
 
@@ -110,7 +85,7 @@ namespace Epi.Common.EmailServices
             {
                 bool isAuthenticated = false;
                 bool isUsingSSL = false;
-                int SMTPPort = 25;
+                int smtpPort = 25;
 
                 // App Config Settings:
                 // EMAIL_USE_AUTHENTICATION [ True | False ] default is False
@@ -140,9 +115,9 @@ namespace Epi.Common.EmailServices
                 }
 
                 s = ConfigurationManager.AppSettings["SMTP_PORT"];
-                if (!int.TryParse(s, out SMTPPort))
+                if (!int.TryParse(s, out smtpPort))
                 {
-                    SMTPPort = 25;
+                    smtpPort = 25;
                 }
 
                 System.Net.Mail.MailMessage message = new System.Net.Mail.MailMessage();
@@ -155,11 +130,11 @@ namespace Epi.Common.EmailServices
                 message.From = new System.Net.Mail.MailAddress(Email.From.ToString());
                 // message.From = new MailAddress("renuka_yarakaraju@sra.com", "CloudEnter");
                 message.Body = Email.Body;
-                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(ConfigurationManager.AppSettings["SMTP_HOST"].ToString());
+                System.Net.Mail.SmtpClient smtp = new System.Net.Mail.SmtpClient(EmailAppSettings.GetStringValue(EmailAppSettings.Key.SmtpHost));
 
                 if (isAuthenticated)
                 {
-                    smtp.Credentials = new System.Net.NetworkCredential(Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_USERNAME"].ToString()), Cryptography.Decrypt(ConfigurationManager.AppSettings["EMAIL_PASSWORD"].ToString()));
+                    smtp.Credentials = new System.Net.NetworkCredential(EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailUserName), EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailPassword));
                 }
 
 

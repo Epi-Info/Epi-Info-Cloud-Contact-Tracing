@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Mvc;
-using System.Web.Security;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Configuration;
+using System.Web.Mvc;
+using System.Web.Security;
 using Epi.Common.EmailServices;
+using Epi.Common.EmailServices.Constants;
 
 namespace Epi.Web.Controllers
 {
@@ -22,7 +22,7 @@ namespace Epi.Web.Controllers
             {
                 var email = new Email();
                 email.Body = redirectUrl + " and Pass Code is: " + passCode;
-                email.From = ConfigurationManager.AppSettings["EMAIL_FROM"].ToString();
+                email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom).ToString();
                 email.Subject = "Link for Survey: " + surveyName;// EmailSubject;
                 List<string> tempList = new List<string>();
                 tempList.Add(emailAddress);

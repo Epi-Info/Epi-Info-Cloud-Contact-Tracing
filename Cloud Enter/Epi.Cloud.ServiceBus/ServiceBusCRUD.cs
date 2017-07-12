@@ -1,21 +1,19 @@
-﻿
-using System;
-using System.Configuration;
-using System.Threading;
-using Microsoft.ServiceBus;
-using Microsoft.ServiceBus.Messaging;
+﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using Epi.DataPersistence.DataStructures;
+using System.Threading;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Common.Constants;
+using Epi.DataPersistence.DataStructures;
+using Microsoft.ServiceBus;
+using Microsoft.ServiceBus.Messaging;
+using Newtonsoft.Json;
+
 namespace Epi.Cloud.ServiceBus
 {
     public class ServiceBusCRUD
     {
-
         public TopicClient topicClient;
-        public string SBconnectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString", true);
+        public string SBconnectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString);
         public string TopicName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusTopicName);
         public string SubscriptionName = AppSettings.GetStringValue(AppSettings.Key.ServiceBusSubscriptionName);
 
@@ -28,13 +26,10 @@ namespace Epi.Cloud.ServiceBus
             }
         }
 
-
         private static bool VerifyConfiguration()
         {
             bool configOK = true;
-            //var ResourceKey = ConfigurationHelper.GetEnvironmentKey("ServiceBusConnectionString", AppSettings.Key.Environment, false);
-
-            var connectionString = ConfigurationHelper.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString, true);
+            var connectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString);
 
             return configOK;
 
@@ -136,7 +131,7 @@ namespace Epi.Cloud.ServiceBus
         #region Created message and send message to queue
         public void SendMessage(string body, IDictionary<string, object> responseProperties = null)
         {
-            var SBconnectionString = ConfigurationHelper.GetConnectionString("ServiceBusConnectionString", true);
+            var SBconnectionString = ConnectionStrings.GetConnectionString(ConnectionStrings.Key.ServiceBusConnectionString);
             topicClient = TopicClient.CreateFromConnectionString(SBconnectionString, TopicName);
             //topicClient = TopicClient.Create(TopicName);
             BrokeredMessage message = CreateMessage(body, responseProperties);
@@ -185,7 +180,5 @@ namespace Epi.Cloud.ServiceBus
             Thread.Sleep(2000);
         }
         #endregion
-
-
     }
 }

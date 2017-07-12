@@ -8,6 +8,9 @@ using System.Configuration;
 using Epi.Web.Enter.Common.Constants;
 using Epi.Web.Enter.Common.Email;
 using Epi.Web.Enter.Common.Security;
+using Epi.Common.Security.Constants;
+using Epi.Cloud.Common.Constants;
+using Epi.Common.EmailServices.Constants;
 
 namespace Epi.Web.BLL
 {
@@ -100,7 +103,7 @@ namespace Epi.Web.BLL
             }
             else
             {
-                string KeyForUserPasswordSalt = ConfigurationManager.AppSettings["KeyForUserPasswordSalt"];
+                string KeyForUserPasswordSalt = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForUserPasswordSalt);
                 PasswordHasher PasswordHasher = new Web.Enter.Common.Security.PasswordHasher(KeyForUserPasswordSalt);
                 string salt = PasswordHasher.CreateSalt(UserBO.EmailAddress);
                 UserBO.ResetPassword = true;
@@ -125,33 +128,33 @@ namespace Epi.Web.BLL
                 {
                     Body.Append("Your account has now been created for organization - " + OrganizationBO.Organization + ".\n");
                     Body.Append("\nOrganization Key: " + OrgKey);
-                    Body.Append("\n\nPlease click the link below to launch Epi Info™ Cloud Data Capture. \n" + ConfigurationManager.AppSettings["BaseURL"] + "\n\nThank you.");
+                    Body.Append("\n\nPlease click the link below to launch Epi Info™ Cloud Data Capture. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\n\nThank you.");
                 }
                 else
                 {
                     Body.Append("Welcome to Epi Info™ Cloud Data Capture. \nYour account has now been created for oganization - " + OrganizationBO.Organization + ".");
-                    if (System.Configuration.ConfigurationManager.AppSettings["WINDOW_AUTHENTICATION"].ToUpper() == "NO")
+                    if (AppSettings.GetStringValue(AppSettings.Key.WindowAuthentication).ToUpper() == "NO")
                     {
                         Body.Append("\n\nEmail: " + UserBO.EmailAddress + "\nPassword: " + tempPassword);
                     }
                     
                     Body.Append("\nOrganization Key: " + OrgKey);
-                    Body.Append("\n\nPlease click the link below to launch the Epi Info™ Cloud Data Capture and log in with your email and temporary password. You will then be asked to create a new password. \n" + ConfigurationManager.AppSettings["BaseURL"]);
+                    Body.Append("\n\nPlease click the link below to launch the Epi Info™ Cloud Data Capture and log in with your email and temporary password. You will then be asked to create a new password. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL));
                     //Add email and temporary password for new user. 
                 }
 
-                //Body.Append("\n" + ConfigurationManager.AppSettings["BaseURL"]);
+                //Body.Append("\n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL));
 
                 if (InsertStatus == InsertCombination.NewUserNewOrg)
                 {
                     Body.Append("\n\nPlease follow the steps below in order to start publishing forms to the web using Epi Info™ 7.");
-                    Body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + ConfigurationManager.AppSettings["EPI_INFO_DOWNLOAD_URL"]);
+                    Body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + AppSettings.GetStringValue(AppSettings.Key.EpiInfoDownloadURL));
                     Body.Append("\n\tStep 2: On the Main Menu, click on “Tools” and select “Options”");
                     Body.Append("\n\tStep 3: On the Options dialog, click on the “Cloud Data Capture” Tab.");
                     Body.Append("\n\tStep 4: On the Cloud Data Capture tab, enter the following information.");
 
-                    Body.Append("\n\t\t-Endpoint Address:" + ConfigurationManager.AppSettings["ENDPOINT_ADDRESS"] + "\n\t\t-Connect using Windows Authentication:  " + ConfigurationManager.AppSettings["WINDOW_AUTHENTICATION"]);
-                    Body.Append("\n\t\t-Binding Protocol:" + ConfigurationManager.AppSettings["BINDING_PROTOCOL"]);
+                    Body.Append("\n\t\t-Endpoint Address:" + AppSettings.GetStringValue(AppSettings.Key.EndpointAddress) + "\n\t\t-Connect using Windows Authentication:  " + AppSettings.GetStringValue(AppSettings.Key.WindowAuthentication));
+                    Body.Append("\n\t\t-Binding Protocol:" + AppSettings.GetStringValue(AppSettings.Key.BindingProtocol));
 
                     Body.Append("\n\tStep 5:Click “OK’ button.");
                     Body.Append("\nOrganization key provided here is to be used in Epi Info™ 7 during publish process.");
@@ -163,7 +166,7 @@ namespace Epi.Web.BLL
                 email.To = new List<string>();
                 email.To.Add(UserBO.EmailAddress);
 
-                success = SendEmail(email, Constant.EmailCombinationEnum.InsertOrganization);
+                success = SendEmail(email, EmailCombinationEnum.InsertOrganization);
 
 
             }
@@ -264,7 +267,7 @@ namespace Epi.Web.BLL
             List<OrganizationBO> result = this.OrganizationDao.GetOrganizationInfoForAdmin(UserId, UserRole);
             return result;
         }
-        private bool SendEmail(Email email, Constant.EmailCombinationEnum Combination)
+        private bool SendEmail(Email email, EmailCombinationEnum Combination)
         {
 
 
@@ -272,7 +275,7 @@ namespace Epi.Web.BLL
             switch (Combination)
             {
 
-                case Constant.EmailCombinationEnum.InsertOrganization:
+                case EmailCombinationEnum.InsertOrganization:
                     email.Subject = "An Epi Info Cloud Data Capture account has been created for your organization.";
 
                     break;
@@ -281,11 +284,10 @@ namespace Epi.Web.BLL
             }
 
             email.Body = email.Body.ToString();
-            //+" \n \nPlease click the link below to launch Epi Cloud Data Capture. \n" + ConfigurationManager.AppSettings["BaseURL"] + "\n\nThank you."; //email.Body.ToString() + " \n \n" + ConfigurationManager.AppSettings["BaseURL"];
-            email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
+            //+" \n \nPlease click the link below to launch Epi Cloud Data Capture. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\n\nThank you."; //email.Body.ToString() + " \n \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL);
+            email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom);
 
             return Epi.Web.Enter.Common.Email.EmailHandler.SendMessage(email);
-
         }
     }
 }

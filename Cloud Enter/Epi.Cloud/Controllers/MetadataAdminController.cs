@@ -20,7 +20,7 @@ namespace Epi.Web.MVC.Controllers
     {
         private readonly IEpiCloudCache _epiCloudCache;
 
-        static string containerName = ConfigurationManager.AppSettings[AppSettings.Key.MetadataBlogContainerName];
+        static string containerName = AppSettings.GetStringValue(AppSettings.Key.MetadataBlogContainerName);
         MetadataBlobCRUD _metadataBlobCRUD = new MetadataBlobCRUD(containerName);
         protected List<KeyValuePair<int, string>> Columns = new List<KeyValuePair<int, string>>();
 

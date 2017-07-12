@@ -1,12 +1,10 @@
-﻿using Epi.Cloud.Common.Attributes;
-using Epi.Cloud.Common.Configuration;
+﻿using Epi.Common.Attributes;
+using Epi.Common.Configuration;
 
 namespace Epi.Cloud.Common.Constants
 {
     public static class ConnectionStrings
     {
-        static ConfigurationAttributesHelper AttributeHelper = new ConfigurationAttributesHelper(typeof(Key));
-
         public struct Key
         {
             [EncryptedValue(true)]
@@ -34,6 +32,10 @@ namespace Epi.Cloud.Common.Constants
             public const string MetadataBlobStorage = "MetadataBlobStorage.ConnectionString";
         }
 
+        #region Helper Functions
+
+        static ConfigurationAttributesHelper AttributeHelper = new ConfigurationAttributesHelper(typeof(Key));
+
         public static bool IsValueEncrypted(string key)
         {
             return AttributeHelper.IsValueEncrypted(key);
@@ -43,5 +45,7 @@ namespace Epi.Cloud.Common.Constants
         {
             return AttributeHelper.GetConnectionString(key, decryptIfEncrypted);
         }
+
+        #endregion Helper Functions
     }
 }
