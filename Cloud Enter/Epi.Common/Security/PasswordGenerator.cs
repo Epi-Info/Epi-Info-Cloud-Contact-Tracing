@@ -2,6 +2,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using System.Configuration;
+using Epi.Common.Security.Constants;
 
 namespace Epi.Common.Security
 {
@@ -9,15 +10,15 @@ namespace Epi.Common.Security
     {
         public PasswordGenerator()
         {
-            this.Minimum = DefaultMinimum = Convert.ToInt32(ConfigurationManager.AppSettings["PasswordMinimumLength"]);
-            this.Maximum = DefaultMaximum = Convert.ToInt32(ConfigurationManager.AppSettings["PasswordMaximumLength"]);
-            this.ConsecutiveCharacters = Convert.ToBoolean(ConfigurationManager.AppSettings["ConsecutiveCharacters"]); //false;
-            this.RepeatCharacters = Convert.ToBoolean(ConfigurationManager.AppSettings["RepeatCharacters"]);	//= true;
-            this.Symbols = ConfigurationManager.AppSettings["Symbols"].ToString();
-            this.UseSymbols = Convert.ToBoolean(ConfigurationManager.AppSettings["UseSymbols"]); //= false;
-            this.UseNumeric = Convert.ToBoolean(ConfigurationManager.AppSettings["UseNumbers"]); //= false;
-            this.UseLowerCase = Convert.ToBoolean(ConfigurationManager.AppSettings["UseLowerCase"]);
-            this.UseUpperCase = Convert.ToBoolean(ConfigurationManager.AppSettings["UseUpperCase"]);
+            this.Minimum = DefaultMinimum = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMinimumLength);
+            this.Maximum = DefaultMaximum = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMaximumLength);
+            this.ConsecutiveCharacters = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.ConsecutiveCharacters);
+            this.RepeatCharacters = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.RepeatCharacters);
+            this.Symbols = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols);
+            this.UseSymbols = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseSymbols);
+            this.UseNumeric = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseNumbers);
+            this.UseLowerCase = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseLowerCase);
+            this.UseUpperCase = SecurityAppSettings.GetBoolValue(SecurityAppSettings.Key.UseUpperCase);
             this.Exclusions = null;
 
             rng = new RNGCryptoServiceProvider();
@@ -72,7 +73,7 @@ namespace Epi.Common.Security
 
             if (true == this.UseSymbols)
             {
-                passwordArrary = new string(pwdCharArray) + ConfigurationManager.AppSettings["Symbols"].ToString();
+                passwordArrary = new string(pwdCharArray) + SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols);
                 pwdCharArray = passwordArrary.ToCharArray();
             }
 
@@ -97,7 +98,7 @@ namespace Epi.Common.Security
 
                 else if (UseSymbols && !symbolExists)
                 {
-                    nextCharacter = GetRandomCharacter(ConfigurationManager.AppSettings["Symbols"].ToString());
+                    nextCharacter = GetRandomCharacter(SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.Symbols));
                     symbolExists = true;
                 }
 
@@ -249,9 +250,8 @@ namespace Epi.Common.Security
             set { this.hasConsecutive = value; }
         }
 
-        private int DefaultMinimum;// = Convert.ToInt32(ConfigurationManager.AppSettings["PasswordMinimumLength"]);
-        private int DefaultMaximum;// = Convert.ToInt32(ConfigurationManager.AppSettings["PasswordMaximumLength"]);
-        //private int UBoundDigit = Convert.ToInt32(ConfigurationManager.AppSettings["UBoundDigit"]);
+        private int DefaultMinimum; // = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMinimumLength)
+        private int DefaultMaximum; // = SecurityAppSettings.GetIntValue(SecurityAppSettings.Key.PasswordMaximumLength)
 
         private RNGCryptoServiceProvider rng;
         private int minSize;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
@@ -18,6 +17,7 @@ using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.EmailServices;
+using Epi.Common.EmailServices.Constants;
 using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.Constants;
 using Epi.FormMetadata.DataStructures;
@@ -833,7 +833,7 @@ namespace Epi.Web.MVC.Controllers
 
             email.To = new List<string>();
             email.To.Add(OwnerInfo.User.EmailAddress);
-            email.From = ConfigurationManager.AppSettings["EMAIL_FROM"];
+            email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailFrom);
             //email.Subject = "Record locked notification.";
             //email.Body = "A user was unable to edit/delete a Epi Info™ Cloud Enter recored. \n \n Please login to Epi Info™ Cloud Enter system to Unlock this record.\n \n Below are the needed info to unlock the record.\n \n Response id: " + responseId + "\n\n User email: " + userInfo.User.EmailAddress + "\n\n";
             email.Subject = ResourceProvider.GetResourceString(ResourceNamespaces.EmailMessages, EmailResourceKeys.RecordLocked_Subject);

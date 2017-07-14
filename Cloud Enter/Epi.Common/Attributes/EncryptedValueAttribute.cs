@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Epi.Cloud.Common.Attributes
+namespace Epi.Common.Attributes
 {
     [AttributeUsage(AttributeTargets.All)]
     public class EncryptedValueAttribute : Attribute

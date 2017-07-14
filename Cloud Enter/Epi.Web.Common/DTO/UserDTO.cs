@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Epi.Cloud.Common.Constants;
 
 namespace Epi.Web.Enter.Common.DTO
 {
@@ -79,9 +77,9 @@ namespace Epi.Web.Enter.Common.DTO
             set { _Role = value; }
         }
         
-        private Epi.Web.Enter.Common.Constants.Constant.OperationMode updateMode;
+        private OperationMode updateMode;
 
-        public Epi.Web.Enter.Common.Constants.Constant.OperationMode Operation
+        public OperationMode Operation
         {
             get { return updateMode; }
             set { updateMode = value; }

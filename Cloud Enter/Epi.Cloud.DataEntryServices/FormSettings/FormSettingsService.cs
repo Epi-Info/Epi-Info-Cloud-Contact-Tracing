@@ -9,7 +9,7 @@ using Epi.Cloud.Common.Message;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Common.Exception;
+using Epi.Common.Exceptions;
 
 namespace Epi.Cloud.DataEntryServices
 {

@@ -11,6 +11,8 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using System.Xml;
 using System.Xml.Linq;
 using Epi.Web.Enter.Common.Xml;
+using Epi.Cloud.Common.Constants;
+
 namespace Epi.Web.BLL
 {
     public class SurveyResponse
@@ -93,11 +95,11 @@ namespace Epi.Web.BLL
             int PageSize;
             if (IsMobile)
             {
-                PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
+                PageSize = AppSettings.GetIntValue(AppSettings.Key.MobileResponsePageSize);
             }
             else
             {
-                PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
+                PageSize = AppSettings.GetIntValue(AppSettings.Key.ResponsePageSize);
             }
             result = this.SurveyResponseDao.GetFormResponseByFormId(FormId, PageNumber, PageSize);
             return result;
@@ -110,21 +112,22 @@ namespace Epi.Web.BLL
             //int PageSize;
             if (criteria.IsMobile)
             {
-                criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
+                criteria.PageSize = AppSettings.GetIntValue(AppSettings.Key.MobileResponsePageSize);
             }
             else
             {
-                criteria.PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE"]);
+                criteria.PageSize = AppSettings.GetIntValue(AppSettings.Key.ResponsePageSize);
             }
             result = this.SurveyResponseDao.GetFormResponseByFormId(criteria);
             return result;
         }
+
         public int GetNumberOfPages(string FormId, bool IsMobile)
         {
             int PageSize;
             if (IsMobile)
             {
-                PageSize = Int32.Parse(ConfigurationManager.AppSettings["RESPONSE_PAGE_SIZE_Mobile"]);
+                PageSize = AppSettings.GetIntValue(AppSettings.Key.Response);
             }
             else
             {

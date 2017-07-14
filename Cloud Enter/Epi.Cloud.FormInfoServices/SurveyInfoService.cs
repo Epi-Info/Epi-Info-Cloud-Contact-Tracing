@@ -3,7 +3,7 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.Message;
 using System.Collections.Generic;
 using Epi.Cloud.Common.BusinessObjects;
-using Epi.Common.Exception;
+using Epi.Common.Exceptions;
 using System.ServiceModel;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 

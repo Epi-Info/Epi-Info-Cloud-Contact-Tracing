@@ -7,7 +7,9 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
 using Epi.Common.EmailServices;
+using Epi.Common.EmailServices.Constants;
 using Epi.Common.Security;
+using Epi.Common.Security.Constants;
 
 namespace Epi.Web.BLL
 {
@@ -54,7 +56,7 @@ namespace Epi.Web.BLL
 
         private string ReadSalt()
         {
-            return AppSettings.GetStringValue(AppSettings.Key.KeyForUserPasswordSalt);
+            return SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForUserPasswordSalt);
         }
 
         public UserBO GetUserByUserId(UserBO user)
@@ -166,7 +168,7 @@ namespace Epi.Web.BLL
             }
 
             //email.Body = email.Body.ToString() + " \n \nPlease click the link below to launch Epi Cloud Enter. \n" + AppSettings.GetStringValue(AppSettings.Key.BaseURL) + "\nThank you.";
-            email.From = AppSettings.GetStringValue(AppSettings.Key.EmailUserName);
+            email.From = EmailAppSettings.GetStringValue(EmailAppSettings.Key.EmailUserName);
 
             return EmailHandler.SendMessage(email);
         }
@@ -228,7 +230,7 @@ namespace Epi.Web.BLL
 
 
                     body.Append("\n\nPlease follow the steps below in order to start publishing forms to the web using Epi Info™ 7.");
-                    body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + ConfigurationManager.AppSettings["EPI_INFO_DOWNLOAD_URL"]);
+                    body.Append("\n\tStep 1: Download and install the latest version of Epi Info™ 7 from:" + AppSettings.GetStringValue(AppSettings.Key.EpiInfoDownloadURL));
                     body.Append("\n\tStep 2: On the Main Menu, click on “Tools” and select “Options”");
                     body.Append("\n\tStep 3: On the Options dialog, click on the “Cloud Enter” Tab.");
                     body.Append("\n\tStep 4: On the Cloud Enter tab, enter the following information.");

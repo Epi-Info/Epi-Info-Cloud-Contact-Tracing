@@ -15,7 +15,7 @@ using Epi.Cloud.MetadataServices.Common.Extensions;
 using Epi.Cloud.MVC.Extensions;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
-using Epi.Common.Exception;
+using Epi.Common.Exceptions;
 using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.DataEntryServices

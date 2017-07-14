@@ -26,7 +26,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private const string FRP_ = "FormResponseProperties.";
         private const string FRP_RecStatus = FRP_ + "RecStatus";
         private const string FRP_ResponseQA_ = FRP_ + "ResponseQA.";
-        private const string FRP_OrgId = FRP_ + "OrgId";
+        private const string FRP_UserOrgId = FRP_ + "UserOrgId";
 
         private const string udf_wildCardCompare = "udf.WildCardCompare";
         private const string udf_sharingRules = "udf.SharingRules";
@@ -222,7 +222,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
                 ruleContext.RuleId.ToString(),
                 ruleContext.IsHostOrganizationUser.ToString().ToLower(),
                 ruleContext.UserOrganizationId.ToString(),
-                collectionAlias + "." + FRP_OrgId
+                collectionAlias + "." + FRP_UserOrgId
                 };
 
                 qualifier = udf_sharingRules + "(" + string.Join(",", parameters) + ")" + AND;

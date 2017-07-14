@@ -3,6 +3,7 @@ using System.Text;
 using System.Security.Cryptography;
 using System.IO;
 using System.Configuration;
+using Epi.Common.Security.Constants;
 
 namespace Epi.Common.Security
 {
@@ -11,17 +12,9 @@ namespace Epi.Common.Security
     /// </summary>
     public class Cryptography
     {
-        /// <summary>
-        /// Identifier for Web driver that is built into Epi Info
-        /// </summary>
-
-
-        //public static readonly string passPhrase = Environment.GetEnvironmentVariable("KeyForConnectionStringPassphrase");// ConfigurationManager.AppSettings["KeyForConnectionStringPassphrase"]; //"80787d6053694493be171dd712e51c61";
-        //public static readonly string saltValue = Environment.GetEnvironmentVariable("KeyForConnectionStringSalt");// ConfigurationManager.AppSettings["KeyForConnectionStringSalt"]; //;"476ba16073764022bc7f262c6d67ebef";
-        //public static readonly string initVector = Environment.GetEnvironmentVariable("KeyForConnectionStringVector");
-        public static readonly string passPhrase = ConfigurationManager.AppSettings["KeyForConnectionStringPassphrase"]; //"80787d6053694493be171dd712e51c61";
-        public static readonly string saltValue = ConfigurationManager.AppSettings["KeyForConnectionStringSalt"]; //;"476ba16073764022bc7f262c6d67ebef";
-        public static readonly string initVector = ConfigurationManager.AppSettings["KeyForConnectionStringVector"];// "0f8f*d5bd&cb4~9f";
+        public static readonly string passPhrase = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForConnectionStringPassphrase);
+        public static readonly string saltValue = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForConnectionStringSalt);
+        public static readonly string initVector = SecurityAppSettings.GetStringValue(SecurityAppSettings.Key.KeyForConnectionStringVector);
 
         /// <summary>
         /// Encryption

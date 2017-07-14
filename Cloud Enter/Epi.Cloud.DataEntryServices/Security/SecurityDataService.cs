@@ -6,7 +6,7 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
-using Epi.Common.Exception;
+using Epi.Common.Exceptions;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.MessageBase;
