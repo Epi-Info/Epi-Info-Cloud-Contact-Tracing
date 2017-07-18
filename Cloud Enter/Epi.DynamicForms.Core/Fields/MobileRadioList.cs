@@ -46,7 +46,9 @@ namespace MvcDynamicForms.Fields
             var html = new StringBuilder();
             var inputName = _form.FieldPrefix + _key;
             var choicesList = _choices.ToList();
-
+            var selectedValue = string.Empty;
+            bool IsAfterControl = false;
+         
             var choicesList1 = GetChoices(_ChoicesList);
             choicesList = choicesList1.ToList();
 
@@ -84,8 +86,8 @@ namespace MvcDynamicForms.Fields
             legend.SetInnerText(Prompt);
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), IsHidden));
-            legend.Attributes.Add("style", StyleValues.ToString());
+           // StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), IsHidden));
+           // legend.Attributes.Add("style", StyleValues.ToString());
             html.Append(legend.ToString());
 
 
@@ -117,8 +119,8 @@ namespace MvcDynamicForms.Fields
                 rad.Attributes.Add("name", inputName);
                 rad.Attributes.Add("class", inputName);
                 rad.Attributes.Add("id", radId);
-                string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
-                rad.Attributes.Add("style", InputFieldStyle);
+              //  string InputFieldStyle = GetInputFieldStyle(_InputFieldfontstyle.ToString(), _InputFieldfontSize, _InputFieldfontfamily.ToString());
+               // rad.Attributes.Add("style", InputFieldStyle);
 
                 //StringBuilder RadioButton = new StringBuilder();
                 //RadioButton.Append("<input type='Radio'");
@@ -126,25 +128,45 @@ namespace MvcDynamicForms.Fields
                 //RadioButton.Append(" id='" + radId + "'/>");
 
 
+
+                ////http://stackoverflow.com/questions/13492881/why-is-blur-event-not-fired-in-ios-safari-mobile-iphone-ipad 
+                //Changed from onblur to onchange as its not supported in IOS devices. Please refer to the link above
+
                 ////////////Check code start//////////////////
                 EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
-                if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
+                if (FunctionObjectAfter != null)
                 {
-
+                    rad.Attributes.Add("onchange", "$('#" + inputName + "').val('" + i.ToString() + "');$('#" + inputName + "').parent().next().find('input[type=hidden]')[0].value='" + i.ToString() + "'; return " + _key + "_after();"); //After
+                    IsAfterControl = true;
                     // rad.Attributes.Add("onblur", "return " + _key + "_after();"); //After
-                    rad.Attributes.Add("onclick", "return " + _key + "_after(this.id);"); //After
+                    // rad.Attributes.Add("onchange", "return " + _key + "_after(this.id);"); //After
+                }
+                EnterRule FunctionObjectClick = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=click&identifier=" + _key);
+                if (FunctionObjectClick != null)
+                {                    
+                    rad.Attributes.Add("onclick", "return " + _key + "_click(this.id);"); //click
+                    IsAfterControl = true;
+                }
+                if (!IsAfterControl)
+                {
+                    rad.Attributes.Add("onchange", "$('#" + inputName + "').val('" + i.ToString() + "');"); //click
                 }
 
                 ////////////Check code end//////////////////
                 rad.SetInnerText(choicesList[i].Key);
                 rad.Attributes.Add("value", i.ToString());
-                // rad.Attributes.Add("style", IsHiddenStyle);
+                 rad.Attributes.Add("style", IsHiddenStyle);
                 if (_IsDisabled)
                 {
                     rad.Attributes.Add("disabled", "disabled");
                 }
 
-                if (Value == i.ToString()) rad.Attributes.Add("checked", "checked");
+                if (Value == i.ToString())
+                {
+                    selectedValue = Value;
+                    rad.Attributes.Add("checked", "checked");
+                    
+                }
                 rad.MergeAttributes(_inputHtmlAttributes);
                 html.Append(rad.ToString(TagRenderMode.SelfClosing));
 
@@ -171,7 +193,7 @@ namespace MvcDynamicForms.Fields
             hidden.Attributes.Add("id", inputName);
             hidden.Attributes.Add("name", inputName);
 
-            hidden.Attributes.Add("value", string.Empty);
+            hidden.Attributes.Add("value", selectedValue);
             html.Append(hidden.ToString(TagRenderMode.SelfClosing));
 
             var wrapper = new TagBuilder(_fieldWrapper);
