@@ -23,7 +23,11 @@ namespace Epi.Cloud.BLL
         public FormInfoBO GetFormInfoByFormId(string formId, int userId)
         {
             //Owner Forms
-            FormInfoBO result = _formInfoDao.GetFormByFormId(formId, userId);
+            FormInfoBO result = new FormInfoBO();
+            if (userId > 0)
+            {
+                result = _formInfoDao.GetFormByFormId(formId, userId);
+            }
 
             result.HasDraftModeData = _formInfoDao.HasDraftRecords(formId);
 
