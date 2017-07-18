@@ -541,8 +541,27 @@ CCE_Context.prototype.setValue = function (pName, pValue) {
                         cce_Symbol.Value = FormatedTime;
                     }
                     else {
-                        $(Jquery).timepicker("setTime", new Date(pValue));
-                        cce_Symbol.Value = pValue;
+                       
+                        var str = cce_Symbol.Value.toString();
+                        //var nincluded= str.includes(":");
+                        var array = str.split(':');
+                        if (array != null && array.length>1)
+                        {
+                             
+                             $(Jquery).val(cce_Symbol.Value)
+                            // $(Jquery).timepicker("set   cce_Symbol.Value = pValue;
+                            cce_Symbol.Value = pValue;
+                          }
+                        else {
+                            
+                            var FormatedTime;
+                            var date = new Date(cce_Symbol.Value);
+                            FormatedTime = FormatTime(date);
+                           
+                            $(Jquery).val(FormatedTime);
+                            cce_Symbol.Value = FormatedTime;
+                           }
+                       
                     }
                     break;
 
@@ -803,31 +822,41 @@ function CCE_ProcessHighlightCommand(pCheckCodeList) {
                         $(query).find('div').css("background-color", "yellow");
                         break;
 
-                    default:
-                        $(query).css("background-color", "yellow");
-                        query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
-                        break;
-                }
-            } else {
-                if (symbol.Type == "radiobutton") {
-                    query = '.labelmvcdynamicfield_' + pCheckCodeList[i];
-                    $(query).each(function (i, obj) {
-                        $(query).css("background-color", "yellow");
-                    });
-                }
-                else {
-
-                    $(query).css("background-color", "yellow");
+                default:
+                    $(query).css("background-color","yellow");
                     query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+                    break;
+                    }
+   }else{
+               switch (symbol.Type) {
+                   case "radiobutton":
+
+                       query = '.labelmvcdynamicfield_' + pCheckCodeList[i];
+                       $(query).each(function (i, obj) {
+                           $(query).css("background-color", "yellow");
+                       });
+
+                       break;
+                   case "checkbox":
+
+                       query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+                      
+                       $(query).css("background-color", "yellow");
+                      
+                       break;
 
 
-                }
-            }
-
-            CCE_AddToFieldsList(pCheckCodeList[i], 'HighlightedFieldsList');
-        }
-    }
+                   default:
+                       $(query).css("background-color", "yellow");
+                       //query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+                       break;
+               }
 }
+ 
+              CCE_AddToFieldsList(pCheckCodeList[i], 'HighlightedFieldsList');
+         }
+     }
+ }
 
 
 /// <summary>
@@ -931,27 +960,37 @@ function CCE_ProcessUnHighlightCommand(pCheckCodeList) {
                         $(query).find('div').css("background-color", "white");
                         break;
 
-                    default:
-                        $(query).css("background-color", "white");
-                        query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
-                        break;
-                }
-            } else {
-                if (symbol.Type == "radiobutton") {
-                    query = '.labelmvcdynamicfield_' + pCheckCodeList[i];
-                    $(query).each(function (i, obj) {
-                        $(query).css("background-color", "");
-                    });
-                }
-                else {
-                    $(query).css("background-color", "");
-
+                default:
+                    $(query).css("background-color","white");
                     query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
-                    //CCE_AddToHilightedFieldsList(pCheckCodeList[i]);
-                }
-            }
+                    break;
+                    }
+}else{
+    switch (symbol.Type) {
+        case "radiobutton":
 
-            CCE_RemoveFromFieldsList(pCheckCodeList[i], 'HighlightedFieldsList');
+            query = '.labelmvcdynamicfield_' + pCheckCodeList[i];
+            $(query).each(function (i, obj) {
+                $(query).css("background-color", "");
+            });
+            break;
+        case "checkbox":
+
+            query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+            $(query).css("background-color", "");
+
+            break;
+
+
+        default:
+            $(query).css("background-color", "");
+
+            //query = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+            break;
+    }
+        }
+ 
+             CCE_RemoveFromFieldsList(pCheckCodeList[i], 'HighlightedFieldsList');
 
         }
     }
@@ -1025,44 +1064,53 @@ function CCE_ProcessDisableCommand(pCheckCodeList) {
             var symbol = cce_Context.resolve(pCheckCodeList[i]);
 
 
-            if (eval(document.getElementById("IsMobile"))) {
-                query = '#mvcdynamicfield_' + pCheckCodeList[i];
-                Labelquery = '#labelmvcdynamicfield_' + pCheckCodeList[i];
-                switch (symbol.Type) {
-                    case "radiobutton":
-                        Query = '#mvcdynamicfield_' + pCheckCodeList[i] + "_fieldWrapper";
-                        $(Query).find('.ui-radio').addClass('ui-disabled');
-                        break;
-                    case "checkbox":
+if (eval(document.getElementById("IsMobile"))){
+  query = '#mvcdynamicfield_' + pCheckCodeList[i];
+  Labelquery = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+   switch (symbol.Type) 
+            {
+                case "radiobutton":
+                    Query = '#mvcdynamicfield_' + pCheckCodeList[i] + "_fieldWrapper";
+                    $(Query).find('.ui-radio').addClass('ui-disabled'); 
+                    break;
+                case "checkbox":
+                       
+                    var checkboxcontrolId = '#mvcdynamicfield_' + pCheckCodeList[i] ;
+                     $(checkboxcontrolId).attr("disabled", true);
+                     $(Labelquery).css("color", "LightGray")
+                     break;
+               case "yesno":
+               case "legalvalues":
+               case "commentlegal":
+                  //  $(query).selectmenu();
+                   // $(query).selectmenu('disable');
+                   $(query).attr("disabled", "disabled");
+                    break;
+              // case "yesno":
+              //    //  $(query).selectmenu();
+              //      $(query).selectmenu('disable');
+              //      break;
+              //case "commentlegal":
+              //     // $(query).selectmenu();
+              //      $(query).selectmenu('disable');
+                   //      break;
+               case "label":
+                      break;
+               case "datepicker":
+                     $(query).datebox('disable');
+                      break;
+                case "timepicker":
+                    $(query).datebox('disable');
+                    break;
+                case "relatebutton":
+                    $(query).button('disable');
+                    break;
+                //case "groupbox":
+                  // break;
 
-                        var checkboxcontrolId = '#mvcdynamicfield_' + pCheckCodeList[i];
-                        $(checkboxcontrolId).attr("disabled", true);
-                        $(Labelquery).css("color", "LightGray")
-                        break;
-                    case "legalvalues":
-                        $(query).selectmenu('disable');
-                        break;
-                    case "yesno":
-                        $(query).selectmenu('disable');
-                        break;
-                    case "commentlegal":
-                        $(query).selectmenu('disable');
-                        break;
-                    case "datepicker":
-                        $(query).datebox('disable');
-                        break;
-                    case "timepicker":
-                        $(query).datebox('disable');
-                        break;
-                    case "relatebutton":
-                        $(query).button('disable');
-                        break;
-                        //case "groupbox":
-                        // break;
-
-                    default:
-                        $(query).textinput('disable');
-                        break;
+                default:
+                    $(query).textinput('disable');
+                    break;
 
                 }
 
@@ -1158,31 +1206,39 @@ function CCE_ProcessEnableCommand(pCheckCodeList) {
                         $(Labelquery).css("color", "Black")
 
 
-                        break;
-                    case "legalvalues":
-                        $(query).selectmenu('enable');
-                        break;
-                    case "yesno":
-                        $(query).selectmenu('enable');
-                        break;
-                    case "commentlegal":
-                        $(query).selectmenu('enable');
-                        break;
-                    case "datepicker":
-                        $(query).datebox('enable');
-                        break;
-                    case "timepicker":
-                        $(query).datebox('enable');
-                        break;
-                    case "groupbox":
-
-                        break;
-                    case "relatebutton":
-                        $(query).button('enable');
-                        break;
-                    default:
-                        $(query).textinput('enable');
-                        break;
+                    break;
+                case "yesno":
+                case "legalvalues":
+                case "commentlegal":
+                   // $(query).selectmenu();
+                    //$(query).selectmenu('enable');
+                    $(query).attr('disabled', false);
+                    break;
+       //case "yesno":
+       //            // $(query).selectmenu();
+       //             $(query).selectmenu('enable');
+       //             break;
+       //case "commentlegal":
+       //           //  $(query).selectmenu();
+       //             $(query).selectmenu('enable');
+       //             break;
+               case "datepicker":
+                     $(query).datebox('enable');
+                      break;
+                case "timepicker":
+                    $(query).datebox('enable');
+                    break;
+               case "groupbox":
+                   
+                   break;
+               case "relatebutton":
+                   $(query).button('enable');
+                   break;
+              case "label":
+                    break;
+                default:
+                    $(query).textinput('enable');
+                    break;
 
                 }
             } else {
@@ -1324,20 +1380,24 @@ function CCE_RemoveFromFieldsList(FieldName, ListName) {
     }
 }*/
 
-
-//Clear the control value
-function CCE_ClearControlValue(pCheckCodeList) {
-    if (pCheckCodeList != null) {
-        // var ControlList = new Array();
-        var ControlList = "";
-        for (var i = 0; i < pCheckCodeList.length; i++) {
-            //if control is a check box uncheck it otherwise clear the control value
-            var cce_Symbol = cce_Context.resolve(pCheckCodeList[i]);
-            if (cce_Symbol != null) {
-                // cce_Symbol.Value = pValue;
-                cce_Symbol.Value = null;
-                var controlId = '#mvcdynamicfield_' + pCheckCodeList[i];
-                var FieldName = 'mvcdynamicfield_' + pCheckCodeList[i];
+ 
+ //Clear the control value
+ function CCE_ClearControlValue(pCheckCodeList) 
+ {
+     if (pCheckCodeList != null) 
+     {
+          // var ControlList = new Array();
+             var ControlList = "";
+         for (var i = 0; i < pCheckCodeList.length; i++) 
+         {
+                //if control is a check box uncheck it otherwise clear the control value
+                var cce_Symbol = cce_Context.resolve(pCheckCodeList[i]);
+                if (cce_Symbol != null) 
+                {
+                   // cce_Symbol.Value = pValue;
+                    cce_Symbol.Value = null;
+                    var controlId = '#mvcdynamicfield_' + pCheckCodeList[i];
+                    var FieldName = 'mvcdynamicfield_' + pCheckCodeList[i];
 
 
                 var IsHidden = false;
@@ -1386,54 +1446,69 @@ function CCE_ClearControlValue(pCheckCodeList) {
                                 $(Radiofield).find(label).removeClass('ui-radio-on'); //1
                                 $(Radiofield).find(label).addClass('ui-radio-off'); //2
 
-                                $(Radiofield).find('.ui-icon-radio-on').addClass('RadioTemp'); //1
-                                $(Radiofield).find('.ui-icon-radio-on').removeClass('ui-icon-radio-on'); //2
-                                $(Radiofield).find('.RadioTemp').addClass('ui-icon-radio-off'); //3
-                                $(Radiofield).find('.ui-icon-radio-off').removeClass('RadioTemp'); //4 keep them in this order
-                            }
-                            else {
-                                var RadiofieldName = "." + FieldName;
-                                value = -1;
-                                $(RadiofieldName).each(function (i, obj) {
-                                    if ($(this).is(':checked')) {
-                                        $(this).attr('checked', false);
+                                    $(Radiofield).find('.ui-icon-radio-on').addClass('RadioTemp'); //1
+                                    $(Radiofield).find('.ui-icon-radio-on').removeClass('ui-icon-radio-on'); //2
+                                    $(Radiofield).find('.RadioTemp').addClass('ui-icon-radio-off'); //3
+                                    $(Radiofield).find('.ui-icon-radio-off').removeClass('RadioTemp'); //4 keep them in this order
                                     }
-                                });
-                                $(controlId).val('');
-                            }
-                            break;
-                        case "legalvalues":
-                            if (eval(document.getElementById("IsMobile"))) {
-                                $(controlId).val('');
-                                if (!IsHidden) {
-                                    $(controlId).selectmenu('refresh');
-                                }
-                            }
-                            else { $(controlId).val(''); }
-                            break;
-                        case "yesno":
-                            if (eval(document.getElementById("IsMobile"))) {
+                                    else
+                                    {
+                                           var RadiofieldName = "." + FieldName;
+                                            value = -1; 
+                                            $(RadiofieldName).each(function(i, obj) 
+                                            {
+                                                if ($(this).is(':checked'))
+                                                {
+                                                    $(this).attr('checked', false);
+                                                }
+                                            });
+                                            $(controlId).val('');
+                                    }
+                                    break;
+                                  case "legalvalues":
+                                   if (eval(document.getElementById("IsMobile")))
+                                         {  
+                                           $(controlId).val('');
+                                           if  (!IsHidden)
+                                           {
+                                               $(controlId).selectmenu();
+                                                 $(controlId).selectmenu('refresh');
+                                                 }
+                                         }
+                                         else
+                                         {$(controlId).val('');}
+                                        break;
+                                  case "yesno":
+                                     if (eval(document.getElementById("IsMobile")))
+                                         {  
+                                         
+                                          $(controlId).val('');
+                                          if  (!IsHidden)
+                                          {
+                                              $(controlId).selectmenu();
+                                                 $(controlId).selectmenu('refresh');
+                                                 }
 
-                                $(controlId).val('');
-                                if (!IsHidden) {
-                                    $(controlId).selectmenu('refresh');
-                                }
-
-
-                            }
-                            else { $(controlId).val(''); }
-                            break;
-                        case "commentlegal":
-                            if (eval(document.getElementById("IsMobile"))) {
-                                $(controlId).val('');
-                                if (!IsHidden) {
-                                    $(controlId).selectmenu('refresh');
-                                }
-                            }
-                            else { $(controlId).val(''); }
-                            break;
-                        case "groupbox":
-                            break;
+                                         
+                                         }
+                                         else
+                                         {$(controlId).val('');}
+                                        break;
+                                  case "commentlegal":
+                                    if (eval(document.getElementById("IsMobile")))
+                                         {  
+                                           $(controlId).val('');
+                                         if  (!IsHidden)
+                                         {
+                                             $(controlId).selectmenu();
+                                                 $(controlId).selectmenu('refresh');
+                                                 }
+                                         }
+                                         else
+                                         {$(controlId).val('');}
+                                        break;
+                                     case "groupbox":
+                                     break;
 
                         default:
                             $(controlId).val('');
@@ -1466,14 +1541,21 @@ function CCE_ClearControlValue(pCheckCodeList) {
 
 //Go to a page or focus on a control on the same page
 
-function CCE_GoToControlOrPage(controlOrPage) {
-    if (parseInt(controlOrPage) == controlOrPage) {
-        var currentUrl = window.location.href;
-        //get the url in the format of http://localhost/<Server>/survey/<ResponseID>
-        currentUrl = processUrl(currentUrl, 'RedirectionUrl', "");
-        $("#myform")[0].action = currentUrl + "/" + controlOrPage;
-        $("#myform")[0].is_goto_action.value = 'true';
-        //detach the validation engine as we don't want to validate data to go to another page as directed by check code
+ function CCE_GoToControlOrPage(controlOrPage) 
+ {
+    // alert(location.href);
+     if (parseInt(controlOrPage) == controlOrPage) 
+     {
+         var currentUrl = location.href;
+         //get the url in the format of http://localhost/<Server>/survey/<ResponseID>
+         var StringArray = currentUrl.split('?')
+         currentUrl = StringArray[0];
+         currentUrl = processUrl(currentUrl, 'RedirectionUrl', "");
+        
+        // alert(currentUrl);
+         $("#myform")[0].action = currentUrl + "/" + controlOrPage;
+         $("#myform")[0].is_goto_action.value = 'true';
+         //detach the validation engine as we don't want to validate data to go to another page as directed by check code
         // $('#myform').validationEngine('detach');
         $("#myform").submit();
     }
@@ -2063,47 +2145,56 @@ function CCE_Set_Update_DisabledControls_State(Items) {
 ///////Update Controls State end//////
 //////Enable all controls before leaving the page start ////////
 
-function CCE_ProcessEnableAllControls(List) {
+function CCE_ProcessEnableAllControls(List) 
+ {
 
-    var pCheckCodeList = new Array();
+  var pCheckCodeList = new Array();
     pCheckCodeList = List.split(',');
     pCheckCodeList.splice(0, 1);
 
-    if (pCheckCodeList != null) {
-        for (var i = 0; i < pCheckCodeList.length; i++) {
-            var query = null;
+     if (pCheckCodeList != null) 
+     {
+         for (var i = 0; i < pCheckCodeList.length; i++) 
+         {
+             var query = null;
 
-
-            var symbol = cce_Context.resolve(pCheckCodeList[i]);
-            if (symbol != null) {
-                if (eval(document.getElementById("IsMobile"))) {
-                    query = '#mvcdynamicfield_' + pCheckCodeList[i];
-                    Labelquery = '#labelmvcdynamicfield_' + pCheckCodeList[i];
-                    switch (symbol.Type) {
-                        case "radiobutton":
-                            Query = '#mvcdynamicfield_' + pCheckCodeList[i] + "_fieldWrapper";
-                            $(Query).find('.ui-radio').removeClass('ui-disabled');
-                            break;
-                        case "checkbox":
-
-                            $(query).checkboxradio('enable');
-                            $(Labelquery).css("color", "Black")
-                            break;
-                        case "legalvalues":
-                            $(query).selectmenu('enable');
-                            break;
-                        case "yesno":
-                            $(query).selectmenu('enable');
-                            break;
-                        case "commentlegal":
-                            $(query).selectmenu('enable');
-                            break;
-                        case "datepicker":
-                            $(query).datebox('enable');
-                            break;
-                        case "timepicker":
-                            $(query).datebox('enable');
-                            break;
+             
+             var symbol = cce_Context.resolve(pCheckCodeList[i]);
+             if(symbol != null)
+             {
+                 if (eval(document.getElementById("IsMobile")))
+                 {
+                   query = '#mvcdynamicfield_' + pCheckCodeList[i];
+                   Labelquery = '#labelmvcdynamicfield_' + pCheckCodeList[i];
+                   switch (symbol.Type) 
+                   {
+                                case "radiobutton":
+                                    Query = '#mvcdynamicfield_' + pCheckCodeList[i] + "_fieldWrapper";
+                                    $(Query).find('.ui-radio').removeClass('ui-disabled'); 
+                                    break;
+                                case "checkbox":
+                        
+                                    $(query).checkboxradio('enable');
+                                      $(Labelquery).css("color","Black")
+                                    break;
+                       case "legalvalues":
+                                    $(query).selectmenu();
+                                    $(query).selectmenu('enable');
+                                    break;
+                       case "yesno":
+                                    $(query).selectmenu();
+                                    $(query).selectmenu('enable');
+                                    break;
+                       case "commentlegal":
+                                    $(query).selectmenu();
+                                    $(query).selectmenu('enable');
+                                    break;
+                               case "datepicker":
+                                     $(query).datebox('enable');
+                                      break;
+                                case "timepicker":
+                                    $(query).datebox('enable');
+                                    break;
 
                         default:
                             $(query).textinput('enable');
@@ -2209,18 +2300,22 @@ function CCE_HasFormValuesChanged() {
                 var CurrentValue;
 
 
-                if (symbol.Type == "checkbox") {
-                    var isChecked = $(ControlName).prop('checked');
-                    if (isChecked) {
-                        CurrentValue = "Yes";
-                    }
-                    else {
-                        CurrentValue = "No";
-                    }
-
-                    if (symbol_value == "true" || symbol_value == "yes") {
-                        symbol_value = "Yes";
-                    }
+                    if (symbol.Type == "checkbox") {
+                        var isChecked = $(ControlName).prop('checked');
+                        //alert("isChecked:   " + isChecked + "  symbol_value:" + symbol_value);
+                         
+                        if (isChecked)
+                        {
+                         CurrentValue ="Yes";
+                        }
+                        else
+                        {
+                            CurrentValue = "No";
+                        }
+                        
+                        if (symbol_value.toString().toLowerCase() == "true" || symbol_value.toString().toLowerCase() == "yes") {
+                            symbol_value = "Yes";
+                        }
                         // if (symbol_value == "false" || symbol_value == "no")
                     else {
                         symbol_value = "No";
