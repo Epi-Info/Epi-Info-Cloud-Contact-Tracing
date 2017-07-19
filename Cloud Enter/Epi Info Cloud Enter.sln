@@ -30,7 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	ProjectSection(SolutionItems) = preProject
 		..\Documentation\Cloud Enter Conceptual v6.pdf = ..\Documentation\Cloud Enter Conceptual v6.pdf
 		..\Documentation\Cloud Enter Conceptual v6.vsd = ..\Documentation\Cloud Enter Conceptual v6.vsd
-		..\Documentation\PrimeMetadataCache.vsd = ..\Documentation\PrimeMetadataCache.vsd
+		..\Documentation\Sequence Diagrams.pdf = ..\Documentation\Sequence Diagrams.pdf
+		..\Documentation\Sequence Diagrams.vsd = ..\Documentation\Sequence Diagrams.vsd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dev Test Projects", "Dev Test Projects", "{B7914E06-C65D-4677-8290-ED9FDD1BC0F9}"
