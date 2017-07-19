@@ -46,6 +46,8 @@ namespace MvcDynamicForms.Fields
             var choicesList = _choices.ToList();
             var choicesList1 = GetChoices(_ChoicesList);
             choicesList = choicesList1.ToList();
+            var selectedValue = string.Empty;
+            bool IsAfterControl = false;
             if (!IsValid)
             {
                 var error = new TagBuilder("label");
@@ -124,9 +126,20 @@ namespace MvcDynamicForms.Fields
                 EnterRule FunctionObjectAfter = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=after&identifier=" + _key);
                 if (FunctionObjectAfter != null && !FunctionObjectAfter.IsNull())
                 {
-
-                    // rad.Attributes.Add("onblur", "return " + _key + "_after();"); //After
-                    rad.Attributes.Add("onclick", "return " + _key + "_after();"); //After
+                    rad.Attributes.Add("onchange", "$('#" + inputName + "').val('" + i.ToString() + "');$('#" + inputName + "').parent().next().find('input[type=hidden]')[0].value='" + i.ToString() + "'; return " + _key + "_after();"); //After
+                    //rad.Attributes.Add("onblur", "$('#" + inputName + "').val('" + i.ToString() + "');return " + _key + "_after();"); //After
+                    //rad.Attributes.Add("onclick", "return " + _key + "_after();"); //After
+                    IsAfterControl = true;
+                }
+                EnterRule FunctionObjectClick = (EnterRule)_form.FormCheckCodeObj.GetCommand("level=field&event=click&identifier=" + _key);
+                if (FunctionObjectClick != null && !FunctionObjectClick.IsNull())
+                {
+                    rad.Attributes.Add("onclick", "return " + _key + "_click();"); //click
+                    IsAfterControl = true;
+                }
+                if (!IsAfterControl)
+                {
+                    rad.Attributes.Add("onchange", "$('#" + inputName + "').val('" + i.ToString() + "');"); //click
                 }
 
                 ////////////Check code end//////////////////
@@ -138,7 +151,13 @@ namespace MvcDynamicForms.Fields
                     rad.Attributes.Add("disabled", "disabled");
                 }
 
-                if (Value == i.ToString()) rad.Attributes.Add("checked", "checked");
+                if (Value == i.ToString())
+                {
+                    selectedValue = Value;
+                    rad.Attributes.Add("checked", "checked");
+                }
+
+
                 rad.MergeAttributes(_inputHtmlAttributes);
                 html.Append(rad.ToString(TagRenderMode.SelfClosing));
 
@@ -168,7 +187,7 @@ namespace MvcDynamicForms.Fields
             hidden.Attributes.Add("type", "hidden");
             hidden.Attributes.Add("id", inputName);
             hidden.Attributes.Add("name", inputName);
-            hidden.Attributes.Add("value", string.Empty);
+            hidden.Attributes.Add("value", selectedValue);
             html.Append(hidden.ToString(TagRenderMode.SelfClosing));
 
 
