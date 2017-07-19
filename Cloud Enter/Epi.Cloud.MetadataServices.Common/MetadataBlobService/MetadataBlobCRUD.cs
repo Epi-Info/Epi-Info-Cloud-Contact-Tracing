@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define CaptureMetadataJson
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -303,11 +305,12 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
             metadata.ProjectDeploymentProperties = deploymentProperties;
 
             string metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
-
-//#if CaptureMetadataJson
+#if DEBUG
+#if CaptureMetadataJson
             if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
             System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigestsJson);
-//#endif
+#endif
+#endif
             var projectKey = new Guid(metadata.Project.Id).ToString("N");
 
             if (deleteBeforeUpload) DeleteBlob(projectKey);
