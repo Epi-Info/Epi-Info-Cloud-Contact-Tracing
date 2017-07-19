@@ -147,9 +147,16 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 
         public string DownloadText(string blobName)
         {
-            CloudBlockBlob blobSource = BlobContainer.GetBlockBlobReference(blobName);
-            string content = blobSource.DownloadText();
-            return content;
+            try
+            {
+                CloudBlockBlob blobSource = BlobContainer.GetBlockBlobReference(blobName);
+                string content = blobSource.DownloadText();
+                return content;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
 
@@ -297,10 +304,10 @@ namespace Epi.Cloud.MetadataServices.Common.MetadataBlobService
 
             string metadataWithDigestsJson = Newtonsoft.Json.JsonConvert.SerializeObject(metadata);
 
-#if CaptureMetadataJson
+//#if CaptureMetadataJson
             if (!System.IO.Directory.Exists(@"C:\Junk")) System.IO.Directory.CreateDirectory(@"C:\Junk");
-            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigests);
-#endif
+            System.IO.File.WriteAllText(@"C:\Junk\ZikaMetadataWithDigests.json", metadataWithDigestsJson);
+//#endif
             var projectKey = new Guid(metadata.Project.Id).ToString("N");
 
             if (deleteBeforeUpload) DeleteBlob(projectKey);

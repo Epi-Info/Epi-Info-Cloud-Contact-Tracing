@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Epi.Data.EF;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using Epi.FormMetadata.DataStructures;
-using System;
 using System.Data.Entity;
 using System.Data.Entity.SqlServer;
-using Epi.Cloud.Common.Configuration;
-using Epi.Data;
 using System.Data.SqlClient;
-using System.Configuration;
+using System.Linq;
 using Epi.Cloud.Common.Constants;
+using Epi.Data;
+using Epi.Data.EF;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.Cloud.SqlServer
 {
@@ -27,7 +25,7 @@ namespace Epi.Cloud.SqlServer
     /// <summary>
     /// Concret SQL Server Database Class
     /// </summary>
-    public class MetaData
+    public class Metadata
     {
         public Epi.FormMetadata.DataStructures.Template GetProjectTemplateMetadata(string projectId)
         {
@@ -339,7 +337,7 @@ namespace Epi.Cloud.SqlServer
             if (string.IsNullOrEmpty(TableName) || string.IsNullOrEmpty(ColumnName)) return null;
             List<string> lstSourceTableVal = new List<string>();
 
-            MetaData getDropdownVal = new MetaData();
+            Metadata getDropdownVal = new Metadata();
             DataTable dtDropDownVal = getDropdownVal.GetDropdownDB(TableName, ColumnName);
 
             foreach (DataRow _SourceTableValue in dtDropDownVal.Rows)

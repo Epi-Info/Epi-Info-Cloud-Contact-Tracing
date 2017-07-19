@@ -42,7 +42,7 @@ namespace Epi.Cloud.MetadataServices.Common
             if (metadata == null)
             {
                 metadata = await RetrieveProjectMetadataViaAPIAsync(projectId);
-                if (metadata == null)
+                if (metadata != null)
                 {
                     MetadataBlobCRUD.SaveMetadataToBlobStorage(metadata);
                 }

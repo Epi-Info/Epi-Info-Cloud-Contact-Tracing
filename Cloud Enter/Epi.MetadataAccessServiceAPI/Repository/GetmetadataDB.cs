@@ -13,7 +13,7 @@ namespace Epi.MetadataAccessService.Repository
             DataTable dt = new DataTable();
 
             // Retrive the Template level Attributes
-            MetaData metaDt = new MetaData();
+            Metadata metaDt = new Metadata();
             Template lstMetaDataFieldsAtr = new Template();
 
             //Get the meta data using entity framework
