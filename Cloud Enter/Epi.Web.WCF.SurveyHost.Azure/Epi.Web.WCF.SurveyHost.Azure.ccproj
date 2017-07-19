@@ -49,9 +49,13 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Epi.Web.WCF.SurveyHostContent\" />
+    <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <DiagnosticsConfiguration Include="Epi.Web.WCF.SurveyHostContent\diagnostics.wadcfgx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\epicloudwcfserviceProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
