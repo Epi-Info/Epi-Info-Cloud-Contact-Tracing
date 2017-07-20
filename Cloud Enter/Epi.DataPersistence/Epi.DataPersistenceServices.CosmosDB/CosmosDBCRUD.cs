@@ -8,9 +8,9 @@ using Epi.Cloud.Common.Metadata;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD : MetadataAccessor
+    public partial class CosmosDBCRUD : MetadataAccessor
     {
         private string _serviceEndpoint;
         private string _authKey;
@@ -18,7 +18,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private Microsoft.Azure.Documents.Database _database;
         private ConcurrentDictionary<string, DocumentCollection> _documentCollections = new ConcurrentDictionary<string, DocumentCollection>();
 
-        public DocumentDbCRUD()
+        public CosmosDBCRUD()
         {
             Initialize();
         }
@@ -117,7 +117,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         #region GetOrCreateDabase
         /// <summary>
-        ///If DB is not avaliable in Document Db create DB
+        ///If DB is not avaliable in Cosmos DB create DB
         /// </summary>
         private Database GetOrCreateDatabase(string databaseName)
         {
@@ -142,7 +142,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
         #region GetOrCreateCollection 
         /// <summary>
-        /// Get or Create Collection in Document DB
+        /// Get or Create Collection in Cosmos DB
         /// </summary>
         private DocumentCollection GetOrCreateCollection(string databaseLink, string collectionId)
         {
@@ -176,7 +176,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         private DocumentCollection GetCollectionReference(string collectionId)
         {
 
-            //Get a reference to the DocumentDB Collection
+            //Get a reference to the CosmosDB Collection
             var collection = GetOrCreateCollection(ResponseDatabase.SelfLink, collectionId);
             return collection;
         }

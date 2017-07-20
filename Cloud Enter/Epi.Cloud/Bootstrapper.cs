@@ -58,7 +58,7 @@ namespace Epi.Web.MVC
 #if useEF_FormSettingFacade
             container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.Cloud.Facades.EF_FormSettingFacade>();
 #else            
-            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.DocumentDB.Facades.DocDB_EF_FormSettingFacade>();
+            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.CosmosDB.Facades.DocDB_EF_FormSettingFacade>();
 #endif
             // Data Service Interfaces
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
@@ -69,7 +69,7 @@ namespace Epi.Web.MVC
 			// Registered Instances
 			var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
-            var docDB_SurveyFacade = new Epi.PersistenceServices.DocumentDB.DocDB_SurveyPersistenceFacade();
+            var docDB_SurveyFacade = new Epi.PersistenceServices.CosmosDB.DocDB_SurveyPersistenceFacade();
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);

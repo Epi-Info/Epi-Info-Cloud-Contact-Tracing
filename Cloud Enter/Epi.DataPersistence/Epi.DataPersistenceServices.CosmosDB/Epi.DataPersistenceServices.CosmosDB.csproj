@@ -7,8 +7,8 @@
     <ProjectGuid>{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Epi.DataPersistenceServices.DocumentDB</RootNamespace>
-    <AssemblyName>Epi.DataPersistenceServices.DocumentDB</AssemblyName>
+    <RootNamespace>Epi.DataPersistenceServices.CosmosDB</RootNamespace>
+    <AssemblyName>Epi.DataPersistenceServices.CosmosDB</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -83,17 +83,17 @@
     <Compile Include="DAO\FormSettingDao.cs" />
     <Compile Include="DataStructures.FormResponse.Methods.cs" />
     <Compile Include="DataStructures.FormResponse.cs" />
-    <Compile Include="DocumentDbCRUD.FormSettings.cs" />
+    <Compile Include="CosmosDBCRUD.FormSettings.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="DataStructures.FormSettings.cs" />
     <Compile Include="Facades\DocDB_EF_FormSettingFacade.cs" />
     <Compile Include="SurveyPersistenceFacade.cs" />
-    <Compile Include="DocumentDbCRUD.FormResponse.Attachment.cs" />
-    <Compile Include="DocumentDbCRUD.FormResponse.cs" />
-    <Compile Include="DocumentDbCRUD.QueryHelpers.cs" />
+    <Compile Include="CosmosDBCRUD.FormResponse.Attachment.cs" />
+    <Compile Include="CosmosDBCRUD.FormResponse.cs" />
+    <Compile Include="CosmosDBCRUD.QueryHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DocumentDbCRUD.FormResponse.StoreProcedures.cs" />
-    <Compile Include="DocumentDbCRUD.cs" />
+    <Compile Include="CosmosDBCRUD.FormResponse.StoreProcedures.cs" />
+    <Compile Include="CosmosDBCRUD.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

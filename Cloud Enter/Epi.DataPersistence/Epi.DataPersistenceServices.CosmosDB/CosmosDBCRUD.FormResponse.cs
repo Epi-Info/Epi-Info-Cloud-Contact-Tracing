@@ -9,15 +9,15 @@ using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.FormMetadata.DataStructures;
-using Epi.PersistenceServices.DocumentDB;
+using Epi.PersistenceServices.CosmosDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD
+    public partial class CosmosDBCRUD
     {
         private string DatabaseName;
         private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);

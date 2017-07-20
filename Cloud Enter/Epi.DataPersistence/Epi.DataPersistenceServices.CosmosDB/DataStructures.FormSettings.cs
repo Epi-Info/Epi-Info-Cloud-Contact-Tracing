@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Azure.Documents;
 
-namespace Epi.DataPersistenceServices.DocumentDB.FormSettings
+namespace Epi.DataPersistenceServices.CosmosDB.FormSettings
 {
     public class FormSettingsResource : Resource
     {

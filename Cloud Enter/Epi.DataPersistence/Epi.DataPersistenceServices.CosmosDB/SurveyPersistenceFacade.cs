@@ -13,11 +13,11 @@ using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
-using Epi.DataPersistenceServices.DocumentDB;
+using Epi.DataPersistenceServices.CosmosDB;
 using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents;
 
-namespace Epi.PersistenceServices.DocumentDB
+namespace Epi.PersistenceServices.CosmosDB
 {
     public partial class DocDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
     {
@@ -27,7 +27,7 @@ namespace Epi.PersistenceServices.DocumentDB
         {
         }
 
-        DocumentDbCRUD _formResponseCRUD = new DocumentDbCRUD();
+        CosmosDBCRUD _formResponseCRUD = new CosmosDBCRUD();
 
         public FormResponseDetail GetFormResponseState(IResponseContext responseContext)
         {
@@ -144,7 +144,7 @@ namespace Epi.PersistenceServices.DocumentDB
 
         #region Save Form Response Properties
         /// <summary>
-        /// First time store ResponseId, RecStatus, and SurveyId in DocumentDB
+        /// First time store ResponseId, RecStatus, and SurveyId in CosmosDB
         /// </summary>
         /// <param name="response"></param>
         /// <returns></returns>

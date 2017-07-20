@@ -6,9 +6,9 @@ namespace Epi.Cloud.DataEntryServices.Extensions
 {
     public static class FormExtensions
     {
-   //     public static Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties ToPageResponseProperties(this Form form, string responseId)
+   //     public static Epi.PersistenceServices.CosmosDB.DataStructures.PageResponseProperties ToPageResponseProperties(this Form form, string responseId)
    //     {
-			//Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties pageResponseProperties = new Epi.PersistenceServices.DocumentDB.DataStructures.PageResponseProperties
+			//Epi.PersistenceServices.CosmosDB.DataStructures.PageResponseProperties pageResponseProperties = new Epi.PersistenceServices.CosmosDB.DataStructures.PageResponseProperties
    //         {
 			//	Id = responseId,
    //             GlobalRecordID = responseId,

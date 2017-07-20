@@ -4,7 +4,7 @@ using Epi.Cloud.WebJobs;
 using Epi.Cloud.ServiceBus;
 using Epi.DataPersistence.DataStructures;
 using Newtonsoft.Json;
-using Epi.PersistenceServices.DocumentDB;
+using Epi.PersistenceServices.CosmosDB;
 using Epi.Common.Core.Interfaces;
 using System.IO;
 

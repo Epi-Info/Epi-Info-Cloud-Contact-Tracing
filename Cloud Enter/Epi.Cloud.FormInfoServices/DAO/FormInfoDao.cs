@@ -247,7 +247,7 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
             {
                 bool hasDraftRecords = false;
 
-                // TODO: DocumentDB implementation required
+                // TODO: CosmosDB implementation required
                 //Guid Id = new Guid(formId);
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{

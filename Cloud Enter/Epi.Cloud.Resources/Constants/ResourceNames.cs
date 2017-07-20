@@ -26,13 +26,13 @@
         public const string UserAdded = "UserAdded";
     }
 
-    public struct DocumentDBSPKeys
+    public struct CosmosDBSPKeys
     {
         public const string GetAllRecordsBySurveyID = "GetAllRecordsBySurveyID";
         public const string OrderBy = "OrderBy";
     }
 
-    public struct DocumentDBUDFKeys
+    public struct CosmosDBUDFKeys
     {
         public const string udfWildCardCompare = "udfWildCardCompare";
         public const string udfSharingRules = "udfSharingRules";

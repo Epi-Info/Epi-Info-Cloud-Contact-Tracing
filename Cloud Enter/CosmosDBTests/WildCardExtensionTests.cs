@@ -1,7 +1,7 @@
 ﻿using Epi.Common.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DocumentDBTests
+namespace CosmosDBTests
 {
     [TestClass]
     public class WildCardExtensionTests

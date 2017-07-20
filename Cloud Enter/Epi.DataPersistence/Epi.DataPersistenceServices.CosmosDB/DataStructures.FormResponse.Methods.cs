@@ -5,7 +5,7 @@ using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.Extensions;
 
-namespace Epi.PersistenceServices.DocumentDB
+namespace Epi.PersistenceServices.CosmosDB
 {
     public partial class FormResponseResource
     {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Extensions;
-using Epi.DataPersistenceServices.DocumentDB.FormSettings;
+using Epi.DataPersistenceServices.CosmosDB.FormSettings;
 using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents.Client;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD
+    public partial class CosmosDBCRUD
     {
         private const string FormSettingsCollectionName = "FormSettings";
 

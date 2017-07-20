@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
-using Epi.PersistenceServices.DocumentDB;
+using Epi.PersistenceServices.CosmosDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD
+    public partial class CosmosDBCRUD
     {
         public int? continuationToken = null;
 
@@ -71,11 +71,11 @@ namespace Epi.DataPersistenceServices.DocumentDB
                     }
                     if (await DoesUserDefinedFunctionExist(udfSharingRulesUri) == false)
                     {
-                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfSharingRulesId, DocumentDBUDFKeys.udfSharingRules);
+                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfSharingRulesId, CosmosDBUDFKeys.udfSharingRules);
                     }
                     if (await DoesUserDefinedFunctionExist(udfWildCardUri) == false)
                     {
-                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfWildCardCompareId, DocumentDBUDFKeys.udfWildCardCompare);
+                        var createUDFResponse = await CreateUDFAsync(collectionUri, udfWildCardCompareId, CosmosDBUDFKeys.udfWildCardCompare);
                     }
 
                     try
@@ -143,7 +143,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         }
 
         /// <summary>
-        /// Create Document Db Stored Procedure
+        /// Create Cosmos DB Stored Procedure
         /// </summary>
         /// <param name="collectionUri"></param>
         /// <param name="spId"></param>
@@ -153,7 +153,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
 
             try
             {
-                var sprocBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, DocumentDBSPKeys.GetAllRecordsBySurveyID);
+                var sprocBody = ResourceProvider.GetResourceString(ResourceNamespaces.CosmosDBSp, CosmosDBSPKeys.GetAllRecordsBySurveyID);
                 var sprocDefinition = new StoredProcedure
                 {
                     Id = spId,
@@ -169,7 +169,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
             return null;
         }
         /// <summary>
-        /// Create Document Db Stored Procedure
+        /// Create Cosmos DB Stored Procedure
         /// </summary>
         /// <param name="collectionUri"></param>
         /// <param name="udfId"></param>
@@ -178,7 +178,7 @@ namespace Epi.DataPersistenceServices.DocumentDB
         {
             try
             {
-                var udfBody = ResourceProvider.GetResourceString(ResourceNamespaces.DocumentDBSp, resourceName);
+                var udfBody = ResourceProvider.GetResourceString(ResourceNamespaces.CosmosDBSp, resourceName);
                 var udfDefinition = new UserDefinedFunction
                 {
                     Id = udfId,

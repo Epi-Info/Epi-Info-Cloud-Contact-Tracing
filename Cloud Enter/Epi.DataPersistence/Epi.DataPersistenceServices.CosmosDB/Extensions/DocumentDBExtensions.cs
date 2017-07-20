@@ -4,16 +4,16 @@ using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Metadata;
 using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.DataStructures;
-using Epi.DataPersistenceServices.DocumentDB.FormSettings;
-using Epi.PersistenceServices.DocumentDB;
+using Epi.DataPersistenceServices.CosmosDB.FormSettings;
+using Epi.PersistenceServices.CosmosDB;
 
 namespace Epi.DataPersistence.Extensions
 {
-    public static class DocumentDBExtensions
+    public static class CosmosDBExtensions
     {
         static MetadataAccessor _metadataAccessor = new MetadataAccessor();
 
-        static DocumentDBExtensions()
+        static CosmosDBExtensions()
         {
         }
 

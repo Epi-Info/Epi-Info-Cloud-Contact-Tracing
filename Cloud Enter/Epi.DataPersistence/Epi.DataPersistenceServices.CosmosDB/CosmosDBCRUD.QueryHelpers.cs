@@ -4,9 +4,9 @@ using Epi.FormMetadata.DataStructures;
 using Epi.DataPersistence.Constants;
 using Epi.Cloud.Common.Core.DataStructures;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD
+    public partial class CosmosDBCRUD
     {
         private const string LT = "<";
         private const string LE = "<=";

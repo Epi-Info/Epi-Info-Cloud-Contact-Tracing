@@ -74,9 +74,9 @@
       <Project>{7555D754-575E-4988-BDD4-F6AD47CFB9D9}</Project>
       <Name>Epi.Common.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj">
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.CosmosDB\Epi.DataPersistenceServices.CosmosDB.csproj">
       <Project>{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}</Project>
-      <Name>Epi.DataPersistenceServices.DocumentDB</Name>
+      <Name>Epi.DataPersistenceServices.CosmosDB</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

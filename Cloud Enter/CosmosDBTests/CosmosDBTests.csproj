@@ -6,8 +6,8 @@
     <ProjectGuid>{520B1E4E-81C0-438D-AE4A-730BE8433936}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DocumentDBTests</RootNamespace>
-    <AssemblyName>DocumentDBTests</AssemblyName>
+    <RootNamespace>CosmosDBTests</RootNamespace>
+    <AssemblyName>CosmosDBTests</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -60,9 +60,9 @@
       <Project>{f4c81667-c307-4db4-a727-fd42342799cf}</Project>
       <Name>Epi.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj">
+    <ProjectReference Include="..\Epi.DataPersistence\Epi.DataPersistenceServices.CosmosDB\Epi.DataPersistenceServices.CosmosDB.csproj">
       <Project>{3e9b6f53-60c7-4671-9138-a1a7edf413c4}</Project>
-      <Name>Epi.DataPersistenceServices.DocumentDB</Name>
+      <Name>Epi.DataPersistenceServices.CosmosDB</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

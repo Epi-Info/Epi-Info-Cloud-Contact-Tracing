@@ -51,7 +51,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             }
             else
             {
-                //TODO Implement for DocumentDB
+                //TODO Implement for CosmosDB
                 throw new NotImplementedException("GetSurveyResponse - return all responses");
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
@@ -122,7 +122,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
             {
                 Guid Id = new Guid(passcodeBO.ResponseId);
 
-                //TODO Implement for DocumentDB
+                //TODO Implement for CosmosDB
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
                 //    var Query = from response in Context.SurveyResponses
@@ -149,7 +149,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
                 Guid Id = new Guid(UserAuthenticationRequestBO.ResponseId);
 
-                //TODO Implement for DocumentDB
+                //TODO Implement for CosmosDB
                 //using (var Context = DataObjectFactory.CreateContext())
                 //{
                 //    SurveyResponse surveyResponse = Context.SurveyResponses.First(x => x.ResponseId == Id);
@@ -1138,7 +1138,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
         }
         public SurveyResponseBO GetResponse(IResponseContext responseContext)
         {
-            // TODO: DocumentDB implementation required
+            // TODO: CosmosDB implementation required
             SurveyResponseBO result = new SurveyResponseBO();
 
             try
@@ -1169,7 +1169,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public int GetFormResponseCount(SurveyAnswerCriteria criteria)
         {
-            // TODO: DocumentDb implementation required
+            // TODO: CosmosDB implementation required
             int responseCount = criteria.FormResponseCount.HasValue ? criteria.FormResponseCount.Value : 0;
 
 #if IncludeEpi7Compatibilty
@@ -1261,7 +1261,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public void UpdatePassCode(UserAuthenticationRequestBO passcodeBO)
         {
-            // TODO: DocumentDB implementation required
+            // TODO: CosmosDB implementation required
             return;
             throw new NotImplementedException();
         }

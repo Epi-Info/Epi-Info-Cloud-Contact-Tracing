@@ -1,14 +1,14 @@
 ﻿using System;
 using Epi.Cloud.Common;
 using Epi.Common.Core.Interfaces;
-using Epi.PersistenceServices.DocumentDB;
+using Epi.PersistenceServices.CosmosDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;
 
-namespace Epi.DataPersistenceServices.DocumentDB
+namespace Epi.DataPersistenceServices.CosmosDB
 {
-    public partial class DocumentDbCRUD
+    public partial class CosmosDBCRUD
     {
         private const int HResult_AttachmentAlreadyExists = -2146233088;
 

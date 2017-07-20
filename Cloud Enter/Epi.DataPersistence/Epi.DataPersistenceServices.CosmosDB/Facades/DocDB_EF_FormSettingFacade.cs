@@ -11,21 +11,21 @@ using Epi.Cloud.Resources;
 using Epi.Cloud.SurveyInfoServices.Extensions;
 using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Extensions;
-using Epi.DataPersistenceServices.DocumentDB.DAO;
+using Epi.DataPersistenceServices.CosmosDB.DAO;
 
-namespace Epi.DataPersistenceServices.DocumentDB.Facades
+namespace Epi.DataPersistenceServices.CosmosDB.Facades
 {
     public class DocDB_EF_FormSettingFacade : IFormSettingFacade
     {
         private readonly MetadataAccessor _metadataAccessor;
-        private readonly DocumentDbCRUD _formResponseCRUD;
+        private readonly CosmosDBCRUD _formResponseCRUD;
         private readonly IFormSettingDao_EF _formSettingDao_EF;
         private readonly IFormSettingDao _formSettingDao_DocDB;
 
         public DocDB_EF_FormSettingFacade(IFormSettingDao_EF formSettingDao_EF)
         {
             _metadataAccessor = new MetadataAccessor();
-            _formResponseCRUD = new DocumentDbCRUD();
+            _formResponseCRUD = new CosmosDBCRUD();
             _formSettingDao_EF = formSettingDao_EF;
             _formSettingDao_DocDB = new FormSettingDao(formSettingDao_EF);
         }

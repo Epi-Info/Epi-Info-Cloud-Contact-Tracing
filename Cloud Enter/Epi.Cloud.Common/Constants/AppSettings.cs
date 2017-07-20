@@ -60,12 +60,12 @@ namespace Epi.Cloud.Common.Constants
 
             #endregion Settings
 
-            #region DocumentDB
+            #region CosmosDB
 
             [DefaultValue("ResponseSnapshot")]
             public const string AttachmentId = "AttachmentId";
 
-            #endregion DocumentDB
+            #endregion CosmosDB
 
             #region Service Bus
 

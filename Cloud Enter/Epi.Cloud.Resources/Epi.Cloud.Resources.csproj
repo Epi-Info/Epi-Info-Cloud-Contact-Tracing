@@ -47,10 +47,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DataAccessRules.resx</DependentUpon>
     </Compile>
-    <Compile Include="DocumentDbSp.Designer.cs">
+    <Compile Include="CosmosDBSp.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>DocumentDbSp.resx</DependentUpon>
+      <DependentUpon>CosmosDBSp.resx</DependentUpon>
     </Compile>
     <Compile Include="EmailMessages.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -71,9 +71,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DataAccessRules.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="DocumentDbSp.resx">
+    <EmbeddedResource Include="CosmosDBSp.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DocumentDbSp.Designer.cs</LastGenOutput>
+      <LastGenOutput>CosmosDBSp.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="EmailMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>

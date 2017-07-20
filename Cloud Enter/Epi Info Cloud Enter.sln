@@ -52,7 +52,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.FormMetadata", "Epi.For
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistence.Common", "Epi.DataPersistence\Epi.DataPersistence.Common\Epi.DataPersistence.Common.csproj", "{1BD3B7DA-C63F-4644-B391-B364FDF62FF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistenceServices.DocumentDB", "Epi.DataPersistence\Epi.DataPersistenceServices.DocumentDB\Epi.DataPersistenceServices.DocumentDB.csproj", "{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.DataPersistenceServices.CosmosDB", "Epi.DataPersistence\Epi.DataPersistenceServices.CosmosDB\Epi.DataPersistenceServices.CosmosDB.csproj", "{3E9B6F53-60C7-4671-9138-A1A7EDF413C4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.DataConsistencyServicesAPI", "Epi.Cloud.DataConsistencyServicesAPI\Epi.Cloud.DataConsistencyServicesAPI.csproj", "{CD816397-9373-4D67-BBC6-E70E563BF4D4}"
 EndProject
@@ -94,7 +94,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Epi.Cloud.Resources", "Epi.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceTests", "ResourceTests\ResourceTests.csproj", "{C4E6EE38-C08D-490B-ABD0-772FFDCF28E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentDBTests", "DocumentDBTests\DocumentDBTests.csproj", "{520B1E4E-81C0-438D-AE4A-730BE8433936}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmosDBTests", "CosmosDBTests\CosmosDBTests.csproj", "{520B1E4E-81C0-438D-AE4A-730BE8433936}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Epi.WebEnter.WCFDependency", "Epi.WebEnter.WCFDependency", "{1D734EF5-BCFA-4832-BE7C-DA06550B7142}"
 EndProject
