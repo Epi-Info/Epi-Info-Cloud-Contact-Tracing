@@ -28,19 +28,20 @@ namespace Epi.Common.Configuration
             return isEncrypted;
         }
 
-        public bool GetBoolValue(string key)
+        public bool GetBoolValue(string key, bool decryptIfEncrypted = true)
         {
             bool value = false;
             try
             {
                 var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !bool.TryParse(stringValue, out value))
+                if (!string.IsNullOrWhiteSpace(stringValue))
                 {
-                    return ReturnDefaultBoolValue(key);
+                    stringValue = DecryptIfEncrypted(key, stringValue, decryptIfEncrypted);
+                    return bool.TryParse(stringValue, out value) ? value : ReturnDefaultBoolValue(key);
                 }
                 else
                 {
-                    return value;
+                    return ReturnDefaultBoolValue(key);
                 }
             }
             catch (Exception ex)
@@ -49,19 +50,20 @@ namespace Epi.Common.Configuration
             }
         }
 
-        public int GetIntValue(string key)
+        public int GetIntValue(string key, bool decryptIfEncrypted = true)
         {
             int value = 0;
             try
             {
                 var stringValue = ConfigurationManager.AppSettings[key];
-                if (string.IsNullOrWhiteSpace(stringValue) || !Int32.TryParse(stringValue, out value))
+                if (!string.IsNullOrWhiteSpace(stringValue))
                 {
-                    return ReturnDefaultIntValue(key);
+                    stringValue = DecryptIfEncrypted(key, stringValue, decryptIfEncrypted);
+                    return Int32.TryParse(stringValue, out value) ? value : ReturnDefaultIntValue(key);
                 }
                 else
                 {
-                    return value;
+                    return ReturnDefaultIntValue(key);
                 }
             }
             catch (Exception ex)
@@ -82,18 +84,7 @@ namespace Epi.Common.Configuration
                 }
                 else
                 {
-                    if (decryptIfEncrypted && IsValueEncrypted(key))
-                    {
-                        try
-                        {
-                            value = Cryptography.Decrypt(value);
-                        }
-                        catch (Exception ex)
-                        {
-                            // If an exception occurrs assume that the value is not encrypted;
-                            _encryptedValueAttributes[key] = EncryptedValueAttribute.False;
-                        }
-                    }
+                    value = DecryptIfEncrypted(key, value, decryptIfEncrypted);
                     return value;
                 }
             }
@@ -101,6 +92,27 @@ namespace Epi.Common.Configuration
             {
                 return ReturnDefaultStringValue(key, ex);
             }
+        }
+
+        private string DecryptIfEncrypted(string key, string value, bool decryptIfEncrypted = true)
+        {
+            if (decryptIfEncrypted && IsValueEncrypted(key))
+            {
+                try
+                {
+                    value = Cryptography.Decrypt(value);
+                }
+                catch (Exception ex)
+                {
+                    lock (_encryptedValueAttributes)
+                    {
+                        // If an exception occurrs assume that the value is not encrypted;
+                        _encryptedValueAttributes[key] = EncryptedValueAttribute.False;
+                    }
+                }
+            }
+
+            return value;
         }
 
         public string GetConnectionString(string key, bool decryptIfEncrypted = true)
@@ -136,15 +148,18 @@ namespace Epi.Common.Configuration
         private EncryptedValueAttribute FindEncryptedAttribute(string key)
         {
             EncryptedValueAttribute encryptedValueAttribute = EncryptedValueAttribute.False;
-            if (!_encryptedValueAttributes.TryGetValue(key, out encryptedValueAttribute))
+            lock(_encryptedValueAttributes)
             {
-                var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
-                if (field != null)
+                if (!_encryptedValueAttributes.TryGetValue(key, out encryptedValueAttribute))
                 {
-                    encryptedValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(EncryptedValueAttribute)).FirstOrDefault() as EncryptedValueAttribute;
+                    var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
+                    if (field != null)
+                    {
+                        encryptedValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(EncryptedValueAttribute)).FirstOrDefault() as EncryptedValueAttribute;
+                    }
+                    encryptedValueAttribute = encryptedValueAttribute ?? EncryptedValueAttribute.False;
+                    _encryptedValueAttributes.Add(key, encryptedValueAttribute);
                 }
-                encryptedValueAttribute = encryptedValueAttribute ?? EncryptedValueAttribute.False;
-                _encryptedValueAttributes.Add(key, encryptedValueAttribute);
             }
             return encryptedValueAttribute;
         }
