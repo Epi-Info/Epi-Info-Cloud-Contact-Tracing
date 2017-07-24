@@ -28,7 +28,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EpiCloudDeployment.ps1" />
+    <Compile Include="ExecuteSQLQuery.ps1" />
     <Compile Include="PublishPackage.ps1" />
+    <Compile Include="PublishWebJob.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
