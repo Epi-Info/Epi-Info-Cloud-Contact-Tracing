@@ -75,7 +75,14 @@ namespace Epi.Web.MVC.Controllers
 
                 var model = new FormResponseInfoModel();
                 model.ViewId = viewId;
-                model = GetSurveyResponseInfoModel(formid, pagenumber, null, null, -1);
+                if (Session[SessionKeys.CurrentOrgId] != null && Convert.ToInt32(Session[SessionKeys.CurrentOrgId]) != 0)
+                {
+                    model = GetSurveyResponseInfoModel(formid, pagenumber, null, null, Convert.ToInt32(Session[SessionKeys.CurrentOrgId]));
+                }
+                else
+                {
+                    model = GetSurveyResponseInfoModel(formid, pagenumber, null, null);
+                }
                 Session[SessionKeys.SelectedOrgId] = model.FormInfoModel.OrganizationId;
                 return View("Index", model);
             }
@@ -106,7 +113,7 @@ namespace Epi.Web.MVC.Controllers
 
                 if (relateSurveyId.ResponseIds.Count() > 0)
                 {
-                    SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(relateSurveyId.ResponseIds[0].ResponseId);
+                    SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(relateSurveyId.ResponseIds[0].ResponseId, relateSurveyId.FormId);
                     var form = _surveyFacade.GetSurveyFormData(relateSurveyId.ResponseIds[0].SurveyId, 1, surveyAnswerDTO, isMobileDevice, null, null, isAndroid);
                     surveyModel.Form = form;
                     if (string.IsNullOrEmpty(responseId))
@@ -190,7 +197,7 @@ namespace Epi.Web.MVC.Controllers
                 }
                 Session[SessionKeys.IsEditMode] = true;
                 isEditMode = true;
-                SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId);
+                SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId, Session[SessionKeys.RootFormId].ToString());
                 if (Session[SessionKeys.RecoverLastRecordVersion] != null)
                 {
                     surveyAnswer.RecoverLastRecordVersion = bool.Parse(Session[SessionKeys.RecoverLastRecordVersion].ToString());
