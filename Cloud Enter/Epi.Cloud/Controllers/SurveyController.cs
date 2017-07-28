@@ -285,21 +285,7 @@ namespace Epi.Web.MVC.Controllers
                 isMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
             }
 
-            var requestedViewId = Convert.ToInt32(Requested_View_Id);
-            var formId = MetadataAccessor.GetFormIdByViewId(requestedViewId);
-            var parentFormId = MetadataAccessor.GetParentFormIdByViewId(requestedViewId);
-            var rootFormId = MetadataAccessor.GetRootFormIdByViewId(requestedViewId);
-            var responseContext = new ResponseContext
-            {
-                FormId = formId,
-                ParentFormId = parentFormId,
-                RootFormId = RootFormId,
-                ResponseId = responseId,
-                RootResponseId = rootResponseId,
-                UserOrgId = orgId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies() as ResponseContext;
+          
 
             try
             {
@@ -465,7 +451,21 @@ namespace Epi.Web.MVC.Controllers
                         else if (!string.IsNullOrEmpty(this.Request.Form["is_goto_action"]) && this.Request.Form["is_goto_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
                             //This is a Navigation to a url
-
+                            var requestedViewId = Convert.ToInt32(Requested_View_Id);
+                            var formId = MetadataAccessor.GetFormIdByViewId(requestedViewId);
+                            var parentFormId = MetadataAccessor.GetParentFormIdByViewId(requestedViewId);
+                            var rootFormId = MetadataAccessor.GetRootFormIdByViewId(requestedViewId);
+                            var responseContext = new ResponseContext
+                            {
+                                FormId = formId,
+                                ParentFormId = parentFormId,
+                                RootFormId = RootFormId,
+                                ResponseId = responseId,
+                                RootResponseId = rootResponseId,
+                                UserOrgId = orgId,
+                                UserId = userId,
+                                UserName = userName
+                            }.ResolveMetadataDependencies() as ResponseContext;
 
                             form = SetLists(form);
 
