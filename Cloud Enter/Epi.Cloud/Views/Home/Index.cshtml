@@ -1,32 +1,32 @@
 ﻿@using Epi.Web.MVC.Constants
 @model Epi.Web.MVC.Models.FormModel
 @{
-    ViewBag.Title = "Epi Info™ Cloud Enter - Home";// + " - "+ 
-	// Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	
+    ViewBag.Title = "Epi Info™ Cloud Enter - Home";// + " - "+
+                                                   // Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 @*<script type="text/javascript" >
 
-	  $(document).ready(function () {
-		  // a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
+          $(document).ready(function () {
+              // a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
 
 
 
 
-		  $("#VideoDialog").dialog({
-			  autoOpen: false,
-			  show: "blind",
-			  hide: "blind",
-			  resizable: false,
-			  height: 410,
-			  width: 500,
-			  modal: true
-		  });
+              $("#VideoDialog").dialog({
+                  autoOpen: false,
+                  show: "blind",
+                  hide: "blind",
+                  resizable: false,
+                  height: 410,
+                  width: 500,
+                  modal: true
+              });
 
-	  });
+          });
 
-</script>*@
+    </script>*@
 
 
 <script type="text/jscript">
@@ -86,7 +86,7 @@
 
         $(document).on("click", "button[name='DeleteButton']", function (e) {
             e.preventDefault();
-             
+
             var ResponseId = $(this).attr("value");
             var SessionTimeOut = $('#SYSTEM_SESSION_TIMEOUT_HIDDEN').val() * 60000;
 
@@ -129,7 +129,7 @@
                    else
                         {
                         UnLockRecordForDelete(ResponseId);
-                
+
 
                         }
 
@@ -154,9 +154,7 @@
 
 
 
-        $("button[class*='metro-tile']").click(function (e) {
-            ShowSppiner();
-           
+    $("button[class*='metro-tile']").click(function (e) {
         $("#dropdown-2").val( $("#FORM_SelectedOrgId_HIDDEN").val());
         e.preventDefault();
         if ('@Model.SelectedForm' == "") {
@@ -212,7 +210,6 @@
             //            ReadResponses($(this).attr('data-FormId'), 1, '', '');
             //return page to the top when a form is selected if the list of forms is too long.
             $("html, body").animate({ scrollTop: 0 }, "slow");
-           // CloseSppiner()
             return false;
         });
 
@@ -294,7 +291,7 @@
 
         //Sort by Logic for ASC and DESC button clicks
         $(document).on("click", "button[id='ResetSort']", function (e) {
-            
+
             e.preventDefault();
             $("#right").show();
             var formid = $('#hidFormId').val();
@@ -552,10 +549,10 @@
 
         // start the idle timer plugin
         $.idleTimeout('#TimeOutdialog', 'div.ui-dialog-buttonpane button:first', {
-            //idleAfter:  840 ,// 900,
-            //pollingInterval: 2,
+            idleAfter:  840 ,// 900,
+            pollingInterval: 2,
             keepAliveURL: 'keepalive.php',
-            //serverResponseEquals: 'OK',
+            serverResponseEquals: 'OK',
             onTimeout: function () {
                 //window.location = "timeout.htm";
                 window.location = '@Url.Action("Index","Login")';
@@ -633,7 +630,7 @@
         }
     }
     function ReadResponse(ActionUrl) {
-        ShowSppiner();
+
         var Url = window.location.pathname;
         var Formid = "";
         if (Url.indexOf("/") != -1) {
@@ -653,11 +650,10 @@
 
         function successFunc(data, status) {
             $('#right').html(data);
-            CloseSppiner();
+
         }
 
         function errorFunc() {
-            CloseSppiner();
             alert('error');
         }
 
@@ -665,7 +661,6 @@
 
     function GetSettings() {
         var ActionUrl = '@Url.Action("GetSettings","Home")' + '?formid=' + $("#FORM_ID_HIDDEN").val();
-        ShowSppiner();
         $.ajax({
             url: ActionUrl,
             type: 'GET',
@@ -679,7 +674,7 @@
 
         function successFunc(data, status) {
             $('#right').html(data);
-            CloseSppiner();
+
         }
 
         function errorFunc() {
@@ -712,7 +707,7 @@
 
     }
     function SaveSettings() {
-        ShowSppiner();
+
         var validation = true;
         $('.SelectedColumns').each(function () {
 
@@ -743,7 +738,6 @@
 
         }
         else {
-            CloseSppiner();
             alert('User should select at least one column for each form.');
             $('select.SelectedColumns option').focus();
         }
@@ -774,11 +768,9 @@
                 $('#' + FormId).removeClass("metro-prod")
                 $('#' + FormId).addClass("metro-staging");
             }
-            CloseSppiner();
         }
 
         function errorFunc() {
-            CloseSppiner();
             alert('error');
         }
 
@@ -825,7 +817,7 @@
                 // if time elapsed is less the   system timeout
                // alert("loggedInUserId " + loggedInUserId)
               //  alert("data.LastActiveUserId " + data.LastActiveUserId)
-                if (EditingDuration <= SessionTimeOut && data.LastActiveUserId>0 && loggedInUserId != data.LastActiveUserId) {
+                if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
                     alert("This record is being edited by another user.");
                 }
                 else {
@@ -875,8 +867,7 @@
 
 
 
-        var ActionUrl = '@Url.Action("UnLock", "Home")' + '/' + ResponseId+'/False';
-        
+        var ActionUrl = '@Url.Action("UnLock", "Home")' + '?responseid=' + ResponseId;
         $.ajax({
             url: ActionUrl,
             type: 'POST',
@@ -894,8 +885,8 @@
                 $("#exitdialog").dialog("open");
             }
             else{
-                
-                alert('This record is being edited by another user.');              
+
+                alert('Cannot Delete Records in Inprogress State');
             }
         }
 
@@ -926,29 +917,6 @@
             alert('error');
         }
     }
-    function ShowSppiner() {
-        var validate = $('#formsList').validationEngine('validate');
-
-        if (validate) {
-            if (open) {
-                $('BODY').jLoadingOverlay('close');
-                open = false;
-            }
-            else {
-                $('BODY').jLoadingOverlay('');
-                open = true;
-            }
-        }
-        $("#parent-selector :input").attr("disabled", true);
-    }
-    function CloseSppiner() {
-
-        $('BODY').jLoadingOverlay('close');
-        open = false;
-
-        $("#parent-selector :input").attr("disabled", false);
-    }
-
 </script>
 <script>
 	$(document).ajaxStop(function () {
@@ -960,13 +928,13 @@
              // $("#right").height(leftHeight)
              $("#left").height(rightHeight)
           }
-		else 
+		else
         {
-           // $("#left").height(rightHeight) 
+           // $("#left").height(rightHeight)
         }
 	});
 	function msToTime(ms) {
-	    
+
 	    var hours = Math.floor(ms / 3600000); // 1 Hour = 36000 Milliseconds
 	    var minutes = Math.floor((ms % 3600000) / 60000); // 1 Minutes = 60000 Milliseconds
 	    var seconds = Math.floor(((ms % 360000) % 60000) / 1000); // 1 Second = 1000 Milliseconds
@@ -979,116 +947,121 @@
 	}
 </script>
 <div id="pageHeader">
-	<div id="pageTitle">
-            <h2 style="margin:3px 0px 0px 5px">
-                Home
-            </h2>
-	</div>
- 
-	
-	<div id="userwelcome">
-		Welcome <strong>@Model.UserFirstName&nbsp;@Model.UserLastName </strong>&nbsp; | &nbsp;
-	  @*  <a href="#">Log Out</a>*@
-	  
-     @if ( Model.UserHighestRole == 3)
-      {
-      @Html.ActionLink("Site Administration", "OrgList", "AdminOrganization", null, null);
-       <span>&nbsp; | &nbsp;</span> 
-      }
-      
-      @if (Model.UserHighestRole == 2)
-      {
-      @Html.ActionLink("Site Administration", "UserList", "AdminUser", null, null);
-       <span>&nbsp; | &nbsp;</span> 
-      }
-@if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
-{
-    if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
-    {
-        <a href="http://www.cdc.gov/epiinfo/cloud/index.html">Log Out</a>
+    <div id="pageTitle">
+        <h2 style="margin:3px 0px 0px 5px">
+            Home
+        </h2>
+    </div>
 
-    }
-    else
-    {
-	      @Html.ActionLink("Log Out", "LogOut", "Home", null, null)	
+
+    <div id="userwelcome">
+        Welcome <strong>@Model.UserFirstName&nbsp;@Model.UserLastName </strong>&nbsp; | &nbsp;
+        @*  <a href="#">Log Out</a>*@
+
+        @if (Model.UserHighestRole == 3)
+        {
+            @Html.ActionLink("Site Administration", "OrgList", "AdminOrganization", null, null);
+            <span>&nbsp; | &nbsp;</span>
         }
-    }
-	</div>
-	<div style="clear: both;">
-	</div>
+
+        @if (Model.UserHighestRole == 2)
+        {
+            @Html.ActionLink("Site Administration", "UserList", "AdminUser", null, null);
+            <span>&nbsp; | &nbsp;</span>
+        }
+        @if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
+        {
+            if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"].ToUpper() == "TRUE")
+            {
+                <a href="http://www.cdc.gov/epiinfo/cloud/index.html">Log Out</a>
+
+            }
+            else
+            {
+                @Html.ActionLink("Log Out", "LogOut", "Home", null, null)
+            }
+        }
+    </div>
+    <div style="clear: both;">
+    </div>
 </div>
 <div id="content" style="@*margin-bottom: 200px;*@ padding-left: 10px; min-height: 375px; min-width:1200px; margin: 0 !important;">
 
-	@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formsList" }))
-	{
-		
-	
-		<div class="section group" id="main">
-			<div id="left" class="col span_1_of_3" style="width: 317px !important; margin:0 !important;">
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formsList" }))
+    {
+
+
+        <div class="section group" id="main">
+            <div id="left" class="col span_1_of_3" style="width: 317px !important; margin:0 !important;">
                 <div id="leftarrangeby" style="float: left; vertical-align: middle; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 5px solid White; vertical-align: middle;">
-		            <span class="css3-metro-dropdown">
-			            <select id="dropdown-2" style="width: 172px;">
-			               @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
-                           @foreach(var item in Model.OrganizationList){
-				            <option value="@item.OrganizationId">@item.Organization</option>
-                               }
-				
-				            @*	<option value="3">Last Saved Forms First</option>*@
-			            </select>
-		            </span>
                     <span class="css3-metro-dropdown">
-			            <select id="dropdown-1" style="width: 131px;">
-			               @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
-				            <option value="1">My Forms</option>
-				            <option value="2">Forms Assigned to Me</option>
+                        <select id="dropdown-2" style="width: 172px;">
+                            @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
+                            @foreach (var item in Model.OrganizationList)
+                            {
+                                <option value="@item.OrganizationId">@item.Organization</option>
+                            }
+
+                            @*	<option value="3">Last Saved Forms First</option>*@
+                        </select>
+                    </span>
+                    <span class="css3-metro-dropdown">
+                        <select id="dropdown-1" style="width: 131px;">
+                            @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
+                            <option value="1">My Forms</option>
+                            <option value="2">Forms Assigned to Me</option>
                             <option value="4">Forms Shared with Me</option>
-				            <option value="3" selected="selected">All Forms</option>
-				            @*	<option value="3">Last Saved Forms First</option>*@
-			            </select>
-		            </span>
-	            </div>
-				@Html.Partial("ListForms", Model.FormList)
+                            <option value="3" selected="selected">All Forms</option>
+                            @*	<option value="3">Last Saved Forms First</option>*@
+                        </select>
+                    </span>
+                </div>
+                @Html.Partial("ListForms", Model.FormList)
                 <div id="rightlegend" style="font-size: 9pt; vertical-align: baseline; color:#fff; margin-top: 15px;">
-		            <div id="Div1" style="">
-			            <img alt="" src="~/Content/images/designlegend1.png" align="middle" style="width: 16px;
+                    <div id="Div1" style="">
+                        <img alt="" src="~/Content/images/designlegend1.png" align="middle" style="width: 16px;
 				            vertical-align: middle;" />
-			            My Forms</div>
-		            <div id="Div2" style="">
-			            <img alt="" src="~/Content/images/collectlegend1.png" align="middle" style="width: 16px;
+                        My Forms
+                    </div>
+                    <div id="Div2" style="">
+                        <img alt="" src="~/Content/images/collectlegend1.png" align="middle" style="width: 16px;
 				            vertical-align: middle;" />
-			            Forms Assigned to Me</div>
+                        Forms Assigned to Me
+                    </div>
                     <div id="Div6" style="">
                         <img alt="" src="~/Content/images/collectlegend2.png" align="middle" style="width: 16px;
 				            vertical-align: middle;" />
                         Forms Shared with Me
                     </div>
-                     
-		            <div id="Div4" style="">
-			            <img alt="" src="~/Content/images/prod1.png" align="middle" style="width: 16px;
-				            vertical-align: middle;" />
-			            Forms in Production</div>
-		            <div id="Div3" style="">
-			            <img alt="" src="~/Content/images/staging1.png" align="middle" style="width: 16px;
-				            vertical-align: middle;" />
-			            Forms in Staging</div>
-	            </div>
-			</div>
-			<div id="right" class="col span_1_of_3" style="background: white; min-width: 800px; margin:0 !important;">
-			   @* @Html.Partial("ListResponses", Model)*@
-			</div>
-		  <div style=""clear:both"></div>
-		</div>
-	}
-	<div id="settingscontent" style="height:0;">
-	   
-	</div>
-	<div id="exitdialog" title="Delete Record" >
 
-			
-			   <p style="font-size:1.20em; font-weight:600;">Are you sure you want to delete this record? </p>
-				
-			 
-		   </div>
+                    <div id="Div4" style="">
+                        <img alt="" src="~/Content/images/prod1.png" align="middle" style="width: 16px;
+				            vertical-align: middle;" />
+                        Forms in Production
+                    </div>
+                    <div id="Div3" style="">
+                        <img alt="" src="~/Content/images/staging1.png" align="middle" style="width: 16px;
+				            vertical-align: middle;" />
+                        Forms in Staging
+                    </div>
+                </div>
+            </div>
+            <div id="right" class="col span_1_of_3" style="background: white; min-width: 800px; margin:0 !important;">
+                @* @Html.Partial("ListResponses", Model)*@
+            </div>
+            <div style="" clear:both"></div>
+        </div>
+    }
+    <div id="settingscontent" style="height:0;">
+
+    </div>
+    <div id="exitdialog" title="Delete Record">
+
+
+        <p style="font-size:1.20em; font-weight:600;">Are you sure you want to delete this record? </p>
+
+
+    </div>
     <div id="ConcurrencyDialog" title="Record being Edited">
 
         <div id="ConcurrencyMessage">
@@ -1104,14 +1077,14 @@
         </div>
     </div>
 </div>
- <div id="TimeOutdialog" title="Your session is about to expire!">
-				<p>
-					<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
-					You will be logged off in <span id="dialog-countdown" style="font-weight:bold"></span>
-				</p>
+<div id="TimeOutdialog" title="Your session is about to expire!">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>
+        You will be logged off in <span id="dialog-countdown" style="font-weight:bold"></span>
+    </p>
 
-				<p>Do you want to continue your session?</p>
-			 </div>
+    <p>Do you want to continue your session?</p>
+</div>
 <input id="FORM_ID_HIDDEN" type="hidden" />
 <input id="FORM_MODE_HIDDEN" type="hidden" />
 <input id="FORM_SELECTED_HIDDEN" type="hidden" />
@@ -1119,9 +1092,9 @@
 <input id="FORM_SORTORDER_HIDDEN" type="hidden" />
 <input id="FORM_SORTFIELD_HIDDEN" type="hidden" />
 <input id="FORM_SelectedOrgId_HIDDEN" type="hidden" />
-<input id="SYSTEM_SESSION_TIMEOUT_HIDDEN" type="hidden"  value="@Session.Timeout"/>
+<input id="SYSTEM_SESSION_TIMEOUT_HIDDEN" type="hidden" value="@Session.Timeout" />
 
 
-@*</div>  
-  </div> *@ 
-		 
+@*</div>
+    </div> *@
+

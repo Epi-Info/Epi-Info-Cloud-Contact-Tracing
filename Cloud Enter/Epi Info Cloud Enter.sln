@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D97BB9D-8A5E-4D42-9B43-C8677E570D8F}"
 	ProjectSection(SolutionItems) = preProject
@@ -128,6 +128,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EpiCloudSetupTemplate", "Ep
 	ProjectSection(SolutionItems) = preProject
 		Parameters.json = Parameters.json
 		Template.json = Template.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScript", "SQLScript", "{AB22A2DA-9469-420E-8FFB-638F7FB1CFBA}"
+	ProjectSection(SolutionItems) = preProject
+		EpiCloudDataCatpuerSqlScript.sql = EpiCloudDataCatpuerSqlScript.sql
 	EndProjectSection
 EndProject
 Global
@@ -1518,5 +1523,6 @@ Global
 		{5D11C9CE-FD71-49B9-98A6-21B6D8571E18} = {B7914E06-C65D-4677-8290-ED9FDD1BC0F9}
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 		{83720B53-704A-41D9-9EFE-36225AA249CA} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
+		{AB22A2DA-9469-420E-8FFB-638F7FB1CFBA} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 	EndGlobalSection
 EndGlobal
