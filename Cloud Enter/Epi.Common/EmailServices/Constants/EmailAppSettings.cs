@@ -59,7 +59,7 @@ namespace Epi.Common.EmailServices.Constants
 
         public static bool GetBoolValue(this string key)
         {
-            return AttributeHelper.IsValueEncrypted(key);
+            return AttributeHelper.GetBoolValue(key);
         }
 
         public static int GetIntValue(this string key)
