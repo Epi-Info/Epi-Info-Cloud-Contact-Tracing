@@ -494,16 +494,28 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult Delete(string responseId)
         {
-            SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
-            surveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = responseId });
-            string Id = Session[SessionKeys.UserId].ToString();
-            surveyAnswerRequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Id);
+            var rootFormId = Session[SessionKeys.RootFormId].ToString();
+            string encryptedUserId = Session[SessionKeys.UserId].ToString();
+            int userId = SurveyHelper.GetDecryptUserId(encryptedUserId);
+            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
+            var responseContext = new ResponseContext
+            {
+                ResponseId = responseId,
+                RootResponseId = responseId,
+                FormId = rootFormId,
+                UserOrgId = orgId,
+                UserId = userId
+            }.ResolveMetadataDependencies() as ResponseContext;
+
+            SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
+            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.Criteria.UserOrganizationId = orgId;
+            surveyAnswerRequest.Criteria.UserId = userId;
             surveyAnswerRequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
-            surveyAnswerRequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
-            surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
+            surveyAnswerRequest.Criteria.SurveyId = rootFormId;
             surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
             surveyAnswerRequest.Action = RequestAction.Delete;
-            SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
+            SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);                      
             return Json(string.Empty);
         }
 
