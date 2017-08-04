@@ -264,16 +264,11 @@ namespace Epi.Web.EF
             Guid Id = new Guid(FormId);
             try
             {
-                using (var context = DataObjectFactory.CreateContext())
-                {
-                    List<string> columns = (from c in context.SurveyMetaDataTransforms
-                                            where c.SurveyId == Id &&
-                                            //(c.FieldTypeId != 2 && c.FieldTypeId != 3 && c.FieldTypeId != 17 && c.FieldTypeId != 20 && c.FieldTypeId != 21) //filter non-data fields.
-                                            (c.FieldTypeId != 2 && c.FieldTypeId != 3 && c.FieldTypeId != 4 && c.FieldTypeId != 13 && c.FieldTypeId != 20 &&  c.FieldTypeId != 21) //filter non-data fields.
-                                            orderby c.FieldName
-                                            select c.FieldName).ToList();
-                    return columns;
-                }
+                List<string> columns = GetFieldDigests(FormId)
+                               .Where(f => !FieldDigest.NonDataFieldTypes.Any(t => t == f.FieldType))
+                               .Select(f =>  f.TrueCaseFieldName).ToList();
+                return columns;
+                             
             }
             catch (Exception ex)
             {
