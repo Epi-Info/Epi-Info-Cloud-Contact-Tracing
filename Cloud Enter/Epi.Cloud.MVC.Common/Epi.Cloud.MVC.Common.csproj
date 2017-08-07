@@ -91,6 +91,7 @@
     <Compile Include="Models\UserResetPasswordModel.cs" />
     <Compile Include="Utilities\ExceptionMessage.cs" />
     <Compile Include="Utilities\FormProvider.cs" />
+    <Compile Include="Utilities\FormSetting.cs" />
     <Compile Include="Utilities\MobileFormProvider.cs" />
     <Compile Include="Utilities\UserSession.cs" />
     <Compile Include="Utilities\SurveyHelper.cs" />

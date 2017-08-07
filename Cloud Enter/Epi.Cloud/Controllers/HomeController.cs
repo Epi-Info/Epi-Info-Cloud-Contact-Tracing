@@ -15,6 +15,7 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.MVC.Constants;
 using Epi.Cloud.MVC.Extensions;
 using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utilities;
 using Epi.Cloud.MVC.Utility;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
@@ -870,22 +871,22 @@ namespace Epi.Cloud.MVC.Controllers
                 formSettingReq.FormInfo.UserId = userId;
                 FormSettingDTO formSetting = new FormSettingDTO();
                 formSetting.FormId = formsHierarchyDTO.FormId;
-                formSetting.ColumnNameList = GetDictionary(this.Request.Form["SelectedColumns_" + formsHierarchyDTO.FormId]);
-                formSetting.AssignedUserList = GetDictionary(this.Request.Form["SelectedUser"]);
-                formSetting.SelectedOrgList = GetDictionary(this.Request.Form["SelectedOrg"]);
-                formSetting.IsShareable = GetBoolValue(this.Request.Form["IsShareable"]);
-                formSetting.SelectedDataAccessRule = int.Parse(this.Request.Form["DataAccessRuleId"]);
+                formSetting.ColumnNameList = GetDictionary(this.Request.Form[FormSetting.Key.SelectedColumns_ + formsHierarchyDTO.FormId]);
+                formSetting.AssignedUserList = GetDictionary(this.Request.Form[FormSetting.Key.SelectedUser]);
+                formSetting.SelectedOrgList = GetDictionary(this.Request.Form[FormSetting.Key.SelectedOrg]);
+                formSetting.IsShareable = GetBoolValue(this.Request.Form[FormSetting.Key.IsShareable]);
+                formSetting.SelectedDataAccessRule = int.Parse(this.Request.Form[FormSetting.Key.DataAccessRuleId]);
 
-                if (!string.IsNullOrEmpty(this.Request.Form["SoftDeleteForm"]) && this.Request.Form["SoftDeleteForm"].ToUpper() == "ON")
+                if (!string.IsNullOrEmpty(this.Request.Form[FormSetting.Key.SoftDeleteForm]) && this.Request.Form[FormSetting.Key.SoftDeleteForm].ToUpper() == "ON")
                 {
                     formSetting.IsDisabled = true;
                 }
-                if (!string.IsNullOrEmpty(this.Request.Form["RemoveTestData"]) && this.Request.Form["RemoveTestData"].ToUpper() == "ON")
+                if (!string.IsNullOrEmpty(this.Request.Form[FormSetting.Key.RemoveTestData]) && this.Request.Form[FormSetting.Key.RemoveTestData].ToUpper() == "ON")
                 {
                     formSetting.DeleteDraftData = true;
                 }
                 formSettingReq.FormSetting.Add(formSetting);
-                formSettingReq.FormInfo.IsDraftMode = GetBoolValue(this.Request.Form["Mode"]);
+                formSettingReq.FormInfo.IsDraftMode = GetBoolValue(this.Request.Form[FormSetting.Key.Mode]);
             }
             FormSettingResponse formSettingResponse = _surveyFacade.SaveSettings(formSettingReq);
 
@@ -898,7 +899,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             if (isMobileDevice == false)
             {
-                if (!string.IsNullOrEmpty(this.Request.Form["SoftDeleteForm"]) && this.Request.Form["SoftDeleteForm"].ToUpper() == "ON")
+                if (!string.IsNullOrEmpty(this.Request.Form[FormSetting.Key.SoftDeleteForm]) && this.Request.Form[FormSetting.Key.SoftDeleteForm].ToUpper() == "ON")
                 {
                     return Json(null);
                 }

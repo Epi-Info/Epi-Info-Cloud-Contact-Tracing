@@ -68,7 +68,7 @@
  
     </script>
     <div id="userwelcome">
-        Welcome <strong>@Session[Epi.Cloud.MVC.Constants.UserSession.Key.UserFirstName] @Session[Epi.Cloud.MVC.Constants.UserSession.Key.UserLastName]</strong>&nbsp;
+        Welcome <strong>@Session[UserSession.Key.UserFirstName] @Session[UserSession.Key.UserLastName]</strong>&nbsp;
         | &nbsp; @*  <a href="#">Log Out</a>*@
         @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;
 @if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)

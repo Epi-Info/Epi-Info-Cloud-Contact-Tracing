@@ -112,7 +112,7 @@
     $(document).ready(function () {
         $("div#demoheader").css({ "margin": "-2px 0px 0px 10px" });
        
-            if ('@Session["IsDemoMode"]' == "TRUE") 
+            if ('@Session[UserSession.Key.IsDemoMode]' == "TRUE") 
             {
                 //  disableElements($('#content').children());
                 $('[name="input"]').attr("disabled", true);
