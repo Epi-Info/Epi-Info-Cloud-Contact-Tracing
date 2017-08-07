@@ -4,7 +4,7 @@ using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
     public class FormResponseInfoModel
     {

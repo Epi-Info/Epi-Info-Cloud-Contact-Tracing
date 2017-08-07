@@ -8,13 +8,14 @@ using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Constants;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
 using Epi.Common.Core.DataStructures;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class FinalController : Controller
+    public class FinalController : BaseSurveyController
     {
         private readonly ISurveyFacade _isurveyFacade;
 
@@ -71,14 +72,14 @@ namespace Epi.Web.MVC.Controllers
 
                 if (isMobileDevice == false)
                 {
-                    isMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+                    isMobileDevice = Epi.Cloud.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
                 }
 
                 FormsAuthentication.SetAuthCookie("BeginSurvey", false);
                 Guid responseId = Guid.NewGuid();
-                string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
-                int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-                int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+                string rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
+                int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+                int userId = GetIntSessionValue(UserSession.Key.UserId);
 
                 var responseContext = new ResponseContext
                 {

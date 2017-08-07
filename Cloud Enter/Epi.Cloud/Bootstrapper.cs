@@ -1,11 +1,11 @@
 #define useEF_FormSettingFacade
 
 using System.Web.Mvc;
-using Epi.Web.MVC.Utility;
+using Epi.Cloud.MVC.Utility;
 using Microsoft.Practices.Unity;
 using Unity.Mvc3;
 
-namespace Epi.Web.MVC
+namespace Epi.Cloud.MVC
 {
     public static class Bootstrapper
     {

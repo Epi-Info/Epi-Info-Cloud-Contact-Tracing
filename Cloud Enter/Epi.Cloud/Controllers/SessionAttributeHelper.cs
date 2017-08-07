@@ -1,0 +1,190 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using Epi.Common.Attributes;
+
+namespace Epi.Cloud.Common
+{
+    public class SessionAttributesHelper
+        {
+            public SessionAttributesHelper(Type keyType)
+            {
+                _keyType = keyType;
+                _fields = keyType.GetFields();
+            }
+
+            private FieldInfo[] _fields;
+            private Type _keyType;
+
+            public bool IsValueEncrypted(string key)
+            {
+                var encryptedAttribute = FindEncryptedAttribute(key);
+                var isEncrypted = encryptedAttribute.IsEncrypted;
+
+                return isEncrypted;
+            }
+
+            public bool GetBoolValue(string key, bool decryptIfEncrypted = true)
+            {
+                bool value = false;
+                try
+                {
+                    var stringValue = Session[key];
+                    if (!string.IsNullOrWhiteSpace(stringValue))
+                    {
+                        stringValue = DecryptIfEncrypted(key, stringValue, decryptIfEncrypted);
+                        return bool.TryParse(stringValue, out value) ? value : ReturnDefaultBoolValue(key);
+                    }
+                    else
+                    {
+                        return ReturnDefaultBoolValue(key);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ReturnDefaultBoolValue(key, ex);
+                }
+            }
+
+            public int GetIntValue(string key, bool decryptIfEncrypted = true)
+            {
+                int value = 0;
+                try
+                {
+                    var stringValue = Session[key];
+                    if (!string.IsNullOrWhiteSpace(stringValue))
+                    {
+                        stringValue = DecryptIfEncrypted(key, stringValue, decryptIfEncrypted);
+                        return Int32.TryParse(stringValue, out value) ? value : ReturnDefaultIntValue(key);
+                    }
+                    else
+                    {
+                        return ReturnDefaultIntValue(key);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ReturnDefaultIntValue(key, ex);
+                }
+            }
+
+            public string GetStringValue(string key, bool decryptIfEncrypted = true)
+            {
+                string value = string.Empty;
+                try
+                {
+                    value = Session[key];
+                    if (value == null)
+                    {
+                        return ReturnDefaultStringValue(key);
+                    }
+                    else
+                    {
+                        value = DecryptIfEncrypted(key, value, decryptIfEncrypted);
+                        return value;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ReturnDefaultStringValue(key, ex);
+                }
+            }
+
+            private string DecryptIfEncrypted(string key, string value, bool decryptIfEncrypted = true)
+            {
+                if (decryptIfEncrypted && IsValueEncrypted(key))
+                {
+                    try
+                    {
+                        value = Cryptography.Decrypt(value);
+                    }
+                    catch (Exception ex)
+                    {
+                        lock (_encryptedValueAttributes)
+                        {
+                            // If an exception occurrs assume that the value is not encrypted;
+                            _encryptedValueAttributes[key] = EncryptedValueAttribute.False;
+                        }
+                    }
+                }
+
+                return value;
+            }
+
+
+            private Dictionary<string, EncryptedValueAttribute> _encryptedValueAttributes = new Dictionary<string, EncryptedValueAttribute>();
+
+            private EncryptedValueAttribute FindEncryptedAttribute(string key)
+            {
+                EncryptedValueAttribute encryptedValueAttribute = EncryptedValueAttribute.False;
+                lock (_encryptedValueAttributes)
+                {
+                    if (!_encryptedValueAttributes.TryGetValue(key, out encryptedValueAttribute))
+                    {
+                        var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
+                        if (field != null)
+                        {
+                            encryptedValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(EncryptedValueAttribute)).FirstOrDefault() as EncryptedValueAttribute;
+                        }
+                        encryptedValueAttribute = encryptedValueAttribute ?? EncryptedValueAttribute.False;
+                        _encryptedValueAttributes.Add(key, encryptedValueAttribute);
+                    }
+                }
+                return encryptedValueAttribute;
+            }
+
+
+            private DefaultValueAttribute FindDefaultValueAttribute(string key)
+            {
+                DefaultValueAttribute defaultValueAttribute = null;
+
+                var field = _fields.Where(f => f.GetRawConstantValue().ToString() == key).SingleOrDefault();
+                if (field != null)
+                {
+                    defaultValueAttribute = field.GetCustomAttributes(false).Where(a => a.GetType() == typeof(DefaultValueAttribute)).FirstOrDefault() as DefaultValueAttribute;
+                }
+                return defaultValueAttribute;
+            }
+
+            private bool ReturnDefaultBoolValue(string key, Exception ex = null)
+            {
+                var defaultValueAttribute = FindDefaultValueAttribute(key);
+
+                if (defaultValueAttribute != null)
+                {
+                    var defaultValue = defaultValueAttribute.Value as bool?;
+                    if (defaultValue.HasValue) return defaultValue.Value;
+                }
+
+                throw new SettingsPropertyNotFoundException(key, ex);
+            }
+
+            private string ReturnDefaultStringValue(string key, Exception ex = null)
+            {
+                var defaultValueAttribute = FindDefaultValueAttribute(key);
+
+                if (defaultValueAttribute != null)
+                {
+                    var defaultValue = defaultValueAttribute.Value.ToString();
+                    if (defaultValue != null) return defaultValue;
+                }
+
+                throw new SettingsPropertyNotFoundException(key, ex);
+            }
+
+            private int ReturnDefaultIntValue(string key, Exception ex = null)
+            {
+                var defaultValueAttribute = FindDefaultValueAttribute(key);
+
+                if (defaultValueAttribute != null)
+                {
+                    var defaultValue = defaultValueAttribute.Value as int?;
+                    if (defaultValue.HasValue) return defaultValue.Value;
+                }
+
+                throw new SettingsPropertyNotFoundException(key, ex);
+            }
+        }
+    }

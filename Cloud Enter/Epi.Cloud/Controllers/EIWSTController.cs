@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Reflection;
 using System.Web.Mvc;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Models;
 using Epi.Common.EmailServices;
 using Epi.Common.EmailServices.Constants;
-using Epi.Common.Security;
-using Epi.Web.MVC.Models;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class EIWSTController : Controller
+    public class EIWSTController : BaseSurveyController
     {
         private readonly ISurveyFacade _isurveyFacade;
 

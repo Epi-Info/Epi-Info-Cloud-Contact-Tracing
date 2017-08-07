@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
     public class MetadataAdmin
     {

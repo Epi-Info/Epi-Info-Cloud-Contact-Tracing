@@ -7,17 +7,17 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Constants;
 using Epi.Cloud.MVC.Extensions;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class AdminUserController : Controller
+    public class AdminUserController : BaseSurveyController
     {
-        private readonly ISurveyFacade _surveyFacade;
         private readonly ISecurityFacade _securityFacade;
 
         public AdminUserController(ISurveyFacade surveyFacade,
@@ -32,14 +32,13 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            int orgId = -1;
-            int.TryParse((Session[SessionKeys.CurrentOrgId] ?? string.Empty).ToString(),out orgId);           
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId, -1);
             UserOrgModel userOrgModel = GetUserInfoList(orgId);
-            userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
-            if (Session[SessionKeys.CurrentOrgId] == null)
+            userOrgModel.UserHighestRole = GetIntSessionValue(UserSession.Key.UserHighestRole);
+            if (IsSessionValueNull(UserSession.Key.CurrentOrgId))
             {
-                Session[SessionKeys.CurrentOrgId] = userOrgModel.OrgList[0].OrganizationId;
-                Session[SessionKeys.IsCurrentOrgHostOrg] = userOrgModel.OrgList[0].IsHostOrganization;
+                SetSessionValue(UserSession.Key.CurrentOrgId, userOrgModel.OrgList[0].OrganizationId);
+                SetSessionValue(UserSession.Key.IsCurrentOrgHostOrg, userOrgModel.OrgList[0].IsHostOrganization);
             }
             
             return View(ViewActions.UserList, userOrgModel);
@@ -52,7 +51,7 @@ namespace Epi.Web.MVC.Controllers
             ViewBag.Version = version;
             UserModel userModel = new UserModel();
             UserRequest request = new UserRequest();
-            int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out orgId);
+            orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
             if (isEditMode)
             {
                 request.Organization = new OrganizationDTO();
@@ -78,7 +77,7 @@ namespace Epi.Web.MVC.Controllers
             UserResponse response = new UserResponse();
             UserRequest request = new UserRequest();
             string messageTemplate;
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
             try
             {
                 if (ModelState.IsValid)
@@ -89,7 +88,7 @@ namespace Epi.Web.MVC.Controllers
 
                         request.User = userModel.ToUserDTO();
 
-                         int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
+                        request.CurrentOrg = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
                         request.CurrentUser = userId;
                         response = _securityFacade.SetUserInfo(request);
@@ -104,7 +103,7 @@ namespace Epi.Web.MVC.Controllers
                         request.Action = RequestAction.None;
                         request.User = userModel.ToUserDTO();
 
-                        int.TryParse(Session[SessionKeys.CurrentOrgId].ToString(), out request.CurrentOrg);
+                        request.CurrentOrg = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
                         request.CurrentUser = userId;
                         response = _securityFacade.SetUserInfo(request);
@@ -133,7 +132,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 throw ex;
             }
-            userOrgModel.UserHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            userOrgModel.UserHighestRole = GetIntSessionValue(UserSession.Key.UserHighestRole);
             return View(ViewActions.UserList, userOrgModel);
         }
 
@@ -149,21 +148,21 @@ namespace Epi.Web.MVC.Controllers
             UserOrgModel userOrgModel = GetUserInfoList(orgId);
 
             ViewBag.SelectedOrg = orgId;
-            Session[SessionKeys.CurrentOrgId] = orgId;
-            Session[SessionKeys.IsCurrentOrgHostOrg] = userOrgModel.OrgList[0].IsHostOrganization;
+            SetSessionValue(UserSession.Key.CurrentOrgId, orgId);
+            SetSessionValue(UserSession.Key.IsCurrentOrgHostOrg, userOrgModel.OrgList[0].IsHostOrganization);
 
             return PartialView("PartialUserList", userModel);
         }
 
         private UserOrgModel GetUserInfoList(int orgId = -1)
         {
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
             UserOrgModel userOrgModel = new UserOrgModel();
             try
             {
                 OrganizationRequest request = new OrganizationRequest();
                 request.UserId = userId;
-                request.UserRole = Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString());
+                request.UserRole = GetIntSessionValue(UserSession.Key.UserHighestRole);
                 OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
                 List<OrganizationModel> orgListModel = organizations.OrganizationList.ToOrganizationModelList();
                 userOrgModel.OrgList = orgListModel;

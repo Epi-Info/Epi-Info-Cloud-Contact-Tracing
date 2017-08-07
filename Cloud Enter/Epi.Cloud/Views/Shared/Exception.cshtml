@@ -1,6 +1,6 @@
 ﻿@using Epi.Cloud.Common.Constants
-@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.ExceptionModel
+@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.ExceptionModel
 @{
     ViewBag.Title = "Exception";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -39,9 +39,9 @@
     <div style="clear: both;">
     </div>
     <div id="relatenav" style="padding-bottom: 10px; display: inline-block; margin: 10px;">
-        @if (Session[SessionKeys.RootFormId] != null)
+        @if (Session[UserSession.Key.RootFormId] != null)
         {
-            @Html.ActionLink("Return to Home", "Index", "Home", new { surveyid = Session[SessionKeys.RootFormId] }, new { @class = "returnto" })
+            @Html.ActionLink("Return to Home", "Index", "Home", new { surveyid = Session[UserSession.Key.RootFormId] }, new { @class = "returnto" })
         }
         else
         {    
@@ -49,7 +49,7 @@
         }
         
     </div>
-    @if (Model != null && Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString()) > 1)
+    @if (Model != null && Convert.ToInt16(Session[UserSession.Key.UserHighestRole].ToString()) > 1)
     {
         <div style="margin: 10px">
             <a id="showhide" href="#">Show/Hide Details</a></div>

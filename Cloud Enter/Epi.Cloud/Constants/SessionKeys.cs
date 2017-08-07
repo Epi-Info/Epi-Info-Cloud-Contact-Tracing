@@ -1,6 +1,6 @@
-﻿namespace Epi.Web.MVC.Constants
+﻿namespace Epi.Cloud.MVC.Constants
 {
-    public struct SessionKeys
+    public struct Key
     {
         public const string CurrentFormId = "CurrentFormId";
         public const string CurrentOrgId = "CurrentOrgId";

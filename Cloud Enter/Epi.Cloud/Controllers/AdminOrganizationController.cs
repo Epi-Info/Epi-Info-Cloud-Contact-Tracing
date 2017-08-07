@@ -8,13 +8,14 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Constants;
 using Epi.Cloud.MVC.Extensions;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class AdminOrganizationController : Controller
+    public class AdminOrganizationController : BaseSurveyController
     {
         private ISurveyFacade _surveyFacade;
         private ISecurityFacade _securityFacade;
@@ -31,8 +32,8 @@ namespace Epi.Web.MVC.Controllers
         {
             string version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            int userHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            int userHighestRole = GetIntSessionValue(UserSession.Key.UserHighestRole);
             OrganizationRequest request = new OrganizationRequest();
             request.UserId = userId;
             request.UserRole = userHighestRole;
@@ -77,8 +78,8 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult OrgInfo(OrgAdminInfoModel orgAdminInfoModel)
         {
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            int userHighestRole = int.Parse(Session[SessionKeys.UserHighestRole].ToString());
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            int userHighestRole = GetIntSessionValue(UserSession.Key.UserHighestRole);
             string url = "";
             if (this.Request.UrlReferrer == null)
             {

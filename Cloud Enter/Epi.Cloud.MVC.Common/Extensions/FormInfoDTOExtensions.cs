@@ -3,7 +3,7 @@ using Epi.Cloud.Common.Constants;
 using Epi.FormMetadata.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 
 namespace Epi.Cloud.MVC.Extensions
 {

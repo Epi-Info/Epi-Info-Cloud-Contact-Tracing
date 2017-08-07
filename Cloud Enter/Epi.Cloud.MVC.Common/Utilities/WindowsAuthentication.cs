@@ -5,7 +5,7 @@ using System.Text;
 using System.Web.Hosting;
 
 
-namespace Epi.Web.MVC.Utility
+namespace Epi.Cloud.MVC.Utility
 {
     public static class WindowsAuthentication
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 using System.Linq;
 using Epi.Cloud.Common.DTO;
 

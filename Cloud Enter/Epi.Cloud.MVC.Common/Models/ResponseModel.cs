@@ -1,6 +1,6 @@
 ﻿using Epi.Cloud.Common.Criteria;
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
     public class ResponseModel
     {

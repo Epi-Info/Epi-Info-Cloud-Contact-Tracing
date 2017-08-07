@@ -34,6 +34,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Epi.Cloud\bin\EpiInfo.Plugin.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -91,6 +92,7 @@
     <Compile Include="Utilities\ExceptionMessage.cs" />
     <Compile Include="Utilities\FormProvider.cs" />
     <Compile Include="Utilities\MobileFormProvider.cs" />
+    <Compile Include="Utilities\UserSession.cs" />
     <Compile Include="Utilities\SurveyHelper.cs" />
     <Compile Include="Utilities\SurveyResponseBuilder.cs" />
     <Compile Include="Utilities\ValidateResponse.cs" />

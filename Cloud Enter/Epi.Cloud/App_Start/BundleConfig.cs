@@ -1,6 +1,6 @@
 ﻿using System.Web.Optimization;
 
-namespace Epi.Web.MVC
+namespace Epi.Cloud.MVC
 {
     public class BundleConfig
     {

@@ -4,7 +4,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.WebPages;
 
-namespace Epi.Web.MVC
+namespace Epi.Cloud.MVC
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801

@@ -1,7 +1,7 @@
 using System.Web.Mvc;
 using System.Web.WebPages;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
     public class ViewSwitcherController : Controller
     {

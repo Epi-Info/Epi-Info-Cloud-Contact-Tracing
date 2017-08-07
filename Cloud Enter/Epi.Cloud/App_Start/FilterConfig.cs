@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace Epi.Web.MVC
+namespace Epi.Cloud.MVC
 {
     public class FilterConfig
     {

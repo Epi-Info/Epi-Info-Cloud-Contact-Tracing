@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Epi.Cloud.Common.DTO;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 using Epi.Cloud.Common.Constants;
 
 namespace Epi.Cloud.MVC.Extensions
 {
     public static class SurveryAnswerExtensions
     {
-        public static Epi.Web.MVC.Models.ResponseModel ToResponseModel(this SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
+        public static Epi.Cloud.MVC.Models.ResponseModel ToResponseModel(this SurveyAnswerDTO item, List<KeyValuePair<int, string>> Columns)
         {
             ResponseModel ResponseModel = new ResponseModel();
 

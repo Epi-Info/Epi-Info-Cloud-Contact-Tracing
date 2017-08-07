@@ -12,7 +12,7 @@ using Epi.Cloud.Common.DTO;
 using MvcDynamicForms;
 using MvcDynamicForms.Fields;
 
-namespace Epi.Web.MVC.Utility
+namespace Epi.Cloud.MVC.Utility
 {
     public class FormProvider : MetadataAccessor
     {
