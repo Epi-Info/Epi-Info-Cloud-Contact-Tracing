@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
 using Epi.Cloud.MVC.Constants;
 using Epi.Common.Attributes;
@@ -59,17 +60,17 @@ namespace Epi.Cloud.MVC.Constants
             return SessionHelper.IsValueEncrypted(key);
         }
 
-        static public bool IsSessionValueNull(Controller controller, string key)
+        static public bool IsSessionValueNull(HttpSessionStateBase session, string key)
         {
-            return controller.Session[key] == null;
+            return session[key] == null;
         }
 
-        static public bool GetBoolSessionValue(Controller controller, string key, bool? defaultValue = null, bool decryptIfEncrypted = true)
+        static public bool GetBoolSessionValue(HttpSessionStateBase session, string key, bool? defaultValue = null, bool decryptIfEncrypted = true)
         {
             bool value = false;
             try
             {
-                object sessionValue = controller.Session[key];
+                object sessionValue = session[key];
                 if (sessionValue != null)
                 {
                     if (sessionValue is bool)
@@ -90,12 +91,12 @@ namespace Epi.Cloud.MVC.Constants
             }
         }
 
-        static public int GetIntSessionValue(Controller controller, string key, int? defaultValue = null, bool decryptIfEncrypted = true)
+        static public int GetIntSessionValue(HttpSessionStateBase session, string key, int? defaultValue = null, bool decryptIfEncrypted = true)
         {
             int value = 0;
             try
             {
-                object sessionValue = controller.Session[key];
+                object sessionValue = session[key];
                 if (sessionValue != null)
                 {
                     if (sessionValue is int)
@@ -117,12 +118,12 @@ namespace Epi.Cloud.MVC.Constants
             }
         }
 
-        static public string GetStringSessionValue(Controller controller, string key, string defaultValue = "~~~", bool decryptIfEncrypted = true)
+        static public string GetStringSessionValue(HttpSessionStateBase session, string key, string defaultValue = "~~~", bool decryptIfEncrypted = true)
         {
             string value = string.Empty;
             try
             {
-                object sessionValue = controller.Session[key];
+                object sessionValue = session[key];
                 if (sessionValue != null)
                 {
                     if (sessionValue is string)
@@ -142,15 +143,15 @@ namespace Epi.Cloud.MVC.Constants
             }
         }
 
-        static public object GetSessionValue(Controller controller, string key, object defaultValue = null)
+        static public object GetSessionValue(HttpSessionStateBase session, string key, object defaultValue = null)
         {
-            var value = controller.Session[key];
+            var value = session[key];
             if (value == null) value = defaultValue;
             return value;
         }
-        static public T GetSessionValue<T>(Controller controller, string key, T defaultValue = default(T)) where T : new()
+        static public T GetSessionValue<T>(HttpSessionStateBase session, string key, T defaultValue = default(T)) where T : new()
         {
-            var value = controller.Session[key];
+            var value = session[key];
             if (value is string && !string.IsNullOrWhiteSpace((string)value))
             {
                 if (IsValueEncrypted(key))
@@ -168,12 +169,12 @@ namespace Epi.Cloud.MVC.Constants
             return (T)value;
         }
 
-        static public void SetSessionValue<T>(Controller controller, string key, T value, bool dontEncrypt = false)
+        static public void SetSessionValue<T>(HttpSessionStateBase session, string key, T value, bool dontEncrypt = false)
         {
-            controller.Session[key] = dontEncrypt ? value : SessionHelper.EncryptIfShouldBeEncrypted(key, value);
+            session[key] = dontEncrypt ? value : SessionHelper.EncryptIfShouldBeEncrypted(key, value);
         }
 
-        static public void SetSessionObjectValue<T>(Controller controller, string key, T value) where T : new()
+        static public void SetSessionObjectValue<T>(HttpSessionStateBase session, string key, T value) where T : new()
         {
             if (value != null)
             {
@@ -181,23 +182,23 @@ namespace Epi.Cloud.MVC.Constants
                 {
                     var json = JsonConvert.SerializeObject(value);
                     var encryptedValue = Cryptography.Encrypt(json);
-                    controller.Session[key] = encryptedValue;
+                    session[key] = encryptedValue;
                 }
                 else
                 {
-                    controller.Session[key] = value;
+                    session[key] = value;
                 }
             }
         }
 
-        static public void RemoveSessionValue(Controller controller, string key)
+        static public void RemoveSessionValue(HttpSessionStateBase session, string key)
         {
-            controller.Session.Remove(key);
+            session.Remove(key);
         }
 
-        static public void ClearSession(Controller controller)
+        static public void ClearSession(HttpSessionStateBase session)
         {
-            controller.Session.Clear();
+            session.Clear();
         }
     }
 }

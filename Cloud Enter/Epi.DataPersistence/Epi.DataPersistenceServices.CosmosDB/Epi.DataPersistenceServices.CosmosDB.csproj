@@ -86,7 +86,7 @@
     <Compile Include="CosmosDBCRUD.FormSettings.cs" />
     <Compile Include="Extensions\DocumentDBExtensions.cs" />
     <Compile Include="DataStructures.FormSettings.cs" />
-    <Compile Include="Facades\DocDB_EF_FormSettingFacade.cs" />
+    <Compile Include="Facades\CosmosDB_EF_FormSettingFacade.cs" />
     <Compile Include="SurveyPersistenceFacade.cs" />
     <Compile Include="CosmosDBCRUD.FormResponse.Attachment.cs" />
     <Compile Include="CosmosDBCRUD.FormResponse.cs" />

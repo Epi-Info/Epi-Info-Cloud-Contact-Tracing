@@ -268,52 +268,52 @@ namespace Epi.Cloud.MVC.Controllers
 
         protected bool IsSessionValueNull(string key)
         {
-            return UserSession.IsSessionValueNull(this, key);
+            return UserSession.IsSessionValueNull(Session, key);
         }
 
         protected bool GetBoolSessionValue(string key, bool? defaultValue = null, bool decryptIfEncrypted = true)
         {
-            return UserSession.GetBoolSessionValue(this, key, defaultValue, decryptIfEncrypted);
+            return UserSession.GetBoolSessionValue(Session, key, defaultValue, decryptIfEncrypted);
         }
 
         protected int GetIntSessionValue(string key, int? defaultValue = null, bool decryptIfEncrypted = true)
         {
-            return UserSession.GetIntSessionValue(this, key, defaultValue, decryptIfEncrypted);
+            return UserSession.GetIntSessionValue(Session, key, defaultValue, decryptIfEncrypted);
         }
 
         protected string GetStringSessionValue(string key, string defaultValue = "~~~", bool decryptIfEncrypted = true)
         {
-            return UserSession.GetStringSessionValue(this, key, defaultValue, decryptIfEncrypted);
+            return UserSession.GetStringSessionValue(Session, key, defaultValue, decryptIfEncrypted);
         }
 
         protected object GetSessionValue(string key, object defaultValue = null)
         {
-            return UserSession.GetSessionValue(this, key, defaultValue);
+            return UserSession.GetSessionValue(Session, key, defaultValue);
         }
 
         protected T GetSessionValue<T>(string key, T defaultValue = default(T)) where T : new()
         {
-            return UserSession.GetSessionValue<T>(this, key, defaultValue);
+            return UserSession.GetSessionValue<T>(Session, key, defaultValue);
         }
 
         protected void SetSessionValue<T>(string key, T value, bool dontEncrypt = false)
         {
-            UserSession.SetSessionValue<T>(this, key, value, dontEncrypt);
+            UserSession.SetSessionValue<T>(Session, key, value, dontEncrypt);
         }
 
         protected void SetSessionObjectValue<T>(string key, T value) where T : new()
         {
-            UserSession.SetSessionObjectValue<T>(this, key, value);
+            UserSession.SetSessionObjectValue<T>(Session, key, value);
         }
 
         protected void RemoveSessionValue(string key)
         {
-            UserSession.RemoveSessionValue(this, key);
+            UserSession.RemoveSessionValue(Session, key);
         }
 
         protected void ClearSession()
         {
-            UserSession.ClearSession(this);
+            UserSession.ClearSession(Session);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Epi.Cloud.MVC
 #if useEF_FormSettingFacade
             container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.Cloud.Facades.EF_FormSettingFacade>();
 #else            
-            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.CosmosDB.Facades.DocDB_EF_FormSettingFacade>();
+            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.CosmosDB.Facades.CosmosDB_EF_FormSettingFacade>();
 #endif
             // Data Service Interfaces
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();
