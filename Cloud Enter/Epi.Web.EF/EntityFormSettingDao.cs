@@ -282,6 +282,7 @@ namespace Epi.Web.EF
 
             try
             {
+                int i = 0;
                 foreach (var org in selectedOrgList)
                 {
                     using (var context = DataObjectFactory.CreateContext())
@@ -289,8 +290,7 @@ namespace Epi.Web.EF
                         int orgId = int.Parse(org.Value);
 
                         var adminList = context.UserOrganizations.Where(x => x.OrganizationID == orgId && x.RoleId == Roles.Administrator && x.Active == true).ToList();
-
-                        int i = 0;
+                       
                         foreach (var item in adminList)
                         {
                             orgAdmins.Add(i++, item.User.EmailAddress);
