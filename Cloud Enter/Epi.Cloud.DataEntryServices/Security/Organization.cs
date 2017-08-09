@@ -143,8 +143,8 @@ namespace Epi.Web.BLL
                     Body.Append("\n\tStep 3: On the Options dialog, click on the “Cloud Enter” Tab.");
                     Body.Append("\n\tStep 4: On the Cloud Enter tab, enter the following information.");
 
-                    Body.Append("\n\t\t-Endpoint Address:" + AppSettings.GetStringValue(AppSettings.Key.EndpointAddress + "\n\t\t-Connect using Windows Authentication:  " + AppSettings.GetStringValue(AppSettings.Key.WindowAuthentication)));
-                    Body.Append("\n\t\t-Binding Protocol:" + AppSettings.GetStringValue(AppSettings.Key.BindingProtocol));
+                    //Body.Append("\n\t\t-Endpoint Address:" + AppSettings.GetStringValue(AppSettings.Key.EndpointAddress + "\n\t\t-Connect using Windows Authentication:  " + AppSettings.GetStringValue(AppSettings.Key.WindowAuthentication)));
+                    //Body.Append("\n\t\t-Binding Protocol:" + AppSettings.GetStringValue(AppSettings.Key.BindingProtocol));
 
                     Body.Append("\n\tStep 5:Click “OK’ button.");
                     Body.Append("\nOrganization key provided here is to be used in Epi Info™ 7 during publish process.");
