@@ -20,7 +20,7 @@ namespace Epi.Cloud.DataConsistencyServices.Controllers
             _responseInfoService = new ResponseInfoService();
         }
 
-        // GET: api/Response/c94b709b-2c7f-4f79-9042-a8f8bc37d5b5?formId=2e1d01d4-f50d-4f23-888b-cd4b7fc9884b
+        // api/Response?responseId=be210fa9-0997-4868-9725-d263bd3b1511&formId=2e1d01d4-f50d-4f23-888b-cd4b7fc9884b
         public IHttpActionResult Get(string responseId, string formId, string rootResponseId = null)
         {
             IResponseContext responseContext;
