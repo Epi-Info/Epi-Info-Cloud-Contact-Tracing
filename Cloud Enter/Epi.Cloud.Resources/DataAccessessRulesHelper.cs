@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Resources.Constants;
+using System.Globalization;
+using System.Resources;
+using System.Collections;
 
 namespace Epi.Cloud.Resources
 {
@@ -19,11 +22,13 @@ namespace Epi.Cloud.Resources
             string ruleName;
             string ruleDescription;
             var resourceManager = ResourceProvider.GetResourceManager(ResourceNamespaces.DataAccessRules);
-            while ((ruleDescription = resourceManager.GetString((ruleName = "Rule" + ++ruleId))) != null)
+            ResourceSet resourceSet= resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);            
+            foreach (DictionaryEntry entry in resourceSet)
             {
-                dataAccessRuleIds.Add(ruleId, ruleName);
-                dataAccessRuleDescriptions.Add(ruleName, ruleDescription);
-            }
+                ruleId++;
+                dataAccessRuleIds.Add(ruleId, entry.Key.ToString());
+                dataAccessRuleDescriptions.Add(entry.Key.ToString(), entry.Value.ToString());               
+            }           
         }
 
         public static void GetDataAccessRules(List<FormSettingBO> formSettingBOList)
