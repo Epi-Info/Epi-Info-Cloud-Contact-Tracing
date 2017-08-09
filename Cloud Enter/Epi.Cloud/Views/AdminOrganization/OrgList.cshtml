@@ -1,5 +1,5 @@
-﻿@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.OrgListModel
+﻿@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.OrgListModel
 
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Site Administration";// + " - "+
@@ -18,7 +18,7 @@
 
         <span>&nbsp;&nbsp;</span>
         <h2 class="adminnav">@Html.ActionLink("Users", "UserList", "AdminUser", null, new { @class = "userbtn" })</h2>
-        @if (!(string.IsNullOrEmpty(Session[SessionKeys.UserHighestRole].ToString())) && Session[SessionKeys.UserHighestRole].ToString()=="3")
+        @if (!(string.IsNullOrEmpty(Session[UserSession.Key.UserHighestRole].ToString())) && Session[UserSession.Key.UserHighestRole].ToString()=="3")
         {
             <span>&nbsp;&nbsp;</span>
             <h2 class="adminnav">@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, new { @class = "userbtn" })</h2>
@@ -28,7 +28,7 @@
 
 
     <div id="userwelcome">
-        Welcome <strong>@Session[SessionKeys.UserFirstName] @Session[SessionKeys.UserLastName]</strong>&nbsp; | &nbsp;
+        Welcome <strong>@Session[UserSession.Key.UserFirstName] @Session[UserSession.Key.UserLastName]</strong>&nbsp; | &nbsp;
         @*  <a href="#">Log Out</a>*@
 
         @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Epi.Cloud.Common.DTO;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 
 namespace Epi.Cloud.MVC.Extensions
 {

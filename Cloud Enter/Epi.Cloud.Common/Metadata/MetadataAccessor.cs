@@ -80,10 +80,10 @@ namespace Epi.Cloud.Common.Metadata
                     if (formIds.Length > 0)
                     {
                         var isSuccessful = ProjectMetadataProvider.UpdateFormModeSettings(formIds, isShareable, isDraftMode, dataAccessRuleId).Result;
-                        if (isSuccessful)
-                        {
+                       // if (isSuccessful)
+                       // {
                             StaticCache.FormDigests = null;
-                        }
+                       // }
                     }
                 }
             }

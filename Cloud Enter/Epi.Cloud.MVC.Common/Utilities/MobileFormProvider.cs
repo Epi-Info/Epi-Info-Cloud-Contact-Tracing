@@ -4,7 +4,7 @@ using Epi.Cloud.Common.Metadata;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Epi.Web.MVC.Utility
+namespace Epi.Cloud.MVC.Utility
 {
     public class MobileFormProvider : FormProvider
     {

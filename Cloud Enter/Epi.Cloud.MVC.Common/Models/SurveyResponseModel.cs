@@ -2,7 +2,7 @@
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.DataStructures;
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
 
     /// <summary>

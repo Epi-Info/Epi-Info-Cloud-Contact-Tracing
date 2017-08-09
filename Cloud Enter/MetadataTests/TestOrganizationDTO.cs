@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Epi.Cloud.Common.DTO;
 using System.Linq;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 
 namespace MetadataTests
 {

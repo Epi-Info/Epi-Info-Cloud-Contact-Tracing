@@ -1,5 +1,5 @@
-﻿@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.ExceptionModel
+﻿@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.ExceptionModel
 @{
     ViewBag.Title = "Exception.Mobile";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -25,16 +25,16 @@
     </div>
 </div>
 <div id="relatenav" style="padding-bottom: 10px; display: inline-block; margin: 10px;">
-    @if (Session[SessionKeys.RootFormId] != null)
+    @if (Session[UserSession.Key.RootFormId] != null)
     {
-        @Html.ActionLink("Return to Home", "Index", "FormResponse", new { formid = Session[SessionKeys.RootFormId], Pagenumber = Session[SessionKeys.PageNumber] }, new { @class = "returnto" })
+        @Html.ActionLink("Return to Home", "Index", "FormResponse", new { formid = Session[UserSession.Key.RootFormId], Pagenumber = Session[UserSession.Key.PageNumber] }, new { @class = "returnto" })
     }
     else
     {    
         @Html.ActionLink("Log Out", "LogOut", "FormResponse", null, new { @class = "returnto" })
     }
 </div>
-@if (Convert.ToInt16(Session[SessionKeys.UserHighestRole].ToString()) > 1)
+@if (Convert.ToInt16(Session[UserSession.Key.UserHighestRole].ToString()) > 1)
 {
     <div style="margin: 10px">
         <a id="showhide" href="#">Show/Hide Details</a></div>

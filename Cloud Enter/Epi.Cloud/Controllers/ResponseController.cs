@@ -2,9 +2,9 @@
 using System.Web.Mvc;
 using Epi.Cloud.Common.Constants;
 
-namespace Epi.Web.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class ResponseController : Controller
+    public class ResponseController : BaseSurveyController
     {
         [HttpGet]
         public ActionResult Index(string surveyId, string responseId, int pageNumber = 1)

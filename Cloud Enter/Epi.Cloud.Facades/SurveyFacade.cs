@@ -9,8 +9,8 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Cloud.MVC.Extensions;
 using Epi.Common.Core.Interfaces;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
 
 namespace Epi.Cloud.Facades
 {

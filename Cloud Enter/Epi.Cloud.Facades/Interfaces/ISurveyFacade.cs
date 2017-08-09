@@ -3,7 +3,7 @@ using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Model;
 using Epi.Common.Core.Interfaces;
-using Epi.Web.MVC.Models;
+using Epi.Cloud.MVC.Models;
 
 namespace Epi.Cloud.Facades.Interfaces
 {

@@ -1,11 +1,11 @@
 #define useEF_FormSettingFacade
 
 using System.Web.Mvc;
-using Epi.Web.MVC.Utility;
+using Epi.Cloud.MVC.Utility;
 using Microsoft.Practices.Unity;
 using Unity.Mvc3;
 
-namespace Epi.Web.MVC
+namespace Epi.Cloud.MVC
 {
     public static class Bootstrapper
     {
@@ -58,7 +58,7 @@ namespace Epi.Web.MVC
 #if useEF_FormSettingFacade
             container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.Cloud.Facades.EF_FormSettingFacade>();
 #else            
-            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.CosmosDB.Facades.DocDB_EF_FormSettingFacade>();
+            container.RegisterType<Epi.Cloud.Facades.Interfaces.IFormSettingFacade, Epi.DataPersistenceServices.CosmosDB.Facades.CosmosDB_EF_FormSettingFacade>();
 #endif
             // Data Service Interfaces
             container.RegisterType<Epi.Cloud.Interfaces.DataInterfaces.IDataEntryService, Epi.Cloud.DataEntryServices.DataEntryService>();

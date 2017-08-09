@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
     public class SettingsInfoModel
     {

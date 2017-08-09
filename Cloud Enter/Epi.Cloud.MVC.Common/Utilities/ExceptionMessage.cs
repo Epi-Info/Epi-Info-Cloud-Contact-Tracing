@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web;
-using Epi.Cloud.Common.Constants;
+using Epi.Cloud.MVC.Constants;
 using Epi.Common.EmailServices.Constants;
 
 namespace Epi.Web.Utility
@@ -100,11 +100,11 @@ namespace Epi.Web.Utility
                 pMessage += "Inner Exception :\n" + exc.InnerException + ";" +
                             "Exception StackTrace:\n" + exc.StackTrace + "\n\n\n";
 
-                if (Context != null && !string.IsNullOrEmpty(Context.Session[SessionKeys.UserFirstName].ToString()))
+                if (Context != null && !string.IsNullOrEmpty(Context.Session[UserSession.Key.UserFirstName].ToString()))
                 {
-                    pMessage += "Logged in User: \n" + Context.Session[SessionKeys.UserFirstName].ToString() + " " + Context.Session[SessionKeys.UserLastName].ToString() + "\n\n\n"; ;
-                    pMessage += "Form Id: \n" + Context.Session[SessionKeys.RootFormId] + "\n\n\n"; ;
-                    pMessage += "Response Id: \n" + Context.Session[SessionKeys.RootResponseId] + "\n\n\n"; ;
+                    pMessage += "Logged in User: \n" + Context.Session[UserSession.Key.UserFirstName].ToString() + " " + Context.Session[UserSession.Key.UserLastName].ToString() + "\n\n\n"; ;
+                    pMessage += "Form Id: \n" + Context.Session[UserSession.Key.RootFormId] + "\n\n\n"; ;
+                    pMessage += "Response Id: \n" + Context.Session[UserSession.Key.RootResponseId] + "\n\n\n"; ;
                 }
 
                 AdminEmailAddress = EmailAppSettings.GetStringValue(EmailAppSettings.Key.LoggingAdminEmailAddress);

@@ -1,5 +1,5 @@
-﻿@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.MetadataAdmin
+﻿@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.MetadataAdmin
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Home";// + " - "+
                                                    // Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
@@ -222,14 +222,14 @@
         @*@Html.ActionLink("Admin", "Index", "MetadataAdmin", null, null);*@
 
         <div>
-            @if (Session[SessionKeys.UserHighestRole].ToString() == "3")
+            @if (Session[UserSession.Key.UserHighestRole].ToString() == "3")
             {
                 <button id="btnmetaadmin" onclick="location.href='@Url.Action("OrgList", "AdminOrganization")';return false;" class="default" type="button" style="height: 35px;">
                     Back
                 </button>                
             }
 
-            @if (Session[SessionKeys.UserHighestRole].ToString() == "2")
+            @if (Session[UserSession.Key.UserHighestRole].ToString() == "2")
             {
                 <button id="btnmetaadmin" onclick="location.href='@Url.Action("UserList", "AdminUser")';return false;" class="default" type="button" style="height: 35px;">
                     Back

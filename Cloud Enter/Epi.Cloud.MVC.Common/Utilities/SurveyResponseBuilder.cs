@@ -9,7 +9,7 @@ using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Web.MVC.Utility
+namespace Epi.Cloud.MVC.Utility
 {
     public class SurveyResponseBuilder
     {

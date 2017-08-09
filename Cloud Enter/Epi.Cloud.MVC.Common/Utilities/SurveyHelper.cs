@@ -16,7 +16,7 @@ using Epi.Common.Core.DataStructures;
 using Epi.Cloud.Common.Extensions;
 using Epi.Common.Core.Interfaces;
 
-namespace Epi.Web.MVC.Utility
+namespace Epi.Cloud.MVC.Utility
 {
     public class SurveyHelper
 	{

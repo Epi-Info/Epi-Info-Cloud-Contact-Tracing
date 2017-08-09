@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
-using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Constants;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
+using Epi.Common.Attributes;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.Common.Security;
 using Epi.FormMetadata.DataStructures;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
+using Newtonsoft.Json;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
     public abstract class BaseSurveyController : Controller
     {
@@ -35,20 +41,21 @@ namespace Epi.Web.MVC.Controllers
 
         protected ResponseContext GetSetResponseContext(string responseId)
         {
-            ResponseContext responseContext = Session[SessionKeys.ResponseContext] as ResponseContext;
+            ResponseContext responseContext = GetSessionValue<ResponseContext>(UserSession.Key.ResponseContext);
             if (responseContext == null)
             {
                 responseContext = (ResponseContext)new ResponseContext
                 {
-                    RootFormId = Session[SessionKeys.RootFormId].ToString(),
-                    UserName = Session[SessionKeys.UserName].ToString()
+                    RootFormId = GetStringSessionValue(UserSession.Key.RootFormId),
+                    UserName = GetStringSessionValue(UserSession.Key.UserName)
                 }.ResolveMetadataDependencies();
             }
             responseContext.ResponseId = responseId;
-            responseContext.UserOrgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-            Session[SessionKeys.ResponseContext] = responseContext;
+            responseContext.UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
-            responseContext.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            SetSessionValue(UserSession.Key.ResponseContext, responseContext);
+
+            responseContext.UserId = GetIntSessionValue(UserSession.Key.UserId);
             return responseContext;
         }
 
@@ -62,7 +69,7 @@ namespace Epi.Web.MVC.Controllers
             FormResponseInfoModel formResponseInfoModel = new FormResponseInfoModel();
             formResponseInfoModel.SearchModel = new SearchBoxModel();
             var surveyResponseBuilder = new SurveyResponseBuilder();
-            FormSettingRequest formSettingRequest = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+            FormSettingRequest formSettingRequest = new FormSettingRequest { ProjectId = GetStringSessionValue(UserSession.Key.ProjectId) };
 
             //Populating the request
 
@@ -132,11 +139,11 @@ namespace Epi.Web.MVC.Controllers
         {
             SurveyAnswerDTO result = null;
 
-            string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
-            string rootFormId = Session[SessionKeys.RootFormId].ToString();
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-            string userName = Session[SessionKeys.UserName].ToString();
+            string rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
+            string rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            string userName = GetStringSessionValue(UserSession.Key.UserName);
 
             ResponseContext responseContext = (ResponseContext)new ResponseContext
             {
@@ -249,6 +256,64 @@ namespace Epi.Web.MVC.Controllers
                 SelectListItem newSelectListItem = new SelectListItem { Text = item.Value, Value = item.Value, Selected = item.Value == selectedValue };
                 searchColumns.Add(newSelectListItem);
             }
+        }
+
+        /* --------------------------------------------------------------------------------------- */
+        /*                                      Session Helpers                                    */
+        /* --------------------------------------------------------------------------------------- */
+        protected bool IsValueEncrypted(string key)
+        {
+            return SessionHelper.IsValueEncrypted(key);
+        }
+
+        protected bool IsSessionValueNull(string key)
+        {
+            return UserSession.IsSessionValueNull(Session, key);
+        }
+
+        protected bool GetBoolSessionValue(string key, bool? defaultValue = null, bool decryptIfEncrypted = true)
+        {
+            return UserSession.GetBoolSessionValue(Session, key, defaultValue, decryptIfEncrypted);
+        }
+
+        protected int GetIntSessionValue(string key, int? defaultValue = null, bool decryptIfEncrypted = true)
+        {
+            return UserSession.GetIntSessionValue(Session, key, defaultValue, decryptIfEncrypted);
+        }
+
+        protected string GetStringSessionValue(string key, string defaultValue = "~~~", bool decryptIfEncrypted = true)
+        {
+            return UserSession.GetStringSessionValue(Session, key, defaultValue, decryptIfEncrypted);
+        }
+
+        protected object GetSessionValue(string key, object defaultValue = null)
+        {
+            return UserSession.GetSessionValue(Session, key, defaultValue);
+        }
+
+        protected T GetSessionValue<T>(string key, T defaultValue = default(T)) where T : new()
+        {
+            return UserSession.GetSessionValue<T>(Session, key, defaultValue);
+        }
+
+        protected void SetSessionValue<T>(string key, T value, bool dontEncrypt = false)
+        {
+            UserSession.SetSessionValue<T>(Session, key, value, dontEncrypt);
+        }
+
+        protected void SetSessionObjectValue<T>(string key, T value) where T : new()
+        {
+            UserSession.SetSessionObjectValue<T>(Session, key, value);
+        }
+
+        protected void RemoveSessionValue(string key)
+        {
+            UserSession.RemoveSessionValue(Session, key);
+        }
+
+        protected void ClearSession()
+        {
+            UserSession.ClearSession(Session);
         }
     }
 }

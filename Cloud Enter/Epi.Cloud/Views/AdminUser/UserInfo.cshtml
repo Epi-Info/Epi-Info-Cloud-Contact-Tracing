@@ -1,5 +1,5 @@
-﻿@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.UserModel
+﻿@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.UserModel
 @{
     ViewBag.Title = "Epi Info™ Cloud Enter - Site Administration";// + " - "+ 
     // Model.SurveyName + " - " + Model.IsDraftModeStyleClass;
@@ -16,7 +16,7 @@
                 disableElements(el[i].children);
             }
         }
-             if ('@Session[SessionKeys.IsDemoMode]' == "TRUE")
+             if ('@Session[UserSession.Key.IsDemoMode]' == "TRUE")
             {
                 // disableElements($('#content').children());
                 $('[name="input"]').attr("disabled", true);
@@ -60,7 +60,7 @@
 		<h2 class="adminnav">@Html.ActionLink("Users", "UserList", "AdminUser", null, new { @class = "userbtn" })</h2>*@
     </div>
     <div id="userwelcome">
-        Welcome <strong>@Session[SessionKeys.UserFirstName] @Session[SessionKeys.UserLastName]</strong>&nbsp;
+        Welcome <strong>@Session[UserSession.Key.UserFirstName] @Session[UserSession.Key.UserLastName]</strong>&nbsp;
         | &nbsp; @*  <a href="#">Log Out</a>*@
         @Html.ActionLink("Home", "Index", "Home", null, null) &nbsp; | &nbsp;
 @if (@System.Configuration.ConfigurationManager.AppSettings["IsDemoMode"] != null)
@@ -102,7 +102,7 @@
 @*@Html.ValidationSummary(true, "Please correct the errors and try again.")*@
  
             var disable_attr = false;
-                 if ((Model.IsEditMode && Model.Email == Session[SessionKeys.UserEmailAddress].ToString()))
+                 if ((Model.IsEditMode && Model.Email == Session[UserSession.Key.UserEmailAddress].ToString()))
                 {
                     disable_attr = true;
                 }

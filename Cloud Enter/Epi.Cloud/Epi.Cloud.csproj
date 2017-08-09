@@ -382,7 +382,6 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Constants\SessionKeys.cs" />
     <Compile Include="Controllers\AdminOrganizationController.cs" />
     <Compile Include="Controllers\AdminUserController.cs" />
     <Compile Include="Controllers\BaseSurveyController.cs" />
@@ -792,6 +791,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Constants\" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

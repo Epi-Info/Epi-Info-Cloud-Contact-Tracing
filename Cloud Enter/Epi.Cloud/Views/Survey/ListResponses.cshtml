@@ -1,5 +1,5 @@
-﻿@using Epi.Web.MVC.Constants
-@model Epi.Web.MVC.Models.SurveyModel  
+﻿@using Epi.Cloud.MVC.Constants
+@model Epi.Cloud.MVC.Models.SurveyModel  
  <div id="formtitle" style="margin: 10px 0 0 0;">
    <h2 class="surveyTitle" style="margin: 7px 0 .2em 0;">@Model.Form.SurveyInfo.SurveyName
     </h2>
@@ -91,7 +91,7 @@
 <div id="recordscontent">
     <!--style="display:inline-block;"-->
     <div id="addnew">
-        <button  type="submit"  onclick="AddChild(@HttpContext.Current.Session[SessionKeys.RequestedViewId]);" name="AddNewFormId" class="default record" style="width:165px !important; font-size: 1.15em;" >
+        <button  type="submit"  onclick="AddChild(@HttpContext.Current.Session[UserSession.Key.RequestedViewId]);" name="AddNewFormId" class="default record" style="width:165px !important; font-size: 1.15em;" >
             Add New Record
         </button>
     </div>

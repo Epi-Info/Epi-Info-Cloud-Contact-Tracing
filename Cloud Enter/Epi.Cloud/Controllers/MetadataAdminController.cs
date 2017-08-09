@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
-using Epi.Cloud.Common.Configuration;
-using Epi.Web.MVC.Models;
-using Epi.Cloud.MetadataServices.Common;
-using System.Configuration;
-using Epi.Cloud.Common.Constants;
-using Epi.Common.Constants;
 using Epi.Cloud.CacheServices;
+using Epi.Cloud.Common.Constants;
+using Epi.Cloud.MetadataServices.Common;
+using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
+using Epi.Cloud.MVC.Models;
+using Epi.Common.Constants;
 using Epi.FormMetadata.DataStructures;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
     [Authorize]
-    public class MetadataAdminController : Controller
+    public class MetadataAdminController : BaseSurveyController
     {
         private readonly IEpiCloudCache _epiCloudCache;
 

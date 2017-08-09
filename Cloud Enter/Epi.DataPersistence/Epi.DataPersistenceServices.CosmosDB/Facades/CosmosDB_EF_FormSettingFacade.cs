@@ -15,14 +15,14 @@ using Epi.DataPersistenceServices.CosmosDB.DAO;
 
 namespace Epi.DataPersistenceServices.CosmosDB.Facades
 {
-    public class DocDB_EF_FormSettingFacade : IFormSettingFacade
+    public class CosmosDB_EF_FormSettingFacade : IFormSettingFacade
     {
         private readonly MetadataAccessor _metadataAccessor;
         private readonly CosmosDBCRUD _formResponseCRUD;
         private readonly IFormSettingDao_EF _formSettingDao_EF;
         private readonly IFormSettingDao _formSettingDao_DocDB;
 
-        public DocDB_EF_FormSettingFacade(IFormSettingDao_EF formSettingDao_EF)
+        public CosmosDB_EF_FormSettingFacade(IFormSettingDao_EF formSettingDao_EF)
         {
             _metadataAccessor = new MetadataAccessor();
             _formResponseCRUD = new CosmosDBCRUD();

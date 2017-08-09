@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 
 
-namespace Epi.Web.MVC.Models
+namespace Epi.Cloud.MVC.Models
 {
     [Serializable]
     public class SearchBoxModel

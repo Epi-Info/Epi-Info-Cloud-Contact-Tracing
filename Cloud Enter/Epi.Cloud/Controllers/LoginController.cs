@@ -9,14 +9,15 @@ using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Facades.Interfaces;
+using Epi.Cloud.MVC.Constants;
+using Epi.Cloud.MVC.Models;
 using Epi.Common.Diagnostics;
 using Epi.Common.Security.Constants;
-using Epi.Web.MVC.Models;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
 
-    public class LoginController : Controller
+    public class LoginController : BaseSurveyController
     {
         private readonly ILogger _logger;
 
@@ -47,19 +48,21 @@ namespace Epi.Web.MVC.Controllers
 
             var isDemoMode = AppSettings.GetBoolValue(AppSettings.Key.IsDemoMode);
 
-            Session[SessionKeys.IsDemoMode] = isDemoMode.ToString().ToUpper();
+            SetSessionValue(UserSession.Key.IsDemoMode, isDemoMode.ToString().ToUpper());
 
             if (isDemoMode)
             {
-                string UserId = Epi.Common.Security.Cryptography.Encrypt("1");
+                int UserId = 1;
                 FormsAuthentication.SetAuthCookie("Guest@cdc.gov", false);
 
-                Session[SessionKeys.UserId] = UserId;
+                // The EncryptedValue(true) attribute exists on UserSession.Key.UserId
+                // therefore SetSessionValue will encrypt the UserId.
+                SetSessionValue(UserSession.Key.UserId, UserId);
 
-                Session[SessionKeys.UserHighestRole] = 3;
-                Session[SessionKeys.UserFirstName] = "John";
-                Session[SessionKeys.UserLastName]= "Doe";
-                Session[SessionKeys.UserEmailAddress] = "Guest@cdc.gov";
+                SetSessionValue(UserSession.Key.UserHighestRole, 3);
+                SetSessionValue(UserSession.Key.UserFirstName, "John");
+                SetSessionValue(UserSession.Key.UserLastName, "Doe");
+                SetSessionValue(UserSession.Key.UserEmailAddress, "Guest@cdc.gov");
                 return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
             }
             var configuration = WebConfigurationManager.OpenWebConfiguration("/");
@@ -85,15 +88,14 @@ namespace Epi.Web.MVC.Controllers
                     if (result != null && result.User.Count() > 0)
                     {
                         FormsAuthentication.SetAuthCookie(CurrentUserName.Split('\\')[0].ToString(), false);
-                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User[0].UserId.ToString());
-                        Session[SessionKeys.UserId] = UserId;
-                        //Session[SessionKeys.UsertRole] = result.User.Role;
-                        Session[SessionKeys.UserHighestRole] = result.User[0].UserHighestRole;
+                        SetSessionValue(UserSession.Key.UserId, result.User[0].UserId);
+                        //SetSessionValue(UserSession.Key.UsertRole, result.User.Role);
+                        SetSessionValue(UserSession.Key.UserHighestRole, result.User[0].UserHighestRole);
 
-                        Session[SessionKeys.UserEmailAddress] = result.User[0].EmailAddress;
-                        Session[SessionKeys.UserFirstName] = result.User[0].FirstName;
-                        Session[SessionKeys.UserLastName] = result.User[0].LastName;
-                        Session[SessionKeys.UGuid] = result.User[0].UGuid;
+                        SetSessionValue(UserSession.Key.UserEmailAddress, result.User[0].EmailAddress);
+                        SetSessionValue(UserSession.Key.UserFirstName, result.User[0].FirstName);
+                        SetSessionValue(UserSession.Key.UserLastName, result.User[0].LastName);
+                        SetSessionValue(UserSession.Key.UGuid, result.User[0].UGuid);
                         return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
                     }
                     else
@@ -115,38 +117,9 @@ namespace Epi.Web.MVC.Controllers
 
         public ActionResult Index(UserLoginModel Model, string Action, string ReturnUrl)
         {
-
             return ValidateUser(Model, ReturnUrl);
-
-            //if (ReturnUrl == null || !ReturnUrl.Contains("/"))
-            //{
-            //    ReturnUrl = "/Home/Index";
-            //}
-
-
-            //Epi.Cloud.Common.Message.UserAuthenticationResponse result = _isurveyFacade.ValidateUser(Model.UserName, Model.Password);
-
-            //if (result.UserIsValid)
-            //{
-            //    if (result.User.ResetPassword)
-            //    {
-            //        return ResetPassword(Model.UserName);
-            //    }
-            //    else
-            //    {
-
-            //        FormsAuthentication.SetAuthCookie(Model.UserName, false);
-            //        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
-            //        Session[SessionKeys.UserId] = UserId;
-            //        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = "" });
-            //    }
-            //}
-            //else
-            //{
-            //    ModelState.AddModelError("", "The email or password you entered is incorrect.");
-            //    return View();
-            //}
         }
+
         /// <summary>
         /// parse and return the responseId from response Url 
         /// </summary>
@@ -159,7 +132,7 @@ namespace Epi.Web.MVC.Controllers
 
             foreach (var expression in expressions)
             {
-                if (Epi.Web.MVC.Utility.SurveyHelper.IsGuid(expression))
+                if (Epi.Cloud.MVC.Utility.SurveyHelper.IsGuid(expression))
                 {
 
                     responseId = expression;
@@ -290,23 +263,22 @@ namespace Epi.Web.MVC.Controllers
                     }
                     else
                     {
-                        string UserId = Epi.Common.Security.Cryptography.Encrypt(result.User.UserId.ToString());
                         OrganizationRequest request = new OrganizationRequest();
                         request.UserId = result.User.UserId;
                         request.UserRole = result.User.UserHighestRole;
                         OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
 
-
                         FormsAuthentication.SetAuthCookie(Model.UserName, false);
-                        Session[SessionKeys.UserId] = UserId;
-                        //Session[SessionKeys.UsertRole] = result.User.Role;
-                        Session[SessionKeys.UserHighestRole] = result.User.UserHighestRole;
-                        Session[SessionKeys.UserEmailAddress] = result.User.EmailAddress;
-                        Session[SessionKeys.UserFirstName] = result.User.FirstName;
-                        Session[SessionKeys.UserLastName] = result.User.LastName;
-                        Session[SessionKeys.UserName] = result.User.UserName;
-                        Session[SessionKeys.UGuid] = result.User.UGuid;
-                        Session[SessionKeys.CurrentOrgId] = organizations.OrganizationList[0].OrganizationId;
+                        SetSessionValue(UserSession.Key.UserId, result.User.UserId);
+                        //SetSessionValue(UserSession.Key.UsertRole, result.User.Role);
+                        SetSessionValue(UserSession.Key.UserHighestRole, result.User.UserHighestRole);
+                        SetSessionValue(UserSession.Key.UserEmailAddress, result.User.EmailAddress);
+                        SetSessionValue(UserSession.Key.UserFirstName, result.User.FirstName);
+                        SetSessionValue(UserSession.Key.UserLastName, result.User.LastName);
+                        SetSessionValue(UserSession.Key.UserName, result.User.UserName);
+                        SetSessionValue(UserSession.Key.UGuid, result.User.UGuid);
+                        SetSessionValue(UserSession.Key.CurrentOrgId, organizations.OrganizationList[0].OrganizationId);
+
                         return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = formId });
                         //return Redirect(ReturnUrl);
                     }
@@ -314,8 +286,8 @@ namespace Epi.Web.MVC.Controllers
                 //else
                 {
                     ModelState.AddModelError("", "The email or password you entered is incorrect.");
-                  Model.ViewValidationSummary = true;
-                 return View(Model);
+                    Model.ViewValidationSummary = true;
+                    return View(Model);
                 }
             }
             catch (Exception ex)

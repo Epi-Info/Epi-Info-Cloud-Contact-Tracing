@@ -85,7 +85,7 @@ namespace Epi.Cloud.MetadataServices
 
                 formDigests = _epiCloudCache.GetFormDigests(ProjectGuid);
             }
-            var formDigest = formDigests != null ? formDigests.Where(d => CaseInsensitiveEqualityComparer.Instance.Equals(d.FormId, formId)).SingleOrDefault() : null;
+            var formDigest = formDigests != null ? formDigests.Where(d => String.Compare(d.FormId, formId, true) == 0).SingleOrDefault() : null;
             return await Task.FromResult(formDigest);
         }
 

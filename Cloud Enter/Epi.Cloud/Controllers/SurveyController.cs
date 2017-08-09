@@ -7,24 +7,24 @@ using System.Threading;
 using System.Web.Mvc;
 using System.Web.Security;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.DTO;
+using Epi.Cloud.Common.Extensions;
+using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
+using Epi.Cloud.Common.Model;
 using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
+using Epi.Cloud.MVC.Constants;
 using Epi.Cloud.MVC.Extensions;
+using Epi.Cloud.MVC.Models;
+using Epi.Cloud.MVC.Utility;
+using Epi.Common.Core.DataStructures;
 using Epi.Core.EnterInterpreter;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
-using Epi.DataPersistence.Common.Interfaces;
 using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.DTO;
-using Epi.Cloud.Common.Message;
-using Epi.Cloud.Common.Model;
-using Epi.Web.MVC.Models;
-using Epi.Web.MVC.Utility;
-using Epi.Common.Core.DataStructures;
-using Epi.Cloud.Common.Extensions;
 
-namespace Epi.Web.MVC.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
     [Authorize]
     public class SurveyController : BaseSurveyController
@@ -58,14 +58,15 @@ namespace Epi.Web.MVC.Controllers
             try
             {
                 CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
-                if (Session[SessionKeys.RootResponseId] != null && Session[SessionKeys.RootResponseId].ToString() == responseId)
+                if (GetStringSessionValue(UserSession.Key.RootResponseId) == responseId)
                 {
-                    Session[SessionKeys.RelateButtonPageId] = null;
+                    RemoveSessionValue(UserSession.Key.RelateButtonPageId);
                 }
                 bool isAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
-                if (Session[SessionKeys.IsEditMode] != null)
+
+                if (!IsSessionValueNull(UserSession.Key.IsEditMode))
                 {
-                    bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
+                    this.IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
                 }
 
                 var surveyModel = GetIndex(responseId, PageNumber, IsEditMode, surveyId, isAndroid);
@@ -101,12 +102,13 @@ namespace Epi.Web.MVC.Controllers
             if (!string.IsNullOrEmpty(surveyId))
             {
                 requestedViewId = forms.Where(x => x.FormId == surveyId).Select(x => x.ViewId).FirstOrDefault();
-                Session[SessionKeys.IsSqlProject] = true;
-                Session[SessionKeys.RequestedViewId] = requestedViewId;
+                SetSessionValue(UserSession.Key.IsSqlProject, true);
+                SetSessionValue(UserSession.Key.RequestedViewId, requestedViewId);
             }
             else
             {
-                if (int.TryParse((Session[SessionKeys.RequestedViewId] ?? "0").ToString(), out requestedViewId) && requestedViewId != 0)
+                requestedViewId = GetIntSessionValue(UserSession.Key.RequestedViewId, defaultValue: 0);
+                if (requestedViewId != 0)
                 {
                     surveyId = relateSurveyId = forms.SingleOrDefault(x => x.ViewId == requestedViewId).FormId;
                 }
@@ -120,7 +122,7 @@ namespace Epi.Web.MVC.Controllers
             IsMobileDevice = this.Request.Browser.IsMobileDevice;
             if (IsMobileDevice == false)
             {
-                IsMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+                IsMobileDevice = Epi.Cloud.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
             }
 
             List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
@@ -130,7 +132,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 if (IsMobileDevice == false)
                 {
-                    Session[SessionKeys.RootFormId] = FormsHierarchy[0].FormId;
+                    SetSessionValue(UserSession.Key.RootFormId, FormsHierarchy[0].FormId);
                 }
             }
 
@@ -180,9 +182,9 @@ namespace Epi.Web.MVC.Controllers
                             form.IsDraftModeStyleClass = "draft";
                         }
                     }
-                    if (Session[SessionKeys.FormValuesHasChanged] != null)
+                    if (!IsSessionValueNull(UserSession.Key.FormValuesHasChanged))
                     {
-                        form.FormValuesHasChanged = Session[SessionKeys.FormValuesHasChanged].ToString();
+                        form.FormValuesHasChanged = GetStringSessionValue(UserSession.Key.FormValuesHasChanged);
                     }
                     form.RequiredFieldsList = this._requiredList;
                     //passCode end
@@ -201,11 +203,11 @@ namespace Epi.Web.MVC.Controllers
                 responseContext = new ResponseContext
                 {
                     ResponseId = responseId,
-                    FormId = Session[SessionKeys.RootFormId].ToString(),
-                    RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
-                    UserOrgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]),
-                    UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()),
-                    UserName = Session[SessionKeys.UserName].ToString()
+                    FormId = GetStringSessionValue(UserSession.Key.RootFormId),
+                    RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
+                    UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
+                    UserId = GetIntSessionValue(UserSession.Key.UserId),
+                    UserName = GetStringSessionValue(UserSession.Key.UserName)
                 }.ResolveMetadataDependencies() as ResponseContext;
             }
             else
@@ -214,10 +216,10 @@ namespace Epi.Web.MVC.Controllers
                 {
                     FormId = surveyId,
                     ResponseId = responseId,
-                    RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
-                    UserOrgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]),
-                    UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()),
-                    UserName = Session[SessionKeys.UserName].ToString()
+                    RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
+                    UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
+                    UserId = GetIntSessionValue(UserSession.Key.UserId),
+                    UserName = GetStringSessionValue(UserSession.Key.UserName)
                 }.ResolveMetadataDependencies() as ResponseContext;
             }
 
@@ -260,12 +262,12 @@ namespace Epi.Web.MVC.Controllers
 
             SetGlobalVariable();
             ViewBag.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string userName = Session[SessionKeys.UserName].ToString();
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            string userName = GetStringSessionValue(UserSession.Key.UserName);
             string responseId = surveyAnswerModel.ResponseId;
-            string rootResponseId = Session[SessionKeys.RootResponseId].ToString();
-            Session[SessionKeys.FormValuesHasChanged] = Form_Has_Changed;
+            string rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
+            SetSessionValue(UserSession.Key.FormValuesHasChanged, Form_Has_Changed);
 
             bool isAndroid = false;
 
@@ -275,14 +277,14 @@ namespace Epi.Web.MVC.Controllers
             }
             if (rootResponseId == responseId)
             {
-                Session[SessionKeys.RelateButtonPageId] = null;
+                RemoveSessionValue(UserSession.Key.RelateButtonPageId);
             }
 
             bool isMobileDevice = false;
             isMobileDevice = this.Request.Browser.IsMobileDevice;
             if (isMobileDevice == false)
             {
-                isMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+                isMobileDevice = Epi.Cloud.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
             }
 
           
@@ -380,7 +382,7 @@ namespace Epi.Web.MVC.Controllers
                                 }
                             }
 
-                            Dictionary<string, int> SurveyPagesList = (Dictionary<string, int>)Session[SessionKeys.RelateButtonPageId];
+                            Dictionary<string, int> SurveyPagesList = GetSessionValue<Dictionary<string, int>>(UserSession.Key.RelateButtonPageId);
                             if (SurveyPagesList != null)
                             {
                                 pageNumber = SurveyPagesList[parentResponseId];
@@ -400,13 +402,13 @@ namespace Epi.Web.MVC.Controllers
 
                             SetRelateSession(responseId, pageNumber);
                             RequestedViewId = int.Parse(this.Request.Form["Requested_View_Id"]);
-                            surveyAnswer.RootResponseId = Session[SessionKeys.RootResponseId].ToString();
+                            surveyAnswer.RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
                             form = SaveCurrentForm(form, surveyInfoModel, surveyAnswer, responseId, orgId, userId, userName, isSubmited, isSaved, isMobileDevice, formValuesHasChanged, pageNumber, FormsHierarchy);
 
                             // After this point we are dealing with child of child
                             form = SetLists(form);
                             TempData[TempDataKeys.Width] = form.Width + 5;
-                            Session[SessionKeys.RequestedViewId] = RequestedViewId;
+                            SetSessionValue(UserSession.Key.RequestedViewId, RequestedViewId);
                             SurveyModel SurveyModel = new SurveyModel();
                             SurveyModel.Form = form;
                             SurveyModel.RelateModel = FormsHierarchy.ToRelateModel(form.SurveyInfo.SurveyId);
@@ -433,20 +435,18 @@ namespace Epi.Web.MVC.Controllers
                         else if (!string.IsNullOrEmpty(this.Request.Form[RequestAction.DontSave]) && this.Request.Form[RequestAction.DontSave].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
 
-
-                            bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
-
+                            this.IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
                             SurveyAnswerRequest SARequest = new SurveyAnswerRequest();
-                            SARequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = Session[SessionKeys.RootResponseId].ToString() });
-                            SARequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+                            SARequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = GetStringSessionValue(UserSession.Key.RootResponseId) });
+                            SARequest.Criteria.UserId = GetIntSessionValue(UserSession.Key.UserId);
                             SARequest.Criteria.IsEditMode = this.IsEditMode;
-                            SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
+                            SARequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
                             SARequest.Criteria.IsDeleteMode = true;
                             SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteInEditMode;
                             SARequest.Action = RequestAction.DontSave;
 
                             SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
-                            return RedirectToRoute(new { Controller = "FormResponse", Action = "Index", formid = Session[SessionKeys.RootFormId].ToString(), ViewId = 0, pageNumber });
+                            return RedirectToRoute(new { Controller = "FormResponse", Action = "Index", formid = GetStringSessionValue(UserSession.Key.RootFormId), ViewId = 0, pageNumber });
                         }
                         else if (!string.IsNullOrEmpty(this.Request.Form["is_goto_action"]) && this.Request.Form["is_goto_action"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                         {
@@ -505,7 +505,7 @@ namespace Epi.Web.MVC.Controllers
                                 {
                                     if (!Log_Out)
                                     {
-                                        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = this.RootFormId, orgid = (int)Session[SessionKeys.SelectedOrgId] });
+                                        return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = this.RootFormId, orgid = GetIntSessionValue(UserSession.Key.SelectedOrgId) });
                                     }
                                     else
                                     {
@@ -518,16 +518,16 @@ namespace Epi.Web.MVC.Controllers
                                     {
                                         if (string.IsNullOrEmpty(this.RootFormId))
                                         {
-                                            return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = surveyInfoModel.SurveyId, orgid = (int)Session[SessionKeys.SelectedOrgId] });
+                                            return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = surveyInfoModel.SurveyId, orgid = GetIntSessionValue(UserSession.Key.SelectedOrgId) });
                                         }
                                         else
                                         {
-                                            return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = this.RootFormId, orgid = (int)Session[SessionKeys.SelectedOrgId] });
+                                            return RedirectToAction(ViewActions.Index, ControllerNames.Home, new { surveyid = this.RootFormId, orgid = GetIntSessionValue(UserSession.Key.SelectedOrgId) });
                                         }
                                     }
                                     else
                                     {
-                                        return RedirectToAction(ViewActions.Index, ControllerNames.FormResponse, new { formid = this.RootFormId, Pagenumber = Convert.ToInt32(Session[SessionKeys.PageNumber]) });
+                                        return RedirectToAction(ViewActions.Index, ControllerNames.FormResponse, new { formid = this.RootFormId, Pagenumber = GetIntSessionValue(UserSession.Key.PageNumber) });
                                     }
                                 }
                             }
@@ -553,7 +553,7 @@ namespace Epi.Web.MVC.Controllers
                                 SurveyModel.RelateModel = FormsHierarchy.ToRelateModel(form.SurveyInfo.SurveyId);
                                 if (!string.IsNullOrEmpty(this.Request.Form["Click_Related_Form"]))
                                 {
-                                    bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
+                                    IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
                                     if (IsEditMode)
                                     {
                                         ViewBag.Edit = "Edit";
@@ -609,8 +609,8 @@ namespace Epi.Web.MVC.Controllers
             FormsHierarchyResponse formsHierarchyResponse = new FormsHierarchyResponse();
             FormsHierarchyRequest formsHierarchyRequest = new FormsHierarchyRequest();
 
-            var rootFormId = Session[SessionKeys.RootFormId];
-            var rootResponseId = Session[SessionKeys.RootResponseId];
+            var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
+            var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
 
             if (rootFormId != null && rootResponseId != null)
             {
@@ -631,7 +631,7 @@ namespace Epi.Web.MVC.Controllers
 
             SurveyAnswerRequest sar = new SurveyAnswerRequest();
             sar.Action = RequestAction.Update;
-            sar.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            sar.Criteria.UserId = GetIntSessionValue(UserSession.Key.UserId);
             sar.SurveyAnswerList.Add(surveyAnswerDTO);
             // TODO: !! Update FormInfo with current UserId and LastPageVisited !!
             //_surveyFacade.SaveSurveyAnswer(sar);
@@ -679,11 +679,11 @@ namespace Epi.Web.MVC.Controllers
             {
                 IsAndroid = true;
             }
-            var rootResponseId = Session[SessionKeys.RootResponseId].ToString();
-            var rootFormId = Session[SessionKeys.RootFormId].ToString();
-            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId].ToString());
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string userName = Session[SessionKeys.UserName].ToString();
+            var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
+            var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            string userName = GetStringSessionValue(UserSession.Key.UserName);
             try
             {
                 if (!string.IsNullOrEmpty(NameList))
@@ -729,7 +729,7 @@ namespace Epi.Web.MVC.Controllers
 
                             MvcDynamicForms.Form formRs = _surveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, i, SurveyAnswer, IsMobileDevice, null, null, IsAndroid);
 
-                            formRs = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValues(formRs, Name, Value);
+                            formRs = Epi.Cloud.MVC.Utility.SurveyHelper.UpdateControlsValues(formRs, Name, Value);
 
                             _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, formRs, SurveyAnswer, false, false, i, orgId, userId, userName);
                         }
@@ -748,11 +748,11 @@ namespace Epi.Web.MVC.Controllers
         [ValidateAntiForgeryToken]
         public JsonResult SaveSurvey(string Key, int Value, string responseId)
         {
-            ResponseContext responseContext = Session[SessionKeys.ResponseContext] as ResponseContext;
+            ResponseContext responseContext = GetSessionValue<ResponseContext>(UserSession.Key.ResponseContext);
 
-            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string userName = Session[SessionKeys.UserName].ToString();
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            string userName = GetStringSessionValue(UserSession.Key.UserName);
             try
             {
                 bool IsMobileDevice = false;
@@ -832,34 +832,34 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult Delete(string responseid)//List<FormInfoModel> ModelList, string formid)
         {
-            var rootFormId = Session[SessionKeys.RootFormId].ToString();
-            var formId = Session[SessionKeys.CurrentFormId];
+            var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
+            var formId = GetStringSessionValue(UserSession.Key.CurrentFormId);
 
             var responseContext = new ResponseContext
             {
-                RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
+                RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
                 RootFormId = rootFormId,
                 ResponseId = responseid,
                 FormId = formId != null ? formId.ToString() : rootFormId,
-                UserOrgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]),
-                UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString()),
-                UserName = Session[SessionKeys.UserName].ToString()
+                UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
+                UserId = GetIntSessionValue(UserSession.Key.UserId),
+                UserName = GetStringSessionValue(UserSession.Key.UserName)
             }.ResolveMetadataDependencies() as ResponseContext;
 
-            bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
+            IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
 
             SurveyAnswerRequest SARequest = new SurveyAnswerRequest { ResponseContext = responseContext };
             var surveyAnswerDTO = new SurveyAnswerDTO() { ResponseDetail = responseContext.ToFormResponseDetail() };
             SARequest.SurveyAnswerList.Add(surveyAnswerDTO);
-            SARequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            SARequest.Criteria.UserId = GetIntSessionValue(UserSession.Key.UserId);
             SARequest.Criteria.IsEditMode = this.IsEditMode;
             SARequest.Criteria.IsDeleteMode = true;
-            SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
+            SARequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
             SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteInEditMode;
             SARequest.Action = RequestAction.DontSave;
             SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
 
-            return Json(Session[SessionKeys.RootFormId]);//string.Empty
+            return Json(GetStringSessionValue(UserSession.Key.RootFormId));
         }
 
         [HttpPost]
@@ -870,26 +870,26 @@ namespace Epi.Web.MVC.Controllers
             SARequest.SurveyAnswerList.Add(new SurveyAnswerDTO()
             {
                 ResponseId = ResponseId,
-                RootResponseId = Session[SessionKeys.RootResponseId].ToString(),
-                RootFormId = Session[SessionKeys.RootFormId].ToString()
+                RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
+                RootFormId = GetStringSessionValue(UserSession.Key.RootFormId)
             }.ResolveMetadataDependencies() as SurveyAnswerDTO);
-            SARequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            SARequest.Criteria.UserId = SurveyHelper.GetDecryptUserId(Session[UserSession.Key.UserId].ToString());
             SARequest.Criteria.IsEditMode = false;
             SARequest.Criteria.IsDeleteMode = true;
-            SARequest.Criteria.IsSqlProject = (bool)Session[SessionKeys.IsSqlProject];
-            SARequest.Criteria.SurveyId = Session[SessionKeys.RootFormId].ToString();
+            SARequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
+            SARequest.Criteria.SurveyId = GetStringSessionValue(UserSession.Key.RootFormId);
             SARequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
             SurveyAnswerResponse SAResponse = _surveyFacade.DeleteResponse(SARequest);
 
-            return Json(Session[SessionKeys.RootFormId]);
+            return Json(GetStringSessionValue(UserSession.Key.RootFormId));
         }
 
         [HttpGet]
         public ActionResult LogOut()
         {
-            this.UpdateStatus(Session[SessionKeys.RootResponseId].ToString(), null, RecordStatus.InProcess, RecordStatusChangeReason.Logout);
+            this.UpdateStatus(GetStringSessionValue(UserSession.Key.RootResponseId), null, RecordStatus.InProcess, RecordStatusChangeReason.Logout);
             FormsAuthentication.SignOut();
-            this.Session.Clear();
+            ClearSession();
             return RedirectToAction(ViewActions.Index, ControllerNames.Login);
         }
 
@@ -898,7 +898,7 @@ namespace Epi.Web.MVC.Controllers
         {
             var parentResponseId = responseId;
 
-            Session[SessionKeys.RequestedViewId] = viewId;
+            SetSessionValue(UserSession.Key.RequestedViewId, viewId);
 
             //1-Get the child Id
 
@@ -919,13 +919,13 @@ namespace Epi.Web.MVC.Controllers
 
         private string AddNewChild(string childFormId, int viewId, string parentResponseId, string formValuesHasChanged, string currentPage)
         {
-            Session[SessionKeys.RequestedViewId] = viewId;
+            SetSessionValue(UserSession.Key.RequestedViewId, viewId);
             bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
             if (IsMobileDevice == false)
             {
-                IsMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+                IsMobileDevice = Epi.Cloud.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
             }
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int UserId = GetIntSessionValue(UserSession.Key.UserId);
 
             string childResponseId = CreateResponse(childFormId, parentResponseId);
             //this.UpdateStatus(responseId, surveyId, RecordStatus.InProcess, RecordStatusChangeReason.NewChild);
@@ -936,7 +936,7 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public JsonResult HasResponse(string surveyId, int viewId, string responseId)
         {
-            var rootResponseId = Session[SessionKeys.RootResponseId].ToString();
+            var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
             var parentResponseId = responseId;
             var childFormId = MetadataAccessor.GetFormIdByViewId(viewId);
 
@@ -956,10 +956,10 @@ namespace Epi.Web.MVC.Controllers
 
         public string CreateResponse(string childFormId, string parentResponseId)
         {
-            int orgId = Convert.ToInt32(Session[SessionKeys.CurrentOrgId]);
-            int userId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
-            string userName = Session[SessionKeys.UserName].ToString();
-            bool.TryParse(Session[SessionKeys.IsEditMode].ToString(), out this.IsEditMode);
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            string userName = GetStringSessionValue(UserSession.Key.UserName);
+            IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
 
             bool IsAndroid = false;
 
@@ -972,12 +972,12 @@ namespace Epi.Web.MVC.Controllers
 
             if (IsMobileDevice == false)
             {
-                IsMobileDevice = Epi.Web.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
+                IsMobileDevice = Epi.Cloud.MVC.Utility.SurveyHelper.IsMobileDevice(this.Request.UserAgent.ToString());
             }
             //create the responseid
             Guid childResponseId = Guid.NewGuid();
             TempData[TempDataKeys.ResponseId] = childResponseId.ToString();
-            var rootResponseId = Session[SessionKeys.RootResponseId].ToString();
+            var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
 
             var responseContext = new ResponseContext
             {
@@ -993,7 +993,7 @@ namespace Epi.Web.MVC.Controllers
 
             // create the first survey response
             // SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
-            int currentOrgId = int.Parse(Session[SessionKeys.SelectedOrgId].ToString());
+            int currentOrgId = GetIntSessionValue(UserSession.Key.SelectedOrgId);
             SurveyAnswerDTO SurveyAnswer = _surveyFacade.CreateSurveyAnswer(responseContext, this.IsEditMode, currentOrgId);
 
             List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
@@ -1022,7 +1022,7 @@ namespace Epi.Web.MVC.Controllers
 
                     responseDetail = surveyResponseBuilder.CreateResponseDocument(responseContext, pageDigests);
 
-                    Session[SessionKeys.RequiredList] = surveyResponseBuilder.RequiredList;
+                    SetSessionValue(UserSession.Key.RequiredList, surveyResponseBuilder.RequiredList);
                     this._requiredList = surveyResponseBuilder.RequiredList;
                     form.RequiredFieldsList = this._requiredList;
                     FunctionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
@@ -1039,8 +1039,8 @@ namespace Epi.Web.MVC.Controllers
                     form.RequiredFieldsList = FunctionObject_B.Context.RequiredFieldList;
 
 
-                    ContextDetailList = Epi.Web.MVC.Utility.SurveyHelper.GetContextDetailList(FunctionObject_B);
-                    form = Epi.Web.MVC.Utility.SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
+                    ContextDetailList = Epi.Cloud.MVC.Utility.SurveyHelper.GetContextDetailList(FunctionObject_B);
+                    form = Epi.Cloud.MVC.Utility.SurveyHelper.UpdateControlsValuesFromContext(form, ContextDetailList);
 
                     _surveyFacade.UpdateSurveyResponse(surveyInfoModel, childResponseId.ToString(), form, SurveyAnswer, false, false, 0, orgId, userId, userName);
                 }
@@ -1057,7 +1057,7 @@ namespace Epi.Web.MVC.Controllers
                 SurveyAnswer.ResponseDetail = surveyResponseBuilder.CreateResponseDocument(responseContext, pageDigestArray);
 
                 this._requiredList = surveyResponseBuilder.RequiredList;
-                Session[SessionKeys.RequiredList] = surveyResponseBuilder.RequiredList;
+                SetSessionValue(UserSession.Key.RequiredList, surveyResponseBuilder.RequiredList);
                 form.RequiredFieldsList = _requiredList;
                 _surveyFacade.UpdateSurveyResponse(surveyInfoModel, SurveyAnswer.ResponseId, form, SurveyAnswer, false, false, 0, orgId, userId, userName);
             }
@@ -1075,7 +1075,7 @@ namespace Epi.Web.MVC.Controllers
         {
             Epi.Cloud.Common.Message.UserAuthenticationResponse AuthenticationResponse = _securityFacade.GetAuthenticationResponse(responseId);
 
-            string strPassCode = Epi.Web.MVC.Utility.SurveyHelper.GetPassCode();
+            string strPassCode = Epi.Cloud.MVC.Utility.SurveyHelper.GetPassCode();
             if (string.IsNullOrEmpty(AuthenticationResponse.PassCode))
             {
                 _securityFacade.UpdatePassCode(responseId, strPassCode);
@@ -1239,15 +1239,15 @@ namespace Epi.Web.MVC.Controllers
 
         private void SetGlobalVariable()
         {
-            this.RootFormId = (Session[SessionKeys.RootFormId] ?? string.Empty).ToString();
-            this.RootResponseId = (Session[SessionKeys.RootResponseId] ?? string.Empty).ToString();
-            this._requiredList = (Session[SessionKeys.RequiredList] ?? string.Empty).ToString();
-            bool.TryParse((Session[SessionKeys.IsEditMode] ?? "False").ToString(), out this.IsEditMode);
+            RootFormId = GetStringSessionValue(UserSession.Key.RootFormId, defaultValue: string.Empty);
+            RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId, defaultValue: string.Empty);
+            _requiredList = GetStringSessionValue(UserSession.Key.RequiredList, defaultValue: string.Empty);
+            IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
         }
 
         private FormResponseInfoModel GetFormResponseInfoModel(string SurveyId, string ResponseId, List<FormsHierarchyDTO> FormsHierarchyDTOList = null)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int UserId = GetIntSessionValue(UserSession.Key.UserId);
             FormResponseInfoModel FormResponseInfoModel = new FormResponseInfoModel();
 
             var formHieratchyDTO = FormsHierarchyDTOList.FirstOrDefault(h => h.FormId == SurveyId);
@@ -1256,7 +1256,7 @@ namespace Epi.Web.MVC.Controllers
             if (!string.IsNullOrEmpty(SurveyId))
             {
                 //SurveyAnswerRequest FormResponseReq = new SurveyAnswerRequest();
-                FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = Session[SessionKeys.ProjectId] as string };
+                FormSettingRequest FormSettingReq = new FormSettingRequest { ProjectId = GetStringSessionValue(UserSession.Key.ProjectId) };
 
                 //Populating the request
 
@@ -1280,7 +1280,7 @@ namespace Epi.Web.MVC.Controllers
                     surveyAnswerDTO.FormId = SurveyId;
                     surveyAnswerDTO.CurrentPageNumber = 1;
                     surveyAnswerDTO.DateUpdated = DateTime.UtcNow;
-                    surveyAnswerDTO.RootResponseId = Session[SessionKeys.RootResponseId].ToString();
+                    surveyAnswerDTO.RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
                     surveyAnswerDTO.ParentResponseId = ResponseId;
                     surveyAnswerDTO.ResponseId = Guid.NewGuid().ToString();
                     var responseContext = surveyAnswerDTO.ToResponseContext();
@@ -1321,7 +1321,7 @@ namespace Epi.Web.MVC.Controllers
         [HttpPost]
         public ActionResult ReadResponseInfo(string SurveyId, int ViewId, string ResponseId, string CurrentPage)
         {
-            int UserId = SurveyHelper.GetDecryptUserId(Session[SessionKeys.UserId].ToString());
+            int UserId = GetIntSessionValue(UserSession.Key.UserId);
             int PageNumber = int.Parse(CurrentPage);
             bool IsAndroid = false;
 
@@ -1329,7 +1329,7 @@ namespace Epi.Web.MVC.Controllers
             {
                 IsAndroid = true;
             }
-            Session[SessionKeys.CurrentFormId] = SurveyId;
+            SetSessionValue(UserSession.Key.CurrentFormId, SurveyId);
 
             SetRelateSession(ResponseId, PageNumber);
             bool IsMobileDevice = this.Request.Browser.IsMobileDevice;
@@ -1339,7 +1339,7 @@ namespace Epi.Web.MVC.Controllers
 
                 int RequestedViewId;
                 RequestedViewId = ViewId;
-                Session[SessionKeys.RequestedViewId] = RequestedViewId;
+                SetSessionValue(UserSession.Key.RequestedViewId, RequestedViewId);
 
                 SurveyModel SurveyModel = new SurveyModel();
                 SurveyModel.RelateModel = FormsHierarchy.ToRelateModel(SurveyId);
@@ -1379,21 +1379,19 @@ namespace Epi.Web.MVC.Controllers
 
         public void SetRelateSession(string ResponseId, int CurrentPage)
         {
-            // Session[SessionKeys.RelateButtonPageId] 
-            var Obj = Session[SessionKeys.RelateButtonPageId];
-            Dictionary<string, int> List = new Dictionary<string, int>();
-            if (Obj == null)
+            Dictionary<string, int> List = GetSessionValue<Dictionary<string, int>>(UserSession.Key.RelateButtonPageId);
+            if (List == null)
             {
+                List = new Dictionary<string, int>();
                 List.Add(ResponseId, CurrentPage);
-                Session[SessionKeys.RelateButtonPageId] = List;
+                SetSessionValue(UserSession.Key.RelateButtonPageId, List);
             }
             else
             {
-                List = (Dictionary<string, int>)Session[SessionKeys.RelateButtonPageId];
                 if (!List.ContainsKey(ResponseId))
                 {
                     List.Add(ResponseId, CurrentPage);
-                    Session[SessionKeys.RelateButtonPageId] = List;
+                    SetSessionValue(UserSession.Key.RelateButtonPageId, List);
                 }
             }
         }

@@ -7,9 +7,9 @@ using System.Web.Security;
 using Epi.Common.EmailServices;
 using Epi.Common.EmailServices.Constants;
 
-namespace Epi.Web.Controllers
+namespace Epi.Cloud.MVC.Controllers
 {
-    public class PostController : Controller
+    public class PostController : BaseSurveyController
     {
         //
         // GET: /Notify/
