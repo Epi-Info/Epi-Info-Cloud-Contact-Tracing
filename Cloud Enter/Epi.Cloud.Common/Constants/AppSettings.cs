@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Epi.Common.Configuration;
+using Epi.Common.Attributes;
 
 namespace Epi.Cloud.Common.Constants
 {
@@ -57,6 +58,9 @@ namespace Epi.Cloud.Common.Constants
 
             // No Default Value
             public const string MetadataAccessServiceAPI = "MetadataAccessServiceAPI";
+
+           // [EncryptedValue(true)]
+            public const string CacheSessionConnectionString = "CacheSessionConnectionString";
 
             #endregion Settings
 
