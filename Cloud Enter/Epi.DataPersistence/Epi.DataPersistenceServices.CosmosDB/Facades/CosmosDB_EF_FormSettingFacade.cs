@@ -134,9 +134,9 @@ namespace Epi.DataPersistenceServices.CosmosDB.Facades
             _formSettingDao_DocDB.UpdateFormMode(formInfoBO, formSettingBO);
         }
 
-        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
+        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId, int CurrentOrg = -1)
         {
-            _formSettingDao_EF.UpdateSettingsList(formSettingBO, formId);
+            _formSettingDao_EF.UpdateSettingsList(formSettingBO, formId,CurrentOrg);
 
         }
 

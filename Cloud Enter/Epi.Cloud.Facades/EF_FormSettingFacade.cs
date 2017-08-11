@@ -79,9 +79,9 @@ namespace Epi.Cloud.Facades
             throw new NotImplementedException();
         }
 
-        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
+        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId, int CurrentOrg = -1)
         {
-            _formSettingDao.UpdateSettingsList(formSettingBO, formId);
+            _formSettingDao.UpdateSettingsList(formSettingBO, formId, CurrentOrg);
         }
 
         public void DeleteDraftRecords(string formId)
