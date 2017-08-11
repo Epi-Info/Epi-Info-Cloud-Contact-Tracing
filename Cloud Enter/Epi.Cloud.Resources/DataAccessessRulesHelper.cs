@@ -22,8 +22,9 @@ namespace Epi.Cloud.Resources
             string ruleName;
             string ruleDescription;
             var resourceManager = ResourceProvider.GetResourceManager(ResourceNamespaces.DataAccessRules);
-            ResourceSet resourceSet= resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);            
-            foreach (DictionaryEntry entry in resourceSet)
+            ResourceSet resourceSet= resourceManager.GetResourceSet(CultureInfo.CurrentUICulture, true, true);
+           
+            foreach (DictionaryEntry entry in resourceSet.OfType<DictionaryEntry>().OrderBy(i => i.Key))
             {
                 ruleId++;
                 dataAccessRuleIds.Add(ruleId, entry.Key.ToString());
