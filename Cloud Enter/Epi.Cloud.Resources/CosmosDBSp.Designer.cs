@@ -83,25 +83,6 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function orderBy(relateParentId,formId,recStatus, orderByFieldName, continuationToken) {
-        ///    // HTTP error codes sent to our callback funciton by DocDB server.
-        ///    var ErrorCode = {
-        ///        REQUEST_ENTITY_TOO_LARGE: 413,
-        ///    }    
-        ///    var collection = getContext().getCollection();
-        ///    var collectionLink = collection.getSelfLink();
-        ///    var result = new Array();
-        ///     
-        ///    if(relateParentId){
-        ///            var filterQuery=&quot;SELECT * FROM c where c.RelateParentId=&apos;&quot;+relateParentId+&quot;&apos;                      [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string OrderBy {
-            get {
-                return ResourceManager.GetString("OrderBy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to function SharingRules(ruleId, isHostOrgUser, userOrgId, responseOrgId)
         ///{
         ///    switch (ruleId)

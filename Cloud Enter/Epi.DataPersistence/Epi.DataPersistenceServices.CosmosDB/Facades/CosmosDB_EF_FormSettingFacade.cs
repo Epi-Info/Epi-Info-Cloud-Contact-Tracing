@@ -20,14 +20,14 @@ namespace Epi.DataPersistenceServices.CosmosDB.Facades
         private readonly MetadataAccessor _metadataAccessor;
         private readonly CosmosDBCRUD _formResponseCRUD;
         private readonly IFormSettingDao_EF _formSettingDao_EF;
-        private readonly IFormSettingDao _formSettingDao_DocDB;
+        private readonly IFormSettingDao _formSettingDao_CosmosDB;
 
         public CosmosDB_EF_FormSettingFacade(IFormSettingDao_EF formSettingDao_EF)
         {
             _metadataAccessor = new MetadataAccessor();
             _formResponseCRUD = new CosmosDBCRUD();
             _formSettingDao_EF = formSettingDao_EF;
-            _formSettingDao_DocDB = new FormSettingDao(formSettingDao_EF);
+            _formSettingDao_CosmosDB = new FormSettingDao(formSettingDao_EF);
         }
 
         public List<ResponseGridColumnSettings> GetResponseDisplaySettings(string formId)
@@ -131,7 +131,7 @@ namespace Epi.DataPersistenceServices.CosmosDB.Facades
 
         public void UpdateFormMode(FormInfoBO formInfoBO, FormSettingBO formSettingBO = null)
         {
-            _formSettingDao_DocDB.UpdateFormMode(formInfoBO, formSettingBO);
+            _formSettingDao_CosmosDB.UpdateFormMode(formInfoBO, formSettingBO);
         }
 
         public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)

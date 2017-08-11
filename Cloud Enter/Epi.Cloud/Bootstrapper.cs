@@ -69,11 +69,11 @@ namespace Epi.Cloud.MVC
 			// Registered Instances
 			var epiCloudCache = new Epi.Cloud.CacheServices.EpiCloudCache();
             var projectMetadataProvider = new Epi.Cloud.MetadataServices.ProjectMetadataProvider(epiCloudCache);
-            var docDB_SurveyFacade = new Epi.PersistenceServices.CosmosDB.DocDB_SurveyPersistenceFacade();
+            var cosmosDB_SurveyFacade = new Epi.PersistenceServices.CosmosDB.CosmosDB_SurveyPersistenceFacade();
 
 			container.RegisterInstance<Epi.Cloud.CacheServices.IEpiCloudCache>(epiCloudCache);
             container.RegisterInstance<Epi.Cloud.Interfaces.MetadataInterfaces.IProjectMetadataProvider>(projectMetadataProvider);
-            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(docDB_SurveyFacade);
+            container.RegisterInstance<Epi.DataPersistence.Common.Interfaces.ISurveyPersistenceFacade >(cosmosDB_SurveyFacade);
 
 			container.RegisterControllers();
 

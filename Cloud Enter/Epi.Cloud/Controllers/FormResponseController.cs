@@ -249,16 +249,16 @@ namespace Epi.Cloud.MVC.Controllers
             ///////////////////////////// Execute - Record Before - start//////////////////////
             Dictionary<string, string> ContextDetailList = new Dictionary<string, string>();
             EnterRule functionObject_B = (EnterRule)form.FormCheckCodeObj.GetCommand("level=record&event=before&identifier=");
-            SurveyResponseBuilder surveyResponseDocDb = new SurveyResponseBuilder(_requiredList);
+            SurveyResponseBuilder surveyResponseBuilder = new SurveyResponseBuilder(_requiredList);
             if (functionObject_B != null && !functionObject_B.IsNull())
             {
                 try
                 {
                     PageDigest[] pageDigests = form.MetadataAccessor.GetCurrentFormPageDigests();
-                    responseDetail = surveyResponseDocDb.CreateResponseDocument(responseContext, pageDigests);
+                    responseDetail = surveyResponseBuilder.CreateResponseDocument(responseContext, pageDigests);
 
-                    SetSessionValue(UserSession.Key.RequiredList, surveyResponseDocDb.RequiredList);
-                    _requiredList = surveyResponseDocDb.RequiredList;
+                    SetSessionValue(UserSession.Key.RequiredList, surveyResponseBuilder.RequiredList);
+                    _requiredList = surveyResponseBuilder.RequiredList;
                     form.RequiredFieldsList = _requiredList;
                     functionObject_B.Context.HiddenFieldList = form.HiddenFieldsList;
                     functionObject_B.Context.HighlightedFieldList = form.HighlightedFieldsList;
@@ -289,9 +289,9 @@ namespace Epi.Cloud.MVC.Controllers
             {
                 PageDigest[] pageDigestArray = form.MetadataAccessor.GetCurrentFormPageDigests();// metadataAccessor.GetPageDigests(surveyInfoModel.SurveyId);
 
-                surveyAnswerDTO.ResponseDetail = surveyResponseDocDb.CreateResponseDocument(responseContext, pageDigestArray);
+                surveyAnswerDTO.ResponseDetail = surveyResponseBuilder.CreateResponseDocument(responseContext, pageDigestArray);
 
-                _requiredList = surveyResponseDocDb.RequiredList;
+                _requiredList = surveyResponseBuilder.RequiredList;
                 SetSessionValue(UserSession.Key.RequiredList, _requiredList);
                 form.RequiredFieldsList = _requiredList;
                 _surveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswerDTO.ResponseId, form, surveyAnswerDTO, false, false, 0, orgId, userId, userName);
