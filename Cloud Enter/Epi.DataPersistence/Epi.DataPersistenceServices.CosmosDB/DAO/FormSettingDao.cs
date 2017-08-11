@@ -179,9 +179,9 @@ namespace Epi.DataPersistenceServices.CosmosDB.DAO
 
 
         // vvvvvvvvvvvvvvvvvvvvvvvvvvv Implemented in Epi.Web.EF/EntityFormSettingDao vvvvvvvvvvvvvvvvvvvvvvvvvvv //
-        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
+        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId, int CurrentOrg = -1)
         {
-            _formSettingDao_EF.UpdateSettingsList(formSettingBO, formId);
+            _formSettingDao_EF.UpdateSettingsList(formSettingBO, formId,CurrentOrg);
         }
 
         public Dictionary<int, string> GetOrgAdmins(Dictionary<int, string> selectedOrgList)

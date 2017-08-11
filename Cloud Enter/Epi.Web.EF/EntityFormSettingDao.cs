@@ -203,7 +203,7 @@ namespace Epi.Web.EF
             }
         }
 
-        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
+        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId, int CurrentOrg = -1)
         {
             Guid id = new Guid(formId);
             try
@@ -218,7 +218,10 @@ namespace Epi.Web.EF
 
                     foreach (User user in users)
                     {
-                        response.Users.Remove(user);
+                        if (user.UserOrganizations.Where(x => x.OrganizationID == CurrentOrg).Count() > 0)
+                        {
+                            response.Users.Remove(user);
+                        }
                     }
                     context.SaveChanges();
 
@@ -282,6 +285,7 @@ namespace Epi.Web.EF
 
             try
             {
+                int i = 0;
                 foreach (var org in selectedOrgList)
                 {
                     using (var context = DataObjectFactory.CreateContext())
@@ -289,8 +293,7 @@ namespace Epi.Web.EF
                         int orgId = int.Parse(org.Value);
 
                         var adminList = context.UserOrganizations.Where(x => x.OrganizationID == orgId && x.RoleId == Roles.Administrator && x.Active == true).ToList();
-
-                        int i = 0;
+                       
                         foreach (var item in adminList)
                         {
                             orgAdmins.Add(i++, item.User.EmailAddress);

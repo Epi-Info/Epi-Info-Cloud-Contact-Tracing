@@ -117,13 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Rule1" xml:space="preserve">
-    <value>Organization users can only access the data of their organization</value>
+  <data name="Access within organization" xml:space="preserve">
+    <value>Users within an organization can only access the data created by their organization</value>
   </data>
-  <data name="Rule2" xml:space="preserve">
-    <value>All users in host organization will have access to all data of all organizations</value>
+  <data name="Enable data access for central organization" xml:space="preserve">
+    <value>The users in central organization will have access to all the data created by all organizations</value>
   </data>
-  <data name="Rule3" xml:space="preserve">
-    <value>All users of all organizations can access all data</value>
+  <data name="Enable data access to all" xml:space="preserve">
+    <value>All users part of all organizations can access all data created by all organizations</value>
   </data>
 </root>

@@ -861,6 +861,7 @@ namespace Epi.Cloud.MVC.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveSettings(string formid)
         {
+            int currentOrgId = GetIntSessionValue(UserSession.Key.SelectedOrgId);
             List<FormsHierarchyDTO> formsHierarchyDTOList = GetFormsHierarchy(formid);
             FormSettingRequest formSettingReq = new FormSettingRequest { ProjectId = GetStringSessionValue(UserSession.Key.ProjectId) };
             int userId = GetIntSessionValue(UserSession.Key.UserId);
@@ -887,6 +888,7 @@ namespace Epi.Cloud.MVC.Controllers
                 }
                 formSettingReq.FormSetting.Add(formSetting);
                 formSettingReq.FormInfo.IsDraftMode = GetBoolValue(this.Request.Form[FormSetting.Key.Mode]);
+                formSettingReq.CurrentOrgId = currentOrgId;
             }
             FormSettingResponse formSettingResponse = _surveyFacade.SaveSettings(formSettingReq);
 
@@ -894,7 +896,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             var model = new FormResponseInfoModel();
 
-            int currentOrgId = GetIntSessionValue(UserSession.Key.SelectedOrgId);
+           
             model = GetFormResponseInfoModel(formid, 1, "", "", currentOrgId);
 
             if (isMobileDevice == false)
