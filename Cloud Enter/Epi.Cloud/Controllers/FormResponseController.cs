@@ -51,6 +51,7 @@ namespace Epi.Cloud.MVC.Controllers
             {
                 RemoveSessionValue(UserSession.Key.SortOrder);
                 RemoveSessionValue(UserSession.Key.SortField);
+                RemoveSessionValue(UserSession.Key.SearchCriteria);
             }
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
