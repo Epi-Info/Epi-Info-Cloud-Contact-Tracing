@@ -61,7 +61,7 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Organization users can only access the data of their organization.
+        ///   Looks up a localized string similar to Users within an organization can only access the data created by their organization.
         /// </summary>
         internal static string Access_within_organization {
             get {
@@ -70,20 +70,20 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All users of all organizations can access all data.
-        /// </summary>
-        internal static string Enable_data_access__to_all {
-            get {
-                return ResourceManager.GetString("Enable data access  to all", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to All users in host organization will have access to all data of all organizations.
+        ///   Looks up a localized string similar to The users in central organization will have access to all the data created by all organizations.
         /// </summary>
         internal static string Enable_data_access_for_central_organization {
             get {
                 return ResourceManager.GetString("Enable data access for central organization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All users part of all organizations can access all data created by all organizations.
+        /// </summary>
+        internal static string Enable_data_access_to_all {
+            get {
+                return ResourceManager.GetString("Enable data access to all", resourceCulture);
             }
         }
     }

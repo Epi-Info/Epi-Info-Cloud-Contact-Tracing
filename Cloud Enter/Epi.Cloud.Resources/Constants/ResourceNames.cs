@@ -29,7 +29,6 @@
     public struct CosmosDBSPKeys
     {
         public const string GetAllRecordsBySurveyID = "GetAllRecordsBySurveyID";
-        public const string OrderBy = "OrderBy";
     }
 
     public struct CosmosDBUDFKeys

@@ -37,7 +37,7 @@ namespace Epi.Web.BLL
             return result;
         }
 
-        public string SaveSettings(bool isDraftMode, FormSettingDTO formSettingDTO)
+        public string SaveSettings(bool isDraftMode, FormSettingDTO formSettingDTO, int CurrentOrg = -1)
         {
             var formId = formSettingDTO.FormId;
             var isShareable = formSettingDTO.IsShareable;
@@ -53,7 +53,7 @@ namespace Epi.Web.BLL
                 List<UserBO> formCurrentUsersList = _userDao.GetUserByFormId(formSettingDTO.FormId);
                 Dictionary<int, string> assignedOrgAdminList = _formSettingFacade.GetOrgAdmins(formSettingDTO.SelectedOrgList);// about to share with
                 List<UserBO> CurrentOrgAdminList = _formSettingFacade.GetOrgAdminsByFormId(formSettingDTO.FormId);// shared with 
-                _formSettingFacade.UpdateSettingsList(formSettingBO, formSettingDTO.FormId);
+                _formSettingFacade.UpdateSettingsList(formSettingBO, formSettingDTO.FormId,CurrentOrg);
 
                 // Clear all Draft records
                 if (formSettingDTO.DeleteDraftData)

@@ -203,7 +203,7 @@ namespace Epi.Web.EF
             }
         }
 
-        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId)
+        public void UpdateSettingsList(FormSettingBO formSettingBO, string formId, int CurrentOrg = -1)
         {
             Guid id = new Guid(formId);
             try
@@ -218,7 +218,10 @@ namespace Epi.Web.EF
 
                     foreach (User user in users)
                     {
-                        response.Users.Remove(user);
+                        if (user.UserOrganizations.Where(x => x.OrganizationID == CurrentOrg).Count() > 0)
+                        {
+                            response.Users.Remove(user);
+                        }
                     }
                     context.SaveChanges();
 

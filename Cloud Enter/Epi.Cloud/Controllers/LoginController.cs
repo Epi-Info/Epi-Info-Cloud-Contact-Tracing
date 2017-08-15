@@ -266,7 +266,8 @@ namespace Epi.Cloud.MVC.Controllers
                         OrganizationRequest request = new OrganizationRequest();
                         request.UserId = result.User.UserId;
                         request.UserRole = result.User.UserHighestRole;
-                        OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
+                       // OrganizationResponse organizations = _securityFacade.GetAdminOrganizations(request);
+                        OrganizationResponse organizations = _securityFacade.GetUserOrganizations(request);
 
                         FormsAuthentication.SetAuthCookie(Model.UserName, false);
                         SetSessionValue(UserSession.Key.UserId, result.User.UserId);

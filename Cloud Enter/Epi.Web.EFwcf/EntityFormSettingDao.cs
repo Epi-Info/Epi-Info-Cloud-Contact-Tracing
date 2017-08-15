@@ -216,7 +216,7 @@ namespace Epi.Web.EFwcf
             }
 
         }
-        public void UpDateSettingsList(FormSettingBO FormSettingBO, string FormId)
+        public void UpDateSettingsList(FormSettingBO FormSettingBO, string FormId, int CurrentOrg = -1)
         {
 
             Guid Id = new Guid(FormId);
@@ -226,14 +226,16 @@ namespace Epi.Web.EFwcf
                 {
                     SurveyMetaData Response = Context.SurveyMetaDatas.First(x => x.SurveyId == Id);
                     //Remove old Users
-                
+
                     var _User = new HashSet<string>(Response.Users.Select(x => x.UserName));
                     var Users = Context.Users.Where(t => _User.Contains(t.UserName))  .ToList();
                   
                     foreach (User user in Users)
                     {
-
-                        Response.Users.Remove(user);
+                        if (user.UserOrganizations.Where(x => x.OrganizationID == CurrentOrg).Count() > 0)
+                        {
+                            Response.Users.Remove(user);
+                        }
 
                     }
                     Context.SaveChanges();

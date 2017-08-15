@@ -137,7 +137,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                         }
 
                         // Send hierarchicalFormResponseDetail to consistency service 
-                        var surveyPersistenceFacade = new DocDB_SurveyPersistenceFacade();
+                        var surveyPersistenceFacade = new CosmosDB_SurveyPersistenceFacade();
                         surveyPersistenceFacade.NotifyConsistencyService(hierarchicalFormResponseDetail);
 
                         if (responseContext.IsRootResponse)

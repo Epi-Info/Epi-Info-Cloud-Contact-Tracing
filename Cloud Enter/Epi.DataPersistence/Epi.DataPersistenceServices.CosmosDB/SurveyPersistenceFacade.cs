@@ -19,11 +19,11 @@ using Microsoft.Azure.Documents;
 
 namespace Epi.PersistenceServices.CosmosDB
 {
-    public partial class DocDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
+    public partial class CosmosDB_SurveyPersistenceFacade : MetadataAccessor, ISurveyPersistenceFacade
     {
         private string AttachmentId = AppSettings.GetStringValue(AppSettings.Key.AttachmentId);
 
-        public DocDB_SurveyPersistenceFacade()
+        public CosmosDB_SurveyPersistenceFacade()
         {
         }
 

@@ -96,7 +96,7 @@ namespace Epi.Cloud.DataEntryServices
 						formSettingImplementation.UpdateFormSettings(formSettingRequest.FormInfo.IsDraftMode, item);
 
 					}
-					string Message = formSettingImplementation.SaveSettings(formSettingRequest.FormInfo.IsDraftMode, formSettingRequest.FormSetting[0]);
+					string Message = formSettingImplementation.SaveSettings(formSettingRequest.FormInfo.IsDraftMode, formSettingRequest.FormSetting[0], formSettingRequest.CurrentOrgId);
 				}
 
 				return response;
