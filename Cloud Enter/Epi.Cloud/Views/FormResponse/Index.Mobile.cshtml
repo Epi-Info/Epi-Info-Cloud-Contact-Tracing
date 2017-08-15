@@ -640,7 +640,7 @@ var pageId = $('#hidPageNumber').val();
                                 @Html.TextBoxFor(m => m.SearchModel.Value5, string.Empty)
                             </div>
                             <button type="button" data-theme="defbtn" name="Search">
-                                Go</button>
+                                Search</button>
                             <button type="button " data-theme="defbtn" name="ResetSearch">
                                 Reset</button>
                         </div>
@@ -705,18 +705,18 @@ var pageId = $('#hidPageNumber').val();
                                 @Html.Partial("PagerPartial", Model)
                             </div>
                             }
-                            var responses = Model.ResponsesList.Skip((Model.CurrentPage - 1) * Model.PageSize).Take(Model.PageSize).ToList();
+                            var responses = Model.ResponsesList.ToList();
                             @Html.Raw("<ul>")
                             for (int i = 0; i < responses.Count(); i++)
                             {
                             @Html.Raw("<li class='mobilerow'>");
                                                                if (Model.ViewId == 0)
                                                                {                 
-                            @Html.Raw("<div class='mobilewrap'>" + "<div  class='mobilevalue' style='width:100%; text-align:right;'>" + "<button data-role='button' data-theme='submit2' data-inline='true' type='button' onclick ='CheckForConcurrency(this)' name='EditForm'  id='" + responses[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Open</button> &nbsp;" + "<button data-role='button' data-theme='submit2' data-inline='true' type='submit' name='DeleteButton'  id='" + Model.ResponsesList[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Delete</button>" + " " + "</div><div style='clear: both;'></div></div>");
+                            @Html.Raw("<div class='mobilewrap'>" + "<div  class='mobilevalue' style='width:100%; text-align:right;'>" + "<button data-role='button' data-theme='submit2' data-inline='true' type='button' onclick ='CheckForConcurrency(this)' name='EditForm'  id='" + responses[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Open</button> &nbsp;" + "<button data-role='button' data-theme='submit2' data-inline='true' type='submit' name='DeleteButton'  id='" + responses[i].Column0 + "'value='" + responses[i].Column0 + "'>Delete</button>" + " " + "</div><div style='clear: both;'></div></div>");
                                                                }
                                                                else
                                                                { 
-                            @Html.Raw("<div class='mobilewrap'>" + "<div  class='mobilevalue' style='width:100%; text-align:right;'>" + "<button data-role='button' data-theme='submit2' data-inline='true' type='button' onclick ='CheckForConcurrency(this)'  name='EditForm'  id='" + responses[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Open</button> &nbsp;" + "<button data-role='button' data-theme='submit2' data-inline='true' type='submit' name='DeleteBranchButton'  id='" + Model.ResponsesList[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Delete</button>" + " " + "</div><div style='clear: both;'></div></div>");
+                            @Html.Raw("<div class='mobilewrap'>" + "<div  class='mobilevalue' style='width:100%; text-align:right;'>" + "<button data-role='button' data-theme='submit2' data-inline='true' type='button' onclick ='CheckForConcurrency(this)'  name='EditForm'  id='" + responses[i].Column0 + "'value='" + Model.ResponsesList[i].Column0 + "'>Open</button> &nbsp;" + "<button data-role='button' data-theme='submit2' data-inline='true' type='submit' name='DeleteBranchButton'  id='" + responses[i].Column0 + "'value='" + responses[i].Column0 + "'>Delete</button>" + " " + "</div><div style='clear: both;'></div></div>");
 
                                                                }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
                             @Html.Raw("<div class='mobilewrap'><div class='mobileheader'>" + Model.Columns[0].Value + ":</div> <div class='mobilevalue'>" + responses[i].Column1 + "</div><div style='clear: both;'></div></div>");
