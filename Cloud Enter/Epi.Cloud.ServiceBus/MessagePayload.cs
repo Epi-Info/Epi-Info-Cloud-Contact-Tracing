@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace Epi.Cloud.ServiceBus
 {
+    public struct MessagePropertyKeys
+    {
+        public const string ResponseId = "ResponseId";
+        public const string FormId = "FormId";
+        public const string FormName = "FormName";
+        public const string UserOrgId = "UserOrgId";
+        public const string IsDeleted = "IsDeleted";
+    }
+
     [Serializable]
     public class MessagePayload
     {
