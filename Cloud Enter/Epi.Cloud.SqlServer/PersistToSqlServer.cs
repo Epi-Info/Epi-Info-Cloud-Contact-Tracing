@@ -58,49 +58,49 @@ namespace Epi.Cloud.SqlServer
 
                             //if (!ResponseKey.Contains("groupbox") && !ResponseKey.StartsWith("grp") && !ResponseKey.EndsWith("grp"))
                             //{
-                                MetadataAccessor getFieldDigest = new MetadataAccessor();
-                                //var FieldDataType = getFieldDigest.GetFieldDigestByFieldName(objPageResoponse.FormId, ResponseKey);
+                            MetadataAccessor getFieldDigest = new MetadataAccessor();
+                            //var FieldDataType = getFieldDigest.GetFieldDigestByFieldName(objPageResoponse.FormId, ResponseKey);
 
-                                var FieldDataType = GetFieldDataTypeByFieldName(objPageResoponse.FormId, objPageResoponse.PageId, ResponseKey);
+                            var FieldDataType = GetFieldDataTypeByFieldName(objPageResoponse.FormId, objPageResoponse.PageId, ResponseKey);
 
 
-                                //if (!(FieldDataType.ToString().Equals(MetaFieldType.CommandButton.ToString()))
-                                //    && (!FieldDataType.ToString().Equals(MetaFieldType.LabelTitle.ToString()))
-                                //    && (!FieldDataType.ToString().Equals(MetaFieldType.Relate.ToString()))
-                                //    && (!FieldDataType.ToString().Equals(MetaFieldType.Group.ToString())))
-                                if(!(FieldDataType.ToString()== "Unknown"))
+                            //if (!(FieldDataType.ToString().Equals(MetaFieldType.CommandButton.ToString()))
+                            //    && (!FieldDataType.ToString().Equals(MetaFieldType.LabelTitle.ToString()))
+                            //    && (!FieldDataType.ToString().Equals(MetaFieldType.Relate.ToString()))
+                            //    && (!FieldDataType.ToString().Equals(MetaFieldType.Group.ToString())))
+                            if (!(FieldDataType.ToString() == "Unknown"))
+                            {
+                                ChildcolumnNames += ChildcolumnNames != string.Empty ? "," + ResponseKey : ResponseKey;
+
+
+                                if ((!string.IsNullOrEmpty(ResponseValue)) && ResponseValue.Contains("'"))
                                 {
-                                    ChildcolumnNames += ChildcolumnNames != string.Empty ? "," + ResponseKey : ResponseKey;
-
-
-                                    if ((!string.IsNullOrEmpty(ResponseValue)) && ResponseValue.Contains("'"))
-                                    {
-                                        ResponseValue = ResponseValue.Replace("'", "''");
-                                    }
-
-                                    //if (FieldDataType.ToString().Equals(MetaFieldType.Checkbox.ToString()) || FieldDataType.ToString().Equals(MetaFieldType.YesNo.ToString()))
-                                    if (FieldDataType.ToString()== "Boolean" || FieldDataType.ToString() == "YesNo") 
-                                    {
-                                        ResponseValue = ResponseValue.ToLower().ToString() == "yes" ? "1" : "0";
-
-                                        ChildColumnValues += ChildColumnValues != string.Empty ? "," + ResponseValue : "" + 0;
-                                        ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "=" + ResponseValue + "," : "NULL";
-
-                                    }
-                                    //else if (FieldDataType.ToString().Equals(MetaFieldType.Number.ToString()))
-                                    else if (FieldDataType.ToString().Equals("Number"))
-                                    {
-                                        ChildColumnValues += ChildColumnValues != string.Empty ? "," + (ResponseValue != string.Empty ? ResponseValue : "NULL") : "NULL";
-                                        ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "=" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "," : "NULL";
-
-                                    }
-                                    else
-                                    {
-                                        ChildColumnValues += ChildColumnValues != string.Empty ? ",'" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "'" : ResponseValue != string.Empty ? ResponseValue : "NULL";
-                                        ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "='" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "'," : "NULL";
-
-                                    }
+                                    ResponseValue = ResponseValue.Replace("'", "''");
                                 }
+
+                                //if (FieldDataType.ToString().Equals(MetaFieldType.Checkbox.ToString()) || FieldDataType.ToString().Equals(MetaFieldType.YesNo.ToString()))
+                                if (FieldDataType.ToString() == "Boolean" || FieldDataType.ToString() == "YesNo")
+                                {
+                                    ResponseValue = ResponseValue.ToLower().ToString() == "yes" ? "1" : "0";
+
+                                    ChildColumnValues += ChildColumnValues != string.Empty ? "," + ResponseValue : "" + 0;
+                                    ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "=" + ResponseValue + "," : "NULL";
+
+                                }
+                                //else if (FieldDataType.ToString().Equals(MetaFieldType.Number.ToString()))
+                                else if (FieldDataType.ToString().Equals("Number"))
+                                {
+                                    ChildColumnValues += ChildColumnValues != string.Empty ? "," + (ResponseValue != string.Empty ? ResponseValue : "NULL") : "NULL";
+                                    ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "=" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "," : "NULL";
+
+                                }
+                                else
+                                {
+                                    ChildColumnValues += ChildColumnValues != string.Empty ? ",'" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "'" : ResponseValue != string.Empty ? ResponseValue : "NULL";
+                                    ChildColumnUpdateColumnQuery += ChildcolumnNames != string.Empty ? ResponseKey + "='" + (ResponseValue != string.Empty ? ResponseValue : "NULL") + "'," : "NULL";
+
+                                }
+                            }
                             //}
                         }
 
@@ -162,7 +162,7 @@ namespace Epi.Cloud.SqlServer
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                using (SqlCommand cmd = new SqlCommand("usp_SyncToCosmosDB", con))
+                using (SqlCommand cmd = new SqlCommand("usp_SyncToDocumentDb", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 

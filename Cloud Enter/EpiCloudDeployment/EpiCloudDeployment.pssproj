@@ -28,6 +28,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EpiCloudDeployment.ps1" />
+    <Compile Include="EpinfoCloudDataCatpureAzureSetup.ps1" />
     <Compile Include="ExecuteSQLQuery.ps1" />
     <Compile Include="PublishPackage.ps1" />
     <Compile Include="PublishWebJob.ps1" />

@@ -135,6 +135,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLScript", "SQLScript", "{
 		EpiCloudDataCatpuerSqlScript.sql = EpiCloudDataCatpuerSqlScript.sql
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExceFile", "ExceFile", "{10A880A5-DFD4-4802-BF28-0703C88F9F63}"
+	ProjectSection(SolutionItems) = preProject
+		EpiCloudDeploymentExcel.xlsm = EpiCloudDeploymentExcel.xlsm
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug (Exclude EpiMap)|Any CPU = Debug (Exclude EpiMap)|Any CPU
@@ -1524,5 +1529,6 @@ Global
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 		{83720B53-704A-41D9-9EFE-36225AA249CA} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 		{AB22A2DA-9469-420E-8FFB-638F7FB1CFBA} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
+		{10A880A5-DFD4-4802-BF28-0703C88F9F63} = {49F96C7E-4FA5-4303-B781-6548D2784AF4}
 	EndGlobalSection
 EndGlobal

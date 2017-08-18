@@ -1,85 +1,21 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "serverfarms_eicdcserviceplanpro_name": {
-            "value": "eicdcserviceplanprq"
-        },
-        "sites_eicdcmetadataapipro_name": {
-            "value": "eicdcmetadataapiproq"
-        },
-        "sites_eicdcpro_name": {
-            "value": "eicdcpro"
-        },
-        "sites_eicdcdataconsistencyservicesapipro_name": {
-            "value": "eicdcdataconsistencyservicesapipr"
-        },		
-        "config_web_name": {
-            "value": "eicdcproweb"
-        },
-        "config_web_name_1": {
-            "value": "eicdcproweb"
-        },
-        "config_web_name_2": {
-            "value": "eicdcprowebtwo"
-        },
-		"Redis_eicdcsessionpro_name": {
-            "value": "eicdcsessionprdo"
-        },
-		"Redis_eicdccachepro_name": {
-            "value": "eicdccacheprfo"
-        },
-		"serviceBusNamespaceName": {
-            "value": "sbsananthnamspau"
-        },
-		"storageAccountType": {
-			"value": "Standard_GRS"
-		},
-		"storageAccName": {
-			"value": "eicdcstoragepros"
-		},
-		"yourservernameName": {     
-			"Value": "mytesterserser"
-		},
-		 "yourservernameAdminLogin": {
-			"Value": "adminlogines"
-		},
-		 "yourservernameAdminLoginPassword": {      
-			"Value": "Passwor$#12233"
-		},
-		 "dbnameName": {
-			"Value": "testdbeanme",
-      
-		},
-		 "dbnameCollation": {
-			"Value": "SQL_Latin1_General_CP1_CI_AS"
-		},
-		"dbnameEdition": {
-			"Value": "Basic"
-		},
-		"dbnameRequestedServiceObjectiveName": {
-			"Value": "Basic"
-		},
-		"databaseAccountName": {
-			"value": "mydocumentdbs"
-		},
-		"consistencyLevel": {
-			"value": "BoundedStaleness"
-		},
-		"maxStalenessPrefix": {
-			"value": 100
-		},
-		"maxIntervalInSeconds": {
-			"value": 5
-		},
-		 "sendgridAccountName": {
-            "Value": "testmynewsendgris" 
-        },
-      "sendgridPassword": {
-        "Value": "PassWrods$#1234"
-      },
-         "toAddress": {
-            "Value": "ananthwin@gmail.com" 
-        } 
-    }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "Sqlserver": { "value": " " },
+    "Sqlserver_Admin_UserName": { "value": " " },
+    "Sqlserver_Admin_Password": { "value": " " },
+    "Sqlserver_db_name": { "value": " " },
+    "EpiinfoWebapp": { "value": " " },
+    "MetadataApi": { "value": " " },
+    "DataConsistencyApi": { "value": " " },
+    "Nosql_Cosmosdb_Account": { "value": " " },
+    "Redis_Session_Cache": { "value": " " },
+    "Redis_Metadata_Cache": { "value": " " },
+    "ServiceBusName": { "value": " " },
+    "Storage_Account": { "value": " " },
+    "Sendgrid_Account": { "value": " " },
+    "Sendgrid_Password": { "value": " " },
+    "ResourceLocation": { "value": " " }
+  }
 }
