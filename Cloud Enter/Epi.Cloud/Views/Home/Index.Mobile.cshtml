@@ -15,7 +15,8 @@
     $(function () {
 
         $("#dropdown-1").change(function () {
-            FilterRecords(this);
+            var OrgId = $("#dropdown-2").val();
+            FilterRecords(this, OrgId);
             
             // $("#right").hide();
             // $("button[class*='metro-tile']").removeClass('metro-set');
@@ -70,7 +71,7 @@
         
 <div id="content" style="margin-bottom:200px; padding:5px;">
      <div id="leftarrangeby" style="vertical-align:middle; font-size:10pt !important; margin-top:15px;margin-left:3px">
-            <select name="dropdown-2" style="vertical-align:middle; font-size:10pt !important; display:inline-block;" data-theme="submit2" onchange="FilterFormRecords(this);">
+            <select name="dropdown-2"  id="dropdown-2" style="vertical-align:middle; font-size:10pt !important; display:inline-block;" data-theme="submit2" onchange="FilterFormRecords(this);">
                @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
                            @foreach(var item in Model.OrganizationList){
 				            <option value="@item.OrganizationId">@item.Organization</option>
@@ -79,7 +80,7 @@
 				            @*	<option value="3">Last Saved Forms First</option>*@
             </select>
         
-            <select name="dropdown-1" style="vertical-align:middle; font-size:10pt !important; display:inline-block;" data-theme="submit2" onchange="FilterRecords(this,$('#dropdown-2').val());">
+            <select name="dropdown-1" style="vertical-align:middle; font-size:10pt !important; display:inline-block;" data-theme="submit2">
                @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
                 <option value="1">My Forms</option>        
                 <option value="2">Forms Assigned to Me</option>

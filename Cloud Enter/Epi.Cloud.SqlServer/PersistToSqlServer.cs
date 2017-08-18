@@ -162,7 +162,7 @@ namespace Epi.Cloud.SqlServer
 
             using (SqlConnection con = new SqlConnection(connStr))
             {
-                using (SqlCommand cmd = new SqlCommand("usp_SyncToCosmosDB", con))
+                using (SqlCommand cmd = new SqlCommand("usp_SyncToDocumentDb", con))
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
 

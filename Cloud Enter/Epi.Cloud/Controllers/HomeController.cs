@@ -498,7 +498,7 @@ namespace Epi.Cloud.MVC.Controllers
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
                 formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
                 formResponseReq.Criteria.DataAccessRuleId = formSettingResponse.FormSetting.SelectedDataAccessRule;
-
+                formResponseReq.Criteria.IsDraftMode = formSettingResponse.FormInfo.IsDraftMode;
                 formResponseReq.Criteria.UserOrganizationId = orgid;
 
                 SetSessionValue(UserSession.Key.IsSqlProject, formSettingResponse.FormInfo.IsSQLProject);
@@ -709,7 +709,7 @@ namespace Epi.Cloud.MVC.Controllers
                 _columns = formSettingResponse.FormSetting.FormControlNameList.ToList();
 
                 // Get Additional Metadata columns 
-                var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
+               /* var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
                 Dictionary<int, string> columnDictionary = tempColumns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
                 foreach (var item in metadataColumns)
@@ -718,7 +718,7 @@ namespace Epi.Cloud.MVC.Controllers
                     {
                         _columns.Add(new KeyValuePair<int, string>(_columns.Count() + 1, item));
                     }
-                }
+                }*/
 
                 _columns.Sort(Compare);
 

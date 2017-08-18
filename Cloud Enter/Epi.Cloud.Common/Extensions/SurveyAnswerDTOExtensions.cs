@@ -24,6 +24,7 @@ namespace Epi.Cloud.Common.Extensions
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
             surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
+            surveyResponseBO.IsDraftMode = surveyAnswerDTO.IsDraftMode;
 
             surveyResponseBO.UserId = userId.HasValue ? userId.Value : surveyAnswerDTO.UserId;
             surveyResponseBO.LastActiveUserId = surveyAnswerDTO.LastActiveUserId;

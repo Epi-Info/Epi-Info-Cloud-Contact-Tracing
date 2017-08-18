@@ -46,11 +46,22 @@ namespace Epi.Cloud.MVC.Controllers
         public ActionResult Index(string formid, string responseId, int pagenumber = 1, int viewId = 0)
         {
             bool reset = false;
+            string sortField = null;
+            string sortOrder = null;
+            if (Request.QueryString["sortfield"] != null)
+            {
+                sortField = Request.QueryString["sortfield"];
+            }
+            if (Request.QueryString["sort"] != null)
+            {
+                sortOrder = Request.QueryString["sort"];
+            }
             bool.TryParse(Request.QueryString["reset"], out reset);
             if (reset)
             {
                 RemoveSessionValue(UserSession.Key.SortOrder);
                 RemoveSessionValue(UserSession.Key.SortField);
+                RemoveSessionValue(UserSession.Key.SearchCriteria);
             }
             string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             ViewBag.Version = version;
@@ -76,7 +87,7 @@ namespace Epi.Cloud.MVC.Controllers
                 var model = new FormResponseInfoModel();
                 model.ViewId = viewId;
                 int currentOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId, defaultValue: -1);
-                model = GetSurveyResponseInfoModel(formid, pagenumber, null, null, currentOrgId);
+                model = GetSurveyResponseInfoModel(formid, pagenumber, sortOrder, sortField, currentOrgId);
                 SetSessionValue(UserSession.Key.SelectedOrgId, model.FormInfoModel.OrganizationId);
                 return View("Index", model);
             }
@@ -310,7 +321,7 @@ namespace Epi.Cloud.MVC.Controllers
             MetadataAccessor.CurrentFormId = surveyId;
 
             FormResponseInfoModel formResponseInfoModel = null;
-
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
             int userId = GetIntSessionValue(UserSession.Key.UserId);
             string userName = GetStringSessionValue(UserSession.Key.UserName);
 
@@ -318,6 +329,7 @@ namespace Epi.Cloud.MVC.Controllers
             {
                 formResponseInfoModel = GetFormResponseInfoModel(surveyId, orgid, userId);
                 FormSettingResponse formSettingResponse = formResponseInfoModel.FormSettingResponse;
+                var surveyResponseBuilder = new SurveyResponseBuilder();
                 formResponseInfoModel.FormInfoModel.IsShared = formSettingResponse.FormInfo.IsShared;
                 formResponseInfoModel.FormInfoModel.IsShareable = formSettingResponse.FormInfo.IsShareable;
                 formResponseInfoModel.FormInfoModel.FormName = formSettingResponse.FormInfo.FormName;
@@ -351,18 +363,18 @@ namespace Epi.Cloud.MVC.Controllers
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
                 formResponseReq.Criteria.IsShareable = formSettingResponse.FormInfo.IsShareable;
                 formResponseReq.Criteria.DataAccessRuleId = formSettingResponse.FormSetting.SelectedDataAccessRule;
-                formResponseReq.Criteria.IsMobile = true;
+                //formResponseReq.Criteria.IsMobile = true;
                 formResponseReq.Criteria.UserOrganizationId = orgid;
 
                 SetSessionValue(UserSession.Key.IsSqlProject, formSettingResponse.FormInfo.IsSQLProject);
                 SetSessionValue(UserSession.Key.IsOwner, formSettingResponse.FormInfo.IsOwner);
 
                 // Following code retain search starts
-                string searchCriteria = GetStringSessionValue(UserSession.Key.SearchCriteria, defaultValue: null);
-                if (!string.IsNullOrEmpty(searchCriteria) &&
+                string sessionSearchCriteria = GetStringSessionValue(UserSession.Key.SearchCriteria, defaultValue: null);
+                if (!string.IsNullOrEmpty(sessionSearchCriteria) &&
                     (Request.QueryString["col1"] == null || Request.QueryString["col1"] == "undefined"))
                 {
-                    formResponseReq.Criteria.SearchCriteria = searchCriteria;
+                    formResponseReq.Criteria.SearchCriteria = sessionSearchCriteria;
                     formResponseInfoModel.SearchModel = GetSessionValue<SearchBoxModel>(UserSession.Key.SearchModel);
                 }
                 else
@@ -374,13 +386,13 @@ namespace Epi.Cloud.MVC.Controllers
                 // Following code retain search ends
                 PopulateDropDownlists(formResponseInfoModel, formSettingResponse.FormSetting.FormControlNameList.ToList());
 
-                if (!string.IsNullOrWhiteSpace(/*FromURL*/sort))
+                if (sort != null && sort.Length > 0)
                 {
                     formResponseReq.Criteria.SortOrder = sort;
                 }
-                if (!string.IsNullOrWhiteSpace(/*FromURL*/sortfield))
+                if (!string.IsNullOrEmpty(sortfield) && sortfield.Length > 0)
                 {
-                    formResponseReq.Criteria.Sortfield = /*FromURL*/sortfield;
+                    formResponseReq.Criteria.Sortfield = sortfield;
                 }
                 formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
@@ -388,39 +400,93 @@ namespace Epi.Cloud.MVC.Controllers
 
 
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
+                var surveyResponse = formResponseList.SurveyResponseList;//.Skip((pageNumber - 1) * 20).Take(20);
 
-                //foreach (var item in formResponseList.SurveyResponseList)
-                //{
-                //   SurveyAnswerDTO surveyAnswer = new SurveyAnswerDTO();
-                //   surveyAnswer.IsLocked = false;
-                //   surveyAnswer.ResponseId = item.ResponseId;
-                //   //var pageResponseDetail = surveyAnswer.ResponseDetail.PageResponseDetailList.Where(p => p.PageNumber == criteria.PageNumber).SingleOrDefault();
-                //   //if (pageResponseDetail == null)
-                //   //{
-                //   //    pageResponseDetail = new Cloud.Common.EntityObjects.PageResponseDetail() { PageNumber = criteria.PageNumber };
-                //   //    surveyAnswer.ResponseDetail.AddPageResponseDetail(pageResponseDetail);
-                //   //}
-                //   //pageResponseDetail.ResponseQA = item.ResponseDetail != null ? item.ResponseDetail.FlattenedResponseQA() : new Dictionary<string, string>();
-                //   surveyAnswer.ResponseDetail = item.ResponseDetail;
-                //   formResponseList.SurveyResponseList.Add(surveyAnswer);
-                //}
-
-                //var ResponseTableList ; //= FormSettingResponse.FormSetting.DataRows;
-                //Setting Resposes List
-                List<ResponseModel> ResponseList = new List<ResponseModel>();
+                formResponseList.SurveyResponseList = surveyResponse.ToList();
+                List<ResponseModel> responseList = new List<ResponseModel>();
+                List<ResponseModel> responseListModel = new List<ResponseModel>();
+                Dictionary<string, string> dictory = new Dictionary<string, string>();
+                List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>(); ;
+               
                 foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)
                     {
-                        ResponseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
+                        responseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
                     }
                     else
                     {
-                        ResponseList.Add(item.ToResponseModel(_columns));
+                        responseList.Add(item.ToResponseModel(_columns));
                     }
                 }
 
-                formResponseInfoModel.ResponsesList = ResponseList;
+                string sortFieldcolumn = string.Empty;
+                if (!string.IsNullOrEmpty(sortfield))
+                {
+                    sortfield = sortfield.ToLower();
+                    foreach (var column in _columns)
+                    {
+                        if (column.Value.ToLower() == sortfield)
+                        {
+                            sortFieldcolumn = "Column" + column.Key;
+                        }
+                    }
+                }
+
+                var sortList = responseList;
+                if (!string.IsNullOrEmpty(sortfield))
+                {
+
+                    if (sort != "ASC")
+                    {
+                        switch (sortFieldcolumn)
+                        {
+                            case "Column1":
+                                responseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
+                                break;
+                            case "Column2":
+                                responseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
+                                break;
+                            case "Column3":
+                                responseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
+                                break;
+                            case "Column4":
+                                responseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
+                                break;
+                            case "Column5":
+                                responseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (sortFieldcolumn)
+                        {
+                            case "Column1":
+                                responseListModel = sortList.OrderBy(x => x.Column1).ToList();
+                                break;
+                            case "Column2":
+                                responseListModel = sortList.OrderBy(x => x.Column2).ToList();
+                                break;
+                            case "Column3":
+                                responseListModel = sortList.OrderBy(x => x.Column3).ToList();
+                                break;
+                            case "Column4":
+                                responseListModel = sortList.OrderBy(x => x.Column4).ToList();
+                                break;
+                            case "Column5":
+                                responseListModel = sortList.OrderBy(x => x.Column5).ToList();
+                                break;
+                        }
+                    }
+                    formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
+
+                }
+                if (string.IsNullOrEmpty(sort))
+                {
+                    formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                }
+
                 //Setting Form Info 
                 formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
                 //Setting Additional Data
@@ -434,6 +500,73 @@ namespace Epi.Cloud.MVC.Controllers
             }
             return formResponseInfoModel;
         }
+
+        public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
+        {
+            page = page.HasValue ? page.Value : 1;
+            sortField = sortField.ToLower();
+            bool isMobileDevice = this.Request.Browser.IsMobileDevice;
+
+            //Code added to retain Search Starts
+
+            if (reset)
+            {
+                RemoveSessionValue(UserSession.Key.SortOrder);
+                RemoveSessionValue(UserSession.Key.SortField);
+            }
+
+            if (IsSessionValueNull(UserSession.Key.ProjectId))
+            {
+                // This will prime the cache if the project is not already loaded into cache.
+                SetSessionValue(UserSession.Key.ProjectId, _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary());
+            }
+
+            SetSessionValue(UserSession.Key.SelectedOrgId, orgId);
+            var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId, defaultValue: null);
+            if (rootFormId == formId)
+            {
+                string sessionSortOrder = GetStringSessionValue(UserSession.Key.SortOrder, defaultValue: null);
+                if (!string.IsNullOrEmpty(sessionSortOrder) && string.IsNullOrEmpty(sort))
+                {
+                    sort = sessionSortOrder;
+                }
+
+                string sessionSortField = GetStringSessionValue(UserSession.Key.SortField, defaultValue: null);
+                if (!string.IsNullOrEmpty(sessionSortField) && string.IsNullOrEmpty(sortField))
+                {
+                    sortField = sessionSortField;
+                }
+
+                SetSessionValue(UserSession.Key.SortOrder, sort);
+                SetSessionValue(UserSession.Key.SortField, sortField);
+                SetSessionValue(UserSession.Key.PageNumber, page.Value);
+            }
+            else
+            {
+                ResponseContext responseContext = new ResponseContext { FormId = formId, RootFormId = formId };
+                SetSessionValue(UserSession.Key.ResponseContext, responseContext);
+
+                RemoveSessionValue(UserSession.Key.SortOrder);
+                RemoveSessionValue(UserSession.Key.SortField);
+                SetSessionValue(UserSession.Key.RootFormId, formId);
+                SetSessionValue(UserSession.Key.PageNumber, page.Value);
+
+            }
+
+            //Code added to retain Search Ends. 
+
+            var formResponseInfoModel = GetSurveyResponseInfoModel(formId, page.Value, sort, sortField, orgId);
+
+            if (isMobileDevice == false)
+            {
+                return PartialView("ListResponses", formResponseInfoModel);
+            }
+            else
+            {
+                return View("ListResponses", formResponseInfoModel);
+            }
+        }
+
 
 
         private void PopulateDropDownlists(FormResponseInfoModel formResponseInfoModel, List<KeyValuePair<int, string>> list)
