@@ -122,12 +122,12 @@ namespace MvcDynamicForms.Fields
 
 
             StringBuilder StyleValues = new StringBuilder();
-            StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
-            prompt.Attributes.Add("style", StyleValues.ToString());
+            //StyleValues.Append(GetControlStyle(_fontstyle.ToString(), _promptTop.ToString(), _promptLeft.ToString(), null, Height.ToString(), _IsHidden));
+            //prompt.Attributes.Add("style", StyleValues.ToString());
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), _Prompttop.ToString(), _Promptleft.ToString(), null, Height.ToString(), _IsHidden));
             //StyleValues.Append(GetContolStyle(_fontstyle.ToString(), null, null, null, null, _IsHidden));
             // prompt.Attributes.Add("style", StyleValues.ToString());
-            //prompt.Attributes.Add("style", "display:block !important; ");
+            prompt.Attributes.Add("style", "display:block !important; ");
             html.Append(prompt.ToString());
 
             var OuterDiv = new TagBuilder("div");
