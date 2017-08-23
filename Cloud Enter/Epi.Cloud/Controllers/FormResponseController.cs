@@ -762,7 +762,7 @@ namespace Epi.Cloud.MVC.Controllers
             SetSessionValue(UserSession.Key.EditForm, responseId);
 
             // Minimize the amount of Json data by serializing only pertinent state information
-            var json = Json(surveyAnswerStateDTO.ToSurveyAnswerDTO());
+            var json = Json(surveyAnswerStateDTO);
             return json;
         }
 

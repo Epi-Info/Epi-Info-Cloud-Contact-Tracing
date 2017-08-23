@@ -802,7 +802,8 @@ namespace Epi.Cloud.MVC.Controllers
             surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
             SetSessionValue(UserSession.Key.EditForm, responseId);
 
-            var json = Json(surveyAnswerDTO.ToSurveyAnswerDTO());
+           // var json = Json(surveyAnswerDTO.ToSurveyAnswerDTO());
+            var json = Json(surveyAnswerDTO);
             return json;
         }
 
