@@ -27,6 +27,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppSettingsKeyandValues.ps1" />
     <Compile Include="EpiCloudDeployment.ps1" />
     <Compile Include="EpinfoCloudDataCatpureAzureSetup.ps1" />
     <Compile Include="ExecuteSQLQuery.ps1" />

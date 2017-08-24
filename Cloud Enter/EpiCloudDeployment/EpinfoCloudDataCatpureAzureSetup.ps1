@@ -88,7 +88,7 @@ $WebJobType=  "continuous"
               $WebStatus=Get-AzureWebsite -Name $WebName
               if($WebStatus.State -eq "Running"){
                  New-AzureWebsiteJob -Name $WebName -JobName $WebJobName -JobType $WebJobType -JobFile $WebJobPackagePath
-                 $SuccessMessage="Publish Web Job $WebName Success" 
+                 $SuccessMessage="Create Azure Resource and Deploy WebApp,API and WebJob Completed Successfully" 
                  Script-Output -FilePath $OutPutFileName -Message $SuccessMessage
               } 
             else{             

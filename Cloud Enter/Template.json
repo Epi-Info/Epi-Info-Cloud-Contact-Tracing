@@ -1,394 +1,394 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "MetadataApi": {
-      "type": "String"
-    },
-    "EpiinfoWebapp": {
-      "type": "String"
-    },
-    "DataConsistencyApi": {
-      "type": "String"
-    },
-    "ResourceLocation": {
-      "type": "String"
-    },
-    "serverfarms_eicdcserviceplanpro_name": {
-      "defaultValue": "basicepinfoserviceplan",
-      "type": "String"
-    },
-    "Redis_Session_Cache": {
-      "type": "String"
-    },
-    "Redis_Metadata_Cache": {
-      "type": "String"
-    },
-    "Storage_Account": {
-      "type": "String"
-    },
-    "ServiceBusName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the Service Bus namespace"
-      }
-    },
-    "storageAccountType": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_ZRS",
-        "Premium_LRS"
-      ],
-      "metadata": {
-        "description": "Storage Account type"
-      }
-    },
-    "Sqlserver": {
-      "type": "string"
-    },
-    "Sqlserver_Admin_UserName": {
-      "type": "string",
-      "minLength": 1
-    },
-    "Sqlserver_Admin_Password": {
-      "type": "securestring"
-    },
-    "Sqlserver_db_name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "dbnameCollation": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
-    },
-    "dbnameEdition": {
-      "type": "string",
-      "defaultValue": "Basic"
-    },
-    "dbnameRequestedServiceObjectiveName": {
-      "type": "string",
-      "defaultValue": "Basic"
-    },
-    "Nosql_Cosmosdb_Account": {
-      "type": "string",
-      "metadata": {
-        "description": "The DocumentDB database account name."
-      }
-    },
-    "consistencyLevel": {
-      "type": "string",
-      "allowedValues": [
-        "Eventual",
-        "Strong",
-        "Session",
-        "BoundedStaleness"
-      ],
-      "defaultValue": "Session",
-      "metadata": {
-        "description": "The DocumentDB deault consistency level for this account."
-      }
-    },
-    "maxStalenessPrefix": {
-      "type": "int",
-      "minValue": 10,
-      "maxValue": 1000,
-      "defaultValue": 10,
-      "metadata": {
-        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
-      }
-    },
-    "maxIntervalInSeconds": {
-      "type": "int",
-      "minValue": 5,
-      "maxValue": 600,
-      "defaultValue": 5,
-      "metadata": {
-        "description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
-      }
-    },
-    "Sendgrid_Account": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of your new SendGrid account."
-      }
-    },
-    "Sendgrid_Password": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The password to use for your new SendGrid account."
-      }
-    }
-  },
-  "variables": {
-    "defaultSASKeyName": "RootManageSharedAccessKey",
-    "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('ServiceBusName'), variables('defaultSASKeyName'))]",
-    "sbVersion": "2017-04-01",
-    "storageAccountName": "[parameters('Storage_Account')]",
-    "offerType": "Standard"
-  },
-  "resources": [
-    {
-      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro'.",
-      "type": "Microsoft.Web/serverfarms",
-      "sku": {
-        "name": "B1",
-        "tier": "Basic",
-        "size": "B1",
-        "family": "B",
-        "capacity": 1
-      },
-      "kind": "app",
-      "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
-      "apiVersion": "2015-08-01",
-      "location": "[parameters('ResourceLocation')]",
-      "scale": null,
-      "properties": {
-        "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
-        "numberOfWorkers": 1
-      },
-      "dependsOn": [ ]
-    },
-    {
-      "comments": "This is about Web Service plan serverfarms_eicdcserviceplanpro_name: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcpro'.",
-      "type": "Microsoft.Web/sites",
-      "kind": "app",
-      "name": "[parameters('EpiinfoWebapp')]",
-      "apiVersion": "2015-08-01",
-      "location": "[parameters('ResourceLocation')]",
-      "tags": {
-        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
-      },
-      "scale": null,
-      "properties": {
-        "name": "[parameters('EpiinfoWebapp')]",
-        "enabled": true,
-        "hostNameSslStates": [
-          {
-            "name": "[concat(parameters('EpiinfoWebapp'),'.azurewebsites.net')]",
-            "sslState": 0,
-            "thumbprint": null,
-            "ipBasedSslState": 0
-          },
-          {
-            "name": "[concat(parameters('EpiinfoWebapp'),'.scm.azurewebsites.net')]",
-            "sslState": 0,
-            "thumbprint": null,
-            "ipBasedSslState": 0
-          }
-        ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
-      ]
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCDataConsistencyServicesAPIQA'.",
-      "type": "Microsoft.Web/sites",
-      "kind": "api",
-      "name": "[parameters('MetadataApi')]",
-      "apiVersion": "2016-08-01",
-      "location": "[parameters('ResourceLocation')]",
-      "tags": {
-        "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
-      },
-      "scale": null,
-      "properties": {
-        "name": "[parameters('MetadataApi')]",
-        "enabled": true,
-        "hostNameSslStates": [
-          {
-            "name": "[concat(parameters('MetadataApi'),'eicdcdataconsistencyservicesapiqa.azurewebsites.net')]",
-            "sslState": "Disabled",
-            "virtualIP": null,
-            "thumbprint": null,
-            "toUpdate": null,
-            "hostType": "Standard"
-          },
-          {
-            "name": "[concat(parameters('MetadataApi'),'eicdcdataconsistencyservicesapiqa.scm.azurewebsites.net')]",
-            "sslState": "Disabled",
-            "virtualIP": null,
-            "thumbprint": null,
-            "toUpdate": null,
-            "hostType": "Repository"
-          }
-        ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]",
-        "reserved": false,
-        "siteConfig": null,
-        "scmSiteAlsoStopped": false,
-        "hostingEnvironmentProfile": null,
-        "clientAffinityEnabled": true,
-        "clientCertEnabled": false,
-        "hostNamesDisabled": false,
-        "containerSize": 0,
-        "dailyMemoryTimeQuota": 0,
-        "cloningInfo": null
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
-      ]
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcdataconsistencyservicesapipro'.",
-      "type": "Microsoft.Web/sites",
-      "kind": "api",
-      "name": "[parameters('DataConsistencyApi')]",
-      "apiVersion": "2015-08-01",
-      "location": "[parameters('ResourceLocation')]",
-      "tags": {
-        "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
-      },
-      "scale": null,
-      "properties": {
-        "name": "[parameters('DataConsistencyApi')]",
-        "enabled": true,
-        "siteConfig": {
-          "AlwaysOn": true
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+		"MetadataApi": {
+            "type": "String"
         },
-        "hostNameSslStates": [
-          {
-            "name": "[concat(parameters('DataConsistencyApi'),'.azurewebsites.net')]",
-            "sslState": 0,
-            "thumbprint": null,
-            "ipBasedSslState": 0
-          },
-          {
-            "name": "[concat(parameters('DataConsistencyApi'),'.scm.azurewebsites.net')]",
-            "sslState": 0,
-            "thumbprint": null,
-            "ipBasedSslState": 0
-          }
-        ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
-      ]
-    },
-    {
-      "name": "[parameters('Sendgrid_Account')]",
-      "type": "Sendgrid.Email/accounts",
-      "apiVersion": "2015-01-01",
-      "location": "[parameters('ResourceLocation')]",
-      "plan": {
-        "name": "free",
-        "publisher": "Sendgrid",
-        "product": "sendgrid_azure",
-        "promotionCode": ""
-      },
-      "properties": {
-        "password": "[parameters('Sendgrid_Password')]",
-        "acceptMarketingEmails": "0",
-        "email": ""
-      }
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdcsessionpro'.",
-      "type": "Microsoft.Cache/Redis",
-      "name": "[parameters('Redis_Session_Cache')]",
-      "apiVersion": "2016-04-01",
-      "location": "[parameters('ResourceLocation')]",
-      "tags": { },
-      "scale": null,
-      "properties": {
-        "redisVersion": "3.2.7",
-        "sku": {
-          "name": "Standard",
-          "family": "C",
-          "capacity": 0
+		"EpiinfoWebapp": {
+            "type": "String"
         },
-        "enableNonSslPort": false,
-        "redisConfiguration": {
-          "maxclients": "256",
-          "maxmemory-reserved": "2",
-          "maxfragmentationmemory-reserved": "12",
-          "maxmemory-delta": "2"
-        }
-      },
-      "dependsOn": [ ]
-    },
-    {
-      "apiVersion": "2015-04-08",
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "name": "[parameters('Nosql_Cosmosdb_Account')]",
-      "location": "[parameters('ResourceLocation')]",
-      "properties": {
-        "name": "[parameters('Nosql_Cosmosdb_Account')]",
-        "databaseAccountOfferType": "[variables('offerType')]",
-        "consistencyPolicy": {
-          "defaultConsistencyLevel": "[parameters('consistencyLevel')]",
-          "maxStalenessPrefix": "[parameters('maxStalenessPrefix')]",
-          "maxIntervalInSeconds": "[parameters('maxIntervalInSeconds')]"
+		"DataConsistencyApi": {
+            "type": "String"
         },
-        "locations": [
-          {
-            "locationName": "[parameters('ResourceLocation')]",
-            "failoverPriority": 0
-          }
-        ]
-      }
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdccachepro'.",
-      "type": "Microsoft.Cache/Redis",
-      "name": "[parameters('Redis_Metadata_Cache')]",
-      "apiVersion": "2016-04-01",
-      "location": "[parameters('ResourceLocation')]",
-      "tags": { },
-      "scale": null,
-      "properties": {
-        "redisVersion": "3.2.7",
-        "sku": {
-          "name": "Standard",
-          "family": "C",
-          "capacity": 0
+		"ResourceLocation": {
+            "type": "String"
         },
-        "enableNonSslPort": false,
-        "redisConfiguration": {
-          "maxclients": "256",
-          "maxmemory-reserved": "2",
-          "maxfragmentationmemory-reserved": "12",
-          "maxmemory-delta": "2"
-        }
-      },
-      "dependsOn": [ ]
-    },
-    {
-      "apiVersion": "2017-04-01",
-      "name": "[parameters('ServiceBusName')]",
-      "type": "Microsoft.ServiceBus/Namespaces",
-      "location": "[parameters('ResourceLocation')]",
-      "sku": {
-        "name": "Standard"
-      }
-    },
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
-      "apiVersion": "2016-01-01",
-      "location": "[parameters('ResourceLocation')]",
-      "sku": {
-        "name": "[parameters('storageAccountType')]"
-      },
-      "kind": "Storage",
-      "properties": {
-      }
-    },
-    {
-      "name": "[parameters('Sqlserver')]",
-      "type": "Microsoft.Sql/servers",
-      "location": "[parameters('ResourceLocation')]",
-      "apiVersion": "2014-04-01-preview",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "yourservername"
-      },
+        "serverfarms_eicdcserviceplanpro_name": { 
+			"defaultValue": "basicepinfoserviceplan",
+            "type": "String"
+        },         
+		"Redis_Session_Cache": {
+            "type": "String"
+        },
+		"Redis_Metadata_Cache": {
+            "type": "String"
+        },
+		"Storage_Account": {
+            "type": "String"
+        },
+		"ServiceBusName": {
+             "type": "string",
+             "metadata": {
+             "description": "Name of the Service Bus namespace"
+            }
+        },
+		"storageAccountType": {
+			  "type": "string",
+			  "defaultValue": "Standard_LRS",
+				  "allowedValues": [
+					"Standard_LRS",
+					"Standard_GRS",
+					"Standard_ZRS",
+					"Premium_LRS"
+				  ],
+				  "metadata": {
+					"description": "Storage Account type"
+				  }
+		},
+		"Sqlserver": {
+		  "type": "string", 
+		},
+		"Sqlserver_Admin_UserName": {
+		  "type": "string", 
+		  "minLength": 1
+		},
+		"Sqlserver_Admin_Password": {
+		  "type": "securestring", 
+		},
+		"Sqlserver_db_name": {
+		  "type": "string", 
+		  "minLength": 1
+		},
+		"dbnameCollation": {
+		  "type": "string",
+		  "minLength": 1,
+		  "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+		},
+		"dbnameEdition": {
+		  "type": "string",
+		  "defaultValue": "Basic"
+		},
+		"dbnameRequestedServiceObjectiveName": {
+		  "type": "string",
+		  "defaultValue": "Basic"
+		},
+		"Nosql_Cosmosdb_Account": {
+		  "type": "string",
+          "metadata": {
+			"description": "The DocumentDB database account name."
+			}
+		},
+		"consistencyLevel": {
+		  "type": "string",
+		  "allowedValues": [
+				"Eventual",
+				"Strong",
+				"Session",
+				"BoundedStaleness"
+			],
+        "defaultValue": "Session",
+			"metadata": {
+			"description": "The DocumentDB deault consistency level for this account."
+			}
+		},
+		"maxStalenessPrefix": {
+			"type": "int",
+			"minValue": 10,
+			"maxValue": 1000,
+			"defaultValue": 10,
+			"metadata": {
+				"description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
+			}
+		},
+		"maxIntervalInSeconds": {
+			"type": "int",
+			"minValue": 5,
+			"maxValue": 600,
+			"defaultValue": 5,
+			"metadata": {
+			"description": "When consistencyLevel is set to BoundedStaleness, then this value is required, else it can be ignored."
+			}
+		},
+		"Sendgrid_Account": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of your new SendGrid account."
+            }
+        },
+        "Sendgrid_Password": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password to use for your new SendGrid account."
+            }
+        }    
+	},		
+    "variables": {
+		"defaultSASKeyName": "RootManageSharedAccessKey",
+		"authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('ServiceBusName'), variables('defaultSASKeyName'))]",
+		"sbVersion": "2017-04-01",
+		"storageAccountName": "[parameters('Storage_Account')]",
+		"offerType": "Standard"
+	},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro'.",
+            "type": "Microsoft.Web/serverfarms",
+            "sku": {
+                "name": "B1",
+                "tier": "Basic",
+                "size": "B1",
+                "family": "B",
+                "capacity": 1
+            },
+            "kind": "app",
+            "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
+            "apiVersion": "2015-08-01",
+            "location":"[parameters('ResourceLocation')]",
+            "scale": null,
+            "properties": {
+                "name": "[parameters('serverfarms_eicdcserviceplanpro_name')]",
+                "numberOfWorkers": 1
+            },
+            "dependsOn": []
+        },    
+        {
+            "comments": "This is about Web Service plan serverfarms_eicdcserviceplanpro_name: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcpro'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "app",
+            "name": "[parameters('EpiinfoWebapp')]",
+            "apiVersion": "2015-08-01",
+            "location": "[parameters('ResourceLocation')]",
+            "tags": {
+                "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "name": "[parameters('EpiinfoWebapp')]",
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('EpiinfoWebapp'),'.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('EpiinfoWebapp'),'.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourceGroups/EpiInfoCSRAQA/providers/Microsoft.Web/sites/EICDCDataConsistencyServicesAPIQA'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('MetadataApi')]",
+            "apiVersion": "2016-08-01",
+            "location": "[parameters('ResourceLocation')]",
+            "tags": {
+                "hidden-related:/subscriptions/704ee7fd-cbfa-4061-aa7d-b3a449b188eb/resourcegroups/EpiInfoCSRAQA/providers/Microsoft.Web/serverfarms/eicsraappserviceqa": "empty"
+            },
+            "scale": null,
+            "properties": {			
+                "name": "[parameters('MetadataApi')]",
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('MetadataApi'),'eicdcdataconsistencyservicesapiqa.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('MetadataApi'),'eicdcdataconsistencyservicesapiqa.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "virtualIP": null,
+                        "thumbprint": null,
+                        "toUpdate": null,
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]",
+                "reserved": false,
+                "siteConfig": null,
+                "scmSiteAlsoStopped": false,
+                "hostingEnvironmentProfile": null,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "cloningInfo": null
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+            ]
+        },  
+		{
+            "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcegroup/providers/Microsoft.Web/sites/eicdcdataconsistencyservicesapipro'.",
+            "type": "Microsoft.Web/sites",
+            "kind": "api",
+            "name": "[parameters('DataConsistencyApi')]",
+            "apiVersion": "2015-08-01",
+            "location": "[parameters('ResourceLocation')]",
+            "tags": {
+                "hidden-related:/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourcegroups/eicdcresourcegroup/providers/Microsoft.Web/serverfarms/eicdcserviceplanpro": "empty"
+            },
+            "scale": null,
+            "properties": {
+                "name": "[parameters('DataConsistencyApi')]",
+                "enabled": true,
+				"siteConfig": {
+                   "AlwaysOn": true
+					},
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('DataConsistencyApi'),'.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    },
+                    {
+                        "name": "[concat(parameters('DataConsistencyApi'),'.scm.azurewebsites.net')]",
+                        "sslState": 0,
+                        "thumbprint": null,
+                        "ipBasedSslState": 0
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_eicdcserviceplanpro_name'))]"
+            ]
+        },      
+		{
+            "name": "[parameters('Sendgrid_Account')]",
+            "type": "Sendgrid.Email/accounts",
+            "apiVersion": "2015-01-01",
+            "location": "[parameters('ResourceLocation')]",
+            "plan": {
+                "name": "free",
+                "publisher": "Sendgrid",
+                "product": "sendgrid_azure",
+                "promotionCode": ""
+            },
+            "properties": {
+                "password": "[parameters('Sendgrid_Password')]",
+                "acceptMarketingEmails": "0",
+                "email": ""
+            }
+        }, 
+		{
+            "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdcsessionpro'.",
+            "type": "Microsoft.Cache/Redis",
+            "name": "[parameters('Redis_Session_Cache')]",
+            "apiVersion": "2016-04-01",
+            "location": "[parameters('ResourceLocation')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "redisVersion": "3.2.7",
+                "sku": {
+                    "name": "Standard",
+                    "family": "C",
+                    "capacity": 0
+                },
+                "enableNonSslPort": false,
+                "redisConfiguration": {
+                    "maxclients": "256",
+                    "maxmemory-reserved": "2",
+                    "maxfragmentationmemory-reserved": "12",
+                    "maxmemory-delta": "2"
+                }
+            },
+            "dependsOn": []
+        },
+		{
+			"apiVersion": "2015-04-08",
+			"type": "Microsoft.DocumentDB/databaseAccounts",
+			"name": "[parameters('Nosql_Cosmosdb_Account')]",
+			"location": "[parameters('ResourceLocation')]",
+			"properties": {
+				"name": "[parameters('Nosql_Cosmosdb_Account')]",
+				"databaseAccountOfferType": "[variables('offerType')]",
+				"consistencyPolicy": {
+					"defaultConsistencyLevel": "[parameters('consistencyLevel')]",
+					"maxStalenessPrefix": "[parameters('maxStalenessPrefix')]",
+					"maxIntervalInSeconds": "[parameters('maxIntervalInSeconds')]"
+				},
+			"locations": [
+					{
+						"locationName": "[parameters('ResourceLocation')]",
+						"failoverPriority": 0
+					}
+				]
+			}
+		},
+		{
+            "comments": "Generalized from resource: '/subscriptions/eb1a9873-b89d-47fb-90b6-97c4e887efb4/resourceGroups/eicdcresourcepro/providers/Microsoft.Cache/Redis/eicdccachepro'.",
+            "type": "Microsoft.Cache/Redis",
+            "name": "[parameters('Redis_Metadata_Cache')]",
+            "apiVersion": "2016-04-01",
+            "location": "[parameters('ResourceLocation')]",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "redisVersion": "3.2.7",
+                "sku": {
+                    "name": "Standard",
+                    "family": "C",
+                    "capacity": 0
+                },
+                "enableNonSslPort": false,
+                "redisConfiguration": {
+                    "maxclients": "256",
+                    "maxmemory-reserved": "2",
+                    "maxfragmentationmemory-reserved": "12",
+                    "maxmemory-delta": "2"
+                }
+            },
+            "dependsOn": []
+        },
+		{
+			  "apiVersion": "2017-04-01",
+			  "name": "[parameters('ServiceBusName')]",
+			  "type": "Microsoft.ServiceBus/Namespaces",
+			  "location": "[parameters('ResourceLocation')]",
+			  "sku": {
+				"name": "Standard"
+                }
+	    },
+		{
+			  "type": "Microsoft.Storage/storageAccounts",
+			  "name": "[variables('storageAccountName')]",
+			  "apiVersion": "2016-01-01",
+			  "location": "[parameters('ResourceLocation')]",
+			  "sku": {
+				  "name": "[parameters('storageAccountType')]"
+			  },
+			  "kind": "Storage", 
+			  "properties": {
+              }
+        },
+		{
+			"name": "[parameters('Sqlserver')]",
+			"type": "Microsoft.Sql/servers",
+			"location": "[parameters('ResourceLocation')]",
+			"apiVersion": "2014-04-01-preview",
+			"dependsOn": [],
+			"tags": {
+			"displayName": "yourservername"
+		},
       "properties": {
         "administratorLogin": "[parameters('Sqlserver_Admin_UserName')]",
         "administratorLoginPassword": "[parameters('Sqlserver_Admin_Password')]",
@@ -428,5 +428,5 @@
         }
       ]
     }
-  ]
+    ] 
 }
