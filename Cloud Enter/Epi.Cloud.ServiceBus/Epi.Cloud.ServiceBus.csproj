@@ -81,6 +81,7 @@
     <Compile Include="ServiceBusCRUD.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Constants\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

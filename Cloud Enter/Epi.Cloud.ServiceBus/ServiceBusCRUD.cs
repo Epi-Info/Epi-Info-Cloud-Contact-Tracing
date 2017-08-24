@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Epi.Cloud.Common.Configuration;
 using Epi.Cloud.Common.Constants;
+using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Microsoft.ServiceBus;
 using Microsoft.ServiceBus.Messaging;
@@ -69,9 +70,12 @@ namespace Epi.Cloud.ServiceBus
             CreateTopic();
 
             var responseProperties = new Dictionary<string, object>();
-            responseProperties.Add("ResponseId", hierarchicalResponse.RootResponseId);
-            responseProperties.Add("FormId", hierarchicalResponse.RootFormId);
-            responseProperties.Add("FormName", hierarchicalResponse.RootFormName);
+            responseProperties.Add(MessagePropertyKeys.ResponseId, hierarchicalResponse.RootResponseId);
+            responseProperties.Add(MessagePropertyKeys.FormId, hierarchicalResponse.RootFormId);
+            responseProperties.Add(MessagePropertyKeys.FormName, hierarchicalResponse.RootFormName);
+            responseProperties.Add(MessagePropertyKeys.UserOrgId, hierarchicalResponse.UserOrgId);
+            responseProperties.Add(MessagePropertyKeys.IsDeleted, hierarchicalResponse.RecStatus == RecordStatus.Deleted
+                                                               || hierarchicalResponse.RecStatus == RecordStatus.PhysicalDelete);
 
             var hierarchicalResponseJson = JsonConvert.SerializeObject(hierarchicalResponse, Formatting.None, new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
 

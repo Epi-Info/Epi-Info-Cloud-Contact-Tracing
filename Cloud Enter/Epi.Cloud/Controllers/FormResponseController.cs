@@ -617,18 +617,30 @@ namespace Epi.Cloud.MVC.Controllers
         [HttpPost]
         public ActionResult Delete(string responseId)
         {
-            SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
-            surveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = responseId });
-            surveyAnswerRequest.Criteria.UserId = GetIntSessionValue(UserSession.Key.UserId); ;
+            var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
+            int userId = GetIntSessionValue(UserSession.Key.UserId);
+            int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            var responseContext = new ResponseContext
+            {
+                ResponseId = responseId,
+                RootResponseId = responseId,
+                FormId = rootFormId,
+                UserOrgId = orgId,
+                UserId = userId
+            }.ResolveMetadataDependencies() as ResponseContext;
+
+            SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
+            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.Criteria.UserOrganizationId = orgId;
+            surveyAnswerRequest.Criteria.UserId = userId;
             surveyAnswerRequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
-            surveyAnswerRequest.Criteria.SurveyId = GetStringSessionValue(UserSession.Key.RootFormId);
-            surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
+            surveyAnswerRequest.Criteria.SurveyId = rootFormId;
             surveyAnswerRequest.Criteria.StatusChangeReason = RecordStatusChangeReason.DeleteResponse;
             surveyAnswerRequest.Action = RequestAction.Delete;
             SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.DeleteResponse(surveyAnswerRequest);
             return Json(string.Empty);
         }
-
+       
         [HttpPost]
         public ActionResult DeleteBranch(string ResponseId)//List<FormInfoModel> ModelList, string formid)
         {
@@ -750,7 +762,7 @@ namespace Epi.Cloud.MVC.Controllers
             SetSessionValue(UserSession.Key.EditForm, responseId);
 
             // Minimize the amount of Json data by serializing only pertinent state information
-            var json = Json(surveyAnswerStateDTO.ToSurveyAnswerDTO());
+            var json = Json(surveyAnswerStateDTO);
             return json;
         }
 
