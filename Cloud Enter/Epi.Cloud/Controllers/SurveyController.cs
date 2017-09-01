@@ -573,6 +573,10 @@ namespace Epi.Cloud.MVC.Controllers
                         {
                             //Invalid Data - stay on same page
                             int CurrentPageNum = surveyAnswer.CurrentPageNumber;
+                            if (isMobileDevice)
+                            {
+                                CurrentPageNum--;
+                            }
 
                             if (CurrentPageNum != pageNumber) // failed validation and navigating to different page// must keep url the same 
                             {
