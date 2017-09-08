@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Configuration;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Web.Mvc;
 using Epi.Cloud.Common.DTO;
@@ -15,12 +12,10 @@ using Epi.Cloud.Facades.Interfaces;
 using Epi.Cloud.MVC.Constants;
 using Epi.Cloud.MVC.Models;
 using Epi.Cloud.MVC.Utility;
-using Epi.Common.Attributes;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
-using Epi.Common.Security;
+using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
-using Newtonsoft.Json;
 
 namespace Epi.Cloud.MVC.Controllers
 {
@@ -39,16 +34,48 @@ namespace Epi.Cloud.MVC.Controllers
             return a.Key.CompareTo(b.Key);
         }
 
+        protected IResponseContext InitializeResponseContext(IResponseContext responseContext = null, string formId = null, string responseId = null, string parentResponseId = null, string rootResponseId = null, bool isNewRecord = false)
+        {
+            if (responseContext == null) responseContext = new ResponseContext();
+
+            responseContext.RootResponseId = string.IsNullOrEmpty(responseContext.RootResponseId) ? (string.IsNullOrEmpty(rootResponseId) ? GetStringSessionValue(UserSession.Key.RootResponseId) : rootResponseId) : responseContext.RootResponseId;
+            responseContext.ParentResponseId = string.IsNullOrEmpty(responseContext.ParentResponseId) ? parentResponseId : responseContext.ParentResponseId;
+            responseContext.ResponseId = string.IsNullOrEmpty(responseContext.ResponseId) ? responseId : responseContext.ResponseId;
+            if (string.IsNullOrEmpty(responseContext.RootResponseId)) responseContext.RootResponseId = responseContext.ResponseId;
+
+            responseContext.FormId = string.IsNullOrEmpty(responseContext.FormId) ? (string.IsNullOrEmpty(formId) ? GetStringSessionValue(UserSession.Key.CurrentFormId) : formId) : responseContext.FormId;
+            if (string.IsNullOrEmpty(responseContext.FormId)) responseContext.FormId = string.IsNullOrEmpty(responseContext.RootFormId) ? GetStringSessionValue(UserSession.Key.RootFormId) : responseContext.RootFormId;
+
+            responseContext.UserName = GetStringSessionValue(UserSession.Key.UserName);
+            responseContext.UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+            responseContext.UserId = GetIntSessionValue(UserSession.Key.UserId);
+
+            if (isNewRecord) responseContext.IsNewRecord = true;
+
+            return responseContext.ResolveMetadataDependencies() as IResponseContext;
+        }
+
+        protected FormResponseDetail InitializeFormResponseDetail(FormResponseDetail formResponseDetail = null)
+        {
+            if (formResponseDetail == null) formResponseDetail = new FormResponseDetail();
+
+            formResponseDetail = InitializeResponseContext(formResponseDetail) as FormResponseDetail;
+
+            var now = DateTime.UtcNow;
+            formResponseDetail.FirstSaveTime = now;
+            formResponseDetail.LastSaveTime = now;
+
+            formResponseDetail.LastPageVisited = 1;
+
+            return formResponseDetail;
+        }
+
         protected ResponseContext GetSetResponseContext(string responseId)
         {
             ResponseContext responseContext = GetSessionValue<ResponseContext>(UserSession.Key.ResponseContext);
             if (responseContext == null)
             {
-                responseContext = (ResponseContext)new ResponseContext
-                {
-                    RootFormId = GetStringSessionValue(UserSession.Key.RootFormId),
-                    UserName = GetStringSessionValue(UserSession.Key.UserName)
-                }.ResolveMetadataDependencies();
+                responseContext = InitializeResponseContext(responseContext, responseId: responseId) as ResponseContext;
             }
             responseContext.ResponseId = responseId;
             responseContext.UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);

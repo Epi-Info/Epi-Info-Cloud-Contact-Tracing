@@ -51,9 +51,9 @@ namespace Epi.DataPersistence.DataStructures
         public string HighlightedFieldsList { get; set; }
         public string DisabledFieldsList { get; set; }
 
-        public List<PageResponseDetail> PageResponseDetailList { get; private set; }
+        public List<PageResponseDetail> PageResponseDetailList { get; set; }
 
-        public List<FormResponseDetail> ChildFormResponseDetailList { get; private set; }
+        public List<FormResponseDetail> ChildFormResponseDetailList { get; set; }
 
         public bool IsChildResponse { get { return IsRelatedView; } }
 

@@ -325,6 +325,7 @@ namespace Epi.Cloud.DataEntryServices
                     surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
                     surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
                     surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
+                    surveyResponseBO.LastSaveLogonName = surveyAnswerRequest.Criteria.UserName;
                     surveyResponseBO.Status = surveyAnswerRequest.Criteria.StatusId;
                     surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
                 }

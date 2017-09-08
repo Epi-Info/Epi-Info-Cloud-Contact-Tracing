@@ -35,6 +35,7 @@ namespace Epi.Common.EmailServices.Constants
             public const string SmtpPort = "SMTP_PORT";
 
             // No Default Value
+            [EncryptedValue(true)]
             public const string EmailFrom = "EMAIL_FROM";
 
             // No Default Value

@@ -14,7 +14,7 @@ namespace Epi.Cloud.Facades.Interfaces
             List<FormsHierarchyDTO> formsHierarchyDTOList = null,
 			bool IsAndroid = false);
 
-        SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext, bool isEditMode = false, int currentOrgId = -1);
+        SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext);
         void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, string responseId, MvcDynamicForms.Form form, SurveyAnswerDTO surveyAnswerDTO, bool isSubmited, bool isSaved, int pageNumber, int orgId, int userId,string userName);
 
         SurveyInfoModel GetSurveyInfoModel(string surveyId);

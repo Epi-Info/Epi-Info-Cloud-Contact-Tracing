@@ -76,23 +76,14 @@ namespace Epi.Cloud.MVC.Controllers
                 }
 
                 FormsAuthentication.SetAuthCookie("BeginSurvey", false);
+
                 Guid responseId = Guid.NewGuid();
-                string rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
-                int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
-                int userId = GetIntSessionValue(UserSession.Key.UserId);
 
-                var responseContext = new ResponseContext
-                {
-                    FormId = surveyId,
-                    ResponseId = responseId.ToString(),
-                    RootResponseId = rootResponseId,
-                    UserOrgId = orgId,
-                }.ResolveMetadataDependencies() as ResponseContext;
-
+                var responseContext = InitializeResponseContext(formId: surveyId, responseId: responseId.ToString());
                 SurveyAnswerDTO surveyAnswer = _isurveyFacade.CreateSurveyAnswer(responseContext);
-                SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswer.SurveyId);
+                SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyId);
 
-                MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(surveyAnswer.SurveyId, 1, surveyAnswer, isMobileDevice);
+                MvcDynamicForms.Form form = _isurveyFacade.GetSurveyFormData(surveyId, 1, surveyAnswer, isMobileDevice);
 
                 List<string> requiredFields = null;
 
@@ -118,7 +109,7 @@ namespace Epi.Cloud.MVC.Controllers
                     form.RequiredFieldsList = string.Join(",", requiredFields);
                 }
 
-                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 1, orgId, userId, null);
+                _isurveyFacade.UpdateSurveyResponse(surveyInfoModel, surveyAnswer.ResponseId, form, surveyAnswer, false, false, 1, responseContext.UserOrgId, responseContext.UserId, null);
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseId = responseId, PageNumber = 1 });
             }

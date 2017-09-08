@@ -15,36 +15,16 @@ namespace Epi.Cloud.Common.Extensions
 
             return new SurveyAnswerDTO
             {
-                ResponseId = surveyResponseBO.ResponseId,
-                ParentResponseId = surveyResponseBO.ParentResponseId,
-                RootResponseId = surveyResponseBO.RootResponseId,
-                SurveyId = surveyResponseBO.FormId,
-                DateUpdated = surveyResponseBO.DateUpdated,
-                DateCompleted = surveyResponseBO.DateCompleted,
-                DateCreated = surveyResponseBO.DateCreated,
-                IsNewRecord = surveyResponseBO.IsNewRecord,
-                Status = surveyResponseBO.Status,
+                ResponseDetail = surveyResponseBO.ResponseDetail,
                 ReasonForStatusChange = surveyResponseBO.ReasonForStatusChange,
                 UserPublishKey = surveyResponseBO.UserPublishKey,
-                IsDraftMode = surveyResponseBO.IsDraftMode,
-                IsLocked = surveyResponseBO.IsLocked,
                 UserEmail = surveyResponseBO.UserEmail,
                 RecordSourceId = surveyResponseBO.RecordSourceId,
                 ViewId = surveyResponseBO.ViewId,
                 FormOwnerId = metadataAccessor.GetFormDigest(surveyResponseBO.FormId).OrganizationId,
-
-                UserId = surveyResponseBO.UserId,
-                LoggedInUserId = surveyResponseBO.UserId,
-                LastActiveUserId = surveyResponseBO.LastActiveUserId,
-
-                UserOrgId = surveyResponseBO.UserOrgId,
-                LoggedInUserOrgId = surveyResponseBO.UserOrgId,
-                LastActiveOrgId = surveyResponseBO.LastActiveOrgId,
-               
                 RecoverLastRecordVersion = false, // TODO: Do we have to populate RecoverLastRecordVersion
                 RequestedViewId = string.Empty,
-                CurrentPageNumber = 0,
-                ResponseDetail = surveyResponseBO.ResponseDetail
+                CurrentPageNumber = 0
             };
         }
         public static List<SurveyAnswerDTO> ToSurveyAnswerDTOList(this List<SurveyResponseBO> surveyResponseBOList)

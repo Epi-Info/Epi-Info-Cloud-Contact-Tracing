@@ -6,124 +6,34 @@ using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.Common.DTO
 {
-    public class SurveyAnswerDTO : IResponseContext
+    public class SurveyAnswerDTO : IFormResponseDetail
     {
-        public SurveyAnswerDTO()
+        public SurveyAnswerDTO(FormResponseDetail responseDetail = null)
         {
-            ResponseDetail = new FormResponseDetail();
+            ResponseDetail = responseDetail ?? new FormResponseDetail();
         }
+
         public FormResponseDetail ResponseDetail { get; set; }
 
+        public int LoggedInUserOrgId { get { return UserOrgId; } set { UserOrgId = value; } }
+ 
+        public int LoggedInUserId { get { return UserId; } set { UserId = value; } }
 
-        #region Proxy to ResponseContext in ResponseDetail
-
-        public string ResponseId
-        {
-            get { return ((IResponseContext)ResponseDetail).ResponseId; }
-            set { ((IResponseContext)ResponseDetail).ResponseId = value; }
-        }
-        public string ParentResponseId
-        {
-            get { return ((IResponseContext)ResponseDetail).ParentResponseId; }
-            set { ((IResponseContext)ResponseDetail).ParentResponseId = value; }
-        }
-
-        public string RootResponseId
-        {
-            get { return ((IResponseContext)ResponseDetail).RootResponseId; }
-            set { ((IResponseContext)ResponseDetail).RootResponseId = value; }
-        }
-
-        public string FormId
-        {
-            get { return ((IResponseContext)ResponseDetail).FormId; }
-            set { ((IResponseContext)ResponseDetail).FormId = value; }
-        }
-
-        public string ParentFormId
-        {
-            get { return ((IResponseContext)ResponseDetail).ParentFormId; }
-            set { ((IResponseContext)ResponseDetail).ParentFormId = value; }
-        }
-
-        public string RootFormId
-        {
-            get { return ((IResponseContext)ResponseDetail).RootFormId; }
-            set { ((IResponseContext)ResponseDetail).RootFormId = value; }
-        }
-
-        public string FormName
-        {
-            get { return ((IResponseContext)ResponseDetail).FormName; }
-            set { ((IResponseContext)ResponseDetail).FormName = value; }
-        }
-
-        public string ParentFormName
-        {
-            get { return ((IResponseContext)ResponseDetail).ParentFormName; }
-            set { ((IResponseContext)ResponseDetail).ParentFormName = value; }
-        }
-
-        public string RootFormName
-        {
-            get { return ((IResponseContext)ResponseDetail).RootFormName; }
-            set { ((IResponseContext)ResponseDetail).RootFormName = value; }
-        }
-
-        public bool IsNewRecord
-        {
-            get { return ((IResponseContext)ResponseDetail).IsNewRecord; }
-            set { ((IResponseContext)ResponseDetail).IsNewRecord = value; }
-        }
-
-        public int LoggedInUserOrgId
-        {
-            get { return ((IResponseContext)ResponseDetail).UserOrgId; }
-            set { ((IResponseContext)ResponseDetail).UserOrgId = value; }
-        }
-        public int UserOrgId
-        {
-            get { return ((IResponseContext)ResponseDetail).UserOrgId; }
-            set { ((IResponseContext)ResponseDetail).UserOrgId = value; }
-        }
-
-        public int UserId
-        {
-            get { return ((IResponseContext)ResponseDetail).UserId; }
-            set { ((IResponseContext)ResponseDetail).UserId = value; }
-        }
-
-        public string UserName
-        {
-            get { return ((IResponseContext)ResponseDetail).UserName; }
-            set { ((IResponseContext)ResponseDetail).UserName = value; }
-        }
-
-public int LoggedInUserId { get; set; }
-
-
-        public bool IsChildResponse { get { return ((IResponseContext)ResponseDetail).IsChildResponse; } }
-
-        public bool IsRootResponse { get { return ((IResponseContext)ResponseDetail).IsRootResponse; } }
-
-        #endregion // Proxy to ResponseContext in ResponseDetail
 
         public string SurveyId
         {
-            get { return ((IResponseContext)ResponseDetail).FormId; }
-            set { ((IResponseContext)ResponseDetail).FormId = value; }
+            get { return FormId; }
+            set { FormId = value; }
         }
-        public DateTime DateUpdated { get; set; }
+        public DateTime DateCreated { get { return FirstSaveTime; } set { FirstSaveTime = value; } }
+        public DateTime DateUpdated { get { return LastSaveTime; } set { LastSaveTime = value; } }
         public DateTime? DateCompleted { get; set; }
-        public DateTime DateCreated { get; set; }
-        public int Status { get; set; }
+        public int Status { get { return RecStatus; } set { RecStatus = value; } }
         public RecordStatusChangeReason ReasonForStatusChange { get; set; }
+        public int LastActiveOrgId { get { return UserOrgId; } set { UserOrgId = value; } }
+        public int LastActiveUserId { get { return UserId; } set { UserId = value; } }
         public Guid UserPublishKey { get; set; }
-        public bool IsDraftMode { get; set; }
-        public bool IsLocked { get; set; }
         public string UserEmail { get; set; }
-        public int LastActiveOrgId { get; set; }
-        public int LastActiveUserId { get; set; }
         public int RecordSourceId { get; set; }
         public int ViewId { get; set; }
         public int FormOwnerId { get; set; }
@@ -133,5 +43,54 @@ public int LoggedInUserId { get; set; }
 
         public Dictionary<string, string> SqlData { get; set; }
 
+        public string ResponseId { get { return ResponseDetail.ResponseId; } set { ResponseDetail.ResponseId = value; } }
+        public string FormId { get { return ResponseDetail.FormId; } set { ResponseDetail.FormId = value; } }
+        public string FormName { get { return ResponseDetail.FormName; } set { ResponseDetail.FormName = value; } }
+
+        public string ParentResponseId { get { return ResponseDetail.ParentResponseId; } set { ResponseDetail.ParentResponseId = value; } }
+        public string ParentFormId { get { return ResponseDetail.ParentFormId; } set { ResponseDetail.ParentFormId = value; } }
+        public string ParentFormName { get { return ResponseDetail.ParentFormName; } set { ResponseDetail.ParentFormName = value; } }
+
+        public string RootResponseId { get { return ResponseDetail.RootResponseId; } set { ResponseDetail.RootResponseId = value; } }
+        public string RootFormId { get { return ResponseDetail.RootFormId; } set { ResponseDetail.RootFormId = value; } }
+        public string RootFormName { get { return ResponseDetail.RootFormName; } set { ResponseDetail.RootFormName = value; } }
+
+        public bool IsChildResponse { get { return (ResponseDetail).IsChildResponse; } }
+        public bool IsRootResponse { get { return (ResponseDetail).IsRootResponse; } }
+
+        public int UserOrgId { get { return ResponseDetail.UserOrgId; } set { ResponseDetail.UserOrgId = value; } }
+        public int UserId { get { return ResponseDetail.UserId; } set { ResponseDetail.UserId = value; } }
+        public string UserName { get { return ResponseDetail.UserName; } set { ResponseDetail.UserName = value; } }
+
+        public bool IsNewRecord { get { return ResponseDetail.IsNewRecord; } set { ResponseDetail.IsNewRecord = value; } }
+        public bool IsDraftMode { get { return ResponseDetail.IsDraftMode; } set { ResponseDetail.IsDraftMode = value; } }
+        public bool IsLocked { get { return ResponseDetail.IsLocked; } set { ResponseDetail.IsLocked = value; } }
+
+        public int RecStatus { get { return ResponseDetail.RecStatus; } set { ResponseDetail.RecStatus = value; } }
+        public string FirstSaveLogonName { get { return ResponseDetail.FirstSaveLogonName; } set { ResponseDetail.FirstSaveLogonName = value; } }
+
+        public string LastSaveLogonName { get { return ResponseDetail.LastSaveLogonName; } set { ResponseDetail.LastSaveLogonName = value; } }
+
+        public DateTime FirstSaveTime { get { return ResponseDetail.FirstSaveTime; } set { ResponseDetail.FirstSaveTime = value; } }
+
+        public DateTime LastSaveTime { get { return ResponseDetail.LastSaveTime; } set { ResponseDetail.LastSaveTime = value; } }
+
+        public bool IsRelatedView { get { return ResponseDetail.IsRelatedView; } set { ResponseDetail.IsRelatedView = value; } }
+
+        public List<int> PageIds { get { return ResponseDetail.PageIds; } set { ResponseDetail.PageIds = value; } }
+
+        public int LastPageVisited { get { return ResponseDetail.LastPageVisited; } set { ResponseDetail.LastPageVisited = value; } }
+
+        public string RequiredFieldsList { get { return ResponseDetail.RequiredFieldsList; } set { ResponseDetail.RequiredFieldsList = value; } }
+
+        public string HiddenFieldsList { get { return ResponseDetail.HiddenFieldsList; } set { ResponseDetail.HiddenFieldsList = value; } }
+
+        public string HighlightedFieldsList { get { return ResponseDetail.HighlightedFieldsList; } set { ResponseDetail.HighlightedFieldsList = value; } }
+
+        public string DisabledFieldsList { get { return ResponseDetail.DisabledFieldsList; } set { ResponseDetail.DisabledFieldsList = value; } }
+
+        public List<PageResponseDetail> PageResponseDetailList { get { return ResponseDetail.PageResponseDetailList; } set { ResponseDetail.PageResponseDetailList = value; } }
+
+        public List<FormResponseDetail> ChildFormResponseDetailList { get { return ResponseDetail.ChildFormResponseDetailList; } set { ResponseDetail.ChildFormResponseDetailList = value; } }
     }
 }

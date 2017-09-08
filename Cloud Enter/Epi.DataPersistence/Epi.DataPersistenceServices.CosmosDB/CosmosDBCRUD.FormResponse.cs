@@ -455,7 +455,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             try
             {
                 // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 1234 };
 
                 var query = Client.CreateDocumentQuery(rootFormCollectionUri,
                     SELECT
@@ -537,7 +537,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 var collectionAlias = rootFormName;
                 var rootFormCollectionUri = GetCollectionUri(rootFormName);
                 // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = -1 };
+                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 1234, };
                 List<string> formProperties = new List<string>
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"

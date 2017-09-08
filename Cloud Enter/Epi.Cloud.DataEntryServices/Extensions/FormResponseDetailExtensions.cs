@@ -1,5 +1,7 @@
 ﻿using Epi.DataPersistence.DataStructures;
 using Epi.Cloud.Common.BusinessObjects;
+using System.Collections;
+using System.Linq;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {

@@ -225,20 +225,10 @@ namespace Epi.Cloud.MVC.Controllers
 
             int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
-            var responseContext = new ResponseContext
-            {
-                FormId = /*FromURL*/addNewFormId,
-                ResponseId = responseId.ToString(),
-                ParentResponseId = this.Request.Form["Parent_Response_Id"].ToString(),
-                RootResponseId = rootResponseId,
-                IsNewRecord = !isEditMode,
-                UserOrgId = orgId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies() as ResponseContext;
+            var responseContext = InitializeResponseContext(formId: /*FromURL*/addNewFormId, responseId: responseId.ToString(), parentResponseId: this.Request.Form["Parent_Response_Id"].ToString(), isNewRecord: !isEditMode);
 
             // create the first survey response
-            SurveyAnswerDTO surveyAnswerDTO = _surveyFacade.CreateSurveyAnswer(responseContext, isEditMode);
+            SurveyAnswerDTO surveyAnswerDTO = _surveyFacade.CreateSurveyAnswer(responseContext);
             List<FormsHierarchyDTO> formsHierarchy = GetFormsHierarchy();
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(surveyAnswerDTO.SurveyId, formsHierarchy);
             MetadataAccessor metadataAccessor = surveyInfoModel as MetadataAccessor;
@@ -348,13 +338,7 @@ namespace Epi.Cloud.MVC.Controllers
                 //}
                 //SetUserRole(userId, orgid);
 
-                var responseContext = new ResponseContext
-                {
-                    RootFormId = surveyId,
-                    UserOrgId = orgid,
-                    UserId = userId,
-                    UserName = userName
-                }.ResolveMetadataDependencies();
+                var responseContext = InitializeResponseContext(formId: surveyId);
 
                 SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest { ResponseContext = responseContext };
                 formResponseReq.Criteria.SurveyId = surveyId.ToString();
@@ -543,14 +527,14 @@ namespace Epi.Cloud.MVC.Controllers
             }
             else
             {
-                ResponseContext responseContext = new ResponseContext { FormId = formId, RootFormId = formId };
+                SetSessionValue(UserSession.Key.RootFormId, formId);
+
+                ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
                 SetSessionValue(UserSession.Key.ResponseContext, responseContext);
 
                 RemoveSessionValue(UserSession.Key.SortOrder);
                 RemoveSessionValue(UserSession.Key.SortField);
-                SetSessionValue(UserSession.Key.RootFormId, formId);
                 SetSessionValue(UserSession.Key.PageNumber, page.Value);
-
             }
 
             //Code added to retain Search Ends. 
@@ -690,12 +674,13 @@ namespace Epi.Cloud.MVC.Controllers
                 // If we don't have any data for this child form yet then create a response 
                 if (ResponseListDTO.Count == 0)
                 {
-                    var surveyAnswerDTO = new SurveyAnswerDTO();
+                    var formResponseDetail = InitializeFormResponseDetail();
+                    formResponseDetail.ParentResponseId = responseId;
+                    formResponseDetail.ResponseId = Guid.NewGuid().ToString();
+                    formResponseDetail.ResolveMetadataDependencies();
+
+                    var surveyAnswerDTO = new SurveyAnswerDTO(formResponseDetail);
                     surveyAnswerDTO.CurrentPageNumber = 1;
-                    surveyAnswerDTO.DateUpdated = DateTime.UtcNow;
-                    surveyAnswerDTO.ParentResponseId = responseId;
-                    surveyAnswerDTO.ResponseId = Guid.NewGuid().ToString();
-                    surveyAnswerDTO.ResponseDetail = new FormResponseDetail();
                     ResponseListDTO.Add(surveyAnswerDTO);
                 }
 

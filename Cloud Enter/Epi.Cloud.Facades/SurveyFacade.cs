@@ -144,15 +144,13 @@ namespace Epi.Cloud.Facades
         /// <param name="isEditMode"></param>
         /// <param name="currentOrgId"></param>
         /// <returns></returns>
-        public SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext, bool isEditMode = false, int currentOrgId = -1)
+        public SurveyAnswerDTO CreateSurveyAnswer(IResponseContext responseContext)
         {
             return SurveyHelper.CreateSurveyResponse(responseContext,
 													 _surveyAnswerRequest, 
 													 _surveyAnswerDTO, 
 													 _surveyResponseBuilder, 
-													 _dataEntryService, 
-													 isEditMode, 
-													 currentOrgId);
+													 _dataEntryService);
         }
 
         public void UpdateSurveyResponse(SurveyInfoModel surveyInfoModel, 

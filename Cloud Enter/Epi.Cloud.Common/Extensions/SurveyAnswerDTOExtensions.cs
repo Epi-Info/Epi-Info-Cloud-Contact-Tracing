@@ -15,26 +15,15 @@ namespace Epi.Cloud.Common.Extensions
         {
             SurveyResponseBO surveyResponseBO = new SurveyResponseBO();
             surveyResponseBO.ResponseDetail = surveyAnswerDTO.ResponseDetail;
-            surveyResponseBO.FormId = surveyAnswerDTO.SurveyId;
-            surveyResponseBO.ResponseId = surveyAnswerDTO.ResponseId;
-            surveyResponseBO.ParentResponseId = surveyAnswerDTO.ParentResponseId;
-            surveyResponseBO.Status = surveyAnswerDTO.Status;
-            surveyResponseBO.ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange;
             surveyResponseBO.UserPublishKey = surveyAnswerDTO.UserPublishKey;
             surveyResponseBO.DateUpdated = surveyAnswerDTO.DateUpdated;
             surveyResponseBO.DateCompleted = surveyAnswerDTO.DateCompleted;
-            surveyResponseBO.IsNewRecord = surveyAnswerDTO.IsNewRecord;
-            surveyResponseBO.IsDraftMode = surveyAnswerDTO.IsDraftMode;
 
-            surveyResponseBO.UserId = userId.HasValue ? userId.Value : surveyAnswerDTO.UserId;
+            surveyResponseBO.ReasonForStatusChange = surveyAnswerDTO.ReasonForStatusChange;
             surveyResponseBO.LastActiveUserId = surveyAnswerDTO.LastActiveUserId;
 
-            surveyResponseBO.UserOrgId = surveyAnswerDTO.UserOrgId;
             surveyResponseBO.CurrentOrgId = surveyAnswerDTO.UserOrgId;
             surveyResponseBO.LastActiveOrgId = surveyAnswerDTO.LastActiveOrgId;
-
-            surveyResponseBO.ResponseDetail.PageIds.AddRange(surveyAnswerDTO.ResponseDetail.PageResponseDetailList.Select(p => p.PageId).ToArray());
-            surveyResponseBO.ResponseDetail.PageIds = surveyResponseBO.ResponseDetail.PageIds.Distinct().OrderBy(pid => pid).ToList();
 
             return surveyResponseBO;
         }

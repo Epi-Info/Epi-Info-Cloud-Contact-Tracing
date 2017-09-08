@@ -141,7 +141,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             string formId = surveyAnswerDTO.ResponseDetail.FormId;
             string formName = MetadataAccessor.GetFormDigest(formId).FormName;
-            if (surveyAnswerDTO.ResponseDetail == null) surveyAnswerDTO.ResponseDetail = new FormResponseDetail { FormId = formId, FormName = formName, LastPageVisited = 1 };
+            if (surveyAnswerDTO.ResponseDetail == null) surveyAnswerDTO.ResponseDetail = InitializeFormResponseDetail();
 
             if (viewPageNumber == 0) viewPageNumber = surveyAnswerDTO.ResponseDetail.LastPageVisited;
 
@@ -200,27 +200,11 @@ namespace Epi.Cloud.MVC.Controllers
             ResponseContext responseContext;
             if (string.IsNullOrEmpty(surveyId))
             {
-                responseContext = new ResponseContext
-                {
-                    ResponseId = responseId,
-                    FormId = GetStringSessionValue(UserSession.Key.RootFormId),
-                    RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
-                    UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
-                    UserId = GetIntSessionValue(UserSession.Key.UserId),
-                    UserName = GetStringSessionValue(UserSession.Key.UserName)
-                }.ResolveMetadataDependencies() as ResponseContext;
+                responseContext = InitializeResponseContext(responseId: responseId) as ResponseContext;
             }
             else
             {
-                responseContext = new ResponseContext
-                {
-                    FormId = surveyId,
-                    ResponseId = responseId,
-                    RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
-                    UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
-                    UserId = GetIntSessionValue(UserSession.Key.UserId),
-                    UserName = GetStringSessionValue(UserSession.Key.UserName)
-                }.ResolveMetadataDependencies() as ResponseContext;
+                responseContext = InitializeResponseContext(formId: surveyId, responseId: responseId) as ResponseContext;
             }
 
             SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
@@ -453,19 +437,7 @@ namespace Epi.Cloud.MVC.Controllers
                             //This is a Navigation to a url
                             var requestedViewId = Convert.ToInt32(Requested_View_Id);
                             var formId = MetadataAccessor.GetFormIdByViewId(requestedViewId);
-                            var parentFormId = MetadataAccessor.GetParentFormIdByViewId(requestedViewId);
-                            var rootFormId = MetadataAccessor.GetRootFormIdByViewId(requestedViewId);
-                            var responseContext = new ResponseContext
-                            {
-                                FormId = formId,
-                                ParentFormId = parentFormId,
-                                RootFormId = RootFormId,
-                                ResponseId = responseId,
-                                RootResponseId = rootResponseId,
-                                UserOrgId = orgId,
-                                UserId = userId,
-                                UserName = userName
-                            }.ResolveMetadataDependencies() as ResponseContext;
+                            var responseContext = InitializeResponseContext(formId: formId, rootResponseId: rootResponseId, responseId: responseId) as ResponseContext;
 
                             form = SetLists(form);
 
@@ -611,6 +583,8 @@ namespace Epi.Cloud.MVC.Controllers
 
             var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
             var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
+            var userId = GetIntSessionValue(UserSession.Key.UserId);
+            var orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
             if (rootFormId != null && rootResponseId != null)
             {
@@ -618,6 +592,8 @@ namespace Epi.Cloud.MVC.Controllers
 
                 formsHierarchyRequest.SurveyResponseInfo.RootFormId = rootFormId.ToString();
                 formsHierarchyRequest.SurveyResponseInfo.ResponseId = rootResponseId.ToString();
+                formsHierarchyRequest.SurveyResponseInfo.UserId = userId;
+                formsHierarchyRequest.SurveyResponseInfo.UserOrgId = orgId;
                 formsHierarchyRequest.SurveyResponseInfo.ResolveMetadataDependencies();
                 formsHierarchyResponse = _surveyFacade.GetFormsHierarchy(formsHierarchyRequest);
             }
@@ -697,15 +673,8 @@ namespace Epi.Cloud.MVC.Controllers
 
                     IsMobileDevice = this.Request.Browser.IsMobileDevice;
 
-                    ResponseContext responseContext = (ResponseContext)new ResponseContext
-                    {
-                        RootFormId = rootFormId,
-                        ResponseId = responseId,
-                        RootResponseId = rootResponseId ?? responseId,
-                        UserOrgId = orgId,
-                        UserId = userId,
-                        UserName = userName
-                    }.ResolveMetadataDependencies();
+                    ResponseContext responseContext = InitializeResponseContext(responseId: responseId) as ResponseContext;
+
 
                     var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
 
@@ -830,21 +799,12 @@ namespace Epi.Cloud.MVC.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(string responseid)//List<FormInfoModel> ModelList, string formid)
+        public ActionResult Delete(string responseId)//List<FormInfoModel> ModelList, string formid)
         {
             var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
             var formId = GetStringSessionValue(UserSession.Key.CurrentFormId);
 
-            var responseContext = new ResponseContext
-            {
-                RootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId),
-                RootFormId = rootFormId,
-                ResponseId = responseid,
-                FormId = formId != null ? formId.ToString() : rootFormId,
-                UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId),
-                UserId = GetIntSessionValue(UserSession.Key.UserId),
-                UserName = GetStringSessionValue(UserSession.Key.UserName)
-            }.ResolveMetadataDependencies() as ResponseContext;
+            var responseContext = InitializeResponseContext(responseId: responseId);
 
             IsEditMode = GetBoolSessionValue(UserSession.Key.IsEditMode);
 
@@ -940,12 +900,7 @@ namespace Epi.Cloud.MVC.Controllers
             var parentResponseId = responseId;
             var childFormId = MetadataAccessor.GetFormIdByViewId(viewId);
 
-            var responseContext = new ResponseContext
-            {
-                FormId = childFormId,
-                ParentResponseId = parentResponseId,
-                RootResponseId = rootResponseId
-            }.ResolveMetadataDependencies();
+            var responseContext = InitializeResponseContext(formId: childFormId, rootResponseId: rootResponseId, parentResponseId: parentResponseId);
 
             var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
 
@@ -979,22 +934,9 @@ namespace Epi.Cloud.MVC.Controllers
             TempData[TempDataKeys.ResponseId] = childResponseId.ToString();
             var rootResponseId = GetStringSessionValue(UserSession.Key.RootResponseId);
 
-            var responseContext = new ResponseContext
-            {
-                RootResponseId = rootResponseId,
-                ParentResponseId = parentResponseId,
-                ResponseId = childResponseId.ToString(),
-                FormId = childFormId,
-                IsNewRecord = true,
-                UserOrgId = orgId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies() as ResponseContext;
-
             // create the first survey response
-            // SurveyAnswerDTO SurveyAnswer = _isurveyFacade.CreateSurveyAnswer(surveyModel.SurveyId, ResponseID.ToString());
-            int currentOrgId = GetIntSessionValue(UserSession.Key.SelectedOrgId);
-            SurveyAnswerDTO SurveyAnswer = _surveyFacade.CreateSurveyAnswer(responseContext, this.IsEditMode, currentOrgId);
+            var responseContext = InitializeResponseContext(formId: childFormId, rootResponseId: rootResponseId, parentResponseId: parentResponseId, responseId: childResponseId.ToString(), isNewRecord: !IsEditMode);
+            SurveyAnswerDTO SurveyAnswer = _surveyFacade.CreateSurveyAnswer(responseContext);
 
             List<FormsHierarchyDTO> FormsHierarchy = GetFormsHierarchy();
             SurveyInfoModel surveyInfoModel = GetSurveyInfo(SurveyAnswer.SurveyId, FormsHierarchy);

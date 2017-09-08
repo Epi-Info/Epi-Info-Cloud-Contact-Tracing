@@ -113,6 +113,8 @@ namespace Epi.Cloud.Common.Extensions
             formResponseDetail.UserOrgId = responseContext.UserOrgId;
             formResponseDetail.UserId = responseContext.UserId;
             formResponseDetail.UserName = responseContext.UserName;
+            formResponseDetail.FirstSaveLogonName = responseContext.UserName;
+            formResponseDetail.LastSaveLogonName = responseContext.UserName;
 
             var pageResponseDetail = new PageResponseDetail
             {

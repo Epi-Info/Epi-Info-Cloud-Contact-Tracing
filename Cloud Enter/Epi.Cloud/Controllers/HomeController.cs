@@ -135,7 +135,7 @@ namespace Epi.Cloud.MVC.Controllers
         [HttpPost]
         public ActionResult Index(string surveyId, string addNewFormId, string editForm)
         {
-            bool isNewRecord = false;
+            bool isNewRecord;
 
             int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
             int userId = GetIntSessionValue(UserSession.Key.UserId);
@@ -152,10 +152,13 @@ namespace Epi.Cloud.MVC.Controllers
 
             if (!string.IsNullOrEmpty(editForm) && string.IsNullOrEmpty(addNewFormId))
             {
+                // -------------------------------
+                //      Edit Existing Record
+                // -------------------------------
+                isNewRecord = false;
                 SetSessionValue(UserSession.Key.RootResponseId, editForm);
 
                 SetSessionValue(UserSession.Key.IsEditMode, true);
-                isNewRecord = false;
                 SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(editForm, GetStringSessionValue(UserSession.Key.RootFormId));
 
                 SetSessionValue(UserSession.Key.RequestedViewId, surveyAnswerDTO.ViewId);
@@ -165,11 +168,12 @@ namespace Epi.Cloud.MVC.Controllers
                 RemoveSessionValue(UserSession.Key.RecoverLastRecordVersion);
                 return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = editResponseId, PageNumber = 1, surveyid = surveyAnswerDTO.SurveyId, Edit = "Edit" });
             }
-            else
-            {
-                SetSessionValue(UserSession.Key.IsEditMode, false);
-                isNewRecord = true;
-            }
+
+            // -------------------------------
+            //      Add New Record
+            // -------------------------------
+            isNewRecord = true;
+            SetSessionValue(UserSession.Key.IsEditMode, false);
             bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
 
@@ -190,19 +194,9 @@ namespace Epi.Cloud.MVC.Controllers
             var rootResponseId = responseId;
             SetSessionValue(UserSession.Key.RootResponseId, rootResponseId);
 
-            var responseContext = new ResponseContext
-            {
-                FormId = addNewFormId,
-                ResponseId = responseId.ToString(),
-                IsNewRecord = isNewRecord,
-                UserOrgId = orgId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies() as ResponseContext;
+            var responseContext = InitializeResponseContext(formId: addNewFormId, responseId: responseId.ToString(), isNewRecord: true) as ResponseContext;
 
-            int currentOrgId = GetIntSessionValue(UserSession.Key.SelectedOrgId);
-
-            SurveyAnswerDTO surveyAnswer = _surveyFacade.CreateSurveyAnswer(responseContext, false, currentOrgId);
+            SurveyAnswerDTO surveyAnswer = _surveyFacade.CreateSurveyAnswer(responseContext);
             surveyId = /*FromURL*/surveyId ?? surveyAnswer.SurveyId;
 
             // Initialize the Metadata Accessor
@@ -372,7 +366,7 @@ namespace Epi.Cloud.MVC.Controllers
             }
             else
             {
-                ResponseContext responseContext = new ResponseContext { FormId = formId, RootFormId = formId };
+                ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
                 SetSessionValue(UserSession.Key.ResponseContext, responseContext);
 
                 RemoveSessionValue(UserSession.Key.SortOrder);
@@ -418,14 +412,7 @@ namespace Epi.Cloud.MVC.Controllers
             var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId);
             int userId = GetIntSessionValue(UserSession.Key.UserId);
             int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
-            var responseContext = new ResponseContext
-            {
-                ResponseId = responseId,
-                RootResponseId = responseId,
-                FormId = rootFormId,
-                UserOrgId = orgId,
-                UserId = userId
-            }.ResolveMetadataDependencies() as ResponseContext;
+            var responseContext = InitializeResponseContext(responseId: responseId) as ResponseContext;
 
             SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
             surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
@@ -483,16 +470,10 @@ namespace Epi.Cloud.MVC.Controllers
                 // Set User Role 
                 SetUserRole(userId, orgid);
 
-                var responseContext = new ResponseContext
-                {
-                    RootFormId = surveyId,
-                    UserOrgId = orgid,
-                    UserId = userId,
-                    UserName = userName
-                }.ResolveMetadataDependencies();
+                var responseContext = InitializeResponseContext(formId: surveyId);
 
                 SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest { ResponseContext = responseContext };
-                formResponseReq.Criteria.SurveyId = /*FromURL*/surveyId.ToString();
+                formResponseReq.Criteria.SurveyId = /*FromURL*/surveyId;
                 formResponseReq.Criteria.PageNumber = pageNumber;
                 formResponseReq.Criteria.UserId = userId;
                 formResponseReq.Criteria.IsSqlProject = formSettingResponse.FormInfo.IsSQLProject;
@@ -542,7 +523,7 @@ namespace Epi.Cloud.MVC.Controllers
                 List<ResponseModel> responseList = new List<ResponseModel>();
                 List<ResponseModel> responseListModel = new List<ResponseModel>();
                 Dictionary<string, string> dictory = new Dictionary<string, string>();
-                List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>(); ;
+                List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>();
                 foreach (var item in formResponseList.SurveyResponseList)
                 {
                     if (item.SqlData != null)

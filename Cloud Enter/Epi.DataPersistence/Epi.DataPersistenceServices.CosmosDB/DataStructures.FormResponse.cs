@@ -78,7 +78,7 @@ namespace Epi.PersistenceServices.CosmosDB
         public string HighlightedFieldsList { get; set; }
         public string DisabledFieldsList { get; set; }
 
-        public Dictionary<string, string> ResponseQA { get; set; }
+        public Dictionary<string/*FieldName*/, string/*FieldValue*/> ResponseQA { get; set; }
 
         public bool IsRootForm { get { return (!string.IsNullOrEmpty(FormId) && FormId == RootFormId)
                                            || (string.IsNullOrEmpty(FormId) && string.IsNullOrEmpty(ParentFormId)); } }

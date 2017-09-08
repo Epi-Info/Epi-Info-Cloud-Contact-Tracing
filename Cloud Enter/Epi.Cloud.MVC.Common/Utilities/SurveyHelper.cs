@@ -35,13 +35,13 @@ namespace Epi.Cloud.MVC.Utility
 														SurveyAnswerRequest surveyAnswerRequest1,
 														SurveyAnswerDTO surveyAnswerDTO,
 														SurveyResponseBuilder surveyResponseBuilder,
-														IDataEntryService dataEntryService,
-														bool isEditMode = false,
-														int currentOrgId = -1)
+														IDataEntryService dataEntryService)
 		{
-			bool AddRoot = false;
 			SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest();
 			surveyAnswerRequest.ResponseContext = responseContext;
+
+            FormResponseDetail responseDetail = responseContext.ToFormResponseDetail();
+            surveyAnswerDTO.ResponseDetail = responseDetail;
 
             responseContext.ToSurveyAnswerDTO(surveyAnswerDTO);
 			surveyAnswerDTO.DateCreated = DateTime.UtcNow;
@@ -52,38 +52,15 @@ namespace Epi.Cloud.MVC.Utility
             surveyAnswerDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
 			surveyAnswerDTO.RecordSourceId = RecordSource.CloudEnter;
-			//if (isEditMode)
-			//{
-			//	surveyAnswerDTO.ParentResponseId = responseContext.ParentResponseId;
-			//}
-
-
-            FormResponseDetail responseDetail = responseContext.ToFormResponseDetail();
-            surveyAnswerDTO.ResponseDetail = responseDetail;
 
 			surveyAnswerDTO.ParentResponseId = responseContext.ParentResponseId;
             surveyAnswerRequest.Criteria.UserOrganizationId  = responseContext.UserOrgId;
             surveyAnswerRequest.Criteria.UserId = responseContext.UserId;
             surveyAnswerRequest.Criteria.UserName = responseContext.UserName;
 
-            surveyAnswerRequest.Criteria.UserOrganizationId = currentOrgId;
 			surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
 
-			if (!responseContext.IsChildResponse)
-			{
-				surveyAnswerRequest.Action = RequestAction.Create;
-			}
-			else
-			{
-				//if (isEditMode)
-				//{
-
-				//	surveyAnswerRequest.SurveyAnswerList[0].ParentResponseId = null;
-				//}
-
-				surveyAnswerRequest.Action = RequestAction.CreateChild;
-
-			}
+		    surveyAnswerRequest.Action = responseContext.IsChildResponse ? RequestAction.CreateChild : RequestAction.Create;
 
 			dataEntryService.SetSurveyAnswer(surveyAnswerRequest);
 

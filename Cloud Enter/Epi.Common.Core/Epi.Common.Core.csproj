@@ -52,6 +52,8 @@
     <Compile Include="DataStructures\ResponseGridColumnSettings.cs" />
     <Compile Include="DTO\FormInfoDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
+    <Compile Include="Interfaces\IFormResponseDetail.cs" />
+    <Compile Include="Interfaces\IPageResponseDetail.cs" />
     <Compile Include="Interfaces\IResponseContext.cs" />
     <Compile Include="Message\Base\RequestBase.cs" />
     <Compile Include="Message\Base\ResponseBase.cs" />
