@@ -154,7 +154,9 @@
 
 
 
-    $("button[class*='metro-tile']").click(function (e) {
+        $("button[class*='metro-tile']").click(function (e) {
+           ShowSppiner();
+           
         $("#dropdown-2").val( $("#FORM_SelectedOrgId_HIDDEN").val());
         e.preventDefault();
         if ('@Model.SelectedForm' == "") {
@@ -210,6 +212,7 @@
             //            ReadResponses($(this).attr('data-FormId'), 1, '', '');
             //return page to the top when a form is selected if the list of forms is too long.
             $("html, body").animate({ scrollTop: 0 }, "slow");
+           // CloseSppiner()
             return false;
         });
 
@@ -549,10 +552,10 @@
 
         // start the idle timer plugin
         $.idleTimeout('#TimeOutdialog', 'div.ui-dialog-buttonpane button:first', {
-            idleAfter:  840 ,// 900,
-            pollingInterval: 2,
+           // idleAfter:  840 ,// 900,
+            //pollingInterval: 2,
             keepAliveURL: 'keepalive.php',
-            serverResponseEquals: 'OK',
+            //serverResponseEquals: 'OK',
             onTimeout: function () {
                 //window.location = "timeout.htm";
                 window.location = '@Url.Action("Index","Login")';
@@ -630,7 +633,7 @@
         }
     }
     function ReadResponse(ActionUrl) {
-
+        ShowSppiner();
         var Url = window.location.pathname;
         var Formid = "";
         if (Url.indexOf("/") != -1) {
@@ -650,10 +653,11 @@
 
         function successFunc(data, status) {
             $('#right').html(data);
-
+            CloseSppiner();
         }
 
         function errorFunc() {
+            CloseSppiner();
             alert('error');
         }
 
@@ -661,6 +665,7 @@
 
     function GetSettings() {
         var ActionUrl = '@Url.Action("GetSettings","Home")' + '?formid=' + $("#FORM_ID_HIDDEN").val();
+        ShowSppiner();
         $.ajax({
             url: ActionUrl,
             type: 'GET',
@@ -674,7 +679,7 @@
 
         function successFunc(data, status) {
             $('#right').html(data);
-
+            CloseSppiner();
         }
 
         function errorFunc() {
@@ -703,11 +708,12 @@
 
         function errorFunc() {
             alert('error');
+	     CloseSppiner();
         }
 
     }
     function SaveSettings() {
-
+        ShowSppiner();
         var validation = true;
         $('.SelectedColumns').each(function () {
 
@@ -738,6 +744,7 @@
 
         }
         else {
+            CloseSppiner();
             alert('User should select at least one column for each form.');
             $('select.SelectedColumns option').focus();
         }
@@ -768,9 +775,11 @@
                 $('#' + FormId).removeClass("metro-prod")
                 $('#' + FormId).addClass("metro-staging");
             }
+            CloseSppiner();
         }
 
         function errorFunc() {
+            CloseSppiner();
             alert('error');
         }
 
@@ -817,7 +826,7 @@
                 // if time elapsed is less the   system timeout
                // alert("loggedInUserId " + loggedInUserId)
               //  alert("data.LastActiveUserId " + data.LastActiveUserId)
-                if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
+                if (EditingDuration <= SessionTimeOut && data.LastActiveUserId>0 && loggedInUserId != data.LastActiveUserId) {
                     alert("This record is being edited by another user.");
                 }
                 else {
@@ -867,7 +876,8 @@
 
 
 
-        var ActionUrl = '@Url.Action("UnLock", "Home")' + '?responseid=' + ResponseId;
+        var ActionUrl = '@Url.Action("UnLock", "Home")' + '/' + ResponseId+'/False';
+        
         $.ajax({
             url: ActionUrl,
             type: 'POST',
@@ -885,8 +895,8 @@
                 $("#exitdialog").dialog("open");
             }
             else{
-
-                alert('Cannot Delete Records in Inprogress State');
+                
+                alert('This record is being edited by another user.');              
             }
         }
 
@@ -917,6 +927,29 @@
             alert('error');
         }
     }
+    function ShowSppiner() {
+        var validate = $('#formsList').validationEngine('validate');
+
+        if (validate) {
+            if (open) {
+                $('BODY').jLoadingOverlay('close');
+                open = false;
+            }
+            else {
+                $('BODY').jLoadingOverlay('');
+                open = true;
+            }
+        }
+        $("#parent-selector :input").attr("disabled", true);
+    }
+    function CloseSppiner() {
+
+        $('BODY').jLoadingOverlay('close');
+        open = false;
+
+        $("#parent-selector :input").attr("disabled", false);
+    }
+
 </script>
 <script>
 	$(document).ajaxStop(function () {

@@ -226,20 +226,20 @@ namespace Epi.Cloud.MVC.Utility
                         break;
 
                     case FieldTypes.LegalValues:    //DropDown LegalValues
-                        var dropDownLegalValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
+                        var dropDownLegalValues = string.Join("&#;", fieldAttributes.SourceTableValues);
                         var selectedLegalValue = fieldValue;
                         form.AddFields(GetDropDown(fieldAttributes, _Width, _Height, selectedLegalValue, dropDownLegalValues, (int)FieldTypes.LegalValues));
                         break;
 
                     case FieldTypes.Codes:  //DropDown Codes
-                        var dropDownCodesValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower(); 
+                        var dropDownCodesValues = string.Join("&#;", fieldAttributes.SourceTableValues); 
                          var selectedCodesValue = fieldValue;
                         var dropDownSelectedCodesValue = GetDropDown(fieldAttributes, _Width, _Height, selectedCodesValue, dropDownCodesValues, (int)FieldTypes.Codes, fieldAttributes.RelateCondition);
                         form.AddFields(dropDownSelectedCodesValue);
                         break;
 
                     case FieldTypes.CommentLegal:   //DropDown CommentLegal
-                        var dropDownCommentLegalValues = string.Join("&#;", fieldAttributes.SourceTableValues).ToLower();
+                        var dropDownCommentLegalValues = string.Join("&#;", fieldAttributes.SourceTableValues);
                         var selectedCommentLegalValue = fieldValue;
                         var dropDownSelectedCommentLegalValue = GetDropDown(fieldAttributes, _Width, _Height, selectedCommentLegalValue, dropDownCommentLegalValues, 19);
                         form.AddFields(dropDownSelectedCommentLegalValue);

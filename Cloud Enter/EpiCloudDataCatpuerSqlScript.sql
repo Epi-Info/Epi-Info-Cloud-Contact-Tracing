@@ -640,11 +640,11 @@ CREATE FUNCTION [dbo].[SplitInts]
 RETURNS TABLE
 AS
   RETURN ( SELECT Item = CONVERT(INT, Item) FROM
-	  ( SELECT Item = x.i.value('(./text())[1]', 'varchar(max)')
-		FROM ( SELECT [XML] = CONVERT(XML, '<i>'
-		+ REPLACE(@List, @Delimiter, '</i><i>') + '</i>').query('.')
-		  ) AS a CROSS APPLY [XML].nodes('i') AS x(i) ) AS y
-	  WHERE Item IS NOT NULL
+      ( SELECT Item = x.i.value('(./text())[1]', 'varchar(max)')
+        FROM ( SELECT [XML] = CONVERT(XML, '<i>'
+        + REPLACE(@List, @Delimiter, '</i><i>') + '</i>').query('.')
+          ) AS a CROSS APPLY [XML].nodes('i') AS x(i) ) AS y
+      WHERE Item IS NOT NULL
   );
 
 
@@ -672,12 +672,12 @@ GO
 CREATE VIEW [dbo].[vwCanvasShare]
 AS
 SELECT        dbo.[User].UserName, dbo.Datasource.DatasourceName, dbo.Canvas.CanvasID, dbo.Canvas.CanvasName, dbo.Canvas.CanvasDescription, 
-						 dbo.Canvas.CreatedDate, dbo.Canvas.ModifiedDate, dbo.Canvas.CanvasContent, dbo.[User].UserID, dbo.[User].FirstName, dbo.[User].LastName, 
-						 dbo.Datasource.DatasourceID, dbo.Datasource.OrganizationID, dbo.Canvas.CanvasGUID
+                         dbo.Canvas.CreatedDate, dbo.Canvas.ModifiedDate, dbo.Canvas.CanvasContent, dbo.[User].UserID, dbo.[User].FirstName, dbo.[User].LastName, 
+                         dbo.Datasource.DatasourceID, dbo.Datasource.OrganizationID, dbo.Canvas.CanvasGUID
 FROM            dbo.Canvas INNER JOIN
-						 dbo.SharedCanvases ON dbo.Canvas.CanvasID = dbo.SharedCanvases.CanvasID INNER JOIN
-						 dbo.[User] ON dbo.SharedCanvases.UserID = dbo.[User].UserID INNER JOIN
-						 dbo.Datasource ON dbo.Canvas.DatasourceID = dbo.Datasource.DatasourceID
+                         dbo.SharedCanvases ON dbo.Canvas.CanvasID = dbo.SharedCanvases.CanvasID INNER JOIN
+                         dbo.[User] ON dbo.SharedCanvases.UserID = dbo.[User].UserID INNER JOIN
+                         dbo.Datasource ON dbo.Canvas.DatasourceID = dbo.Datasource.DatasourceID
 
 
 
@@ -690,12 +690,12 @@ GO
 CREATE VIEW [dbo].[vwCanvasUser]
 AS
 SELECT        dbo.[User].UserName, dbo.Datasource.DatasourceName, dbo.Canvas.CanvasID, dbo.Canvas.CanvasName, dbo.Canvas.CanvasDescription, 
-						 dbo.Canvas.CreatedDate, dbo.Canvas.ModifiedDate, dbo.Canvas.CanvasContent, dbo.[User].UserID, dbo.[User].FirstName, dbo.[User].LastName, 
-						 dbo.Datasource.DatasourceID, dbo.Datasource.OrganizationID, dbo.Canvas.CanvasGUID
+                         dbo.Canvas.CreatedDate, dbo.Canvas.ModifiedDate, dbo.Canvas.CanvasContent, dbo.[User].UserID, dbo.[User].FirstName, dbo.[User].LastName, 
+                         dbo.Datasource.DatasourceID, dbo.Datasource.OrganizationID, dbo.Canvas.CanvasGUID
 FROM            dbo.Canvas INNER JOIN
-						 dbo.[User] ON dbo.Canvas.UserID = dbo.[User].UserID INNER JOIN
-						 dbo.DatasourceUser ON dbo.[User].UserID = dbo.DatasourceUser.UserID INNER JOIN
-						 dbo.Datasource ON dbo.Canvas.DatasourceID = dbo.Datasource.DatasourceID AND dbo.DatasourceUser.DatasourceID = dbo.Datasource.DatasourceID
+                         dbo.[User] ON dbo.Canvas.UserID = dbo.[User].UserID INNER JOIN
+                         dbo.DatasourceUser ON dbo.[User].UserID = dbo.DatasourceUser.UserID INNER JOIN
+                         dbo.Datasource ON dbo.Canvas.DatasourceID = dbo.Datasource.DatasourceID AND dbo.DatasourceUser.DatasourceID = dbo.Datasource.DatasourceID
 
 
 
@@ -708,9 +708,9 @@ GO
 CREATE VIEW [dbo].[vwOrgsForUser]
 AS
 SELECT     dbo.UserOrganization.UserID, dbo.Organization.OrganizationID, dbo.Organization.Organization, dbo.UserOrganization.RoleID, 
-					  dbo.UserOrganization.Active, dbo.Organization.IsEnabled AS IsOrgActive
+                      dbo.UserOrganization.Active, dbo.Organization.IsEnabled AS IsOrgActive
 FROM         dbo.Organization INNER JOIN
-					  dbo.UserOrganization ON dbo.Organization.OrganizationID = dbo.UserOrganization.OrganizationID
+                      dbo.UserOrganization ON dbo.Organization.OrganizationID = dbo.UserOrganization.OrganizationID
 
 
 
@@ -723,13 +723,13 @@ GO
 CREATE VIEW [dbo].[vwUserDatasource]
 AS
 SELECT     dbo.[User].UserID, dbo.[User].UserName, dbo.[User].PasswordHash, dbo.Datasource.DatasourceID, dbo.Datasource.DatasourceName, 
-					  dbo.Datasource.DatasourceServerName, dbo.Datasource.DatabaseType, dbo.Datasource.InitialCatalog, dbo.Datasource.PersistSecurityInfo, 
-					  dbo.Datasource.Password, dbo.Datasource.DatabaseObject, dbo.Datasource.SQLQuery, dbo.Datasource.SQLText, dbo.Datasource.active AS IsDatasourceActive, 
-					  dbo.Datasource.DatabaseUserID, dbo.[User].FirstName, dbo.[User].LastName, dbo.[User].EmailAddress, dbo.[User].PhoneNumber, dbo.[User].ResetPassword, 
-					  dbo.Datasource.OrganizationID, dbo.Datasource.portnumber, dbo.Datasource.EIWSDatasource, dbo.Datasource.EIWSSurveyId
+                      dbo.Datasource.DatasourceServerName, dbo.Datasource.DatabaseType, dbo.Datasource.InitialCatalog, dbo.Datasource.PersistSecurityInfo, 
+                      dbo.Datasource.Password, dbo.Datasource.DatabaseObject, dbo.Datasource.SQLQuery, dbo.Datasource.SQLText, dbo.Datasource.active AS IsDatasourceActive, 
+                      dbo.Datasource.DatabaseUserID, dbo.[User].FirstName, dbo.[User].LastName, dbo.[User].EmailAddress, dbo.[User].PhoneNumber, dbo.[User].ResetPassword, 
+                      dbo.Datasource.OrganizationID, dbo.Datasource.portnumber, dbo.Datasource.EIWSDatasource, dbo.Datasource.EIWSSurveyId
 FROM         dbo.DatasourceUser INNER JOIN
-					  dbo.Datasource ON dbo.DatasourceUser.DatasourceID = dbo.Datasource.DatasourceID INNER JOIN
-					  dbo.[User] ON dbo.DatasourceUser.UserID = dbo.[User].UserID
+                      dbo.Datasource ON dbo.DatasourceUser.DatasourceID = dbo.Datasource.DatasourceID INNER JOIN
+                      dbo.[User] ON dbo.DatasourceUser.UserID = dbo.[User].UserID
 
 
 
@@ -742,12 +742,12 @@ GO
 CREATE VIEW [dbo].[vwUserOrganizationUser]
 AS
 SELECT     TOP (100) PERCENT dbo.[User].UserID, dbo.UserOrganization.RoleID, dbo.[User].EmailAddress, dbo.[User].PhoneNumber, dbo.[User].UserName, 
-					  dbo.[User].FirstName, dbo.[User].LastName, dbo.[User].PasswordHash, dbo.[User].ResetPassword, dbo.UserOrganization.OrganizationID, dbo.Role.RoleValue, 
-					  dbo.Role.RoleDescription, dbo.UserOrganization.Active, dbo.Organization.IsEnabled AS IsOrgActive
+                      dbo.[User].FirstName, dbo.[User].LastName, dbo.[User].PasswordHash, dbo.[User].ResetPassword, dbo.UserOrganization.OrganizationID, dbo.Role.RoleValue, 
+                      dbo.Role.RoleDescription, dbo.UserOrganization.Active, dbo.Organization.IsEnabled AS IsOrgActive
 FROM         dbo.UserOrganization INNER JOIN
-					  dbo.[User] ON dbo.UserOrganization.UserID = dbo.[User].UserID INNER JOIN
-					  dbo.Role ON dbo.UserOrganization.RoleID = dbo.Role.RoleID INNER JOIN
-					  dbo.Organization ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
+                      dbo.[User] ON dbo.UserOrganization.UserID = dbo.[User].UserID INNER JOIN
+                      dbo.Role ON dbo.UserOrganization.RoleID = dbo.Role.RoleID INNER JOIN
+                      dbo.Organization ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
 ORDER BY dbo.[User].UserID
 
 
@@ -932,7 +932,7 @@ VALUES                   (@DatasourceName,   @DatasourceServerName, @DatabaseTyp
 declare @usercount  INT    
 
 select @usercount = (select COUNT(* )  )    
-	from @DatasourceUser
+ 	from @DatasourceUser
 
 
 
@@ -945,9 +945,9 @@ if @usercount  >  0
   end
 
 IF @@Error > 0
-	ROLLBACK;
+    ROLLBACK;
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 
 
@@ -966,7 +966,7 @@ CREATE PROCEDURE  [dbo].[usp_add_Epi7DB_record]
 	@LastSaveTime   dateTime, 
 	@ParentRecordId  uniqueidentifier, 
 	@Epi7DBName varchar(50 )         
-		
+	    
 
 AS
 
@@ -1061,9 +1061,9 @@ IF (@@Error > 0 OR @UserId = -1 OR @OrganizationId = -1)
 		Set @ErrMsg = 'Adding organization "' + @OrganizationName + '" with Administrator failed.';
 		RaisError(@ErrMsg, 10, 1) ;
 		ROLLBACK;
-	End
+    End
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 	
 END
 
@@ -1138,9 +1138,9 @@ Else
 VALUES (@UserId, @OrganizationId, @RoleID, @Active)
 
 IF @@Error > 0
-	ROLLBACK;
+    ROLLBACK;
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 
 
@@ -1172,8 +1172,8 @@ DECLARE @uid Numeric = 0
 	SET @did = (Select DatasourceID from Datasource where DatasourceName = @DatasourceName)
 	Set @uid = (Select UserID from [User] where UserName = @UserName)
 
-	INSERT DatasourceUser ([DatasourceId], [UserID]) VALUES (@did, @uid)
-	--set @RETURN_VALUE = SCOPE_IDENTITY();
+    INSERT DatasourceUser ([DatasourceId], [UserID]) VALUES (@did, @uid)
+    --set @RETURN_VALUE = SCOPE_IDENTITY();
 END
 
 
@@ -1203,9 +1203,9 @@ INSERT  INTO [EIDatasource] (  [DatasourceServerName], [DatabaseType], [InitialC
 VALUES                   (   @DatasourceServerName, @DatabaseType, @InitialCatalog, @PersistSecurityInfo,@SurveyID, @DatabaseUserID, @Password);
 
 IF @@Error > 0
-	ROLLBACK;
+    ROLLBACK;
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 
 
@@ -1244,20 +1244,20 @@ BEGIN TRANSACTION;
 Copy the existing row that has CanvasContent column into a new row 
 **/  
 INSERT INTO canvas  ([CanvasName]
-		   ,[UserID]
-		   ,[CanvasDescription]
-		   ,[CreatedDate]
-		   ,[ModifiedDate]
-		   ,[DatasourceID]
-		   ,[CanvasContent])
-	   SELECT  CanvasName
-		   ,UserID
-		   ,CanvasDescription
-		   ,CreatedDate
-		   ,ModifiedDate
-		   ,DatasourceID
-		   ,CanvasContent
-	   FROM Canvas where CanvasName = @oldCanvasName ;
+           ,[UserID]
+           ,[CanvasDescription]
+           ,[CreatedDate]
+           ,[ModifiedDate]
+           ,[DatasourceID]
+           ,[CanvasContent])
+       SELECT  CanvasName
+           ,UserID
+           ,CanvasDescription
+           ,CreatedDate
+           ,ModifiedDate
+           ,DatasourceID
+           ,CanvasContent
+       FROM Canvas where CanvasName = @oldCanvasName ;
 
 set @newCanvasId  = @@identity ;
 
@@ -1271,8 +1271,8 @@ Update createdDate column to latest date in order to see the canvas on the top o
 
 UPDATE [Canvas]
    SET [CanvasName] = @newCanvasName
-	  ,[CreatedDate] =  GETDATE( )
-	  ,[DatasourceID] =  @newDatasourceId
+      ,[CreatedDate] =  GETDATE( )
+      ,[DatasourceID] =  @newDatasourceId
  WHERE CanvasID = @newCanvasId ;
  
 -- set @userID = (Select UserID from CanvasId = @newCanvasId);
@@ -1293,9 +1293,9 @@ UPDATE [Canvas]
 	
 
 IF @@Error > 0
-	ROLLBACK TRANSACTION;
+    ROLLBACK TRANSACTION;
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 
 
@@ -1331,18 +1331,18 @@ SET @PageXml.modify(  'insert <ResponseDetail QuestionName="GlobalRecordId"> {sq
 
 -- Cleanup    
 IF OBJECT_ID('tempdb..#temp') IS NOT NULL
-	DROP TABLE #temp;    
+    DROP TABLE #temp;    
 
 
 -- Get PageId from xml               
 SET @PageId = (SELECT doc.col.value('@MetaDataPageId', 'decimal') AS p
-			   FROM   @PageXml.nodes('/Page ') AS doc(col));
-			   -- FROM   @xml.nodes('/SurveyResponse/Page ') AS doc(col));  
+               FROM   @PageXml.nodes('/Page ') AS doc(col));
+               -- FROM   @xml.nodes('/SurveyResponse/Page ') AS doc(col));  
 	
 if @PageId  is null  
 	BEGIN   
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'Could not read @PadId -  usp_create_epi7_sql_statements', 'usp_create_epi7_sql_statements ');
+                    VALUES (@SurveyId, @ResponseId, 'Could not read @PadId -  usp_create_epi7_sql_statements', 'usp_create_epi7_sql_statements ');
 	 
 		--SET @throw_text =  'Could not read @PadId -  usp_create_epi7_sql_statements - Could not parse pageId from XML ';        
 		--THROW  51000,  @throw_text, 1 ;        
@@ -1352,15 +1352,15 @@ if @PageId  is null
 
 -- Get TabName from metadata         
 SET @TabName = (SELECT TOP 1 TABLEName
-				FROM   SurveyMetaDataTransform
-				WHERE  SurveyId = @SurveyId
-					   AND PageId = @PageId);
+                FROM   SurveyMetaDataTransform
+                WHERE  SurveyId = @SurveyId
+                       AND PageId = @PageId);
 
 if @TabName is null  
 	BEGIN    
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'No table name found for given SurveyId and PageId combination', 'usp_create_epi7_sql_statements '); 
-			 
+                    VALUES (@SurveyId, @ResponseId, 'No table name found for given SurveyId and PageId combination', 'usp_create_epi7_sql_statements '); 
+		     
 	END    
 
 
@@ -1371,13 +1371,13 @@ if @TabName is null
 
 -- Create a work  TABLE                                 
 SELECT doc.col.value('@QuestionName', 'varchar(70)') AS FieldName,
-	   doc.col.value('. ', 'varchar(70)') AS Fieldvalue,
-	   doc.col.value('. ', 'varchar(70)') AS FieldvalueForInsert, 
-	   (SELECT fieldtypeid
-		FROM   SurveyMetaDataTransform
-		WHERE  fieldname = doc.col.value('@QuestionName', 'varchar(70)')
-			   AND SurveyId = @SurveyId
-			   AND PageId = @PageId) AS FieldTypeId 
+       doc.col.value('. ', 'varchar(70)') AS Fieldvalue,
+       doc.col.value('. ', 'varchar(70)') AS FieldvalueForInsert, 
+       (SELECT fieldtypeid
+        FROM   SurveyMetaDataTransform
+        WHERE  fieldname = doc.col.value('@QuestionName', 'varchar(70)')
+               AND SurveyId = @SurveyId
+               AND PageId = @PageId) AS FieldTypeId 
 INTO   #temp
 FROM   @PageXml.nodes('/Page/ResponseDetail') AS doc(col);    
 -- FROM   @xml.nodes('/SurveyResponse/Page/ResponseDetail  ') AS doc(col);    
@@ -1444,14 +1444,14 @@ IF @@ERROR >  0
 				DECLARE @ErrorProcedure AS NVARCHAR (128);
 				DECLARE @ErrorLine AS INT;
 				DECLARE @ErrorMessage AS NVARCHAR (4000);
-			
+            
 				SELECT @ErrorNumber = ERROR_NUMBER(), --  AS ErrorNumber
 						@ErrorSeverity = ERROR_SEVERITY(), --  AS ErrorSeverity
 						@ErrorState = ERROR_STATE(), --  AS ErrorState
 						@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 						@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 						@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 				EXECUTE usp_log_to_errorlog 
 					@SurveyId, @ResponseId, '', 
 					'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
@@ -1464,17 +1464,17 @@ IF @@ERROR >  0
 
 DECLARE @cols AS VARCHAR (MAX);
 DECLARE @values AS VARCHAR (MAX);
-		
+        
 
 -- Concat text for column list for  INSERT    
 SET @cols = STUFF((SELECT ',' + QUOTENAME(FieldName)
-				   FROM   #temp
-				   WHERE  FieldTypeId NOT IN (2, 3, 20, 21, 13) --  , 2, 3, 17, 21   )    
-				   FOR    XML PATH (''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '');
+                   FROM   #temp
+                   WHERE  FieldTypeId NOT IN (2, 3, 20, 21, 13) --  , 2, 3, 17, 21   )    
+                   FOR    XML PATH (''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '');
 if @cols  is null  
 	BEGIN   
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'Could not create @cols string ', 'usp_create_epi7_sql_statements ');	  
+                    VALUES (@SurveyId, @ResponseId, 'Could not create @cols string ', 'usp_create_epi7_sql_statements ');	  
 	END    
 
 
@@ -1491,7 +1491,7 @@ SET @values = STUFF((SELECT
 if @values  is null  
 	BEGIN  
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'Could not create @values string', 'usp_create_epi7_sql_statements ');	      
+                    VALUES (@SurveyId, @ResponseId, 'Could not create @values string', 'usp_create_epi7_sql_statements ');	      
 	END    
 
 -- For Tests
@@ -1500,22 +1500,22 @@ if @values  is null
 -- Concat text  for SET clause     
 --  dont update  GlobalRecordId    
 SET @UpdateText = STUFF((SELECT ',' + SqlText
-						 FROM   #temp
-						 WHERE  FieldTypeId NOT IN (2, 3, 20, 21, 13) --   2, 3, 17, 21   )        
-								AND FieldName != 'GlobalRecordId' --  dont update  GlobalRecordId                    
-						 FOR    XML PATH (''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '');
+                         FROM   #temp
+                         WHERE  FieldTypeId NOT IN (2, 3, 20, 21, 13) --   2, 3, 17, 21   )        
+                                AND FieldName != 'GlobalRecordId' --  dont update  GlobalRecordId                    
+                         FOR    XML PATH (''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '');
 
 IF @UpdateText IS NULL
 BEGIN  
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'Could not create @UpdateText string', 'usp_create_epi7_sql_statements ');	  
+                    VALUES (@SurveyId, @ResponseId, 'Could not create @UpdateText string', 'usp_create_epi7_sql_statements ');	  
 	END    
 
 --For test
 --select @UpdateText  as [UpdateText]        
 
 DECLARE @Epi7DBName VARCHAR(50);    
-		  
+          
 SELECT @Epi7DBName = initialcatalog 
 FROM   eidatasource 
 WHERE  surveyid = @SurveyId; 
@@ -1523,7 +1523,7 @@ WHERE  surveyid = @SurveyId;
 IF @Epi7DBName IS NULL
 BEGIN  
 		INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES (@SurveyId, @ResponseId, 'Could not create @Epi7DBName string', 'usp_create_epi7_sql_statements ');	     
+                    VALUES (@SurveyId, @ResponseId, 'Could not create @Epi7DBName string', 'usp_create_epi7_sql_statements ');	     
 END    
 
 set @TabName =  '[' +  @Epi7DBName  +  '].[dbo].['  +  @TabName +  ']'    
@@ -1537,10 +1537,10 @@ SET @InsertText = 'INSERT  INTO ' + @TabName +
 --  Bake the cake        
 SET @UpdateText =  N' UPDATE ' + @TabName + 
 				  ' SET ' + @UpdateText + ' 
-					WHERE GlobalRecordId =  ' + QUOTENAME(@ResponseId, '''');       
+				    WHERE GlobalRecordId =  ' + QUOTENAME(@ResponseId, '''');       
 
 
-						
+      				    
 -- Cleanup!
 DROP TABLE #temp;
 GO
@@ -1568,7 +1568,7 @@ DECLARE @PageXml AS XML;
 DECLARE @PageId AS INT;
 
 IF OBJECT_ID('tempdb..#temp_outer') IS NOT NULL
-	DROP TABLE #temp_outer;
+    DROP TABLE #temp_outer;
 
 SELECT doc.col.value('@MetaDataPageId ', 'int') AS PageId
 INTO   #temp_outer
@@ -1580,34 +1580,34 @@ FROM   @xml.nodes('/SurveyResponse/Page ') AS doc(col);
 
 -- A FAST_FORWARD      
 DECLARE PAGE_ID CURSOR FAST_FORWARD
-	FOR SELECT PageId
-		FROM   #temp_outer;
+    FOR SELECT PageId
+        FROM   #temp_outer;
 OPEN PAGE_ID;
 FETCH NEXT FROM PAGE_ID INTO @PageId;
 WHILE (@@FETCH_STATUS = 0)
-	BEGIN
-		SELECT @PageXml = doc.col.query('Page[@MetaDataPageId=sql:variable("@PageId") ]') --    , 'varchar(70)')    
-		FROM   @xml.nodes('/SurveyResponse ') AS doc(col);
+    BEGIN
+        SELECT @PageXml = doc.col.query('Page[@MetaDataPageId=sql:variable("@PageId") ]') --    , 'varchar(70)')    
+        FROM   @xml.nodes('/SurveyResponse ') AS doc(col);
 		
 		-- For tests    
-		-- select @PageXml   as  PageXml    
-		
+        -- select @PageXml   as  PageXml    
+        
 		EXECUTE usp_create_epi7_sql_statements 
 			@PageXml, @SurveyId, @ResponseId, 
 			@InsertText = @InsertResultText OUTPUT, 
 			@UpdateText = @UpdateResultText OUTPUT;
 
 		-- For tests     
-		-- SET @UseDBText = 'use ' + QUOTENAME(@Epi7DBName);
-		-- execute (@UseDBText) 
+        -- SET @UseDBText = 'use ' + QUOTENAME(@Epi7DBName);
+        -- execute (@UseDBText) 
 		
 
-			IF @Mode = 'i'
+            IF @Mode = 'i'
 				BEGIN
 					SET @ResultText =   @InsertResultText;
 					EXECUTE (@InsertResultText);
 				END
-			ELSE
+            ELSE
 				BEGIN
 					SET @ResultText =  @UpdateResultText;
 					EXECUTE (@UpdateResultText);
@@ -1622,28 +1622,28 @@ WHILE (@@FETCH_STATUS = 0)
 				DECLARE @ErrorProcedure AS NVARCHAR (128);
 				DECLARE @ErrorLine AS INT;
 				DECLARE @ErrorMessage AS NVARCHAR (4000);
-			
+            
 				SELECT @ErrorNumber = ERROR_NUMBER(), --  AS ErrorNumber
 						@ErrorSeverity = ERROR_SEVERITY(), --  AS ErrorSeverity
 						@ErrorState = ERROR_STATE(), --  AS ErrorState
 						@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 						@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 						@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 				EXECUTE usp_log_to_errorlog 
 					@SurveyId, @ResponseId, @ResultText, 
 					'usp_create_epi7_sql_statements_driver', '@InsertResultText/@UpdateResultText', 
 					@ErrorNumber, @ErrorSeverity, @ErrorState, @ErrorProcedure, @ErrorLine, @ErrorMessage;		
 
 			  END   
-				 
+			     
 		-- For tests
-		--SELECT @ResultText;
-			 
+        --SELECT @ResultText;
+             
 
-		FETCH NEXT FROM PAGE_ID INTO @PageId;
+        FETCH NEXT FROM PAGE_ID INTO @PageId;
 
-	END  -- WHILE    
+    END  -- WHILE    
 
 CLOSE PAGE_ID;
 DEALLOCATE PAGE_ID;     
@@ -1702,7 +1702,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	UPDATE [User] SET PasswordHash = @HashedPassword, ResetPassword = 1 Where EmailAddress = @EmailAddress
+    UPDATE [User] SET PasswordHash = @HashedPassword, ResetPassword = 1 Where EmailAddress = @EmailAddress
 END
 
 
@@ -1762,12 +1762,12 @@ AS
 BEGIN
 
 SELECT dbo.Organization.Organization,
-	   dbo.[User].UserName,
-	   dbo.[User].FirstName,
-	   dbo.[User].LastName,
-	   dbo.Organization.OrganizationID,
-	   dbo.[User].UserID,
-	   CASE 
+       dbo.[User].UserName,
+       dbo.[User].FirstName,
+       dbo.[User].LastName,
+       dbo.Organization.OrganizationID,
+       dbo.[User].UserID,
+       CASE 
 			WHEN dbo.[User].UserID IN
 			(
 				SELECT dbo.[User].UserID AS u2
@@ -1785,12 +1785,12 @@ SELECT dbo.Organization.Organization,
 		END     
 		AS Shared
 FROM   dbo.[User]
-	   INNER JOIN
-	   dbo.UserOrganization
-	   ON dbo.[User].UserID = dbo.UserOrganization.UserID
-	   INNER JOIN
-	   dbo.Organization
-	   ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
+       INNER JOIN
+       dbo.UserOrganization
+       ON dbo.[User].UserID = dbo.UserOrganization.UserID
+       INNER JOIN
+       dbo.Organization
+       ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
 WHERE  (dbo.Organization.OrganizationID = @OrganizationID    );        
 
 
@@ -1835,7 +1835,7 @@ GO
 --  exec  usp_get_form_family     'D6CB7DFA-255E-4BC7-9042-1E40A0B10564'       '4AD66995-6665-4C8D-9882-05995818BC01'    
 --select *  from SurveyMetaData    
 --where  SurveyName like 'emr2'    
-		
+        
 CREATE PROCEDURE [dbo].[usp_get_form_family]
 	@SurveyId VARCHAR (50)
 AS
@@ -1844,58 +1844,58 @@ DECLARE @topNode AS VARCHAR (50);
 
 WITH   CteAlias2
 AS     (SELECT SurveyId,
-			   SurveyName AS Path,
-			   ParentId
-		FROM   SurveyMetaData
-		WHERE  SurveyId = @SurveyId
-		UNION ALL
-		SELECT SurveyMetaData.SurveyId AS topNode,
-			   CAST (SurveyMetaData.SurveyName + '\' + CteAlias2.Path AS NVARCHAR (500)) AS SPath,
-			   SurveyMetaData.parentid
-		FROM   SurveyMetaData
-			   INNER JOIN
-			   CteAlias2
-			   ON SurveyMetaData.SurveyId = CteAlias2.ParentId)    
-			   
+               SurveyName AS Path,
+               ParentId
+        FROM   SurveyMetaData
+        WHERE  SurveyId = @SurveyId
+        UNION ALL
+        SELECT SurveyMetaData.SurveyId AS topNode,
+               CAST (SurveyMetaData.SurveyName + '\' + CteAlias2.Path AS NVARCHAR (500)) AS SPath,
+               SurveyMetaData.parentid
+        FROM   SurveyMetaData
+               INNER JOIN
+               CteAlias2
+               ON SurveyMetaData.SurveyId = CteAlias2.ParentId)    
+               
 SELECT @topNode = CteAlias2.SurveyId
 FROM   CteAlias2;    
-	
+    
 WITH   CteAlias
 AS     (SELECT s.[SurveyName] AS Path,
-			   s.SurveyId, --    [SurveyId] 
-			   s.OwnerId,
-			   s.SurveyNumber,
-			   s.[SurveyTypeId],
-			   s.[SurveyName],
-			   s.[TemplateXML],
-			   s.[UserPublishKey],
-			   s.[DateCreated],
-			   s.[IsDraftMode],
-			   s.[StartDate],
-			   s.[ParentId],
-			   s.[ViewId],
-			   s.[IsSQLProject]
-		FROM   SurveyMetaData AS s
-		WHERE  SurveyId = @topNode
-		UNION ALL
-		SELECT CAST (CteAlias.Path + '\' + s.SurveyName AS NVARCHAR (500)) AS SPath,
-			   s.[SurveyId] AS topNode,
-			   s.OwnerId,
-			   s.SurveyNumber,
-			   s.[SurveyTypeId],
-			   s.[SurveyName],
-			   s.[TemplateXML],
-			   s.[UserPublishKey],
-			   s.[DateCreated],
-			   s.[IsDraftMode],
-			   s.[StartDate],
-			   s.[ParentId],
-			   s.[ViewId],
-			   s.[IsSQLProject]
-		FROM   SurveyMetaData AS s
-			   INNER JOIN
-			   CteAlias
-			   ON s.parentid = CteAlias.SurveyId)
+               s.SurveyId, --    [SurveyId] 
+               s.OwnerId,
+               s.SurveyNumber,
+               s.[SurveyTypeId],
+               s.[SurveyName],
+               s.[TemplateXML],
+               s.[UserPublishKey],
+               s.[DateCreated],
+               s.[IsDraftMode],
+               s.[StartDate],
+               s.[ParentId],
+               s.[ViewId],
+               s.[IsSQLProject]
+        FROM   SurveyMetaData AS s
+        WHERE  SurveyId = @topNode
+        UNION ALL
+        SELECT CAST (CteAlias.Path + '\' + s.SurveyName AS NVARCHAR (500)) AS SPath,
+               s.[SurveyId] AS topNode,
+               s.OwnerId,
+               s.SurveyNumber,
+               s.[SurveyTypeId],
+               s.[SurveyName],
+               s.[TemplateXML],
+               s.[UserPublishKey],
+               s.[DateCreated],
+               s.[IsDraftMode],
+               s.[StartDate],
+               s.[ParentId],
+               s.[ViewId],
+               s.[IsSQLProject]
+        FROM   SurveyMetaData AS s
+               INNER JOIN
+               CteAlias
+               ON s.parentid = CteAlias.SurveyId)
 SELECT *
 FROM   CteAlias;
 
@@ -1925,12 +1925,12 @@ AS
 BEGIN
 
 SELECT dbo.Organization.Organization,
-	   dbo.[User].UserName,
-	   dbo.[User].FirstName,
-	   dbo.[User].LastName,
-	   dbo.Organization.OrganizationID,
-	   dbo.[User].UserID,
-	   CASE 
+       dbo.[User].UserName,
+       dbo.[User].FirstName,
+       dbo.[User].LastName,
+       dbo.Organization.OrganizationID,
+       dbo.[User].UserID,
+       CASE 
 			WHEN dbo.[User].UserID IN
 			(
 				SELECT dbo.[User].UserID AS u2
@@ -1948,12 +1948,12 @@ SELECT dbo.Organization.Organization,
 		END     
 		AS Shared
 FROM   dbo.[User]
-	   INNER JOIN
-	   dbo.UserOrganization
-	   ON dbo.[User].UserID = dbo.UserOrganization.UserID
-	   INNER JOIN
-	   dbo.Organization
-	   ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
+       INNER JOIN
+       dbo.UserOrganization
+       ON dbo.[User].UserID = dbo.UserOrganization.UserID
+       INNER JOIN
+       dbo.Organization
+       ON dbo.UserOrganization.OrganizationID = dbo.Organization.OrganizationID
 WHERE  (dbo.Organization.OrganizationID = @OrganizationID    );        
 
 
@@ -1978,7 +1978,7 @@ GO
 
 AS
 BEGIN
-	
+    
 DECLARE   @canvasId      INT      
 
 SET  @canvasId   =   ( SELECT   CanvasID            
@@ -1987,11 +1987,11 @@ WHERE     CanvasGUID =    @canvasGuid            )
   
 
 SELECT 
-	   dbo.[User].UserName,
-	   dbo.[User].FirstName,
-	   dbo.[User].LastName,
-	   dbo.[User].UserID,
-	   CASE 
+       dbo.[User].UserName,
+       dbo.[User].FirstName,
+       dbo.[User].LastName,
+       dbo.[User].UserID,
+       CASE 
 			WHEN dbo.[User].UserID IN
 			(
 				SELECT dbo.[User].UserID AS u2
@@ -2061,12 +2061,12 @@ GO
 CREATE PROCEDURE [dbo].[usp_GetErrorInfo]
 AS
 SELECT
-	ERROR_NUMBER() AS ErrorNumber
-	,ERROR_SEVERITY() AS ErrorSeverity
-	,ERROR_STATE() AS ErrorState
-	,ERROR_PROCEDURE() AS ErrorProcedure
-	,ERROR_LINE() AS ErrorLine
-	,ERROR_MESSAGE() AS ErrorMessage;
+    ERROR_NUMBER() AS ErrorNumber
+    ,ERROR_SEVERITY() AS ErrorSeverity
+    ,ERROR_STATE() AS ErrorState
+    ,ERROR_PROCEDURE() AS ErrorProcedure
+    ,ERROR_LINE() AS ErrorLine
+    ,ERROR_MESSAGE() AS ErrorMessage;
 
 
 
@@ -2087,7 +2087,7 @@ BEGIN
 	Where  Cast(ResponseDisplaySettings.FormId as varchar(100)) = @FormId
 	And ResponseDisplaySettings.ColumnName = SurveyMetaDataTransform.FieldName
 	AND FieldTypeId Not in (20, 2, 3, 21 ) -- Neglecting non data fields.
-	Order by SortOrder
+    Order by SortOrder
 
 END
 
@@ -2139,14 +2139,14 @@ BEGIN
  --   Order by SortOrder
  
  select ColumnName, TableName, SortOrder, FieldTypeID, ViewTableName from ResponseDisplaySettings 
-	inner join SurveyMetaDataTransform  ON 
+ 	inner join SurveyMetaDataTransform  ON 
 	ResponseDisplaySettings.FormId = SurveyMetaDataTransform.SurveyId 
 	inner join SurveyMetaDataView On
 	ResponseDisplaySettings.FormId = SurveyMetaDataView.SurveyId
 	Where  Cast(ResponseDisplaySettings.FormId as varchar(100)) = @FormId
 	And ResponseDisplaySettings.ColumnName = SurveyMetaDataTransform.FieldName
 	AND FieldTypeId Not in (20, 2, 3, 21 )
-	Order by SortOrder
+    Order by SortOrder
 
 END
 
@@ -2190,12 +2190,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	Declare @UserId Varchar(50);
-	Set @UserId = (SELECT  UserId   FROM   [User]  WHERE    ( UserName = @UserName  )  )
-	
-	Select *, (Select Count(*) from DatasourceUser where DatasourceUser.UserId =  @UserId ) as 
-	DatasourceCount from vwUserOrganizationUser where vwUserOrganizationUser.UserId = @UserId and Active = 'True' and IsorgActive = 'True' ;
-	
+    Declare @UserId Varchar(50);
+    Set @UserId = (SELECT  UserId   FROM   [User]  WHERE    ( UserName = @UserName  )  )
+    
+    Select *, (Select Count(*) from DatasourceUser where DatasourceUser.UserId =  @UserId ) as 
+    DatasourceCount from vwUserOrganizationUser where vwUserOrganizationUser.UserId = @UserId and Active = 'True' and IsorgActive = 'True' ;
+    
 END
 
 
@@ -2224,30 +2224,30 @@ AS
 
 
 INSERT INTO [ErrorLog]
-		   ([SurveyId]
-		   ,[ResponseId]
-		   ,[Comment]
-		   ,[ERROR_NUMBER]
-		   ,[ERROR_MESSAGE]
-		   ,[ERROR_SEVERITY]
-		   ,[ERROR_STATE]
-		   ,[ERROR_PROCEDURE]
-		   ,[ERROR_LINE]
-		   ,[ErrorText]
-		   ,[ErrorText2]
+           ([SurveyId]
+           ,[ResponseId]
+           ,[Comment]
+           ,[ERROR_NUMBER]
+           ,[ERROR_MESSAGE]
+           ,[ERROR_SEVERITY]
+           ,[ERROR_STATE]
+           ,[ERROR_PROCEDURE]
+           ,[ERROR_LINE]
+           ,[ErrorText]
+           ,[ErrorText2]
 		   ,[XML])
-	 VALUES
-		   ( @SurveyId
-		   , @ResponseId
-		   , @comment 
-		   , @ErrorNumber  
+     VALUES
+           ( @SurveyId
+           , @ResponseId
+           , @comment 
+           , @ErrorNumber  
 		   , @ErrorMessage           
-		   , @ERRORSEVERITY
-		   , @ERRORSTATE
-		   , @ERRORPROCEDURE
-		   , @ERRORLINE
+           , @ERRORSEVERITY
+           , @ERRORSTATE
+           , @ERRORPROCEDURE
+           , @ERRORLINE
 		   , @ErrorText
-		   , @ErrorText2 
+           , @ErrorText2 
 		   ,@Xml    )
 		   
 
@@ -2267,62 +2267,62 @@ create proc   [dbo].[usp_process_sql_server_project_response]
   @IsSQLResponse AS BIT,
   @FirstSaveLogonName AS VARCHAR (10) 
   
-	AS BEGIN
-		   -- SET NOCOUNT ON added to prevent extra result sets from 
-		   -- interfering with SELECT statements. 
-		   SET NOCOUNT ON;    
-					  
+    AS BEGIN
+           -- SET NOCOUNT ON added to prevent extra result sets from 
+           -- interfering with SELECT statements. 
+           SET NOCOUNT ON;    
+                      
 
-		   DECLARE @InsertText AS VARCHAR (MAX);
-		   DECLARE @Epi7DBName AS VARCHAR (50);
-		   DECLARE @UpdateText AS VARCHAR (MAX);
-		   DECLARE @ResultText AS VARCHAR (MAX);
-		   DECLARE @UpdateResultText AS VARCHAR (MAX);
-		   DECLARE @RecordsourceId AS VARCHAR (50);                                 
-					  
-					  
-		   -- If Response is not finalized then return    
-		   IF @StatusId =  1
-			   BEGIN
-				   -- EXEC xp_logevent  70000, 'exited for @statusid != 2',  informational 
-				   RETURN;
-			   END
-		   
+           DECLARE @InsertText AS VARCHAR (MAX);
+           DECLARE @Epi7DBName AS VARCHAR (50);
+           DECLARE @UpdateText AS VARCHAR (MAX);
+           DECLARE @ResultText AS VARCHAR (MAX);
+           DECLARE @UpdateResultText AS VARCHAR (MAX);
+           DECLARE @RecordsourceId AS VARCHAR (50);                                 
+                      
+                      
+           -- If Response is not finalized then return    
+           IF @StatusId =  1
+               BEGIN
+                   -- EXEC xp_logevent  70000, 'exited for @statusid != 2',  informational 
+                   RETURN;
+               END
+           
 			IF @StatusId =  0    
-			   BEGIN
+               BEGIN
 
-				   RETURN;
-			   END
-					  
-		   
-		   -- Get the Epi7 proects's DB name      
-		   SELECT @Epi7DBName = initialcatalog
-		   FROM   eidatasource
-		   WHERE  surveyid = @SurveyId;
-		   
-		   -- Get project's SQL status        
-		   SELECT @IsSQLProject = issqlproject
-		   FROM   surveymetadata
-		   WHERE  surveyid = @SurveyId;
-		   
-		   -- Get record source                    
-		   SELECT @RecordsourceId = recordsourceid
-		   FROM   surveyresponse
-		   WHERE  responseid = @ResponseId;
-								 
-	 
-		   
-				   -- STEP 1   
-				   -- call usp_create_Epi7_views_statement   
-				   DECLARE @ViewTableName AS VARCHAR (50);
-				   
-				   SELECT @ViewTableName = viewtablename
-				   FROM   surveymetadataview
-				   WHERE  surveyid = @SurveyId;
-			   
-				   DECLARE @InsertviewText AS VARCHAR (500);
-				
-							SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
+                   RETURN;
+               END
+                      
+           
+           -- Get the Epi7 proects's DB name      
+           SELECT @Epi7DBName = initialcatalog
+           FROM   eidatasource
+           WHERE  surveyid = @SurveyId;
+           
+           -- Get project's SQL status        
+           SELECT @IsSQLProject = issqlproject
+           FROM   surveymetadata
+           WHERE  surveyid = @SurveyId;
+           
+           -- Get record source                    
+           SELECT @RecordsourceId = recordsourceid
+           FROM   surveyresponse
+           WHERE  responseid = @ResponseId;
+                                 
+     
+           
+                   -- STEP 1   
+                   -- call usp_create_Epi7_views_statement   
+                   DECLARE @ViewTableName AS VARCHAR (50);
+                   
+                   SELECT @ViewTableName = viewtablename
+                   FROM   surveymetadataview
+                   WHERE  surveyid = @SurveyId;
+               
+                   DECLARE @InsertviewText AS VARCHAR (500);
+                
+						    SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
 										[GlobalRecordId]    ,
 										[FirstSaveLogonName]    ,
 										[FirstSaveTime]    ,
@@ -2337,21 +2337,21 @@ create proc   [dbo].[usp_process_sql_server_project_response]
 											quotename('EWE', '''') + ', ' + 
 											quotename(CAST (Getdate() AS VARCHAR (100)), '''')  +   
 											') ';
-	  
+      
 
-	  
-				   EXECUTE (@InsertviewText);
-			   
-				   -- STEP 2    
-				   EXECUTE usp_create_epi7_sql_statements_driver 
+      
+                   EXECUTE (@InsertviewText);
+               
+                   -- STEP 2    
+                   EXECUTE usp_create_epi7_sql_statements_driver 
 							@ResponseXml, 
 							@SurveyId,  
 							@ResponseId, 
 							'i', 
 							@Epi7DBName;                                      
-				   EXECUTE (@InsertText);  --  returned from  sp                     
-	  
-	   END
+                   EXECUTE (@InsertText);  --  returned from  sp                     
+      
+       END
 
 
 
@@ -2423,7 +2423,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	-- comment  
-	-- Insert statements for procedure here 
+    -- Insert statements for procedure here 
 	select   'Owned' As IsShared,   *  from vwCanvasUser where UserID =   @userID  UNION 
 	select   'Shared' As IsShared,   * from vwCanvasShare  where UserID = @userID  Order By CreatedDate DESC
 	 
@@ -2490,7 +2490,7 @@ BEGIN
 	SET NOCOUNT ON;
 
    Select * From   vwOrgsforUser  Where RoleId > 1 AND UserId  =  @UserName AND Active = 1 AND IsOrgActive = 1
-	
+    
 END
 
 
@@ -2516,35 +2516,35 @@ BEGIN
 	SET NOCOUNT ON;
 
   SELECT OrganizationID,
-	   [Organization],
-	   [IsEnabled],
-	   -- Get  DatasourceCount         
-	   (SELECT COUNT(*)
-		FROM   Datasource
-		WHERE  Datasource.OrganizationID = Organization.OrganizationID) AS DatasourceCount,    
+       [Organization],
+       [IsEnabled],
+       -- Get  DatasourceCount         
+       (SELECT COUNT(*)
+        FROM   Datasource
+        WHERE  Datasource.OrganizationID = Organization.OrganizationID) AS DatasourceCount,    
 		-- Get  TotalUserCount         
-	   (SELECT COUNT(*)
-		FROM   [UserOrganization] 
-		WHERE  [UserOrganization].OrganizationID = Organization.OrganizationID) AS TotalUserCount,    
+       (SELECT COUNT(*)
+        FROM   [UserOrganization] 
+        WHERE  [UserOrganization].OrganizationID = Organization.OrganizationID) AS TotalUserCount,    
 		-- Get  AdminCount                  
-	   (SELECT COUNT(*)
-		FROM   UserOrganization 
-		WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
+       (SELECT COUNT(*)
+        FROM   UserOrganization 
+        WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
 				UserOrganization.RoleID =  2 
 		) AS AdminCount,        
 		-- Get  AnalystCount         
-	   (SELECT COUNT(*)
+       (SELECT COUNT(*)
 		FROM   UserOrganization 
-		WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
+        WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
 				UserOrganization.RoleID =  1    
 				) AS AnalystCount,  
 		-- Get  SuperAdminCount                                 
-	   (SELECT COUNT(*)
+       (SELECT COUNT(*)
 		FROM   UserOrganization 
-		WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
+        WHERE UserOrganization.OrganizationID =  Organization.OrganizationID AND
 				UserOrganization.RoleID =  4 
 		  ) AS    SuperAdminCount             
-			   
+               
 FROM   [dbo].[Organization] Order by Organization;    
 
 
@@ -2572,7 +2572,7 @@ BEGIN
 	SET NOCOUNT ON;
 
    select * from [User] left join UserOrganization on [User].UserId = UserOrganization.UserId Where UserName = @UserName
-	
+    
 END
 
 
@@ -2620,7 +2620,7 @@ Select *  from (select   'Owned' As IsShared,   *  from vwCanvasUser where UserI
 	
 Drop Table #T
   
-	
+    
 END
 
 
@@ -2644,7 +2644,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
+    -- Insert statements for procedure here
 	--SELECT <@Param1, sysname, @p1>, <@Param2, sysname, @p2>
 	--if(@canvasId = -1)
 	--	begin
@@ -2742,7 +2742,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	if @userId = -1
+    if @userId = -1
 		begin
 		Select * from Datasource where OrganizationId = @orgId Order by DatasourceName--and CreatorId = @creatorId
 		end
@@ -2777,7 +2777,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
+    -- Insert statements for procedure here
 	declare @sqlString Varchar(100)
 	set @sqlString = 'SELECT *  FROM ' + @ViewName + ' WHERE DatasourceName =  ''' + @DSName + '''';
 	
@@ -2810,7 +2810,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	declare @sqlString Varchar(100)
-	IF(@SqlTest = 0)
+    IF(@SqlTest = 0)
 		Begin
 		set @sqlString = 'select Count(*)  from  ' + @DatabaseObject
 		End
@@ -2852,7 +2852,7 @@ BEGIN
 	SET NOCOUNT ON;
 
    Select TOP 1 EmailAddress From vwUserOrganizationuser Where RoleID = 4 
-	
+    
 END
 
 
@@ -2882,7 +2882,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
+    -- Insert statements for procedure here
 	--SELECT <@Param1, sysname, @p1>, <@Param2, sysname, @p2>
 	
 
@@ -2966,7 +2966,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	Select * FROM [User] Where (UGuid = @UGuid)
+    Select * FROM [User] Where (UGuid = @UGuid)
 END
 
 
@@ -2992,7 +2992,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	Select * FROM [User] Where (UserName = @UserName) And (PasswordHash = @PwdHash);
+    Select * FROM [User] Where (UserName = @UserName) And (PasswordHash = @PwdHash);
 END
 
 
@@ -3015,8 +3015,8 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	Select UserName from [User];
-	
+    Select UserName from [User];
+    
 END
 
 
@@ -3041,7 +3041,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	if @datasourceid <>  -1
+   	if @datasourceid <>  -1
 	begin
 	 SELECT vwUserOrganizationUser.UserID, USERNAME, FIRSTNAME, LASTNAME, ORGANIZATIONID, PHONENUMBER, PASSWORDHASH , EMAILADDRESS, ROLEID, ROLEDESCRIPTION, ACTIVE 
 		FROM vwUserOrganizationUser Left join DatasourceUser on vwUserOrganizationUser.UserId = DatasourceUser.UserId Where DatasourceID =  @datasourceid and organizationid = @orgid Order by FIRSTNAME
@@ -3073,7 +3073,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	--DELETE FROM ORGANIZATION WHERE ORGANIZATIONID = @orgId 
+    --DELETE FROM ORGANIZATION WHERE ORGANIZATIONID = @orgId 
 END
 
 
@@ -3139,7 +3139,7 @@ IF(@ISNEWCANVAS = 1)
 	Create Table #CountTable(count int);
 		
 	Insert into #CountTable
-		SELECT   count(*)  FROM CANVAS WHERE CANVASNAME = @CANVASNAME --UNION 
+   		SELECT   count(*)  FROM CANVAS WHERE CANVASNAME = @CANVASNAME --UNION 
 		--SELECT   count(*) FROM VWCANVASSHARE  WHERE CANVASNAME = @CANVASNAME  --ORDER BY CREATEDDATE DESC
 		
 		-- If true there is an existing canvas  
@@ -3155,7 +3155,7 @@ IF(@ISNEWCANVAS = 1)
 			[DATASOURCEID],[CANVASCONTENT])
 			VALUES (''+ @CANVASNAME +'','' + @USERID + '', '' + @CANVASDESC + '', '' + @CREATEDDATE + '', '' + @MODIFIEDDATE + '',
 			'' + @DATASOURCEID + '', '' + @XMLCONTENT + '');
-			
+		    
 			Select (SELECT CANVASID FROM CANVAS WHERE CANVASNAME = '' + @CANVASNAME + '')
 			End
 		Drop Table #CountTable;
@@ -3195,7 +3195,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
+    -- Insert statements for procedure here
 	--SELECT <@Param1, sysname, @p1>, <@Param2, sysname, @p2>
 	IF NOT Exists(Select * from SharedCanvases where UserId = @userId and CanvasId = @canvasId)
 	 INSERT INTO SharedCanvases    ([CanvasID] ,[UserID]) VALUES (@canvasId,@userId) ;
@@ -3229,11 +3229,11 @@ DECLARE @IsSQLProject AS BIT;
 SELECT @Epi7DBName = initialcatalog
 FROM   eidatasource
 WHERE  surveyid = @SurveyId;
-								 
+							     
 IF @IsResponsePresent = 1  
 	BEGIN
 	
-		-- Get IsSqlResponse from SurveyResponseTracking  
+    	-- Get IsSqlResponse from SurveyResponseTracking  
 		SELECT	@IsSQLResponse = issqlresponse, 
 				@IsResponseinsertedToEpi7 = isresponseinsertedtoepi7                   
 		FROM   surveyresponsetracking
@@ -3242,11 +3242,11 @@ IF @IsResponsePresent = 1
 		IF	@IsSQLResponse = 1 
 			and @IsResponseinsertedToEpi7 = 1 
 			BEGIN  
-				   SELECT @ViewTableName = viewtablename
-				   FROM   surveymetadataview
-				   WHERE  surveyid = @SurveyId;
-				   
-				   SET @UpdateSQL =   'UPDATE  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + '] ' + 
+                   SELECT @ViewTableName = viewtablename
+                   FROM   surveymetadataview
+                   WHERE  surveyid = @SurveyId;
+                   
+                   SET @UpdateSQL =   'UPDATE  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + '] ' + 
 											' SET RECSTATUS = ' + CAST (@RECSTATUS AS VARCHAR(10)) + ' ' + 
 											' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId as VARCHAR(100)), '''')										
 
@@ -3268,9 +3268,9 @@ ELSE
 		IF @IsSQLProject = 1  
 			BEGIN  
 				   SELECT @ViewTableName = viewtablename
-				   FROM   surveymetadataview
-				   WHERE  surveyid = @SurveyId;
-			
+                   FROM   surveymetadataview
+                   WHERE  surveyid = @SurveyId;
+            
 					SET @UpdateSQL =   'UPDATE  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + '] ' + 
 											' SET RECSTATUS = ' + CAST (@RECSTATUS AS VARCHAR(10)) + ' ' + 
 											' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId as VARCHAR(100)) , '''')  
@@ -3280,7 +3280,7 @@ ELSE
 					EXECUTE (@UpdateSQL ) ; 
 					RETURN ; 											            
 			END  
-					   
+			           
 	END
 
 
@@ -3302,7 +3302,7 @@ CREATE PROCEDURE [dbo].[usp_update_datasource]
 	@DatabaseUserID varchar(200),
 	@Password varchar(200),
 	@DatabaseObject   varchar(MAX),
-	-- @SQLQuery bit,
+    -- @SQLQuery bit,
 	-- @SQLText varchar(MAX),
 	@active bit,
 	@DatasourceID int,
@@ -3328,7 +3328,7 @@ SET [DatasourceName] = @DatasourceName,  [DatasourceServerName] = @DatasourceSer
 delete from DatasourceUser where DatasourceID 	=  @DatasourceID                              
 
 select @usercount = (select COUNT(* )  )    
-	from @DatasourceUser
+ 	from @DatasourceUser
 
 
 
@@ -3343,9 +3343,9 @@ if @usercount  >  0
 
 
 IF @@Error > 0
-	ROLLBACK;
+    ROLLBACK;
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 
 
@@ -3371,7 +3371,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	-- Insert statements for procedure here
+    -- Insert statements for procedure here
 	UPDATE ORGANIZATION SET  Organization = @orgName, IsEnabled = @active  WHERE ORGANIZATIONID = @orgId;    
 	
 END
@@ -3399,7 +3399,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	Update [User] Set PasswordHash = @HashedPassword, ResetPassword = 0 Where UserId = @UserId
+    Update [User] Set PasswordHash = @HashedPassword, ResetPassword = 0 Where UserId = @UserId
 END
 
 
@@ -3422,13 +3422,13 @@ AS
 
 -- Clean up work tabs      
 IF OBJECT_ID('tempdb..#UNShare') IS NOT NULL
-	DROP TABLE #UNShare;
+    DROP TABLE #UNShare;
 IF OBJECT_ID('tempdb..#MIGHTShare') IS NOT NULL
-	DROP TABLE #MIGHTShare;
+    DROP TABLE #MIGHTShare;
 IF OBJECT_ID('tempdb..#ToShare') IS NOT NULL
-	DROP TABLE #ToShare;
+    DROP TABLE #ToShare;
 IF OBJECT_ID('tempdb..#ToEmail') IS NOT NULL
-	DROP TABLE #ToEmail;
+    DROP TABLE #ToEmail;
 
 -- =============================================
 -- select the users from the organization 
@@ -3439,8 +3439,8 @@ SELECT UserID
 INTO   #UNShare
 FROM   UserOrganization
 WHERE  OrganizationID = @OrganizationID
-	   AND UserID NOT IN (SELECT Item
-						  FROM   dbo.SplitInts (@UsersToShare, ',')); --   (11, 14 )       
+       AND UserID NOT IN (SELECT Item
+                          FROM   dbo.SplitInts (@UsersToShare, ',')); --   (11, 14 )       
 -- =============================================
 -- Takes the comma separated list argument @UsersToShare
 -- amd creates a selected set                                                        
@@ -3451,62 +3451,62 @@ SELECT UserID
 INTO   #MIGHTShare
 FROM   UserOrganization
 WHERE  OrganizationID =  @OrganizationID    
-	   AND UserID IN (SELECT item
-					  FROM   SplitInts (@UsersToShare, ',')); --   (11, 14 )    
+       AND UserID IN (SELECT item
+                      FROM   SplitInts (@UsersToShare, ',')); --   (11, 14 )    
 -- =============================================    
 -- create share tahle with the as 
 -- one column and userid as the other       
-	
+    
 SELECT @canvasId AS CanvasID,
-	   UserId
+       UserId
 INTO   #ToShare
 FROM   #mightshare;    
 
 BEGIN TRANSACTION;
 BEGIN TRY
 
-	-- Unshare the canvas         
-	DELETE SharedCanvases
-	WHERE  UserID IN (SELECT UserID
-					  FROM   #unshare)
-		   AND CanvasID = @canvasId;              
-					  
-	-- Save the newly shared to a list for emails    
-	SELECT *
-	INTO   #ToEmail
-	FROM   #toshare
-	WHERE  UserID NOT IN (SELECT UserID
-						  FROM   SharedCanvases
-						  WHERE  CanvasID = @canvasId);    
-													
-	-- Share with anyone from the share list that is 
-	-- NOT ALREADY shared witth  
-	INSERT INTO SharedCanvases
-	SELECT CanvasID, UserId
-					   
-	FROM   #toshare
-	WHERE  UserID NOT IN (SELECT UserID
-						  FROM   SharedCanvases
-						  WHERE  CanvasID = @canvasId);
+    -- Unshare the canvas         
+    DELETE SharedCanvases
+    WHERE  UserID IN (SELECT UserID
+                      FROM   #unshare)
+           AND CanvasID = @canvasId;              
+                      
+    -- Save the newly shared to a list for emails    
+    SELECT *
+    INTO   #ToEmail
+    FROM   #toshare
+    WHERE  UserID NOT IN (SELECT UserID
+                          FROM   SharedCanvases
+                          WHERE  CanvasID = @canvasId);    
+                                                    
+    -- Share with anyone from the share list that is 
+    -- NOT ALREADY shared witth  
+    INSERT INTO SharedCanvases
+    SELECT CanvasID, UserId
+   				       
+    FROM   #toshare
+    WHERE  UserID NOT IN (SELECT UserID
+                          FROM   SharedCanvases
+                          WHERE  CanvasID = @canvasId);
 
 	-- Return results                              
-	SELECT *
-	FROM   #toemail;
-	
-	COMMIT TRANSACTION;
+    SELECT *
+    FROM   #toemail;
+    
+    COMMIT TRANSACTION;
 
 END TRY
 BEGIN CATCH
 
-	SELECT ERROR_NUMBER() AS ErrorNumber,
-		   ERROR_SEVERITY() AS ErrorSeverity,
-		   ERROR_STATE() AS ErrorState,
-		   ERROR_PROCEDURE() AS ErrorProcedure,
-		   ERROR_LINE() AS ErrorLine,
-		   ERROR_MESSAGE() AS ErrorMessage;
-	-- in case of an error, ROLLBACK the transaction    
-	ROLLBACK;
-		
+    SELECT ERROR_NUMBER() AS ErrorNumber,
+           ERROR_SEVERITY() AS ErrorSeverity,
+           ERROR_STATE() AS ErrorState,
+           ERROR_PROCEDURE() AS ErrorProcedure,
+           ERROR_LINE() AS ErrorLine,
+           ERROR_MESSAGE() AS ErrorMessage;
+    -- in case of an error, ROLLBACK the transaction    
+    ROLLBACK;
+        
 END CATCH
 
 GO
@@ -3564,10 +3564,10 @@ INSERT INTO DatasourceUser (DatasourceID, UserID)
 IF @@Error > 0
 Begin
 	Raiserror('Updating User failed' , 10 , 1);
-	ROLLBACK;
+    ROLLBACK;
 End
 ELSE
-	COMMIT TRANSACTION;
+    COMMIT TRANSACTION;
 
 END
 
@@ -3634,46 +3634,46 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE     TRIGGER [dbo].[tr_update_SurveyMetaData  ]  
-	ON [dbo].[SurveyMetaData]  
-	FOR UPDATE, INSERT
-	  AS 
-	
+    ON [dbo].[SurveyMetaData]  
+    FOR UPDATE, INSERT
+      AS 
+    
 
 	   DECLARE @SurveyId AS UNIQUEIDENTIFIER;
-	   DECLARE @IsDraftMode AS BIT;
-		 DECLARE @xmlMetadataDocument AS XML 
+       DECLARE @IsDraftMode AS BIT;
+         DECLARE @xmlMetadataDocument AS XML 
    
-		 DECLARE @ViewTableName as varchar(50)  
+         DECLARE @ViewTableName as varchar(50)  
    declare   @PageTableName  varchar(50)  
    declare   @PageId   varchar(50)  
-		  
-		SELECT @SurveyId = i.SurveyId
-	   FROM   inserted AS i;
-	   
-	   SELECT @IsDraftMode = i.IsDraftMode
-	   FROM   inserted AS i;
+          
+        SELECT @SurveyId = i.SurveyId
+       FROM   inserted AS i;
+       
+       SELECT @IsDraftMode = i.IsDraftMode
+       FROM   inserted AS i;
 
 		SELECT  @xmlMetadataDocument = i.TemplateXML 
 		from inserted as i; 
 		
-			  
-	   DELETE  SurveyMetaDataTransform     
-	   WHERE  SurveyId = @SurveyId;
-	   
-	   DELETE  SurveyMetadataView  
-	   WHERE  SurveyId = @SurveyId;
-			  
+              
+       DELETE  SurveyMetaDataTransform     
+       WHERE  SurveyId = @SurveyId;
+       
+       DELETE  SurveyMetadataView  
+       WHERE  SurveyId = @SurveyId;
+              
   
-	select  @ViewTableName =    doc.col.value('@Name  ', 'varchar(70)')   
-		FROM   @xmlMetadataDocument.nodes('/Template/Project/View  ') AS doc(col  )    
+    select  @ViewTableName =    doc.col.value('@Name  ', 'varchar(70)')   
+        FROM   @xmlMetadataDocument.nodes('/Template/Project/View  ') AS doc(col  )    
 
-	select  @PageId  =    doc.col.value('@PageId', 'varchar(70)')   
-		FROM   @xmlMetadataDocument.nodes('/Template/Project/View/Page    ') AS doc(col  )    
-		
+    select  @PageId  =    doc.col.value('@PageId', 'varchar(70)')   
+        FROM   @xmlMetadataDocument.nodes('/Template/Project/View/Page    ') AS doc(col  )    
+        
   set  @PageTableName  =  @ViewTableName +   @PageId               
-		
-		print  'surveyid = ' +  cast   (@surveyid as  varchar(50) )  
-		
+        
+        print  'surveyid = ' +  cast   (@surveyid as  varchar(50) )  
+        
 	--  Insert into SurveyMetaDataView  
 	   INSERT INTO   SurveyMetaDataView 
 			([SurveyId], [ViewTableName] )
@@ -3681,15 +3681,15 @@ CREATE     TRIGGER [dbo].[tr_update_SurveyMetaData  ]
 			( @SurveyId, @ViewTableName  ) ; 
 	
 	--  Insert into SurveyMetaDataTransform  
-	   INSERT INTO   SurveyMetaDataTransform (  [SurveyId], [FieldName], [FieldTypeId], [TableName], [PageId]         )
-	   (SELECT @SurveyId AS SurveyId,
-			   doc.col.value('@Name', 'varchar(70)') AS FieldName,
-			   doc.col.value('@FieldTypeId', 'int') AS FieldTypeId, 
+       INSERT INTO   SurveyMetaDataTransform (  [SurveyId], [FieldName], [FieldTypeId], [TableName], [PageId]         )
+       (SELECT @SurveyId AS SurveyId,
+               doc.col.value('@Name', 'varchar(70)') AS FieldName,
+               doc.col.value('@FieldTypeId', 'int') AS FieldTypeId, 
 				@ViewTableName + doc.col.value('@PageId', 'varchar(10)') AS TableName,  
 				 doc.col.value('@PageId', 'int') AS PageId      
-		FROM   @xmlMetadataDocument.nodes('/Template/Project/View/Page/Field  ') AS doc(col));
+        FROM   @xmlMetadataDocument.nodes('/Template/Project/View/Page/Field  ') AS doc(col));
    
-	
+    
 
 
 
@@ -3701,8 +3701,8 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TRIGGER [dbo].[tr_delete_surveyresponse]
-	ON [dbo].[SurveyResponse]	
-	FOR DELETE
+    ON [dbo].[SurveyResponse]	
+    FOR DELETE
 AS 
 
 BEGIN
@@ -3726,7 +3726,7 @@ BEGIN
 	   DECLARE @DeleteSQL AS VARCHAR (500); 
 	   DECLARE @RecordsourceId  AS VARCHAR (50); 
 
-		SELECT @RecordsourceId = d.RecordsourceId			  
+	    SELECT @RecordsourceId = d.RecordsourceId			  
 	   FROM   deleted AS d;
 
 	   If @RecordsourceId='2' --Epi7
@@ -3747,7 +3747,7 @@ BEGIN
 	   SELECT @ResponseId = d.responseid,
 			  @SurveyId = d.surveyid
 	   FROM   deleted AS d;
-		   
+	   	   
 	   SELECT @IsSQLProject = issqlproject
 	   FROM   surveymetadata
 	   WHERE  surveyid = @SurveyId;
@@ -3772,7 +3772,7 @@ BEGIN
 			   INTO   #temp
 			   FROM   [SurveyMetaDataTransform]
 			   WHERE  SurveyId = @SurveyId;    
-									   
+			   			   			   
 			   -- Loop through all data collection tabs and delete 
 			   -- the response records    aaaa  			   			   			   
 			   DECLARE PAGE_TABLE CURSOR FAST_FORWARD
@@ -3780,14 +3780,14 @@ BEGIN
 					   FROM   #temp;
 			   OPEN PAGE_TABLE;
 			   FETCH NEXT FROM PAGE_TABLE INTO @PageTableName;        
-												   
+			   			   			   			   
 			   WHILE (@@FETCH_STATUS = 0)
 				   BEGIN
 					   SET @DeleteSQL = ' DELETE FROM ' + '[' + @Epi7DBName + '].[dbo].[' + @PageTableName + ']' + 
 										' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId AS VARCHAR (255)), '''');
 										
 					   EXECUTE (@DeleteSQL);
-						IF @@ERROR > 0
+					    IF @@ERROR > 0
 							GOTO ERRORBLOCK;
 
 					   FETCH NEXT FROM PAGE_TABLE INTO @PageTableName;
@@ -3795,7 +3795,7 @@ BEGIN
 			   
 			   CLOSE PAGE_TABLE;
 			   DEALLOCATE PAGE_TABLE;
-						   
+			   			   
 			   SET @DeleteSQL = ' DELETE FROM ' + '[' + @Epi7DBName + '].[dbo].[' + @ViewTableName + ']' + 
 								' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId AS VARCHAR (255)), '''');
 			   
@@ -3805,7 +3805,7 @@ BEGIN
 					GOTO ERRORBLOCK;
 		   END
 
-			RETURN;
+		    RETURN;
 
 		   ERRORBLOCK:
 			 BEGIN  
@@ -3815,14 +3815,14 @@ BEGIN
 					DECLARE @ErrorProcedure AS NVARCHAR (128);
 					DECLARE @ErrorLine AS INT;
 					DECLARE @ErrorMessage AS NVARCHAR (4000);  
-					 
+			         
 					SELECT @ErrorNumber = ERROR_NUMBER(), --  AS ErrorNumber
 							@ErrorSeverity = ERROR_SEVERITY(), --  AS ErrorSeverity
 							@ErrorState = ERROR_STATE(), --  AS ErrorState
 							@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 							@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 							@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 					EXECUTE usp_log_to_errorlog 
 						@SurveyId, @ResponseId, '', 
 						'tr_delete_surveyresponse', @DeleteSQL, 
@@ -3839,27 +3839,27 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE    TRIGGER [dbo].[tr_insert_surveyresponse]
-	ON [dbo].[SurveyResponse]
-	FOR INSERT  
-	AS 
-	
-	BEGIN
-		   -- SET NOCOUNT ON added to prevent extra result sets from
-		   -- interfering with SELECT statements.
-		   SET NOCOUNT ON;
-	
-		   DECLARE @SurveyId AS UNIQUEIDENTIFIER;
-		   DECLARE @ResponseId AS UNIQUEIDENTIFIER;
-		   DECLARE @StatusId AS INT;
-		   DECLARE @IsDraftMode AS BIT;
-		   DECLARE @RecordsourceId  AS VARCHAR (50); 		   
-		   
-		   SELECT @ResponseId = i.ResponseId,
-				  @SurveyId = i.SurveyId,
-				  @StatusId = i.StatusId,
-				  @IsDraftMode = i.IsDraftMode, 
-				  @RecordsourceId = i.RecordsourceId
-		   FROM   inserted AS i;
+    ON [dbo].[SurveyResponse]
+    FOR INSERT  
+    AS 
+    
+    BEGIN
+           -- SET NOCOUNT ON added to prevent extra result sets from
+           -- interfering with SELECT statements.
+           SET NOCOUNT ON;
+    
+           DECLARE @SurveyId AS UNIQUEIDENTIFIER;
+           DECLARE @ResponseId AS UNIQUEIDENTIFIER;
+           DECLARE @StatusId AS INT;
+           DECLARE @IsDraftMode AS BIT;
+           DECLARE @RecordsourceId  AS VARCHAR (50); 		   
+           
+           SELECT @ResponseId = i.ResponseId,
+                  @SurveyId = i.SurveyId,
+                  @StatusId = i.StatusId,
+                  @IsDraftMode = i.IsDraftMode, 
+                  @RecordsourceId = i.RecordsourceId
+           FROM   inserted AS i;
 
 		If @RecordsourceId='3' --MobileApplication
 		BEGIN
@@ -3872,32 +3872,32 @@ CREATE    TRIGGER [dbo].[tr_insert_surveyresponse]
 		END
 
 
-		   -- Get project's SQL status       
-		   DECLARE @IsSQLProject AS BIT;
-		   SELECT @IsSQLProject = IsSQLProject 
-		   FROM   SurveyMetaData
-		   WHERE  SurveyId = @SurveyId;
+           -- Get project's SQL status       
+           DECLARE @IsSQLProject AS BIT;
+           SELECT @IsSQLProject = IsSQLProject 
+           FROM   SurveyMetaData
+           WHERE  SurveyId = @SurveyId;
 
 
-		   -- PATH 1     
-		   IF @IsSQLProject = 1
-			  AND @StatusId = 1
-			  AND @RecordsourceId = '1'
-			   BEGIN
-					INSERT INTO   SurveyResponseTracking
+           -- PATH 1     
+           IF @IsSQLProject = 1
+              AND @StatusId = 1
+              AND @RecordsourceId = '1'
+               BEGIN
+                    INSERT INTO   SurveyResponseTracking
 						(ResponseId, IsSQLResponse, IsResponseinsertedToEpi7  )
 						VALUES
 						(@ResponseId, 1, 0)
 						
 						IF @@ERROR > 0
 							GOTO ERRORBLOCK;						  						           
-				   RETURN;
-			   END
-		   
-		   -- PATH 2        
-		   IF @IsSQLProject = 0
-			   BEGIN
-					INSERT INTO   SurveyResponseTracking
+                   RETURN;
+               END
+           
+           -- PATH 2        
+           IF @IsSQLProject = 0
+               BEGIN
+                    INSERT INTO   SurveyResponseTracking
 						(ResponseId, IsSQLResponse, IsResponseinsertedToEpi7  )
 						VALUES
 						(@ResponseId,  0, 0 ) 	
@@ -3905,45 +3905,45 @@ CREATE    TRIGGER [dbo].[tr_insert_surveyresponse]
 						IF @@ERROR > 0
 							GOTO ERRORBLOCK;
 
-				   RETURN;
-			   END
-		   
-		   --  PATH 3            
-		   IF @IsSQLProject = 1
-			  AND @StatusId = 2       
-			  and @RecordsourceId = '2'  
-			   BEGIN
-				INSERT INTO   SurveyResponseTracking
+                   RETURN;
+               END
+           
+           --  PATH 3            
+           IF @IsSQLProject = 1
+              AND @StatusId = 2       
+              and @RecordsourceId = '2'  
+               BEGIN
+                INSERT INTO   SurveyResponseTracking
 						(ResponseId, IsSQLResponse, IsResponseinsertedToEpi7  )
 						VALUES
 						(@ResponseId, 1, 1 ) 
 						
 						IF @@ERROR > 0
 							GOTO ERRORBLOCK;
-									  
-				   RETURN;
-			   END
-		   
-		   --  PATH  5                        
-		   IF @IsSQLProject = 1
-			  AND @StatusId = 2
-			  AND @RecordsourceId  = '3'
-			   BEGIN
+								      
+                   RETURN;
+               END
+           
+           --  PATH  5                        
+           IF @IsSQLProject = 1
+              AND @StatusId = 2
+              AND @RecordsourceId  = '3'
+               BEGIN
 					INSERT INTO   SurveyResponseTracking
 						(ResponseId, IsSQLResponse, IsResponseinsertedToEpi7  )
 						   VALUES
 						(@ResponseId, 1, 0 ) 		                   
 				
-					 UPDATE  SurveyResponseTracking
+                     UPDATE  SurveyResponseTracking
 						SET IsResponseinsertedToEpi7 = 1     
-					 WHERE  ResponseId =  @ResponseId ;
+                     WHERE  ResponseId =  @ResponseId ;
 
 					 IF @@ERROR > 0
 							GOTO ERRORBLOCK;
 
-				   RETURN;
-			   END
-		  
+                   RETURN;
+               END
+      	  
 	   RETURN;
 
 	   ERRORBLOCK:
@@ -3954,14 +3954,14 @@ CREATE    TRIGGER [dbo].[tr_insert_surveyresponse]
 				DECLARE @ErrorProcedure AS NVARCHAR (128);
 				DECLARE @ErrorLine AS INT;
 				DECLARE @ErrorMessage AS NVARCHAR (4000);  
-					 
+			         
 				SELECT @ErrorNumber = ERROR_NUMBER(), --  AS ErrorNumber
 						@ErrorSeverity = ERROR_SEVERITY(), --  AS ErrorSeverity
 						@ErrorState = ERROR_STATE(), --  AS ErrorState
 						@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 						@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 						@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 				EXECUTE usp_log_to_errorlog 
 					@SurveyId, @ResponseId, '', 
 					'tr_insert_surveyresponse', 'Insert/Update of SurveyResponseTracking failed', 
@@ -3979,31 +3979,31 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TRIGGER [dbo].[tr_update_surveyresponse]
-	ON [dbo].[SurveyResponse]
-	FOR UPDATE
-	AS 
+    ON [dbo].[SurveyResponse]
+    FOR UPDATE
+    AS 
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from 
-	-- interfering with SELECT statements. 
-	SET NOCOUNT ON;
+    -- SET NOCOUNT ON added to prevent extra result sets from 
+    -- interfering with SELECT statements. 
+    SET NOCOUNT ON;
 
-	DECLARE @SurveyId AS UNIQUEIDENTIFIER;
-	DECLARE @ResponseId AS UNIQUEIDENTIFIER;
-	DECLARE @StatusId AS INT;
-	DECLARE @ResponseXml AS XML;
-	DECLARE @IsDraftMode AS BIT;
-	DECLARE @IsSQLResponse AS BIT;
-	DECLARE @IsResponseinsertedToEpi7 AS BIT;
-	DECLARE @ParentRecordId AS UNIQUEIDENTIFIER;   
-	DECLARE @InsertText AS VARCHAR (MAX);
-	DECLARE @Epi7DBName AS VARCHAR (50);
-	DECLARE @UpdateText AS VARCHAR (MAX);
-	DECLARE @ResultText AS VARCHAR (MAX);
-	DECLARE @UpdateResultText AS VARCHAR (MAX);
-	DECLARE @RecordsourceId AS VARCHAR (50);
-	DECLARE @UseDBText AS VARCHAR (100);
-	DECLARE @ViewTableName AS VARCHAR (50);
-	DECLARE @RelateParentId AS UNIQUEIDENTIFIER;
+    DECLARE @SurveyId AS UNIQUEIDENTIFIER;
+    DECLARE @ResponseId AS UNIQUEIDENTIFIER;
+    DECLARE @StatusId AS INT;
+    DECLARE @ResponseXml AS XML;
+    DECLARE @IsDraftMode AS BIT;
+    DECLARE @IsSQLResponse AS BIT;
+    DECLARE @IsResponseinsertedToEpi7 AS BIT;
+    DECLARE @ParentRecordId AS UNIQUEIDENTIFIER;   
+    DECLARE @InsertText AS VARCHAR (MAX);
+    DECLARE @Epi7DBName AS VARCHAR (50);
+    DECLARE @UpdateText AS VARCHAR (MAX);
+    DECLARE @ResultText AS VARCHAR (MAX);
+    DECLARE @UpdateResultText AS VARCHAR (MAX);
+    DECLARE @RecordsourceId AS VARCHAR (50);
+    DECLARE @UseDBText AS VARCHAR (100);
+    DECLARE @ViewTableName AS VARCHAR (50);
+    DECLARE @RelateParentId AS UNIQUEIDENTIFIER;
 	DECLARE @throw_text as  VARCHAR(MAX); 
 	DECLARE @ErrorNumber AS INT;
 	DECLARE @ErrorSeverity AS INT;
@@ -4014,20 +4014,20 @@ BEGIN
 	DECLARE @InsertviewText AS VARCHAR (500); 
 
 	-- Get values from just inserted record                
-	SELECT @ResponseId = i.responseid,
-			@SurveyId = i.surveyid,
-			@StatusId = i.statusid,
-			@ResponseXml = i.responsexml,
-			@IsDraftMode = i.isdraftmode,
-			@ParentRecordId = i.parentrecordid,
-			@RelateParentId = i.relateparentid
-	FROM   inserted AS i;
+    SELECT @ResponseId = i.responseid,
+            @SurveyId = i.surveyid,
+            @StatusId = i.statusid,
+            @ResponseXml = i.responsexml,
+            @IsDraftMode = i.isdraftmode,
+            @ParentRecordId = i.parentrecordid,
+            @RelateParentId = i.relateparentid
+    FROM   inserted AS i;
 
 
 	-- Get record source                    
-	SELECT @RecordsourceId = recordsourceid
-	FROM   surveyresponse
-	WHERE  responseid = @ResponseId;
+    SELECT @RecordsourceId = recordsourceid
+    FROM   surveyresponse
+    WHERE  responseid = @ResponseId;
 
 
 	 IF @RecordsourceId='3' --MobileApplication
@@ -4038,11 +4038,11 @@ BEGIN
 	 IF @RecordsourceId='4' --EIWS
 		BEGIN
 		DECLARE @FirstSaveLogonNameWS AS VARCHAR (100) = 'EIWS';		
-	   
-	   IF  @StatusId <> 3  --If the record is not complete
-		   BEGIN
-			   RETURN;
-		   END
+       
+       IF  @StatusId <> 3  --If the record is not complete
+           BEGIN
+               RETURN;
+           END
 	---		   			
 		SELECT @IsSQLResponse = IsSQLProject           
 		FROM   surveymetadata
@@ -4095,7 +4095,7 @@ BEGIN
 												@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 												@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 												@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 										EXECUTE usp_log_to_errorlog 
 											@SurveyId, @ResponseId, @InsertviewText, 
 											'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
@@ -4122,7 +4122,7 @@ BEGIN
 								@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 								@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 								@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 							EXECUTE usp_log_to_errorlog 
 							@SurveyId, @ResponseId, @InsertText, 
 							'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
@@ -4167,70 +4167,70 @@ BEGIN
 
 		 DECLARE @FirstSaveLogonName AS VARCHAR (100) = 'EWE\';
 
-	-- Get User Id 
-	DECLARE @UserId AS INT;
-	DECLARE @UserName AS VARCHAR (100);
-	SELECT @UserId = UserId
-	FROM   SurveyResponseUser
-	WHERE  ResponseId = @ResponseId;
-	
+    -- Get User Id 
+    DECLARE @UserId AS INT;
+    DECLARE @UserName AS VARCHAR (100);
+    SELECT @UserId = UserId
+    FROM   SurveyResponseUser
+    WHERE  ResponseId = @ResponseId;
+    
 	-- Get User name
-	SELECT @UserName = UserName
-	FROM   dbo.[User]
-	WHERE  UserId = @UserId;
-	
+    SELECT @UserName = UserName
+    FROM   dbo.[User]
+    WHERE  UserId = @UserId;
+    
 	-- Update  @FirstSaveLogonName
-	SET @FirstSaveLogonName = @FirstSaveLogonName + @UserName;
-	
+    SET @FirstSaveLogonName = @FirstSaveLogonName + @UserName;
+    
 	-- If Response is not finalized then return    
-	IF @StatusId = 1
-		BEGIN            
-			RETURN;
-		END    
+    IF @StatusId = 1
+        BEGIN            
+            RETURN;
+        END    
 
 	-- If status is delete then soft delete    					
 	IF @StatusId = 0
-		BEGIN
-			EXECUTE usp_soft_delete_Epi7_record @ResponseId, @SurveyId, 1;           
-			RETURN;
-		END
+        BEGIN
+            EXECUTE usp_soft_delete_Epi7_record @ResponseId, @SurveyId, 1;           
+            RETURN;
+        END
 
-	-- Is this response from SQL?  Query surveyresponsetracking 
-	SELECT @IsSQLResponse = issqlresponse,
-			@IsResponseinsertedToEpi7 = isresponseinsertedtoepi7
-	FROM   surveyresponsetracking
-	WHERE  responseid = @ResponseId;    
+    -- Is this response from SQL?  Query surveyresponsetracking 
+    SELECT @IsSQLResponse = issqlresponse,
+            @IsResponseinsertedToEpi7 = isresponseinsertedtoepi7
+    FROM   surveyresponsetracking
+    WHERE  responseid = @ResponseId;    
 		
 			
-	-- If Response is not from a SQL server project then return          
-	IF @IsSQLResponse = 0
-		BEGIN            
-			RETURN;
-		END    
+    -- If Response is not from a SQL server project then return          
+    IF @IsSQLResponse = 0
+        BEGIN            
+            RETURN;
+        END    
 
-	-- Get the Epi7 proects's DB name      
-	SELECT @Epi7DBName = initialcatalog
-	FROM   eidatasource
-	WHERE  surveyid = @SurveyId;   
+    -- Get the Epi7 proects's DB name      
+    SELECT @Epi7DBName = initialcatalog
+    FROM   eidatasource
+    WHERE  surveyid = @SurveyId;   
 				
 	-- Get project's SQL status        
-	DECLARE @IsSQLProject AS BIT;
-	SELECT @IsSQLProject = issqlproject
-	FROM   surveymetadata
-	WHERE  surveyid = @SurveyId;    	
+    DECLARE @IsSQLProject AS BIT;
+    SELECT @IsSQLProject = issqlproject
+    FROM   surveymetadata
+    WHERE  surveyid = @SurveyId;    	
 
-	IF @IsSQLResponse = 1 AND @IsResponseinsertedToEpi7 = 0
-		BEGIN
-			-- STEP 1   
-			-- call usp_create_Epi7_views_statement   
-			SELECT @ViewTableName = viewtablename
-			FROM   surveymetadataview
-			WHERE  surveyid = @SurveyId;                     
+    IF @IsSQLResponse = 1 AND @IsResponseinsertedToEpi7 = 0
+        BEGIN
+            -- STEP 1   
+            -- call usp_create_Epi7_views_statement   
+            SELECT @ViewTableName = viewtablename
+            FROM   surveymetadataview
+            WHERE  surveyid = @SurveyId;                     
 
 
 			IF @RelateParentId IS NOT NULL
-				BEGIN
-					SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
+                BEGIN
+                    SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
 								[GlobalRecordId]    ,
 								[FirstSaveLogonName]    ,
 								[FirstSaveTime]    ,
@@ -4245,10 +4245,10 @@ BEGIN
 								QUOTENAME(@FirstSaveLogonName, '''') + ', ' + 
 								QUOTENAME(CAST (Getdate() AS VARCHAR (100)), '''') + ', ' + 
 								QUOTENAME(CAST (@RelateParentId AS VARCHAR (100)), '''') + ') ';
-				END
-			ELSE
-				BEGIN
-					SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
+                END
+            ELSE
+                BEGIN
+                    SET @InsertviewText = 'INSERT  INTO  [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + ' ([RECSTATUS]    ,
 								[GlobalRecordId]    ,
 								[FirstSaveLogonName]    ,
 								[FirstSaveTime]    ,
@@ -4261,17 +4261,17 @@ BEGIN
 								QUOTENAME(CAST (Getdate() AS VARCHAR (100)), '''') + ', ' + 
 								QUOTENAME(@FirstSaveLogonName, '''') + ', ' + 
 								QUOTENAME(CAST (Getdate() AS VARCHAR (100)), '''') + ') ';
-				END
-			
+                END
+            
 
 			IF @InsertviewText IS NULL
-				BEGIN            
-					INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
-					VALUES                 (@SurveyId, @ResponseId, '@InsertviewText is null ', @InsertviewText);				  
-				END
-			ELSE
-				BEGIN
-					EXECUTE (@InsertviewText);
+                BEGIN            
+                    INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId], comment, [ErrorText])
+                    VALUES                 (@SurveyId, @ResponseId, '@InsertviewText is null ', @InsertviewText);				  
+                END
+            ELSE
+                BEGIN
+                    EXECUTE (@InsertviewText);
 					
 
 					IF @@ERROR >  0    
@@ -4282,20 +4282,20 @@ BEGIN
 								@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 								@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 								@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 						EXECUTE usp_log_to_errorlog 
 							@SurveyId, @ResponseId, @InsertviewText, 
 							'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
 							@ErrorNumber, @ErrorSeverity, @ErrorState, @ErrorProcedure, @ErrorLine, @ErrorMessage;
 					  END   
-				END    
+                END    
 
 			--STEP 2    
 			-- this sp returns  @InsertText
-			EXECUTE [usp_create_epi7_sql_statements_driver] 
+            EXECUTE [usp_create_epi7_sql_statements_driver] 
 				@ResponseXml, @SurveyId, 
 				@ResponseId, 'i', @Epi7DBName;
-			EXECUTE (@InsertText); --  returned from  sp  
+            EXECUTE (@InsertText); --  returned from  sp  
 			
 			IF @@ERROR >  0    
 					  BEGIN 					             
@@ -4305,66 +4305,66 @@ BEGIN
 								@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 								@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 								@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 						EXECUTE usp_log_to_errorlog 
 							@SurveyId, @ResponseId, @InsertText, 
 							'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
 							@ErrorNumber, @ErrorSeverity, @ErrorState, @ErrorProcedure, @ErrorLine, @ErrorMessage;
 					  END                       
-			
+            
 			-- STEP 3   
-			-- after insert update tracking   
-			UPDATE  surveyresponsetracking
-			SET IsResponseinsertedToEpi7 = 1
-			WHERE   responseid = @ResponseId;
-						
+            -- after insert update tracking   
+            UPDATE  surveyresponsetracking
+            SET IsResponseinsertedToEpi7 = 1
+            WHERE   responseid = @ResponseId;
+			            
 			RETURN;
-		END    
+        END    
 	
-	IF @IsSQLResponse = 1  AND @IsResponseinsertedToEpi7 = 1
-		BEGIN    
+    IF @IsSQLResponse = 1  AND @IsResponseinsertedToEpi7 = 1
+        BEGIN    
 
-			-- STEP 1   
-			-- call usp_create_Epi7_views_statement   
-			SELECT @ViewTableName = viewtablename
-			FROM   surveymetadataview
-			WHERE  surveyid = @SurveyId;
-			
+            -- STEP 1   
+            -- call usp_create_Epi7_views_statement   
+            SELECT @ViewTableName = viewtablename
+            FROM   surveymetadataview
+            WHERE  surveyid = @SurveyId;
+            
 			DECLARE @UpdateviewText AS VARCHAR (500);
-			  
+              
 
 			IF @RelateParentId IS NOT NULL
-				BEGIN
-					SET @UpdateviewText =              
+                BEGIN
+                    SET @UpdateviewText =              
 						' UPDATE   [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + 
 						' SET [LastSaveLogonName] = ' + quotename(@FirstSaveLogonName, '''') + ', ' + 
 						'     [LastSaveTime] = ' + quotename(CAST (Getdate() AS VARCHAR (100)), '''') + ' , ' + 
 						'     [FKEY] = ' + quotename(CAST (@RelateParentId AS VARCHAR (100)), '''') + ' ' + 
 						 ' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId AS VARCHAR (255)), '''');    
 						--  ' WHERE GlobalRecordId = ' +  CAST (@ResponseId AS VARCHAR (255))        ;    
-				END
-			ELSE
-				BEGIN
-					SET @UpdateviewText =   
+                END
+            ELSE
+                BEGIN
+                    SET @UpdateviewText =   
 						' UPDATE   [' + @Epi7DBName + '].dbo.[' + @ViewTableName + ']' + 
 						' SET [LastSaveLogonName] = ' + quotename(@FirstSaveLogonName, '''') + ', ' + 
 						'     [LastSaveTime] = ' + quotename(CAST (Getdate() AS VARCHAR (100)), '''') + '  ' + 
 						 ' WHERE GlobalRecordId = ' + QUOTENAME(CAST (@ResponseId AS VARCHAR (255)), '''');    
 						--    ' WHERE GlobalRecordId = ' +  CAST (@ResponseId AS VARCHAR (255))        ;    						 
-											
-				END    
+						                    
+                END    
   
-			IF @UpdateviewText IS NULL
-				BEGIN
+            IF @UpdateviewText IS NULL
+                BEGIN
 
 			
-					INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId],comment, [ErrorText])
-					VALUES                 (@SurveyId, @ResponseId, '@UpdateViewText  ',   @UpdateViewText  );
+                    INSERT  INTO [ErrorLog] ([SurveyId], [ResponseId],comment, [ErrorText])
+                    VALUES                 (@SurveyId, @ResponseId, '@UpdateViewText  ',   @UpdateViewText  );
 					
-				END
-			ELSE
-				BEGIN
-					EXECUTE (@UpdateviewText);
+                END
+            ELSE
+                BEGIN
+                    EXECUTE (@UpdateviewText);
 					
 					IF @@ERROR >  0    
 					  BEGIN 					             
@@ -4374,20 +4374,20 @@ BEGIN
 								@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 								@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 								@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 						EXECUTE usp_log_to_errorlog 
 							@SurveyId, @ResponseId, @UpdateviewText, 
 							'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
 							@ErrorNumber, @ErrorSeverity, @ErrorState, @ErrorProcedure, @ErrorLine, @ErrorMessage;
 					  END    
-				END
+                END
 
-			-- STEP 2   
+            -- STEP 2   
 			-- this sp returns  @UpdateText    
-			EXECUTE [usp_create_epi7_sql_statements_driver] 
+            EXECUTE [usp_create_epi7_sql_statements_driver] 
 				@ResponseXml, @SurveyId, 
 				@ResponseId, 'u', @Epi7DBName;
-			EXECUTE (@UpdateText); -- returned   
+            EXECUTE (@UpdateText); -- returned   
 			
 			IF @@ERROR >  0    
 					  BEGIN 					             
@@ -4397,23 +4397,128 @@ BEGIN
 								@ErrorProcedure = ERROR_PROCEDURE(), --  AS ErrorProcedure
 								@ErrorLine = ERROR_LINE(), --   AS ErrorLine
 								@ErrorMessage = ERROR_MESSAGE(); --   AS ErrorMessage;
-			
+            
 						EXECUTE usp_log_to_errorlog 
 							@SurveyId, @ResponseId, @UpdateText, 
 							'usp_create_epi7_sql_statements', 'Insert/Update in #temp table may have failed', 
 							@ErrorNumber, @ErrorSeverity, @ErrorState, @ErrorProcedure, @ErrorLine, @ErrorMessage;
 					  END    
-			
+            
 			RETURN;
-		END
+        END
 	END
 
 END
 GO
 
 
+CREATE PROCEDURE [dbo].[usp_SyncToDocumentDb] 
+	@GlobalRecordId varchar(100),
+	@TableName varchar(100),
+	@ColumnNames varchar(max), 
+	@ColumnValues varchar(max),
+	@UpdateColumnQuery varchar(max)
+	--[usp_SyncToDocumentDb] 'b546b045-0b72-44a1-9b85-b40838fdf5e0','CSFAnalysisFollowup','','',''
+AS
+BEGIN	
 
-		INSERT INTO  [dbo].[Role] Values (1,'User')
+		--set @ColumnValues =replace( 
+		--                replace( 
+		--                replace( 
+		--                replace( @ColumnValues
+		--                ,    '\', '\\' )
+		--                ,    '%', '\%' )
+		--                ,    '_', '\_' )
+		--                ,    '[', '\[' )
+               
+
+		--set @UpdateColumnQuery =replace( 
+		--                replace( 
+		--                replace( 
+		--                replace( @UpdateColumnQuery
+		--                ,    '\', '\\' )
+		--                ,    '%', '\%' )
+		--                ,    '_', '\_' )
+		--                ,    '[', '\[' ) 
+
+		
+              
+
+			CREATE TABLE #temprecords(	 recordcount int)
+
+			DECLARE @sql as Varchar(max) 
+			select @sql='SELECT COUNT(*) from '+@TableName +'  WHERE GlobalRecordId= '''+ @GlobalRecordId + '''';
+
+			Print @sql
+
+			Insert into #temprecords
+			EXEC (@sql)
+
+			DECLARE @records as int
+			Select @records=recordcount from #temprecords
+
+
+			DROP TABLE #temprecords
+
+			PRINT (@records)
+
+
+			--BEGIN TRY
+				IF ( @records > 0) 
+					BEGIN			
+		
+						EXEC('UPDATE ' + @TableName + ' SET '+@UpdateColumnQuery + ' WHERE GlobalRecordId= '''+ @GlobalRecordId + '''')
+	
+					END
+					ELSE
+					BEGIN
+	
+	  
+					   EXEC( 'INSERT INTO ' + @TableName + ' ( ' + @ColumnNames + ') VALUES (' + @ColumnValues + ')')
+			
+		
+					END 
+
+			--END TRY
+			--BEGIN CATCH    
+			--				select 'error'  as Error  
+			--			declare @ErrorNumber int  
+			--			declare @ErrorSeverity int 
+			--			declare @ErrorState int 
+			--			declare @ErrorProcedure nvarchar(128) 
+			--			declare @ErrorLine int  
+			--			declare @ErrorMessage nvarchar(4000)     
+
+			--			---- may nwed to select to tahle then 
+			--			--SELECT
+			--			--	 @ErrorNumber =  ERROR_NUMBER() --  AS ErrorNumber
+			--			--	,@ErrorSeverity =  ERROR_SEVERITY() --  AS ErrorSeverity
+			--			--	,@ErrorState =  ERROR_STATE()  --  AS ErrorState
+			--			--	,@ErrorProcedure =  ERROR_PROCEDURE()  --  AS ErrorProcedure
+			--			--	,@ErrorLine =  ERROR_LINE()  --   AS ErrorLine
+			--			--	,@ErrorMessage =  ERROR_MESSAGE()  --   AS ErrorMessage;
+					  
+  
+			--			exec usp_log_to_errorlog  
+			--				@GlobalRecordId, 
+			--				NULL,   
+			--				NULL, 
+			--				'error text Jose', 
+			--				'error text2 Jose ',
+			--				@ErrorNumber, 
+			--				@ErrorSeverity, 
+			--				@ErrorState, 
+			--				@ErrorProcedure, 
+			--				@ErrorLine, 
+			--				@ErrorMessage    
+						
+						
+			--END CATCH  
+END
+GO
+
+
+        INSERT INTO  [dbo].[Role] Values (1,'User')
 		INSERT INTO  [dbo].[Role] Values (2,'OrgAdministrator')
 		INSERT INTO  [dbo].[Role] Values (3,'Administrator')
 
@@ -4422,153 +4527,153 @@ GO
 
 
 INSERT INTO [dbo].[Organization]
-		   ([OrganizationKey]
-		   ,[Organization]
-		   ,[IsEnabled]
-		   ,[IsHostOrganization])
-	 VALUES
-		   ('evEY87gI3K68xcoi2Bx4YBb8AuAfuJW3lPXLo3cWuCxy5nSOKsB+5ZtvUuHEMC76'
-		   ,'Epi Info'
-		   ,1
-		   ,1)
+           ([OrganizationKey]
+           ,[Organization]
+           ,[IsEnabled]
+           ,[IsHostOrganization])
+     VALUES
+           ('evEY87gI3K68xcoi2Bx4YBb8AuAfuJW3lPXLo3cWuCxy5nSOKsB+5ZtvUuHEMC76'
+           ,'Epi Info'
+           ,1
+           ,1)
 GO
 
 ------------------------------------------------------------------
 
 INSERT INTO [dbo].[User]
-		   ([UserName]
-		   ,[FirstName]
-		   ,[LastName]
-		   ,[PasswordHash]
-		   ,[ResetPassword]
-		   ,[EmailAddress]
-		   ,[PhoneNumber]
-		   ,[UGuid])
-	 VALUES
-		   ('Ananth_Raja@sra.com'
-		   ,'Ananth'
-		   ,'Raja'
-		   ,'rfvM++zkq7JM1lmRTzdW9iOxpHxNBZNsxA=='
-		   ,0
-		   ,'ananth.raja@hotmail.com'
-		   ,'123456789'
-		   ,'8EAECB5C-58A1-4333-A228-4B91D45BEA2E')
+           ([UserName]
+           ,[FirstName]
+           ,[LastName]
+           ,[PasswordHash]
+           ,[ResetPassword]
+           ,[EmailAddress]
+           ,[PhoneNumber]
+           ,[UGuid])
+     VALUES
+           ('Ananth_Raja@sra.com'
+           ,'Ananth'
+           ,'Raja'
+           ,'rfvM++zkq7JM1lmRTzdW9iOxpHxNBZNsxA=='
+           ,0
+           ,'ananth.raja@hotmail.com'
+           ,'123456789'
+           ,'8EAECB5C-58A1-4333-A228-4B91D45BEA2E')
 GO
 
 -------------------------------------------------------------------------------
 
 INSERT INTO [dbo].[UserOrganization]
-		   ([UserID]
-		   ,[OrganizationID]
-		   ,[RoleId]
-		   ,[Active])
-	 VALUES
-		   (1
-		   ,1
-		   ,3
-		   ,1)
+           ([UserID]
+           ,[OrganizationID]
+           ,[RoleId]
+           ,[Active])
+     VALUES
+           (1
+           ,1
+           ,3
+           ,1)
 GO
 
 
 ----------------------------------------------------
 INSERT INTO [dbo].[lk_RecordSource]
-		   ([RecordSourceId]
-		   ,[RecordSource]
-		   ,[RecordSourceDescription])
-	 VALUES
-		   (1
-		   ,'EWE'
-		   ,'Source is EWE web application')
+           ([RecordSourceId]
+           ,[RecordSource]
+           ,[RecordSourceDescription])
+     VALUES
+           (1
+           ,'EWE'
+           ,'Source is EWE web application')
 GO
 
 INSERT INTO [dbo].[lk_RecordSource]
-		   ([RecordSourceId]
-		   ,[RecordSource]
-		   ,[RecordSourceDescription])
-	 VALUES
-		   (2
-		   ,'Epi7'
-		   ,'Source is Epi7 desktop application')
+           ([RecordSourceId]
+           ,[RecordSource]
+           ,[RecordSourceDescription])
+     VALUES
+           (2
+           ,'Epi7'
+           ,'Source is Epi7 desktop application')
 GO
 
 INSERT INTO [dbo].[lk_RecordSource]
-		   ([RecordSourceId]
-		   ,[RecordSource]
-		   ,[RecordSourceDescription])
-	 VALUES
-		   (3
-		   ,'MA'
-		   ,'Source is mobile application')
+           ([RecordSourceId]
+           ,[RecordSource]
+           ,[RecordSourceDescription])
+     VALUES
+           (3
+           ,'MA'
+           ,'Source is mobile application')
 GO
 
 INSERT INTO [dbo].[lk_RecordSource]
-		   ([RecordSourceId]
-		   ,[RecordSource]
-		   ,[RecordSourceDescription])
-	 VALUES
-		   (4
-		   ,'EIWS'
-		   ,'Source is  EIWS web application')
+           ([RecordSourceId]
+           ,[RecordSource]
+           ,[RecordSourceDescription])
+     VALUES
+           (4
+           ,'EIWS'
+           ,'Source is  EIWS web application')
 GO
 
 ---------------------------
 
 INSERT INTO [dbo].[lk_Status]
-		   ([StatusId]
-		   ,[Status])
-	 VALUES
-		   (0
-		   ,'deleted')
+           ([StatusId]
+           ,[Status])
+     VALUES
+           (0
+           ,'deleted')
 GO
 
 INSERT INTO [dbo].[lk_Status]
-		   ([StatusId]
-		   ,[Status])
-	 VALUES
-		   (1
-		   ,'In Process')
+           ([StatusId]
+           ,[Status])
+     VALUES
+           (1
+           ,'In Process')
 GO
 
 INSERT INTO [dbo].[lk_Status]
-		   ([StatusId]
-		   ,[Status])
-	 VALUES
-		   (2
-		   ,'Saved')
+           ([StatusId]
+           ,[Status])
+     VALUES
+           (2
+           ,'Saved')
 GO
 
 INSERT INTO [dbo].[lk_Status]
-		   ([StatusId]
-		   ,[Status])
-	 VALUES
-		   (3
-		   ,'for the future')
+           ([StatusId]
+           ,[Status])
+     VALUES
+           (3
+           ,'for the future')
 GO
 
 INSERT INTO [dbo].[lk_Status]
-		   ([StatusId]
-		   ,[Status])
-	 VALUES
-		   (4
-		   ,'downloaded')
+           ([StatusId]
+           ,[Status])
+     VALUES
+           (4
+           ,'downloaded')
 GO
 ------------------------------------------------------------
 
 
 INSERT INTO [dbo].[lk_SurveyType]
-		   ([SurveyTypeId]
-		   ,[SurveyType])
-	 VALUES
-		   (1
-		   ,'Single Response')
+           ([SurveyTypeId]
+           ,[SurveyType])
+     VALUES
+           (1
+           ,'Single Response')
 GO
 
 INSERT INTO [dbo].[lk_SurveyType]
-		   ([SurveyTypeId]
-		   ,[SurveyType])
-	 VALUES
-		   (2
-		   ,'Multiple Response')
+           ([SurveyTypeId]
+           ,[SurveyType])
+     VALUES
+           (2
+           ,'Multiple Response')
 GO
 --------------------------------------------------------------
 

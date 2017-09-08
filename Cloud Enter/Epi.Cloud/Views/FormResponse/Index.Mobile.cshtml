@@ -371,8 +371,10 @@ var pageId = $('#hidPageNumber').val();
               
                 if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
                     
-                    $('#inlinecontent').simpledialog2({'mode': 'blank',
-                        //'prompt': false,
+                    $(this).simpledialog2({
+                        'mode': 'blank',
+                        'headerText': 'Dialog',
+                        'headerClose': false,
                         'forceInput': false,
 
                         //'useModal': true,
@@ -386,8 +388,7 @@ var pageId = $('#hidPageNumber').val();
 
                         //},
 
-
-                        'fullHTML': "<div id=\"exitdialog\" title=\"Delete Record\" ><p id='simpletext' style=\"font-size:1.20em; font-weight:400;\">This record is being edited by another user.</p><p style=\"font-size:1.20em; font-weight:300;\"></p><p><div align='right' id='exitbtns'><a class='login'   style='width:50px; padding:8px 5px !important; border: 1px solid #1f3b53 !important; background: #5c53ac !important; color:#fff !important; text-shadow: none !important;'rel='close'   id='simpleclose' \">OK</a></div></p>"
+                        'blankContent': "<div id=\"editDialog\" title=\"Edit Record\" ><p id='simpletext' style=\"font-size:1.20em; font-weight:400;\">This record is being edited by another user.</p><p style=\"font-size:1.20em; font-weight:300;\"></p><p><div align='center' id='exitbtns'><a class='login'   style='width:50px; padding:8px 5px !important; border: 1px solid #1f3b53 !important; background: #5c53ac !important; color:#fff !important; text-shadow: none !important;'rel='close'   id='simpleclose' \">OK</a></div></p>"
                     });
                   
                 }
