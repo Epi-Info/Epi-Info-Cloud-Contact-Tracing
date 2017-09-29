@@ -551,19 +551,6 @@ namespace Epi.Cloud.SurveyInfoServices.DAO
                 throw (ex);
             }
         }
-        private static List<string> MetaDaTaColumnNames()
-        {
-
-            List<string> columns = new List<string>();
-            columns.Add("_UserEmail");
-            columns.Add("_DateUpdated");
-            columns.Add("_DateCreated");
-            // columns.Add("IsDraftMode");
-            columns.Add("_Mode");
-            return columns;
-
-        }
-
 
         public void InsertConnectionString(DbConnectionStringBO ConnectionString)
         {

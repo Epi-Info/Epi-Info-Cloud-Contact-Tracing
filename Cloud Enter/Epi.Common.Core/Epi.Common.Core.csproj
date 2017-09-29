@@ -50,6 +50,7 @@
     <Compile Include="DataStructures\PageResponseDetail.cs" />
     <Compile Include="DataStructures\ResponseContext.cs" />
     <Compile Include="DataStructures\ResponseGridColumnSettings.cs" />
+    <Compile Include="DataStructures\ResponseGridQueryCriteria.cs" />
     <Compile Include="DTO\FormInfoDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
     <Compile Include="Interfaces\IFormResponseDetail.cs" />
@@ -60,7 +61,12 @@
     <Compile Include="Message\SurveyAnswerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Epi.FormMetadata\Epi.FormMetadata.csproj">
+      <Project>{8AD159A9-1A48-4593-91E0-23AE415B0BB2}</Project>
+      <Name>Epi.FormMetadata</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

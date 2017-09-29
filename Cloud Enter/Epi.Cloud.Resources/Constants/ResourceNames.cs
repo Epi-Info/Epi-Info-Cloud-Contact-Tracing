@@ -29,6 +29,7 @@
     public struct CosmosDBSPKeys
     {
         public const string GetAllRecordsBySurveyID = "GetAllRecordsBySurveyID";
+        public const string getGridContent = "getGridContent";
     }
 
     public struct CosmosDBUDFKeys

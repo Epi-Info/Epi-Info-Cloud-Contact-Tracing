@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Criteria;
+using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.DataEntryServices.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
@@ -11,10 +12,6 @@ using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
-using Epi.FormMetadata.DataStructures;
-using Epi.Cloud.Common.Extensions;
-using Epi.Cloud.Common.Core.DataStructures;
-using Epi.Cloud.Facades.Interfaces;
 
 namespace Epi.Cloud.DataEntryServices.DAO
 {
@@ -252,10 +249,19 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     }
                 }
 
-                var gridFields = criteria.FieldDigestList ?? new Dictionary<int, FieldDigest>();
-                var searchFields = criteria.SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>();
+                var responseGridQueryCriteria = new ResponseGridQueryCriteria
+                {
+                    ResponseContext = responseContext,
+                    ResponseAccessRuleContext = responseAccessRuleContext,
+                    SearchQualifiers = criteria.SearchFields,
+                    DisplayFields = criteria.GridFields,
+                    DisplayPageSize = criteria.GridPageSize,
+                    DisplayPageNumber = criteria.PageNumber,
+                    SortByField = criteria.Sortfield,
+                    IsSortedAscending = criteria.SortOrderIsAscending
+                };
 
-                var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseContext, responseAccessRuleContext, gridFields, searchFields, criteria.GridPageSize, criteria.PageNumber);
+                var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseGridQueryCriteria);
                 if (surveyResponses != null)
                 {
                     var responseList = surveyResponses;

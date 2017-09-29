@@ -4,9 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Epi.Cloud.Resources;
 using Epi.Cloud.Resources.Constants;
+using Epi.Common.Core.DataStructures;
 using Epi.PersistenceServices.CosmosDB;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Newtonsoft.Json;
 
 namespace Epi.DataPersistenceServices.CosmosDB
 {
@@ -15,6 +17,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
         public int? continuationToken = null;
 
         private const string spGetRecordsBySurveyId = "GetRecordsBySurveyId";
+        private const string spGetGridContent = "getGridContent";
         private const string udfWildCardCompare = "WildCardCompare";
         private const string udfSharingRules = "SharingRules";
 
@@ -26,9 +29,24 @@ namespace Epi.DataPersistenceServices.CosmosDB
         /// <param name="udfWildCardCompareId"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> GetAllRecordsByFormName(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query)
+        private async Task<List<FormResponseProperties>> GetAllRootResponses(ResponseGridQueryCriteria responseGridQueryCriteria, string query,
+            string continuationToken = null, int skip = 0)
         {
-            return await ExecuteSPAsync(collectionId, spId, udfSharingRulesId, udfWildCardCompareId, query);
+            string collectionId = responseGridQueryCriteria.ResponseContext.RootFormName;
+            string sortKey = responseGridQueryCriteria.SortByField;
+            bool isSortAscending = responseGridQueryCriteria.IsSortedAscending;
+            var queryResult = await ExecuteSPAsync(collectionId, spGetGridContent, udfSharingRules, udfWildCardCompare,
+                                                   query, sortKey, isSortAscending, continuationToken, skip);
+            return queryResult;
+        }
+
+        internal class QueryResult
+        {
+            public Document[] Result { get; set; }
+            public string ContinuationToken { get; set; }
+            public int Skip { get; set; }
+            public string Message { get; set; }
+            public string Trace { get; set; }
         }
 
         internal class OrderByResult
@@ -44,7 +62,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
         /// <param name="spId"></param>
         /// <param name="surveyId"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query)
+        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query,
+                                                                        string sortKey, bool isSortAscending, string continuationToken, int skip)
         {
             RequestOptions option = new RequestOptions();
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
@@ -58,7 +77,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
             try
             {
-                return ExecuteQuery(query, spUri);
+                return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, continuationToken, skip);
             }
             catch (Exception ex)
             {
@@ -80,7 +99,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
                     try
                     {
-                        return ExecuteQuery(query, spUri);
+                        return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, continuationToken, skip);
                     }
                     catch (Exception ex2)
                     {
@@ -90,19 +109,46 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return null;
         }
 
-        private List<FormResponseProperties> ExecuteQuery(string query, Uri spUri)
+        class SpParams
         {
-            var formResponseList = new List<FormResponseProperties>();
+            public string query;
+            public string sortKey;
+            public bool isSortAscending;
+            public string continuationToken;
+            public int skip;
+        }
 
-            do
+        private List<FormResponseProperties> ExecuteQuery(string spId, Uri spUri, string query, 
+                                                          string sortKey, bool isSortAscending, string continuationToken, int skip)
+        {
+            var spParams = new SpParams { query = query,
+                sortKey = sortKey, isSortAscending = isSortAscending,
+                continuationToken = continuationToken, skip = skip };
+            var json = JsonConvert.SerializeObject(spParams);
+
+            var formResponseList = new List<FormResponseProperties>();
+            if (spId == spGetGridContent)
             {
-                var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
-                foreach (var doc in spResponse.Response.Result)
+                QueryResult queryResult = Client.ExecuteStoredProcedureAsync<QueryResult>(spUri, query, sortKey, isSortAscending, continuationToken, skip).Result;
+
+                foreach (var doc in queryResult.Result)
                 {
                     FormResponseProperties formResponse = (dynamic)doc;
                     formResponseList.Add(formResponse);
                 }
-            } while (continuationToken != null);
+            }
+            else
+            {
+                do
+                {
+                    var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
+                    foreach (var doc in spResponse.Response.Result)
+                    {
+                        FormResponseProperties formResponse = (dynamic)doc;
+                        formResponseList.Add(formResponse);
+                    }
+                } while (continuationToken != null);
+            }
 
             return formResponseList;
         }

@@ -83,6 +83,31 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to function getGridContent(query, sortKey, isSortAscending, continuationToken, skip) {
+        ///    var context = getContext();
+        ///    var response = context.getResponse();
+        ///    var collection = context.getCollection();
+        ///    var collectionLink = collection.getSelfLink();
+        ///    var responses = [];
+        ///    var nextContinuationToken;
+        ///    var currentContinuationToken;
+        ///    var responseSize = 0;
+        ///    var isMaxSizeReached = false;
+        ///
+        ///    if (!sortKey) {
+        ///        sortkey = &quot;_ts&quot;;
+        ///        isSortAscending = false;
+        ///    }
+        ///
+        ///    var trace = &quot;query [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string getGridContent {
+            get {
+                return ResourceManager.GetString("getGridContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function SharingRules(ruleId, isHostOrgUser, userOrgId, responseOrgId)
         ///{
         ///    switch (ruleId)

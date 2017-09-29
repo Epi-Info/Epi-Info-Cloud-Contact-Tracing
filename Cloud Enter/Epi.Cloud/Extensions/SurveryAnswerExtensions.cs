@@ -83,17 +83,17 @@ namespace Epi.Cloud.MVC.Extensions
             string ColumnValue = "";
             switch (columnName)
             {
-                case "_UserEmail":
+                case Constant.MetaColumn.UserEmail:
                     ColumnValue = item.UserEmail;
                     break;
-                case "_DateUpdated":
+                case Constant.MetaColumn.DateUpdated:
                     ColumnValue = item.DateUpdated.ToString();
                     break;
-                case "_DateCreated":
+                case Constant.MetaColumn.DateCreated:
                     ColumnValue = item.DateCreated.ToString();
                     break;
-                case "IsDraftMode":
-                case "_Mode":
+                case Constant.MetaColumn.IsDraftMode:
+                case Constant.MetaColumn.Mode:
                     if (item.IsDraftMode.ToString().ToUpper() == "TRUE")
                     {
                         ColumnValue = "Staging";

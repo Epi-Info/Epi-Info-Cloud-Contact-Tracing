@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Epi.Cloud.Common.Core.DataStructures
+namespace Epi.Common.Core.DataStructures
 {
     public class ResponseAccessRuleContext
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.Constants;
-using Epi.Cloud.Common.Core.DataStructures;
+using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
@@ -350,13 +350,13 @@ namespace Epi.DataPersistenceServices.CosmosDB
         /// <param name="pageSize"></param>
         /// <param name="pageNumber"></param>
         /// <returns></returns>
-        public List<FormResponseDetail> GetAllResponsesWithCriteria(IResponseContext responseContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> fields, IDictionary<int, KeyValuePair<FieldDigest, string>> searchFields, string parentResponseId = null, int pageSize = 0, int pageNumber = 0)
+        public List<FormResponseDetail> GetAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria)
         {
             List<FormResponseDetail> formResponseDetailList = null;
 
             try
             {
-                formResponseDetailList = ReadAllResponsesWithCriteria(responseContext, responseAccessRuleContext, fields, searchFields, parentResponseId, pageSize, pageNumber);
+                formResponseDetailList = ReadAllResponsesWithCriteria(responseGridQueryCriteria);
             }
             catch (DocumentQueryException ex)
             {
@@ -365,28 +365,23 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return formResponseDetailList;
         }
 
-        private List<FormResponseDetail> ReadAllResponsesWithCriteria(IResponseContext responseContext, ResponseAccessRuleContext responseAccessRuleContext, IDictionary<int, FieldDigest> fieldDigestList, IDictionary<int, KeyValuePair<FieldDigest, string>> searchQualifiers, string parentResponseId, int pageSize = 0, int pageNumber = 0)
+        private List<FormResponseDetail> ReadAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria)
         {
             List<FormResponseDetail> formResponseDetailList = new List<FormResponseDetail>();
             List<FormResponseProperties> formResponsePropertiesList;
-            if (responseContext.IsChildResponse)
+            if (responseGridQueryCriteria.ResponseContext.IsChildResponse)
             {
-                if (searchQualifiers != null && searchQualifiers.Count > 0) throw new ArgumentException("Search not available on child forms");
-                formResponsePropertiesList = ReadAllChildResponses(responseContext, pageSize, pageNumber, /*includeChildrenOfChild*/false);
+                //if (responseGridQueryCriteria.SearchQualifiers != null && responseGridQueryCriteria.SearchQualifiers.Count > 0)
+                //    throw new ArgumentException("Search not available on child forms");
+
+                formResponsePropertiesList = ReadAllChildResponses(responseGridQueryCriteria, /*includeChildrenOfChild*/false);
                 formResponseDetailList = formResponsePropertiesList.ToFormResponseDetailList();
             }
             else
             {
                 try
                 {
-                    var columnNames = fieldDigestList.Select(f => f.Value.TrueCaseFieldName).ToList();
-
-                    var searchFieldNameValueQualifiers = searchQualifiers != null && searchQualifiers.Count > 0
-                        ? searchQualifiers.Values.ToArray()
-                        : null;
-
-                    formResponseDetailList = ReadAllRootResponses(responseContext, responseAccessRuleContext, columnNames, searchFieldNameValueQualifiers, pageSize, pageNumber, false).ToFormResponseDetailList();
-
+                    formResponseDetailList = ReadAllRootResponses(responseGridQueryCriteria, false).ToFormResponseDetailList();
                 }
                 catch (DocumentQueryException ex)
                 {
@@ -528,10 +523,12 @@ namespace Epi.DataPersistenceServices.CosmosDB
             }
         }
 
-        private List<FormResponseProperties> ReadAllRootResponses(IResponseContext responseContext, ResponseAccessRuleContext accessRuleContext, List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers = null, int pageSize = 0, int pageNumber = 0, bool includeChildren = false)
+        private List<FormResponseProperties> ReadAllRootResponses(ResponseGridQueryCriteria responseGridQueryCriteria, bool includeChildren = false)
         {
             try
             {
+                var responseContext = responseGridQueryCriteria.ResponseContext;
+                var accessRuleContext = responseGridQueryCriteria.ResponseAccessRuleContext;
                 var rootFormName = responseContext.RootFormName ?? this.GetRootFormName(responseContext.RootFormId);
                 string query;
                 var collectionAlias = rootFormName;
@@ -542,8 +539,14 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"
                 };
-                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties, columnlist, searchQualifiers, accessRuleContext != null && accessRuleContext.IsSharable ? accessRuleContext : null);
-                var formResponsePropertiesList = GetAllRecordsByFormName(rootFormName, spGetRecordsBySurveyId, udfSharingRules, udfWildCardCompare, query).Result;
+
+                query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties,
+                    responseGridQueryCriteria.TrueCaseFieldNames,
+                    responseGridQueryCriteria.SearchFieldNameValueQualifiers,
+                    accessRuleContext != null && accessRuleContext.IsSharable ? accessRuleContext : null);
+
+                var formResponsePropertiesList = GetAllRootResponses(responseGridQueryCriteria,
+                    query).Result;
                 return formResponsePropertiesList;
             }
             catch (Exception ex)
@@ -555,12 +558,12 @@ namespace Epi.DataPersistenceServices.CosmosDB
         }
 
         #region Read All Child Responses
-        private List<FormResponseProperties> ReadAllChildResponses(IResponseContext responseContext, int pageSize = 0, int pageNumber = 0, bool includeChildrenOfChild = false)
+        private List<FormResponseProperties> ReadAllChildResponses(ResponseGridQueryCriteria responseGridQueryCriteria, bool includeChildrenOfChild = false)
         {
             try
             {
                 List<FormResponseProperties> childResponses = new List<FormResponseProperties>();
-
+                var responseContext = responseGridQueryCriteria.ResponseContext;
                 var rootFormName = responseContext.RootFormName;
                 var rootResponseResource = ReadRootResponseResource(responseContext, false);
                 var formResponsePropertiesList = rootResponseResource.GetChildResponseList(responseContext)
@@ -571,8 +574,11 @@ namespace Epi.DataPersistenceServices.CosmosDB
                     childResponses = formResponsePropertiesList
                         .OrderByDescending(r => r.LastSaveTime)
                         .ToList();
+
+                    var pageSize = responseGridQueryCriteria.DisplayPageSize;
                     if (pageSize > 0)
                     {
+                        var pageNumber = responseGridQueryCriteria.DisplayPageNumber;
                         childResponses = childResponses.Skip((pageNumber * pageSize) - pageSize).Take(pageSize).ToList();
                     }
                 }
@@ -588,6 +594,5 @@ namespace Epi.DataPersistenceServices.CosmosDB
         }
 
         #endregion
-
     }
 }

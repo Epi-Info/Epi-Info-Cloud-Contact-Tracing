@@ -43,12 +43,12 @@ namespace Epi.Cloud.DataEntryServices
         {
             criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
 
-            int result = _surveyResponseDao.GetFormResponseCount(criteria);
+            int resultCount = _surveyResponseDao.GetFormResponseCount(criteria);
             if (criteria.GridPageSize > 0)
             {
-                result = (result + criteria.GridPageSize - 1) / criteria.GridPageSize;
+                resultCount = (resultCount + criteria.GridPageSize - 1) / criteria.GridPageSize;
             }
-            return result;
+            return resultCount;
         }
 
         //Validate User

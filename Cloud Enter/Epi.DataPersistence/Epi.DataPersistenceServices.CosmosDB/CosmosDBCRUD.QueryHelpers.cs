@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Epi.FormMetadata.DataStructures;
+using Epi.Common.Core.DataStructures;
 using Epi.DataPersistence.Constants;
-using Epi.Cloud.Common.Core.DataStructures;
+using Epi.FormMetadata.DataStructures;
 
 namespace Epi.DataPersistenceServices.CosmosDB
 {
@@ -59,7 +59,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return columnList;
         }
 
-        private string AssembleParentQASelect(string formName, List<string> columnNames)
+        private string AssembleParentQASelect(string formName, string[] columnNames)
         {
             string query = "{"
                             + AssembleParentSelect(null, columnNames.Select(g => g.ToLower() + ":" + formName + "." + FRP_ResponseQA_ + g.ToLower()).ToArray())
@@ -149,14 +149,14 @@ namespace Epi.DataPersistenceServices.CosmosDB
         }
 
         private string GenerateResponseGridQuery(string collectionAlias, string formId, List<string> formPoperties, 
-            List<string> columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers,
+            string[] columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers,
             ResponseAccessRuleContext responseAccessRuleContext)
         {
             string SelectColumnList = string.Empty;
 
             var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
 
-            if (columnlist != null && columnlist.Count > 0)
+            if (columnlist != null && columnlist.Length > 0)
             {
                 // convert column list to this format {patientname1: Zika.FormResponseProperties.ResponseQA.patientname1} as ResponseQA
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist);

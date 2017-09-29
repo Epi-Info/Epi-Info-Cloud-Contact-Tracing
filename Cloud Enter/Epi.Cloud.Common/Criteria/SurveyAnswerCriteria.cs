@@ -93,5 +93,12 @@ namespace Epi.Cloud.Common.Criteria
         public IDictionary<int, FieldDigest> FieldDigestList { get; set; }
         public IDictionary<int, KeyValuePair<FieldDigest, string>> SearchDigestList { get; set; }
         public RecordStatusChangeReason StatusChangeReason { get; set; }
+
+
+        // Helpers
+        public IDictionary<int, FieldDigest> GridFields { get { return FieldDigestList ?? new Dictionary<int, FieldDigest>(); } }
+        public IDictionary<int, KeyValuePair<FieldDigest, string>> SearchFields { get { return SearchDigestList ?? new Dictionary<int, KeyValuePair<FieldDigest, string>>(); } }
+
+        public bool SortOrderIsAscending { get { return string.IsNullOrWhiteSpace(SortOrder) || SortOrder.Trim().ToLower().StartsWith("asc"); } }
     }
 }
