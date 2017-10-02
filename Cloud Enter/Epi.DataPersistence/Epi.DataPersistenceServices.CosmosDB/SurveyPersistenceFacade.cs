@@ -9,12 +9,12 @@ using Epi.Cloud.Common.Metadata;
 using Epi.Cloud.ServiceBus;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Common;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.DataPersistence.Extensions;
 using Epi.DataPersistenceServices.CosmosDB;
-using Epi.FormMetadata.DataStructures;
 using Microsoft.Azure.Documents;
 
 namespace Epi.PersistenceServices.CosmosDB
@@ -172,10 +172,22 @@ namespace Epi.PersistenceServices.CosmosDB
         #endregion
 
         #region Get All Responses With Criteria
-        public IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria)
+        public ResponseGridQueryResult GetAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria)
         {
-            return _formResponseCRUD.GetAllResponsesWithCriteria(responseGridQueryCriteria);
+            ResponseGridQueryPropertiesResult responseGridQueryPropertiesResult = _formResponseCRUD.GetAllResponsesWithCriteria(responseGridQueryCriteria);
+            var formResponseDetailList = responseGridQueryPropertiesResult.ResponsePropertiesList.ToFormResponseDetailList();
+            var result = new ResponseGridQueryResult
+            {
+                FormResponseDetailList = responseGridQueryPropertiesResult.ResponsePropertiesList.ToFormResponseDetailList(),
+                QuerySetToken = responseGridQueryPropertiesResult.QuerySetToken,
+                NumberOfResponsesReturnedByQuery = responseGridQueryPropertiesResult.NumberOfResponsesReturnedByQuery,
+                NumberOfResponsesOnSelectedPage = responseGridQueryPropertiesResult.NumberOfResponsesOnSelectedPage,
+                PageNumber = responseGridQueryPropertiesResult.PageNumber,
+                NumberOfPages = responseGridQueryPropertiesResult.NumberOfPages
+            };
+            return result;
         }
+		#endregion
 
         public FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext)
 		{
@@ -183,7 +195,6 @@ namespace Epi.PersistenceServices.CosmosDB
 			var formResponseDetail = response[0].ToFormResponseDetail();
 			return formResponseDetail;
 		}
-		#endregion
 
 		#region Get Hierarchical Responses for DataConsisitencyServiceAPI
 		public FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)

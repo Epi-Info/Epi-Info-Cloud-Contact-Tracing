@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
 using Epi.Cloud.Common.Criteria;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Interfaces.DataInterfaces;
-using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Common.BusinessObjects;
 using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.DataEntryServices
@@ -32,24 +31,24 @@ namespace Epi.Cloud.DataEntryServices
             return result;
         }
 
-        public List<SurveyResponseBO> GetFormResponseListById(IResponseContext responseContext, SurveyAnswerCriteria criteria)
+        public ResponseGridQueryResultBO GetFormResponseListByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria)
         {
             criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
-            List<SurveyResponseBO> result = _surveyResponseDao.GetFormResponseByFormId(responseContext, criteria);
+            ResponseGridQueryResultBO result = _surveyResponseDao.GetFormResponseByFormId(responseContext, criteria);
             return result;
         }
 
-        public int GetNumberOfPages(SurveyAnswerCriteria criteria)
-        {
-            criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
+        //public int GetNumberOfPages(SurveyAnswerCriteria criteria)
+        //{
+        //    criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
 
-            int resultCount = _surveyResponseDao.GetFormResponseCount(criteria);
-            if (criteria.GridPageSize > 0)
-            {
-                resultCount = (resultCount + criteria.GridPageSize - 1) / criteria.GridPageSize;
-            }
-            return resultCount;
-        }
+        //    int resultCount = _surveyResponseDao.GetFormResponseCount(criteria);
+        //    if (criteria.GridPageSize > 0)
+        //    {
+        //        resultCount = (resultCount + criteria.GridPageSize - 1) / criteria.GridPageSize;
+        //    }
+        //    return resultCount;
+        //}
 
         //Validate User
         public bool ValidateUser(UserAuthenticationRequestBO uarBO)

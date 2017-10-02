@@ -16,6 +16,7 @@ using Epi.Cloud.MVC.Extensions;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
 using Epi.Common.Exceptions;
+using Epi.DataPersistence.Common.BusinessObjects;
 using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.DataEntryServices
@@ -384,18 +385,21 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
                 SurveyAnswerCriteria criteria = surveyAnswerRequest.Criteria;
-                List<SurveyResponseBO> surveyResponseBo = surveyResponseImplementation.GetFormResponseListById(surveyAnswerRequest.ResponseContext, criteria);
+                criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
 
+                ResponseGridQueryResultBO responseGridQueryResultBO = surveyResponseImplementation.GetFormResponseListByFormId(surveyAnswerRequest.ResponseContext, criteria);
                 //Query The number of records
-                result.NumberOfResponses = surveyResponseBo.Count;
-                var surveyResponse = surveyResponseBo;
-                var surveyResponseList = surveyResponse.ToList();
+                result.NumberOfResponses = responseGridQueryResultBO.NumberOfResponsesReturnedByQuery;
+                result.NumberOfPages = responseGridQueryResultBO.NumberOfPages;
+                result.PageSize = responseGridQueryResultBO.NumberOfResponsesOnSelectedPage;
+                
+                var surveyResponseList = responseGridQueryResultBO.SurveyResponseBOList;
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();
 
                 surveyAnswerRequest.Criteria.FormResponseCount = result.NumberOfResponses;
 
                 //Query The number of records
-                result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
+                //result.NumberOfPages = surveyResponseImplementation.GetNumberOfPages(surveyAnswerRequest.Criteria);
 
                 //Get form info 
                 Epi.Cloud.BLL.FormInfo formInfoImplementation = new Epi.Cloud.BLL.FormInfo(_formInfoDao);

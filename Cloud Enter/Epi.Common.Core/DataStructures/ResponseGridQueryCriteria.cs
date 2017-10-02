@@ -11,6 +11,7 @@ namespace Epi.Common.Core.DataStructures
         public ResponseAccessRuleContext ResponseAccessRuleContext { get; set; }
         public IDictionary<int, KeyValuePair<FieldDigest, string>> SearchQualifiers { get; set; }
         public IDictionary<int, FieldDigest> DisplayFields { get; set; }
+        public string QuerySetToken { get; set; }
         public int DisplayPageSize { get; set; }
         public int DisplayPageNumber { get; set; }
         public string SortByField { get; set; }

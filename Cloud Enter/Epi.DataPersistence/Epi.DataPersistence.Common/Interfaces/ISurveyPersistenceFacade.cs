@@ -3,6 +3,7 @@ using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Message;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Common.BusinessObjects;
 using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 
@@ -24,9 +25,7 @@ namespace Epi.DataPersistence.Common.Interfaces
 
         SurveyAnswerResponse DeleteResponse(IResponseContext responseContext);
 
-        //bool SaveFormResponseProperties(SurveyResponseBO request);
-
-        IEnumerable<FormResponseDetail> GetAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria);
+        ResponseGridQueryResult GetAllResponsesWithCriteria(ResponseGridQueryCriteria responseGridQueryCriteria);
 
         FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responceContext, bool includeDeletedRecords = false);
 

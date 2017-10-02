@@ -86,5 +86,15 @@ namespace Epi.PersistenceServices.CosmosDB
         public bool IsRootResponse { get { return ResponseId == RootResponseId || IsRootForm; } }
         public bool IsChildResponse { get { return !IsRootResponse; } }
     }
+
+    public class ResponseGridQueryPropertiesResult
+    {
+        public List<FormResponseProperties> ResponsePropertiesList { get; set; }
+        public string QuerySetToken { get; set; }
+        public int NumberOfResponsesReturnedByQuery { get; set; }
+        public int NumberOfResponsesOnSelectedPage { get; set; }
+        public int PageNumber { get; set; }
+        public int NumberOfPages { get; set; }
+    }
 }
 

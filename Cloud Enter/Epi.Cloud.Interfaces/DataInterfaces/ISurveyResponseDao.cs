@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Criteria;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Common.BusinessObjects;
 using Epi.DataPersistence.Constants;
 
 namespace Epi.Cloud.Interfaces.DataInterfaces
@@ -62,7 +63,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        List<SurveyResponseBO> GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria);
+        ResponseGridQueryResultBO GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria);
 
         /// <summary>
         /// GetFormResponseCount

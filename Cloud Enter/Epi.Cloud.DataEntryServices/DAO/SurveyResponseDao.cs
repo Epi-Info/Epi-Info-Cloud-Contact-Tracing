@@ -10,6 +10,7 @@ using Epi.Cloud.Interfaces.DataInterfaces;
 using Epi.Cloud.Interfaces.MetadataInterfaces;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Common.BusinessObjects;
 using Epi.DataPersistence.Common.Interfaces;
 using Epi.DataPersistence.Constants;
 
@@ -28,8 +29,6 @@ namespace Epi.Cloud.DataEntryServices.DAO
             ProjectMetadataProvider = projectMetadataProvider;
             _surveyPersistenceFacade = surveyPersistenceFacade;
         }
-
-        private int _dataAccessRuleId;
 
         /// <summary>
         /// Gets a specific SurveyResponse.
@@ -170,9 +169,9 @@ namespace Epi.Cloud.DataEntryServices.DAO
             return x.DateCreated.CompareTo(y.DateCreated);
         }
 
-        public List<SurveyResponseBO> GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria)
+        public ResponseGridQueryResultBO GetFormResponseByFormId(IResponseContext responseContext, SurveyAnswerCriteria criteria)
         {
-            List<SurveyResponseBO> result = new List<SurveyResponseBO>();
+            ResponseGridQueryResultBO result = new ResponseGridQueryResultBO();
             ResponseAccessRuleContext responseAccessRuleContext = null;
 
             try
@@ -261,12 +260,16 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     IsSortedAscending = criteria.SortOrderIsAscending
                 };
 
-                var surveyResponses = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseGridQueryCriteria);
-                if (surveyResponses != null)
+                var responseGridQueryResult = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseGridQueryCriteria);
+                result = new ResponseGridQueryResultBO
                 {
-                    var responseList = surveyResponses;
-                    result = responseList.Select(r => r.ToSurveyResponseBO()).ToList();
-                }
+                    SurveyResponseBOList = responseGridQueryResult.FormResponseDetailList.ToSurveyResponseBOList(),
+                    QuerySetToken = responseGridQueryResult.QuerySetToken,
+                    NumberOfResponsesReturnedByQuery = responseGridQueryResult.NumberOfResponsesReturnedByQuery,
+                    NumberOfResponsesOnSelectedPage = responseGridQueryResult.NumberOfResponsesOnSelectedPage,
+                    PageNumber = responseGridQueryResult.PageNumber,
+                    NumberOfPages = responseGridQueryResult.NumberOfPages
+                };
             }
             catch (Exception ex)
             {

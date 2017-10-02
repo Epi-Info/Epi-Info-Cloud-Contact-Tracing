@@ -29,30 +29,32 @@ namespace Epi.DataPersistenceServices.CosmosDB
         /// <param name="udfWildCardCompareId"></param>
         /// <param name="query"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> GetAllRootResponses(ResponseGridQueryCriteria responseGridQueryCriteria, string query,
+        private async Task<ResponseGridQueryPropertiesResult> GetAllRootResponses(ResponseGridQueryCriteria responseGridQueryCriteria, string query,
+            int pageNumber, int responsesPerPage,
+            string querySetToken,
             string continuationToken = null, int skip = 0)
         {
             string collectionId = responseGridQueryCriteria.ResponseContext.RootFormName;
             string sortKey = responseGridQueryCriteria.SortByField;
             bool isSortAscending = responseGridQueryCriteria.IsSortedAscending;
             var queryResult = await ExecuteSPAsync(collectionId, spGetGridContent, udfSharingRules, udfWildCardCompare,
-                                                   query, sortKey, isSortAscending, continuationToken, skip);
+                                                   query, sortKey, isSortAscending, pageNumber, responsesPerPage,
+                                                   querySetToken, continuationToken, skip);
             return queryResult;
         }
 
         internal class QueryResult
         {
             public Document[] Result { get; set; }
+            public string QuerySetToken { get; set; }
+            public int NumberOfResponsesReturnedByQuery { get; set; }
+            public int NumberOfResponsesOnSelectedPage { get; set; }
+            public int PageNumber { get; set; }
+            public int NumberOfPages { get; set; }
             public string ContinuationToken { get; set; }
             public int Skip { get; set; }
             public string Message { get; set; }
             public string Trace { get; set; }
-        }
-
-        internal class OrderByResult
-        {
-            public Document[] Result { get; set; }
-            public int? Continuation { get; set; }
         }
 
         /// <summary>
@@ -62,8 +64,9 @@ namespace Epi.DataPersistenceServices.CosmosDB
         /// <param name="spId"></param>
         /// <param name="surveyId"></param>
         /// <returns></returns>
-        private async Task<List<FormResponseProperties>> ExecuteSPAsync(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query,
-                                                                        string sortKey, bool isSortAscending, string continuationToken, int skip)
+        private async Task<ResponseGridQueryPropertiesResult> ExecuteSPAsync(string collectionId, string spId, string udfSharingRulesId, string udfWildCardCompareId, string query,
+                                                                        string sortKey, bool isSortAscending, int pageNumber, int responsesPerPage,
+                                                                        string querySetToken, string continuationToken, int skip)
         {
             RequestOptions option = new RequestOptions();
             Uri collectionUri = UriFactory.CreateDocumentCollectionUri(DatabaseName, collectionId);
@@ -77,7 +80,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
             try
             {
-                return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, continuationToken, skip);
+                return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, pageNumber, responsesPerPage,
+                                    querySetToken, continuationToken, skip);
             }
             catch (Exception ex)
             {
@@ -99,7 +103,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
                     try
                     {
-                        return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, continuationToken, skip);
+                        return ExecuteQuery(spId, spUri, query, sortKey, isSortAscending, pageNumber, responsesPerPage, 
+                                            querySetToken, continuationToken, skip);
                     }
                     catch (Exception ex2)
                     {
@@ -114,43 +119,56 @@ namespace Epi.DataPersistenceServices.CosmosDB
             public string query;
             public string sortKey;
             public bool isSortAscending;
+            public int pageNumber;
+            public int responsesPerPage;
             public string continuationToken;
             public int skip;
         }
 
-        private List<FormResponseProperties> ExecuteQuery(string spId, Uri spUri, string query, 
-                                                          string sortKey, bool isSortAscending, string continuationToken, int skip)
+        private ResponseGridQueryPropertiesResult ExecuteQuery(string spId, Uri spUri, string query,
+                                                          string sortKey, bool isSortAscending,
+                                                          int pageNumber, int responsesPerPage,
+                                                          string querySetToken,
+                                                          string continuationToken, int skip)
         {
-            var spParams = new SpParams { query = query,
-                sortKey = sortKey, isSortAscending = isSortAscending,
-                continuationToken = continuationToken, skip = skip };
+            var spParams = new SpParams
+            {
+                query = query,
+                sortKey = sortKey,
+                isSortAscending = isSortAscending,
+                continuationToken = continuationToken,
+                skip = skip
+            };
             var json = JsonConvert.SerializeObject(spParams);
 
             var formResponseList = new List<FormResponseProperties>();
-            if (spId == spGetGridContent)
+            QueryResult queryResult = null;
+
+            do
             {
-                QueryResult queryResult = Client.ExecuteStoredProcedureAsync<QueryResult>(spUri, query, sortKey, isSortAscending, continuationToken, skip).Result;
+                 queryResult = Client.ExecuteStoredProcedureAsync<QueryResult>(spUri, query, sortKey, isSortAscending,
+                                          pageNumber, responsesPerPage, querySetToken, continuationToken, skip).Result;
 
                 foreach (var doc in queryResult.Result)
                 {
                     FormResponseProperties formResponse = (dynamic)doc;
                     formResponseList.Add(formResponse);
                 }
-            }
-            else
-            {
-                do
-                {
-                    var spResponse = Client.ExecuteStoredProcedureAsync<OrderByResult>(spUri, query).Result;
-                    foreach (var doc in spResponse.Response.Result)
-                    {
-                        FormResponseProperties formResponse = (dynamic)doc;
-                        formResponseList.Add(formResponse);
-                    }
-                } while (continuationToken != null);
-            }
+                continuationToken = queryResult.ContinuationToken;
+                skip = queryResult.Skip;
 
-            return formResponseList;
+            } while (continuationToken != null);
+
+            var responseGridQueryPropertiesResult = new ResponseGridQueryPropertiesResult
+            {
+                ResponsePropertiesList = formResponseList,
+                QuerySetToken = queryResult.QuerySetToken,
+                NumberOfResponsesReturnedByQuery = queryResult.NumberOfResponsesReturnedByQuery,
+                NumberOfResponsesOnSelectedPage = queryResult.NumberOfResponsesOnSelectedPage,
+                PageNumber = pageNumber,
+                NumberOfPages = queryResult.NumberOfPages
+            };
+            return responseGridQueryPropertiesResult;
         }
 
         public async Task<bool> DoesStoredProcedureExist(Uri spUri)

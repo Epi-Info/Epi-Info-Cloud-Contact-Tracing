@@ -1,4 +1,4 @@
-﻿function getGridContent(query, sortKey, isSortAscending, continuationToken, skip) {
+﻿function getGridContent(query, sortKey, isSortAscending, pageNumber, responsesPerPage, querySetToken, continuationToken, skip) {
     var context = getContext();
     var response = context.getResponse();
     var collection = context.getCollection();
@@ -13,6 +13,13 @@
         sortkey = "_ts";
         isSortAscending = false;
     }
+
+    // Use for debugging in portal
+    //sortKey="patientname1";
+    //isSortAscending=true;
+    //pageNumber = 1;
+    //responsesPerPage = 20;
+    //skip = 0;
 
     var trace = "query:" + query + ", continuationToken:" + continuationToken + ", skip:" + skip + ", sortKey:" + sortKey + ", isSortAscending:" + isSortAscending;
 
@@ -46,7 +53,7 @@
                       var thisResponseSize = JSON.stringify(thisResponse).length;
 
                       // DocumentDB has a response size limit of 1 MB.
-                      if (responseSize + thisResponseSize < 1024 * 1024) {
+                      if (pageNumber > 0 || responseSize + thisResponseSize < 1024 * 1024) {
                           // Append response to responses.
                           responses = responses.concat(thisResponse);
 
@@ -71,21 +78,37 @@
               else if (isMaxSizeReached) {
                   // If the response size limit reached; run the script again with the nextContinuationToken as a script parameter.
                   response.setBody({
+                      "result": responses,
                       "message": "Response size limit reached.",
                       "trace": trace,
+                      "querySetToken": querySetToken,
                       "continuationToken": currentContinuationToken,
-                      "result": responses,
+
                       "skip": taken
                   });
               }
               else {
                   // If there is no continutation token, we are done. Return the response.
                   responses = schwartzianSort(responses, sortKey);
+                  var numberOfPages;
+                  var pageResponses;
+                  if (pageNumber > 0 && responsesPerPage > 0) {
+                      numberOfPages = Math.ceil(responses.length / responsesPerPage);
+                      var first = pageNumber * responsesPerPage - responsesPerPage;
+                      var last = pageNumber * responsesPerPage;
+                      pageResponses = responses.slice(first, last);
+                  }
+                  pageNumber = pageNumber ? pageNumber : 0
                   response.setBody({
+                      "result": pageResponses ? pageResponses : responses,
+                      "querySetToken": pageNumber <= 1 ? maxDateValue(responses) : querySetToken,
+                      "pageNumber": pageNumber,
+                      "numberOfPages": numberOfPages ? numberOfPages : 0,
+                      "numberOfResponsesReturnedByQuery": responses.length,
+                      "numberOfResponsesOnSelectedPage": pageResponses.length,
                       "message": "Completed",
-                      "trace": trace,
                       "sortKey": sortKey,
-                      "result": responses
+                      "trace": trace
                   });
               }
           });
@@ -99,6 +122,17 @@
                 "skip": taken
             });
         }
+    }
+
+    function maxDateValue(list) {
+        var len = list.length
+        var max = "0000";
+        while (len--) {
+            if (list[len].FirstSaveTime > max) {
+                max = list[len].FirstSaveTime;
+            }
+        }
+        return max;
     }
 
     var schwartzianSort = (function () {

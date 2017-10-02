@@ -1,7 +1,7 @@
-﻿using Epi.DataPersistence.DataStructures;
-using Epi.Cloud.Common.BusinessObjects;
-using System.Collections;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Epi.Cloud.Common.BusinessObjects;
+using Epi.DataPersistence.DataStructures;
 
 namespace Epi.Cloud.DataEntryServices.Extensions
 {
@@ -14,5 +14,12 @@ namespace Epi.Cloud.DataEntryServices.Extensions
             surveyResponseBO.ViewId = new Common.Metadata.MetadataAccessor().GetFormDigest(formResponseDetail.FormId).ViewId;
             return surveyResponseBO;
         }
-	}
+
+        public static List<SurveyResponseBO> ToSurveyResponseBOList(this IEnumerable<FormResponseDetail> formResponseDetailList)
+        {
+            var surveyResponseBOList = formResponseDetailList.Select(d => d.ToSurveyResponseBO()).ToList();
+            return surveyResponseBOList;
+        }
+
+    }
 }

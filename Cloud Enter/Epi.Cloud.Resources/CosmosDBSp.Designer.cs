@@ -61,28 +61,6 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function orderBy(filterQuery) {
-        ///    // HTTP error codes sent to our callback funciton by DocDB server.
-        ///    var ErrorCode = {
-        ///        REQUEST_ENTITY_TOO_LARGE: 413,
-        ///    }
-        ///
-        ///    var collection = getContext().getCollection();
-        ///    var collectionLink = collection.getSelfLink();
-        ///    var result = new Array(); 
-        ///    tryQuery({});
-        ///
-        ///    function tryQuery(options) {
-        ///        var isAccepted = (filterQuery &amp;&amp; filterQuery.length) ?
-        ///            collection.queryDocuments(collectionLink, filterQuery, options, call [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string GetAllRecordsBySurveyID {
-            get {
-                return ResourceManager.GetString("GetAllRecordsBySurveyID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to function getGridContent(query, sortKey, isSortAscending, continuationToken, skip) {
         ///    var context = getContext();
         ///    var response = context.getResponse();

@@ -40,10 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BusinessObjects\ResponseGridQueryResultBO.cs" />
     <Compile Include="BusinessObjects\SurveyResponseBO.cs" />
     <Compile Include="Interfaces\IFormSettingsPersistenceFacade.cs" />
     <Compile Include="Interfaces\ISurveyPersistenceFacade.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResponseGridQueryResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Epi.Common.Core\Epi.Common.Core.csproj">

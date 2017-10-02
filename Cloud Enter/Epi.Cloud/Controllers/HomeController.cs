@@ -520,7 +520,7 @@ namespace Epi.Cloud.MVC.Controllers
 
                 SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
 
-                var surveyResponse = formResponseList.SurveyResponseList;//.Skip((pageNumber - 1) * 20).Take(20);
+                var surveyResponse = formResponseList.SurveyResponseList;
                 formResponseList.SurveyResponseList = surveyResponse.ToList();
                 List<ResponseModel> responseList = new List<ResponseModel>();
                 List<ResponseModel> responseListModel = new List<ResponseModel>();
@@ -602,7 +602,7 @@ namespace Epi.Cloud.MVC.Controllers
                 ////}
                 //if (string.IsNullOrEmpty(sort))
                 //{
-                    formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                formResponseInfoModel.ResponsesList = responseList; //.Skip((pageNumber - 1) * 20).Take(20).ToList();
                 //}
 
 
@@ -611,7 +611,7 @@ namespace Epi.Cloud.MVC.Controllers
 
                 //Setting Additional Data
                 formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
-                formResponseInfoModel.PageSize = ReadPageSize();
+                formResponseInfoModel.PageSize = formResponseList.PageSize;
                 formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;
                 formResponseInfoModel.sortfield = sortfield;
                 formResponseInfoModel.sortOrder = sort;
