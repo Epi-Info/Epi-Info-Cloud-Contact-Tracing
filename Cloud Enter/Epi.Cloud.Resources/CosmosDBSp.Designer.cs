@@ -119,8 +119,7 @@ namespace Epi.Cloud.Resources {
         ///    //var inputPosStack = new int[(input.Length + 1) * (pattern.Length + 1)];
         ///    var inputPosStack = [];
         ///
-        ///    // Stack containing pattern positions that should be tested for further matching
-        /// [rest of string was truncated]&quot;;.
+        ///    // Stack containing pattern positions that should be tested for furth [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string udfWildCardCompare {
             get {

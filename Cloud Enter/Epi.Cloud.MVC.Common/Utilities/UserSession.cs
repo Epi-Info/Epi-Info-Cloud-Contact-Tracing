@@ -50,6 +50,7 @@ namespace Epi.Cloud.MVC.Constants
             public const string UsertRole = "UsertRole";
             public const string UserName = "UserName";
             public const string ResponseContext = "ResponseContext";
+            public const string QuerySetToken = "QuerySetToken";
         }
 
         static ConfigurationAttributesHelper AttributeHelper = new ConfigurationAttributesHelper(typeof(UserSession.Key));

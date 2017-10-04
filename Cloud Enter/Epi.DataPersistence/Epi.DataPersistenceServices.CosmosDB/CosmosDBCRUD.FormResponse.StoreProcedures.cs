@@ -48,6 +48,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             public Document[] Result { get; set; }
             public string QuerySetToken { get; set; }
             public int NumberOfResponsesReturnedByQuery { get; set; }
+            public int NumberOfResponsesPerPage { get; set; }
             public int NumberOfResponsesOnSelectedPage { get; set; }
             public int PageNumber { get; set; }
             public int NumberOfPages { get; set; }
@@ -164,6 +165,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 ResponsePropertiesList = formResponseList,
                 QuerySetToken = queryResult.QuerySetToken,
                 NumberOfResponsesReturnedByQuery = queryResult.NumberOfResponsesReturnedByQuery,
+                NumberOfResponsesPerPage = queryResult.NumberOfResponsesPerPage,
                 NumberOfResponsesOnSelectedPage = queryResult.NumberOfResponsesOnSelectedPage,
                 PageNumber = pageNumber,
                 NumberOfPages = queryResult.NumberOfPages

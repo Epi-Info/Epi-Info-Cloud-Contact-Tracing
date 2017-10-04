@@ -391,7 +391,8 @@ namespace Epi.Cloud.DataEntryServices
                 //Query The number of records
                 result.NumberOfResponses = responseGridQueryResultBO.NumberOfResponsesReturnedByQuery;
                 result.NumberOfPages = responseGridQueryResultBO.NumberOfPages;
-                result.PageSize = responseGridQueryResultBO.NumberOfResponsesOnSelectedPage;
+                result.NumberOfResponsesPerPage = responseGridQueryResultBO.NumberOfResponsesPerPage;
+                result.QuerySetToken = responseGridQueryResultBO.QuerySetToken;
                 
                 var surveyResponseList = responseGridQueryResultBO.SurveyResponseBOList;
                 result.SurveyResponseList = surveyResponseList.ToSurveyAnswerDTOList();

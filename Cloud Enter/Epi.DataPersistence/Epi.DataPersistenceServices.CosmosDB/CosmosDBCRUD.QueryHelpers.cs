@@ -27,6 +27,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
         private const string FRP_RecStatus = FRP_ + "RecStatus";
         private const string FRP_ResponseQA_ = FRP_ + "ResponseQA.";
         private const string FRP_UserOrgId = FRP_ + "UserOrgId";
+        private const string FRP_FirstSaveTime = FRP_ + "FirstSaveTime";
 
         private const string udf_wildCardCompare = "udf.WildCardCompare";
         private const string udf_sharingRules = "udf.SharingRules";
@@ -150,7 +151,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
         private string GenerateResponseGridQuery(string collectionAlias, string formId, List<string> formPoperties, 
             string[] columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers,
-            ResponseAccessRuleContext responseAccessRuleContext)
+            ResponseAccessRuleContext responseAccessRuleContext, string querySetToken)
         {
             string SelectColumnList = string.Empty;
 
@@ -167,6 +168,9 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 var searchQualifierList = searchQualifiers.Select(x => AssembleSearchQuailifier(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
 
                 var expression = collectionAlias + "." + FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
+
+                if (!string.IsNullOrWhiteSpace(querySetToken)) expression += AND + collectionAlias + "." + FRP_FirstSaveTime + LE + querySetToken;
+
                 var query = SELECT
                                + SelectFormPoperties + ","
                                + AssembleSelect(collectionAlias, "_ts,")
@@ -189,7 +193,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
-                               + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
+                               + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted)
+                               + (!string.IsNullOrWhiteSpace(querySetToken) ? And_Expression(FRP_FirstSaveTime, LE, querySetToken) : string.Empty))
                                + ORDER_BY
                                + AssembleSelect(collectionAlias, "_ts")
                                + DESC;

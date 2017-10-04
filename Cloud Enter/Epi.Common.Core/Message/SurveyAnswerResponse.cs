@@ -30,10 +30,12 @@ namespace Epi.Cloud.Common.Message
         /// </summary>
         public int NumberOfPages { get; set; }
 
+        public string QuerySetToken { get; set; }
+
         /// <summary>
         /// Number of Records per page
         /// </summary>
-        public int PageSize { get; set; }
+        public int NumberOfResponsesPerPage { get; set; }
 
         public int NumberOfResponses { get; set; }
 

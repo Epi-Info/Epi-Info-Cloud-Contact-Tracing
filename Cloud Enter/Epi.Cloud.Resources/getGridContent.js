@@ -79,12 +79,15 @@
                   // If the response size limit reached; run the script again with the nextContinuationToken as a script parameter.
                   response.setBody({
                       "result": responses,
-                      "message": "Response size limit reached.",
-                      "trace": trace,
-                      "querySetToken": querySetToken,
                       "continuationToken": currentContinuationToken,
-
-                      "skip": taken
+                      "skip": taken,
+                      "querySetToken": pageNumber <= 1 ? maxDateValue(responses) : querySetToken,
+                      "sortKey": sortKey,
+                      "pageNumber": pageNumber,
+                      "numberOfResponsesReturnedByQuery": responses.length,
+                      "numberOfResponsesPerPage": responsesPerPage,
+                      "message": "Response size limit reached.",
+                      "trace": trace
                   });
               }
               else {
@@ -102,12 +105,13 @@
                   response.setBody({
                       "result": pageResponses ? pageResponses : responses,
                       "querySetToken": pageNumber <= 1 ? maxDateValue(responses) : querySetToken,
+                      "sortKey": sortKey,
                       "pageNumber": pageNumber,
                       "numberOfPages": numberOfPages ? numberOfPages : 0,
                       "numberOfResponsesReturnedByQuery": responses.length,
+                      "numberOfResponsesPerPage": responsesPerPage,
                       "numberOfResponsesOnSelectedPage": pageResponses.length,
                       "message": "Completed",
-                      "sortKey": sortKey,
                       "trace": trace
                   });
               }

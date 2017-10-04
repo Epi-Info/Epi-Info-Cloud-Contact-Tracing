@@ -472,6 +472,11 @@ namespace Epi.Cloud.MVC.Controllers
                 // Set User Role 
                 SetUserRole(userId, orgid);
 
+                // If this is the first grid query or the user elects to return to page 1 then
+                // clear the QuerySetToken which will retrieve a new grid response set which may
+                // include newly created records.
+                if (pageNumber <= 1) RemoveSessionValue(UserSession.Key.QuerySetToken);
+
                 var responseContext = InitializeResponseContext(formId: surveyId);
 
                 SurveyAnswerRequest formResponseReq = new SurveyAnswerRequest { ResponseContext = responseContext };
@@ -516,103 +521,23 @@ namespace Epi.Cloud.MVC.Controllers
                 formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
                 formResponseReq.Criteria.SearchDigestList = ToSearchDigestList(formResponseInfoModel.SearchModel, /*FromURL*/surveyId);
+                formResponseReq.Criteria.QuerySetToken = GetStringSessionValue(UserSession.Key.QuerySetToken, null);
 
+                SurveyAnswerResponse surveyAnswerResponse = _surveyFacade.GetFormResponseList(formResponseReq);
 
-                SurveyAnswerResponse formResponseList = _surveyFacade.GetFormResponseList(formResponseReq);
+                // Remember the QuerySetToken to assure the same set of responses is queried if the user
+                // navigates to some other page in the response grid.
+                SetSessionValue(UserSession.Key.QuerySetToken, surveyAnswerResponse.QuerySetToken);
 
-                var surveyResponse = formResponseList.SurveyResponseList;
-                formResponseList.SurveyResponseList = surveyResponse.ToList();
-                List<ResponseModel> responseList = new List<ResponseModel>();
-                List<ResponseModel> responseListModel = new List<ResponseModel>();
-                Dictionary<string, string> dictory = new Dictionary<string, string>();
-                List<Dictionary<string, string>> dictoryList = new List<Dictionary<string, string>>();
-                foreach (var item in formResponseList.SurveyResponseList)
-                {
-                    if (item.SqlData != null)
-                    {
-                        responseList.Add(ConvertRowToModel(item, _columns, "GlobalRecordId"));
-                    }
-                    else
-                    {
-                        responseList.Add(item.ToResponseModel(_columns));
-                    }
-
-                }
-
-                //string sortFieldcolumn = string.Empty;
-                //if (!string.IsNullOrEmpty(sortfield))
-                //{
-                //    foreach (var column in _columns)
-                //    {
-                //        if (column.Value.ToLower() == sortfield)
-                //        {
-                //            sortFieldcolumn = "Column" + column.Key;
-                //        }
-                //    }
-                //}
-
-                //var sortList = responseList;
-                //sortfield = sortfield.ToLower();
-                //if (!string.IsNullOrEmpty(sortfield))
-                //{
-                //    if (sort != "ASC")
-                //    {
-                //        switch (sortFieldcolumn)
-                //        {
-                //            case "Column1":
-                //                responseListModel = sortList.OrderByDescending(x => x.Column1).ToList();
-                //                break;
-                //            case "Column2":
-                //                responseListModel = sortList.OrderByDescending(x => x.Column2).ToList();
-                //                break;
-                //            case "Column3":
-                //                responseListModel = sortList.OrderByDescending(x => x.Column3).ToList();
-                //                break;
-                //            case "Column4":
-                //                responseListModel = sortList.OrderByDescending(x => x.Column4).ToList();
-                //                break;
-                //            case "Column5":
-                //                responseListModel = sortList.OrderByDescending(x => x.Column5).ToList();
-                //                break;
-                //        }
-                //    }
-                //    else
-                //    {
-                //        switch (sortFieldcolumn)
-                //        {
-                //            case "Column1":
-                //                responseListModel = sortList.OrderBy(x => x.Column1).ToList();
-                //                break;
-                //            case "Column2":
-                //                responseListModel = sortList.OrderBy(x => x.Column2).ToList();
-                //                break;
-                //            case "Column3":
-                //                responseListModel = sortList.OrderBy(x => x.Column3).ToList();
-                //                break;
-                //            case "Column4":
-                //                responseListModel = sortList.OrderBy(x => x.Column4).ToList();
-                //                break;
-                //            case "Column5":
-                //                responseListModel = sortList.OrderBy(x => x.Column5).ToList();
-                //                break;
-                //        }
-                //    }
-                //    formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
-
-                ////}
-                //if (string.IsNullOrEmpty(sort))
-                //{
-                formResponseInfoModel.ResponsesList = responseList; //.Skip((pageNumber - 1) * 20).Take(20).ToList();
-                //}
-
+                formResponseInfoModel.ResponsesList = surveyAnswerResponse.SurveyResponseList.Select(r => r.ToResponseModel(_columns)).ToList();
 
                 //Setting Form Info 
-                formResponseInfoModel.FormInfoModel = formResponseList.FormInfo.ToFormInfoModel();
+                formResponseInfoModel.FormInfoModel = surveyAnswerResponse.FormInfo.ToFormInfoModel();
 
                 //Setting Additional Data
-                formResponseInfoModel.NumberOfPages = formResponseList.NumberOfPages;
-                formResponseInfoModel.PageSize = formResponseList.PageSize;
-                formResponseInfoModel.NumberOfResponses = formResponseList.NumberOfResponses;
+                formResponseInfoModel.NumberOfPages = surveyAnswerResponse.NumberOfPages;
+                formResponseInfoModel.PageSize = surveyAnswerResponse.NumberOfResponsesPerPage;
+                formResponseInfoModel.NumberOfResponses = surveyAnswerResponse.NumberOfResponses;
                 formResponseInfoModel.sortfield = sortfield;
                 formResponseInfoModel.sortOrder = sort;
                 formResponseInfoModel.CurrentPage = pageNumber;

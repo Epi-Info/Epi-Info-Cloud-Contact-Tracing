@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GetGridContent.js" />
+    <Content Include="SharingRules.js" />
     <Content Include="WildCardCompare.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

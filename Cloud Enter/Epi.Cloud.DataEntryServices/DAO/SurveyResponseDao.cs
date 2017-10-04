@@ -257,7 +257,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     DisplayPageSize = criteria.GridPageSize,
                     DisplayPageNumber = criteria.PageNumber,
                     SortByField = criteria.Sortfield,
-                    IsSortedAscending = criteria.SortOrderIsAscending
+                    IsSortedAscending = criteria.SortOrderIsAscending,
+                    QuerySetToken = criteria.QuerySetToken
                 };
 
                 var responseGridQueryResult = _surveyPersistenceFacade.GetAllResponsesWithCriteria(responseGridQueryCriteria);
@@ -266,6 +267,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     SurveyResponseBOList = responseGridQueryResult.FormResponseDetailList.ToSurveyResponseBOList(),
                     QuerySetToken = responseGridQueryResult.QuerySetToken,
                     NumberOfResponsesReturnedByQuery = responseGridQueryResult.NumberOfResponsesReturnedByQuery,
+                    NumberOfResponsesPerPage = responseGridQueryResult.NumberOfResponsesPerPage,
                     NumberOfResponsesOnSelectedPage = responseGridQueryResult.NumberOfResponsesOnSelectedPage,
                     PageNumber = responseGridQueryResult.PageNumber,
                     NumberOfPages = responseGridQueryResult.NumberOfPages

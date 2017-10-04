@@ -537,7 +537,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 query = GenerateResponseGridQuery(collectionAlias, responseContext.FormId, formProperties,
                     responseGridQueryCriteria.TrueCaseFieldNames,
                     responseGridQueryCriteria.SearchFieldNameValueQualifiers,
-                    accessRuleContext != null && accessRuleContext.IsSharable ? accessRuleContext : null);
+                    accessRuleContext != null && accessRuleContext.IsSharable ? accessRuleContext : null,
+                    responseGridQueryCriteria.QuerySetToken);
 
                 var responseGridQueryPropertiesResult = GetAllRootResponses(responseGridQueryCriteria,
                     query, responseGridQueryCriteria.DisplayPageNumber, responseGridQueryCriteria.DisplayPageSize,

@@ -78,6 +78,8 @@ namespace Epi.Cloud.Common.Criteria
 
         public string SearchCriteria { get; set; }
 
+        public string QuerySetToken { get; set; }
+
         public bool IsSqlProject { get; set; }
         public bool IsDeleteMode { get; set; }
         public bool IsDraftMode { get; set; }

@@ -92,6 +92,7 @@ namespace Epi.PersistenceServices.CosmosDB
         public List<FormResponseProperties> ResponsePropertiesList { get; set; }
         public string QuerySetToken { get; set; }
         public int NumberOfResponsesReturnedByQuery { get; set; }
+        public int NumberOfResponsesPerPage { get; set; }
         public int NumberOfResponsesOnSelectedPage { get; set; }
         public int PageNumber { get; set; }
         public int NumberOfPages { get; set; }

@@ -181,6 +181,7 @@ namespace Epi.PersistenceServices.CosmosDB
                 FormResponseDetailList = responseGridQueryPropertiesResult.ResponsePropertiesList.ToFormResponseDetailList(),
                 QuerySetToken = responseGridQueryPropertiesResult.QuerySetToken,
                 NumberOfResponsesReturnedByQuery = responseGridQueryPropertiesResult.NumberOfResponsesReturnedByQuery,
+                NumberOfResponsesPerPage = responseGridQueryPropertiesResult.NumberOfResponsesPerPage,
                 NumberOfResponsesOnSelectedPage = responseGridQueryPropertiesResult.NumberOfResponsesOnSelectedPage,
                 PageNumber = responseGridQueryPropertiesResult.PageNumber,
                 NumberOfPages = responseGridQueryPropertiesResult.NumberOfPages
