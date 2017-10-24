@@ -118,43 +118,47 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="getGridContent" xml:space="preserve">
-    <value>function getGridContent(query, sortKey, isSortAscending, continuationToken, skip) {
+    <value>function getGridContent(query, sortKey, isSortAscending, pageNumber, responsesPerPage, querySetToken, continuationToken="", skip=0, isCallerPostProcessing) {
     var context = getContext();
     var response = context.getResponse();
     var collection = context.getCollection();
     var collectionLink = collection.getSelfLink();
     var responses = [];
-    var nextContinuationToken;
-    var currentContinuationToken;
     var responseSize = 0;
-    var isMaxSizeReached = false;
+    var numberOfQueries = 0;
 
     if (!sortKey) {
-        sortkey = "_ts";
+        sortkey = "_DateCreated";
         isSortAscending = false;
     }
 
-    var trace = "query:" + query + ", continuationToken:" + continuationToken + ", skip:" + skip + ", sortKey:" + sortKey + ", isSortAscending:" + isSortAscending;
-    
+    var trace = "query:" + query
+        + ", sortKey:" + sortKey
+        + ", isSortAscending:" + isSortAscending
+        + ", continuationToken:" + continuationToken
+        + ", skip:" + skip;
+
     getNodes(continuationToken, skip);
 
     // continuationToken identifies the continuation point.
-    // skip is then number of documents that were already returned from the continuation point.
-    function getNodes(continuationToken, skip) {
-        // trace = trace.concat(", getNodes");
+    // skip is then number of documents that were already
+    // returned from the previous continuation point.
+    function getNodes(continuationToken/*, skip*/) {
+        trace += ", getNodes";
+
         // Tune the pageSize to fit your dataset.
         var requestOptions =
         {
             continuation: continuationToken,
-            pageSize: 100
-        };
+            pageSize: 500
+		};
 
         // The number of documents taken from the current continuation block
         var taken = 0;
 
         var accepted = collection.queryDocuments(collectionLink, query, requestOptions,
           function (err, documentsRead, responseOptions) {
-              trace = trace.concat(",queryDocments");
+              trace += ",queryDocments";
               currentContinuationToken = requestOptions.continuation;
               for(var thisResponse of documentsRead)
               {
@@ -164,113 +168,122 @@
                   else {
                       // The size of the current query response page.
                       var thisResponseSize = JSON.stringify(thisResponse).length;
+                      responseSize += thisResponseSize;
 
-                      // DocumentDB has a response size limit of 1 MB.
-                      if (responseSize + thisResponseSize &lt; 1024 * 1024) {
-						  // Append response to responses.
-                          responses = responses.concat(thisResponse);
+                      // Append response to responses.
+                      responses = responses.concat(thisResponse);
 
-                          // Keep track of the total response size.
-                          responseSize += thisResponseSize;
-                          taken += 1;
-                      }
-                      else {
-                          isMaxSizeReached = true;
-                          break;
-                      }
+                     // Keep track of the total response size.
+                     taken += 1;
                   }
               }
-              trace = trace.concat(",taken:"+taken);
+              trace += ",taken:" + taken;
 
-              if (!isMaxSizeReached &amp;&amp; responseOptions.continuation) {
-                  // If max response size has not been reached and there is a continuation token... 
-                  // Run the query again to get the next page of results
-                  nextContinuationToken = responseOptions.continuation;
-                  getNodes(responseOptions.continuation);
+              if (responseOptions.continuation) {
+                 getNodes(responseOptions.continuation);
               }
-              else if (isMaxSizeReached) {
-                  // If the response size limit reached; run the script again with the nextContinuationToken as a script parameter.
-                  response.setBody({
-                      "message": "Response size limit reached.",
-                      "trace": trace,
-                      "continuationToken": currentContinuationToken,
-                      "result": responses,
-                      "skip": taken
-                  });
+              if (!isCallerPostProcessing)
+              {
+                // If there is no continutation token, we are done. Return the response.
+                responses = schwartzianSort(responses, sortKey);
+                var numberOfPages;
+                var pageResponses;
+                if (pageNumber &gt; 0 &amp;&amp; responsesPerPage &gt; 0) {
+                    numberOfPages = Math.ceil(responses.length / responsesPerPage);
+                    var first = pageNumber * responsesPerPage - responsesPerPage;
+                    var last = pageNumber * responsesPerPage;
+                    pageResponses = responses.slice(first, last);
+                }
               }
-              else {
-                  // If there is no continutation token, we are done. Return the response.
-				  responses = schwartzianSort(responses, sortKey);
-                  response.setBody({ 
-                        "message" : "Completed",
-                        "trace": trace,
-                        "sortKey": sortKey,
-                        "result": responses });
-              }
+              pageNumber = pageNumber ? pageNumber : 0
+              response.setBody({
+                  "result": pageResponses ? pageResponses : responses,
+                  "querySetToken": pageNumber &lt;= 1 ? maxDateValue(responses) : querySetToken,
+                  "sortKey": sortKey,
+                  "pageNumber": pageNumber,
+                  "numberOfPages": numberOfPages ? numberOfPages : 0,
+                  "numberOfResponsesReturnedByQuery": responses.length,
+                  "numberOfResponsesPerPage": responsesPerPage,
+                  "numberOfResponsesOnSelectedPage": pageResponses.length,
+				  "totalSizeOfResponsesReturnedByQuery": responseSize,
+				  "totalSizeOfResponsesOnSelectedPage": JSON.stringify(pageResponses).length,
+                  "message": "Completed",
+                  "trace": trace
+              });
           });
 
         if (!accepted) {
             // If the execution limit reached; run the script again with the nextContinuationToken as a script parameter.
             response.setBody({
                 "message": "Execution limit reached.",
-                "continuationToken": nextContinuationToken,
+                "continuationToken": requestOptions.continuation,
                 "result": responses,
                 "skip": taken
             });
         }
     }
-	
-	var schwartzianSort = (function () {
-		var decorate = function (sortKey) {
-			return function (item) {
-				switch (sortKey) {
-                    case "_ts":
-						return [item["_ts"](), item];
-					case "_UserEmail":
-						return [item["UserName"](), item];
-					case "IsDraftMode":
-					case "_Mode":
-						return [item.IsDraftMode, item];
-					case "_DateCreated":
-						return [item.FirstSaveTime, item];
-					case "_DateUpdated":
-						return [item.LastSaveTime, item];
-					default:
-						return [item.ResponseQA[sortKey] ? item.ResponseQA[sortKey].toUpperCase() : "", item];
-				}
-			};
-		};
 
-		var compare = function (sortFunction) {
-			sortFunction = sortFunction || defaultSortFunction;
+    function maxDateValue(list) {
+        var len = list.length
+        var max = "0000";
+        while (len--) {
+            if (list[len].FirstSaveTime &gt; max) {
+                max = list[len].FirstSaveTime;
+            }
+        }
+        return max;
+    }
 
-			return function (a, b) {
-				return sortFunction(a[0], b[0]);
-			};
-		};
+    var schwartzianSort = (function () {
+        var decorate = function (sortKey) {
+            return function (item) {
+                switch (sortKey) {
+                    case "_UserEmail":
+                        return [item["UserName"](), item];
+                    case "IsDraftMode":
+                    case "_Mode":
+                        return [item.IsDraftMode, item];
+                    case "_DateCreated":
+                        return [item.FirstSaveTime, item];
+                    case "_DateUpdated":
+                        return [item["_ts"](), item];
+                        //return [item.LastSaveTime, item];
+                    default:
+                        return [item.ResponseQA[sortKey] ? item.ResponseQA[sortKey].toUpperCase() : "", item];
+                }
+            };
+        };
 
-		var defaultSortFunction = function (a, b) {
+        var compare = function (sortFunction) {
+            sortFunction = sortFunction || defaultSortFunction;
+
+            return function (a, b) {
+                return sortFunction(a[0], b[0]);
+            };
+        };
+
+        var defaultSortFunction = function (a, b) {
             if (isSortAscending) {
-               	if (a &lt; b) return -1;
-			    if (a &gt; b) return 1;
+                if (a &lt; b) return -1;
+                if (a &gt; b) return 1;
             }
             else {
-                if (a &lt; b) return 1;
+                if (a &lt; b) return 1; 0
                 if (a &gt; b) return -1;
             }
-			return 0;
-		};
+            return 0;
+        };
 
-		var undecorate = function (item) {
-			return item[1];
-		};
+        var undecorate = function (item) {
+            return item[1];
+        };
 
-		return function (items, sortKey, sortFunction) {
-			return items.map(decorate(sortKey))
+        return function (items, sortKey, sortFunction) {
+            return items.map(decorate(sortKey))
 						.sort(compare(sortFunction))
 						.map(undecorate);
-		};
-	})();
+        };
+    })();
 }</value>
   </data>
   <data name="udfSharingRules" xml:space="preserve">

@@ -178,10 +178,10 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, searchQualifierList)
-                               + expression
-                               + ORDER_BY
-                               + AssembleSelect(collectionAlias, "_ts")
-                               + DESC;
+                               + expression;
+                               //+ ORDER_BY
+                               //+ AssembleSelect(collectionAlias, "_ts")
+                               //+ DESC;
                 return query;
             }
             else
@@ -194,10 +194,10 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
                                + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted)
-                               + (!string.IsNullOrWhiteSpace(querySetToken) ? And_Expression(FRP_FirstSaveTime, LE, querySetToken) : string.Empty))
-                               + ORDER_BY
-                               + AssembleSelect(collectionAlias, "_ts")
-                               + DESC;
+                               + (!string.IsNullOrWhiteSpace(querySetToken) ? And_Expression(FRP_FirstSaveTime, LE, querySetToken) : string.Empty));
+                               //+ ORDER_BY
+                               //+ AssembleSelect(collectionAlias, "_ts")
+                               //+ DESC;
 
                 return query;
             }

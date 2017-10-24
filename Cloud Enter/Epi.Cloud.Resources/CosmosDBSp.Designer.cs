@@ -61,23 +61,21 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function getGridContent(query, sortKey, isSortAscending, continuationToken, skip) {
+        ///   Looks up a localized string similar to function getGridContent(query, sortKey, isSortAscending, pageNumber, responsesPerPage, querySetToken, continuationToken=&quot;&quot;, skip=0, isCallerPostProcessing) {
         ///    var context = getContext();
         ///    var response = context.getResponse();
         ///    var collection = context.getCollection();
         ///    var collectionLink = collection.getSelfLink();
         ///    var responses = [];
-        ///    var nextContinuationToken;
-        ///    var currentContinuationToken;
         ///    var responseSize = 0;
-        ///    var isMaxSizeReached = false;
+        ///    var numberOfQueries = 0;
         ///
         ///    if (!sortKey) {
-        ///        sortkey = &quot;_ts&quot;;
+        ///        sortkey = &quot;_DateCreated&quot;;
         ///        isSortAscending = false;
         ///    }
         ///
-        ///    var trace = &quot;query [rest of string was truncated]&quot;;.
+        ///    var t [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string getGridContent {
             get {

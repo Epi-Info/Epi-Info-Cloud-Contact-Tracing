@@ -159,7 +159,7 @@ namespace Epi.Cloud.DataEntryServices
         {
             bool result = false;
             var responseContext = surveyResponseBO.ToResponseContext();
-            _surveyResponseDao.UpdateRecordStatus(responseContext, surveyResponseBO.Status, RecordStatusChangeReason.DeleteResponse);
+            _surveyResponseDao.UpdateRecordStatus(responseContext, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
             result = true;
 
             return result;

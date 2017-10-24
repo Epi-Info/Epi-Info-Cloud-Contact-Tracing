@@ -184,7 +184,8 @@ namespace Epi.PersistenceServices.CosmosDB
                 NumberOfResponsesPerPage = responseGridQueryPropertiesResult.NumberOfResponsesPerPage,
                 NumberOfResponsesOnSelectedPage = responseGridQueryPropertiesResult.NumberOfResponsesOnSelectedPage,
                 PageNumber = responseGridQueryPropertiesResult.PageNumber,
-                NumberOfPages = responseGridQueryPropertiesResult.NumberOfPages
+                NumberOfPages = responseGridQueryPropertiesResult.NumberOfPages,
+                PostProcessingWasRequired = responseGridQueryPropertiesResult.IsPostProcessingRequired
             };
             return result;
         }

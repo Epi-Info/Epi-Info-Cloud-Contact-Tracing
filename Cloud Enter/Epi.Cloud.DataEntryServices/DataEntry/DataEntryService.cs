@@ -348,7 +348,6 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
                 foreach (var response in surveyAnswerRequest.SurveyAnswerList)
                 {
-
                     if (surveyAnswerRequest.Criteria.IsEditMode)
                     {
                         surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.Restore);

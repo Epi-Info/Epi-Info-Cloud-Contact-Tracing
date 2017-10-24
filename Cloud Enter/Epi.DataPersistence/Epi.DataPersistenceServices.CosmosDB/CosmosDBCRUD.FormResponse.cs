@@ -527,8 +527,6 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 string query;
                 var collectionAlias = rootFormName;
                 var rootFormCollectionUri = GetCollectionUri(rootFormName);
-                // Set some common query options
-                FeedOptions queryOptions = new FeedOptions { MaxItemCount = 1234, };
                 List<string> formProperties = new List<string>
                 {
                     "FormId","FirstSaveTime","LastSaveTime","ResponseId","UserName","IsDraftMode"

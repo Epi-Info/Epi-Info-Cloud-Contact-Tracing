@@ -144,10 +144,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="StoredProcedures\GetAllRecordsBySurveyID.js" />
-    <Content Include="StoredProcedures\OrderBy.js" />
-    <Content Include="StoredProcedures\SharingRules.js" />
-    <Content Include="StoredProcedures\WildCardCompare.js" />
+    <Content Include="StoredProcedures\GetGridContent.v2.js" />
+    <Content Include="StoredProcedures\GetGridContent.js" />
+    <Content Include="UserDefinedFunctions\SharingRules.js" />
+    <Content Include="UserDefinedFunctions\WildCardCompare.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets" Condition="Exists('..\..\packages\Microsoft.Azure.DocumentDB.1.10.0\build\Microsoft.Azure.DocumentDB.targets')" />

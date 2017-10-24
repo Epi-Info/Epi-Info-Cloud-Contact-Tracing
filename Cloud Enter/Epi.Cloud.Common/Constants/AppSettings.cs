@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using Epi.Common.Configuration;
-using Epi.Common.Attributes;
 
 namespace Epi.Cloud.Common.Constants
 {
@@ -31,6 +30,12 @@ namespace Epi.Cloud.Common.Constants
             #endregion EMail Body Message Text
 
             #region Settings
+
+            [DefaultValue("_DateUpdated")] // _DateCreated, _DateUpdated, _UserEmail, IsDraftMode
+            public const string DefaultSortField = "DefaultSortField";
+
+            [DefaultValue("Descending")] // Ascending, Descending
+            public const string DefaultSortOrder = "DefaultSortOrder";
 
             [DefaultValue(20)]
             public const string ResponsePageSize = "RESPONSE_PAGE_SIZE";

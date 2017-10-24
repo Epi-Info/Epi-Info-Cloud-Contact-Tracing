@@ -270,7 +270,8 @@ namespace Epi.Cloud.DataEntryServices.DAO
                     NumberOfResponsesPerPage = responseGridQueryResult.NumberOfResponsesPerPage,
                     NumberOfResponsesOnSelectedPage = responseGridQueryResult.NumberOfResponsesOnSelectedPage,
                     PageNumber = responseGridQueryResult.PageNumber,
-                    NumberOfPages = responseGridQueryResult.NumberOfPages
+                    NumberOfPages = responseGridQueryResult.NumberOfPages,
+                    PostProcessingWasRequired = responseGridQueryResult.PostProcessingWasRequired
                 };
             }
             catch (Exception ex)
