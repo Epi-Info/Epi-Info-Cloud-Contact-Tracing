@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Epi.Web.Enter.Common.CloudHelper
+﻿namespace Epi.Web.Enter.Common.CloudHelper
 {
     public class CloudWebJobHelper
     {

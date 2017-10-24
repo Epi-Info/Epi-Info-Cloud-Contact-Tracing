@@ -1,19 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Epi.Cloud.CloudOperation;
 using System.Configuration;
+using Epi.Cloud.CloudOperation;
+using Epi.Cloud.Common.Constants;
 using Epi.Cloud.MetadataServices.Common;
 using Epi.Cloud.MetadataServices.Common.MetadataBlobService;
-using Epi.FormMetadata;
-using Epi.Cloud.Common.Constants;
-using Epi.Cloud.CacheServices;
 using Epi.FormMetadata.DataStructures;
-using StackExchange.Redis;
-using Epi.Web.Enter.Common.Security;
-//using Epi.Web.Enter.Common.Security;
 
 namespace Epi.Cloud.PublishMetaData
 {
