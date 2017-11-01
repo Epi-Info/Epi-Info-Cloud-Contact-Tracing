@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.ServiceModel;
-using System.Text;
 using Epi.Web.Enter.Common.DTO;
 using Epi.Web.Enter.Common.Message;
 using Epi.Web.Enter.Common.MessageBase;
@@ -12,11 +9,8 @@ using Epi.Web.Enter.Common.ObjectMapping;
 using Epi.Web.Enter.Common.BusinessObject;
 using Epi.Web.Enter.Common.Exception;
 using Epi.Web.Enter.Common.Constants;
-using Epi.Web.BLL;
 using Epi.Cloud.PublishMetaData;
 using System.Configuration;
-using Epi.Cloud.CacheServices;
-using Epi.Web.Enter.Common.Security;
 
 namespace Epi.Web.WCF.SurveyService
 {
@@ -25,7 +19,6 @@ namespace Epi.Web.WCF.SurveyService
 
         // Session state variables
         private string _accessToken;
-        //private ShoppingCart _shoppingCart;
         private string _userName;
 
         /// <summary>

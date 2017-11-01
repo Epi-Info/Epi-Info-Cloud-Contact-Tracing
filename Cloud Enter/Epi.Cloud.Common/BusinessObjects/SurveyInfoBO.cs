@@ -30,10 +30,6 @@ namespace Epi.Cloud.Common.BusinessObjects
 
 		public DateTime DateCreated { get; set; }
 
-        public bool IsDraftMode { get; set; }
-
-        public bool IsShareable { get; set; }
-
         public DateTime StartDate { get; set; }
 
         public string ParentFormId { get; set; }
@@ -42,11 +38,15 @@ namespace Epi.Cloud.Common.BusinessObjects
 
         public int OwnerId { get; set; }
 
-        public bool IsSqlProject { get; set; }
-
         public string DBConnectionString { get; set; }
 
+        public bool IsShareable { get; set; }
+
         public bool IsShared { get; set; }
+
+        public bool IsSqlProject { get; set; }
+
+        public bool IsDraftMode { get; set; }
 
         public bool HasDraftModeData { get; set; }
 	}

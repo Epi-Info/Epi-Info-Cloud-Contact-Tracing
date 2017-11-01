@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
 
 namespace Epi.Web.Enter.Common.BusinessObject
 {
-
     public class SurveyRequestResultBO  
     {
         bool isPulished;
