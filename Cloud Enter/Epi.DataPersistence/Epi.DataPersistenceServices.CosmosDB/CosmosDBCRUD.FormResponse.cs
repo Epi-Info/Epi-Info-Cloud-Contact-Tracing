@@ -465,8 +465,6 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return 0;
         }
 
-
-
         private FormResponseResource ReadRootResponseResource(IResponseContext responseContext, bool includeDeleted)
         {
             try

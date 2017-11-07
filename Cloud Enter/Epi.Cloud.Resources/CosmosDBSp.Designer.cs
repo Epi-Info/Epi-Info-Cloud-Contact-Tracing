@@ -105,19 +105,17 @@ namespace Epi.Cloud.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to function WildCardCompare(input, pattern, singleWildcard = &apos;?&apos;, multipleWildcard = &apos;*&apos;)
-        ///{
-        ///    input = input.toLowerCase();
-        ///    pattern = pattern.toLowerCase();
+        ///   Looks up a localized string similar to function WildCardCompare(input1, pattern1, input2, pattern2, input3, pattern3, input4, pattern4, input5, pattern5) {
+        ///    var singleWildcard = &apos;?&apos;;
+        ///    var multipleWildcard = &apos;*&apos;;
         ///
-        ///    var inputLength = input.length;
-        ///    var patternLength = pattern.length;
+        ///    var inputList = [];
+        ///    var patternList = [];
         ///
-        ///    // Stack containing input positions that should be tested for further matching
-        ///    //var inputPosStack = new int[(input.Length + 1) * (pattern.Length + 1)];
-        ///    var inputPosStack = [];
-        ///
-        ///    // Stack containing pattern positions that should be tested for furth [rest of string was truncated]&quot;;.
+        ///    if (pattern1) inputList.push(input1); patternList.push(pattern1);
+        ///    if (pattern2) inputList.push(input2); patternList.push(pattern2);
+        ///    if (pattern3) inputList.push(input3); patternList.push(pattern3);
+        ///    if (pattern4) inputList.push(input4); patternList.push(pa [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string udfWildCardCompare {
             get {

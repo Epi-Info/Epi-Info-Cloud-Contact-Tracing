@@ -20,7 +20,6 @@ namespace Epi.DataPersistenceServices.CosmosDB
         private const string FROM = " FROM ";
         private const string WHERE = " WHERE ";
         private const string AND = " AND ";
-        private const string OR = " OR ";
         private const string Alias = "`@`";
 
         private const string FRP_ = "FormResponseProperties.";
@@ -76,7 +75,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return where;
         }
 
-        private static string Expression(string left, string relational_operator, object right, string and_or = null)
+        private static string Expression(string left, string relational_operator, object right, string and = null)
         {
             string expression;
 
@@ -87,12 +86,18 @@ namespace Epi.DataPersistenceServices.CosmosDB
             else
             {
                 if (right is string == false)
-                    expression = string.Format("{0}.{1} {2} {3}", Alias, left, relational_operator, right.ToString());
+                    expression = string.Format("{0}.{1} {2} {3}", Alias, left, relational_operator, right);
+                else if (left.Contains(FRP_ResponseQA_))
+                {
+                    expression = string.Format("Lower({0}.{1}) {2} Lower('{3}')", Alias, left, relational_operator, right);
+                }
                 else
-                    expression = string.Format("{0}.{1} {2} {3}", Alias, left, relational_operator, "'" + right.ToString() + "'");
+                {
+                    expression = string.Format("{0}.{1} {2} '{3}'", Alias, left, relational_operator, right);
+                }
             }
 
-            return and_or == null ? expression : and_or + expression;
+            return and == null ? expression : and + expression;
         }
 
         private static string ExpressionWithFunction(string left, string relational_operator, object right, string function)
@@ -115,20 +120,6 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return AND + expression;
         }
 
-        private static string Or_Expression(string left, string relational_operator, object right, string function)
-        {
-            var expression = function == null
-                ? Expression(left, relational_operator, right)
-                : ExpressionWithFunction(left, relational_operator, right, function);
-            return OR + expression;
-        }
-
-        private static string Or_Expression(string left, string relational_operator, object right, bool excludeExpression = false)
-        {
-            var expression = excludeExpression ? string.Empty : Expression(left, relational_operator, right, OR);
-            return expression;
-        }
-
         private static string And_SearchExpressions(KeyValuePair<FieldDigest, string>[] searchQualifiers)
         {
             string searchExpression = string.Empty;
@@ -149,11 +140,24 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return string.Format("LOWER({0})", argument);
         }
 
+        private class WildCardQualifier
+        {
+            public WildCardQualifier(string fieldName, string fieldPattern)
+            {
+                FieldName = fieldName;
+                FieldPattern = fieldPattern;
+            }
+            public string FieldName;
+            public string FieldPattern;
+        }
+
         private string GenerateResponseGridQuery(string collectionAlias, string formId, List<string> formPoperties, 
             string[] columnlist, KeyValuePair<FieldDigest, string>[] searchQualifiers,
             ResponseAccessRuleContext responseAccessRuleContext, string querySetToken)
         {
             string SelectColumnList = string.Empty;
+
+            List<WildCardQualifier> wildCardQualifiers = new List<WildCardQualifier>();
 
             var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
 
@@ -163,56 +167,69 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 SelectColumnList = AssembleParentQASelect(collectionAlias, columnlist);
             }
 
+            string query = null;
+
             if (searchQualifiers != null && searchQualifiers.Length > 0)
             {
-                var searchQualifierList = searchQualifiers.Select(x => AssembleSearchQuailifier(collectionAlias, x.Key.FieldName, x.Value) + AND).ToArray();
+                var searchQualifierList = searchQualifiers.Select(x => AssembleSearchQuailifier(collectionAlias, x.Key.FieldName, x.Value, wildCardQualifiers)).Where(x => x != null).ToList();
+                var wildCardSearchQualifier = AssembleWildCardSearchQualifier(collectionAlias, wildCardQualifiers);
+                if (wildCardSearchQualifier != null) searchQualifierList.Add(wildCardSearchQualifier + AND);
 
-                var expression = collectionAlias + "." + FRP_ + "FormId" + EQ + "\"" + formId + "\"" + AND + collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
+                var expression = collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
 
                 if (!string.IsNullOrWhiteSpace(querySetToken)) expression += AND + collectionAlias + "." + FRP_FirstSaveTime + LE + querySetToken;
 
-                var query = SELECT
+                query = SELECT
                                + SelectFormPoperties + ","
                                + AssembleSelect(collectionAlias, "_ts,")
                                + SelectColumnList
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
-                               + AssembleWhere(collectionAlias, searchQualifierList)
+                               + AssembleWhere(collectionAlias, searchQualifierList.ToArray())
                                + expression;
                                //+ ORDER_BY
                                //+ AssembleSelect(collectionAlias, "_ts")
                                //+ DESC;
-                return query;
             }
             else
             {
-                var query = SELECT
+                query = SELECT
                                + SelectFormPoperties + ","
                                + AssembleSelect(collectionAlias, "_ts,")
                                + SelectColumnList
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
-                               + AssembleWhere(collectionAlias, Expression(FRP_ + "FormId", EQ, formId)
-                               + And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted)
+                               + AssembleWhere(collectionAlias, Expression(FRP_RecStatus, NE, RecordStatus.Deleted)
                                + (!string.IsNullOrWhiteSpace(querySetToken) ? And_Expression(FRP_FirstSaveTime, LE, querySetToken) : string.Empty));
                                //+ ORDER_BY
                                //+ AssembleSelect(collectionAlias, "_ts")
                                //+ DESC;
 
-                return query;
             }
+
+            return query;
         }
 
-        private string AssembleSearchQuailifier(string collectionAlias, string fieldName, string fieldValue)
+        private string AssembleSearchQuailifier(string collectionAlias, string fieldName, string fieldValue, List<WildCardQualifier> wildCardQualifiers)
         {
-            string qualifier;
+            string qualifier = null ;
             if (fieldValue.Contains('*') || fieldValue.Contains('?'))
             {
-                qualifier = udf_wildCardCompare + "(" + collectionAlias + "." + FRP_ResponseQA_ + fieldName + "," + "\"" + fieldValue + "\"" + ")";
+                wildCardQualifiers.Add(new WildCardQualifier(fieldName, fieldValue));
             }
             else
             {
-                qualifier = collectionAlias + "." + FRP_ResponseQA_ + fieldName + EQ + '"' + fieldValue + '"';
+                qualifier = Expression(FRP_ResponseQA_ + fieldName, EQ, fieldValue) + AND;
+            }
+            return qualifier;
+        }
+
+        private string AssembleWildCardSearchQualifier(string collectionAlias, List<WildCardQualifier> wildCardQualifiers)
+        {
+            string qualifier = null;
+            if (wildCardQualifiers.Count() > 0)
+            {
+                qualifier = udf_wildCardCompare + "(" + string.Join(",", wildCardQualifiers.Select(q => collectionAlias + "." + FRP_ResponseQA_ + q.FieldName + "," + "\"" + q.FieldPattern + "\"").ToArray() ) + ")";
             }
             return qualifier;
         }
