@@ -66,7 +66,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                     + AssembleSelect(rootFormCollectionName, "*")
                     + FROM + rootFormCollectionName
                     + WHERE
-                    + AssembleWhere(rootFormCollectionName, Expression("id", EQ, rootResponseId),
+                    + AssembleExpressions(rootFormCollectionName, Expression("id", EQ, rootResponseId),
                                                             And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted))
                     , queryOptions);
 
@@ -441,6 +441,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             var rootFormId = GetRootFormId(formId);
             var rootFormName = GetRootFormName(formId);
             Uri rootFormCollectionUri = GetCollectionUri(rootFormName);
+            var collectionAlias = rootFormName;
             try
             {
                 // Set some common query options
@@ -449,10 +450,10 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 var query = Client.CreateDocumentQuery(rootFormCollectionUri,
                     SELECT
                     + AssembleSelect(rootFormName, "id")
-                    + FROM + rootFormName
+                    + FROM + collectionAlias
                     + (includeDeletedRecords
                         ? string.Empty
-                        : WHERE + AssembleWhere(rootFormName, Expression(FRP_RecStatus, NE, RecordStatus.Deleted)))
+                        : WHERE + AssembleExpressions(collectionAlias, Expression(FRP_RecStatus, NE, RecordStatus.Deleted)))
                     , queryOptions);
                 var formResponseCount = query.AsEnumerable().Count();
                 return formResponseCount;
@@ -483,7 +484,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                     + AssembleSelect(collectionAlias, "*")
                     + FROM + collectionAlias
                     + WHERE
-                    + AssembleWhere(collectionAlias, Expression("id", EQ, rootResponseId),
+                    + AssembleExpressions(collectionAlias, Expression("id", EQ, rootResponseId),
                                                 And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted, includeDeleted))
                     , queryOptions);
                 var formResponseResource = (FormResponseResource)query.AsEnumerable().FirstOrDefault();

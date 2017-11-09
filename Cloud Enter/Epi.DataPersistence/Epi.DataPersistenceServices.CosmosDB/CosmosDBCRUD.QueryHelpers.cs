@@ -68,10 +68,16 @@ namespace Epi.DataPersistenceServices.CosmosDB
             return query;
         }
 
-        private string AssembleWhere(string collectionName, params string[] expressions)
+        private string AssembleExpressions(string collectionName, params string[] expressions)
         {
             string where;
             where = string.Join(" ", expressions.Select(e => e.ToString().Replace(Alias, collectionName)));
+            return where;
+        }
+        private string AssembleAndExpressions(string collectionName, params string[] expressions)
+        {
+            string where;
+            where = AND + string.Join(" ", expressions.Select(e => e.ToString().Replace(Alias, collectionName)));
             return where;
         }
 
@@ -157,7 +163,6 @@ namespace Epi.DataPersistenceServices.CosmosDB
         {
             string SelectColumnList = string.Empty;
 
-            List<WildCardQualifier> wildCardQualifiers = new List<WildCardQualifier>();
 
             var SelectFormPoperties = AssembleSelect(collectionAlias, formPoperties.Select(g => FRP_ + g).ToArray());
 
@@ -169,15 +174,16 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
             string query = null;
 
+            var trailingExpressions = new List<string>();
+            trailingExpressions.Add(And_Expression(FRP_RecStatus, NE, RecordStatus.Deleted));
+            if (!string.IsNullOrWhiteSpace(querySetToken)) trailingExpressions.Add(And_Expression(FRP_FirstSaveTime, LE, querySetToken));
+
             if (searchQualifiers != null && searchQualifiers.Length > 0)
             {
-                var searchQualifierList = searchQualifiers.Select(x => AssembleSearchQuailifier(collectionAlias, x.Key.FieldName, x.Value, wildCardQualifiers)).Where(x => x != null).ToList();
-                var wildCardSearchQualifier = AssembleWildCardSearchQualifier(collectionAlias, wildCardQualifiers);
-                if (wildCardSearchQualifier != null) searchQualifierList.Add(wildCardSearchQualifier + AND);
-
-                var expression = collectionAlias + "." + FRP_RecStatus + NE + RecordStatus.Deleted;
-
-                if (!string.IsNullOrWhiteSpace(querySetToken)) expression += AND + collectionAlias + "." + FRP_FirstSaveTime + LE + querySetToken;
+                List<WildCardQualifier> wildCardQualifiers = new List<WildCardQualifier>();
+                var searchExpressionList = searchQualifiers.Select(x => And_SearchExpression(x.Key.FieldName, x.Value, wildCardQualifiers)).Where(x => x != null).ToList();
+                var wildCardSearchExpression = And_WildCardSearchExpression(wildCardQualifiers);
+                if (wildCardSearchExpression != null) searchExpressionList.Add(wildCardSearchExpression);
 
                 query = SELECT
                                + SelectFormPoperties + ","
@@ -185,11 +191,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + SelectColumnList
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
-                               + AssembleWhere(collectionAlias, searchQualifierList.ToArray())
-                               + expression;
-                               //+ ORDER_BY
-                               //+ AssembleSelect(collectionAlias, "_ts")
-                               //+ DESC;
+                               + AssembleExpressions(collectionAlias, searchExpressionList.ToArray())
+                               + AssembleExpressions(collectionAlias, trailingExpressions.ToArray());
             }
             else
             {
@@ -199,39 +202,34 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + SelectColumnList
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
-                               + AssembleWhere(collectionAlias, Expression(FRP_RecStatus, NE, RecordStatus.Deleted)
-                               + (!string.IsNullOrWhiteSpace(querySetToken) ? And_Expression(FRP_FirstSaveTime, LE, querySetToken) : string.Empty));
-                               //+ ORDER_BY
-                               //+ AssembleSelect(collectionAlias, "_ts")
-                               //+ DESC;
-
+                               + AssembleExpressions(collectionAlias, trailingExpressions.ToArray());
             }
 
             return query;
         }
 
-        private string AssembleSearchQuailifier(string collectionAlias, string fieldName, string fieldValue, List<WildCardQualifier> wildCardQualifiers)
+        private string And_SearchExpression(string fieldName, string fieldValue, List<WildCardQualifier> wildCardQualifiers)
         {
-            string qualifier = null ;
-            if (fieldValue.Contains('*') || fieldValue.Contains('?'))
+            string searchExpression = null ;
+            if (fieldValue.Contains('*') || fieldValue.Contains('?') || fieldValue.ToLower().StartsWith("regex:"))
             {
                 wildCardQualifiers.Add(new WildCardQualifier(fieldName, fieldValue));
             }
             else
             {
-                qualifier = Expression(FRP_ResponseQA_ + fieldName, EQ, fieldValue) + AND;
+                searchExpression = And_Expression(FRP_ResponseQA_ + fieldName, EQ, fieldValue);
             }
-            return qualifier;
+            return searchExpression;
         }
 
-        private string AssembleWildCardSearchQualifier(string collectionAlias, List<WildCardQualifier> wildCardQualifiers)
+        private string And_WildCardSearchExpression(List<WildCardQualifier> wildCardQualifiers)
         {
-            string qualifier = null;
+            string wildCardSearchExpression = null;
             if (wildCardQualifiers.Count() > 0)
             {
-                qualifier = udf_wildCardCompare + "(" + string.Join(",", wildCardQualifiers.Select(q => collectionAlias + "." + FRP_ResponseQA_ + q.FieldName + "," + "\"" + q.FieldPattern + "\"").ToArray() ) + ")";
+                wildCardSearchExpression = AND + udf_wildCardCompare + "(" + string.Join(",", wildCardQualifiers.Select(q => Alias + "." + FRP_ResponseQA_ + q.FieldName + "," + "\"" + q.FieldPattern + "\"").ToArray() ) + ")";
             }
-            return qualifier;
+            return wildCardSearchExpression;
         }
 
         private string AssembleAcessRuleQualifier(string collectionAlias, ResponseAccessRuleContext ruleContext)
@@ -247,7 +245,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 collectionAlias + "." + FRP_UserOrgId
                 };
 
-                qualifier = udf_sharingRules + "(" + string.Join(",", parameters) + ")" + AND;
+                qualifier = udf_sharingRules + "(" + string.Join(",", parameters) + ")";
             }
 
             return qualifier;

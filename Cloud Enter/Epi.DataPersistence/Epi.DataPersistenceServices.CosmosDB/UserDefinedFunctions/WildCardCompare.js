@@ -12,13 +12,28 @@
     if (pattern5) inputList.push(input5); patternList.push(pattern5);
 
     for (var i = 0, len = inputList.length; i < len; i++) {
-        var input = inputList[i];
-        var pattern = patternList[i];
-        if (!input) return pattern === multipleWildcard;
-        if (!compare(input.toLowerCase(), pattern.toLowerCase())) return false;
+
+		var pattern = patternList[i].toLowerCase();
+        if (pattern === multipleWildcard || pattern === "regex:.*") continue;
+
+        if (!inputList[i]) return false;
+
+		var input = inputList[i].toLowerCase();
+
+        if (pattern.startsWith("regex:")) {
+            if (!regexCompare(input, pattern.substr(6))) return false;
+        }
+        else {
+            if (!compare(input, pattern)) return false;
+        }
     }
 
     return true;
+
+    function regexCompare(input, pattern) {
+        var result = input.match(pattern);
+        return result !== null;
+    }
 
     function compare(input, pattern) {
         isPatternMatched = false;

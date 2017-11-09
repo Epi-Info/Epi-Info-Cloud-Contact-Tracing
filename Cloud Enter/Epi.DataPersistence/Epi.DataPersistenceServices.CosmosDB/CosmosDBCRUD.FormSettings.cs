@@ -52,7 +52,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
                     + AssembleSelect(collectionAlias, "*")
                     + FROM + collectionAlias
                     + WHERE
-                    + AssembleWhere(collectionAlias, Expression("id", EQ, formId))
+                    + AssembleExpressions(collectionAlias, Expression("id", EQ, formId))
                     , queryOptions);
                 var formSettingsResource = (FormSettingsResource)query.AsEnumerable().FirstOrDefault();
                 if (formSettingsResource == null && ifNoneCreateDefault)
