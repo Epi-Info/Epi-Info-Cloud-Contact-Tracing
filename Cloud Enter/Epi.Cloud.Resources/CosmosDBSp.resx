@@ -322,19 +322,24 @@
     if (pattern5) inputList.push(input5); patternList.push(pattern5);
 
     for (var i = 0, len = inputList.length; i &lt; len; i++) {
+        var not = false;
+        var pattern = patternList[i].toLowerCase();
+        if (pattern[0] === "~") {
+            not = true;
+            pattern = pattern.substr(1);
+        } else if (pattern === multipleWildcard || pattern === "regex:.*") continue;
 
-		var pattern = patternList[i].toLowerCase();
-        if (pattern === multipleWildcard || pattern === "regex:.*") continue;
-
+        if (not &amp;&amp; !inputList[i]) continue;
         if (!inputList[i]) return false;
 
 		var input = inputList[i].toLowerCase();
 
         if (pattern.startsWith("regex:")) {
-            if (!regexCompare(input, pattern.substr(6))) return false;
+            pattern = pattern.substr(6);
+            if (not ? regexCompare(input, pattern) : !regexCompare(input, pattern)) return false;
         }
         else {
-            if (!compare(input, pattern)) return false;
+            if (not ? compare(input, pattern) : !compare(input, pattern)) return false;
         }
     }
 
