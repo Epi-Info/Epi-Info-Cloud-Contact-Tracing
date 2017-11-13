@@ -22,7 +22,7 @@
         if (not && !inputList[i]) continue;
         if (!inputList[i]) return false;
 
-		var input = inputList[i].toLowerCase();
+        var input = inputList[i].toLowerCase();
 
         if (pattern.startsWith("regex:")) {
             pattern = pattern.substr(6);

@@ -323,7 +323,7 @@
 
     for (var i = 0, len = inputList.length; i &lt; len; i++) {
         var not = false;
-        var pattern = patternList[i].toLowerCase();
+		var pattern = patternList[i].toLowerCase();
         if (pattern[0] === "~") {
             not = true;
             pattern = pattern.substr(1);

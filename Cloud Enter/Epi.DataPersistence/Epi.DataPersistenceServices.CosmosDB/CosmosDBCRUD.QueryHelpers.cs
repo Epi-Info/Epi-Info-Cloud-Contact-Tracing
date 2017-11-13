@@ -92,14 +92,16 @@ namespace Epi.DataPersistenceServices.CosmosDB
             else
             {
                 if (right is string == false)
+                {
                     expression = string.Format("{0}.{1} {2} {3}", Alias, left, relational_operator, right);
+                }
                 else if (left.Contains(FRP_ResponseQA_))
                 {
-                    expression = string.Format("Lower({0}.{1}) {2} Lower('{3}')", Alias, left, relational_operator, right);
+                    expression = string.Format("{0}.{1} {2} \"{3}\"", Alias, left, relational_operator, right);
                 }
                 else
                 {
-                    expression = string.Format("{0}.{1} {2} '{3}'", Alias, left, relational_operator, right);
+                    expression = string.Format("{0}.{1} {2} \"{3}\"", Alias, left, relational_operator, right);
                 }
             }
 
@@ -108,7 +110,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
         private static string ExpressionWithFunction(string left, string relational_operator, object right, string function)
         {
-            string expression = string.Format("{0}({1}.{2}) {3} {4}", function, Alias, left, relational_operator, "'" + right.ToString() + "'");
+            string expression = string.Format("{0}({1}.{2}) {3} {4}", function, Alias, left, relational_operator, "\"" + right.ToString() + "\"");
             return expression;
         }
 
@@ -132,9 +134,9 @@ namespace Epi.DataPersistenceServices.CosmosDB
             if (searchQualifiers == null || searchQualifiers.Length == 0) return string.Empty;
             foreach (var searchQualifier in searchQualifiers)
             {
-                if (searchQualifier.Value.Contains('*') || searchQualifier.Value.Contains('?'))
+                if (searchQualifier.Value.Contains('*') || searchQualifier.Value.Contains('?') || searchQualifier.Value.ToLowerInvariant().Contains("regex:"))
                 {
-                    var expression = And_Expression(FRP_ResponseQA_ + searchQualifier.Key.FieldName, EQ, searchQualifier.Value.ToLowerInvariant(), "LOWER");
+                    var expression = And_Expression(FRP_ResponseQA_ + searchQualifier.Key.FieldName, EQ, searchQualifier.Value.ToLowerInvariant());
                     searchExpression += expression;
                 }
             }
@@ -211,9 +213,9 @@ namespace Epi.DataPersistenceServices.CosmosDB
         private string And_SearchExpression(string fieldName, string fieldValue, List<WildCardQualifier> wildCardQualifiers)
         {
             string searchExpression = null ;
-            if (fieldValue.Contains('*') || fieldValue.Contains('?') || fieldValue.ToLower().StartsWith("regex:"))
+            if (fieldValue.Contains('*') || fieldValue.Contains('?') || fieldValue.StartsWith("~") || fieldValue.ToLowerInvariant().Contains("regex:"))
             {
-                wildCardQualifiers.Add(new WildCardQualifier(fieldName, fieldValue));
+                wildCardQualifiers.Add(new WildCardQualifier(fieldName, fieldValue.ToLowerInvariant()));
             }
             else
             {
