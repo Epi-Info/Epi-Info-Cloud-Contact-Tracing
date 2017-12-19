@@ -148,7 +148,7 @@ namespace Epi.Cloud.DataEntryServices
 			foreach (var surveyResponseBO in surveyResponseBOs)
 			{
                 ((IResponseContext)surveyResponseBO).ResolveMetadataDependencies();
-				surveyResponseBO.Status = status;
+				surveyResponseBO.RecStatus = status;
 				surveyResponseBO.ReasonForStatusChange = reasonForStatusChange;
 				_surveyResponseDao.UpdateSurveyResponse(surveyResponseBO);
 			}

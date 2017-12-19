@@ -28,7 +28,7 @@ namespace Epi.Cloud.Common.DTO
         public DateTime DateCreated { get { return FirstSaveTime; } set { FirstSaveTime = value; } }
         public DateTime DateUpdated { get { return LastSaveTime; } set { LastSaveTime = value; } }
         public DateTime? DateCompleted { get; set; }
-        public int Status { get { return RecStatus; } set { RecStatus = value; } }
+        public int RecStatus { get { return Status; } set { Status = value; } }
         public RecordStatusChangeReason ReasonForStatusChange { get; set; }
         public int LastActiveOrgId { get { return UserOrgId; } set { UserOrgId = value; } }
         public int LastActiveUserId { get { return UserId; } set { UserId = value; } }
@@ -39,7 +39,7 @@ namespace Epi.Cloud.Common.DTO
         public int FormOwnerId { get; set; }
         public bool RecoverLastRecordVersion { get; set; }
         public string RequestedViewId { get; set; }
-        public int CurrentPageNumber { get; set; }
+        public int CurrentPageNumber { get { return LastPageVisited; } set { LastPageVisited = value; } }
 
         public Dictionary<string, string> SqlData { get; set; }
 
@@ -66,7 +66,7 @@ namespace Epi.Cloud.Common.DTO
         public bool IsDraftMode { get { return ResponseDetail.IsDraftMode; } set { ResponseDetail.IsDraftMode = value; } }
         public bool IsLocked { get { return ResponseDetail.IsLocked; } set { ResponseDetail.IsLocked = value; } }
 
-        public int RecStatus { get { return ResponseDetail.RecStatus; } set { ResponseDetail.RecStatus = value; } }
+        public int Status { get { return ResponseDetail.RecStatus; } set { ResponseDetail.RecStatus = value; } }
         public string FirstSaveLogonName { get { return ResponseDetail.FirstSaveLogonName; } set { ResponseDetail.FirstSaveLogonName = value; } }
 
         public string LastSaveLogonName { get { return ResponseDetail.LastSaveLogonName; } set { ResponseDetail.LastSaveLogonName = value; } }

@@ -6,10 +6,11 @@ namespace Epi.Cloud.MVC.Models
     {
         private string _rootFormId;
         private string _formId;
-        private List<SurveyAnswerModel> _responseIds;
+        private List<SurveyAnswerModel> _responseIds = new List<SurveyAnswerModel>();
         private bool _isRoot;
         private int _viewId;
         private bool _isSqlProject;
+
         public string RootFormId
         {
             get { return _rootFormId; }

@@ -145,7 +145,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="StoredProcedures\GetGridContent.v2.js" />
     <Content Include="StoredProcedures\GetGridContent.js" />
     <Content Include="UserDefinedFunctions\SharingRules.js" />
   </ItemGroup>

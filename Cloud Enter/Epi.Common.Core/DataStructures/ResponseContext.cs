@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Epi.Common.Core.Interfaces;
 
 namespace Epi.Common.Core.DataStructures
@@ -24,15 +25,24 @@ namespace Epi.Common.Core.DataStructures
         public int UserId { get; set; }
         public string UserName { get; set; }
 
-        public bool IsRootForm
+        public bool IsChildResponse
         {
-            get
-            {
-                return (!string.IsNullOrEmpty(FormId) && FormId == RootFormId)
-                    || (string.IsNullOrEmpty(FormId) && string.IsNullOrEmpty(ParentFormId));
-            }
+            get { return !string.IsNullOrEmpty(FormId) && !string.IsNullOrEmpty(RootFormId) && FormId != RootFormId ||
+                !string.IsNullOrEmpty(ResponseId) && !string.IsNullOrEmpty(RootResponseId) && ResponseId != RootResponseId; }
         }
-        public bool IsRootResponse { get { return ResponseId == RootResponseId || IsRootForm; } }
-        public bool IsChildResponse { get { return !IsRootResponse; } }
+
+        public bool IsRootResponse
+        {
+            get { return !IsChildResponse; }
+        }
+
+        public Stack<ChildContext> ChildStack = null;
+
+        public class ChildContext
+        {
+            public string ParentResponseId { get; set; }
+            public string ChildFormName { get; set; }
+            public string ChildResponseId { get; set; }
+        }
     }
 }

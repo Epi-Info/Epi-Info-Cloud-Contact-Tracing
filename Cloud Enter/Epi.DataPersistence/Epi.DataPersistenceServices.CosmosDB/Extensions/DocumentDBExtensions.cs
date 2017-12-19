@@ -232,10 +232,23 @@ namespace Epi.DataPersistence.Extensions
             formResponsePropertiesList.Add(formResponseProperties);
             foreach (var childFormResponseDetail in formResponseDetail.ChildFormResponseDetailList)
             {
-                var childFormResponseProperties = childFormResponseDetail.ToFormResponseProperties();
-                formResponsePropertiesList.Add(childFormResponseProperties);
+                Flatten(childFormResponseDetail, formResponsePropertiesList);
             }
             return formResponsePropertiesList;
+        }
+
+        private static void Flatten(FormResponseDetail childFormResponseDetail, List<FormResponseProperties> formResponsePropertiesList)
+        {
+            var childFormResponseProperties = childFormResponseDetail.ToFormResponseProperties();
+            formResponsePropertiesList.Add(childFormResponseProperties);
+            var nextChildFormResponseDetailList = childFormResponseDetail.ChildFormResponseDetailList;
+            if (nextChildFormResponseDetailList != null)
+            {
+                foreach (var nextChildFormResponseDetail in nextChildFormResponseDetailList)
+                {
+                    Flatten(nextChildFormResponseDetail, formResponsePropertiesList);
+                }
+            }
         }
 
         public static List<FormResponseDetail> ToFormResponseDetailList(this IEnumerable<FormResponseProperties> formResponsePropertiesList)

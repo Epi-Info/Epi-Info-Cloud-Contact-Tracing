@@ -55,8 +55,8 @@ namespace Epi.DataPersistence.DataStructures
 
         public List<FormResponseDetail> ChildFormResponseDetailList { get; set; }
 
-        public bool IsChildResponse { get { return IsRelatedView; } }
+        public bool IsChildResponse { get { return RootResponseId != ResponseId; } }
 
-        public bool IsRootResponse { get { return !IsRelatedView; } }
+        public bool IsRootResponse { get { return RootResponseId == ResponseId; } }
     }
 }

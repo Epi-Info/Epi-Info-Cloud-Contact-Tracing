@@ -296,10 +296,9 @@ namespace Epi.Cloud.Facades
             return surveyInfoResponse;
         }
 
-        public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
+        public SurveyAnswerResponse UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
         {
-            _dataEntryService.UpdateResponseStatus(surveyAnswerRequest);
-
+            return _dataEntryService.UpdateResponseStatus(surveyAnswerRequest);
         }
 
         public bool HasResponse(SurveyAnswerRequest surveyAnswerRequest)

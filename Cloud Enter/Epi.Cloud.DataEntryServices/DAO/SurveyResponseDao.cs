@@ -1265,9 +1265,7 @@ namespace Epi.Cloud.DataEntryServices.DAO
 
         public bool HasResponse(IResponseContext responseContext)
         {
-            //var formId = criteria.SurveyId;
-            //var parentReponseId = criteria.SurveyAnswerIdList[0];
-            var responseExists = _surveyPersistenceFacade.DoChildResponsesExist(responseContext); // formId, parentReponseId);
+            var responseExists = _surveyPersistenceFacade.DoChildResponsesExist(responseContext);
             return responseExists;
         }
 

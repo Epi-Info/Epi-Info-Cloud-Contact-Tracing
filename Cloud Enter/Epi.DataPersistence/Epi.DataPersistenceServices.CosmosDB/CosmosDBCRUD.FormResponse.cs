@@ -101,40 +101,40 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
                 FormResponseDetail hierarchicalFormResponseDetail = null;
 
-                var formResponseResource = ReadRootResponseResource(responseContext, false);
-                if (formResponseResource != null)
+                var rootResponseResource = ReadRootResponseResource(responseContext, false);
+                if (rootResponseResource != null)
                 {
-                    var formResponseProperties = formResponseResource.FormResponseProperties;
+                    var formResponseProperties = rootResponseResource.FormResponseProperties;
 
                     // Determine if the ResponseId parameter is the root responseId or a child responseId
                     if (responseContext.IsRootResponse)
                     {
                         // First logically delete the root and child responses
-                        isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                        isSuccessful = await LogicallyDeleteResponse(rootResponseResource, formResponseProperties).ConfigureAwait(false);
                         formResponseProperties.RecStatus = RecordStatus.Deleted;
 
-                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(formResponseResource);
+                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(rootResponseResource);
 
                         if (deleteType == RecordStatus.PhysicalDelete)
                         {
-                            isSuccessful = await PhysicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                            isSuccessful = await PhysicallyDeleteResponse(rootResponseResource, formResponseProperties).ConfigureAwait(false);
                         }
                     }
                     else // if (responseContext.IsChildResponse)
                     {
-                        formResponseProperties = formResponseResource.GetChildResponse(responseContext);
+                        formResponseProperties = rootResponseResource.GetChildResponse(responseContext);
 
                         // only logically delete child responses
-                        isSuccessful = await LogicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                        isSuccessful = await LogicallyDeleteResponse(rootResponseResource, formResponseProperties).ConfigureAwait(false);
 
-                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(formResponseResource);
+                        hierarchicalFormResponseDetail = formResponseProperties.ToHierarchicalFormResponseDetail(rootResponseResource);
                     }
 
                     if (deleteType != RecordStatus.PhysicalDelete && hierarchicalFormResponseDetail != null)
                     {
                         if (responseContext.IsChildResponse)
                         {
-                            var result = await Client.UpsertDocumentAsync(rootFormCollectionUri, formResponseResource).ConfigureAwait(false);
+                            var result = await Client.UpsertDocumentAsync(rootFormCollectionUri, rootResponseResource).ConfigureAwait(false);
                         }
 
                         // Send hierarchicalFormResponseDetail to consistency service 
@@ -143,10 +143,10 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
                         if (responseContext.IsRootResponse)
                         {
-                            var result = await PhysicallyDeleteResponse(formResponseResource, formResponseProperties).ConfigureAwait(false);
+                            var result = await PhysicallyDeleteResponse(rootResponseResource, formResponseProperties).ConfigureAwait(false);
                         }
 
-                        return formResponseResource;
+                        return rootResponseResource;
                     }
                 }
             }
@@ -223,6 +223,8 @@ namespace Epi.DataPersistenceServices.CosmosDB
                         {
                             deleteResponse = DeleteAttachment(attachment);
                         }
+
+                        formResponseResource.CascadeThroughChildren(formResponseProperties, f => { if (f.RecStatus != RecordStatus.Deleted) f.RecStatus = RecordStatus.Saved; });
                     }
                     if (newResponseStatus != formResponseProperties.RecStatus)
                     {
@@ -409,7 +411,9 @@ namespace Epi.DataPersistenceServices.CosmosDB
                     var responseDictionary = childResponse.Values;
                     foreach (var responses in responseDictionary)
                     {
-                        formResponsePropertiesList.AddRange(responses.Where(r => (includeDeletedRecords ? true : (r.RecStatus != RecordStatus.Deleted)) && (excludeInProcessRecords ? (r.RecStatus != RecordStatus.InProcess) : true)));
+                        formResponsePropertiesList.AddRange
+                            (responses.Where(r => (includeDeletedRecords ? true : (r.RecStatus != RecordStatus.Deleted)) 
+                            && (excludeInProcessRecords ? (r.RecStatus != RecordStatus.InProcess) : true)));
                     }
                 }
             }

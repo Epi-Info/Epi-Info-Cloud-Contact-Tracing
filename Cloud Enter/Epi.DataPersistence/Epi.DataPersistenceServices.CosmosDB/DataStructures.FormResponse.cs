@@ -8,6 +8,12 @@ namespace Epi.PersistenceServices.CosmosDB
 {
     public partial class FormResponseResource : Resource
     {
+        public FormResponseResource()
+        {
+            ChildResponses = new Dictionary<string/*ParentResponseId*/, Dictionary<string/*ChildFormName*/, List<FormResponseProperties>>>();
+            ChildResponseContexts = new Dictionary<string/*ResponseId*/, ChildResponseContext>();
+        }
+
         public class ChildResponseContext
         {
             public ChildResponseContext()
@@ -21,18 +27,14 @@ namespace Epi.PersistenceServices.CosmosDB
                 ParentFormId = formResponseProperties.ParentFormId;
                 ParentFormName = formResponseProperties.ParentFormName;
                 ParentResponseId = formResponseProperties.ParentResponseId;
+                RecStatus = formResponseProperties.RecStatus;
             }
             public string FormId { get; set; }
             public string FormName { get; set; }
             public string ParentFormId { get; set; }
             public string ParentFormName { get; set; }
             public string ParentResponseId { get; set; }
-        }
-
-        public FormResponseResource()
-        {
-            ChildResponses = new Dictionary<string/*ParentResponseId*/, Dictionary<string/*ChildFormName*/, List<FormResponseProperties>>>();
-            ChildResponseContexts = new Dictionary<string/*ResponseId*/, ChildResponseContext>();
+            public int RecStatus { get; set; }
         }
 
         public FormResponseProperties FormResponseProperties { get; set; }

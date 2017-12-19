@@ -14,52 +14,40 @@ namespace Epi.Cloud.Common.Extensions
 
         public static IResponseContext ResolveMetadataDependencies(this IResponseContext responseContext)
         {
-            if (!string.IsNullOrWhiteSpace(responseContext.FormId))
+            if (!string.IsNullOrEmpty(responseContext.FormId))
             {
                 responseContext.FormName = _metadataAccessor.GetFormName(responseContext.FormId);
                 responseContext.ParentFormId = _metadataAccessor.GetParentFormId(responseContext.FormId);
                 responseContext.RootFormId = _metadataAccessor.GetRootFormId(responseContext.FormId);
             }
-            else if (!string.IsNullOrWhiteSpace(responseContext.ParentFormId))
+            else if (!string.IsNullOrEmpty(responseContext.ParentFormId))
             {
                 responseContext.RootFormId = _metadataAccessor.GetRootFormId(responseContext.ParentFormId);
             }
-            else if (string.IsNullOrWhiteSpace(responseContext.RootFormId))
+            else if (string.IsNullOrEmpty(responseContext.RootFormId))
             {
                 // Get the first form Id that the MetadataAccessor is aware of.
                 responseContext.RootFormId = _metadataAccessor.GetRootFormId();
             }
 
-            if (!string.IsNullOrWhiteSpace(responseContext.ParentFormId))
+            if (!string.IsNullOrEmpty(responseContext.ParentFormId))
             {
                 responseContext.ParentFormName = _metadataAccessor.GetFormName(responseContext.ParentFormId);
             }
 
-            if (!string.IsNullOrWhiteSpace(responseContext.RootFormId))
+            if (!string.IsNullOrEmpty(responseContext.RootFormId))
             {
                 responseContext.RootFormName = _metadataAccessor.GetFormName(responseContext.RootFormId);
             }
 
-            if (string.IsNullOrWhiteSpace(responseContext.RootResponseId)) responseContext.RootResponseId = responseContext.ResponseId;
+            if (string.IsNullOrEmpty(responseContext.RootResponseId) || responseContext.FormId == responseContext.RootFormId) responseContext.RootResponseId = responseContext.ResponseId;
 
 
             if (responseContext.IsRootResponse)
             {
-                if (responseContext.ResponseId == null)
-                {
-                    responseContext.ResponseId = responseContext.RootResponseId;
-                    responseContext.FormId = responseContext.RootFormId;
-                    responseContext.FormName = responseContext.RootFormName;
-                }
-            }
-            else if (responseContext.IsChildResponse)
-            {
-                if (responseContext.ParentResponseId == null)
-                {
-                    responseContext.ParentResponseId = responseContext.RootResponseId;
-                    responseContext.ParentFormId = responseContext.RootFormId;
-                    responseContext.ParentFormName = responseContext.RootFormName;
-                }
+                responseContext.ResponseId = responseContext.ResponseId ?? responseContext.RootResponseId;
+                responseContext.FormId = responseContext.FormId ?? responseContext.RootFormId;
+                responseContext.FormName = responseContext.FormName ?? responseContext.RootFormName;
             }
 
             return responseContext;

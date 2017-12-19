@@ -8,11 +8,14 @@ namespace Epi.Cloud.Common.BusinessObjects
 {
     public class SurveyResponseBO : IFormResponseDetail
     {
+        [ThreadStatic]
+        public FormResponseDetail ActiveChildResponseDetail;
+
         public SurveyResponseBO(FormResponseDetail responseDetail = null)
         {
             ResponseDetail = responseDetail ?? new FormResponseDetail();
             DateUpdated = DateTime.UtcNow;
-            Status = RecordStatus.InProcess;
+            RecStatus = RecordStatus.InProcess;
         }
 
         public string ResponseId { get { return ResponseDetail.ResponseId; } set { ResponseDetail.ResponseId = value; } }
@@ -30,28 +33,86 @@ namespace Epi.Cloud.Common.BusinessObjects
         public bool IsChildResponse { get { return (ResponseDetail).IsChildResponse; } }
         public bool IsRootResponse { get { return (ResponseDetail).IsRootResponse; } }
 
-        public int UserOrgId { get { return ResponseDetail.UserOrgId; } set { ResponseDetail.UserOrgId = value; } }
-        public int UserId { get { return ResponseDetail.UserId; } set { ResponseDetail.UserId = value; } }
-        public int LastActiveOrgId { get { return ResponseDetail.UserOrgId; } set { ResponseDetail.UserOrgId = value; } }
-        public int LastActiveUserId { get { return ResponseDetail.UserId; } set { ResponseDetail.UserId = value; } }
+        public int UserOrgId { get { return ResponseDetail.UserOrgId; }
+            set
+            {
+                ResponseDetail.UserOrgId = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.UserOrgId = value;
+            }
+        }
+        public int UserId { get { return ResponseDetail.UserId; }
+            set
+            {
+                ResponseDetail.UserId = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.UserId = value;
+
+            }
+        }
+        public int LastActiveOrgId { get { return ResponseDetail.UserOrgId; }
+            set
+            {
+                ResponseDetail.UserOrgId = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.UserOrgId = value;
+
+            }
+        }
+        public int LastActiveUserId
+        {
+            get { return ResponseDetail.UserId; }
+            set
+            {
+                ResponseDetail.UserId = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.UserId = value;
+
+            }
+        }
         public string UserName { get { return ResponseDetail.UserName; } set { ResponseDetail.UserName = value; } }
 
-        public DateTime DateUpdated { get { return ResponseDetail.LastSaveTime; } set { ResponseDetail.LastSaveTime = value; } }
+        public DateTime DateUpdated
+        {
+            get { return ResponseDetail.LastSaveTime; }
+            set
+            {
+                ResponseDetail.LastSaveTime = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.LastSaveTime = value;
+
+            }
+        }
         public DateTime DateCreated { get { return ResponseDetail.FirstSaveTime; } set { ResponseDetail.FirstSaveTime = value; } }
-        public int Status { get { return ResponseDetail.RecStatus; } set { ResponseDetail.RecStatus = value; } }
         public bool IsNewRecord { get { return ResponseDetail.IsNewRecord; } set { ResponseDetail.IsNewRecord = value; } }
         public bool IsDraftMode { get { return ResponseDetail.IsDraftMode; } set { ResponseDetail.IsDraftMode = value; } }
         public bool IsLocked { get { return ResponseDetail.IsLocked; } set { ResponseDetail.IsLocked = value; } }
         public FormResponseDetail ResponseDetail { get; set; }
 
-        public int RecStatus { get { return ResponseDetail.RecStatus; } set { ResponseDetail.RecStatus = value; } }
+        public int RecStatus { get { return ResponseDetail.RecStatus; }
+            set
+            {
+                ResponseDetail.RecStatus = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.RecStatus = value;
+
+            }
+        }
         public string FirstSaveLogonName { get { return ResponseDetail.FirstSaveLogonName; } set { ResponseDetail.FirstSaveLogonName = value; } }
 
-        public string LastSaveLogonName { get { return ResponseDetail.LastSaveLogonName; } set { ResponseDetail.LastSaveLogonName = value; } }
+        public string LastSaveLogonName { get { return ResponseDetail.LastSaveLogonName; }
+            set
+            {
+                ResponseDetail.LastSaveLogonName = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.LastSaveLogonName = value;
+
+            }
+        }
 
         public DateTime FirstSaveTime { get { return ResponseDetail.FirstSaveTime; } set { ResponseDetail.FirstSaveTime = value; } }
 
-        public DateTime LastSaveTime { get { return ResponseDetail.LastSaveTime; } set { ResponseDetail.LastSaveTime = value; } }
+        public DateTime LastSaveTime { get { return ResponseDetail.LastSaveTime; }
+            set
+            {
+                ResponseDetail.LastSaveTime = value;
+                if (ActiveChildResponseDetail != null) ActiveChildResponseDetail.LastSaveTime = value;
+
+            }
+        }
 
         public bool IsRelatedView { get { return ResponseDetail.IsRelatedView; } set { ResponseDetail.IsRelatedView = value; } }
 

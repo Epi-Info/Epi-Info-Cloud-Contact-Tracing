@@ -311,8 +311,9 @@ namespace Epi.Cloud.DataEntryServices
         }
 
 
-        public void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
+        public SurveyAnswerResponse UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest)
         {
+            SurveyAnswerResponse surveyAnswerResponse = new SurveyAnswerResponse();
             try
             {
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
@@ -321,22 +322,37 @@ namespace Epi.Cloud.DataEntryServices
                 List<SurveyResponseBO> surveyResponseBOList = surveyResponseImplementation.GetSurveyResponseById(responseContext, surveyAnswerRequest.Criteria);
                 foreach (var surveyResponseBO in surveyResponseBOList)
                 {
-                    surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
-                    surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
-                    surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
-                    surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
-                    surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
-                    surveyResponseBO.LastSaveLogonName = surveyAnswerRequest.Criteria.UserName;
-                    surveyResponseBO.Status = surveyAnswerRequest.Criteria.StatusId;
-                    surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
+                    try
+                    {
+                        if (surveyAnswerRequest.IsChildResponse)
+                        {
+                            surveyResponseBO.ActiveChildResponseDetail = surveyResponseBO.ResponseDetail.FindFormResponseDetail(surveyAnswerRequest.ResponseId);
+                        }
+                        surveyResponseBO.IsNewRecord = surveyAnswerRequest.IsNewRecord;
+                        surveyResponseBO.UserOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                        surveyResponseBO.CurrentOrgId = surveyAnswerRequest.Criteria.UserOrganizationId;
+                        surveyResponseBO.UserId = surveyAnswerRequest.Criteria.UserId;
+                        surveyResponseBO.UserName = surveyAnswerRequest.Criteria.UserName;
+                        surveyResponseBO.LastSaveLogonName = surveyAnswerRequest.Criteria.UserName;
+                        surveyResponseBO.LastSaveTime = DateTime.UtcNow;
+                        surveyResponseBO.RecStatus = surveyAnswerRequest.Criteria.StatusId;
+                        surveyResponseBO.ReasonForStatusChange = surveyAnswerRequest.Criteria.StatusChangeReason;
+                    }
+                    finally
+                    {
+                        surveyResponseBO.ActiveChildResponseDetail = null;
+                    }
                 }
 
                 List<SurveyResponseBO> resultList = surveyResponseImplementation.UpdateSurveyResponse(surveyResponseBOList, surveyAnswerRequest.Criteria.StatusId, surveyAnswerRequest.Criteria.StatusChangeReason);
+                surveyAnswerResponse.SurveyResponseList = resultList.Select(bo => bo.ToSurveyAnswerDTO()).ToList();
+                surveyAnswerResponse.NumberOfResponses = surveyAnswerResponse.SurveyResponseList.Count();
             }
             catch (Exception ex)
             {
                 throw new FaultException<CustomFaultException>(new CustomFaultException(ex));
             }
+            return surveyAnswerResponse;
         }
 
         public SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest)

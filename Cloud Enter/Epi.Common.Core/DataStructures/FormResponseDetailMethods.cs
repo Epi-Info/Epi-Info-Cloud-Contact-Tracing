@@ -27,11 +27,28 @@ namespace Epi.DataPersistence.DataStructures
         public FormResponseDetail FindParentFormResponseDetail(string parentResponsId)
         {
             var flattenedResponses = FlattenHierarchy();
-            var parentItem = flattenedResponses.SingleOrDefault(f => f.ResponseId == parentResponsId);
-            return parentItem;
+            var parentResponse = flattenedResponses.SingleOrDefault(f => f.ResponseId == parentResponsId);
+            return parentResponse;
         }
 
-		public List<FormResponseDetail> FlattenHierarchy()
+        /// <summary>
+        /// FindParentFormResponseDetail
+        /// </summary>
+        /// <param name="parentResponsId"></param>
+        /// <returns></returns>
+        public FormResponseDetail FindFormResponseDetail(string responseId)
+        {
+            FormResponseDetail response = this;
+
+            if (responseId != this.ResponseId)
+            {
+                var flattenedResponses = FlattenHierarchy();
+                response = flattenedResponses.SingleOrDefault(f => f.ResponseId == responseId);
+            }
+            return response;
+        }
+
+        public List<FormResponseDetail> FlattenHierarchy()
 		{
 			var flattenedHierarchy = new List<FormResponseDetail>();
 			flattenedHierarchy.Add(this);

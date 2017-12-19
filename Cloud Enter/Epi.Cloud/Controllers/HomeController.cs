@@ -150,7 +150,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             var editResponseId = editForm;
 
-            if (!string.IsNullOrEmpty(editForm) && string.IsNullOrEmpty(addNewFormId))
+            if (!string.IsNullOrEmpty(editResponseId) && string.IsNullOrEmpty(addNewFormId))
             {
                 // -------------------------------
                 //      Edit Existing Record
@@ -336,8 +336,8 @@ namespace Epi.Cloud.MVC.Controllers
 
             if (reset)
             {
-                RemoveSessionValue(UserSession.Key.SortOrder);
-                RemoveSessionValue(UserSession.Key.SortField);
+                SetSessionValue(UserSession.Key.SortOrder, AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder));
+                SetSessionValue(UserSession.Key.SortField, AppSettings.GetStringValue(AppSettings.Key.DefaultSortField));
             }
 
             if (IsSessionValueNull(UserSession.Key.ProjectId))
@@ -371,8 +371,8 @@ namespace Epi.Cloud.MVC.Controllers
                 ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
                 SetSessionValue(UserSession.Key.ResponseContext, responseContext);
 
-                RemoveSessionValue(UserSession.Key.SortOrder);
-                RemoveSessionValue(UserSession.Key.SortField);
+                SetSessionValue(UserSession.Key.SortOrder, AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder));
+                SetSessionValue(UserSession.Key.SortField, AppSettings.GetStringValue(AppSettings.Key.DefaultSortField));
                 SetSessionValue(UserSession.Key.RootFormId, formId);
                 SetSessionValue(UserSession.Key.PageNumber, page.Value);
 
@@ -513,9 +513,17 @@ namespace Epi.Cloud.MVC.Controllers
                 {
                     formResponseReq.Criteria.SortOrder = sort;
                 }
+                else
+                {
+                    formResponseReq.Criteria.SortOrder = AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder);
+                }
                 if (sortfield.Length > 0)
                 {
                     formResponseReq.Criteria.Sortfield = sortfield;
+                }
+                else
+                {
+                    formResponseReq.Criteria.Sortfield = AppSettings.GetStringValue(AppSettings.Key.DefaultSortField);
                 }
 
                 formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
@@ -758,7 +766,7 @@ namespace Epi.Cloud.MVC.Controllers
                 SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = responseId });
                 SurveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
                 SetSessionValue(UserSession.Key.RecoverLastRecordVersion, recoverLastRecordVersion);
-                //  _isurveyFacade.UpdateResponseStatus(SurveyAnswerRequest);
+                _surveyFacade.UpdateResponseStatus(SurveyAnswerRequest);
             }
             catch (Exception ex)
             {

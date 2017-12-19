@@ -128,7 +128,7 @@
     var numberOfQueries = 0;
 
     if (!sortKey) {
-        sortkey = "_DateCreated";
+        sortkey = "_DateUpdated";
         isSortAscending = false;
     }
 
@@ -151,7 +151,7 @@
         {
             continuation: continuationToken,
             pageSize: 500
-		};
+        };
 
         // The number of documents taken from the current continuation block
         var taken = 0;
@@ -173,27 +173,27 @@
                       // Append response to responses.
                       responses = responses.concat(thisResponse);
 
-                     // Keep track of the total response size.
-                     taken += 1;
+                      // Keep track of the total response size.
+                      taken += 1;
                   }
               }
               trace += ",taken:" + taken;
 
               if (responseOptions.continuation) {
-                 getNodes(responseOptions.continuation);
+                  getNodes(responseOptions.continuation);
               }
               if (!isCallerPostProcessing)
               {
-                // If there is no continutation token, we are done. Return the response.
-                responses = schwartzianSort(responses, sortKey);
-                var numberOfPages;
-                var pageResponses;
-                if (pageNumber &gt; 0 &amp;&amp; responsesPerPage &gt; 0) {
-                    numberOfPages = Math.ceil(responses.length / responsesPerPage);
-                    var first = pageNumber * responsesPerPage - responsesPerPage;
-                    var last = pageNumber * responsesPerPage;
-                    pageResponses = responses.slice(first, last);
-                }
+                  // If there is no continutation token, we are done. Return the response.
+                  responses = schwartzianSort(responses, sortKey);
+                  var numberOfPages;
+                  var pageResponses;
+                  if (pageNumber &gt; 0 &amp;&amp; responsesPerPage &gt; 0) {
+                      numberOfPages = Math.ceil(responses.length / responsesPerPage);
+                      var first = pageNumber * responsesPerPage - responsesPerPage;
+                      var last = pageNumber * responsesPerPage;
+                      pageResponses = responses.slice(first, last);
+                  }
               }
               pageNumber = pageNumber ? pageNumber : 0
               response.setBody({
@@ -205,8 +205,8 @@
                   "numberOfResponsesReturnedByQuery": responses.length,
                   "numberOfResponsesPerPage": responsesPerPage,
                   "numberOfResponsesOnSelectedPage": pageResponses.length,
-				  "totalSizeOfResponsesReturnedByQuery": responseSize,
-				  "totalSizeOfResponsesOnSelectedPage": JSON.stringify(pageResponses).length,
+                  "totalSizeOfResponsesReturnedByQuery": responseSize,
+                  "totalSizeOfResponsesOnSelectedPage": JSON.stringify(pageResponses).length,
                   "message": "Completed",
                   "trace": trace
               });
@@ -246,8 +246,7 @@
                     case "_DateCreated":
                         return [item.FirstSaveTime, item];
                     case "_DateUpdated":
-                        return [item["_ts"](), item];
-                        //return [item.LastSaveTime, item];
+                        return [item._ts, item];
                     default:
                         return [item.ResponseQA[sortKey] ? item.ResponseQA[sortKey].toUpperCase() : "", item];
                 }

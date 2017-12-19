@@ -1,17 +1,31 @@
-﻿namespace Epi.DataPersistence.Constants
+﻿using Epi.Cloud.Common.Core;
+
+namespace Epi.DataPersistence.Constants
 {
 	public enum RecordStatusChangeReason
 	{
 		Unknown = 0,
+
 		Update,
-		DeleteResponse,
+
+        [NotifyConsistencyService(true)]
+        DeleteResponse,
+
 		DeleteInEditMode,
+
 		OpenForEdit,
-		SubmitOrClose,
+
+        [NotifyConsistencyService(true)]
+        SubmitOrClose,
+
 		ReadResponse,
+
 		CreateMulti,
+
 		NewChild,
+
 		Logout,
+
         Restore
     }
 }

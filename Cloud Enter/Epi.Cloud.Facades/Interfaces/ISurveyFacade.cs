@@ -26,7 +26,7 @@ namespace Epi.Cloud.Facades.Interfaces
         SurveyAnswerResponse SetChildRecord(SurveyAnswerRequest surveyAnswerRequest);
         FormSettingResponse SaveSettings(FormSettingRequest formSettingReq);
         SurveyAnswerResponse DeleteResponse(SurveyAnswerRequest surveyAnswerRequest);
-        void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
+        SurveyAnswerResponse UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
         FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest);
         bool HasResponse(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerDTO GetSurveyAnswerDTO(SurveyAnswerRequest surveyAnswerRequest);

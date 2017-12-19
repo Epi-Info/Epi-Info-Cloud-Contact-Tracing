@@ -33,6 +33,10 @@ namespace Epi.PersistenceServices.CosmosDB
             {
                 ChildResponseContexts.Add(childResponse.ResponseId, new ChildResponseContext(childResponse));
             }
+            else
+            {
+                existingChildResponseContext.RecStatus = childResponse.RecStatus;
+            }
 
             var childResponsesByChildFormId = ChildResponses[parentResponseId];
             childResponsesByChildFormId[childFormName] = childResponseList;
@@ -97,12 +101,13 @@ namespace Epi.PersistenceServices.CosmosDB
             if (ChildResponses.TryGetValue(formResponseProperties.ResponseId, out childFormResponses))
             {
                 // interate over list child forms
-                foreach (var childFormResponseList in childFormResponses.Values)
+                foreach (var childFormResponseList in childFormResponses.Values.ToArray())
                 {
                     // iterate over list of child responses
-                    foreach (var childFormResponseProperties in childFormResponseList)
+                    foreach (var childFormResponseProperties in childFormResponseList.ToArray())
                     {
                         action(childFormResponseProperties);
+                        AddOrReplaceChildResponse(childFormResponseProperties);
                         CascadeThroughChildren(childFormResponseProperties, action);
                     }
                 }

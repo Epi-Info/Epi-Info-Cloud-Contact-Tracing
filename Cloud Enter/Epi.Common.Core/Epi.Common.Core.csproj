@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsistencyServiceAttributeHelper.cs" />
     <Compile Include="Constants\RecordSource.cs" />
     <Compile Include="Constants\RecordStatus.cs" />
     <Compile Include="Constants\RecordStatusChangeReason.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Message\Base\RequestBase.cs" />
     <Compile Include="Message\Base\ResponseBase.cs" />
     <Compile Include="Message\SurveyAnswerResponse.cs" />
+    <Compile Include="NotifyConsistencyServiceAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

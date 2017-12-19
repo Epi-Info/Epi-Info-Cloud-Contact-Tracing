@@ -38,13 +38,14 @@ namespace Epi.Cloud.MVC.Controllers
         {
             if (responseContext == null) responseContext = new ResponseContext();
 
-            responseContext.RootResponseId = string.IsNullOrEmpty(responseContext.RootResponseId) ? (string.IsNullOrEmpty(rootResponseId) ? GetStringSessionValue(UserSession.Key.RootResponseId) : rootResponseId) : responseContext.RootResponseId;
-            responseContext.ParentResponseId = string.IsNullOrEmpty(responseContext.ParentResponseId) ? parentResponseId : responseContext.ParentResponseId;
-            responseContext.ResponseId = string.IsNullOrEmpty(responseContext.ResponseId) ? responseId : responseContext.ResponseId;
-            if (string.IsNullOrEmpty(responseContext.RootResponseId)) responseContext.RootResponseId = responseContext.ResponseId;
-
             responseContext.FormId = string.IsNullOrEmpty(responseContext.FormId) ? (string.IsNullOrEmpty(formId) ? GetStringSessionValue(UserSession.Key.CurrentFormId) : formId) : responseContext.FormId;
             if (string.IsNullOrEmpty(responseContext.FormId)) responseContext.FormId = string.IsNullOrEmpty(responseContext.RootFormId) ? GetStringSessionValue(UserSession.Key.RootFormId) : responseContext.RootFormId;
+
+            responseContext.ResponseId = string.IsNullOrEmpty(responseContext.ResponseId) ? responseId : responseContext.ResponseId;
+
+            responseContext.RootResponseId = string.IsNullOrEmpty(responseContext.RootResponseId) ? (string.IsNullOrEmpty(rootResponseId) ? GetStringSessionValue(UserSession.Key.RootResponseId) : rootResponseId) : responseContext.RootResponseId;
+            responseContext.ParentResponseId = string.IsNullOrEmpty(responseContext.ParentResponseId) ? parentResponseId : responseContext.ParentResponseId;
+            if (string.IsNullOrEmpty(responseContext.RootResponseId)) responseContext.RootResponseId = responseContext.ResponseId;
 
             responseContext.UserName = GetStringSessionValue(UserSession.Key.UserName);
             responseContext.UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
@@ -78,6 +79,7 @@ namespace Epi.Cloud.MVC.Controllers
                 responseContext = InitializeResponseContext(responseContext, responseId: responseId) as ResponseContext;
             }
             responseContext.ResponseId = responseId;
+            if (responseContext.FormId == responseContext.RootFormId) responseContext.RootResponseId = responseId;
             responseContext.UserOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
 
             SetSessionValue(UserSession.Key.ResponseContext, responseContext);
@@ -172,16 +174,24 @@ namespace Epi.Cloud.MVC.Controllers
             int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
             string userName = GetStringSessionValue(UserSession.Key.UserName);
 
-            ResponseContext responseContext = (ResponseContext)new ResponseContext
+            ResponseContext responseContext = GetSessionValue<ResponseContext>(UserSession.Key.ResponseContext);
+
+            if (!string.IsNullOrEmpty(formId))
             {
-                RootFormId = rootFormId,
-                FormId = !string.IsNullOrEmpty(formId) ? formId : null,
-                ResponseId = responseId,
-                RootResponseId = rootResponseId,
-                UserOrgId = orgId,
-                UserId = userId,
-                UserName = userName
-            }.ResolveMetadataDependencies();
+                responseContext.FormId = formId;
+                responseContext.FormName = MetadataAccessor.GetFormName(formId);
+            }
+
+            if (!string.IsNullOrEmpty(responseId))
+            {
+                responseContext.ResponseId = responseId;
+            }
+
+            responseContext.ResolveMetadataDependencies();
+
+            SetSessionValue(UserSession.Key.ResponseContext, responseContext);
+
+            SetSessionValue(UserSession.Key.RootResponseId, responseContext.RootResponseId);
 
             var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
 

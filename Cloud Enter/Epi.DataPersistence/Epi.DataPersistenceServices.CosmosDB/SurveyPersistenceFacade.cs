@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.Constants;
+using Epi.Cloud.Common.Core;
 using Epi.Cloud.Common.Extensions;
 using Epi.Cloud.Common.Message;
 using Epi.Cloud.Common.Metadata;
@@ -92,12 +93,13 @@ namespace Epi.PersistenceServices.CosmosDB
         {
             var isSuccessful = _formResponseCRUD.ExecuteWithFollowOnAction(
                 () => SaveFormResponseProperties(surveyResponseBO),
-                () => {
-                        if (surveyResponseBO.Status == RecordStatus.Saved)
-                        {
-                            NotifyConsistencyService(surveyResponseBO, surveyResponseBO.Status, RecordStatusChangeReason.SubmitOrClose);
-                        }
-                      });
+(Action)(() =>
+{
+    if (surveyResponseBO.RecStatus == RecordStatus.Saved)
+    {
+        NotifyConsistencyService(surveyResponseBO, (int)surveyResponseBO.RecStatus, RecordStatusChangeReason.SubmitOrClose);
+    }
+}));
             return isSuccessful;
         }
 
@@ -159,15 +161,15 @@ namespace Epi.PersistenceServices.CosmosDB
             return isSuccessful;
         }
 
-		#endregion
+        #endregion
 
-		#region DeleteSurveyByResponseId
-		public SurveyAnswerResponse DeleteResponse(IResponseContext responseContext)
-		{
-			bool deleteStatus = UpdateResponseStatus(responseContext, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
-			SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
-			return surveyAnsResponse;
-		}
+        #region DeleteSurveyByResponseId
+        public SurveyAnswerResponse DeleteResponse(IResponseContext responseContext)
+        {
+            bool deleteStatus = UpdateResponseStatus(responseContext, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
+            SurveyAnswerResponse surveyAnsResponse = new SurveyAnswerResponse();
+            return surveyAnsResponse;
+        }
 
         #endregion
 
@@ -189,52 +191,51 @@ namespace Epi.PersistenceServices.CosmosDB
             };
             return result;
         }
-		#endregion
+        #endregion
 
         public FormResponseDetail GetFormResponseByResponseId(IResponseContext responseContext)
-		{
-			var response = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext);
-			var formResponseDetail = response[0].ToFormResponseDetail();
-			return formResponseDetail;
-		}
+        {
+            var response = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext);
+            var formResponseDetail = response.ToHierarchicalFormResponseDetail();
+            //var formResponseDetail = response[0].ToFormResponseDetail();
+            return formResponseDetail;
+        }
 
-		#region Get Hierarchical Responses for DataConsisitencyServiceAPI
-		public FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)
-		{
-			var hierarchicalDocumentResponseProperties = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext, includeDeletedRecords);
-			var hierarchicalFormResponseDetail = hierarchicalDocumentResponseProperties.ToHierarchicalFormResponseDetail();
-			return hierarchicalFormResponseDetail;
-		}
-		#endregion
+        #region Get Hierarchical Responses for DataConsisitencyServiceAPI
+        public FormResponseDetail GetHierarchicalResponsesByResponseId(IResponseContext responseContext, bool includeDeletedRecords = false)
+        {
+            var hierarchicalDocumentResponseProperties = _formResponseCRUD.GetHierarchicalResponseListByResponseId(responseContext, includeDeletedRecords);
+            var hierarchicalFormResponseDetail = hierarchicalDocumentResponseProperties.ToHierarchicalFormResponseDetail();
+            return hierarchicalFormResponseDetail;
+        }
+        #endregion
 
 
-		#region Notify Consistency Service
-		public void NotifyConsistencyService(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
-		{
-			if (responseStatus == RecordStatus.Deleted || responseStatus == RecordStatus.Saved)
-			{
-				try
-				{
-					var serviceBusCRUD = new ServiceBusCRUD();
-					var hierarchicalResponse = GetHierarchicalResponsesByResponseId(responseContext,includeDeletedRecords: true);
+        #region Notify Consistency Service
+        public void NotifyConsistencyService(IResponseContext responseContext, int responseStatus, RecordStatusChangeReason reasonForStatusChange)
+        {
+            if (responseStatus == RecordStatus.Deleted || responseStatus == RecordStatus.Saved)
+            {
+                try
+                {
+                    var serviceBusCRUD = new ServiceBusCRUD();
+                    var hierarchicalResponse = GetHierarchicalResponsesByResponseId(responseContext, includeDeletedRecords: true);
                     var messageHeader = string.Format("{0},{1},{2}", responseContext.RootFormName, responseContext.RootFormId, responseContext.RootResponseId);
-					switch (reasonForStatusChange)
-					{
-						case RecordStatusChangeReason.SubmitOrClose:
-						case RecordStatusChangeReason.DeleteResponse:
 
-                            //send notification to ServiceBus
-                            NotifyConsistencyService(hierarchicalResponse);
-							//ConsistencyHack(hierarchicalResponse);
-							break;
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine(ex.ToString());
-				}
-			}
-		}
+                    var shouldNotify = ConsistencyServiceAttributeHelper.ShouldNotifyConsistencyService(reasonForStatusChange);
+                    if (shouldNotify)
+                    {
+                        //send notification to ServiceBus
+                        NotifyConsistencyService(hierarchicalResponse);
+                        //ConsistencyHack(hierarchicalResponse);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            }
+        }
         public void NotifyConsistencyService(FormResponseDetail hierarchicalFormResponseDetail)
         {
             var serviceBusCRUD = new ServiceBusCRUD();

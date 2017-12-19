@@ -71,7 +71,7 @@ namespace Epi.Cloud.Resources {
         ///    var numberOfQueries = 0;
         ///
         ///    if (!sortKey) {
-        ///        sortkey = &quot;_DateCreated&quot;;
+        ///        sortkey = &quot;_DateUpdated&quot;;
         ///        isSortAscending = false;
         ///    }
         ///

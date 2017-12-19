@@ -44,7 +44,7 @@ namespace Epi.Cloud.Common.Extensions
             responseDetail.IsRelatedView = surveyResponseBO.ParentFormId != null;
             responseDetail.IsDraftMode = parentSurveyInfoBO.IsDraftMode;
             responseDetail.IsNewRecord = surveyResponseBO.IsNewRecord;
-            responseDetail.RecStatus = surveyResponseBO.Status;
+            responseDetail.RecStatus = surveyResponseBO.RecStatus;
             responseDetail.ResponseId = surveyResponseBO.ResponseId;
             responseDetail.ResolveMetadataDependencies();
 

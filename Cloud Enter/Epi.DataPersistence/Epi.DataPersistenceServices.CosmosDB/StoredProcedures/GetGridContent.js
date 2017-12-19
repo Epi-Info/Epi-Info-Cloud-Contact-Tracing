@@ -8,7 +8,7 @@
     var numberOfQueries = 0;
 
     if (!sortKey) {
-        sortkey = "_DateCreated";
+        sortkey = "_DateUpdated";
         isSortAscending = false;
     }
 
@@ -126,8 +126,7 @@
                     case "_DateCreated":
                         return [item.FirstSaveTime, item];
                     case "_DateUpdated":
-                        return [item["_ts"](), item];
-                        //return [item.LastSaveTime, item];
+                        return [item._ts, item];
                     default:
                         return [item.ResponseQA[sortKey] ? item.ResponseQA[sortKey].toUpperCase() : "", item];
                 }

@@ -8,7 +8,7 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 	{
 		bool HasResponse(SurveyAnswerRequest surveyAnswerRequest);
 
-		void UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
+        SurveyAnswerResponse UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
 
 		SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest);
 
