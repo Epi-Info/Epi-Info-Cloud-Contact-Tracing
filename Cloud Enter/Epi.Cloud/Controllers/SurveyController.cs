@@ -206,7 +206,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext };
 
-            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTOLite());
             surveyAnswerRequest.Criteria.StatusId = statusId;
             surveyAnswerRequest.Criteria.StatusChangeReason = statusChangeReason;
 

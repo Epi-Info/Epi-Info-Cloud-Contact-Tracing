@@ -6,28 +6,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
-@*<script type="text/javascript" >
-
-          $(document).ready(function () {
-              // a workaround for a flaw in the demo system (http://dev.jqueryui.com/ticket/4375), ignore!
-
-
-
-
-              $("#VideoDialog").dialog({
-                  autoOpen: false,
-                  show: "blind",
-                  hide: "blind",
-                  resizable: false,
-                  height: 410,
-                  width: 500,
-                  modal: true
-              });
-
-          });
-
-    </script>*@
-
 
 <script type="text/jscript">
 
@@ -49,7 +27,6 @@
                 "click": function () {
                     $.ajax({
 
-                        //    url: 'Home/Delete/'+ $("#exitdialog").data('ResponseId') + '/' + '@ViewBag.UserId',
                         url: '@Url.Action("Delete","Home")' + '?ResponseId=' + $("#exitdialog").data('ResponseId'),
                         type: 'POST',
                         cache: false,
@@ -57,8 +34,6 @@
                         success: successFunc,
                         error: errorFunc
                     });
-
-                    //                    $.ajaxSetup({ cache: false });
 
                     function successFunc(data, status) {
                         $("#exitdialog").dialog("close");
@@ -100,11 +75,9 @@
                 type: 'POST',
                 cache: false,
                 contentType: 'application/json; charset=utf-8',
-                //data: JSON.stringify(model),
                 success: successFunc,
                 Error: errorFunc
             });
-            //		 $.ajaxSetup({ cache: false });
 
             function successFunc(data, status) {
                 var loggedInUserId = data.LoggedInUserId
@@ -126,29 +99,16 @@
                     if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
                            alert("This record is being edited by another user.");
                         }
-                   else
-                        {
+                    else
+                    {
                         UnLockRecordForDelete(ResponseId);
-
-
-                        }
-
-
-
-
-
-
-                    //$("#ConcurrencyDialog").data('ResponseId', ResponseId)
-                    //$("#LastUpdated").val(UpdatedDate);
-                    //$("#EditingDuration").val(  msToTime(EditingDuration));
-                    //$("#ConcurrencyDialog").dialog("open");
+                    }
                 }
             }
 
             function errorFunc() {
                 alert('error');
            }
-
 
     });
 
@@ -165,7 +125,6 @@
                 $(this).addClass('metro-set');
                 ResetSearchFields();
                 ReadResponses($(this).attr('data-FormId'), 1, '', '');
-                // alert(1);
             }
             else {
                 if ($("#FORM_SELECTED_HIDDEN").val() == "") {
@@ -174,45 +133,21 @@
                     $('#' + '@Model.SelectedForm').addClass('metro-set');
                     $("#FORM_SELECTED_HIDDEN").val('@Model.SelectedForm');
                     ReadResponses('@Model.SelectedForm', '@Session[UserSession.Key.PageNumber]', '', '');
-                    // alert(2);
-                    //test
                 }
                 else {
 
                     $("button[class*='metro-tile']").removeClass('metro-set');
                     SetSettingButtonValue($(this).attr('data-FormId'));
                     $(this).addClass('metro-set');
-                    //  $("#FORM_SELECTED_HIDDEN").val('');
                     ResetSearchFields();
                     ReadResponses($(this).attr('data-FormId'), 1, '', '');
-                    //alert(3);
                 }
 
             }
             $("#right").show();
-            //alert('1');
-            //            $.ajax({
-            //                url: '@Url.Action("ReadResponseInfo","Home")' + '?formid=' + $(this).attr('data-FormId'),
-            //                type: 'GET',
-            //                contentType: 'application/json; charset=utf-8',
-            //                //data: JSON.stringify(model),
-            //                success: successFunc,
-            //                error: errorFunc
-            //            });
-            //            $.ajaxSetup({ cache: false });
 
-            //            function successFunc(data, status) {
-            //                $('#right').html(data);
-            //            }
-
-            //            function errorFunc() {
-            //                alert('error');
-            //            }
-
-            //            ReadResponses($(this).attr('data-FormId'), 1, '', '');
-            //return page to the top when a form is selected if the list of forms is too long.
+           //return page to the top when a form is selected if the list of forms is too long.
             $("html, body").animate({ scrollTop: 0 }, "slow");
-           // CloseSppiner()
             return false;
         });
 
@@ -223,35 +158,12 @@
             $("#right").show();
             var formid = $('#hidFormId').val();
             var pageNumber = $('#hidPageNumber').val();
-            //            Sort = 'ASC';
-            //            SortField = $("#columns").val(); // 'PetsName';
             var Sort = $("#FORM_SORTORDER_HIDDEN").val();
             var SortField = $("#FORM_SORTFIELD_HIDDEN").val();
             ReadResponses(formid, 1, Sort, SortField);
-
-            //            $.ajax({
-            //                url: '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + formid + "&page=1&sort=" + Sort + "&sortfield=" + SortField
-            //                + ReadSearchFields() ,
-            //                type: 'GET',
-            //                contentType: 'application/json; charset=utf-8',
-            //                //data: JSON.stringify(model),
-            //                success: successFunc,
-            //                error: errorFunc
-            //            });
-            //            $.ajaxSetup({ cache: false });
-
-            //            function successFunc(data, status) {
-            //                $('#right').html(data);
-            //            }
-
-            //            function errorFunc() {
-            //                alert('error');
-            //            }
-
         });
 
         $(document).on("click", "button[name='ResetSearch']", function (e) {
-            // alert(1);
             e.preventDefault();
             $("#right").show();
             var formid = $('#hidFormId').val();
@@ -276,11 +188,9 @@
                 cache: false,
                 type: 'GET',
                 contentType: 'application/json; charset=utf-8',
-                //data: JSON.stringify(model),
                 success: successFunc,
                 error: errorFunc
             });
-            //            $.ajaxSetup({ cache: false });
 
             function successFunc(data, status) {
                 $('#right').html(data);
@@ -316,25 +226,6 @@
             $("#FORM_SORTORDER_HIDDEN").val(Sort);
             $("#FORM_SORTFIELD_HIDDEN").val(SortField);
             ReadResponses(formid, 1, Sort, SortField);
-
-            //            $.ajax({
-            //                url: '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + formid + "&page=1&sort=" + Sort + "&sortfield=" + SortField + ReadSearchFields(),
-            //                type: 'GET',
-            //                contentType: 'application/json; charset=utf-8',
-            //                //data: JSON.stringify(model),
-            //                success: successFunc,
-            //                error: errorFunc
-            //            });
-            //            $.ajaxSetup({ cache: false });
-
-            //            function successFunc(data, status) {
-            //                $('#right').html(data);
-            //            }
-
-            //            function errorFunc() {
-            //                alert('error');
-            //            }
-
         });
 
         $(document).on("click", "button[id='SortDESC']", function (e) {
@@ -347,25 +238,6 @@
             $("#FORM_SORTORDER_HIDDEN").val(Sort);
             $("#FORM_SORTFIELD_HIDDEN").val(SortField);
             ReadResponses(formid, 1, Sort, SortField);
-
-            //            $.ajax({
-            //                url: '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + formid + "&page=1&sort=" + Sort + "&sortfield=" + SortField + ReadSearchFields(),
-            //                type: 'GET',
-            //                contentType: 'application/json; charset=utf-8',
-            //                //data: JSON.stringify(model),
-            //                success: successFunc,
-            //                error: errorFunc
-            //            });
-            //            $.ajaxSetup({ cache: false });
-
-            //            function successFunc(data, status) {
-            //                $('#right').html(data);
-            //            }
-
-            //            function errorFunc() {
-            //                alert('error');
-            //            }
-
         });
 
 
@@ -401,7 +273,6 @@
             var OrgId = $("#dropdown-2").val();
 
             FilterRecords(this, OrgId);
-            //FilterRecordsByOrg(OrgId);
             $("#right").hide();
             $("button[class*='metro-tile']").removeClass('metro-set');
 
@@ -419,8 +290,6 @@
             FilterRecordsByOrg(src);
             $("#dropdown-1").val('3');
         });
-
-        //  $("button:visible").triggerHandler('click');
 
     });
     //ConcurrencyDialog
@@ -445,17 +314,13 @@
                         url: ActionUrl,
                         type: 'POST',
                         dataType: "json",
-                        //cache: false,
                         async: false,
                         contentType: 'application/json; charset=utf-8',
-                        //data: JSON.stringify(model),
                         success: successFunc,
                         Error: errorFunc
                     });
-                    //		 $.ajaxSetup({ cache: false });
 
                     function successFunc(data, status) {
-                        // $("#ConcurrencyDialog").dialog("close");
                         $("#ConcurrencyMessage").hide();
                         $(".dialogbtn").hide();
 
@@ -484,8 +349,6 @@
 
 
     $(document).ready(function () {
-        // e.preventDefault();
-        //$(this).addClass('metro-set');
         var ActionUrl = "";
         var Url = window.location.pathname;
         var ResultUrl = "";
@@ -500,26 +363,18 @@
 
             $("button[class*='metro-tile']").removeClass('metro-set');
             $(FieldId).addClass('metro-set');
-            //ActionUrl = '@Url.Action("ReadSortedResponseInfo","Home")' + "?formid=" + ResultUrl + "&page=1";
-            //            ReadResponse(ActionUrl);
-            //ReadResponses(ResultUrl, 1, '', '');
             var OrgId = '@Session[UserSession.Key.SelectedOrgId]';
             $("#FORM_SelectedOrgId_HIDDEN").val(OrgId);
             FilterRecordsByOrg(OrgId);
         }
         else {
-
-            //  $("button:visible").triggerHandler('click');
             var OrgId1 = $("#dropdown-2").val();
             $("#FORM_SelectedOrgId_HIDDEN").val(OrgId1);
             FilterRecordsByOrg(OrgId1);
 
         }
+
         //Use of Organization filter
-
-
-
-
         $("#right").show();
 
         // setup the dialog
@@ -531,12 +386,7 @@
             closeOnEscape: false,
             draggable: false,
             resizable: false,
-            /* buttons: {
-            'Continue Session': function () {
-            $(this).dialog('close');
-            }
-            }*/
-
+ 
             buttons: [{
                 "text": 'Continue Session',
                 "click": function () {
@@ -552,19 +402,10 @@
 
         // start the idle timer plugin
         $.idleTimeout('#TimeOutdialog', 'div.ui-dialog-buttonpane button:first', {
-           // idleAfter:  840 ,// 900,
-            //pollingInterval: 2,
             keepAliveURL: 'keepalive.php',
             //serverResponseEquals: 'OK',
             onTimeout: function () {
-                //window.location = "timeout.htm";
                 window.location = '@Url.Action("Index","Login")';
-                //'/Login';
-
-                //GetRedirectionUrl() + '/1';
-                //'~/Login/Index';
-
-
             },
             onIdle: function () {
                 $(this).dialog("open");
@@ -607,22 +448,16 @@
 
         var SessioOrgId =' @Session[UserSession.Key.SelectedOrgId]';
 
-        //  alert("session: " + SessioOrgId +"  DropDown " + $("#dropdown-2").val());
-
         var OrgId = $("#dropdown-2").val();
 
         $.ajax({
-            //url: '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + formid + "&page=" + pagenumber + "&sort=" + sortOrder + "&sortfield=" + sortField,
             url: '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + formid + '&page=' + pagenumber + '&sort=' + sortOrder + '&sortfield=' + sortField + '&orgid=' + OrgId + '&reset=' + reset
                 + ReadSearchFields(),
             cache: false,
             type: 'GET',
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc
         });4
-
-        //        $.ajaxSetup({ cache: false });
 
         function successFunc(data, status) {
             $('#right').html(data);
@@ -645,11 +480,9 @@
             type: 'GET',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc,
             Error: errorFunc
         });
-        //		$.ajaxSetup({ cache: false });
 
         function successFunc(data, status) {
             $('#right').html(data);
@@ -671,11 +504,9 @@
             type: 'GET',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc,
             Error: errorFunc
         });
-        //		 $.ajaxSetup({ cache: false });
 
         function successFunc(data, status) {
             $('#right').html(data);
@@ -695,11 +526,9 @@
             type: 'POST',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc,
             Error: errorFunc
         });
-        //		 $.ajaxSetup({ cache: false });
 
         function successFunc(data, status) {
             $('#right').html(data);
@@ -722,7 +551,6 @@
             }
         });
 
-        //if ($('select.SelectedColumns option').length > 0) {
         if (validation) {
             $('.SelectedColumns option').prop('selected', true);
             $('#SelectedUser option').prop('selected', true);
@@ -730,12 +558,10 @@
 
             var ActionUrl = '@Url.Action("SaveSettings","Home")' + '?formid=' + $("#FORM_ID_HIDDEN").val();
             var _form = $("#formsList").serialize();
-            //alert(form);
             $.ajax({
                 url: ActionUrl,
                 type: 'POST',
                 cache: false,
-                //contentType: 'application/json; charset=utf-8',
                 data: _form,
                 dataType: "html",
                 success: successFunc,
@@ -749,12 +575,7 @@
             $('select.SelectedColumns option').focus();
         }
 
-
-        //	$.ajaxSetup({ cache: false });
-
         function successFunc(data, status) {
-            //  $('#right').html(data);
-            //alert(data);
             if (data == "") {
                 window.location.href = "Home";
             }
@@ -782,14 +603,8 @@
             CloseSppiner();
             alert('error');
         }
-
-        //    }
-        // else
-        //     {
-        //         alert('User should select at least one column.');
-        //         $('select#SelectedColumns option').focus();
-        //    }
     }
+
     // Check For Concurrency
     function CheckForConcurrency(obj) {
        ;
@@ -803,12 +618,9 @@
             type: 'POST',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc,
             Error: errorFunc
         });
-
-        //		 $.ajaxSetup({ cache: false });
 
         function successFunc(data, status) {
             var loggedInUserId = data.LoggedInUserId
@@ -822,10 +634,6 @@
             }
             else
             {
-                //alert("This recored is being edited.")
-                // if time elapsed is less the   system timeout
-               // alert("loggedInUserId " + loggedInUserId)
-              //  alert("data.LastActiveUserId " + data.LastActiveUserId)
                 if (EditingDuration <= SessionTimeOut && data.LastActiveUserId>0 && loggedInUserId != data.LastActiveUserId) {
                     alert("This record is being edited by another user.");
                 }
@@ -841,10 +649,6 @@
                     }
 
                 }
-                //$("#ConcurrencyDialog").data('ResponseId', obj.id)
-                //$("#LastUpdated").val(UpdatedDate);
-                //$("#EditingDuration").val(msToTime(EditingDuration));
-                //$("#ConcurrencyDialog").dialog("open");
             }
         }
 
@@ -856,26 +660,18 @@
     }
     //CancelChange
     function CancelChange() {
-
-        //		var ActionUrl = '@Url.Action("ReadSortedResponseInfo","Home")' + '?formid=' + $("#FORM_ID_HIDDEN").val();
-        //		ReadResponse(ActionUrl);
         ReadResponses($("#FORM_ID_HIDDEN").val(), 1, '', '');
         $('#dropdown-1').focus();
     }
     function SetSettingButtonValue(formid) {
         $("#FORM_ID_HIDDEN").val(formid);
-
     }
 
     function SetSettingMode() {
-
         $("#FORM_MODE_HIDDEN").val($('#FormMode').find(":selected").text());
-
     }
+
     function UnLockRecordForDelete(ResponseId) {
-
-
-
         var ActionUrl = '@Url.Action("UnLock", "Home")' + '/' + ResponseId+'/False';
         
         $.ajax({
@@ -883,10 +679,10 @@
             type: 'POST',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc1,
             Error: errorFunc1
         });
+
         function successFunc1(data, status)
         {
             if(data =="Success")
@@ -904,20 +700,18 @@
             alert('error');
         }
     }
+
     function UnLockRecordForEdit(ResponseId, RecoverLastRecordVersion) {
-
-
-
         var ActionUrl = '@Url.Action("UnLock", "Home")' + '?responseid=' + ResponseId + "&RecoverLastRecordVersion=" + RecoverLastRecordVersion;
         $.ajax({
             url: ActionUrl,
             type: 'POST',
             cache: false,
             contentType: 'application/json; charset=utf-8',
-            //data: JSON.stringify(model),
             success: successFunc1,
             Error: errorFunc1
         });
+
         function successFunc1(data, status) {
 
             $('#' + ResponseId).closest("form").submit();
@@ -927,6 +721,7 @@
             alert('error');
         }
     }
+
     function ShowSppiner() {
         var validate = $('#formsList').validationEngine('validate');
 
@@ -942,6 +737,7 @@
         }
         $("#parent-selector :input").attr("disabled", true);
     }
+
     function CloseSppiner() {
 
         $('BODY').jLoadingOverlay('close');
@@ -957,15 +753,12 @@
 		var leftHeight = $("#left").height();
 		var rightHeight = $("#right").height();
 		if (leftHeight < rightHeight)
-         {
-             // $("#right").height(leftHeight)
-             $("#left").height(rightHeight)
-          }
-		else
         {
-           // $("#left").height(rightHeight)
+
+		    $("#left").height(rightHeight)
         }
 	});
+
 	function msToTime(ms) {
 
 	    var hours = Math.floor(ms / 3600000); // 1 Hour = 36000 Milliseconds
@@ -979,6 +772,7 @@
 	    return hours + ":" + minutes + ":" + seconds  ;
 	}
 </script>
+
 <div id="pageHeader">
     <div id="pageTitle">
         <h2 style="margin:3px 0px 0px 5px">
@@ -989,7 +783,6 @@
 
     <div id="userwelcome">
         Welcome <strong>@Model.UserFirstName&nbsp;@Model.UserLastName </strong>&nbsp; | &nbsp;
-        @*  <a href="#">Log Out</a>*@
 
         @if (Model.UserHighestRole == 3)
         {
@@ -1029,23 +822,18 @@
                 <div id="leftarrangeby" style="float: left; vertical-align: middle; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 5px solid White; vertical-align: middle;">
                     <span class="css3-metro-dropdown">
                         <select id="dropdown-2" style="width: 172px;">
-                            @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
                             @foreach (var item in Model.OrganizationList)
                             {
                                 <option value="@item.OrganizationId">@item.Organization</option>
                             }
-
-                            @*	<option value="3">Last Saved Forms First</option>*@
                         </select>
                     </span>
                     <span class="css3-metro-dropdown">
                         <select id="dropdown-1" style="width: 131px;">
-                            @* <option value="0" selected="selected" disabled="disabled">Arrange by:</option>*@
                             <option value="1">My Forms</option>
                             <option value="2">Forms Assigned to Me</option>
                             <option value="4">Forms Shared with Me</option>
                             <option value="3" selected="selected">All Forms</option>
-                            @*	<option value="3">Last Saved Forms First</option>*@
                         </select>
                     </span>
                 </div>
@@ -1126,8 +914,4 @@
 <input id="FORM_SORTFIELD_HIDDEN" type="hidden" />
 <input id="FORM_SelectedOrgId_HIDDEN" type="hidden" />
 <input id="SYSTEM_SESSION_TIMEOUT_HIDDEN" type="hidden" value="@Session.Timeout" />
-
-
-@*</div>
-    </div> *@
 

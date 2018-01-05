@@ -3,6 +3,10 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.WebPages;
+using Epi.Cloud.Common.Configuration;
+using Epi.Common.Diagnostics;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.TraceListener;
 
 namespace Epi.Cloud.MVC
 {
@@ -11,6 +15,17 @@ namespace Epi.Cloud.MVC
 
     public class MvcApplication : System.Web.HttpApplication
     {
+        ILogger _logger;
+
+        public MvcApplication()
+        {
+        }
+
+        public MvcApplication(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
             filters.Add(new HandleErrorAttribute());
@@ -79,9 +94,24 @@ namespace Epi.Cloud.MVC
 				//sEvent = exc.Message + "\n" + exc.StackTrace;
 
 				Epi.Web.Utility.ExceptionMessage.SendLogMessage(exc);
-                           
-                    
 
+                try
+                {
+                    ILogger logger = DependencyHelper.DependencyResolver.GetService<ILogger>();
+                    if (logger != null)
+                    {
+                        logger.Error(exc.ToString());
+                    }
+                    TelemetryClient telemetryClient = new TelemetryClient();
+                    if (telemetryClient != null)
+                    {
+                        telemetryClient.TrackException(exc);
+                    }
+                }
+                catch (Exception tex)
+                {
+                    Epi.Web.Utility.ExceptionMessage.SendLogMessage(tex);
+                }
             }
             catch (Exception ex)
             {

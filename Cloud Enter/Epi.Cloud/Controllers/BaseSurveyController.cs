@@ -14,6 +14,7 @@ using Epi.Cloud.MVC.Models;
 using Epi.Cloud.MVC.Utility;
 using Epi.Common.Core.DataStructures;
 using Epi.Common.Core.Interfaces;
+using Epi.DataPersistence.Constants;
 using Epi.DataPersistence.DataStructures;
 using Epi.FormMetadata.DataStructures;
 
@@ -175,12 +176,23 @@ namespace Epi.Cloud.MVC.Controllers
             string userName = GetStringSessionValue(UserSession.Key.UserName);
 
             ResponseContext responseContext = GetSessionValue<ResponseContext>(UserSession.Key.ResponseContext);
+            if (responseContext == null)
+            {
+                responseContext = new ResponseContext();
+            }
 
             if (!string.IsNullOrEmpty(formId))
             {
                 responseContext.FormId = formId;
                 responseContext.FormName = MetadataAccessor.GetFormName(formId);
+                responseContext.RootFormId = MetadataAccessor.GetRootFormId(formId);
+                responseContext.RootFormName = MetadataAccessor.GetFormName(responseContext.RootFormId);
             }
+            else
+            {
+                formId = responseContext.FormId;
+            }
+
 
             if (!string.IsNullOrEmpty(responseId))
             {
@@ -294,6 +306,35 @@ namespace Epi.Cloud.MVC.Controllers
                 searchColumns.Add(newSelectListItem);
             }
         }
+
+        protected ActionResult UnlockResponse(String responseId, bool recoverLastRecordVersion = false)
+        {
+            try
+            {
+                int userId = GetIntSessionValue(UserSession.Key.UserId);
+                int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
+                var responseContext = InitializeResponseContext(responseId: responseId);
+
+                var surveyAnswerDTO = new SurveyAnswerDTO(responseContext.ToFormResponseDetail())
+                {
+                    UserId = userId,
+                    UserOrgId = orgId
+                };
+                surveyAnswerDTO.ResolveMetadataDependencies();
+
+                SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = surveyAnswerDTO };
+                surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
+                surveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
+                SetSessionValue(UserSession.Key.RecoverLastRecordVersion, recoverLastRecordVersion);
+                _surveyFacade.UpdateResponseStatus(surveyAnswerRequest);
+            }
+            catch (Exception ex)
+            {
+                return Json("Error");
+            }
+            return Json("Success");
+        }
+
 
         /* --------------------------------------------------------------------------------------- */
         /*                                      Session Helpers                                    */

@@ -162,6 +162,9 @@ namespace Epi.Cloud.MVC.Controllers
         [HttpPost]
         public ActionResult Index(string surveyId, string addNewFormId, string editForm, string cancel)
         {
+            // Assign "editForm" parameter to a less confusing name. 
+            // editForm contains the responseId of the record being edited.
+            string editResponseId = editForm;
 
             int userId = GetIntSessionValue(UserSession.Key.UserId);
             string userName = GetStringSessionValue(UserSession.Key.UserName);
@@ -186,24 +189,22 @@ namespace Epi.Cloud.MVC.Controllers
 
                 return RedirectToRoute(new { Controller = "Survey", Action = "Index", responseid = this.Request.Form["Parent_Response_Id"].ToString(), PageNumber = pageNumber });
             }
-            if (string.IsNullOrEmpty(/*FromURL*/editForm) && string.IsNullOrEmpty(/*FromURL*/addNewFormId) && !IsSessionValueNull(UserSession.Key.EditForm))
+            if (string.IsNullOrEmpty(/*FromURL*/editResponseId) && string.IsNullOrEmpty(/*FromURL*/addNewFormId) && !IsSessionValueNull(UserSession.Key.EditResponseId))
             {
-                editForm = GetStringSessionValue(UserSession.Key.EditForm);
+                editResponseId = GetStringSessionValue(UserSession.Key.EditResponseId);
             }
 
-            var editFormResponseId = /*FromURL*/editForm;
-
-            if (!string.IsNullOrEmpty(editFormResponseId))
+            if (!string.IsNullOrEmpty(editResponseId))
             {
                 if (IsSessionValueNull(UserSession.Key.RootResponseId))
                 {
-                    SetSessionValue(UserSession.Key.RootResponseId, editFormResponseId);
+                    SetSessionValue(UserSession.Key.RootResponseId, editResponseId);
                 }
 
                 isEditMode = true;
                 SetSessionValue(UserSession.Key.IsEditMode, isEditMode);
 
-                SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editFormResponseId, GetStringSessionValue(UserSession.Key.RootFormId));
+                SurveyAnswerDTO surveyAnswer = GetSurveyAnswer(editResponseId, GetStringSessionValue(UserSession.Key.RootFormId));
                 if (!IsSessionValueNull(UserSession.Key.RecoverLastRecordVersion))
                 {
                     surveyAnswer.RecoverLastRecordVersion = GetBoolSessionValue(UserSession.Key.RecoverLastRecordVersion);
@@ -614,7 +615,7 @@ namespace Epi.Cloud.MVC.Controllers
             }.ResolveMetadataDependencies() as ResponseContext;
 
             SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
-            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTOLite());
             surveyAnswerRequest.Criteria.UserOrganizationId = orgId;
             surveyAnswerRequest.Criteria.UserId = userId;
             surveyAnswerRequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
@@ -744,7 +745,7 @@ namespace Epi.Cloud.MVC.Controllers
             var surveyAnswerStateDTO = GetSurveyAnswerState(responseContext);
             surveyAnswerStateDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerStateDTO.LoggedInUserId = responseContext.UserId;
-            SetSessionValue(UserSession.Key.EditForm, responseId);
+            SetSessionValue(UserSession.Key.EditResponseId, responseId);
 
             // Minimize the amount of Json data by serializing only pertinent state information
             var json = Json(surveyAnswerStateDTO);
@@ -753,20 +754,9 @@ namespace Epi.Cloud.MVC.Controllers
 
         [HttpPost]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Unlock(String ResponseId, bool RecoverLastRecordVersion)
+        public ActionResult Unlock(String responseId, bool recoverLastRecordVersion)
         {
-            try
-            {
-                SurveyAnswerRequest SurveyAnswerRequest = new SurveyAnswerRequest();
-                SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = ResponseId });
-                SurveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
-                SetSessionValue(UserSession.Key.RecoverLastRecordVersion, RecoverLastRecordVersion);
-            }
-            catch (Exception ex)
-            {
-                return Json("Erorr");
-            }
-            return Json("Success");
+            return UnlockResponse(responseId, recoverLastRecordVersion);
         }
     }
 }

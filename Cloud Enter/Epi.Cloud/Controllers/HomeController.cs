@@ -63,7 +63,7 @@ namespace Epi.Cloud.MVC.Controllers
         {
 
             RemoveSessionValue(UserSession.Key.ResponseContext);
-            RemoveSessionValue(UserSession.Key.EditForm);
+            RemoveSessionValue(UserSession.Key.EditResponseId);
 
             int userId = GetIntSessionValue(UserSession.Key.UserId);
             int orgnizationId;
@@ -135,6 +135,10 @@ namespace Epi.Cloud.MVC.Controllers
         [HttpPost]
         public ActionResult Index(string surveyId, string addNewFormId, string editForm)
         {
+            // Assign "editForm" parameter to a less confusing name. 
+            // editForm contains the responseId of the record being edited.
+            string editResponseId = editForm;
+
             bool isNewRecord;
 
             int orgId = GetIntSessionValue(UserSession.Key.CurrentOrgId);
@@ -142,13 +146,11 @@ namespace Epi.Cloud.MVC.Controllers
             string userName = GetStringSessionValue(UserSession.Key.UserName);
             SetSessionValue(UserSession.Key.FormValuesHasChanged, string.Empty);
 
-            var editFormFromSession = GetStringSessionValue(UserSession.Key.EditForm);
-            if (string.IsNullOrEmpty(editForm) && editFormFromSession != null)
+            var editResponseIdFromSession = GetStringSessionValue(UserSession.Key.EditResponseId);
+            if (string.IsNullOrEmpty(editResponseId) && editResponseIdFromSession != null)
             {
-                editForm = editFormFromSession;
+                editResponseId = editResponseIdFromSession;
             }
-
-            var editResponseId = editForm;
 
             if (!string.IsNullOrEmpty(editResponseId) && string.IsNullOrEmpty(addNewFormId))
             {
@@ -156,10 +158,10 @@ namespace Epi.Cloud.MVC.Controllers
                 //      Edit Existing Record
                 // -------------------------------
                 isNewRecord = false;
-                SetSessionValue(UserSession.Key.RootResponseId, editForm);
+                SetSessionValue(UserSession.Key.RootResponseId, editResponseId);
 
                 SetSessionValue(UserSession.Key.IsEditMode, true);
-                SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(editForm, GetStringSessionValue(UserSession.Key.RootFormId));
+                SurveyAnswerDTO surveyAnswerDTO = GetSurveyAnswer(editResponseId, GetStringSessionValue(UserSession.Key.RootFormId));
 
                 SetSessionValue(UserSession.Key.RequestedViewId, surveyAnswerDTO.ViewId);
 
@@ -327,58 +329,62 @@ namespace Epi.Cloud.MVC.Controllers
         [Authorize]
         public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
         {
-            bool isRefreshRequired = false;
-            page = page.HasValue ? page.Value : 1;
-            sortField = sortField.ToLower();
-            bool isMobileDevice = this.Request.Browser.IsMobileDevice;
-
-            //Code added to retain Search Starts
-
-            if (reset)
-            {
-                SetSessionValue(UserSession.Key.SortOrder, AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder));
-                SetSessionValue(UserSession.Key.SortField, AppSettings.GetStringValue(AppSettings.Key.DefaultSortField));
-            }
-
             if (IsSessionValueNull(UserSession.Key.ProjectId))
             {
                 // This will prime the cache if the project is not already loaded into cache.
                 SetSessionValue(UserSession.Key.ProjectId, _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary());
             }
 
-            SetSessionValue(UserSession.Key.SelectedOrgId, orgId);
             var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId, defaultValue: null);
-            if (rootFormId == formId)
+
+            // The Root Form has changed the we need to reset some session variables.
+            if (rootFormId != formId || reset)
             {
-                string sessionSortOrder = GetStringSessionValue(UserSession.Key.SortOrder, defaultValue: null);
-                if (!string.IsNullOrEmpty(sessionSortOrder) && string.IsNullOrEmpty(sort))
+                reset = true;
+
+                if (rootFormId != formId)
                 {
-                    sort = sessionSortOrder;
+                    rootFormId = formId;
+                    SetSessionValue(UserSession.Key.RootFormId, rootFormId);
+
+                    ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
+                    SetSessionValue(UserSession.Key.ResponseContext, responseContext);
                 }
 
-                string sessionSortField = GetStringSessionValue(UserSession.Key.SortField, defaultValue: null);
-                if (!string.IsNullOrEmpty(sessionSortField) && string.IsNullOrEmpty(sortField))
-                {
-                    sortField = sessionSortField;
-                }
-
-                SetSessionValue(UserSession.Key.SortOrder, sort);
-                SetSessionValue(UserSession.Key.SortField, sortField);
-                SetSessionValue(UserSession.Key.PageNumber, page.Value);
+                sort = string.IsNullOrWhiteSpace(sort) ? AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder) : sort;
+                sortField = string.IsNullOrWhiteSpace(sortField) ? AppSettings.GetStringValue(AppSettings.Key.DefaultSortField) : sortField;
             }
             else
             {
-                ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
-                SetSessionValue(UserSession.Key.ResponseContext, responseContext);
-
-                SetSessionValue(UserSession.Key.SortOrder, AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder));
-                SetSessionValue(UserSession.Key.SortField, AppSettings.GetStringValue(AppSettings.Key.DefaultSortField));
-                SetSessionValue(UserSession.Key.RootFormId, formId);
-                SetSessionValue(UserSession.Key.PageNumber, page.Value);
-
+                if (string.IsNullOrWhiteSpace(sort))
+                {
+                    sort = GetStringSessionValue(UserSession.Key.SortOrder, defaultValue: null);
+                    if (string.IsNullOrWhiteSpace(sort))
+                    {
+                        sort = AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder);
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(sortField))
+                {
+                    sortField = GetStringSessionValue(UserSession.Key.SortField, defaultValue: null);
+                    if (string.IsNullOrWhiteSpace(sortField))
+                    {
+                        sortField = AppSettings.GetStringValue(AppSettings.Key.DefaultSortField);
+                    }
+                }
             }
 
-            //Code added to retain Search Ends. 
+            // Make sure that the sort parameters are saved in lower case or empty
+            sort = !string.IsNullOrWhiteSpace(sort) ? sort.ToLowerInvariant() : string.Empty;
+            SetSessionValue(UserSession.Key.SortOrder, sort);
+            sortField = sortField == null ? string.Empty : sortField.ToLowerInvariant();
+            SetSessionValue(UserSession.Key.SortField, sortField); 
+
+            page = page.HasValue ? page.Value : 1;
+            SetSessionValue(UserSession.Key.PageNumber, page.Value);
+            SetSessionValue(UserSession.Key.SelectedOrgId, orgId);
+
+            bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
             var formResponseInfoModel = GetFormResponseInfoModel(formId, page.Value, sort, sortField, orgId);
 
@@ -417,7 +423,7 @@ namespace Epi.Cloud.MVC.Controllers
             var responseContext = InitializeResponseContext(responseId: responseId) as ResponseContext;
 
             SurveyAnswerRequest surveyAnswerRequest = responseContext.ToSurveyAnswerRequest();
-            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTO());
+            surveyAnswerRequest.SurveyAnswerList.Add(responseContext.ToSurveyAnswerDTOLite());
             surveyAnswerRequest.Criteria.UserOrganizationId = orgId;
             surveyAnswerRequest.Criteria.UserId = userId;
             surveyAnswerRequest.Criteria.IsSqlProject = GetBoolSessionValue(UserSession.Key.IsSqlProject);
@@ -626,16 +632,16 @@ namespace Epi.Cloud.MVC.Controllers
                 _columns = formSettingResponse.FormSetting.FormControlNameList.ToList();
 
                 // Get Additional Metadata columns 
-               /* var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
-                Dictionary<int, string> columnDictionary = tempColumns.ToDictionary(pair => pair.Key, pair => pair.Value);
+                /* var metadataColumns = Epi.Cloud.Common.Constants.Constant.MetadataColumnNames();
+                 Dictionary<int, string> columnDictionary = tempColumns.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-                foreach (var item in metadataColumns)
-                {
-                    if (!columnDictionary.ContainsValue(item))
-                    {
-                        _columns.Add(new KeyValuePair<int, string>(_columns.Count() + 1, item));
-                    }
-                }*/
+                 foreach (var item in metadataColumns)
+                 {
+                     if (!columnDictionary.ContainsValue(item))
+                     {
+                         _columns.Add(new KeyValuePair<int, string>(_columns.Count() + 1, item));
+                     }
+                 }*/
 
                 _columns.Sort(Compare);
 
@@ -717,9 +723,11 @@ namespace Epi.Cloud.MVC.Controllers
             }
             surveyAnswerDTO.LoggedInUserOrgId = responseContext.UserOrgId;
             surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
-            SetSessionValue(UserSession.Key.EditForm, responseId);
+            SetSessionValue(UserSession.Key.EditResponseId, responseId);
 
-           // var json = Json(surveyAnswerDTO.ToSurveyAnswerDTO());
+            // Trim the size of the JSON object
+            var recStatus = surveyAnswerDTO.RecStatus;
+            surveyAnswerDTO = surveyAnswerDTO.ToSurveyAnswerDTOLite(recStatus: recStatus);
             var json = Json(surveyAnswerDTO);
             return json;
         }
@@ -760,19 +768,7 @@ namespace Epi.Cloud.MVC.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult Unlock(String responseId, bool recoverLastRecordVersion = false)
         {
-            try
-            {
-                SurveyAnswerRequest SurveyAnswerRequest = new SurveyAnswerRequest();
-                SurveyAnswerRequest.SurveyAnswerList.Add(new SurveyAnswerDTO() { ResponseId = responseId });
-                SurveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
-                SetSessionValue(UserSession.Key.RecoverLastRecordVersion, recoverLastRecordVersion);
-                _surveyFacade.UpdateResponseStatus(SurveyAnswerRequest);
-            }
-            catch (Exception ex)
-            {
-                return Json("Erorr");
-            }
-            return Json("Success");
+            return UnlockResponse(responseId, recoverLastRecordVersion);
         }
 
         [HttpPost]
@@ -814,7 +810,7 @@ namespace Epi.Cloud.MVC.Controllers
 
             var model = new FormResponseInfoModel();
 
-           
+
             model = GetFormResponseInfoModel(formid, 1, "", "", currentOrgId);
 
             if (isMobileDevice == false)

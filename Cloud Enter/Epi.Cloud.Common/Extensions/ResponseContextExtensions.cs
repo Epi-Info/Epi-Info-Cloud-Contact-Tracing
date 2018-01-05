@@ -114,10 +114,11 @@ namespace Epi.Cloud.Common.Extensions
             return formResponseDetail;
         }
 
-        public static SurveyAnswerDTO ToSurveyAnswerDTO(this IResponseContext responseContext, SurveyAnswerDTO surveyAnswerDTO = null)
+        public static SurveyAnswerDTO ToSurveyAnswerDTOLite(this IResponseContext responseContext, SurveyAnswerDTO surveyAnswerDTO = null, int? recStatus = null)
         {
             if (surveyAnswerDTO == null) surveyAnswerDTO = new SurveyAnswerDTO();
             surveyAnswerDTO.ResponseDetail = responseContext.ToFormResponseDetail();
+            if (recStatus.HasValue) surveyAnswerDTO.RecStatus = recStatus.Value;
             return surveyAnswerDTO;
         }
 

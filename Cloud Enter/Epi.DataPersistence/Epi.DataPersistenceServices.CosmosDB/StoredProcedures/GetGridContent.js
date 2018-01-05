@@ -8,7 +8,7 @@
     var numberOfQueries = 0;
 
     if (!sortKey) {
-        sortkey = "_DateUpdated";
+        sortkey = "_dateupdated";
         isSortAscending = false;
     }
 
@@ -118,14 +118,14 @@
         var decorate = function (sortKey) {
             return function (item) {
                 switch (sortKey) {
-                    case "_UserEmail":
+                    case "_useremail":
                         return [item["UserName"](), item];
-                    case "IsDraftMode":
-                    case "_Mode":
+                    case "isdraftmode":
+                    case "_mode":
                         return [item.IsDraftMode, item];
-                    case "_DateCreated":
+                    case "_datecreated":
                         return [item.FirstSaveTime, item];
-                    case "_DateUpdated":
+                    case "_dateupdated":
                         return [item._ts, item];
                     default:
                         return [item.ResponseQA[sortKey] ? item.ResponseQA[sortKey].toUpperCase() : "", item];

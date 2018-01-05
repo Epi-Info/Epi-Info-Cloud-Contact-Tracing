@@ -43,7 +43,7 @@ namespace Epi.Cloud.MVC.Utility
             FormResponseDetail responseDetail = responseContext.ToFormResponseDetail();
             surveyAnswerDTO.ResponseDetail = responseDetail;
 
-            responseContext.ToSurveyAnswerDTO(surveyAnswerDTO);
+            responseContext.ToSurveyAnswerDTOLite(surveyAnswerDTO);
 			surveyAnswerDTO.DateCreated = DateTime.UtcNow;
 			surveyAnswerDTO.SurveyId = responseContext.FormId;
 			surveyAnswerDTO.Status = RecordStatus.InProcess;
