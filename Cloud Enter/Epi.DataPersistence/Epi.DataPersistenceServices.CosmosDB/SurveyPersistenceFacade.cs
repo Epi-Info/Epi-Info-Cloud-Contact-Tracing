@@ -63,7 +63,7 @@ namespace Epi.PersistenceServices.CosmosDB
                         var UpdateSurveyResponseStatusToDeleteResult = _formResponseCRUD.DeleteResponse(responseContext, RecordStatus.Deleted);
                         //NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
                         break;
-                    case RecordStatus.Restore:
+                    case RecordStatus.RecoverLastRecordVersion:
                         attachment = _formResponseCRUD.ReadResponseAttachment(responseContext, AttachmentId);
                         if (attachment == null)
                         {

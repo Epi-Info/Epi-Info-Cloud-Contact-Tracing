@@ -26,6 +26,6 @@ namespace Epi.DataPersistence.Constants
 
 		Logout,
 
-        Restore
+        RecoverLastRecordVersion
     }
 }

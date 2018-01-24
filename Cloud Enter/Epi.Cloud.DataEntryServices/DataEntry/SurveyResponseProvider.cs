@@ -168,7 +168,7 @@ namespace Epi.Cloud.DataEntryServices
         public bool DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponseBO, int status = -1)
         { 
             var responseContext = surveyResponseBO.ToResponseContext();
-            _surveyResponseDao.UpdateRecordStatus(responseContext, status, RecordStatusChangeReason.Restore);
+            _surveyResponseDao.UpdateRecordStatus(responseContext, status, RecordStatusChangeReason.RecoverLastRecordVersion);
             return true;
             
         }

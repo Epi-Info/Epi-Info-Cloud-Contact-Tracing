@@ -272,7 +272,7 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         try
                         {
-                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.Restore, RecordStatusChangeReason.Restore);
+                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.RecoverLastRecordVersion, RecordStatusChangeReason.RecoverLastRecordVersion);
                         }
                         catch
                         {
@@ -366,14 +366,14 @@ namespace Epi.Cloud.DataEntryServices
                 {
                     if (surveyAnswerRequest.Criteria.IsEditMode)
                     {
-                        surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.Restore);
+                        surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.RecoverLastRecordVersion);
                     }
                     else
                     {
 
                         if (surveyAnswerRequest.Action != null && surveyAnswerRequest.Action.Equals(RequestAction.DontSave, StringComparison.OrdinalIgnoreCase))
                         {
-                            surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.Restore);
+                            surveyResponseImplementation.DeleteSurveyResponseInEditMode(response.ToSurveyResponseBO(surveyAnswerRequest.Criteria.UserId), RecordStatus.RecoverLastRecordVersion);
                         }
                         else
                         {

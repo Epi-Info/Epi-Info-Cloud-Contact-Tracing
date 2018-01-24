@@ -335,7 +335,11 @@ namespace Epi.Cloud.MVC.Controllers
                 SetSessionValue(UserSession.Key.ProjectId, _projectMetadataProvider.GetProjectId_RetrieveProjectIfNecessary());
             }
 
+            // Get the last RootFormId if it exists
             var rootFormId = GetStringSessionValue(UserSession.Key.RootFormId, defaultValue: null);
+
+            // The formId parameter is the new RootFormId
+            SetSessionValue(UserSession.Key.RootFormId, formId);
 
             // The Root Form has changed the we need to reset some session variables.
             if (rootFormId != formId || reset)
@@ -345,7 +349,6 @@ namespace Epi.Cloud.MVC.Controllers
                 if (rootFormId != formId)
                 {
                     rootFormId = formId;
-                    SetSessionValue(UserSession.Key.RootFormId, rootFormId);
 
                     ResponseContext responseContext = InitializeResponseContext(formId: formId) as ResponseContext;
                     SetSessionValue(UserSession.Key.ResponseContext, responseContext);

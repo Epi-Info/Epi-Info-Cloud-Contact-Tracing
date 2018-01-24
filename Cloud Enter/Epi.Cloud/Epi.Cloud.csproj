@@ -576,6 +576,7 @@
     <Content Include="Content\images\sign_warning.png" />
     <Content Include="Content\images\Sort-Ascending.png" />
     <Content Include="Content\images\Sort-Descending.png" />
+    <Content Include="Content\images\Sort-MostRecent.png" />
     <Content Include="Content\images\staging.png" />
     <Content Include="Content\images\staging1.png" />
     <Content Include="Content\images\staginglegend.png" />
