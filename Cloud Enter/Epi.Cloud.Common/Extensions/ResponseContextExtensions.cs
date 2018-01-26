@@ -119,6 +119,8 @@ namespace Epi.Cloud.Common.Extensions
             if (surveyAnswerDTO == null) surveyAnswerDTO = new SurveyAnswerDTO();
             surveyAnswerDTO.ResponseDetail = responseContext.ToFormResponseDetail();
             if (recStatus.HasValue) surveyAnswerDTO.RecStatus = recStatus.Value;
+            surveyAnswerDTO.LastActiveUserId = responseContext.UserId;
+            surveyAnswerDTO.LastActiveOrgId = responseContext.UserOrgId;
             return surveyAnswerDTO;
         }
 

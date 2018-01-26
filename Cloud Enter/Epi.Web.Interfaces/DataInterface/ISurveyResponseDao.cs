@@ -21,7 +21,6 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <param name="SurveyResponseId">Unique SurveyResponse identifier.</param>
         /// <returns>SurveyResponse.</returns>
         List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1);
-        List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
 
         /// <summary>
         /// Gets a specific SurveyResponse.
@@ -39,29 +38,6 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// <returns>SurveyResponse.</returns>
         List<SurveyResponseBO> GetSurveyResponse(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1);
 
-        List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1);
-        /// <summary>
-        /// Gets a sorted list of all SurveyResponses.
-        /// </summary>
-        /// <param name="sortExpression">Sort order.</param>
-        /// <returns>Sorted list of SurveyResponses.</returns>
-       // List<SurveyResponseBO> GetSurveyResponses(string sortExpression = "SurveyResponseId ASC");
-        
-        /// <summary>
-        /// Gets SurveyResponse given an order.
-        /// </summary>
-        /// <param name="orderId">Unique order identifier.</param>
-        /// <returns>SurveyResponse.</returns>
-       // SurveyResponseBO GetSurveyResponseByOrder(int orderId);
-
-        /// <summary>
-        /// Gets SurveyResponses with order statistics in given sort order.
-        /// </summary>
-        /// <param name="SurveyResponses">SurveyResponse list.</param>
-        /// <param name="sortExpression">Sort order.</param>
-        /// <returns>Sorted list of SurveyResponses with order statistics.</returns>
-     //   List<SurveyResponseBO> GetSurveyResponsesWithOrderStatistics(string sortExpression);
-
         /// <summary>
         /// Inserts a new SurveyResponse. 
         /// </summary>
@@ -70,6 +46,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </remarks>
         /// <param name="SurveyResponse">SurveyResponse.</param>
         void InsertSurveyResponse(SurveyResponseBO SurveyResponse);
+
         /// <summary>
         /// Inserts a new SurveyResponse. 
         /// </summary>
@@ -78,6 +55,7 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </remarks>
         /// <param name="SurveyResponse">SurveyResponse.</param>
         void InsertChildSurveyResponse(SurveyResponseBO SurveyResponse);
+
         /// <summary>
         /// Updates a SurveyResponse.
         /// </summary>
@@ -91,24 +69,33 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
          void DeleteSurveyResponse(SurveyResponseBO SurveyResponse);
 
          void UpdatePassCode(UserAuthenticationRequestBO passcodeBO);
+
          UserAuthenticationResponseBO GetAuthenticationResponse(UserAuthenticationRequestBO passcodeBO);
 
          List<SurveyResponseBO> GetFormResponseByFormId(string FormId,int PageNumber, int PageSize);
+
          List<SurveyResponseBO> GetFormResponseByFormId(SurveyAnswerCriteria criteria);
+
          int GetFormResponseCount(string FormId);
 
          int GetFormResponseCount(SurveyAnswerCriteria Criteria);
 
          string GetResponseParentId(string ResponseId);
+
          SurveyResponseBO GetSingleResponse(string ResponseId);
 
          List<SurveyResponseBO> GetResponsesHierarchyIdsByRootId(string RootId);
+
          void DeleteSingleSurveyResponse(SurveyResponseBO SurveyResponse); 
+
          SurveyResponseBO GetFormResponseByParentRecordId(string ResponseId);
+
          List<SurveyResponseBO> GetAncestorResponseIdsByChildId(string ChildId);
 
          List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, string SurveyId);
+
          List<SurveyResponseBO> GetResponsesByRelatedFormId(string ResponseId, SurveyAnswerCriteria Criteria);
+
          void DeleteSurveyResponseInEditMode(SurveyResponseBO SurveyResponse);
 
          SurveyResponseBO  GetResponseXml(string ResponseId);

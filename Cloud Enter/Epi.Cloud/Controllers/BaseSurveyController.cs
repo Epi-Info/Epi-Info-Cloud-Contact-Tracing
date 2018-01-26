@@ -324,7 +324,7 @@ namespace Epi.Cloud.MVC.Controllers
 
                 SurveyAnswerRequest surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = surveyAnswerDTO };
                 surveyAnswerRequest.SurveyAnswerList.Add(surveyAnswerDTO);
-                surveyAnswerRequest.Criteria.StatusId = RecordStatus.Saved;
+                surveyAnswerRequest.Criteria.StatusId = recoverLastRecordVersion ? RecordStatus.RecoverLastRecordVersion : RecordStatus.Saved;
                 SetSessionValue(UserSession.Key.RecoverLastRecordVersion, recoverLastRecordVersion);
                 _surveyFacade.UpdateResponseStatus(surveyAnswerRequest);
             }

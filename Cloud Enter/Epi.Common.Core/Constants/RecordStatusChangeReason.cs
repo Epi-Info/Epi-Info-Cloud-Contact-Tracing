@@ -15,6 +15,8 @@ namespace Epi.DataPersistence.Constants
 
 		OpenForEdit,
 
+        Unlock,
+
         [NotifyConsistencyService(true)]
         SubmitOrClose,
 
@@ -26,6 +28,6 @@ namespace Epi.DataPersistence.Constants
 
 		Logout,
 
-        RecoverLastRecordVersion
+        DontSave
     }
 }

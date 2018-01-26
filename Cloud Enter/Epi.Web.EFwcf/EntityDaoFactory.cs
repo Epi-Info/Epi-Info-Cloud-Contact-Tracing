@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Epi.Web.Enter.Interfaces.DataInterface;
 using Epi.Web.Enter.Interfaces.DataInterfaces;
-using Epi.Web.Enter.Interfaces.DataInterface;
 
 namespace Epi.Web.EFwcf
 {
@@ -23,25 +20,21 @@ namespace Epi.Web.EFwcf
         }
 
         public IFormInfoDao FormInfoDao
-            {
-            get { return new  EntityFormInfoDao(); }
-            }
-
-        public ISurveyResponseDao SurveyResponseDao
         {
-            get { return new EntitySurveyResponseDao(); }  
+            get { return new EntityFormInfoDao(); }
         }
 
-        public IOrganizationDao OrganizationDao {
-            get{return new EntityOrganizationDao();}
-        
+        public IOrganizationDao OrganizationDao
+        {
+            get { return new EntityOrganizationDao(); }
+
         }
 
         public IFormSettingDao FormSettingDao
-            {
+        {
             get { return new EntityFormSettingDao(); }
 
-            }
+        }
 
         public IUserDao UserDao
         {

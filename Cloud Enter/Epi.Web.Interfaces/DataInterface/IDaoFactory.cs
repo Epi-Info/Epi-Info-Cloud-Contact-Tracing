@@ -20,13 +20,12 @@ namespace Epi.Web.Enter.Interfaces.DataInterfaces
         /// </summary>
         ISurveyInfoDao SurveyInfoDao { get; }
 
-       
-        ISurveyResponseDao SurveyResponseDao { get; }
-
         IOrganizationDao OrganizationDao { get; }
+
         IFormInfoDao FormInfoDao { get; }
+
         IFormSettingDao FormSettingDao { get; }
+
         IUserDao UserDao { get; }
     }
-
 }

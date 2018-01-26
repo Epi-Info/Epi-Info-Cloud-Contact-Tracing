@@ -64,20 +64,11 @@ namespace Epi.PersistenceServices.CosmosDB
                         //NotifyConsistencyService(responseId, RecordStatus.Deleted, RecordStatusChangeReason.DeleteResponse);
                         break;
                     case RecordStatus.RecoverLastRecordVersion:
-                        attachment = _formResponseCRUD.ReadResponseAttachment(responseContext, AttachmentId);
+                        attachment = RecoverLastRecordVersion(responseContext);
                         if (attachment == null)
                         {
                             //Add new record Don't Save
                             var NewRecordDontSaveResult = _formResponseCRUD.DeleteResponse(responseContext, RecordStatus.PhysicalDelete);
-                        }
-                        else
-                        {
-                            //Edit Record Don't Save
-                            FormResponseResource formResonseResource = _formResponseCRUD.RetrieveResponseAttachment(attachment);
-                            var editRecordDontSaveResult = _formResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
-
-                            //Delete Attachment                         
-                            var deleteResponse = _formResponseCRUD.DeleteAttachment(attachment);
                         }
                         break;
                 }
@@ -89,17 +80,42 @@ namespace Epi.PersistenceServices.CosmosDB
             return true;
         }
 
+        public Attachment RecoverLastRecordVersion(IResponseContext responseContext)
+        {
+            Attachment attachment = _formResponseCRUD.ReadResponseAttachment(responseContext, AttachmentId);
+            if (attachment != null)
+            {
+                //Edit Record Don't Save
+                FormResponseResource formResonseResource = _formResponseCRUD.RetrieveResponseAttachment(attachment);
+                var editRecordDontSaveResult = _formResponseCRUD.RestoreLastResponseSnapshot(formResonseResource);
+
+                //Delete Attachment                         
+                var deleteResponse = _formResponseCRUD.DeleteAttachment(attachment);
+            }
+
+            return attachment;
+        }
+
         public bool SaveResponse(SurveyResponseBO surveyResponseBO)
         {
-            var isSuccessful = _formResponseCRUD.ExecuteWithFollowOnAction(
-                () => SaveFormResponseProperties(surveyResponseBO),
-(Action)(() =>
-{
-    if (surveyResponseBO.RecStatus == RecordStatus.Saved)
-    {
-        NotifyConsistencyService(surveyResponseBO, (int)surveyResponseBO.RecStatus, RecordStatusChangeReason.SubmitOrClose);
-    }
-}));
+            bool isSuccessful = false;
+            if (surveyResponseBO.RecStatus == RecordStatus.RecoverLastRecordVersion)
+            {
+                var attachment = RecoverLastRecordVersion(surveyResponseBO.ResponseDetail);
+                isSuccessful = attachment != null;
+            }
+            else
+            {
+                isSuccessful = _formResponseCRUD.ExecuteWithFollowOnAction(
+                    () => SaveFormResponseProperties(surveyResponseBO),
+                (Action)(() =>
+                {
+                    if (surveyResponseBO.RecStatus == RecordStatus.Saved)
+                    {
+                        NotifyConsistencyService(surveyResponseBO, (int)surveyResponseBO.RecStatus, RecordStatusChangeReason.SubmitOrClose);
+                    }
+                }));
+            }
             return isSuccessful;
         }
 
@@ -152,6 +168,12 @@ namespace Epi.PersistenceServices.CosmosDB
         /// <returns></returns>
         private async Task<bool> SaveFormResponseProperties(SurveyResponseBO response)
         {
+            FormResponseResource recoveredResponse;
+            if (response.RecStatus == RecordStatus.RecoverLastRecordVersion)
+            {
+                //recoveredResponse = RetrieveResponseAttachment(
+            }
+
             var now = DateTime.UtcNow;
             List<FormResponseProperties> formResponsePropertiesList = response.ResponseDetail.ToFormResponsePropertiesFlattenedList();
 

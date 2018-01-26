@@ -272,11 +272,11 @@ namespace Epi.Cloud.DataEntryServices
                     {
                         try
                         {
-                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.RecoverLastRecordVersion, RecordStatusChangeReason.RecoverLastRecordVersion);
+                            _surveyResponseProvider.UpdateRecordStatus(item, RecordStatus.RecoverLastRecordVersion, RecordStatusChangeReason.DontSave);
                         }
-                        catch
+                        catch (Exception ex)
                         {
-
+                            Console.WriteLine("DontSave: " + ex.ToString());
                         }
                     }
                 }

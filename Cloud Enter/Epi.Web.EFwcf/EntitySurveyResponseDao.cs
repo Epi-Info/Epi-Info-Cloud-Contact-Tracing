@@ -105,17 +105,6 @@ namespace Epi.Web.EFwcf
             return result;
         }
 
-
-        public List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyResponseIdList, Guid UserPublishKey, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
-        {
-
-
-            List<SurveyResponseBO> resultRows = GetSurveyResponse(SurveyResponseIdList, UserPublishKey, PageNumber, PageSize);
-
-
-            return resultRows;
-        }
-
         /// <summary>
         /// Gets SurveyResponses per a SurveyId.
         /// </summary>
@@ -397,18 +386,6 @@ namespace Epi.Web.EFwcf
 
 
 
-
-        }
-
-
-        public List<SurveyResponseBO> GetSurveyResponseSize(List<string> SurveyAnswerIdList, string pSurveyId, DateTime pDateCompleted, bool IsDraftMode = false, int pStatusId = -1, int PageNumber = -1, int PageSize = -1, int ResponseMaxSize = -1)
-        {
-
-
-            List<SurveyResponseBO> resultRows = GetSurveyResponse(SurveyAnswerIdList, pSurveyId, pDateCompleted,IsDraftMode ,pStatusId, PageNumber, PageSize);
-
-
-            return resultRows;
 
         }
 

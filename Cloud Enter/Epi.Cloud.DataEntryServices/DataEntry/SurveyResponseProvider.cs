@@ -38,18 +38,6 @@ namespace Epi.Cloud.DataEntryServices
             return result;
         }
 
-        //public int GetNumberOfPages(SurveyAnswerCriteria criteria)
-        //{
-        //    criteria.GridPageSize = AppSettings.GetIntValue(criteria.IsMobile ? AppSettings.Key.MobileResponsePageSize : AppSettings.Key.ResponsePageSize);
-
-        //    int resultCount = _surveyResponseDao.GetFormResponseCount(criteria);
-        //    if (criteria.GridPageSize > 0)
-        //    {
-        //        resultCount = (resultCount + criteria.GridPageSize - 1) / criteria.GridPageSize;
-        //    }
-        //    return resultCount;
-        //}
-
         //Validate User
         public bool ValidateUser(UserAuthenticationRequestBO uarBO)
         {
@@ -168,7 +156,7 @@ namespace Epi.Cloud.DataEntryServices
         public bool DeleteSurveyResponseInEditMode(SurveyResponseBO surveyResponseBO, int status = -1)
         { 
             var responseContext = surveyResponseBO.ToResponseContext();
-            _surveyResponseDao.UpdateRecordStatus(responseContext, status, RecordStatusChangeReason.RecoverLastRecordVersion);
+            _surveyResponseDao.UpdateRecordStatus(responseContext, status, RecordStatusChangeReason.DeleteInEditMode);
             return true;
             
         }

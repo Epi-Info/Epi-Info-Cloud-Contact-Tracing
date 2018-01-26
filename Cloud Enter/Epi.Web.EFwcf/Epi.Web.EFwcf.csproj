@@ -56,7 +56,6 @@
     <Compile Include="EntityFormInfoDao.cs" />
     <Compile Include="EntityFormSettingDao.cs" />
     <Compile Include="EntityOrganizationDao.cs" />
-    <Compile Include="EntitySurveyResponseDao.cs" />
     <Compile Include="DataObjectFactory.cs" />
     <Compile Include="EntityDaoFactory.cs" />
     <Compile Include="EntitySurveyInfoDao.cs" />
