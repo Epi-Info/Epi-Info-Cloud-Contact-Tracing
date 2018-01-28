@@ -158,10 +158,10 @@ namespace Epi.Cloud.MVC.Controllers
             return responseModel;
         }
 
-        protected SurveyAnswerDTO GetSurveyAnswerState(IResponseContext responseContext)
+        protected SurveyAnswerStateDTO GetSurveyAnswerState(IResponseContext responseContext)
         {
             var surveyAnswerRequest = new SurveyAnswerRequest { ResponseContext = responseContext.CloneResponseContext() };
-            SurveyAnswerDTO result = _surveyFacade.GetSurveyAnswerDTO(surveyAnswerRequest);
+            SurveyAnswerStateDTO result = _surveyFacade.GetSurveyAnswerState(surveyAnswerRequest);
             return result;
         }
 

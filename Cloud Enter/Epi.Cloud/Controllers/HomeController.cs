@@ -719,19 +719,10 @@ namespace Epi.Cloud.MVC.Controllers
         {
             ResponseContext responseContext = GetSetResponseContext(responseId);
 
-            var surveyAnswerDTO = GetSurveyAnswerState(responseContext);
-            if (surveyAnswerDTO.DateCreated == DateTime.MinValue)
-            {
-                surveyAnswerDTO.DateCreated = surveyAnswerDTO.DateUpdated;
-            }
-            surveyAnswerDTO.LoggedInUserOrgId = responseContext.UserOrgId;
-            surveyAnswerDTO.LoggedInUserId = responseContext.UserId;
+            SurveyAnswerStateDTO surveyAnswerStateDTO = GetSurveyAnswerState(responseContext);
             SetSessionValue(UserSession.Key.EditResponseId, responseId);
 
-            // Trim the size of the JSON object
-            var recStatus = surveyAnswerDTO.RecStatus;
-            surveyAnswerDTO = surveyAnswerDTO.ToSurveyAnswerDTOLite(recStatus: recStatus);
-            var json = Json(surveyAnswerDTO);
+            var json = Json(surveyAnswerStateDTO);
             return json;
         }
 

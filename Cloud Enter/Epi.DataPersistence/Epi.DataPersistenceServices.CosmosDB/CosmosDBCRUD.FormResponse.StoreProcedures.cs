@@ -285,13 +285,13 @@ namespace Epi.DataPersistenceServices.CosmosDB
 
             try
             {
-                var sprocBody = ResourceProvider.GetResourceString(ResourceNamespaces.CosmosDBSp, CosmosDBSPKeys.GetAllRecordsBySurveyID);
-                var sprocDefinition = new StoredProcedure
+                var spBody = ResourceProvider.GetResourceString(ResourceNamespaces.CosmosDBSp, CosmosDBSPKeys.spGetGridContent);
+                var spDefinition = new StoredProcedure
                 {
                     Id = spId,
-                    Body = sprocBody
+                    Body = spBody
                 };
-                var result = ExecuteWithFollowOnAction(() => Client.CreateStoredProcedureAsync(collectionUri, sprocDefinition));
+                var result = ExecuteWithFollowOnAction(() => Client.CreateStoredProcedureAsync(collectionUri, spDefinition));
                 return await Task.FromResult(result);
             }
             catch (Exception ex)

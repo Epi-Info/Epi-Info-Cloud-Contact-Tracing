@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="getGridContent" xml:space="preserve">
+  <data name="spGetGridContent" xml:space="preserve">
     <value>function getGridContent(query, sortKey, isSortAscending, pageNumber, responsesPerPage, querySetToken, continuationToken="", skip=0, isCallerPostProcessing) {
     var context = getContext();
     var response = context.getResponse();

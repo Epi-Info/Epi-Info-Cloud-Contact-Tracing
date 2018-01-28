@@ -743,8 +743,6 @@ namespace Epi.Cloud.MVC.Controllers
             ResponseContext responseContext = GetSetResponseContext(responseId);
 
             var surveyAnswerStateDTO = GetSurveyAnswerState(responseContext);
-            surveyAnswerStateDTO.LoggedInUserOrgId = responseContext.UserOrgId;
-            surveyAnswerStateDTO.LoggedInUserId = responseContext.UserId;
             SetSessionValue(UserSession.Key.EditResponseId, responseId);
 
             // Minimize the amount of Json data by serializing only pertinent state information

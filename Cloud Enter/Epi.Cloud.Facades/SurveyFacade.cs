@@ -208,10 +208,10 @@ namespace Epi.Cloud.Facades
             return surveyAnswerResponse.SurveyResponseList[0];
         }
 
-        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest)
+        public SurveyAnswerStateDTO GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest)
         {
-            SurveyAnswerResponse surveyAnswerResponse = _dataEntryService.GetSurveyAnswerState(surveyAnswerRequest);
-            return surveyAnswerResponse;
+            SurveyAnswerStateDTO surveyAnswerStateDTO = _dataEntryService.GetSurveyAnswerState(surveyAnswerRequest);
+            return surveyAnswerStateDTO;
         }
 
         /// <summary>

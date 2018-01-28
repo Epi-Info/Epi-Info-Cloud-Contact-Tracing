@@ -54,6 +54,7 @@
     <Compile Include="DataStructures\ResponseGridQueryCriteria.cs" />
     <Compile Include="DTO\FormInfoDTO.cs" />
     <Compile Include="DTO\SurveyAnswerDTO.cs" />
+    <Compile Include="DTO\SurveyAnswerStateDTO.cs" />
     <Compile Include="Interfaces\IFormResponseDetail.cs" />
     <Compile Include="Interfaces\IPageResponseDetail.cs" />
     <Compile Include="Interfaces\IResponseContext.cs" />

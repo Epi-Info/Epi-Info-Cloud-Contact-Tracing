@@ -73,13 +73,11 @@ namespace Epi.Cloud.Resources {
         ///    if (!sortKey) {
         ///        sortkey = &quot;_dateupdated&quot;;
         ///        isSortAscending = false;
-        ///    }
-        ///
-        ///    var t [rest of string was truncated]&quot;;.
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string getGridContent {
+        internal static string spGetGridContent {
             get {
-                return ResourceManager.GetString("getGridContent", resourceCulture);
+                return ResourceManager.GetString("spGetGridContent", resourceCulture);
             }
         }
         
