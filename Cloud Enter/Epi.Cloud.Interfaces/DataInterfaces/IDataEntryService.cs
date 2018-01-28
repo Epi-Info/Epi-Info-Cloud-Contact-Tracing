@@ -1,4 +1,5 @@
 ﻿using Epi.Cloud.Common.BusinessObjects;
+using Epi.Cloud.Common.DTO;
 using Epi.Cloud.Common.Message;
 using Epi.Common.Core.Interfaces;
 
@@ -10,9 +11,9 @@ namespace Epi.Cloud.Interfaces.DataInterfaces
 
         SurveyAnswerResponse UpdateResponseStatus(SurveyAnswerRequest surveyAnswerRequest);
 
-		SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest);
+		SurveyAnswerStateDTO GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest);
 
-		SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest);
+		SurveyAnswerResponse GetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest);
 
 		SurveyAnswerResponse SetSurveyAnswer(SurveyAnswerRequest surveyAnswerRequest);
 

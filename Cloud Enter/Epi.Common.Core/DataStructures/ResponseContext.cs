@@ -35,14 +35,5 @@ namespace Epi.Common.Core.DataStructures
         {
             get { return !IsChildResponse; }
         }
-
-        public Stack<ChildContext> ChildStack = null;
-
-        public class ChildContext
-        {
-            public string ParentResponseId { get; set; }
-            public string ChildFormName { get; set; }
-            public string ChildResponseId { get; set; }
-        }
     }
 }

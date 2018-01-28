@@ -30,6 +30,6 @@ namespace Epi.Cloud.Facades.Interfaces
         FormsHierarchyResponse GetFormsHierarchy(FormsHierarchyRequest formsHierarchyRequest);
         bool HasResponse(SurveyAnswerRequest surveyAnswerRequest);
         SurveyAnswerDTO GetSurveyAnswerDTO(SurveyAnswerRequest surveyAnswerRequest);
-        SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest);
+        SurveyAnswerStateDTO GetSurveyAnswerState(SurveyAnswerRequest surveyAnswerRequest);
     }
 }

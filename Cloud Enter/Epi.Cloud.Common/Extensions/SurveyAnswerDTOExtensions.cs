@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Epi.DataPersistence.Constants;
-using Epi.Cloud.Common.BusinessObjects;
+﻿using Epi.Cloud.Common.BusinessObjects;
 using Epi.Cloud.Common.DTO;
-using Epi.Common.Core.DataStructures;
 using Epi.Cloud.Common.Metadata;
-using System;
+using Epi.Common.Core.DataStructures;
 
 namespace Epi.Cloud.Common.Extensions
 {

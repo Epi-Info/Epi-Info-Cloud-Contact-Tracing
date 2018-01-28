@@ -107,7 +107,7 @@ namespace Epi.Cloud.DataEntryServices
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public SurveyAnswerResponse GetSurveyAnswerState(SurveyAnswerRequest request)
+        public SurveyAnswerStateDTO GetSurveyAnswerState(SurveyAnswerRequest request)
         {
             try
             {
@@ -116,11 +116,10 @@ namespace Epi.Cloud.DataEntryServices
                 SurveyResponseProvider surveyResponseImplementation = new SurveyResponseProvider(_surveyResponseDao);
 
                 var responseContext = request.ResponseContext;
+                int loggedInUserId = request.UserId;
                 SurveyResponseBO surveyResponseBO = surveyResponseImplementation.GetSurveyResponseStateById(responseContext);
-                SurveyAnswerDTO surveyAnswerDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerDTO() : null;
-                result.SurveyResponseList = new List<SurveyAnswerDTO>();
-                if (surveyAnswerDTO != null) result.SurveyResponseList.Add(surveyAnswerDTO);
-                return result;
+                SurveyAnswerStateDTO surveyAnswerStateDTO = surveyResponseBO != null ? surveyResponseBO.ToSurveyAnswerStateDTO(loggedInUserId) : null;
+                return surveyAnswerStateDTO;
             }
             catch (Exception ex)
             {

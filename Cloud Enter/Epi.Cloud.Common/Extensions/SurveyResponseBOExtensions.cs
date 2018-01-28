@@ -9,6 +9,19 @@ namespace Epi.Cloud.Common.Extensions
 {
     public static class SurveyResponseBOExtensions
     {
+        public static SurveyAnswerStateDTO ToSurveyAnswerStateDTO(this SurveyResponseBO surveyResponseBO, int? loggedInUserId = null)
+        {
+            return new SurveyAnswerStateDTO
+            {
+                ResponseId = surveyResponseBO.ResponseId,
+                LoggedInUserId = loggedInUserId.HasValue ? loggedInUserId.Value : 0,
+                LastActiveUserId = surveyResponseBO.UserId,
+                Status = surveyResponseBO.RecStatus,
+                DateUpdated = surveyResponseBO.DateUpdated,
+
+                ResponseContext = surveyResponseBO.ResponseDetail.CloneResponseContext()
+            };
+        }
         public static SurveyAnswerDTO ToSurveyAnswerDTO(this SurveyResponseBO surveyResponseBO)
         {
             MetadataAccessor metadataAccessor = new MetadataAccessor();
