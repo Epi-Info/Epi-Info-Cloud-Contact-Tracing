@@ -80,13 +80,15 @@
             });
 
             function successFunc(data, status) {
+              //  debugger;
                 var loggedInUserId = data.LoggedInUserId
                 var utcUpdatedDate = data.DateUpdated;
                 utcUpdatedDate = utcUpdatedDate.replace(/[^0-9 +]/g, '');
                 utcUpdatedDate = new Date(parseInt(utcUpdatedDate));
                 var now = new Date();
                 var utcNow = new Date(now.toUTCString().slice(0, -4));
-                var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
+                // var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
+                var EditingDuration = Math.abs(new Date() - utcUpdatedDate);
 
 
                 if (data.Status == 2 || data.Status == 4) {
@@ -96,7 +98,7 @@
                     $("#exitdialog").dialog("open");
 
                 } else {
-                    // if time elapsed is less the   system timeout
+                    // if time elapsed is less the   system timeout                   
                     if (EditingDuration <= SessionTimeOut && loggedInUserId != data.LastActiveUserId) {
                            alert("This record is being edited by another user.");
                         }
@@ -608,7 +610,7 @@
 
     // Check For Concurrency
     function CheckForConcurrency(obj) {
-       ;
+     //debugger  ;
         $("#ConcurrencyMessage").show();
         $(".dialogbtn").show();
         $("#NotifyMessage").hide();
@@ -624,6 +626,7 @@
         });
 
         function successFunc(data, status) {
+           // debugger;
             var loggedInUserId = data.LoggedInUserId
             var utcUpdatedDate = data.DateUpdated;
             var SessionTimeOut = $('#SYSTEM_SESSION_TIMEOUT_HIDDEN').val() * 60000;
@@ -631,7 +634,8 @@
             utcUpdatedDate = new Date(parseInt(utcUpdatedDate));
             var now = new Date();
             var utcNow = new Date(now.toUTCString().slice(0, -4))
-            var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
+            //var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
+            var EditingDuration = Math.abs(new Date() - utcUpdatedDate);
             if (data.Status == 2 || data.Status == 4) {
                 $('#' + obj.id).closest("form").submit();
             }
