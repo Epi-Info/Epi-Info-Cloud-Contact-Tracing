@@ -84,8 +84,7 @@
                 var utcUpdatedDate = data.DateUpdated;
                 utcUpdatedDate = utcUpdatedDate.replace(/[^0-9 +]/g, '');
                 utcUpdatedDate = new Date(parseInt(utcUpdatedDate));
-                var now = new Date();
-                var utcNow = new Date(now.toUTCString().slice(0, -4));
+                var utcNow = new Date();
                 var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
 
 
@@ -629,8 +628,7 @@
             var SessionTimeOut = $('#SYSTEM_SESSION_TIMEOUT_HIDDEN').val() * 60000;
             utcUpdatedDate = utcUpdatedDate.replace(/[^0-9 +]/g, '');
             utcUpdatedDate = new Date(parseInt(utcUpdatedDate));
-            var now = new Date();
-            var utcNow = new Date(now.toUTCString().slice(0, -4))
+            var utcNow = new Date();
             var EditingDuration = Math.abs(utcNow - utcUpdatedDate);
             if (data.Status == 2 || data.Status == 4) {
                 $('#' + obj.id).closest("form").submit();
