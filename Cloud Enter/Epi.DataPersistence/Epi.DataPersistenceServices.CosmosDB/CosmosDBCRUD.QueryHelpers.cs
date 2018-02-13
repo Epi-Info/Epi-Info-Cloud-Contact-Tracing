@@ -186,17 +186,25 @@ namespace Epi.DataPersistenceServices.CosmosDB
                 var searchExpressionList = searchQualifiers.Select(x => And_SearchExpression(x.Key.FieldName, x.Value, wildCardQualifiers)).Where(x => x != null).ToList();
                 var wildCardSearchExpression = And_WildCardSearchExpression(wildCardQualifiers);
                 if (wildCardSearchExpression != null) searchExpressionList.Add(wildCardSearchExpression);
-
-                query = SELECT
+                if (responseAccessRuleContext != null && responseAccessRuleContext.IsSharable)
+                    query = SELECT
+                                   + SelectFormPoperties + ","
+                                   + AssembleSelect(collectionAlias, "_ts,")
+                                   + SelectColumnList
+                                   + WHERE
+                                   + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
+                                   + AssembleExpressions(collectionAlias, searchExpressionList.ToArray())
+                                   + AssembleExpressions(collectionAlias, trailingExpressions.ToArray());
+                else
+                    query = SELECT
                                + SelectFormPoperties + ","
                                + AssembleSelect(collectionAlias, "_ts,")
                                + SelectColumnList
-                               + WHERE
-                               + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
-                               + AssembleExpressions(collectionAlias, searchExpressionList.ToArray())
+                               + WHERE                               
+                               + AssembleExpressions(collectionAlias, searchExpressionList.ToArray()).Remove(0, 4)
                                + AssembleExpressions(collectionAlias, trailingExpressions.ToArray());
             }
-            else
+            else if (responseAccessRuleContext != null && responseAccessRuleContext.IsSharable)           
             {
                 query = SELECT
                                + SelectFormPoperties + ","
@@ -205,6 +213,16 @@ namespace Epi.DataPersistenceServices.CosmosDB
                                + WHERE
                                + AssembleAcessRuleQualifier(collectionAlias, responseAccessRuleContext)
                                + AssembleExpressions(collectionAlias, trailingExpressions.ToArray());
+            }
+            else
+            {
+                query = SELECT
+                              + SelectFormPoperties + ","
+                              + AssembleSelect(collectionAlias, "_ts,")
+                              + SelectColumnList
+                              + WHERE                             
+                              + AssembleExpressions(collectionAlias, trailingExpressions.ToArray()).Remove(0,4);
+
             }
 
             return query;

@@ -209,8 +209,9 @@ namespace Epi.Cloud.MVC.Controllers
                 {
                     surveyAnswer.RecoverLastRecordVersion = GetBoolSessionValue(UserSession.Key.RecoverLastRecordVersion);
                 }
-                string childRecordId = GetChildRecordId(surveyAnswer);
-                return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = surveyAnswer.ParentResponseId, PageNumber = 1, Edit = "Edit" });
+                //   string childRecordId = GetChildRecordId(surveyAnswer);
+                //return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = surveyAnswer.ParentResponseId, PageNumber = 1, Edit = "Edit" });
+                return RedirectToAction(ViewActions.Index, ControllerNames.Survey, new { responseid = editResponseId, PageNumber = 1, Edit = "Edit" });
             }
 
             //create the responseid
@@ -464,12 +465,13 @@ namespace Epi.Cloud.MVC.Controllers
                                 break;
                         }
                     }
-                    formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                     formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();                   
 
                 }
                 if (string.IsNullOrEmpty(sort))
                 {
-                    formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                    // formResponseInfoModel.ResponsesList = responseList.Skip((pageNumber - 1) * 20).Take(20).ToList();
+                    formResponseInfoModel.ResponsesList = responseList.Take(20).ToList();
                 }
 
                 //Setting Form Info 
