@@ -83,7 +83,8 @@ namespace Epi.Cloud.MVC.Controllers
                 RemoveSessionValue(UserSession.Key.RootResponseId);
                 RemoveSessionValue(UserSession.Key.FormValuesHasChanged);
                 SetSessionValue(UserSession.Key.IsEditMode, false);
-
+                if (pagenumber == 0)
+                    pagenumber = 1;
                 var model = new FormResponseInfoModel();
                 model.ViewId = viewId;
                 int currentOrgId = GetIntSessionValue(UserSession.Key.CurrentOrgId, defaultValue: -1);
@@ -351,6 +352,7 @@ namespace Epi.Cloud.MVC.Controllers
                 formResponseReq.Criteria.DataAccessRuleId = formSettingResponse.FormSetting.SelectedDataAccessRule;
                 //formResponseReq.Criteria.IsMobile = true;
                 formResponseReq.Criteria.UserOrganizationId = orgid;
+                formResponseReq.Criteria.IsDraftMode = formSettingResponse.FormInfo.IsDraftMode;
 
                 SetSessionValue(UserSession.Key.IsSqlProject, formSettingResponse.FormInfo.IsSQLProject);
                 SetSessionValue(UserSession.Key.IsOwner, formSettingResponse.FormInfo.IsOwner);
@@ -376,9 +378,17 @@ namespace Epi.Cloud.MVC.Controllers
                 {
                     formResponseReq.Criteria.SortOrder = sort;
                 }
+                else
+                {
+                    formResponseReq.Criteria.SortOrder = AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder);
+                }
                 if (!string.IsNullOrEmpty(sortfield) && sortfield.Length > 0)
                 {
                     formResponseReq.Criteria.Sortfield = sortfield;
+                }               
+                else
+                {
+                    formResponseReq.Criteria.Sortfield = AppSettings.GetStringValue(AppSettings.Key.DefaultSortField);
                 }
                 formResponseReq.Criteria.SurveyQAList = _columns.ToDictionary(c => c.Key.ToString(), c => c.Value);
                 formResponseReq.Criteria.FieldDigestList = formResponseInfoModel.ColumnDigests.ToDictionary(c => c.Key, c => c.Value);
@@ -408,11 +418,10 @@ namespace Epi.Cloud.MVC.Controllers
 
                 string sortFieldcolumn = string.Empty;
                 if (!string.IsNullOrEmpty(sortfield))
-                {
-                    sortfield = sortfield.ToLower();
+                {                 
                     foreach (var column in _columns)
                     {
-                        if (column.Value.ToLower() == sortfield)
+                        if (column.Value== sortfield)
                         {
                             sortFieldcolumn = "Column" + column.Key;
                         }
@@ -465,7 +474,8 @@ namespace Epi.Cloud.MVC.Controllers
                                 break;
                         }
                     }
-                     formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();                   
+                    // formResponseInfoModel.ResponsesList = responseListModel.Skip((pageNumber - 1) * 20).Take(20).ToList();  
+                    formResponseInfoModel.ResponsesList = responseList.Take(20).ToList();
 
                 }
                 if (string.IsNullOrEmpty(sort))
@@ -490,8 +500,7 @@ namespace Epi.Cloud.MVC.Controllers
 
         public ActionResult ReadSortedResponseInfo(string formId, int? page, string sort, string sortField, int orgId, bool reset = false)
         {
-            page = page.HasValue ? page.Value : 1;
-            sortField = sortField.ToLower();
+            page = page.HasValue ? page.Value : 1;           
             bool isMobileDevice = this.Request.Browser.IsMobileDevice;
 
             //Code added to retain Search Starts

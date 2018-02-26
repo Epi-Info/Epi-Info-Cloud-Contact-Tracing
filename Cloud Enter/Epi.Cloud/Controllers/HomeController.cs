@@ -378,9 +378,11 @@ namespace Epi.Cloud.MVC.Controllers
             }
 
             // Make sure that the sort parameters are saved in lower case or empty
-            sort = !string.IsNullOrWhiteSpace(sort) ? sort.ToLowerInvariant() : string.Empty;
+          //  sort = !string.IsNullOrWhiteSpace(sort) ? sort.ToLowerInvariant() : string.Empty;
+            sort = !string.IsNullOrWhiteSpace(sort) ? sort : string.Empty;
             SetSessionValue(UserSession.Key.SortOrder, sort);
-            sortField = sortField == null ? string.Empty : sortField.ToLowerInvariant();
+            //  sortField = sortField == null ? string.Empty : sortField.ToLowerInvariant();
+            sortField = sortField == null ? string.Empty : sortField;
             SetSessionValue(UserSession.Key.SortField, sortField); 
 
             page = page.HasValue ? page.Value : 1;

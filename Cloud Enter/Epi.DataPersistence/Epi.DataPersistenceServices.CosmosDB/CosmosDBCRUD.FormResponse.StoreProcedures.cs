@@ -33,7 +33,7 @@ namespace Epi.DataPersistenceServices.CosmosDB
             string querySetToken)
         {
             string collectionId = responseGridQueryCriteria.ResponseContext.RootFormName;
-            string sortKey = responseGridQueryCriteria.SortByField;
+            string sortKey = responseGridQueryCriteria.SortByField.ToLowerInvariant();
             bool isSortAscending = responseGridQueryCriteria.IsSortedAscending;
 
             var queryResult = await ExecuteSPAsync(collectionId, spGetGridContent, udfSharingRules, udfWildCardCompare,

@@ -1166,7 +1166,8 @@ namespace Epi.Cloud.MVC.Controllers
             bool IsAndroid = this.Request.UserAgent.IndexOf("Android", StringComparison.OrdinalIgnoreCase) >= 0;
             surveyAnswerDTO.IsDraftMode = surveyInfoModel.IsDraftMode;
 
-            var lastPageNumber = GetSurveyPageNumber(surveyAnswerDTO.ResponseDetail);
+            //  var lastPageNumber = GetSurveyPageNumber(surveyAnswerDTO.ResponseDetail);
+            var lastPageNumber = pageNumber;
             form = _surveyFacade.GetSurveyFormData(surveyInfoModel.SurveyId, lastPageNumber == 0 ? 1 : lastPageNumber, surveyAnswerDTO, isMobileDevice, null, formsHierarchyDTOList, IsAndroid);
             form.FormValuesHasChanged = formValuesHasChanged;
 
