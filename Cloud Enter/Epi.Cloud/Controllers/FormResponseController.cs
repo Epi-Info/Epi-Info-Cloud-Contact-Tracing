@@ -50,11 +50,29 @@ namespace Epi.Cloud.MVC.Controllers
             string sortOrder = null;
             if (Request.QueryString["sortfield"] != null)
             {
-                sortField = Request.QueryString["sortfield"];
+                sortField = Request.QueryString["sortfield"];              
+                SetSessionValue(UserSession.Key.SortField, sortField);
             }
             if (Request.QueryString["sort"] != null)
             {
                 sortOrder = Request.QueryString["sort"];
+                SetSessionValue(UserSession.Key.SortOrder, sortOrder);
+            }
+            if (string.IsNullOrWhiteSpace(sortOrder))
+            {
+                sortOrder = GetStringSessionValue(UserSession.Key.SortOrder, defaultValue: null);
+                if (string.IsNullOrWhiteSpace(sortOrder))
+                {
+                    sortOrder = AppSettings.GetStringValue(AppSettings.Key.DefaultSortOrder);
+                }
+            }
+            if (string.IsNullOrWhiteSpace(sortField))
+            {
+                sortField = GetStringSessionValue(UserSession.Key.SortField, defaultValue: null);
+                if (string.IsNullOrWhiteSpace(sortField))
+                {
+                    sortField = AppSettings.GetStringValue(AppSettings.Key.DefaultSortField);
+                }
             }
             bool.TryParse(Request.QueryString["reset"], out reset);
             if (reset)
