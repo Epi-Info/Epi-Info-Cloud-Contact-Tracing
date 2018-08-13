@@ -28,6 +28,9 @@ namespace MvcDynamicForms.Fields
         protected string _InputFieldfontfamily;
         protected string _BackgroundColor;
         protected int _FieldTypeId;
+        protected string _Pattern;
+        protected string _Lower;
+        protected string _Upper;
         protected Dictionary<string, string> _inputHtmlAttributes = new Dictionary<string, string>();
 
         /// <summary>
@@ -155,6 +158,10 @@ namespace MvcDynamicForms.Fields
             Required = fieldAttributes.Required;
             RequiredMessage = fieldAttributes.RequiredMessage;
             ReadOnly = fieldAttributes.IsReadOnly;
+            Pattern = fieldAttributes.Pattern;
+            Upper = fieldAttributes.Upper;
+            Lower = fieldAttributes.Lower;
+            IsHighlighted=fieldAttributes.IsHighlighted;
         }
 
         /// <summary>
@@ -188,6 +195,12 @@ namespace MvcDynamicForms.Fields
         public double InputFieldfontSize { get { return this._InputFieldfontSize; } set { this._InputFieldfontSize = value; } }
         public string InputFieldfontfamily { get { return this._InputFieldfontfamily; } set { this._InputFieldfontfamily = value; } }
         public string BackgroundColor { get { return this._BackgroundColor; } set { this._BackgroundColor = value; } }
+
+        public string Pattern { get { return this._Pattern; } set { this._Pattern = value; } }
+
+        public string Upper { get { return this._Upper; } set { this._Upper = value; } }
+
+        public string Lower { get { return this._Lower; } set { this._Lower= value; } }
 
         public string GetInputFieldStyle(string ControlFontStyle, double ControlFontSize, string ControlFontFamily)
         {

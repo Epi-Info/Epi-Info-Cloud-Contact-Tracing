@@ -164,7 +164,7 @@ namespace Epi.Cloud.MVC.Utility
                 fieldValue = (responseQA.TryGetValue(fieldAttributes.FieldName.ToLower(), out fieldValue) ? fieldValue : string.Empty);
 
                 javaScript.Append(GetFormJavaScript(checkcode, form, fieldAttributes.FieldName));
-
+                fieldAttributes.IsHighlighted = GetControlState(fieldAttributes.FieldName, form.HighlightedFieldsList);
                 switch (fieldAttributes.FieldType)
                 {
                     case FieldTypes.Text:   // textbox
@@ -401,10 +401,10 @@ namespace Epi.Cloud.MVC.Utility
         }
 
         protected virtual MvcDynamicForms.Fields.Field GetNumericTextBox(FieldAttributes fieldAttributes, double formWidth, double formHeight, string controlValue)
-        {
+        {           
             var numericTextBox = new NumericTextBox(fieldAttributes, formWidth, formHeight)
             {
-                Value = controlValue
+                Value = controlValue                
             };
 
             return numericTextBox;
@@ -638,6 +638,32 @@ namespace Epi.Cloud.MVC.Utility
             }
 
             return List;
+        }
+
+        private static bool GetControlState(string ControlName, string ListName)
+        {
+
+            bool _Val = false;                        
+                if (!string.IsNullOrEmpty(ListName))
+                {
+                    string List = ListName;
+                    string[] ListArray = List.Split(',');
+                    for (var i = 0; i < ListArray.Length; i++)
+                    {
+                        if (ListArray[i] == ControlName.ToLower())
+                        {
+                            _Val = true;
+                            break;
+                        }
+                        else
+                        {
+
+                            _Val = false;
+                        }
+                    }
+                }           
+
+            return _Val;
         }
     }
 }

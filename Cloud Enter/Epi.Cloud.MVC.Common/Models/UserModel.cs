@@ -14,7 +14,7 @@ namespace Epi.Cloud.MVC.Models
 
 
         [Required(ErrorMessage = "Email is required")]
-        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email address.")]
+        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "The email address you entered is not in the proper format.")]
         public string Email { get; set; }
 
         //[Required(ErrorMessage = "Confirm email is required.")]

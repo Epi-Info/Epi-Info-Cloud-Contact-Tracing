@@ -101,9 +101,9 @@ namespace MvcDynamicForms.Fields
             html.Append(scriptNumeric.ToString(TagRenderMode.Normal));
 
             //if masked input not empty appy the pattern jquery plugin
-            if (!string.IsNullOrEmpty(Pattern))
+            if (!string.IsNullOrEmpty(_Pattern))
             {
-                string maskedPatternEq = GetMaskedPattern(Pattern);
+                string maskedPatternEq = GetMaskedPattern(_Pattern);
                 var scriptMaskedInput = new TagBuilder("script");
                 scriptMaskedInput.InnerHtml = "$(function() { $('#" + inputName + "').mask('" + maskedPatternEq + "');});";
                 html.Append(scriptMaskedInput.ToString(TagRenderMode.Normal));
@@ -169,10 +169,10 @@ namespace MvcDynamicForms.Fields
 
             ControlClass.Append("validate[");
 
-            if ((!string.IsNullOrEmpty(Lower)) && (!string.IsNullOrEmpty(Upper)))
+            if ((!string.IsNullOrEmpty(_Lower)) && (!string.IsNullOrEmpty(_Upper)))
             {
 
-                ControlClass.Append("min[" + Lower + "],max[" + Upper + "],");
+                ControlClass.Append("min[" + _Lower + "],max[" + _Upper + "],");
             }
             if (_isRequired == true)
             {

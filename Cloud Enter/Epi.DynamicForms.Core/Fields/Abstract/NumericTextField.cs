@@ -114,26 +114,26 @@ namespace MvcDynamicForms.Fields
 
                     //invalid: not in between range
                     //first check if low and upper are not empty
-                    if ((!string.IsNullOrEmpty(Lower)) && (!string.IsNullOrEmpty(Upper)))
+                    if ((!string.IsNullOrEmpty(_Lower)) && (!string.IsNullOrEmpty(_Upper)))
                     {
                         //if the number is either less than the lower limit or greater than the upper limit raise error
-                        if ((decimal.Parse(Value) < decimal.Parse(Lower)) || (decimal.Parse(Value) > decimal.Parse(Upper)))
+                        if ((decimal.Parse(Value) < decimal.Parse(_Lower)) || (decimal.Parse(Value) > decimal.Parse(_Upper)))
                         {
-                            Error = string.Format("Number must be in between {0} and {1}", Lower, Upper);
+                            Error = string.Format("Number must be in between {0} and {1}", _Lower, _Upper);
                             return false;
                         }
                     }
 
                     //invalid: checking for lower limit
-                    if ((!string.IsNullOrEmpty(Lower)) && (decimal.Parse(Value) < decimal.Parse(Lower)))
+                    if ((!string.IsNullOrEmpty(_Lower)) && (decimal.Parse(Value) < decimal.Parse(_Lower)))
                     {
-                        Error = string.Format("Number can not be less than {0}", Lower);
+                        Error = string.Format("Number can not be less than {0}", _Lower);
                         return false;
                     }
                     //invalid: checking the upper limit 
-                    if ((!string.IsNullOrEmpty(Upper)) && (decimal.Parse(Value) > decimal.Parse(Upper)))
+                    if ((!string.IsNullOrEmpty(_Upper)) && (decimal.Parse(Value) > decimal.Parse(_Upper)))
                     {
-                        Error = string.Format("Number can not be greater than {0}", Upper);
+                        Error = string.Format("Number can not be greater than {0}", _Upper);
                         return false;
                     }
 

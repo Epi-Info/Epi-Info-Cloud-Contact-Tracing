@@ -9,14 +9,14 @@ namespace Epi.Cloud.MVC.Models
         }
 
         [Required(ErrorMessage = "Email is required.")]
-        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email address.")]
+        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "The email address you entered is not in the proper format.")]
         public string AdminEmail { get; set; }
 
         [Required(ErrorMessage = "The organization name is required.")]
         public string OrgName { get; set; }
 
         [Required(ErrorMessage = "Confirm email is required.")]
-        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "Invalid email address.")]
+        [RegularExpression(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$", ErrorMessage = "The email address you entered is not in the proper format.")]
         [System.ComponentModel.DataAnnotations.Compare("AdminEmail", ErrorMessage = "The email and confirmation do not match.")]
         public string ConfirmAdminEmail { get; set; }
 
